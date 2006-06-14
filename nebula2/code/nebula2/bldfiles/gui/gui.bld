@@ -7,7 +7,7 @@
 beginmodule nguiwidget
     setdir gui
     setfiles {
-        nguiwidget_main nguiwidget_cmds 
+        nguiwidget_main nguiwidget_cmds
     }
     setheaders nguiwidget
 endmodule
@@ -110,7 +110,7 @@ endmodule
 #--------------------------------------------------------------------
 beginmodule nguitextview
     setdir gui
-    setfiles { 
+    setfiles {
         nguitextview_main nguitextview_cmds
     }
     setheaders nguitextview
@@ -271,7 +271,7 @@ beginmodule nguidragbox
     setfiles {
         nguidragbox_main nguidragbox_cmds
     }
-    setheaders nguicontextmenu
+    setheaders nguidragbox
 endmodule
 #--------------------------------------------------------------------
 beginmodule nguigraphicsbrowserwindow
@@ -423,7 +423,7 @@ begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
     setmodules {
-        nguiwidget nguiformlayout nguislider2 nguibutton 
+        nguiwidget nguiformlayout nguislider2 nguibutton
         nguilabel nguitextlabel nguitextbutton nguitextentry nguiipaddressentry
         nguicheckbutton nguicheckbuttongroup nguicheckbuttongroup2
         nguitextview nguicmdentry nguitextureview nguiwindow nguiclientwindow
