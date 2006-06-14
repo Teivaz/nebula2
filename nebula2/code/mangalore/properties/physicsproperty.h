@@ -4,7 +4,7 @@
 /**
     @class Properties::PhysicsProperty
 
-    A physics property adds basic physical behaviour to a game entity. 
+    A physics property adds basic physical behaviour to a game entity.
     The default behaviour is that of a passive physics object which will
     just passively roll and bounce around. Implement more advanced behaviour
     in subclasses.
@@ -13,12 +13,11 @@
 
     Attr::Transform
     Attr::Velocity
-  
+
     (C) 2005 Radon Labs GmbH
 */
 #include "properties/abstractphysicsproperty.h"
 #include "physics/entity.h"
-#include "attr/attributes.h"
 
 //------------------------------------------------------------------------------
 namespace Properties
@@ -61,6 +60,17 @@ private:
 };
 
 RegisterFactory(PhysicsProperty);
+
+//------------------------------------------------------------------------------
+/**
+    Get pointer to physics entity. Note that this method may return 0!
+*/
+inline
+Physics::Entity*
+PhysicsProperty::GetPhysicsEntity() const
+{
+    return this->physicsEntity.get_unsafe();
+}
 
 }; // namespace Properties
 //------------------------------------------------------------------------------

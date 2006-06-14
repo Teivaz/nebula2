@@ -136,6 +136,10 @@ public:
     void SetRenderFlag(nRenderContext::Flag f, bool b);
     /// get a Nebula2 render flag
     bool GetRenderFlag(nRenderContext::Flag f) const;
+    /// set user data, this is a dirty way to get this physics entity's game entity
+    void SetUserData(int d);
+    /// get user data
+    int GetUserData() const;
 
 protected:
     /// update the render context variables
@@ -173,6 +177,8 @@ protected:
 
     nTime activateTime;
     float timeFactor;
+
+    int userData;
 };
 
 RegisterFactory(Entity);
@@ -358,6 +364,29 @@ bool
 Entity::GetRenderFlag(nRenderContext::Flag f) const
 {
     return this->renderContext.GetFlag(f);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set the user data of the entity. This is a not-quite-so-nice way to
+    store the game entity's unique id in the physics entity.
+*/
+inline
+void
+Entity::SetUserData(int d)
+{
+    this->userData = d;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get the user data associated with this physics entity.
+*/
+inline
+int
+Entity::GetUserData() const
+{
+    return this->userData;
 }
 
 }; // namespace Graphics

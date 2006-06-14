@@ -108,6 +108,7 @@ ActorGraphicsProperty::SetupGraphicsEntities()
 
     // create and setup graphics property
 	Ptr<Graphics::CharEntity> ge = Graphics::CharEntity::Create();
+    ge->SetUserData(GetEntity()->GetUniqueId());
     ge->SetResourceName(GetEntity()->GetString(Attr::Graphics));
     ge->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
     nString animSet = GetEntity()->GetString(Attr::AnimSet);
@@ -258,6 +259,7 @@ ActorGraphicsProperty::AddAttachment(const nString& jointName, const nString& gf
     {
         // joint index is valid, create a new graphics entity
 		Ptr<Graphics::Entity> ge = Graphics::Entity::Create();
+        ge->SetUserData(GetEntity()->GetUniqueId());
         ge->SetResourceName(gfxResName);
         ge->SetVisible(false);
 

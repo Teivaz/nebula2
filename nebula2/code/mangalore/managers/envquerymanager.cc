@@ -6,6 +6,7 @@
 #include "managers/envquerymanager.h"
 #include "managers/entitymanager.h"
 #include "physics/server.h"
+#include "graphics/server.h"
 #include "input/server.h"
 #include "gui/nguiserver.h"
 #include "ui/server.h"
@@ -55,38 +56,47 @@ EnvQueryManager::GetEntityUnderMouse() const
 
 //------------------------------------------------------------------------------
 /**
-    This returns the position where a vector through the mouse position
-    intersects the 3d world (or the nearest entity). If the mouse doesn't
-    intersect, the result will be undefined, and the method
-    HasMouseIntersection() returns false.
+   Get the entities under the mouse drag drop rectangle area
 */
-const vector3&
-EnvQueryManager::GetMousePos3d() const
+void
+EnvQueryManager::GetEntitiesUnderMouseDragDropRect(vector2 dragPosition, vector2 dropPosition, nArray<Ptr<Game::Entity> >& entities)
 {
-    return this->mousePos3d;
-}
+    nArray<Ptr<Graphics::Entity> > graphicsEntities;
+    float width, height;
+    vector2 center;
+    if (dragPosition.x < dropPosition.x)
+    {
+        width = dropPosition.x - dragPosition.x;
+        center.x = dragPosition.x + width*0.5f;
+    }
+    else
+    {
+        width = dragPosition.x - dropPosition.x;
+        center.x = dropPosition.x + width*0.5f;
+    }
+    if (dragPosition.y < dropPosition.y)
+    {
+        height = dropPosition.y - dragPosition.y;
+        center.y = dragPosition.y + height*0.5f;
+    }
+    else
+    {
+        height = dragPosition.y - dropPosition.y;
+        center.y = dropPosition.y + height*0.5f;
+    }
+    line3 ray = nGfxServer2::Instance()->ComputeWorldMouseRay(center, 5000.0f);
 
-//------------------------------------------------------------------------------
-/**
-    This returns the upvector of the face under the mousecursor.
-    If the mouse doesn't intersect, the result will be undefined,
-    and the method HasMouseIntersection() returns false.
-*/
-const vector3&
-EnvQueryManager::GetUpVector() const
-{
-    return this->upVector;
-}
+    Graphics::Server::Instance()->DragDropSelect(ray.end(), 60.0f*width, width/height, graphicsEntities);
 
-//------------------------------------------------------------------------------
-/**
-    Returns true if the vector through the current mouse position intersects
-    the world, or an entity, false if no intersection exists.
-*/
-bool
-EnvQueryManager::HasMouseIntersection() const
-{
-    return this->mouseIntersection;
+    EntityManager* entityMgr = EntityManager::Instance();
+    for (int i = 0; i < graphicsEntities.Size(); i++)
+    {
+        int entityId = graphicsEntities[i]->GetUserData();
+        if (entityId)
+        {
+            entities.PushBack(entityMgr->FindEntityById(entityId));
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

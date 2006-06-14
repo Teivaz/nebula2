@@ -35,16 +35,6 @@ PhysicsProperty::~PhysicsProperty()
 
 //------------------------------------------------------------------------------
 /**
-    Get pointer to physics entity. Note that this method may return 0!
-*/
-Physics::Entity*
-PhysicsProperty::GetPhysicsEntity() const
-{
-    return this->physicsEntity.get_unsafe();
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 void
 PhysicsProperty::SetupDefaultAttributes()
@@ -54,7 +44,7 @@ PhysicsProperty::SetupDefaultAttributes()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Called after the physics subsystem has been triggered. This will transfer
     the physics entity's new transform back into the game entity.
 */
@@ -88,7 +78,7 @@ void
 PhysicsProperty::HandleMessage(Message::Msg* msg)
 {
     n_assert(msg != 0);
-    
+
     if (msg->CheckId(Message::SetTransform::Id) && this->IsEnabled())
     {
         // set transform of physics entity
@@ -108,15 +98,15 @@ void
 PhysicsProperty::EnablePhysics()
 {
     n_assert(!this->IsEnabled());
-    
+
     if (GetEntity()->HasAttr(Attr::Physics))
     {
         if (this->physicsEntity == 0)
         {
             // create and setup physics entity
 		    this->physicsEntity = Physics::Entity::Create();
-            this->physicsEntity->SetCompositeName(GetEntity()->GetString(Attr::Physics));
             this->physicsEntity->SetUserData(GetEntity()->GetUniqueId());
+            this->physicsEntity->SetCompositeName(GetEntity()->GetString(Attr::Physics));
             this->physicsEntity->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
         }
 
@@ -137,12 +127,12 @@ void
 PhysicsProperty::DisablePhysics()
 {
     n_assert(this->IsEnabled());
-    
+
     // release the physics entity
     Physics::Level* physicsLevel = Physics::Server::Instance()->GetLevel();
     n_assert(physicsLevel);
-    physicsLevel->RemoveEntity(this->GetPhysicsEntity());
-    
+    physicsLevel->RemoveEntity(this->physicsEntity);
+
     // call parrent
     AbstractPhysicsProperty::DisablePhysics();
 }
@@ -155,7 +145,7 @@ PhysicsProperty::OnDeactivate()
 {
     // call parrent to cleanup
     AbstractPhysicsProperty::OnDeactivate();
-    
+
     // release phy entity
     if (this->physicsEntity != 0)
     {

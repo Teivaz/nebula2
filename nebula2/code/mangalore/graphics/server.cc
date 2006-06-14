@@ -317,7 +317,7 @@ void Server::DragDropSelect(const vector3& lookAt, float angleOfView, float aspe
     {
         CameraEntity* cameraEntity = this->curLevel->GetCamera();
         matrix44 transform = cameraEntity->GetTransform();
-        transform.lookatLh(lookAt, vector3(0.0f, 1.0f, 0.0f));
+        transform.lookatRh(lookAt, vector3(0.0f, 1.0f, 0.0f));
         nCamera2 camera = cameraEntity->GetCamera();
         camera.SetAngleOfView(angleOfView);
         camera.SetAspectRatio(aspectRatio);
