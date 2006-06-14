@@ -3,12 +3,12 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "properties/actorgraphicsproperty.h"
+#include "attr/attributes.h"
 #include "msg/gfxaddattachment.h"
 #include "msg/gfxremattachment.h"
 #include "msg/gfxsetanimation.h"
 #include "msg/gfxaddskin.h"
 #include "msg/gfxremskin.h"
-#include "foundation/factory.h"
 #include "game/entity.h"
 #include "graphics/server.h"
 #include "graphics/level.h"
@@ -105,7 +105,7 @@ void
 ActorGraphicsProperty::SetupGraphicsEntities()
 {
     n_assert(this->GetEntity()->HasAttr(Attr::Transform));
-    
+
     // create and setup graphics property
 	Ptr<Graphics::CharEntity> ge = Graphics::CharEntity::Create();
     ge->SetResourceName(this->GetEntity()->GetString(Attr::Graphics));
@@ -117,10 +117,10 @@ ActorGraphicsProperty::SetupGraphicsEntities()
     }
     else
     {
-        n_error("ActorGraphicsProperty::SetupGraphicsEntity(): entity '%s' has empty AnimSet attribute!", 
+        n_error("ActorGraphicsProperty::SetupGraphicsEntity(): entity '%s' has empty AnimSet attribute!",
             this->GetEntity()->GetString(Attr::Id).Get());
     }
-    
+
     // attach graphics property to level
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
     n_assert(graphicsLevel);
@@ -142,9 +142,10 @@ ActorGraphicsProperty::SetupGraphicsEntities()
 
 //------------------------------------------------------------------------------
 /**
+    Cleanup graphics entities
 */
 void
-ActorGraphicsProperty::OnDeactivate()
+ActorGraphicsProperty::CleanupGraphicsEntities()
 {
     // clear our attachments
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
@@ -156,13 +157,11 @@ ActorGraphicsProperty::OnDeactivate()
         graphicsLevel->RemoveEntity(this->attachments[i].graphicsEntity);
     }
     this->attachments.Clear();
-    
-    GraphicsProperty::OnDeactivate();
 }
 
 //------------------------------------------------------------------------------
 /**
-    Set base and/or overlay animation. 
+    Set base and/or overlay animation.
 */
 void
 ActorGraphicsProperty::SetAnimation(const nString& baseAnim, const nString& overlayAnim, float baseAnimTimeOffset)
@@ -229,7 +228,7 @@ ActorGraphicsProperty::AddAttachment(const nString& jointName, const nString& gf
 {
     n_assert(jointName.IsValid() && gfxResName.IsValid());
 
-    // first check if previous attachment is identical to the current, 
+    // first check if previous attachment is identical to the current,
     // do nothing in this case
     int attIndex = this->FindAttachment(jointName);
     if ((attIndex != -1) && this->attachments[attIndex].graphicsEntity.isvalid())
@@ -317,15 +316,15 @@ ActorGraphicsProperty::UpdateAttachments()
             for (i = 0; i < numAttachments; i++)
             {
                 const Attachment& curAttachment = this->attachments[i];
-                
+
                 // get attachment joint matrix...
                 matrix44 jointMatrix = curAttachment.offsetMatrix;
                 jointMatrix.mult_simple(charEntity->GetJointMatrix(curAttachment.jointIndex));
 
-                // rotate the matrix by 180 degree (since Nebula2 characters look into -z)!!                
+                // rotate the matrix by 180 degree (since Nebula2 characters look into -z)!!
                 jointMatrix.mult_simple(rot180);
                 jointMatrix.mult_simple(worldMatrix);
-                
+
                 // ...and update attachment graphics entity
                 Graphics::Entity* ge = curAttachment.graphicsEntity;
                 ge->SetTransform(jointMatrix);

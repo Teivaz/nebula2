@@ -42,7 +42,7 @@ SimpleGraphicsProperty::GetGraphicsEntity() const
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
 */
 void
 SimpleGraphicsProperty::SetupDefaultAttributes()
@@ -52,7 +52,7 @@ SimpleGraphicsProperty::SetupDefaultAttributes()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Attach the property to a game entity. This will create and setup
     the required graphics entities.
 */
@@ -60,24 +60,38 @@ void
 SimpleGraphicsProperty::OnActivate()
 {
     AbstractGraphicsProperty::OnActivate();
-    
-    this->SetupGraphics();
+
+    this->SetupGraphicsEntity();
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
+    Remove the property from its game entity. This will release the
+    graphics entities owned by the property.
 */
 void
-SimpleGraphicsProperty::SetupGraphics()
+SimpleGraphicsProperty::OnDeactivate()
+{
+    this->CleanupGraphicsEntity();
+
+    // up to parent class
+    AbstractGraphicsProperty::OnDeactivate();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SimpleGraphicsProperty::SetupGraphicsEntity()
 {
     n_assert(this->GetEntity()->HasAttr(Attr::Transform));
     n_assert(this->graphicsEntity == 0);
-    
+
     // create graphics entity
     this->graphicsEntity = Graphics::Entity::Create();
     this->graphicsEntity->SetResourceName(this->GetEntity()->GetString(Attr::Graphics));
     this->graphicsEntity->SetTransform(this->GetEntity()->GetMatrix44(Attr::Transform));
-    
+
     // attach to level
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
     n_assert(graphicsLevel);
@@ -85,16 +99,16 @@ SimpleGraphicsProperty::SetupGraphics()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
 */
 void
-SimpleGraphicsProperty::CleanupGraphics()   
+SimpleGraphicsProperty::CleanupGraphicsEntity()
 {
     if (this->graphicsEntity != 0)
     {
         Graphics::Level* gfxLevel = Graphics::Server::Instance()->GetLevel();
         n_assert(gfxLevel);
-        
+
         // release graphics entity
         if (this->graphicsEntity->GetCell())
         {
@@ -105,21 +119,7 @@ SimpleGraphicsProperty::CleanupGraphics()
 }
 
 //------------------------------------------------------------------------------
-/**    
-    Remove the property from its game entity. This will release the
-    graphics entities owned by the property.
-*/
-void
-SimpleGraphicsProperty::OnDeactivate()
-{
-    this->CleanupGraphics();
-
-    // up to parent class
-    AbstractGraphicsProperty::OnDeactivate();
-}
-
-//------------------------------------------------------------------------------
-/**    
+/**
 */
 bool
 SimpleGraphicsProperty::Accepts(Message::Msg* msg)
@@ -130,7 +130,7 @@ SimpleGraphicsProperty::Accepts(Message::Msg* msg)
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
 */
 void
 SimpleGraphicsProperty::HandleMessage(Message::Msg* msg)

@@ -4,9 +4,9 @@
 /**
     @class Properties::SimpleGraphicsProperty
 
-    This is a simple graphics property which adds visibility to a game 
-    entity. 
-  
+    This is a simple graphics property which adds visibility to a game
+    entity.
+
     (C) 2006 Radon Labs GmbH
 */
 #include "properties/abstractgraphicsproperty.h"
@@ -29,10 +29,10 @@ public:
     SimpleGraphicsProperty();
     /// destructor
     virtual ~SimpleGraphicsProperty();
-    
+
     /// get the graphics entity
     Graphics::Entity* GetGraphicsEntity() const;
-    
+
     /// setup default entity attributes
     virtual void SetupDefaultAttributes();
     /// called from Entity::ActivateProperties()
@@ -46,9 +46,9 @@ public:
     virtual void HandleMessage(Message::Msg* msg);
 protected:
     /// setup graphics entity
-    void SetupGraphics();
+    virtual void SetupGraphicsEntity();
     /// cleanup graphics entity
-    void CleanupGraphics();
+    virtual void CleanupGraphicsEntity();
 
     Ptr<Graphics::Entity> graphicsEntity;
 };
