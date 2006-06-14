@@ -28,7 +28,8 @@ Entity::Entity() :
     linkArray(NumLinkTypes),
     shadowBoxUpdatedFrameId(0),
     activateTime(0.0),
-    timeFactor(1.0f)
+    timeFactor(1.0f),
+    userData(0)
 {
     // initialize link arrays for double grow size,
     // normal entities need rather small arrays, while cameras and
@@ -44,7 +45,7 @@ Entity::Entity() :
     this->timeVarHandle = varServer->GetVariableHandleByName("time");
     this->oneVarHandle  = varServer->GetVariableHandleByName("one");
     this->windVarHandle = varServer->GetVariableHandleByName("wind");
-    
+
     // initialize render context
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
     this->renderContext.AddVariable(nVariable(this->timeVarHandle, 0.0f));
@@ -196,7 +197,7 @@ Entity::OnRemovedFromCell()
         this->ClearLinks(LinkType(linkType));
     }
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Set the graphics resource name.
@@ -228,7 +229,7 @@ Entity::GetResourceName() const
     rendered, additionally to the normal graphics object. A shadow resource
     must be defined if rendering a "deep hierarchy" node, for instance when
     rendering the representation a complex physics object which is made of
-    several rigid bodies, where each body defines the position of a 
+    several rigid bodies, where each body defines the position of a
     visual hierarchy node.
 
     @param  n    graphics resource name
@@ -318,7 +319,7 @@ Entity::UpdateRenderContextVariables()
 /**
     This method is called before the Render() method is invoked on the entity.
 */
-void 
+void
 Entity::OnRenderBefore()
 {
     // empty
@@ -371,7 +372,7 @@ Entity::Render()
             this->shadowRenderContext.AddLink(&(this->GetLinkAt(LightLink, linkIndex)->renderContext));
         }
     }
-    
+
     // update render context's bounding box
     if (this->GetType() == Light)
     {
@@ -398,13 +399,13 @@ Entity::Render()
 
 //------------------------------------------------------------------------------
 /**
-    Clear the links array. This will decrement the refcounts of all linked 
+    Clear the links array. This will decrement the refcounts of all linked
     entities.
 
     FIXME: hmm, this may be performance problem, since all contained smart
     pointer will calls their destructors. But it's definitely safer that way.
 
-    @param  linkType    the link type    
+    @param  linkType    the link type
 */
 void
 Entity::ClearLinks(LinkType linkType)
@@ -477,7 +478,7 @@ Entity::SetCell(Cell* c)
 
 //------------------------------------------------------------------------------
 /**
-    Get the pointer to the graphics Cell this entity is currently 
+    Get the pointer to the graphics Cell this entity is currently
     attached to. The pointer can be 0 if the object is not attached
     to any cell.
 

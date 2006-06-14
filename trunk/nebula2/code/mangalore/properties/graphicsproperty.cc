@@ -119,12 +119,20 @@ GraphicsProperty::SetupGraphicsEntities()
             this->graphicsEntities = Util::PhysicsGfxUtil::CreateGraphics(physEntity);
             n_assert(this->graphicsEntities.Size() > 0);
             Util::PhysicsGfxUtil::SetupGraphics(resName, physEntity, this->graphicsEntities);
+            for (int i = 0; i < this->graphicsEntities.Size(); i++)
+            {
+                this->graphicsEntities[i]->SetUserData(GetEntity()->GetUniqueId());
+            }
             return;
         }
     }
 
     // fallthrough: setup physics-less graphics entity
     this->graphicsEntities = Util::SegmentedGfxUtil::CreateAndSetupGraphicsEntities(resName, worldMatrix);
+    for (int i = 0; i < this->graphicsEntities.Size(); i++)
+    {
+        this->graphicsEntities[i]->SetUserData(GetEntity()->GetUniqueId());
+    }
 }
 
 //------------------------------------------------------------------------------

@@ -89,6 +89,7 @@ SimpleGraphicsProperty::SetupGraphicsEntity()
 
     // create graphics entity
     this->graphicsEntity = Graphics::Entity::Create();
+    this->graphicsEntity->SetUserData(GetEntity()->GetUniqueId());
     this->graphicsEntity->SetResourceName(GetEntity()->GetString(Attr::Graphics));
     this->graphicsEntity->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
 
