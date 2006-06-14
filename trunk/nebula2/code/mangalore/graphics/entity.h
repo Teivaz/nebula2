@@ -33,7 +33,7 @@ class Entity : public Foundation::RefCounted
 	DeclareFactory(Entity);
 
 public:
-    /// clip status 
+    /// clip status
     enum ClipStatus
     {
         InvalidClipStatus,  ///< visibility status invalid
@@ -57,6 +57,7 @@ public:
     {
         CameraLink = 0,     // a camera link
         LightLink,          // a light link
+        SelectLink,         // a drag drop selection link
 
         NumLinkTypes,
     };
@@ -301,7 +302,7 @@ Entity::UpdateGlobalBox()
 /**
 */
 inline
-void 
+void
 Entity::SetVisible(bool b)
 {
     this->visible = b;
@@ -311,7 +312,7 @@ Entity::SetVisible(bool b)
 /**
 */
 inline
-bool 
+bool
 Entity::GetVisible() const
 {
     return this->visible;
@@ -359,6 +360,6 @@ Entity::GetRenderFlag(nRenderContext::Flag f) const
     return this->renderContext.GetFlag(f);
 }
 
-}; // namespace Graphics 
+}; // namespace Graphics
 //------------------------------------------------------------------------------
 #endif

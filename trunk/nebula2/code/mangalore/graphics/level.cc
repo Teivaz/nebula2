@@ -4,12 +4,9 @@
 //------------------------------------------------------------------------------
 #include "graphics/level.h"
 #include "graphics/cell.h"
-#include "gfx2/ngfxserver2.h"
-#include "particle/nparticleserver.h"
 #include "scene/nsceneserver.h"
 #include "graphics/cameraentity.h"
 #include "graphics/lightentity.h"
-#include "misc/nconserver.h"
 
 namespace Graphics
 {
@@ -116,7 +113,7 @@ Level::GetCamera() const
 //------------------------------------------------------------------------------
 /**
     Attach a dynamic graphics entity. The graphics entity will be sorted
-    correctly into the cell tree. The refcount of the entity will be 
+    correctly into the cell tree. The refcount of the entity will be
     incremented.
 
     @param  entity  pointer to a graphics entity
@@ -155,10 +152,6 @@ Level::BeginRender()
     n_assert(this->rootCell != 0);
     n_assert(this->curCamera != 0);
 
-    Foundation::Server* fndServer = Foundation::Server::Instance();
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
-    nSceneServer* sceneServer = nSceneServer::Instance();
-
     // clear light and camera links
     this->profClearLinks.Start();
     this->rootCell->ClearLinks(Entity::CameraLink);
@@ -167,8 +160,6 @@ Level::BeginRender()
 
     // compute the current view/projection matrix
     const matrix44& view = this->curCamera->GetTransform();
-    const matrix44& proj = this->curCamera->GetCamera().GetProjection();
-    matrix44 viewProjection = view * proj;
 
     // update camera pos statistics
     this->watchCameraPos->SetV3(view.pos_component());
@@ -201,7 +192,7 @@ Level::BeginRender()
     this->profFindVisibleObjects.Stop();
 
     // begin rendering the scene
-    if (sceneServer->BeginScene(this->curCamera->GetTransform()))
+    if (nSceneServer::Instance()->BeginScene(this->curCamera->GetTransform()))
     {
         return true;
     }
