@@ -47,8 +47,8 @@ nParticleShapeNode2::~nParticleShapeNode2()
     server as current modelview matrix.
 */
 bool
-nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer, 
-                                    nRenderContext* renderContext, 
+nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
+                                    nRenderContext* renderContext,
                                     const matrix44& parentMatrix)
 {
     n_assert(sceneServer);
@@ -60,7 +60,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
     nParticle2Emitter* emitter = (nParticle2Emitter*)varEmitter.GetObj();
 
     // sample curves to speed up calculating
-    if (!this->curvesValid) 
+    if (!this->curvesValid)
     {
         int c,s;
         for( c = 0; c < nParticle2Emitter::CurveTypeCount ; c++)
@@ -75,7 +75,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
                                                     (((uint)(col.z*255.0f)) )) ;
         };
 
-        // encode alpha values from [0,1] to [0,255] 
+        // encode alpha values from [0,1] to [0,255]
         for( s = 0; s < PARTICLE_TIME_DETAIL ; s++)
             staticCurve[s][nParticle2Emitter::ParticleAlpha] = (float)(((int)(staticCurve[s][nParticle2Emitter::ParticleAlpha] * 255.0f)));
 
@@ -83,7 +83,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
         emitter->CurvesChanged();
         this->curvesValid = true;
     };
-    
+
     nVariable* windVar = renderContext->GetVariable(this->windHandle);
     n_assert2(windVar, "No 'wind' variable provided by application!");
     emitter->SetTransform(this->tform.getmatrix() * parentMatrix);
@@ -114,7 +114,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
     emitter->SetRenderOldestFirst(this->renderOldestFirst);
     emitter->SetIsSetUp(true);
 
-    sceneServer->SetModelTransform(matrix44());
+    sceneServer->SetModelTransform(matrix44::identity);
     return true;
 }
 
@@ -184,7 +184,7 @@ nParticleShapeNode2::GetMeshUsage() const
 //------------------------------------------------------------------------------
 /**
     Perform pre-instance-rendering of particle system.
-    FIXME: check if this is the optimal setup for the new instance 
+    FIXME: check if this is the optimal setup for the new instance
     rendering!
 */
 bool
@@ -207,7 +207,7 @@ nParticleShapeNode2::RenderGeometry(nSceneServer* sceneServer, nRenderContext* r
     n_assert2(timeVar, "No 'time' variable provided by application!");
     float curTime = timeVar->GetFloat();
     n_assert(curTime >= 0.0f);
-   
+
     nParticle2Emitter* emitter = (nParticle2Emitter*)varEmitter.GetObj();
     n_assert(0 != emitter);
     if(!this->invisible)

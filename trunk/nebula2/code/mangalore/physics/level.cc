@@ -303,7 +303,7 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
         if (dAreConnectedExcluding(body1, body2, dJointTypeContact))
         {
             // FIXME: bodies are connected, check if jointed-collision is enabled
-            // for both bodies (whether 2 bodies connected by a joint should 
+            // for both bodies (whether 2 bodies connected by a joint should
             // collide or not, for this, both bodies must have set the
             // CollideConnected() flag set.
             RigidBody* physicsBody0 = (RigidBody*) dBodyGetData(body1);
@@ -344,7 +344,7 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
         contact[i].surface.mu2 = 0.0f;
         contact[i].surface.bounce = bounce;
         contact[i].surface.bounce_vel = 1.0f;
-        contact[i].surface.soft_cfm = 0.0001f;  
+        contact[i].surface.soft_cfm = 0.0001f;
         contact[i].surface.soft_erp = 0.2f;
     }
 
@@ -365,14 +365,14 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
         }
 
         for (i = 0; i < numColls; i++)
-        {  
+        {
             // create a contact for each collision
             dJointID jointId = dJointCreateContact(level->odeWorldId, level->contactJointGroup, &(contact[i]));
             dJointAttach(jointId, body1, body2);
         }
     }
 
-    // FIXME: not really ready for prime time 
+    // FIXME: not really ready for prime time
     // TODO: implement roll / slide sounds (sounds that stop as soon as the contact is gone)
     //       roll / slide sounds also need to consider relative velocity
     //
@@ -400,18 +400,18 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
             const char* sound = Physics::MaterialTable::GetCollisionSound(shape1->GetMaterialType(), shape2->GetMaterialType());
             if (
                 (
-                    (0 != rigid1 && rigid1->IsEnabled()) || 
+                    (0 != rigid1 && rigid1->IsEnabled()) ||
                     (0 != rigid2 && rigid2->IsEnabled())
                 ) && strcmp(sound, "")
             )
             {
                 vector3 normal(contact[0].geom.normal[0], contact[0].geom.normal[1], contact[0].geom.normal[2]);
-                vector3 velocity = 
-                    (0 != rigid1 ? rigid1->GetLinearVelocity() : vector3(0.0f, 0.0f, 0.0f)) - 
+                vector3 velocity =
+                    (0 != rigid1 ? rigid1->GetLinearVelocity() : vector3(0.0f, 0.0f, 0.0f)) -
                     (0 != rigid2 ? rigid2->GetLinearVelocity() : vector3(0.0f, 0.0f, 0.0f));
 
                 float volume = n_saturate((-velocity.dot(normal) - 0.3f) / 4.0f);
-                if (volume > 0.0f) 
+                if (volume > 0.0f)
                 {
 					Ptr<Message::PlaySound> msg = Message::PlaySound::Create();
                     msg->SetName(sound);
@@ -461,7 +461,7 @@ Level::Trigger()
     //this->mouseGripper->SetMousePos(nInputServer::Instance()->GetMousePos());
     //this->mouseGripper->OnFrameBefore();
     this->profFrameBefore.Stop();
-    
+
     // HMM... HACK?!?!?
     // maybe that's better done by some inputcontroller...
     /*
@@ -491,7 +491,7 @@ Level::Trigger()
 
     // step simulation until simulated time is present
     while (this->simTimeStamp < this->time)
-    {    
+    {
         // invoke the "on-step-before" methods
         this->profStepBefore.StartAccum();
         int entityIndex;
@@ -526,14 +526,14 @@ Level::Trigger()
         for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
         {
             this->GetEntityAt(entityIndex)->OnStepAfter();
-        }        
+        }
         //this->mouseGripper->OnStepAfter();
         this->profStepAfter.StopAccum();
 
         this->statsNumSteps++;
         this->simTimeStamp += this->stepSize;
     }
-    
+
     // export statistics
     nWatched watchSpaceCollideCalled("statsMangaPhysicsSpaceCollideCalled", nArg::Int);
     nWatched watchNearCallbackCalled("statsMangaPhysicsNearCallbackCalled", nArg::Int);
@@ -565,20 +565,19 @@ Level::Trigger()
 
 //------------------------------------------------------------------------------
 /**
-    Render a debug visualization of the level. 
+    Render a debug visualization of the level.
     Called by Physics::Server::RenderDebug().
 */
 void
 Level::RenderDebug()
 {
     // render collide shapes
-    const matrix44 identity;
     int numShapes = this->GetNumShapes();
     int shapeIndex;
     for (shapeIndex = 0; shapeIndex < numShapes; shapeIndex++)
     {
         Shape* shape = this->GetShapeAt(shapeIndex);
-        shape->RenderDebug(identity);
+        shape->RenderDebug(matrix44::identity);
     }
 
     // render entities

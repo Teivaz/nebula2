@@ -10,13 +10,14 @@
     (C) 2002 RadonLabs GmbH
 */
 #include <xmmintrin.h>
-#include "mathlib/_vector4_sse.h"
+#include <memory.h>
 #include "mathlib/_vector3_sse.h"
+#include "mathlib/_vector4_sse.h"
 #include "mathlib/quaternion.h"
 #include "mathlib/euler.h"
 #include "mathlib/matrixdefs.h"
 
-static float _matrix44_sse_ident[16] = 
+static float _matrix44_sse_ident[16] =
 {
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
@@ -27,6 +28,9 @@ static float _matrix44_sse_ident[16] =
 //------------------------------------------------------------------------------
 class _matrix44_sse
 {
+public:
+    static const _matrix44_sse identity;
+
 public:
     /// constructor 1
     _matrix44_sse();
@@ -168,7 +172,7 @@ _matrix44_sse::_matrix44_sse(float _m11, float _m12, float _m13, float _m14,
     FIXME: SSE OPTIMIZATION MISSING!
 */
 inline
-_matrix44_sse::_matrix44_sse(const quaternion& q) 
+_matrix44_sse::_matrix44_sse(const quaternion& q)
 {
     float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
     x2 = q.x + q.x; y2 = q.y + q.y; z2 = q.z + q.z;
@@ -211,12 +215,12 @@ _matrix44_sse::_matrix44_sse(const __m128& _m1, const __m128& _m2, const __m128&
     FIXME: SSE OPTIMIZATION MISSING!
 */
 inline
-quaternion 
+quaternion
 _matrix44_sse::get_quaternion() const
 {
     float qa[4];
     float tr = m[0][0] + m[1][1] + m[2][2];
-    if (tr > 0.0f) 
+    if (tr > 0.0f)
     {
         float s = n_sqrt (tr + 1.0f);
         qa[3] = s * 0.5f;
@@ -224,8 +228,8 @@ _matrix44_sse::get_quaternion() const
         qa[0] = (m[1][2] - m[2][1]) * s;
         qa[1] = (m[2][0] - m[0][2]) * s;
         qa[2] = (m[0][1] - m[1][0]) * s;
-    } 
-    else 
+    }
+    else
     {
         int i, j, k, nxt[3] = {1,2,0};
         i = 0;
@@ -248,8 +252,8 @@ _matrix44_sse::get_quaternion() const
 /**
 */
 inline
-void 
-_matrix44_sse::set(const _vector4_sse& v1, const _vector4_sse& v2, const _vector4_sse& v3, const _vector4_sse& v4) 
+void
+_matrix44_sse::set(const _vector4_sse& v1, const _vector4_sse& v2, const _vector4_sse& v3, const _vector4_sse& v4)
 {
     m1 = v1.m128;
     m2 = v2.m128;
@@ -261,8 +265,8 @@ _matrix44_sse::set(const _vector4_sse& v1, const _vector4_sse& v2, const _vector
 /**
 */
 inline
-void 
-_matrix44_sse::set(const _matrix44_sse& mx) 
+void
+_matrix44_sse::set(const _matrix44_sse& mx)
 {
     m1 = mx.m1;
     m2 = mx.m2;
@@ -291,8 +295,8 @@ _matrix44_sse::set(float _m11, float _m12, float _m13, float _m14,
     FIXME: SSE OPTIMIZATION MISSING!
 */
 inline
-void 
-_matrix44_sse::set(const quaternion& q) 
+void
+_matrix44_sse::set(const quaternion& q)
 {
     float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
     x2 = q.x + q.x; y2 = q.y + q.y; z2 = q.z + q.z;
@@ -321,8 +325,8 @@ _matrix44_sse::set(const quaternion& q)
 /**
 */
 inline
-void 
-_matrix44_sse::ident() 
+void
+_matrix44_sse::ident()
 {
     memcpy(&(m[0][0]), _matrix44_sse_ident, sizeof(_matrix44_sse_ident));
 }
@@ -331,8 +335,8 @@ _matrix44_sse::ident()
 /**
 */
 inline
-void 
-_matrix44_sse::transpose() 
+void
+_matrix44_sse::transpose()
 {
     _MM_TRANSPOSE4_PS(m1, m2, m3, m4);
 }
@@ -342,8 +346,8 @@ _matrix44_sse::transpose()
     FIXME: OPTIMIZE FOR SSE!
 */
 inline
-float 
-_matrix44_sse::det() 
+float
+_matrix44_sse::det()
 {
     return
         (M11 * M22 - M12 * M21) * (M33 * M44 - M34 * M43)
@@ -360,7 +364,7 @@ _matrix44_sse::det()
 */
 inline
 void
-_matrix44_sse::invert() 
+_matrix44_sse::invert()
 {
     float* src = &(m[0][0]);
 
@@ -399,7 +403,7 @@ _matrix44_sse::invert()
     minor3 = _mm_mul_ps(row0, tmp1);
 
     tmp1 = _mm_shuffle_ps(tmp1, tmp1, 0x4E);
-    
+
     minor0 = _mm_sub_ps(minor0, _mm_mul_ps(row3, tmp1));
     minor3 = _mm_sub_ps(_mm_mul_ps(row0, tmp1), minor3);
     minor3 = _mm_shuffle_ps(minor3, minor3, 0x4E);
@@ -484,8 +488,8 @@ _matrix44_sse::invert()
     FIXME: SSE OPTIMIZATION!
 */
 inline
-void 
-_matrix44_sse::invert_simple() 
+void
+_matrix44_sse::invert_simple()
 {
     float s = det();
     if (s == 0.0f) return;
@@ -519,7 +523,7 @@ _matrix44_sse::invert_simple()
 */
 inline
 void
-_matrix44_sse::mult_simple(const _matrix44_sse& mx) 
+_matrix44_sse::mult_simple(const _matrix44_sse& mx)
 {
     m1 = _mm_add_ps(_mm_add_ps(_mm_add_ps(_mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(0,0,0,0)), mx.m1), _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(1,1,1,1)), mx.m2)), _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(2,2,2,2)), mx.m3)), _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(3,3,3,3)), mx.m4));
     m2 = _mm_add_ps(_mm_add_ps(_mm_add_ps(_mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(0,0,0,0)), mx.m1), _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(1,1,1,1)), mx.m2)), _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(2,2,2,2)), mx.m3)), _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(3,3,3,3)), mx.m4));
@@ -530,7 +534,7 @@ _matrix44_sse::mult_simple(const _matrix44_sse& mx)
 //------------------------------------------------------------------------------
 /**
     Transforms a vector by the matrix, projecting the result back into w=1.
-    
+
     FIXME: SSE OPTIMIZATION!
 */
 inline
@@ -548,7 +552,7 @@ _matrix44_sse::transform_coord(const _vector3_sse& v) const
 /**
 */
 inline
-_vector3_sse 
+_vector3_sse
 _matrix44_sse::x_component() const
 {
     _vector3_sse v(m1);
@@ -559,7 +563,7 @@ _matrix44_sse::x_component() const
 /**
 */
 inline
-_vector3_sse 
+_vector3_sse
 _matrix44_sse::y_component() const
 {
     _vector3_sse v(m2);
@@ -570,8 +574,8 @@ _matrix44_sse::y_component() const
 /**
 */
 inline
-_vector3_sse 
-_matrix44_sse::z_component() const 
+_vector3_sse
+_matrix44_sse::z_component() const
 {
     _vector3_sse v(m3);
     return v;
@@ -581,8 +585,8 @@ _matrix44_sse::z_component() const
 /**
 */
 inline
-_vector3_sse 
-_matrix44_sse::pos_component() const 
+_vector3_sse
+_matrix44_sse::pos_component() const
 {
     _vector3_sse v(M41, M42, M43);
     return v;
@@ -594,7 +598,7 @@ _matrix44_sse::pos_component() const
 */
 inline
 void
-_matrix44_sse::rotate_x(const float a) 
+_matrix44_sse::rotate_x(const float a)
 {
     float c = n_cos(a);
     float s = n_sin(a);
@@ -612,8 +616,8 @@ _matrix44_sse::rotate_x(const float a)
     FIXME: SSE OPTIMIERUNG!
 */
 inline
-void 
-_matrix44_sse::rotate_y(const float a) 
+void
+_matrix44_sse::rotate_y(const float a)
 {
     float c = n_cos(a);
     float s = n_sin(a);
@@ -631,8 +635,8 @@ _matrix44_sse::rotate_y(const float a)
     FIXME: SSE OPTIMIERUNG!
 */
 inline
-void 
-_matrix44_sse::rotate_z(const float a) 
+void
+_matrix44_sse::rotate_z(const float a)
 {
     float c = n_cos(a);
     float s = n_sin(a);
@@ -649,8 +653,8 @@ _matrix44_sse::rotate_z(const float a)
 /**
 */
 inline
-void 
-_matrix44_sse::translate(const _vector3_sse& t) 
+void
+_matrix44_sse::translate(const _vector3_sse& t)
 {
     m4 = _mm_add_ps(m4, t.m128);
 }
@@ -661,7 +665,7 @@ FIXME: RAFAEL HAS NO CLUE ABOUT SSE!
 */
 inline
 void
-_matrix44_sse::set_translation(const _vector3_sse& t) 
+_matrix44_sse::set_translation(const _vector3_sse& t)
 {
     m4 = t.m128;
 };
@@ -671,7 +675,7 @@ _matrix44_sse::set_translation(const _vector3_sse& t)
 */
 inline
 void
-_matrix44_sse::scale(const _vector3_sse& s) 
+_matrix44_sse::scale(const _vector3_sse& s)
 {
     // _vector3_sse have the w element set to zero, we need it at 1...
     __m128 scale = _mm_add_ps(_mm_set_ps(1.0f, 0.0f, 0.0f, 0.0f), s.m128);
@@ -685,8 +689,8 @@ _matrix44_sse::scale(const _vector3_sse& s)
 /**
 */
 inline
-void 
-_matrix44_sse::lookat(const _vector3_sse& to, const _vector3_sse& up) 
+void
+_matrix44_sse::lookat(const _vector3_sse& to, const _vector3_sse& up)
 {
     _vector3_sse from(M41, M42, M43);
     _vector3_sse z(from - to);
@@ -706,7 +710,7 @@ _matrix44_sse::lookat(const _vector3_sse& to, const _vector3_sse& up)
 /**
 */
 inline
-void 
+void
 _matrix44_sse::billboard(const _vector3_sse& to, const _vector3_sse& up)
 {
     _vector3_sse from(M41, M42, M43);
@@ -714,7 +718,7 @@ _matrix44_sse::billboard(const _vector3_sse& to, const _vector3_sse& up)
     z.norm();
     _vector3_sse y(up);
     _vector3_sse x(y * z);
-    z = x * y;       
+    z = x * y;
     x.norm();
     y.norm();
     z.norm();
@@ -732,7 +736,7 @@ _matrix44_sse::billboard(const _vector3_sse& to, const _vector3_sse& up)
 */
 inline
 void
-_matrix44_sse::operator *= (const _matrix44_sse& mx) 
+_matrix44_sse::operator *= (const _matrix44_sse& mx)
 {
     m1 = _mm_add_ps(_mm_add_ps(_mm_add_ps(_mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(0,0,0,0)), mx.m1), _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(1,1,1,1)), mx.m2)), _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(2,2,2,2)), mx.m3)), _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(3,3,3,3)), mx.m4));
     m2 = _mm_add_ps(_mm_add_ps(_mm_add_ps(_mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(0,0,0,0)), mx.m1), _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(1,1,1,1)), mx.m2)), _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(2,2,2,2)), mx.m3)), _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(3,3,3,3)), mx.m4));
@@ -745,7 +749,7 @@ _matrix44_sse::operator *= (const _matrix44_sse& mx)
     FIXME: SSE OPTIMIZATION!
 */
 inline
-void 
+void
 _matrix44_sse::rotate(const _vector3_sse& vec, float a)
 {
     _vector3_sse v(vec);
@@ -763,7 +767,7 @@ _matrix44_sse::rotate(const _vector3_sse& vec, float a)
 	rotM.M31 = (1.0f - ca) * v.z * v.x - sa * v.y;
 	rotM.M32 = (1.0f - ca) * v.y * v.z + sa * v.x;
 	rotM.M33 = ca + (1.0f - ca) * v.z * v.z;
-	
+
 	(*this) *= rotM;
 }
 
@@ -779,9 +783,9 @@ _matrix44_sse::mult(const _vector4_sse& src, _vector4_sse& dst) const
     dst.m128 = _mm_add_ps(
                _mm_add_ps(
                _mm_add_ps(
-                    _mm_mul_ps(m1, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(0,0,0,0))), 
-                    _mm_mul_ps(m2, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(1,1,1,1)))), 
-                    _mm_mul_ps(m3, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(2,2,2,2)))), 
+                    _mm_mul_ps(m1, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(0,0,0,0))),
+                    _mm_mul_ps(m2, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(1,1,1,1)))),
+                    _mm_mul_ps(m3, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(2,2,2,2)))),
                     _mm_mul_ps(m4, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(3,3,3,3))));
 }
 
@@ -797,19 +801,19 @@ _matrix44_sse::mult(const _vector3_sse& src, _vector3_sse& dst) const
     dst.m128 = _mm_add_ps(
                _mm_add_ps(
                _mm_add_ps(
-                    _mm_mul_ps(m1, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(0,0,0,0))), 
-                    _mm_mul_ps(m2, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(1,1,1,1)))), 
-                    _mm_mul_ps(m3, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(2,2,2,2)))), 
+                    _mm_mul_ps(m1, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(0,0,0,0))),
+                    _mm_mul_ps(m2, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(1,1,1,1)))),
+                    _mm_mul_ps(m3, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(2,2,2,2)))),
                     _mm_mul_ps(m4, _mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(3,3,3,3))));
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_matrix44_sse 
-operator * (const _matrix44_sse& ma, const _matrix44_sse& mb) 
+static
+inline
+_matrix44_sse
+operator * (const _matrix44_sse& ma, const _matrix44_sse& mb)
 {
     return _matrix44_sse(
         _mm_add_ps(_mm_add_ps(_mm_add_ps(_mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(0,0,0,0)), mb.m1), _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(1,1,1,1)), mb.m2)), _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(2,2,2,2)), mb.m3)), _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(3,3,3,3)), mb.m4)),
@@ -822,8 +826,8 @@ operator * (const _matrix44_sse& ma, const _matrix44_sse& mb)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector3_sse operator * (const _matrix44_sse& m, const _vector3_sse& v)
 {
     return _vector3_sse(
@@ -834,8 +838,8 @@ _vector3_sse operator * (const _matrix44_sse& m, const _vector3_sse& v)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector4_sse operator * (const _matrix44_sse& m, const _vector4_sse& v)
 {
     return _vector4_sse(

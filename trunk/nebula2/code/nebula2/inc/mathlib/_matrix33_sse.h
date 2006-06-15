@@ -9,14 +9,14 @@
 
     (C) 2002 RadonLabs GmbH
 */
+#include <xmmintrin.h>
+#include <memory.h>
 #include "mathlib/_vector3_sse.h"
 #include "mathlib/quaternion.h"
 #include "mathlib/euler.h"
 #include "matrixdefs.h"
 
-#include <string.h>
-
-static float _matrix33_sse_ident[12] = 
+static float _matrix33_sse_ident[12] =
 {
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
@@ -24,8 +24,11 @@ static float _matrix33_sse_ident[12] =
 };
 
 //------------------------------------------------------------------------------
-class _matrix33_sse 
+class _matrix33_sse
 {
+public:
+    static const _matrix33_sse identity;
+
 public:
     /// constructor 1
     _matrix33_sse();
@@ -107,27 +110,27 @@ public:
 /**
     FIXME: OPTIMIZE -> KILL TEMPORARYS, SEE _MATRIX44_SSE
 */
-static 
-inline 
-_matrix33_sse operator * (const _matrix33_sse& ma, const _matrix33_sse& mb) 
+static
+inline
+_matrix33_sse operator * (const _matrix33_sse& ma, const _matrix33_sse& mb)
 {
     return _matrix33_sse(
         _mm_add_ps(
         _mm_add_ps(
-            _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(0,0,0,0)), mb.m1), 
-            _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(1,1,1,1)), mb.m2)), 
+            _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(0,0,0,0)), mb.m1),
+            _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(1,1,1,1)), mb.m2)),
             _mm_mul_ps(_mm_shuffle_ps(ma.m1, ma.m1, _MM_SHUFFLE(2,2,2,2)), mb.m3)),
 
         _mm_add_ps(
         _mm_add_ps(
-            _mm_mul_ps(_mm_shuffle_ps(ma.m2, ma.m2, _MM_SHUFFLE(0,0,0,0)), mb.m1), 
-            _mm_mul_ps(_mm_shuffle_ps(ma.m2, ma.m2, _MM_SHUFFLE(1,1,1,1)), mb.m2)), 
+            _mm_mul_ps(_mm_shuffle_ps(ma.m2, ma.m2, _MM_SHUFFLE(0,0,0,0)), mb.m1),
+            _mm_mul_ps(_mm_shuffle_ps(ma.m2, ma.m2, _MM_SHUFFLE(1,1,1,1)), mb.m2)),
             _mm_mul_ps(_mm_shuffle_ps(ma.m2, ma.m2, _MM_SHUFFLE(2,2,2,2)), mb.m3)),
 
         _mm_add_ps(
         _mm_add_ps(
-            _mm_mul_ps(_mm_shuffle_ps(ma.m3, ma.m3, _MM_SHUFFLE(0,0,0,0)), mb.m1), 
-            _mm_mul_ps(_mm_shuffle_ps(ma.m3, ma.m3, _MM_SHUFFLE(1,1,1,1)), mb.m2)), 
+            _mm_mul_ps(_mm_shuffle_ps(ma.m3, ma.m3, _MM_SHUFFLE(0,0,0,0)), mb.m1),
+            _mm_mul_ps(_mm_shuffle_ps(ma.m3, ma.m3, _MM_SHUFFLE(1,1,1,1)), mb.m2)),
             _mm_mul_ps(_mm_shuffle_ps(ma.m3, ma.m3, _MM_SHUFFLE(2,2,2,2)), mb.m3)));
 }
 
@@ -135,15 +138,15 @@ _matrix33_sse operator * (const _matrix33_sse& ma, const _matrix33_sse& mb)
 /**
     FIXME: KILL TEMPORARY
 */
-static 
-inline 
+static
+inline
 _vector3_sse operator * (const _matrix33_sse& mx, const _vector3_sse& v)
 {
     return _vector3_sse(
         _mm_add_ps(
         _mm_add_ps(
-            _mm_mul_ps(_mm_shuffle_ps(v.m128, v.m128, _MM_SHUFFLE(0,0,0,0)), mx.m1), 
-            _mm_mul_ps(_mm_shuffle_ps(v.m128, v.m128, _MM_SHUFFLE(1,1,1,1)), mx.m2)), 
+            _mm_mul_ps(_mm_shuffle_ps(v.m128, v.m128, _MM_SHUFFLE(0,0,0,0)), mx.m1),
+            _mm_mul_ps(_mm_shuffle_ps(v.m128, v.m128, _MM_SHUFFLE(1,1,1,1)), mx.m2)),
             _mm_mul_ps(_mm_shuffle_ps(v.m128, v.m128, _MM_SHUFFLE(2,2,2,2)), mx.m3)));
 }
 
@@ -151,7 +154,7 @@ _vector3_sse operator * (const _matrix33_sse& mx, const _vector3_sse& v)
 /**
 */
 inline
-_matrix33_sse::_matrix33_sse() 
+_matrix33_sse::_matrix33_sse()
 {
     memcpy(&(m[0][0]), _matrix33_sse_ident, sizeof(_matrix33_sse_ident));
 }
@@ -210,7 +213,7 @@ _matrix33_sse::_matrix33_sse(const __m128& _m1, const __m128& _m2, const __m128&
     FIXME: SSE OPTIMIZATION!
 */
 inline
-_matrix33_sse::_matrix33_sse(const quaternion& q) 
+_matrix33_sse::_matrix33_sse(const quaternion& q)
 {
     float xx = q.x*q.x; float yy = q.y*q.y; float zz = q.z*q.z;
     float xy = q.x*q.y; float xz = q.x*q.z; float yz = q.y*q.z;
@@ -234,12 +237,12 @@ _matrix33_sse::_matrix33_sse(const quaternion& q)
     FIXME: SSE OPTIMIZATION!
 */
 inline
-quaternion 
+quaternion
 _matrix33_sse::get_quaternion() const
 {
     float qa[4];
     float tr = m[0][0] + m[1][1] + m[2][2];
-    if (tr > 0.0f) 
+    if (tr > 0.0f)
     {
         float s = n_sqrt (tr + 1.0f);
         qa[3] = s * 0.5f;
@@ -247,8 +250,8 @@ _matrix33_sse::get_quaternion() const
         qa[0] = (m[1][2] - m[2][1]) * s;
         qa[1] = (m[2][0] - m[0][2]) * s;
         qa[2] = (m[0][1] - m[1][0]) * s;
-    } 
-    else 
+    }
+    else
     {
         int i, j, k, nxt[3] = {1,2,0};
         i = 0;
@@ -274,42 +277,42 @@ _matrix33_sse::get_quaternion() const
 inline
 _vector3_sse
 _matrix33_sse::to_euler() const
-{    
+{
     _vector3_sse ea;
-    
+
     // work on matrix with flipped row/columns
     _matrix33_sse tmp(*this);
     tmp.transpose();
 
     int i,j,k,h,n,s,f;
     EulGetOrd(EulOrdXYZs,i,j,k,h,n,s,f);
-    if (s==EulRepYes) 
+    if (s==EulRepYes)
     {
-        double sy = (float) sqrt(tmp.M12 * tmp.M12 + tmp.M13 * tmp.M13);
-        if (sy > 16*FLT_EPSILON) 
+        double sy = sqrt(tmp.M12 * tmp.M12 + tmp.M13 * tmp.M13);
+        if (sy > 16*FLT_EPSILON)
         {
             ea.x = (float) atan2(tmp.M12, tmp.M13);
-            ea.y = (float) atan2(sy, tmp.M11);
+            ea.y = (float) atan2((float) sy, tmp.M11);
             ea.z = (float) atan2(tmp.M21, -tmp.M31);
         } else {
             ea.x = (float) atan2(-tmp.M23, tmp.M22);
-            ea.y = (float) atan2(sy, tmp.M11);
+            ea.y = (float) atan2((float) sy, tmp.M11);
             ea.z = 0;
         }
-    } 
-    else 
+    }
+    else
     {
         double cy = sqrt(tmp.M11 * tmp.M11 + tmp.M21 * tmp.M21);
-        if (cy > 16*FLT_EPSILON) 
+        if (cy > 16*FLT_EPSILON)
         {
             ea.x = (float) atan2(tmp.M32, tmp.M33);
-            ea.y = (float) atan2(-tmp.M31, cy);
+            ea.y = (float) atan2(-tmp.M31, (float) cy);
             ea.z = (float) atan2(tmp.M21, tmp.M11);
-        } 
-        else 
+        }
+        else
         {
             ea.x = (float) atan2(-tmp.M23, tmp.M22);
-            ea.y = (float) atan2(-tmp.M31, cy);
+            ea.y = (float) atan2(-tmp.M31, (float) cy);
             ea.z = 0;
         }
     }
@@ -324,8 +327,8 @@ _matrix33_sse::to_euler() const
     FIXME: SSE OPTIMIZATION!
 */
 inline
-void 
-_matrix33_sse::from_euler(const _vector3_sse& ea) 
+void
+_matrix33_sse::from_euler(const _vector3_sse& ea)
 {
     _vector3_sse tea = ea;
     double ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
@@ -337,13 +340,13 @@ _matrix33_sse::from_euler(const _vector3_sse& ea)
     ci = cos(ti); cj = cos(tj); ch = cos(th);
     si = sin(ti); sj = sin(tj); sh = sin(th);
     cc = ci*ch; cs = ci*sh; sc = si*ch; ss = si*sh;
-    if (s==EulRepYes) 
+    if (s==EulRepYes)
     {
         M11 = (float)(cj);     M12 = (float)(sj*si);     M13 = (float)(sj*ci);
         M21 = (float)(sj*sh);  M22 = (float)(-cj*ss+cc); M23 = (float)(-cj*cs-sc);
         M31 = (float)(-sj*ch); M23 = (float)( cj*sc+cs); M33 = (float)( cj*cc-ss);
-    } 
-    else 
+    }
+    else
     {
         M11 = (float)(cj*ch); M12 = (float)(sj*sc-cs); M13 = (float)(sj*cc+ss);
         M21 = (float)(cj*sh); M22 = (float)(sj*ss+cc); M23 = (float)(sj*cs-sc);
@@ -358,8 +361,8 @@ _matrix33_sse::from_euler(const _vector3_sse& ea)
 /**
 */
 inline
-void 
-_matrix33_sse::lookat(const _vector3_sse& from, const _vector3_sse& to, const _vector3_sse& up) 
+void
+_matrix33_sse::lookat(const _vector3_sse& from, const _vector3_sse& to, const _vector3_sse& up)
 {
     _vector3_sse z(from - to);
     z.norm();
@@ -378,7 +381,7 @@ _matrix33_sse::lookat(const _vector3_sse& from, const _vector3_sse& to, const _v
 /**
 */
 inline
-void 
+void
 _matrix33_sse::billboard(const _vector3_sse& from, const _vector3_sse& to, const _vector3_sse& up)
 {
     _vector3_sse z(from - to);
@@ -399,10 +402,10 @@ _matrix33_sse::billboard(const _vector3_sse& from, const _vector3_sse& to, const
 /**
 */
 inline
-void 
+void
 _matrix33_sse::set(float m11, float m12, float m13,
                    float m21, float m22, float m23,
-                   float m31, float m32, float m33) 
+                   float m31, float m32, float m33)
 {
     m1 = _mm_set_ps(0.0f, m13, m12, m11);
     m2 = _mm_set_ps(0.0f, m23, m22, m21);
@@ -413,8 +416,8 @@ _matrix33_sse::set(float m11, float m12, float m13,
 /**
 */
 inline
-void 
-_matrix33_sse::set(const _vector3_sse& v1, const _vector3_sse& v2, const _vector3_sse& v3) 
+void
+_matrix33_sse::set(const _vector3_sse& v1, const _vector3_sse& v2, const _vector3_sse& v3)
 {
     m1 = v1.m128;
     m2 = v2.m128;
@@ -425,8 +428,8 @@ _matrix33_sse::set(const _vector3_sse& v1, const _vector3_sse& v2, const _vector
 /**
 */
 inline
-void 
-_matrix33_sse::set(const _matrix33_sse& mx) 
+void
+_matrix33_sse::set(const _matrix33_sse& mx)
 {
     m1 = mx.m1;
     m2 = mx.m2;
@@ -437,8 +440,8 @@ _matrix33_sse::set(const _matrix33_sse& mx)
 /**
 */
 inline
-void 
-_matrix33_sse::ident() 
+void
+_matrix33_sse::ident()
 {
     memcpy(&(m[0][0]), _matrix33_sse_ident, sizeof(_matrix33_sse_ident));
 }
@@ -448,8 +451,8 @@ _matrix33_sse::ident()
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
-_matrix33_sse::transpose() 
+void
+_matrix33_sse::transpose()
 {
     #undef n_swap
     #define n_swap(x,y) { float t=x; x=y; y=t; }
@@ -463,8 +466,8 @@ _matrix33_sse::transpose()
     FIXME: SSE OPTIMIZATION
 */
 inline
-bool 
-_matrix33_sse::orthonorm(float limit) 
+bool
+_matrix33_sse::orthonorm(float limit)
 {
     if (((M11*M21+M12*M22+M13*M23)<limit) &&
         ((M11*M31+M12*M32+M13*M33)<limit) &&
@@ -497,7 +500,7 @@ _matrix33_sse::scale(const _vector3_sse& s)
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
+void
 _matrix33_sse::rotate_x(const float a)
 {
     float c = n_cos(a);
@@ -517,7 +520,7 @@ _matrix33_sse::rotate_x(const float a)
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
+void
 _matrix33_sse::rotate_y(const float a)
 {
     float c = n_cos(a);
@@ -537,7 +540,7 @@ _matrix33_sse::rotate_y(const float a)
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
+void
 _matrix33_sse::rotate_z(const float a)
 {
     float c = n_cos(a);
@@ -557,14 +560,14 @@ _matrix33_sse::rotate_z(const float a)
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
+void
 _matrix33_sse::rotate_local_x(const float a)
 {
     _matrix33_sse rotM;  // initialized as identity matrix
 	rotM.M22 = (float) cos(a); rotM.M23 = -(float) sin(a);
 	rotM.M32 = (float) sin(a); rotM.M33 =  (float) cos(a);
 
-	(*this) = rotM * (*this); 
+	(*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -572,14 +575,14 @@ _matrix33_sse::rotate_local_x(const float a)
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
+void
 _matrix33_sse::rotate_local_y(const float a)
 {
     _matrix33_sse rotM;  // initialized as identity matrix
 	rotM.M11 = (float) cos(a);  rotM.M13 = (float) sin(a);
     rotM.M31 = -(float) sin(a); rotM.M33 = (float) cos(a);
 
-	(*this) = rotM * (*this); 
+	(*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -587,14 +590,14 @@ _matrix33_sse::rotate_local_y(const float a)
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
+void
 _matrix33_sse::rotate_local_z(const float a)
 {
     _matrix33_sse rotM;  // initialized as identity matrix
     rotM.M11 = (float) cos(a); rotM.M12 = -(float) sin(a);
 	rotM.M21 = (float) sin(a); rotM.M22 =  (float) cos(a);
 
-	(*this) = rotM * (*this); 
+	(*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -602,7 +605,7 @@ _matrix33_sse::rotate_local_z(const float a)
     FIXME: SSE OPTIMIZATION
 */
 inline
-void 
+void
 _matrix33_sse::rotate(const _vector3_sse& vec, float a)
 {
     _vector3_sse v(vec);
@@ -620,7 +623,7 @@ _matrix33_sse::rotate(const _vector3_sse& vec, float a)
 	rotM.M31 = (1.0f - ca) * v.z * v.x - sa * v.y;
 	rotM.M32 = (1.0f - ca) * v.y * v.z + sa * v.x;
 	rotM.M33 = ca + (1.0f - ca) * v.z * v.z;
-	
+
 	(*this) = (*this) * rotM;
 }
 
@@ -628,7 +631,7 @@ _matrix33_sse::rotate(const _vector3_sse& vec, float a)
 /**
 */
 inline
-_vector3_sse 
+_vector3_sse
 _matrix33_sse::x_component() const
 {
     return _vector3_sse(m1);
@@ -638,7 +641,7 @@ _matrix33_sse::x_component() const
 /**
 */
 inline
-_vector3_sse 
+_vector3_sse
 _matrix33_sse::y_component(void) const
 {
     return _vector3_sse(m2);
@@ -648,8 +651,8 @@ _matrix33_sse::y_component(void) const
 /**
 */
 inline
-_vector3_sse 
-_matrix33_sse::z_component(void) const 
+_vector3_sse
+_matrix33_sse::z_component(void) const
 {
     return _vector3_sse(m3);
 };
@@ -659,24 +662,24 @@ _matrix33_sse::z_component(void) const
 */
 inline
 void
-_matrix33_sse::operator *= (const _matrix33_sse& mx) 
+_matrix33_sse::operator *= (const _matrix33_sse& mx)
 {
     m1 = _mm_add_ps(
          _mm_add_ps(
-            _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(0,0,0,0)), mx.m1), 
-            _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(1,1,1,1)), mx.m2)), 
+            _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(0,0,0,0)), mx.m1),
+            _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(1,1,1,1)), mx.m2)),
             _mm_mul_ps(_mm_shuffle_ps(m1, m1, _MM_SHUFFLE(2,2,2,2)), mx.m3));
 
     m2 = _mm_add_ps(
          _mm_add_ps(
-            _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(0,0,0,0)), mx.m1), 
-            _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(1,1,1,1)), mx.m2)), 
+            _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(0,0,0,0)), mx.m1),
+            _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(1,1,1,1)), mx.m2)),
             _mm_mul_ps(_mm_shuffle_ps(m2, m2, _MM_SHUFFLE(2,2,2,2)), mx.m3));
 
     m3 = _mm_add_ps(
          _mm_add_ps(
-            _mm_mul_ps(_mm_shuffle_ps(m3, m3, _MM_SHUFFLE(0,0,0,0)), mx.m1), 
-            _mm_mul_ps(_mm_shuffle_ps(m3, m3, _MM_SHUFFLE(1,1,1,1)), mx.m2)), 
+            _mm_mul_ps(_mm_shuffle_ps(m3, m3, _MM_SHUFFLE(0,0,0,0)), mx.m1),
+            _mm_mul_ps(_mm_shuffle_ps(m3, m3, _MM_SHUFFLE(1,1,1,1)), mx.m2)),
             _mm_mul_ps(_mm_shuffle_ps(m3, m3, _MM_SHUFFLE(2,2,2,2)), mx.m3));
 }
 
@@ -686,12 +689,12 @@ _matrix33_sse::operator *= (const _matrix33_sse& mx)
     this eliminates the construction of a temp _vector3_sse object
 */
 inline
-void 
+void
 _matrix33_sse::mult(const _vector3_sse& src, _vector3_sse& dst) const
 {
     dst.m128 = _mm_add_ps(
-               _mm_add_ps(_mm_mul_ps(_mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(0,0,0,0)), m1), 
-                          _mm_mul_ps(_mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(1,1,1,1)), m2)), 
+               _mm_add_ps(_mm_mul_ps(_mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(0,0,0,0)), m1),
+                          _mm_mul_ps(_mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(1,1,1,1)), m2)),
                           _mm_mul_ps(_mm_shuffle_ps(src.m128, src.m128, _MM_SHUFFLE(2,2,2,2)), m3));
 }
 

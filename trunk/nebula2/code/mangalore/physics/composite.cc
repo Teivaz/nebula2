@@ -146,7 +146,7 @@ Composite::GetBodyByName(const nString& name) const
             return bodyArray[i];
         }
     }
-    
+
     n_assert(false);
     return 0;
 }
@@ -382,7 +382,7 @@ Composite::OnStepAfter()
             RigidBody* masterBody = this->GetMasterBody();
             if (masterBody)
             {
-                matrix44 m = masterBody->GetTransform();    
+                matrix44 m = masterBody->GetTransform();
                 this->transform = masterBody->GetInverseInitialTransform() * m;
             }
         }
@@ -444,7 +444,7 @@ Composite::SetEnabled(bool b)
 
 //------------------------------------------------------------------------------
 /**
-    Return the enabled/disabled state of the composite. This is 
+    Return the enabled/disabled state of the composite. This is
     the enabled state of the master rigid body.
 */
 bool
@@ -570,12 +570,11 @@ Composite::RenderDebug()
         this->jointArray[jointIndex]->RenderDebug();
     }
 
-    const static matrix44 ident;
     int shapeIndex;
     int numShapes = this->shapeArray.Size();
     for (shapeIndex = 0; shapeIndex < numShapes; shapeIndex++)
     {
-        this->shapeArray[shapeIndex]->RenderDebug(ident);
+        this->shapeArray[shapeIndex]->RenderDebug(matrix44::identity);
     }
 }
 

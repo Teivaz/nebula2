@@ -20,7 +20,11 @@
 //-------------------------------------------------------------------
 //  quaternion
 //-------------------------------------------------------------------
-class quaternion {
+class quaternion
+{
+public:
+    static const quaternion identity;
+
 public:
     float x,y,z,w;
 
@@ -143,11 +147,11 @@ public:
 
     /**
         Create a rotation from one vector to an other. Works only with unit vectors.
-        
-        See http://www.martinb.com/maths/algebra/vectors/angleBetween/index.htm for 
+
+        See http://www.martinb.com/maths/algebra/vectors/angleBetween/index.htm for
         more information.
-        
-        @param from source unit vector 
+
+        @param from source unit vector
         @param to destination unit vector
     */
     void set_from_axes( const vector3& from, const vector3& to )
@@ -159,21 +163,21 @@ public:
         {
             if ((from.z * from.z) > (from.x * from.x))
                 set(0, from.z, -from.y, w);
-                //from*vector3(1,0,0) 
-            else 
+                //from*vector3(1,0,0)
+            else
                 set(from.y, -from.x, 0, w);
-                //from*vector3(0,0,1) 
+                //from*vector3(0,0,1)
         }
-        normalize(); 
+        normalize();
     }
 
     /**
         Create a rotation from one vector to an other. Works with non unit vectors.
-        
-        See http://www.martinb.com/maths/algebra/vectors/angleBetween/index.htm for 
+
+        See http://www.martinb.com/maths/algebra/vectors/angleBetween/index.htm for
         more information.
-        
-        @param from source vector 
+
+        @param from source vector
         @param to destination vector
     */
     void set_from_axes2( const vector3& from, const vector3& to )
@@ -186,12 +190,12 @@ public:
         {
             if ((from.z * from.z) > (from.x * from.x))
                 set(0, from.z, -from.y, w);
-                //from*vector3(1,0,0) 
-            else 
+                //from*vector3(1,0,0)
+            else
                 set(from.y, -from.x, 0, w);
-                //from*vector3(0,0,1) 
+                //from*vector3(0,0,1)
         }
-        normalize(); 
+        normalize();
     }
 
     //-- convert from euler angles ----------------------------------
@@ -251,9 +255,9 @@ public:
         return true;
     };
 
-    //-- rotation interpolation, set this matrix to the -------------    
+    //-- rotation interpolation, set this matrix to the -------------
     //-- interpolated result of q0->q1 with l as interpolator -------
-    void slerp(const quaternion& q0, const quaternion& q1, float l) 
+    void slerp(const quaternion& q0, const quaternion& q1, float l)
     {
         float fScale1;
         float fScale2;
@@ -263,23 +267,23 @@ public:
         // compute dot product, aka cos(theta):
         float fCosTheta = A.x*B.x + A.y*B.y + A.z*B.z + A.w*B.w;
 
-        if (fCosTheta < 0.0f) 
+        if (fCosTheta < 0.0f)
         {
             // flip start quaternion
            A.x = -A.x; A.y = -A.y; A.z = -A.z; A.w = -A.w;
            fCosTheta = -fCosTheta;
         }
 
-        if ((fCosTheta + 1.0f) > 0.05f) 
+        if ((fCosTheta + 1.0f) > 0.05f)
         {
             // If the quaternions are close, use linear interploation
-            if ((1.0f - fCosTheta) < 0.05f) 
+            if ((1.0f - fCosTheta) < 0.05f)
             {
                 fScale1 = 1.0f - l;
                 fScale2 = l;
             }
-            else 
-            { 
+            else
+            {
                 // Otherwise, do spherical interpolation
                 float fTheta    = n_acos(fCosTheta);
                 float fSinTheta = n_sin(fTheta);
@@ -287,7 +291,7 @@ public:
                 fScale2 = n_sin( fTheta * l ) / fSinTheta;
             }
         }
-        else 
+        else
         {
             B.x = -A.y;
             B.y =  A.x;
@@ -302,7 +306,7 @@ public:
         z = fScale1 * A.z + fScale2 * B.z;
         w = fScale1 * A.w + fScale2 * B.w;
     };
-    
+
     void lerp(const quaternion& q0, const quaternion& q1, float l)
     {
         slerp(q0, q1, l);

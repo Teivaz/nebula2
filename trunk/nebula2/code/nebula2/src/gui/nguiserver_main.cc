@@ -681,7 +681,7 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
     r.v0.y += y05;
     r.v1.x -= x05;
     r.v1.y += y05;
-    
+
     rectangle uv;
     uv.v0.x = rectUV.v0.x;
     uv.v0.y = 1.0f - rectUV.v1.y;
@@ -746,10 +746,9 @@ nGuiServer::Render()
         this->ValidateShader();
 
         // update gfx server's transforms
-        static const matrix44 identity;
         static const rectangle screenRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
         matrix44 model = this->GetViewSpaceMatrix(screenRect);
-        gfxServer->PushTransform(nGfxServer2::View, identity);
+        gfxServer->PushTransform(nGfxServer2::View, matrix44::identity);
         gfxServer->PushTransform(nGfxServer2::Model, model);
 
         nShader2* shader = this->refShader.get();
@@ -1408,7 +1407,7 @@ nGuiServer::GetGuiMouseCursor()
 {
     if (!this->refMouseCursor.isvalid())
     {
-        this->refMouseCursor = (nGuiMouseCursor*) this->refGui->Find("GuiMouseCursor");                 
+        this->refMouseCursor = (nGuiMouseCursor*) this->refGui->Find("GuiMouseCursor");
     }
     if (this->refMouseCursor.isvalid())
     {

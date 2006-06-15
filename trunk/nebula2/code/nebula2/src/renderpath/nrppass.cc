@@ -73,10 +73,10 @@ nRpPass::Validate()
     int num = this->phases.Size();
     for (i = 0; i < num; i++)
     {
-        this->phases[i].SetRenderPath(this->renderPath);     
+        this->phases[i].SetRenderPath(this->renderPath);
     #if __NEBULA_STATS__
-        this->phases[i].SetSection(this->section);     
-        this->phases[i].SetPass(this);     
+        this->phases[i].SetSection(this->section);
+        this->phases[i].SetPass(this);
     #endif
         this->phases[i].Validate();
     }
@@ -146,7 +146,7 @@ nRpPass::UpdateMeshCoords()
 
     nMesh2* mesh = this->refQuadMesh;
     float* vPtr = mesh->LockVertices();
-    n_assert(vPtr);    
+    n_assert(vPtr);
     *vPtr++ = x0; *vPtr++ = y1; *vPtr++ = 0.0f; *vPtr++ = u0; *vPtr++ = v0;
     *vPtr++ = x0; *vPtr++ = y0; *vPtr++ = 0.0f; *vPtr++ = u0; *vPtr++ = v1;
     *vPtr++ = x1; *vPtr++ = y1; *vPtr++ = 0.0f; *vPtr++ = u1; *vPtr++ = v0;
@@ -218,12 +218,12 @@ nRpPass::Begin()
     // clear render target?
     if (this->clearFlags != 0)
     {
-        gfxServer->Clear(this->clearFlags, 
-                         this->clearColor.x, 
-                         this->clearColor.y, 
-                         this->clearColor.z, 
-                         this->clearColor.w, 
-                         this->clearDepth, 
+        gfxServer->Clear(this->clearFlags,
+                         this->clearColor.x,
+                         this->clearColor.y,
+                         this->clearColor.z,
+                         this->clearColor.w,
+                         this->clearDepth,
                          this->clearStencil);
     }
 
@@ -313,10 +313,9 @@ nRpPass::DrawFullScreenQuad()
 
     // draw the quad
     nGfxServer2* gfxServer = nGfxServer2::Instance();
-    const matrix44 ident;
-    gfxServer->PushTransform(nGfxServer2::Model, ident);
-    gfxServer->PushTransform(nGfxServer2::View, ident);
-    gfxServer->PushTransform(nGfxServer2::Projection, ident);
+    gfxServer->PushTransform(nGfxServer2::Model, matrix44::identity);
+    gfxServer->PushTransform(nGfxServer2::View, matrix44::identity);
+    gfxServer->PushTransform(nGfxServer2::Projection, matrix44::identity);
     gfxServer->SetMesh(this->refQuadMesh, this->refQuadMesh);
     gfxServer->SetVertexRange(0, 4);
     gfxServer->SetIndexRange(0, 6);
@@ -341,7 +340,7 @@ nRpPass::UpdateVariableShaderParams()
     for (varIndex = 0; varIndex < numVars; varIndex++)
     {
         const nVariable& paramVar = this->varContext.GetVariableAt(varIndex);
-        
+
         // get shader state from variable
         nShaderState::Param shaderParam = (nShaderState::Param) paramVar.GetInt();
 
@@ -379,7 +378,7 @@ nRpPass::UpdateVariableShaderParams()
                 n_error("nRpPass: Invalid shader arg datatype!");
                 break;
         }
-        
+
         // update the shader parameter
         this->shaderParams.SetArg(shaderParam, shaderArg);
     }

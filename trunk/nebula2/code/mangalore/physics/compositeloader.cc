@@ -458,10 +458,9 @@ CompositeLoader::Load(const nString& filename)
         // iterate shapes
         if (stream.SetToFirstChild("MeshShape"))
         {
-            static const matrix44 identity;
             nString filename = stream.GetString("file");
             MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
-            Ptr<MeshShape> meshShape = Physics::Server::Instance()->CreateMeshShape(identity, matType, filename);
+            Ptr<MeshShape> meshShape = Physics::Server::Instance()->CreateMeshShape(matrix44::identity, matType, filename);
             composite->AddShape(meshShape.get());
         }
         while (stream.SetToNextChild("MeshShape"));

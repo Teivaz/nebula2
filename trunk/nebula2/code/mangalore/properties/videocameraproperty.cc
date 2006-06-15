@@ -117,8 +117,7 @@ VideoCameraProperty::SetupDefaultAttributes()
 {
     CameraProperty::SetupDefaultAttributes();
 
-    vector3 identity;
-    GetEntity()->SetVector3(Attr::VideoCameraCenterOfInterest, identity);
+    GetEntity()->SetVector3(Attr::VideoCameraCenterOfInterest, vector3::zero);
     GetEntity()->SetVector3(Attr::VideoCameraDefaultUpVec, vector3(0.0f, 1.0f, 0.0f));
 }
 }; // namespace Properties

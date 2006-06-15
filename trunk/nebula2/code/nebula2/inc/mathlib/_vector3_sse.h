@@ -16,6 +16,9 @@
 class _vector3_sse
 {
 public:
+    static const _vector3_sse zero;
+
+public:
     /// constructor 1
     _vector3_sse();
     /// constructor 2
@@ -28,7 +31,7 @@ public:
     _vector3_sse(const __m128& m);
     /// set elements 1
     void set(const float _x, const float _y, const float _z);
-    /// set elements 2 
+    /// set elements 2
     void set(const _vector3_sse& vec);
     /// set elements 3
     void set(const float* p);
@@ -147,7 +150,7 @@ _vector3_sse::len() const
 /**
 */
 inline
-float 
+float
 _vector3_sse::lensquared() const
 {
     static const int X = 0;
@@ -180,7 +183,7 @@ _vector3_sse::norm()
     // get reciprocal of square root of squared length
     __m128 f = _mm_rsqrt_ss(b);
     __m128 oneDivLen = _mm_shuffle_ps(f, f, _MM_SHUFFLE(X,X,X,X));
-    
+
     m128 = _mm_mul_ps(m128, oneDivLen);
 }
 
@@ -235,7 +238,7 @@ inline
 int
 _vector3_sse::compare(const _vector3_sse& v, float tol) const
 {
-    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1; 
+    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1;
     else if (fabs(v.y - y) > tol) return (v.y > y) ? +1 : -1;
     else if (fabs(v.z - z) > tol) return (v.z > z) ? +1 : -1;
     else                          return 0;
@@ -277,9 +280,9 @@ _vector3_sse::rotate(const _vector3_sse& axis, float angle)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3_sse operator +(const _vector3_sse& v0, const _vector3_sse& v1) 
+static
+inline
+_vector3_sse operator +(const _vector3_sse& v0, const _vector3_sse& v1)
 {
     return _vector3_sse(_mm_add_ps(v0.m128, v1.m128));
 }
@@ -287,9 +290,9 @@ _vector3_sse operator +(const _vector3_sse& v0, const _vector3_sse& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3_sse operator -(const _vector3_sse& v0, const _vector3_sse& v1) 
+static
+inline
+_vector3_sse operator -(const _vector3_sse& v0, const _vector3_sse& v1)
 {
     return _vector3_sse(_mm_sub_ps(v0.m128, v1.m128));
 }
@@ -297,9 +300,9 @@ _vector3_sse operator -(const _vector3_sse& v0, const _vector3_sse& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3_sse operator *(const _vector3_sse& v0, const float s) 
+static
+inline
+_vector3_sse operator *(const _vector3_sse& v0, const float s)
 {
     __m128 packed = _mm_set1_ps(s);
     return _vector3_sse(_mm_mul_ps(v0.m128, packed));
@@ -308,9 +311,9 @@ _vector3_sse operator *(const _vector3_sse& v0, const float s)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3_sse operator -(const _vector3_sse& v) 
+static
+inline
+_vector3_sse operator -(const _vector3_sse& v)
 {
     __m128 zero = _mm_setzero_ps();
     return _vector3_sse(_mm_sub_ps(zero, v.m128));
@@ -333,9 +336,9 @@ float operator %(const _vector3_sse& v0, const _vector3_sse& v1)
 /**
     Cross product.
 */
-static 
-inline 
-_vector3_sse operator *(const _vector3_sse& v0, const _vector3_sse& v1) 
+static
+inline
+_vector3_sse operator *(const _vector3_sse& v0, const _vector3_sse& v1)
 {
     // x = v0.y * v1.z - v0.z * v1.y
     // y = v0.z * v1.x - v0.x * v1.z

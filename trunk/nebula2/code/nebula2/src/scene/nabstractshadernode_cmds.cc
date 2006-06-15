@@ -425,7 +425,6 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
         nCmd* cmd;
         int i;
         int num;
-        static const vector2 nullVec;
         static const vector2 oneVec(1.0f, 1.0f);
 
         //--- setuvpos/setuveuler/setuvscale ---
@@ -434,7 +433,7 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
             const vector2& p = this->textureTransform[i].gettranslation();
             const vector2& e = this->textureTransform[i].geteulerrotation();
             const vector2& s = this->textureTransform[i].getscale();
-            if (!p.isequal(nullVec, 0.0f))
+            if (!p.isequal(vector2::zero, 0.0f))
             {
                 cmd = ps->GetCmd(this, 'SUVP');
                 cmd->In()->SetI(i);
@@ -442,7 +441,7 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
                 cmd->In()->SetF(p.y);
                 ps->PutCmd(cmd);
             }
-            if (!e.isequal(nullVec, 0.0f))
+            if (!e.isequal(vector2::zero, 0.0f))
             {
                 cmd = ps->GetCmd(this, 'SUVE');
                 cmd->In()->SetI(i);

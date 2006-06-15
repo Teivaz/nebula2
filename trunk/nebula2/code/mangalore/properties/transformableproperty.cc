@@ -37,7 +37,7 @@ void
 TransformableProperty::SetupDefaultAttributes()
 {
     Property::SetupDefaultAttributes();
-    GetEntity()->SetMatrix44(Attr::Transform, matrix44());
+    GetEntity()->SetMatrix44(Attr::Transform, matrix44::identity);
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ void
 TransformableProperty::HandleMessage(Message::Msg* msg)
 {
     n_assert(msg != 0);
-    
+
     if (msg->CheckId(Message::UpdateTransform::Id))
     {
         // update the transformation of the game entity

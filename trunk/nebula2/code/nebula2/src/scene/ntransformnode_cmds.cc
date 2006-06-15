@@ -573,7 +573,6 @@ nTransformNode::SaveCmds(nPersistServer* ps)
     if (nSceneNode::SaveCmds(ps))
     {
         nCmd* cmd;
-        static const vector3 nullVec;
         static const vector3 oneVec(1.0f, 1.0f, 1.0f);
 
         //--- setactive ---
@@ -594,7 +593,7 @@ nTransformNode::SaveCmds(nPersistServer* ps)
 
         //--- setposition ---
         const vector3& pos = this->tform.gettranslation();
-        if (!pos.isequal(nullVec, 0.0f))
+        if (!pos.isequal(vector3::zero, 0.0f))
         {
             cmd = ps->GetCmd(this, 'SPOS');
             cmd->In()->SetF(pos.x);
@@ -607,7 +606,7 @@ nTransformNode::SaveCmds(nPersistServer* ps)
         if (this->tform.iseulerrotation())
         {
             const vector3& euler = this->tform.geteulerrotation();
-            if (!euler.isequal(nullVec, 0.0f))
+            if (!euler.isequal(vector3::zero, 0.0f))
             {
                 cmd = ps->GetCmd(this, 'SEUL');
                 cmd->In()->SetF(n_rad2deg(euler.x));
@@ -618,9 +617,8 @@ nTransformNode::SaveCmds(nPersistServer* ps)
         }
         else
         {
-            static const quaternion identQuat;
             const quaternion& quat = this->tform.getquatrotation();
-            if (!quat.isequal(identQuat, 0.0f))
+            if (!quat.isequal(quaternion::identity, 0.0f))
             {
                 cmd = ps->GetCmd(this, 'SQUT');
                 cmd->In()->SetF(quat.x);
@@ -646,7 +644,7 @@ nTransformNode::SaveCmds(nPersistServer* ps)
         if (this->HasRotatePivot())
         {
             const vector3& rotatePivot = this->GetRotatePivot();
-            if (!rotatePivot.isequal(nullVec, 0.0f))
+            if (!rotatePivot.isequal(vector3::zero, 0.0f))
             {
                 cmd = ps->GetCmd(this, 'SRTP');
                 cmd->In()->SetF(rotatePivot.x);
@@ -660,7 +658,7 @@ nTransformNode::SaveCmds(nPersistServer* ps)
         if (this->HasScalePivot())
         {
             const vector3& scalePivot = this->GetScalePivot();
-            if (!scalePivot.isequal(nullVec, 0.0f))
+            if (!scalePivot.isequal(vector3::zero, 0.0f))
             {
                 cmd = ps->GetCmd(this, 'SSCP');
                 cmd->In()->SetF(scalePivot.x);

@@ -217,12 +217,11 @@ Server::GetPointOfInterest() const
 bool
 Server::RayCheck(const vector3& pos, const vector3& dir, const FilterSet& excludeSet)
 {
-    const static matrix44 identity;
     this->contactPoints.Clear();
     this->ray.SetOrigin(pos);
     this->ray.SetVector(dir);
     this->ray.SetExcludeFilterSet(excludeSet);
-    this->ray.DoRayCheckAllContacts(identity, this->contactPoints);
+    this->ray.DoRayCheckAllContacts(matrix44::identity, this->contactPoints);
     return this->contactPoints.Size() > 0;
 }
 

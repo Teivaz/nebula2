@@ -81,7 +81,7 @@ Ragdoll::ComputeAxisAngle(const vector3& anchor, const vector3& axis, const vect
     float t0 = axisLine.closestpoint(p0);
     float t1 = axisLine.closestpoint(p1);
     vector3 vec0 = p0 - axisLine.point(t0);
-    vector3 vec1 = p1 - axisLine.point(t1);        
+    vector3 vec1 = p1 - axisLine.point(t1);
     float a = vector3::angle(vec0, vec1);
     return a;
 }
@@ -198,7 +198,7 @@ Ragdoll::ComputeBindPoseInfoForJoint(Joint* joint)
 /**
     This method binds the physics joints to the character joints by resolving
     the joint link name in the rigidbodies and physics joints into
-    Nebula2 character joint indices. It also stores the difference matrices 
+    Nebula2 character joint indices. It also stores the difference matrices
     between the Nebula2 character bind pose and the physics bind pose.
 */
 void
@@ -266,7 +266,7 @@ Ragdoll::WriteJoints()
             // Nebula2 FIX: rotate by 180 degree
             bodyModelSpace.rotate_y(n_deg2rad(180.0f));
 
-            // move the body's model space transform by the difference between the 
+            // move the body's model space transform by the difference between the
             // rigid body's initial pose, and the joint's bind pose
             // NOTE: this difference matrix is constant and should only be
             // computed once during setup
@@ -287,10 +287,10 @@ Ragdoll::WriteJoints()
     to the world.
 */
 void
-Ragdoll::FixJointStops(JointAxis& curJointAxis, 
-                       const vector3& anchor, 
-                       const vector3& body1Pos, 
-                       const vector3& body2Pos, 
+Ragdoll::FixJointStops(JointAxis& curJointAxis,
+                       const vector3& anchor,
+                       const vector3& body1Pos,
+                       const vector3& body2Pos,
                        float bindAngle,
                        const JointAxis& bindJointAxis)
 {
@@ -336,7 +336,7 @@ Ragdoll::ReadJoints()
     n_assert(this->nebCharacter);
     Physics::Server* physicsServer = Physics::Server::Instance();
     const nCharSkeleton& charSkeleton = this->nebCharacter->GetSkeleton();
-    
+
     // get ode world and collide space id's
     dWorldID odeWorldId = physicsServer->GetOdeWorldId();
     dSpaceID odeSpaceId = physicsServer->GetOdeSpaceId();
@@ -391,7 +391,7 @@ Ragdoll::ReadJoints()
         {
             body2Pos = body2->GetTransform().pos_component();
         }
-        
+
         // detach joint from the world
         joint->Detach();
 
@@ -440,8 +440,7 @@ Ragdoll::ReadJoints()
         }
 
         // re-attach joint to the world
-        static const matrix44 identity;
-        joint->Attach(odeWorldId, 0, identity);
+        joint->Attach(odeWorldId, 0, matrix44::identity);
     }
 */
 }

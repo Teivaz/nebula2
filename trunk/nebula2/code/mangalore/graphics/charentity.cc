@@ -121,7 +121,7 @@ void
 CharEntity::SetBaseAnimationByIndex(int i, float timeOffset)
 {
     if (this->nebCharacter)
-    { 
+    {
         n_assert((i >= 0) && (i < this->GetNumAnimations()));
         this->curBaseAnimIndex = i;
         this->baseAnimStarted = this->GetEntityTime();
@@ -137,7 +137,7 @@ CharEntity::SetBaseAnimationByIndex(int i, float timeOffset)
             this->character3Set.SetCurrentAnimation(i);
         };
     }
-}   
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -193,7 +193,7 @@ CharEntity::SetBaseAnimation(const nString& animName, float timeOffset)
 //------------------------------------------------------------------------------
 /**
     Set a new overlay animation. This is usually a oneshot animation, like
-    Bash, Jump, etc... After the overlay animation has finished, the 
+    Bash, Jump, etc... After the overlay animation has finished, the
     current base animation will be re-activated.
 
     @param  animName    new overlay animation
@@ -234,7 +234,7 @@ CharEntity::SetOverlayAnimationByIndex(int i)
 
     this->curOverlayAnimIndex = i;
     this->overlayAnimStarted = this->GetEntityTime();
-        
+
     // get duration of overlay animation from Nebula2 character
     nCharacter2* chr = this->GetCharacterPointer();
     if (chr)
@@ -378,7 +378,7 @@ CharEntity::LoadNextSkinListInDirectory()
             char3->LoadResources();
         };
         this->character3Set.LoadCharacterSetFromXML(char3,this->char3SetFileName);
-    };            
+    };
 };
 
 //------------------------------------------------------------------------------
@@ -417,7 +417,7 @@ CharEntity::EvaluateSkeleton()
 
 //------------------------------------------------------------------------------
 /**
-    Return pointer to joint or 0 if joint doesn't exist. 
+    Return pointer to joint or 0 if joint doesn't exist.
 */
 nCharJoint*
 CharEntity::GetJoint(int jointIndex) const
@@ -446,8 +446,7 @@ CharEntity::GetJointMatrix(int jointIndex) const
     }
     else
     {
-        static matrix44 identity;
-        return identity;
+        return matrix44::identity;
     }
 }
 
@@ -490,7 +489,7 @@ CharEntity::CreateAnimationEventHandler()
 void
 CharEntity::CleanupAnimationEventHandler()
 {
-    n_assert(0 != this->animEventHandler); 
+    n_assert(0 != this->animEventHandler);
     n_delete(this->animEventHandler);
     this->animEventHandler = 0;
 }
@@ -499,7 +498,7 @@ CharEntity::CleanupAnimationEventHandler()
 /**
     set the characterset
 */
-void 
+void
 CharEntity::SetCharacterSet(nString fileName)
 {
     // skip, if filename is empty
@@ -513,13 +512,13 @@ CharEntity::SetCharacterSet(nString fileName)
         this->character3Mode = true;
         this->char3SetFileName = fileName;
         this->char3NodePtr = 0;
-        
+
         // /res/gfx/characters/skeleton/zweibeiner
         // now the basic character3 node is loaded, but needs to be initialized
         // first we need to find the character3 node
         nClass* nCharacter3NodeClass = nKernelServer::Instance()->FindClass("ncharacter3node");
         nTransformNode* charParentNode = this->GetResource().GetNode();
-        
+
         // find the first ncharacter3node object under the parent node
         nRoot* charNode;
         for (charNode = charParentNode->GetHead();
