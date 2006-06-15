@@ -37,6 +37,13 @@ beginmodule nmath
         _vector2 _vector3 _vector4
         _vector3_sse _vector4_sse
     }
+    setfiles {
+        quaternion
+        _matrix33 _matrix44
+        _matrix33_sse _matrix44_sse
+        _vector2 _vector3 _vector4
+        _vector3_sse _vector4_sse
+    }
 endmodule
 
 #===============================================================================
