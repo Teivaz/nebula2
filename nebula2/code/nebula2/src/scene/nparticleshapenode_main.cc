@@ -101,7 +101,7 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     }
     emitter->SetRGBCurve(this->rgbCurve);
 
-    sceneServer->SetModelTransform(matrix44());
+    sceneServer->SetModelTransform(matrix44::identity);
 
     return true;
 }
@@ -144,7 +144,7 @@ nParticleShapeNode::GetMeshUsage() const
 //------------------------------------------------------------------------------
 /**
     Perform pre-instance-rendering of particle system.
-    FIXME: check if this is the optimal setup for the new instance 
+    FIXME: check if this is the optimal setup for the new instance
     rendering!
 */
 bool

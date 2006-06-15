@@ -187,7 +187,7 @@ ChaseCameraProperty::HandleCameraDistanceChange(float d)
 void
 ChaseCameraProperty::HandleCameraReset()
 {
-    float curTheta = GetEntity()->GetFloat(Attr::CameraDefaultTheta);     
+    float curTheta = GetEntity()->GetFloat(Attr::CameraDefaultTheta);
     const matrix44& m = GetEntity()->GetMatrix44(Attr::Transform);
     this->cameraAngles.set(m.z_component());
     this->cameraAngles.theta = curTheta;
@@ -204,7 +204,7 @@ ChaseCameraProperty::HandleCameraOrbit(float dRho, float dTheta)
     float angularVelocity = GetEntity()->GetFloat(Attr::CameraAngularVelocity);
     float lowStop = n_deg2rad(GetEntity()->GetFloat(Attr::CameraLowStop));
     float hiStop  = n_deg2rad(GetEntity()->GetFloat(Attr::CameraHighStop));
-    
+
     float frameTime = (float) TimeManager::Instance()->GetFrameTime();
     this->cameraAngles.rho += dRho * angularVelocity * frameTime;
     this->cameraAngles.theta += dTheta * angularVelocity * frameTime;
@@ -256,7 +256,6 @@ ChaseCameraProperty::UpdateCamera()
     Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
     n_assert(camera != 0);
     static const vector3 upVec(0.0f, 1.0f, 0.0f);
-    static const vector3 nullVec(0.0f, 0.0f, 0.0f);
 
     // compute the lookat point in global space
     const matrix44& m44 = GetEntity()->GetMatrix44(Attr::Transform);
@@ -274,7 +273,7 @@ ChaseCameraProperty::UpdateCamera()
     // check if the camera is currently at the origin, if yes it is in its initial
     // position and should not interpolate towards its target position
     const vector3& camPos = camera->GetTransform().pos_component();
-    if (camPos.isequal(nullVec, 0.0f))
+    if (camPos.isequal(vector3::zero, 0.0f))
     {
         nTime time = TimeManager::Instance()->GetTime();
         this->cameraPos.Reset(time, 0.0001f, GetEntity()->GetFloat(Attr::CameraLinearGain), goalPos);

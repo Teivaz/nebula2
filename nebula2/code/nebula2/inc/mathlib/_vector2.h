@@ -13,7 +13,11 @@
 #include <float.h>
 
 //------------------------------------------------------------------------------
-class _vector2 {
+class _vector2
+{
+public:
+    static const _vector2 zero;
+
 public:
     /// constructor 1
     _vector2();
@@ -243,7 +247,7 @@ _vector2::operator !=(const _vector2& rhs)
 /**
 */
 inline
-bool 
+bool
 _vector2::isequal(const _vector2& v, const float tol) const
 {
     if (fabs(v.x - x) > tol)      return false;

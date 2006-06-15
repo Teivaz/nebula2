@@ -9,13 +9,14 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#include "mathlib/_vector4.h"
 #include "mathlib/_vector3.h"
+#include "mathlib/_vector4.h"
 #include "mathlib/quaternion.h"
 #include "mathlib/euler.h"
 #include "mathlib/matrixdefs.h"
+#include <memory.h>
 
-static float _matrix44_ident[16] = 
+static float _matrix44_ident[16] =
 {
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
@@ -24,8 +25,11 @@ static float _matrix44_ident[16] =
 };
 
 //------------------------------------------------------------------------------
-class _matrix44 
+class _matrix44
 {
+public:
+    static const _matrix44 identity;
+
 public:
     /// constructor 1
     _matrix44();
@@ -146,7 +150,7 @@ _matrix44::_matrix44(const _vector4& v0, const _vector4& v1, const _vector4& v2,
 /**
 */
 inline
-_matrix44::_matrix44(const _matrix44& m1) 
+_matrix44::_matrix44(const _matrix44& m1)
 {
     memcpy(m, &(m1.m[0][0]), 16 * sizeof(float));
 }
@@ -170,7 +174,7 @@ _matrix44::_matrix44(float _m11, float _m12, float _m13, float _m14,
 /**
 */
 inline
-_matrix44::_matrix44(const quaternion& q) 
+_matrix44::_matrix44(const quaternion& q)
 {
     float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
     x2 = q.x + q.x; y2 = q.y + q.y; z2 = q.z + q.z;
@@ -201,12 +205,12 @@ _matrix44::_matrix44(const quaternion& q)
     4x4 matrix must not be scaled!
 */
 inline
-quaternion 
+quaternion
 _matrix44::get_quaternion() const
 {
     float qa[4];
     float tr = m[0][0] + m[1][1] + m[2][2];
-    if (tr > 0.0f) 
+    if (tr > 0.0f)
     {
         float s = n_sqrt (tr + 1.0f);
         qa[3] = s * 0.5f;
@@ -214,8 +218,8 @@ _matrix44::get_quaternion() const
         qa[0] = (m[1][2] - m[2][1]) * s;
         qa[1] = (m[2][0] - m[0][2]) * s;
         qa[2] = (m[0][1] - m[1][0]) * s;
-    } 
-    else 
+    }
+    else
     {
         int i, j, k, nxt[3] = {1,2,0};
         i = 0;
@@ -238,8 +242,8 @@ _matrix44::get_quaternion() const
 /**
 */
 inline
-void 
-_matrix44::set(const _vector4& v0, const _vector4& v1, const _vector4& v2, const _vector4& v3) 
+void
+_matrix44::set(const _vector4& v0, const _vector4& v1, const _vector4& v2, const _vector4& v3)
 {
     M11=v0.x; M12=v0.y; M13=v0.z, M14=v0.w;
     M21=v1.x; M22=v1.y; M23=v1.z; M24=v1.w;
@@ -251,8 +255,8 @@ _matrix44::set(const _vector4& v0, const _vector4& v1, const _vector4& v2, const
 /**
 */
 inline
-void 
-_matrix44::set(const _matrix44& m1) 
+void
+_matrix44::set(const _matrix44& m1)
 {
     memcpy(m, &(m1.m[0][0]), 16*sizeof(float));
 }
@@ -277,8 +281,8 @@ _matrix44::set(float _m11, float _m12, float _m13, float _m14,
 /**
 */
 inline
-void 
-_matrix44::set(const quaternion& q) 
+void
+_matrix44::set(const quaternion& q)
 {
     float wx, wy, wz, xx, yy, yz, xy, xz, zz, x2, y2, z2;
     x2 = q.x + q.x; y2 = q.y + q.y; z2 = q.z + q.z;
@@ -307,8 +311,8 @@ _matrix44::set(const quaternion& q)
 /**
 */
 inline
-void 
-_matrix44::ident() 
+void
+_matrix44::ident()
 {
     memcpy(&(m[0][0]), _matrix44_ident, sizeof(_matrix44_ident));
 }
@@ -317,8 +321,8 @@ _matrix44::ident()
 /**
 */
 inline
-void 
-_matrix44::transpose() 
+void
+_matrix44::transpose()
 {
     #undef n_swap
     #define n_swap(x,y) { float t=x; x=y; y=t; }
@@ -334,8 +338,8 @@ _matrix44::transpose()
 /**
 */
 inline
-float 
-_matrix44::det() 
+float
+_matrix44::det()
 {
     return
         (M11 * M22 - M12 * M21) * (M33 * M44 - M34 * M43)
@@ -351,7 +355,7 @@ _matrix44::det()
 */
 inline
 void
-_matrix44::invert() 
+_matrix44::invert()
 {
     float s = det();
     if (s == 0.0) return;
@@ -382,8 +386,8 @@ _matrix44::invert()
     the rightmost column) MUCH cheaper then a real 4x4 inversion
 */
 inline
-void 
-_matrix44::invert_simple() 
+void
+_matrix44::invert_simple()
 {
     float s = det();
     if (s == 0.0f) return;
@@ -413,10 +417,10 @@ _matrix44::invert_simple()
 */
 inline
 void
-_matrix44::mult_simple(const _matrix44& m1) 
+_matrix44::mult_simple(const _matrix44& m1)
 {
     int i;
-    for (i=0; i<4; i++) 
+    for (i=0; i<4; i++)
     {
         float mi0 = m[i][0];
         float mi1 = m[i][1];
@@ -456,7 +460,7 @@ _matrix44::transform_coord(const _vector3& v) const
 inline
 _vector3&
 _matrix44::x_component() const
-{  
+{
     return *(_vector3*)&M11;
 }
 
@@ -487,7 +491,7 @@ _matrix44::z_component() const
     @return the 4th row of the matrix. (M41, M42 and M43)
 */
 inline
-_vector3& 
+_vector3&
 _matrix44::pos_component() const
 {
     return *(_vector3*)&M41;
@@ -498,7 +502,7 @@ _matrix44::pos_component() const
 */
 inline
 void
-_matrix44::rotate_x(const float a) 
+_matrix44::rotate_x(const float a)
 {
     float c = n_cos(a);
     float s = n_sin(a);
@@ -515,8 +519,8 @@ _matrix44::rotate_x(const float a)
 /**
 */
 inline
-void 
-_matrix44::rotate_y(const float a) 
+void
+_matrix44::rotate_y(const float a)
 {
     float c = n_cos(a);
     float s = n_sin(a);
@@ -533,8 +537,8 @@ _matrix44::rotate_y(const float a)
 /**
 */
 inline
-void 
-_matrix44::rotate_z(const float a) 
+void
+_matrix44::rotate_z(const float a)
 {
     float c = n_cos(a);
     float s = n_sin(a);
@@ -551,8 +555,8 @@ _matrix44::rotate_z(const float a)
 /**
 */
 inline
-void 
-_matrix44::translate(const _vector3& t) 
+void
+_matrix44::translate(const _vector3& t)
 {
     M41 += t.x;
     M42 += t.y;
@@ -564,7 +568,7 @@ _matrix44::translate(const _vector3& t)
 */
 inline
 void
-_matrix44::set_translation(const _vector3& t) 
+_matrix44::set_translation(const _vector3& t)
 {
     M41 = t.x;
     M42 = t.y;
@@ -576,10 +580,10 @@ _matrix44::set_translation(const _vector3& t)
 */
 inline
 void
-_matrix44::scale(const _vector3& s) 
+_matrix44::scale(const _vector3& s)
 {
     int i;
-    for (i=0; i<4; i++) 
+    for (i=0; i<4; i++)
     {
         m[i][0] *= s.x;
         m[i][1] *= s.y;
@@ -591,8 +595,8 @@ _matrix44::scale(const _vector3& s)
 /**
 */
 inline
-void 
-_matrix44::lookatRh(const _vector3& at, const _vector3& up) 
+void
+_matrix44::lookatRh(const _vector3& at, const _vector3& up)
 {
     _vector3 eye(M41, M42, M43);
     _vector3 zaxis = eye - at;
@@ -609,8 +613,8 @@ _matrix44::lookatRh(const _vector3& at, const _vector3& up)
 /**
 */
 inline
-void 
-_matrix44::lookatLh(const _vector3& at, const _vector3& up) 
+void
+_matrix44::lookatLh(const _vector3& at, const _vector3& up)
 {
     _vector3 eye(M41, M42, M43);
     _vector3 zaxis = at - eye;
@@ -709,7 +713,7 @@ _matrix44::orthoRh(float w, float h, float zn, float zf)
 /**
 */
 inline
-void 
+void
 _matrix44::billboard(const _vector3& to, const _vector3& up)
 {
     _vector3 from(M41, M42, M43);
@@ -718,7 +722,7 @@ _matrix44::billboard(const _vector3& to, const _vector3& up)
     _vector3 y(up);
     y.norm();
     _vector3 x(y * z);
-    z = x * y;       
+    z = x * y;
 
     M11=x.x;  M12=x.y;  M13=x.z;  M14=0.0f;
     M21=y.x;  M22=y.y;  M23=y.z;  M24=0.0f;
@@ -730,10 +734,10 @@ _matrix44::billboard(const _vector3& to, const _vector3& up)
 */
 inline
 void
-_matrix44::operator *= (const _matrix44& m1) 
+_matrix44::operator *= (const _matrix44& m1)
 {
     int i;
-    for (i=0; i<4; i++) 
+    for (i=0; i<4; i++)
     {
         float mi0 = m[i][0];
         float mi1 = m[i][1];
@@ -750,7 +754,7 @@ _matrix44::operator *= (const _matrix44& m1)
 /**
 */
 inline
-void 
+void
 _matrix44::rotate(const _vector3& vec, float a)
 {
     _vector3 v(vec);
@@ -768,7 +772,7 @@ _matrix44::rotate(const _vector3& vec, float a)
     rotM.M31 = (1.0f - ca) * v.z * v.x - sa * v.y;
     rotM.M32 = (1.0f - ca) * v.y * v.z + sa * v.x;
     rotM.M33 = ca + (1.0f - ca) * v.z * v.z;
-    
+
     (*this) *= rotM;
 }
 
@@ -814,9 +818,9 @@ _matrix44::weighted_madd(const _vector3& src, _vector3& dst, float weight) const
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_matrix44 operator * (const _matrix44& m0, const _matrix44& m1) 
+static
+inline
+_matrix44 operator * (const _matrix44& m0, const _matrix44& m1)
 {
     _matrix44 m2(
         m0.m[0][0]*m1.m[0][0] + m0.m[0][1]*m1.m[1][0] + m0.m[0][2]*m1.m[2][0] + m0.m[0][3]*m1.m[3][0],
@@ -844,8 +848,8 @@ _matrix44 operator * (const _matrix44& m0, const _matrix44& m1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector3 operator * (const _matrix44& m, const _vector3& v)
 {
     return _vector3(
@@ -857,8 +861,8 @@ _vector3 operator * (const _matrix44& m, const _vector3& v)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector4 operator * (const _matrix44& m, const _vector4& v)
 {
     return _vector4(

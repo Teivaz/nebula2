@@ -29,8 +29,7 @@ nAppCamera::Reset()
     this->transform.settranslation(vector3(0.0f, 0.0f, 0.0f));
     this->transform.seteulerrotation(vector3(0.0f, 0.0f, 0.0f));
     this->transform.setscale(vector3(1.0f, 1.0f, 1.0f));
-    const static matrix44 identity;
-    this->transform.setmatrix(identity);
+    this->transform.setmatrix(matrix44::identity);
 }
 
 //------------------------------------------------------------------------------

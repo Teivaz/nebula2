@@ -10,10 +10,14 @@
     (C) 2002 RadonLabs GmbH
 */
 #include <xmmintrin.h>
+#include <math.h>
 
 //------------------------------------------------------------------------------
 class _vector4_sse
 {
+public:
+    static const _vector4_sse zero;
+
 public:
     /// constructor 1
     _vector4_sse();
@@ -23,7 +27,7 @@ public:
     _vector4_sse(const _vector4_sse& vec);
     /// set elements 1
     void set(const float _x, const float _y, const float _z, const float _w);
-    /// set elements 2 
+    /// set elements 2
     void set(const _vector4_sse& v);
     /// return length
     float len() const;
@@ -156,11 +160,11 @@ _vector4_sse::norm()
     // get len
     __m128 a = _mm_mul_ps(m128, m128);
     __m128 b = _mm_add_ss(a, _mm_add_ss(_mm_shuffle_ps(a, a, _MM_SHUFFLE(X,X,X,X)), _mm_add_ss(_mm_shuffle_ps(a, a, _MM_SHUFFLE(Y,Y,Y,Y)), _mm_shuffle_ps(a, a, _MM_SHUFFLE(Z,Z,Z,Z)))));
-    
+
     // get reciprocal of square root of squared length
     __m128 f = _mm_rsqrt_ss(b);
     __m128 oneDivLen = _mm_shuffle_ps(f, f, _MM_SHUFFLE(X, X, X, X));
-    
+
     m128 = _mm_mul_ps(m128, oneDivLen);
 }
 
@@ -216,7 +220,7 @@ inline
 int
 _vector4_sse::compare(const _vector4_sse& v, float tol) const
 {
-    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1; 
+    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1;
     else if (fabs(v.y - y) > tol) return (v.y > y) ? +1 : -1;
     else if (fabs(v.z - z) > tol) return (v.z > z) ? +1 : -1;
     else if (fabs(v.w - w) > tol) return (v.w > w) ? +1 : -1;
@@ -252,9 +256,9 @@ _vector4_sse::maximum(const _vector4_sse& v)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector4_sse operator +(const _vector4_sse& v0, const _vector4_sse& v1) 
+static
+inline
+_vector4_sse operator +(const _vector4_sse& v0, const _vector4_sse& v1)
 {
     return _vector4_sse(_mm_add_ps(v0.m128, v1.m128));
 }
@@ -262,9 +266,9 @@ _vector4_sse operator +(const _vector4_sse& v0, const _vector4_sse& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector4_sse operator -(const _vector4_sse& v0, const _vector4_sse& v1) 
+static
+inline
+_vector4_sse operator -(const _vector4_sse& v0, const _vector4_sse& v1)
 {
     return _vector4_sse(_mm_sub_ps(v0.m128, v1.m128));
 }
@@ -272,9 +276,9 @@ _vector4_sse operator -(const _vector4_sse& v0, const _vector4_sse& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector4_sse operator *(const _vector4_sse& v0, const float& s) 
+static
+inline
+_vector4_sse operator *(const _vector4_sse& v0, const float& s)
 {
     __m128 packed = _mm_set1_ps(s);
     return _vector4_sse(_mm_mul_ps(v0.m128, packed));
@@ -283,8 +287,8 @@ _vector4_sse operator *(const _vector4_sse& v0, const float& s)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector4_sse operator -(const _vector4_sse& v)
 {
     __m128 zero = _mm_setzero_ps();

@@ -16,6 +16,9 @@
 class _vector3
 {
 public:
+    static const _vector3 zero;
+
+public:
     /// constructor 1
     _vector3();
     /// constructor 2
@@ -24,7 +27,7 @@ public:
     _vector3(const _vector3& vec);
     /// set elements 1
     void set(const float _x, const float _y, const float _z);
-    /// set elements 2 
+    /// set elements 2
     void set(const _vector3& vec);
     /// return length
     float len() const;
@@ -144,7 +147,7 @@ _vector3::len() const
 /**
 */
 inline
-float 
+float
 _vector3::lensquared() const
 {
     return x * x + y * y + z * z;
@@ -158,7 +161,7 @@ void
 _vector3::norm()
 {
     float l = len();
-    if (l > TINY) 
+    if (l > TINY)
     {
         x /= l;
         y /= l;
@@ -222,7 +225,7 @@ inline
 int
 _vector3::compare(const _vector3& v, float tol) const
 {
-    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1; 
+    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1;
     else if (fabs(v.y - y) > tol) return (v.y > y) ? +1 : -1;
     else if (fabs(v.z - z) > tol) return (v.z > z) ? +1 : -1;
     else                          return 0;
@@ -264,9 +267,9 @@ _vector3::rotate(const _vector3& axis, float angle)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3 operator +(const _vector3& v0, const _vector3& v1) 
+static
+inline
+_vector3 operator +(const _vector3& v0, const _vector3& v1)
 {
     return _vector3(v0.x + v1.x, v0.y + v1.y, v0.z + v1.z);
 }
@@ -274,9 +277,9 @@ _vector3 operator +(const _vector3& v0, const _vector3& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3 operator -(const _vector3& v0, const _vector3& v1) 
+static
+inline
+_vector3 operator -(const _vector3& v0, const _vector3& v1)
 {
     return _vector3(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z);
 }
@@ -284,9 +287,9 @@ _vector3 operator -(const _vector3& v0, const _vector3& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3 operator *(const _vector3& v0, const float s) 
+static
+inline
+_vector3 operator *(const _vector3& v0, const float s)
 {
     return _vector3(v0.x * s, v0.y * s, v0.z * s);
 }
@@ -294,9 +297,9 @@ _vector3 operator *(const _vector3& v0, const float s)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector3 operator -(const _vector3& v) 
+static
+inline
+_vector3 operator -(const _vector3& v)
 {
     return _vector3(-v.x, -v.y, -v.z);
 }
@@ -304,8 +307,8 @@ _vector3 operator -(const _vector3& v)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector3 operator /(const _vector3& v0, const float s)
 {
     float one_over_s = 1.0f/s;
@@ -327,9 +330,9 @@ float operator %(const _vector3& v0, const _vector3& v1)
 /**
     Cross product.
 */
-static 
-inline 
-_vector3 operator *(const _vector3& v0, const _vector3& v1) 
+static
+inline
+_vector3 operator *(const _vector3& v0, const _vector3& v1)
 {
     return _vector3(v0.y * v1.z - v0.z * v1.y,
                     v0.z * v1.x - v0.x * v1.z,
@@ -384,16 +387,16 @@ _vector3::findortho() const
     if (0.0 != x)
     {
         return _vector3((-y - z) / x, 1.0, 1.0);
-    } 
+    }
     else if (0.0 != y)
     {
         return _vector3(1.0, (-x - z) / y, 1.0);
-    } 
+    }
     else if (0.0 != z)
     {
         return _vector3(1.0, 1.0, (-x - y) / z);
-    } 
-    else 
+    }
+    else
     {
         return _vector3(0.0, 0.0, 0.0);
     }

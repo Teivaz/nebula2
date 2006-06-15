@@ -15,7 +15,7 @@
 #include "matrixdefs.h"
 #include <memory.h>
 
-static float _matrix33_ident[9] = 
+static float _matrix33_ident[9] =
 {
     1.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
@@ -23,8 +23,11 @@ static float _matrix33_ident[9] =
 };
 
 //------------------------------------------------------------------------------
-class _matrix33 
+class _matrix33
 {
+public:
+    static const _matrix33 identity;
+
 public:
     /// constructor 1
     _matrix33();
@@ -93,10 +96,10 @@ public:
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _matrix33
-operator * (const _matrix33& m0, const _matrix33& m1) 
+operator * (const _matrix33& m0, const _matrix33& m1)
 {
     _matrix33 m2(
         m0.m[0][0]*m1.m[0][0] + m0.m[0][1]*m1.m[1][0] + m0.m[0][2]*m1.m[2][0],
@@ -117,8 +120,8 @@ operator * (const _matrix33& m0, const _matrix33& m1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector3 operator * (const _matrix33& m, const _vector3& v)
 {
     return _vector3(
@@ -131,7 +134,7 @@ _vector3 operator * (const _matrix33& m, const _vector3& v)
 /**
 */
 inline
-_matrix33::_matrix33() 
+_matrix33::_matrix33()
 {
     memcpy(&(m[0][0]), _matrix33_ident, sizeof(_matrix33_ident));
 }
@@ -140,7 +143,7 @@ _matrix33::_matrix33()
 /**
 */
 inline
-_matrix33::_matrix33(const _vector3& v0, const _vector3& v1, const _vector3& v2) 
+_matrix33::_matrix33(const _vector3& v0, const _vector3& v1, const _vector3& v2)
 {
     M11=v0.x; M12=v0.y; M13=v0.z;
     M21=v1.x; M22=v1.y; M23=v1.z;
@@ -151,7 +154,7 @@ _matrix33::_matrix33(const _vector3& v0, const _vector3& v1, const _vector3& v2)
 /**
 */
 inline
-_matrix33::_matrix33(const _matrix33& m1) 
+_matrix33::_matrix33(const _matrix33& m1)
 {
     memcpy(m, &(m1.m[0][0]), 9*sizeof(float));
 }
@@ -173,7 +176,7 @@ _matrix33::_matrix33(float _m11, float _m12, float _m13,
 /**
 */
 inline
-_matrix33::_matrix33(const quaternion& q) 
+_matrix33::_matrix33(const quaternion& q)
 {
     float xx = q.x*q.x; float yy = q.y*q.y; float zz = q.z*q.z;
     float xy = q.x*q.y; float xz = q.x*q.z; float yz = q.y*q.z;
@@ -196,12 +199,12 @@ _matrix33::_matrix33(const quaternion& q)
 /**
 */
 inline
-quaternion 
+quaternion
 _matrix33::get_quaternion() const
 {
     float qa[4];
     float tr = m[0][0] + m[1][1] + m[2][2];
-    if (tr > 0.0f) 
+    if (tr > 0.0f)
     {
         float s = n_sqrt (tr + 1.0f);
         qa[3] = s * 0.5f;
@@ -209,8 +212,8 @@ _matrix33::get_quaternion() const
         qa[0] = (m[1][2] - m[2][1]) * s;
         qa[1] = (m[2][0] - m[0][2]) * s;
         qa[2] = (m[0][1] - m[1][0]) * s;
-    } 
-    else 
+    }
+    else
     {
         int i, j, k, nxt[3] = {1,2,0};
         i = 0;
@@ -235,19 +238,19 @@ _matrix33::get_quaternion() const
 inline
 _vector3
 _matrix33::to_euler() const
-{    
+{
     _vector3 ea;
-    
+
     // work on matrix with flipped row/columns
     _matrix33 tmp(*this);
     tmp.transpose();
 
     int i,j,k,h,n,s,f;
     EulGetOrd(EulOrdXYZs,i,j,k,h,n,s,f);
-    if (s==EulRepYes) 
+    if (s==EulRepYes)
     {
         double sy = (float) sqrt(tmp.M12 * tmp.M12 + tmp.M13 * tmp.M13);
-        if (sy > 16*FLT_EPSILON) 
+        if (sy > 16*FLT_EPSILON)
         {
             ea.x = (float) atan2(tmp.M12, tmp.M13);
             ea.y = (float) atan2((float)sy, tmp.M11);
@@ -257,17 +260,17 @@ _matrix33::to_euler() const
             ea.y = (float) atan2((float)sy, tmp.M11);
             ea.z = 0;
         }
-    } 
-    else 
+    }
+    else
     {
         double cy = sqrt(tmp.M11 * tmp.M11 + tmp.M21 * tmp.M21);
-        if (cy > 16*FLT_EPSILON) 
+        if (cy > 16*FLT_EPSILON)
         {
             ea.x = (float) atan2(tmp.M32, tmp.M33);
             ea.y = (float) atan2(-tmp.M31, (float)cy);
             ea.z = (float) atan2(tmp.M21, tmp.M11);
-        } 
-        else 
+        }
+        else
         {
             ea.x = (float) atan2(-tmp.M23, tmp.M22);
             ea.y = (float) atan2(-tmp.M31, (float)cy);
@@ -284,8 +287,8 @@ _matrix33::to_euler() const
 /**
 */
 inline
-void 
-_matrix33::from_euler(const _vector3& ea) 
+void
+_matrix33::from_euler(const _vector3& ea)
 {
     _vector3 tea = ea;
     double ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
@@ -297,13 +300,13 @@ _matrix33::from_euler(const _vector3& ea)
     ci = cos(ti); cj = cos(tj); ch = cos(th);
     si = sin(ti); sj = sin(tj); sh = sin(th);
     cc = ci*ch; cs = ci*sh; sc = si*ch; ss = si*sh;
-    if (s==EulRepYes) 
+    if (s==EulRepYes)
     {
         M11 = (float)(cj);     M12 = (float)(sj*si);     M13 = (float)(sj*ci);
         M21 = (float)(sj*sh);  M22 = (float)(-cj*ss+cc); M23 = (float)(-cj*cs-sc);
         M31 = (float)(-sj*ch); M23 = (float)( cj*sc+cs); M33 = (float)( cj*cc-ss);
-    } 
-    else 
+    }
+    else
     {
         M11 = (float)(cj*ch); M12 = (float)(sj*sc-cs); M13 = (float)(sj*cc+ss);
         M21 = (float)(cj*sh); M22 = (float)(sj*ss+cc); M23 = (float)(sj*cs-sc);
@@ -318,8 +321,8 @@ _matrix33::from_euler(const _vector3& ea)
 /**
 */
 inline
-void 
-_matrix33::lookat(const _vector3& from, const _vector3& to, const _vector3& up) 
+void
+_matrix33::lookat(const _vector3& from, const _vector3& to, const _vector3& up)
 {
     _vector3 z(from - to);
     z.norm();
@@ -336,7 +339,7 @@ _matrix33::lookat(const _vector3& from, const _vector3& to, const _vector3& up)
 /**
 */
 inline
-void 
+void
 _matrix33::billboard(const _vector3& from, const _vector3& to, const _vector3& up)
 {
     _vector3 z(from - to);
@@ -355,10 +358,10 @@ _matrix33::billboard(const _vector3& from, const _vector3& to, const _vector3& u
 /**
 */
 inline
-void 
+void
 _matrix33::set(float m11, float m12, float m13,
                float m21, float m22, float m23,
-               float m31, float m32, float m33) 
+               float m31, float m32, float m33)
 {
     M11=m11; M12=m12; M13=m13;
     M21=m21; M22=m22; M23=m23;
@@ -369,8 +372,8 @@ _matrix33::set(float m11, float m12, float m13,
 /**
 */
 inline
-void 
-_matrix33::set(const _vector3& v0, const _vector3& v1, const _vector3& v2) 
+void
+_matrix33::set(const _vector3& v0, const _vector3& v1, const _vector3& v2)
 {
     M11=v0.x; M12=v0.y; M13=v0.z;
     M21=v1.x; M22=v1.y; M23=v1.z;
@@ -381,8 +384,8 @@ _matrix33::set(const _vector3& v0, const _vector3& v1, const _vector3& v2)
 /**
 */
 inline
-void 
-_matrix33::set(const _matrix33& m1) 
+void
+_matrix33::set(const _matrix33& m1)
 {
     memcpy(m, &(m1.m), 9*sizeof(float));
 }
@@ -391,8 +394,8 @@ _matrix33::set(const _matrix33& m1)
 /**
 */
 inline
-void 
-_matrix33::ident() 
+void
+_matrix33::ident()
 {
     memcpy(&(m[0][0]), _matrix33_ident, sizeof(_matrix33_ident));
 }
@@ -401,8 +404,8 @@ _matrix33::ident()
 /**
 */
 inline
-void 
-_matrix33::transpose() 
+void
+_matrix33::transpose()
 {
     #undef n_swap
     #define n_swap(x,y) { float t=x; x=y; y=t; }
@@ -415,8 +418,8 @@ _matrix33::transpose()
 /**
 */
 inline
-bool 
-_matrix33::orthonorm(float limit) 
+bool
+_matrix33::orthonorm(float limit)
 {
     if (((M11*M21+M12*M22+M13*M23)<limit) &&
         ((M11*M31+M12*M32+M13*M33)<limit) &&
@@ -451,7 +454,7 @@ _matrix33::scale(const _vector3& s)
 /**
 */
 inline
-void 
+void
 _matrix33::rotate_x(const float a)
 {
     float c = n_cos(a);
@@ -470,7 +473,7 @@ _matrix33::rotate_x(const float a)
 /**
 */
 inline
-void 
+void
 _matrix33::rotate_y(const float a)
 {
     float c = n_cos(a);
@@ -489,7 +492,7 @@ _matrix33::rotate_y(const float a)
 /**
 */
 inline
-void 
+void
 _matrix33::rotate_z(const float a)
 {
     float c = n_cos(a);
@@ -508,49 +511,49 @@ _matrix33::rotate_z(const float a)
 /**
 */
 inline
-void 
+void
 _matrix33::rotate_local_x(const float a)
 {
     _matrix33 rotM;  // initialized as identity matrix
 	rotM.M22 = (float) cos(a); rotM.M23 = -(float) sin(a);
 	rotM.M32 = (float) sin(a); rotM.M33 =  (float) cos(a);
 
-	(*this) = rotM * (*this); 
+	(*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
+void
 _matrix33::rotate_local_y(const float a)
 {
     _matrix33 rotM;  // initialized as identity matrix
 	rotM.M11 = (float) cos(a);  rotM.M13 = (float) sin(a);
     rotM.M31 = -(float) sin(a); rotM.M33 = (float) cos(a);
 
-	(*this) = rotM * (*this); 
+	(*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
+void
 _matrix33::rotate_local_z(const float a)
 {
     _matrix33 rotM;  // initialized as identity matrix
     rotM.M11 = (float) cos(a); rotM.M12 = -(float) sin(a);
 	rotM.M21 = (float) sin(a); rotM.M22 =  (float) cos(a);
 
-	(*this) = rotM * (*this); 
+	(*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
+void
 _matrix33::rotate(const _vector3& vec, float a)
 {
     _vector3 v(vec);
@@ -568,7 +571,7 @@ _matrix33::rotate(const _vector3& vec, float a)
 	rotM.M31 = (1.0f - ca) * v.z * v.x - sa * v.y;
 	rotM.M32 = (1.0f - ca) * v.y * v.z + sa * v.x;
 	rotM.M33 = ca + (1.0f - ca) * v.z * v.z;
-	
+
 	(*this) = (*this) * rotM;
 }
 
@@ -576,7 +579,7 @@ _matrix33::rotate(const _vector3& vec, float a)
 /**
 */
 inline
-_vector3 
+_vector3
 _matrix33::x_component() const
 {
     _vector3 v(M11,M12,M13);
@@ -587,7 +590,7 @@ _matrix33::x_component() const
 /**
 */
 inline
-_vector3 
+_vector3
 _matrix33::y_component(void) const
 {
     _vector3 v(M21,M22,M23);
@@ -598,8 +601,8 @@ _matrix33::y_component(void) const
 /**
 */
 inline
-_vector3 
-_matrix33::z_component(void) const 
+_vector3
+_matrix33::z_component(void) const
 {
     _vector3 v(M31,M32,M33);
     return v;
@@ -610,7 +613,7 @@ _matrix33::z_component(void) const
 */
 inline
 void
-_matrix33::operator *= (const _matrix33& m1) 
+_matrix33::operator *= (const _matrix33& m1)
 {
     int i;
     for (i=0; i<3; i++) {
@@ -629,7 +632,7 @@ _matrix33::operator *= (const _matrix33& m1)
     this eliminates the construction of a temp _vector3 object
 */
 inline
-void 
+void
 _matrix33::mult(const _vector3& src, _vector3& dst) const
 {
     dst.x = M11*src.x + M21*src.y + M31*src.z;

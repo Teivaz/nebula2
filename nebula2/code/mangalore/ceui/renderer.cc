@@ -175,9 +175,9 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
 */
 void Renderer::doRender() {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
-    gfxServer->PushTransform(nGfxServer2::Model, matrix44());
+    gfxServer->PushTransform(nGfxServer2::Model, matrix44::identity);
     gfxServer->PushTransform(nGfxServer2::View, transform);
-    gfxServer->PushTransform(nGfxServer2::Projection, matrix44());
+    gfxServer->PushTransform(nGfxServer2::Projection, matrix44::identity);
 
     float* vertices;
     int maxVetices;

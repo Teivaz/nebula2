@@ -11,10 +11,14 @@
 */
 #include "mathlib/nmath.h"
 #include <float.h>
+#include "mathlib/_vector3.h"
 
 //------------------------------------------------------------------------------
-class _vector4 
+class _vector4
 {
+public:
+    static const _vector4 zero;
+
 public:
     enum component
     {
@@ -34,7 +38,7 @@ public:
     _vector4(const _vector3& vec3);
     /// set elements 1
     void set(const float _x, const float _y, const float _z, const float _w);
-    /// set elements 2 
+    /// set elements 2
     void set(const _vector4& v);
     /// set to vector3 (w will be set to 1.0)
     void set(const _vector3& v);
@@ -189,7 +193,7 @@ void
 _vector4::norm()
 {
     float l = len();
-    if (l > TINY) 
+    if (l > TINY)
     {
         float oneDivL = 1.0f / l;
         x *= oneDivL;
@@ -206,9 +210,9 @@ inline
 void
 _vector4::operator +=(const _vector4& v)
 {
-    x += v.x; 
-    y += v.y; 
-    z += v.z; 
+    x += v.x;
+    y += v.y;
+    z += v.z;
     w += v.w;
 }
 
@@ -219,9 +223,9 @@ inline
 void
 _vector4::operator -=(const _vector4& v)
 {
-    x -= v.x; 
-    y -= v.y; 
-    z -= v.z; 
+    x -= v.x;
+    y -= v.y;
+    z -= v.z;
     w -= v.w;
 }
 
@@ -232,9 +236,9 @@ inline
 void
 _vector4::operator *=(const float s)
 {
-    x *= s; 
-    y *= s; 
-    z *= s; 
+    x *= s;
+    y *= s;
+    z *= s;
     w *= s;
 }
 
@@ -304,7 +308,7 @@ inline
 int
 _vector4::compare(const _vector4& v, float tol) const
 {
-    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1; 
+    if (fabs(v.x - x) > tol)      return (v.x > x) ? +1 : -1;
     else if (fabs(v.y - y) > tol) return (v.y > y) ? +1 : -1;
     else if (fabs(v.z - z) > tol) return (v.z > z) ? +1 : -1;
     else if (fabs(v.w - w) > tol) return (v.w > w) ? +1 : -1;
@@ -340,9 +344,9 @@ _vector4::maximum(const _vector4& v)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector4 operator +(const _vector4& v0, const _vector4& v1) 
+static
+inline
+_vector4 operator +(const _vector4& v0, const _vector4& v1)
 {
     return _vector4(v0.x + v1.x, v0.y + v1.y, v0.z + v1.z, v0.w + v1.w);
 }
@@ -350,9 +354,9 @@ _vector4 operator +(const _vector4& v0, const _vector4& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector4 operator -(const _vector4& v0, const _vector4& v1) 
+static
+inline
+_vector4 operator -(const _vector4& v0, const _vector4& v1)
 {
     return _vector4(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z, v0.w - v1.w);
 }
@@ -360,9 +364,9 @@ _vector4 operator -(const _vector4& v0, const _vector4& v1)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-_vector4 operator *(const _vector4& v0, const float& s) 
+static
+inline
+_vector4 operator *(const _vector4& v0, const float& s)
 {
     return _vector4(v0.x * s, v0.y * s, v0.z * s, v0.w * s);
 }
@@ -370,8 +374,8 @@ _vector4 operator *(const _vector4& v0, const float& s)
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 _vector4 operator -(const _vector4& v)
 {
     return _vector4(-v.x, -v.y, -v.z, -v.w);
@@ -420,12 +424,12 @@ _vector4::mincompmask() const
         minComp = Y;
         minVal  = y;
     }
-    if (z < minVal) 
+    if (z < minVal)
     {
         minComp = Z;
         minVal  = z;
     }
-    if (w < minVal) 
+    if (w < minVal)
     {
         minComp = W;
         minVal  = w;

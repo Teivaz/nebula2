@@ -16,10 +16,10 @@ static void n_getmaxdistance(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nlodnode
-    
+
     @cppclass
     nLodNode
-    
+
     @superclass
     ntransformnode
 
@@ -156,7 +156,6 @@ nLodNode::SaveCmds(nPersistServer* ps)
     if (nSceneNode::SaveCmds(ps))
     {
         nCmd* cmd;
-        static const vector3 nullVec;
         static const vector3 oneVec(1.0f, 1.0f, 1.0f);
 
         //--- setthreshold ---
