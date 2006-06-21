@@ -446,4 +446,4 @@ Ragdoll::ReadJoints()
 }
 
 
-}; // namespace Physics
+} // namespace Physics

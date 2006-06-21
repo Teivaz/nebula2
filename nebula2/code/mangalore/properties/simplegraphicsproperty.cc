@@ -152,4 +152,4 @@ SimpleGraphicsProperty::HandleMessage(Message::Msg* msg)
     }
 }
 
-}; // namespace Properties
+} // namespace Properties

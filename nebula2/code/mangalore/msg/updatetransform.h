@@ -3,13 +3,13 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::UpdateTransform
-    
+
     Updates the transform of a entity, does not set the physics tranform.
     All property that need to update when entity transformation changes need
     listen to this messags.
 
     To set the transformation of a entity (including the physics) use the SetTransform message.
-    
+
     (C) 2006 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -55,6 +55,6 @@ UpdateTransform::GetMatrix() const
     return this->transform;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

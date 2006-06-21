@@ -6,7 +6,7 @@
 
     The Loader::Server is the central object of the loader subsystem
     Usually you don't work directly with the Loader subsystem, but instead
-    use higher level classes like the Game::SetupManager and 
+    use higher level classes like the Game::SetupManager and
     Game::SaveGameManager.
 
     (C) 2003 RadonLabs GmbH
@@ -99,6 +99,6 @@ Server::GetUserProfile() const
     return this->userProfile;
 }
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

@@ -35,6 +35,6 @@ public:
 
 RegisterFactory(TransformableProperty);
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

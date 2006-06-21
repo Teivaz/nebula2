@@ -4,7 +4,7 @@
 /**
     @class Graphics::Cell
 
-    A Cell object defines a culling group for cells and entities. If a cell 
+    A Cell object defines a culling group for cells and entities. If a cell
     is not visible, none of the enclosed cells and entities will be visible.
 
     Cells can be arranged hierarchically.
@@ -32,7 +32,7 @@
 #include "graphics/entity.h"
 
 //------------------------------------------------------------------------------
-namespace Graphics 
+namespace Graphics
 {
 class LightEntity;
 class CameraEntity;
@@ -168,7 +168,7 @@ Cell::GetNumEntitiesInHierarchyByCombinedTypes(uint ordTypes) const
 /**
 */
 inline
-const vector4& 
+const vector4&
 Cell::GetDebugColor() const
 {
     return this->debugColor;
@@ -234,7 +234,7 @@ Cell::GetChildCellAt(int index) const
 //------------------------------------------------------------------------------
 /**
     Get number of entities by type
-    
+
     @param  type    the entity type
     @return         number of entities in pool
 */
@@ -290,7 +290,7 @@ Cell::GetTransform() const
 
 //------------------------------------------------------------------------------
 /**
-    Set the bounding box of the cell in global space. This should only be called 
+    Set the bounding box of the cell in global space. This should only be called
     once by the level loader.
 
     @param  b   the cell's bounding box
@@ -315,7 +315,6 @@ Cell::GetBox() const
     return this->bbox;
 }
 
-}; // namespace Graphics
+} // namespace Graphics
 //------------------------------------------------------------------------------
 #endif
-

@@ -171,6 +171,6 @@ Server::GetVendorName() const
     return this->vendorName;
 }
 
-}; // namespace Foundation
+} // namespace Foundation
 //------------------------------------------------------------------------------
 #endif

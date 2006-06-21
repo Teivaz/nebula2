@@ -13,7 +13,7 @@
     derive your own input property classes from the InputProperty class,
     because then the FocusManager will be aware of it (otherwise it will
     just ignore the entity).
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -58,6 +58,6 @@ public:
 
 RegisterFactory(InputProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

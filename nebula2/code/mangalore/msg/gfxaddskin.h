@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::GfxAddSkin
-    
+
     Makes the given skin visible on a Character3.
-    
+
     (C) 2006 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -47,6 +47,6 @@ GfxAddSkin::GetSkinName() const
     return this->skinName;
 }
 
-}; // namespace Message
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

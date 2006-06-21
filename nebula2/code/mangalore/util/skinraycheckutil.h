@@ -29,7 +29,7 @@ namespace Util
 class SkinRayCheckUtil
 {
 public:
-    
+
     /// mesh types
     enum MeshType
     {
@@ -61,10 +61,10 @@ public:
     SkinRayCheckUtil();
     /// destructor
     virtual ~SkinRayCheckUtil();
-    
+
     /// set graphics entity
     void SetGraphicsEntity(Graphics::Entity* entity);
-    
+
     /// make a raycheck and return all intersected faces as index
     bool DoRayCheck(const line3& ray, nArray<faceIntersection>& intersectedFaces);
 
@@ -105,7 +105,7 @@ private:
     void UpdateFaces();
     /// update skinned mesh from character skeleton and bind pose mesh
     void UpdateSkinning();
-    /// 
+    ///
     void UpdateSingleFace(int faceIndex);
     /// find a shapenode child of a transformnode
     void FindShapeNodes(nRoot* parent, nArray<nShapeNode*>& shapeNodes);
@@ -120,7 +120,7 @@ private:
     bool initialized;
     uint lastUpdateFrameId;
     nFixedArray<face> faces;            // face status
-    
+
     // for the segmentation optimization
     nFixedArray<bbox3> segmentationBoxes;
     int segmentationWidth;
@@ -142,6 +142,6 @@ private:
     nRef<nMesh2> refSkinnedMesh;        // the skinned mesh, written to analyse
 };
 
-}; // namespace Util
+} // namespace Util
 //------------------------------------------------------------------------------
 #endif

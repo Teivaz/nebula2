@@ -6,7 +6,7 @@
 
     A specialized physics composite, which binds physics joints contained
     in the composite to the character joints of a Nebula2 character.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "physics/composite.h"
@@ -94,7 +94,6 @@ Ragdoll::GetCharacter() const
     return this->nebCharacter;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-    

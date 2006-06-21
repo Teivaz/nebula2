@@ -3,14 +3,14 @@
 //------------------------------------------------------------------------------
 /**
     @class Properties::ActorPhysicsProperty
- 
-    ActorPhysicsProperty adds "actor physics" to an entity. This is 
+
+    ActorPhysicsProperty adds "actor physics" to an entity. This is
     mainly a capsule which is always kept upright and responds "immediately"
-    to move messages. Attach the ActorPhysicsProperty instead of a 
+    to move messages. Attach the ActorPhysicsProperty instead of a
     PhysicsProperty to an entity.
-    
+
     ActorPhysicsProperty implements the following messages:
-    
+
     MoveGoto
     MoveFollow
     MoveDirection
@@ -18,7 +18,7 @@
     MoveTeleport
     MoveTurn
     MoveRotate
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "properties/abstractphysicsproperty.h"
@@ -56,10 +56,10 @@ public:
     virtual void OnMoveBefore();
     /// called after movement has happened
     virtual void OnMoveAfter();
-    
+
     /// get a pointer to the physics entity
     virtual Physics::Entity* GetPhysicsEntity() const;
-    
+
     /// return true if message is accepted by controller
     virtual bool Accepts(Message::Msg* msg);
     /// handle a single message
@@ -119,7 +119,6 @@ ActorPhysicsProperty::IsGotoActive() const
     return this->gotoPath.isvalid();
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif
-

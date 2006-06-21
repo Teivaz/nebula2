@@ -201,4 +201,4 @@ EnvironmentLoader::CreatePhysicsEntity(Db::Query* query, int queryRowIndex)
     EntityManager::Instance()->AttachEntity(gameEntity);
 }
 
-}; // namespace Loader
+} // namespace Loader

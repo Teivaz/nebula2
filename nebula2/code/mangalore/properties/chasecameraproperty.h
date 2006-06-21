@@ -5,7 +5,7 @@
     @class Properties::ChaseCameraProperty
 
     A chase camera for 3rd person camera control.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "properties/cameraproperty.h"
@@ -77,6 +77,6 @@ protected:
 
 RegisterFactory(ChaseCameraProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

@@ -153,4 +153,4 @@ PhysicsProperty::OnDeactivate()
     }
 }
 
-}; // namespace Properties
+} // namespace Properties

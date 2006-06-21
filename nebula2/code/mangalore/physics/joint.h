@@ -113,7 +113,7 @@ Joint::SetLinkName(const nString& n)
     Get optional link name.
 */
 inline
-const nString& 
+const nString&
 Joint::GetLinkName() const
 {
     return this->linkName;
@@ -175,6 +175,6 @@ Joint::GetDebugVisualizationColor() const
     return vector4(1.0f, 0.0f, 1.0f, 1.0f);
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

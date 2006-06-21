@@ -10,7 +10,7 @@
     where the action happens (for instance where the player controlled
     character is at the moment). This is useful for huge levels where
     physics should only happen in an area around the player.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -30,7 +30,7 @@ class Server;
 class Ray;
 class MouseGripper;
 
-class Level : public Foundation::RefCounted 
+class Level : public Foundation::RefCounted
 {
     DeclareRtti;
 	DeclareFactory(Level);
@@ -282,9 +282,6 @@ Level::GetMouseGripper() const
     return this->mouseGripper;
 }
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-    
-    

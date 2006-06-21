@@ -5,7 +5,7 @@
     @class Physics::JointAxis
 
     Hold parameter definitions for a joint axis.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"
@@ -163,7 +163,7 @@ JointAxis::GetAngle() const
 
 //------------------------------------------------------------------------------
 /**
-    NOTE: setting LoStop to dInfinity to disable the lostop as said in the ODE 
+    NOTE: setting LoStop to dInfinity to disable the lostop as said in the ODE
     docs doesn't work. Thus, explicitely enable/disable low stops.
 */
 inline
@@ -383,7 +383,6 @@ JointAxis::GetStopCFM() const
     return this->stopCfm;
 }
 
-}; // namespace 
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

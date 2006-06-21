@@ -5,7 +5,7 @@
     @class Physics::PhysicsUtil
 
     Implements some static physics utility methods.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -26,7 +26,6 @@ public:
     static bool RayBundleCheck(const vector3& from, const vector3& to, const vector3& upVec, const vector3& leftVec, float bundleRadius, const FilterSet& excludeSet, float& outContactDist);
 };
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

@@ -32,6 +32,6 @@ EntityLoaderBase::Load(const nString& /*levelName*/)
     return false;
 }
 
-}; // namespace Loader
+} // namespace Loader
 
 

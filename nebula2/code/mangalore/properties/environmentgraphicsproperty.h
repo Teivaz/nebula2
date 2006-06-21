@@ -5,14 +5,14 @@
     @class Properties::EnvironmentGraphicsProperty
 
     This is a specialized graphics property which handles all the static
-    environment graphics. Probably 90% of all objects in a level will 
+    environment graphics. Probably 90% of all objects in a level will
     just be static environment objects, so it makes sense to create
     an optimized class just for that.
 
     NOTE: usually you don't need to care about this class. The level loader
     will automatically put all static environment objects into a single
     game entity which has a StaticGraphicsProperty attached.
-        
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -58,9 +58,6 @@ EnvironmentGraphicsProperty::AddGraphicsEntity(Graphics::Entity* gfxEntity)
     this->graphicsEntities.Append(gfxEntity);
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif
-
-
-

@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class UI::Button
-    
+
     A simple button UI element.
 
     (C) 2005 Radon Labs GmbH
@@ -129,6 +129,6 @@ Button::IsMouseOver() const
     return this->mouseOver;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

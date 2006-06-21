@@ -50,4 +50,4 @@ FactoryManager::CreateElement(const nString& type) const
     }
 }
 
-}; // namespace UI
+} // namespace UI

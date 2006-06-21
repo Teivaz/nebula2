@@ -41,4 +41,4 @@ void ResourceProvider::unloadRawDataContainer(CEGUI::RawDataContainer& data) {
     data.setSize(0);
 }
 
-}
+} // namespace CEUI

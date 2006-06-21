@@ -147,4 +147,4 @@ InputProperty::OnBeginFrame()
     }
 }
 
-}; // namespace Properties
+} // namespace Properties

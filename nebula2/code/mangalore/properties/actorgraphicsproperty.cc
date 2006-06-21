@@ -378,4 +378,4 @@ ActorGraphicsProperty::RemSkin(const nString& skinName)
     }
 }
 
-}; // namespace Properties
+} // namespace Properties

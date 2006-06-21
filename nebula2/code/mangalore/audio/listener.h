@@ -6,7 +6,7 @@
 
     A audio subsystem listener object. Make sure to update the
     listener's transform and velocity each frame and you should be set.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -142,7 +142,6 @@ Listener::GetDopplerFactor() const
     return this->listener.GetDopplerFactor();
 }
 
-}; // namespace Audio
-
+} // namespace Audio
 //------------------------------------------------------------------------------
 #endif

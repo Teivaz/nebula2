@@ -297,7 +297,6 @@ CharEntity::GetGroundExcludeSet()
     return this->groundExcludeSet;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-

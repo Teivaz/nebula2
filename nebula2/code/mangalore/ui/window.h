@@ -3,8 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class UI::Window
-    
-    Base class for windows. A window generally has exactly one canvas 
+
+    Base class for windows. A window generally has exactly one canvas
     attached and a virtual method to handle the events for the window.
 
     Override this class to implement windows with new behaviour.
@@ -105,6 +105,6 @@ Window::GetResource() const
     return this->resName;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

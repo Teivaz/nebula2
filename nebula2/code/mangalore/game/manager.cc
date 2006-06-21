@@ -81,4 +81,4 @@ Manager::OnSave()
     // empty
 }
 
-}; // namespace Game
+} // namespace Game

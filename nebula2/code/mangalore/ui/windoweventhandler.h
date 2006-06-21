@@ -3,11 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class UI::WindowEventHandler
-  
+
     The window event handler routes gui event to a window object's
     HandleEvent() method. It is created and fully controlled by
     the window.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "ui/eventhandler.h"
@@ -46,6 +46,6 @@ WindowEventHandler::SetWindow(Window* w)
     this->window = w;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

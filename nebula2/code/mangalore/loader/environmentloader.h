@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class Loader::EnvironmentLoader
-    
+
     Helper class which loads all the environment objects into a level.
     Called by Loader::LevelLoader.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/nstring.h"
@@ -40,6 +40,6 @@ private:
 };
 RegisterFactory(EnvironmentLoader);
 
-}; // namespace Loader
+} // namespace Loader
 //------------------------------------------------------------------------------
 #endif

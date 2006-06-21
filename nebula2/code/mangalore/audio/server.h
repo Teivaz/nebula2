@@ -5,7 +5,7 @@
     @class Audio::Server
 
     The Audio::Server object is the central object of the audio subsystem.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -179,6 +179,6 @@ Server::GetListener() const
     return 0;
 }
 
-}; // namespace Audio
+} // namespace Audio
 //------------------------------------------------------------------------------
 #endif

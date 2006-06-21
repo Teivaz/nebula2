@@ -37,4 +37,4 @@ Control::OnCreate(Element* parent)
     this->SetEnabled(this->gfxNode->GetBoolAttr("rlGuiEnabled"));
 }
 
-}; // namespace UI
+} // namespace UI

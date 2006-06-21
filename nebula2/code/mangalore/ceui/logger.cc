@@ -43,4 +43,4 @@ void Logger::logEvent(const CEGUI::String& message, CEGUI::LoggingLevel level) {
 void Logger::setLogFilename(const CEGUI::String& filename, bool append) {
 }
 
-}
+} // namespace CEUI

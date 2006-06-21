@@ -107,5 +107,5 @@ Hinge2Joint::RenderDebug()
     }
 }
 
-}; // namespace Physics
+} // namespace Physics
 

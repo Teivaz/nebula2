@@ -40,6 +40,6 @@ protected:
     nTime timeout;
 };
 
-}; // namespace FSM
+} // namespace FSM
 //------------------------------------------------------------------------------
 #endif

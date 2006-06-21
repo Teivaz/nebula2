@@ -7,8 +7,8 @@
     Properties are attached to game entities to add specific functionality
     or behaviours to the entity. For instance, you add a GraphicsProperty
     if the entity should be able render itself, or you add an AudioProperty
-    if the entity should be able to emit sound. Properties are derived from 
-    the Message::Port class and as such may receive and handle 
+    if the entity should be able to emit sound. Properties are derived from
+    the Message::Port class and as such may receive and handle
     messages but they are not required to do so.
 
     (C) 2005 Radon Labs GmbH
@@ -104,6 +104,6 @@ Property::HasEntity() const
     return this->entity != 0;
 }
 
-}; // namespace Property
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

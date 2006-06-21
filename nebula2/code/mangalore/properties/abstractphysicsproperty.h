@@ -5,7 +5,7 @@
     @class Properties::AbstractPhysicsProperty
 
     Abstract Physics property, provides a enable and disable mechanism.
-  
+
     (C) 2005 Radon Labs GmbH
 */
 #include "properties/transformableproperty.h"
@@ -63,9 +63,9 @@ inline
 bool
 AbstractPhysicsProperty::IsEnabled() const
 {
-    return this->enabled;    
+    return this->enabled;
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

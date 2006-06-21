@@ -87,4 +87,4 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
     return graphicsEntities;
 }
 
-}; // namespace Util
+} // namespace Util

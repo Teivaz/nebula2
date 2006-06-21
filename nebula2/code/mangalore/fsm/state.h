@@ -39,7 +39,6 @@ protected:
     nString name;
 };
 
-}; // namespace FSM
-
+} // namespace FSM
 //------------------------------------------------------------------------------
 #endif

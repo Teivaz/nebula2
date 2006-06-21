@@ -92,6 +92,6 @@ MoveFollow::GetDistance() const
     return this->distance;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

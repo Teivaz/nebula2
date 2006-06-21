@@ -14,7 +14,7 @@
 
     To add or replace Manager objects, derive from Game::Server and
     overwrite the SetupManagers() method.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -79,7 +79,6 @@ Server::Instance()
     return Server::Singleton;
 }
 
-}; // namespace Game
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif
-

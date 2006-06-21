@@ -72,6 +72,6 @@ PhysicsProperty::GetPhysicsEntity() const
     return this->physicsEntity.get_unsafe();
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

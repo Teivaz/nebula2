@@ -153,4 +153,4 @@ CmdLineArgs::GetMatrix44(const nString& name) const
     return this->argValues[this->FindArgIndex(name)].AsMatrix44();
 }
 
-}; // namespace Util
+} // namespace Util

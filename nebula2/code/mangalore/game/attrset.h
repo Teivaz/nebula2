@@ -22,9 +22,9 @@ class AttrSet : public Foundation::RefCounted
 public:
     /// Add attributes to entity.
     virtual void SetupEntity(Entity* entity) = 0;
-    
+
 };
 
-}; // namespace Game
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

@@ -81,6 +81,6 @@ ActorGraphicsProperty::GetGraphicsEntity() const
     return (Graphics::CharEntity*) this->graphicsEntities[0].get();
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

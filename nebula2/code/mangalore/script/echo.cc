@@ -52,4 +52,4 @@ Echo::GetName() const
     return "echo";
 }
 
-}; // namespace Script
+} // namespace Script

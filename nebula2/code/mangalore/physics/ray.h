@@ -6,7 +6,7 @@
 
     Ray objects are used to perform ray checks on the physics world
     representation.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -51,7 +51,7 @@ public:
 private:
     /// ODE collision callback function
     static void OdeRayCallback(void* data, dGeomID o1, dGeomID o2);
-    
+
     enum
     {
         MaxContacts = 16,
@@ -148,8 +148,6 @@ Ray::GetExcludeFilterSet() const
     return this->excludeFilterSet;
 }
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-

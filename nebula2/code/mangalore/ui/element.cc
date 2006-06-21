@@ -394,4 +394,4 @@ Element::PutEvent(const nString& eventName)
     Server::Instance()->PutEvent(eventName);
 }
 
-}; // namespace
+} // namespace

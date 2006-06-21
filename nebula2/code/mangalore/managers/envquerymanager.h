@@ -103,6 +103,6 @@ EnvQueryManager::HasMouseIntersection() const
     return this->mouseIntersection;
 }
 
-}; // namespace Managers
+} // namespace Managers
 //------------------------------------------------------------------------------
 #endif

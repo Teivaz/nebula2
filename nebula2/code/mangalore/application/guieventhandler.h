@@ -7,7 +7,7 @@
     A GUI event handler for the GuiStateHandler application state handler.
     This generic event handler class just routes the events it receives
     to the GuiStateHandler::HandleEvent() method.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "ui/eventhandler.h"
@@ -60,6 +60,6 @@ GuiEventHandler::GetGuiStateHandler() const
     return this->guiStateHandler;
 }
 
-}; // namespace Application
+} // namespace Application
 //------------------------------------------------------------------------------
 #endif

@@ -5,7 +5,7 @@
     @class Message::GfxRemAttachment
 
     Remove an attachment from a joint.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -50,6 +50,6 @@ GfxRemAttachment::GetJointName() const
 {
     return this->jointName;
 }
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

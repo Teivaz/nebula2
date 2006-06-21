@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class UI::EventHandler
-    
+
     An UI event handler implements the logic behind an user interface. It is
-    implemented as a Message::Port which accepts messages of the type 
+    implemented as a Message::Port which accepts messages of the type
     UI::Event. Derive a subclass to implement your UI logic inside
     the HandleEvent() method.
 */
@@ -38,6 +38,6 @@ protected:
 
 RegisterFactory(EventHandler);
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

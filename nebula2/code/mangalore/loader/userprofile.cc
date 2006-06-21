@@ -167,7 +167,7 @@ UserProfile::Close()
     this->stream.Close();
 }
 
-}; // namespace Loader
+} // namespace Loader
 
 
 

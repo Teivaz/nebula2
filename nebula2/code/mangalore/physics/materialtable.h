@@ -5,7 +5,7 @@
     @class Physics::MaterialTable
 
     Contains material properties and friction coefficients.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -17,7 +17,7 @@ namespace Physics
 {
 typedef int MaterialType;
 const MaterialType InvalidMaterial = -1;
-        
+
 class MaterialTable
 {
 public:
@@ -46,13 +46,13 @@ private:
 
     struct material {
         material() : name(), density(0.0f) {}
-        nString name; 
-        float density; 
+        nString name;
+        float density;
     };
-    struct interaction { 
+    struct interaction {
         interaction() : friction(0.0f), bouncyness(0.0f), collSound() {}
-        float friction; 
-        float bouncyness; 
+        float friction;
+        float bouncyness;
         nString collSound;
     };
 
@@ -61,7 +61,6 @@ private:
     static nArray<struct interaction> interactions;
 };
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-    

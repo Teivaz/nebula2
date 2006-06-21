@@ -59,4 +59,4 @@ Msg::BroadcastAsync()
     Server::Instance()->BroadcastAsync(this);
 }
 
-}; // namespace Message
+} // namespace Message

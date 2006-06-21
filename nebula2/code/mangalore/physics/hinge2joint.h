@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Physics::Hinge2Joint
-    
+
     A hinge2 joint. See ODE docs for details.
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "physics/joint.h"
@@ -59,7 +59,7 @@ RegisterFactory(Hinge2Joint);
 /**
 */
 inline
-void 
+void
 Hinge2Joint::SetAnchor(const vector3& v)
 {
     this->anchor = v;
@@ -69,7 +69,7 @@ Hinge2Joint::SetAnchor(const vector3& v)
 /**
 */
 inline
-const vector3& 
+const vector3&
 Hinge2Joint::GetAnchor() const
 {
     return this->anchor;
@@ -125,6 +125,6 @@ Hinge2Joint::GetSuspensionCFM() const
     return this->suspCfm;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

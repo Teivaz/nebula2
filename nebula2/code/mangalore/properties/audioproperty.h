@@ -5,7 +5,7 @@
     @class Properties::AudioProperty
 
     An audio property adds the ability to emit sounds to a game entity.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -24,6 +24,6 @@ public:
 
 RegisterFactory(AudioProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

@@ -72,7 +72,6 @@ private:
 
 RegisterFactory(Level);
 
-}; // namespace Graphics
-
+} // namespace Graphics
 //------------------------------------------------------------------------------
 #endif

@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Physics::CapsuleShape
-    
+
     A capsule shape (a cylinder with round caps).
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "physics/shape.h"
@@ -13,7 +13,7 @@
 //------------------------------------------------------------------------------
 namespace Physics
 {
-class CapsuleShape : public Shape    
+class CapsuleShape : public Shape
 {
     DeclareRtti;
 	DeclareFactory(CapsuleShape);
@@ -83,7 +83,6 @@ CapsuleShape::GetLength() const
     return this->length;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-

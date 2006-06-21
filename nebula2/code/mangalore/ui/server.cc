@@ -392,4 +392,4 @@ Server::IsMouseOverGui() const
     return false;
 }
 
-}; // namespace UI
+} // namespace UI

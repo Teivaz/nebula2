@@ -19,6 +19,6 @@ public:
     virtual void setLogFilename(const CEGUI::String& filename, bool append);
 };
 
-}
-
+} // namespace CEUI
+//------------------------------------------------------------------------------
 #endif

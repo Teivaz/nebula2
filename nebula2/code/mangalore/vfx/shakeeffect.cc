@@ -80,4 +80,4 @@ ShakeEffect::Trigger()
     }
 }
 
-}; // namespace VFX
+} // namespace VFX

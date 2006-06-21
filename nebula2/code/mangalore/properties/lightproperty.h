@@ -4,9 +4,9 @@
 /**
     @class Properties::LightProperty
 
-    A light property adds a light source object (Graphics::LightEntity) 
+    A light property adds a light source object (Graphics::LightEntity)
     to a game entity.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -54,7 +54,7 @@ public:
 
 private:
     Ptr<Graphics::LightEntity> lightEntity;
-    nLight light;    
+    nLight light;
 };
 
 RegisterFactory(LightProperty);
@@ -83,6 +83,6 @@ LightProperty::GetLight() const
     return this->light;
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

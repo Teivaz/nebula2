@@ -389,6 +389,6 @@ Entity::GetUserData() const
     return this->userData;
 }
 
-}; // namespace Graphics
+} // namespace Graphics
 //------------------------------------------------------------------------------
 #endif

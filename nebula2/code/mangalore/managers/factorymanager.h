@@ -4,7 +4,7 @@
 /**
     @class Managers::FactoryManager
 
-    The FactoryManager is responsible for creating new game entities. 
+    The FactoryManager is responsible for creating new game entities.
     FactoryManager must be extended by Mangalore applications if the
     application needs new game entity classes.
 
@@ -16,7 +16,7 @@
     entity types of your application. This file defines entity types
     by the properties which are added to them.
 
-    (C) 2005 Radon Labs GmbH  
+    (C) 2005 Radon Labs GmbH
 */
 #include "game/manager.h"
 #include "game/property.h"
@@ -85,6 +85,6 @@ FactoryManager::Instance()
     return Singleton;
 }
 
-}; // namespace Managers
+} // namespace Managers
 //------------------------------------------------------------------------------
 #endif

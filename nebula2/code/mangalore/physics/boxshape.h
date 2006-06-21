@@ -5,7 +5,7 @@
     @class Physics::BoxShape
 
     A box shape in the Physics subsystem.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "physics/shape.h"
@@ -59,6 +59,6 @@ BoxShape::GetSize() const
     return this->size;
 }
 
-}; // namespace OdePhysics
+} // namespace Physics
 //------------------------------------------------------------------------------
-#endif    
+#endif

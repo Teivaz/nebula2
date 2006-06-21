@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::GfxRemSkin
-    
+
     Makes the given skin invisibe on a Character3.
 
     (C) 2006 Radon Labs GmbH
@@ -47,6 +47,6 @@ GfxRemSkin::GetSkinName() const
     return this->skinName;
 }
 
-}; // namespace Message
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

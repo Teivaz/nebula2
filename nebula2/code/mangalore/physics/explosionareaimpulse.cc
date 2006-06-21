@@ -100,4 +100,4 @@ ExplosionAreaImpulse::HandleRigidBody(RigidBody* rigidBody, const vector3& rigid
 //    }
 }
 
-}; // namespace Physics
+} // namespace Physics

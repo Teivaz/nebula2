@@ -7,7 +7,7 @@
     A filter set object allows to define conditions which define a set of
     physics entities. It is used to include or exclude physics entities
     from various tests (like stabbing checks).
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "util/narray.h"
@@ -173,7 +173,6 @@ FilterSet::CheckMaterialType(uint id) const
     return (this->materialTypes.Find(id) != 0);
 }
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

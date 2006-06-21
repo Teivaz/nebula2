@@ -54,7 +54,6 @@ private:
 	nArray<Cell> table;
 };
 
-}; // namespace Foundation
-
+} // namespace Foundation
 //------------------------------------------------------------------------------
 #endif

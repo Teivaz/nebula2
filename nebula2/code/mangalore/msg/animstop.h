@@ -3,11 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::AnimStop
-  
+
     Stop path animation playback.
-    
+
     (C) 2005 Radon Labs GmbH
-*/    
+*/
 #include "message/msg.h"
 
 //------------------------------------------------------------------------------
@@ -22,7 +22,6 @@ class AnimStop : public Message::Msg
 
 RegisterFactory(AnimStop);
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
-

@@ -301,6 +301,6 @@ PhysicsGfxUtil::TransferRagdollTransforms(Physics::Entity* physicsEntity, Graphi
     return true;
 }
 
-}; // namespace Util
+} // namespace Util
 
 

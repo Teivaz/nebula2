@@ -61,4 +61,4 @@ EventHandler::HandleEvent(Event* event)
     // empty (implement in subclass)
 }
 
-}; // namespace UI
+} // namespace UI

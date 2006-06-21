@@ -250,4 +250,4 @@ Window::Inside(const vector2& mousePos)
     }
 }
 
-}; // namespace UI
+} // namespace UI

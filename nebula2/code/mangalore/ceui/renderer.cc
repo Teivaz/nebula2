@@ -219,4 +219,4 @@ CEGUI::ResourceProvider* Renderer::createResourceProvider() {
     return resourceProvider;
 }
 
-}
+} // namespace CEUI

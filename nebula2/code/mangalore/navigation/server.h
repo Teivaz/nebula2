@@ -107,6 +107,6 @@ Server::GetMap() const
     return this->map;
 }
 
-}; // namespace Navigation
+} // namespace Navigation
 //------------------------------------------------------------------------------
 #endif

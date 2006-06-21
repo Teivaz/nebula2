@@ -5,7 +5,7 @@
     @class Physics::MeshShape
 
     An shape containing a triangle mesh.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "physics/shape.h"
@@ -171,8 +171,6 @@ MeshShape::GetFilename() const
     return this->filename;
 }
 
-}; // namespace OdePhysics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-
-    

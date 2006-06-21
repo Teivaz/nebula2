@@ -6,7 +6,7 @@
 
     An audio entity associates a sound object with position
     and velocity.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -191,6 +191,6 @@ Entity::IsPlaying() const
     }
 }
 
-}; // namespace Audio
+} // namespace Audio
 //------------------------------------------------------------------------------
-#endif    
+#endif

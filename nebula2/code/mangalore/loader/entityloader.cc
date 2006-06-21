@@ -74,6 +74,6 @@ EntityLoader::Load(const nString& levelName)
     return true;
 }
 
-}; // namespace Loader
+} // namespace Loader
 
 

@@ -368,6 +368,6 @@ Server::AddNumVisibleCells(Entity::LinkType linkType, int incr)
 }
 #endif
 
-}; // namespace Graphics
+} // namespace Graphics
 //------------------------------------------------------------------------------
 #endif

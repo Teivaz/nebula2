@@ -119,4 +119,4 @@ AbstractPhysicsProperty::GetPhysicsEntity() const
     return 0;
 }
 
-}; // namespace Properties
+} // namespace Properties

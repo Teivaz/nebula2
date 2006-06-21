@@ -95,4 +95,4 @@ TimeManager::OnFrame()
     this->frameId++;
 }
 
-}; // namespace Game
+} // namespace Game

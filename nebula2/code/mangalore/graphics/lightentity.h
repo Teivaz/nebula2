@@ -7,7 +7,7 @@
     A graphics entity which emits light into its surroundings.
     A light entity does not need an existing Nebula2 object to work, it will
     just create it's own light.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "graphics/entity.h"
@@ -79,6 +79,6 @@ LightEntity::GetLight() const
     return this->light;
 }
 
-}; // namespace Graphics
+} // namespace Graphics
 //------------------------------------------------------------------------------
 #endif

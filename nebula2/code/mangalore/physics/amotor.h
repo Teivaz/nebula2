@@ -75,7 +75,6 @@ AMotor::AxisParams(uint axisIndex) const
     return this->axisParams[axisIndex];
 }
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
