@@ -7,9 +7,9 @@
 /**
 */
 nDirectoryWatchHandler::nDirectoryWatchHandler() :
-    watchThread(0),
+    watchThread(0)
 #ifdef __WIN32__
-    directoryHandle(0)
+    , directoryHandle(0)
 #endif
 {
     // empty
@@ -34,15 +34,15 @@ nDirectoryWatchHandler::Watch(nString& directory)
     this->path = directory;
 
 #ifdef __WIN32__
-    // Get the hanlde of the directory itself.
+    // Get the handle of the directory itself.
     this->directoryHandle = CreateFile(this->path.Get(), FILE_LIST_DIRECTORY | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | 
                                         FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL);
-#endif
 
     if (this->directoryHandle)
     {
         this->watchThread = n_new(nThread(this->WatchThreadFunc, nThread::Normal, 0, 0, 0, (void*)this));
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -56,11 +56,13 @@ nDirectoryWatchHandler::Unwatch()
     n_delete(this->watchThread);
     this->watchThread = 0;
 
+#ifdef __WIN32__
     if (this->directoryHandle) 
     {
         CloseHandle(this->directoryHandle);
         this->directoryHandle = NULL;
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
