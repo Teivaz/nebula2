@@ -306,7 +306,8 @@ nSQLite3Database::CreateIndex(const nString& tableName, const nArray<nString>& i
     n_assert(this->IsLoaded());
     n_assert(this->sqliteHandle);
     nString sql;
-    sql.Format("CREATE INDEX %s_Index ON %s ( %s )", tableName.Get(), tableName.Get(), nString::Concatenate(indexedColumns, ","));
+    nString columns = nString::Concatenate(indexedColumns, ",");
+    sql.Format("CREATE INDEX %s_Index ON %s ( %s )", tableName.Get(), tableName.Get(), columns.Get());
     nSqlQuery* query = this->CreateQuery(sql);
     query->Execute();
     query->Release();
