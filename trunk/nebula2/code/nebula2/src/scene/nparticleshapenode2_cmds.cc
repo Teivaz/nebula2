@@ -38,8 +38,6 @@ static void n_p2setparticlevelocityfactor(void* slf, nCmd* cmd);
 static void n_p2setparticlergb(void* slf, nCmd* cmd);
 static void n_p2setparticlealpha(void* slf, nCmd* cmd);
 static void n_p2setparticleairresistance(void* slf, nCmd* cmd);
-static void n_p2setparticlefriction(void* slf, nCmd* cmd);
-static void n_p2setparticlerotationfriction(void* slf, nCmd* cmd);
 
 
 //------------------------------------------------------------------------------
