@@ -54,7 +54,7 @@ main(int argc, const char** argv)
     nKernelServer* kernelServer = new nKernelServer;
 
     // read input anim
-    n_printf("-> loading anim '%s'\n", inFileArg);
+    n_printf("-> loading anim '%s'\n", inFileArg.Get());
     nString filename = inFileArg;
     if (!anim.Load(kernelServer->GetFileServer(), inFileArg.Get()))
     {

@@ -77,7 +77,7 @@ main(int argc, const char** argv)
     // create an ipc client and try to connect
     printf("*** Nebula2 remote shell *** \n");
     printf("(C) 2003 RadonLabs GmbH\n");
-    printf("Trying host %s port %s...\n", hostArg, portArg);
+    printf("Trying host %s port %s...\n", hostArg.Get(), portArg.Get());
     
     nIpcAddress ipcAddress(hostArg.Get(), portArg.Get());
     nIpcClient ipcClient;
