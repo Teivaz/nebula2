@@ -106,7 +106,7 @@ nMouseCursor::Unload()
 
 //------------------------------------------------------------------------------
 /**
-/* create empty mouse cursor
+    create empty mouse cursor
 */
 void
 nMouseCursor::CreateEmpty(int width, int height) {
