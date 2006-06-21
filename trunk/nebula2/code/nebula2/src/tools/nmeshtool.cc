@@ -144,7 +144,7 @@ main(int argc, const char** argv)
     nKernelServer* kernelServer = new nKernelServer;
 
     // read input mesh
-    n_printf("-> loading mesh '%s'\n", inFileArg);
+    n_printf("-> loading mesh '%s'\n", inFileArg.Get());
     nString filename = inFileArg;
     if (oldN3d2Loader && (0 == strcmp(filename.GetExtension(), "n3d2")))
     {
@@ -172,7 +172,7 @@ main(int argc, const char** argv)
         n_printf("-> loading append mesh '%s'\n", appendFileArg.Get());
         if (!appendMesh.Load(kernelServer->GetFileServer(), appendFileArg.Get()))
         {
-            n_printf("nmeshtool error: Could not load append mesh '%s'\n", appendFileArg);
+            n_printf("nmeshtool error: Could not load append mesh '%s'\n", appendFileArg.Get());
             delete kernelServer;
             return 5;
         }
