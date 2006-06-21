@@ -122,4 +122,4 @@ Canvas::OnRender()
     this->graphicsEntity->Render();
 }
 
-}; // namespace UI
+} // namespace UI

@@ -3,11 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::AnimPlay
-  
+
     Start path animation playback.
-    
+
     (C) 2005 Radon Labs GmbH
-*/    
+*/
 #include "message/msg.h"
 
 //------------------------------------------------------------------------------
@@ -22,7 +22,6 @@ class AnimPlay : public Message::Msg
 
 RegisterFactory(AnimPlay);
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
-

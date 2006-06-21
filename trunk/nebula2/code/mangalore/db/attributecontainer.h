@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Db::AttributeContainer
-    
+
     A simple container class for attributes.
-    
+
     (C) 2006 Radon Labs GmbH
 */
 #include "util/narray.h"
@@ -39,6 +39,6 @@ private:
     nArray<Attribute> attrs;
 };
 
-}; // namespace Db
+} // namespace Db
 //------------------------------------------------------------------------------
 #endif

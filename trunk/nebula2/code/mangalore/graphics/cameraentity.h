@@ -4,10 +4,10 @@
 /**
     @class Graphics::CameraEntity
 
-    A camera entity can check shape entities for visibility and 
+    A camera entity can check shape entities for visibility and
     establishes a link between visible shape entities and the camera entity.
     A camera can be made the current camera in the level it is attached to.
-    Only one camera entity can be current at any time. 
+    Only one camera entity can be current at any time.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -86,8 +86,6 @@ CameraEntity::UpdateViewProjection()
     this->viewProjMatrix *= this->camera.GetProjection();
 }
 
-}; // namespace Graphics
-
+} // namespace Graphics
 //------------------------------------------------------------------------------
 #endif
-

@@ -23,7 +23,7 @@
 
     Properties must indicate through the virtual GetActiveEntityPools()
     method in which pools they want to be active. Most properties
-    are active in both pools, some properties 
+    are active in both pools, some properties
     (like the GraphicsProperty) make only sense for Live entities.
     Properties where the active entity pools mask doesn't match
     the pool of their entity won't even be added, and as such don't
@@ -68,7 +68,7 @@ public:
     Entity();
     /// destructor
     virtual ~Entity();
-    
+
     //=== basics ===
 
     /// get unique id of entity
@@ -188,7 +188,7 @@ private:
     EntityPool entityPool;
 
     static EntityId uniqueIdCounter;
-    
+
     /// the entity was created from template, forces the save of all attributes
     bool createdFromTemplate;
 };
@@ -448,6 +448,6 @@ Entity::GetCreatedFromTemplate() const
     return this->createdFromTemplate;
 }
 
-}; // namespace Game
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

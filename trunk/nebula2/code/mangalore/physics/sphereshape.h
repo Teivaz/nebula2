@@ -5,7 +5,7 @@
     @class Physics::SphereShape
 
     A sphere shape in the Physics subsystem.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "physics/shape.h"
@@ -59,6 +59,6 @@ SphereShape::GetRadius() const
     return this->radius;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::CameraOrbit, Message::Msg);
 ImplementFactory(Message::CameraOrbit);
 ImplementMsgId(CameraOrbit);
-}; // namespace Msg
+} // namespace Message

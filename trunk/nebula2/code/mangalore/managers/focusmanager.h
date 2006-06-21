@@ -97,7 +97,6 @@ FocusManager::Instance()
     return Singleton;
 }
 
-}; // namespace Managers
+} // namespace Managers
 //------------------------------------------------------------------------------
 #endif
-

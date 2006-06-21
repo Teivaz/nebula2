@@ -4,9 +4,9 @@
 /**
     @class Util::PhysicsGfxUtil
 
-    Helper class which knows how to connect complex physics composites to 
+    Helper class which knows how to connect complex physics composites to
     graphics entities.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "physics/entity.h"
@@ -42,6 +42,6 @@ private:
     static bool TransferRagdollTransforms(Physics::Entity* physicsEntity, Graphics::CharEntity* graphicsEntity);
 };
 
-}; // namespace Util
+} // namespace Util
 //------------------------------------------------------------------------------
 #endif

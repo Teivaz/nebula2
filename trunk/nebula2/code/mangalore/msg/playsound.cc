@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::PlaySound, Message::Msg);
 ImplementFactory(Message::PlaySound);
 ImplementMsgId(PlaySound);
-}; // namespace Msg
+} // namespace Message

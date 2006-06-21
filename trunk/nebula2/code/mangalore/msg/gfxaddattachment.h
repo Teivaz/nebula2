@@ -5,7 +5,7 @@
     @class Message::GfxAddAttachment
 
     Attach a graphics entity defined by a resource name to a joint.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -101,6 +101,6 @@ GfxAddAttachment::GetOffsetMatrix() const
     return this->offsetMatrix;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

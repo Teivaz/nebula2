@@ -6,7 +6,7 @@
 
     Commands an entity to turn into the specified direction defined
     by a 3d vector. The direction vector can be absolute or camera relative.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -79,7 +79,6 @@ MoveTurn::GetCameraRelative() const
     return this->camRelative;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
-

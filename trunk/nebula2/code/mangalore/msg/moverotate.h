@@ -5,7 +5,7 @@
     @class Message::MoveRotate
 
     Commands an entity rotate around the y-axis for a new heading.
-    
+
     (C) 2006 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -53,7 +53,6 @@ MoveRotate::GetAngle() const
     return this->angle;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
-

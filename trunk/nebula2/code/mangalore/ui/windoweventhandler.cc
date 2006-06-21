@@ -38,5 +38,5 @@ WindowEventHandler::HandleEvent(Event* e)
     this->window->HandleEvent(e);
 }
 
-}; // namespace UI
+} // namespace UI
 

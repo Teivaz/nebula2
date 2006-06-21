@@ -3,15 +3,15 @@
 //------------------------------------------------------------------------------
 /**
     @class UI::Event
-    
+
     User interface events are emitted by user interface and handled by the
     currently registered UI event handler. UIs usually consist of 2 parts,
     the user interface itself (a hierarchy of UI::Element objects, constructed
-    from an XUI file) which represents the visual part, and an event handler 
+    from an XUI file) which represents the visual part, and an event handler
     which implements the logic behind the UI.
-    
+
     (C) 2005 Radon Labs GmbH
-*/    
+*/
 #include "message/msg.h"
 
 //------------------------------------------------------------------------------
@@ -66,6 +66,6 @@ Event::GetEventName() const
     return this->eventName;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

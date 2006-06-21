@@ -145,7 +145,6 @@ Server::GetActiveEffectAt(int index) const
     return this->activeEffects[index];
 }
 
-}; // namespace VFX
-
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

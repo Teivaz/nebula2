@@ -5,7 +5,7 @@
     @class Audio::WaveResource
 
     A wave resource is an entry in a WaveBank.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -136,6 +136,6 @@ WaveResource::GetVolume() const
     return this->volume;
 }
 
-}; // namespace Audio
+} // namespace Audio
 //------------------------------------------------------------------------------
 #endif

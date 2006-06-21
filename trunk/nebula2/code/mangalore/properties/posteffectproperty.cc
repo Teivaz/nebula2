@@ -109,4 +109,4 @@ PostEffectProperty::OnRender()
     varServer->SetFloatVariable("NoiseFrequency", GetEntity()->GetFloat(Attr::NoiseFrequency));
 }
 
-}; // namespace Properties
+} // namespace Properties

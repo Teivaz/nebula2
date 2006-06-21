@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class Db::Query
-    
-    This is a wrapper around Nebula2's nSqlQuery and provides 
+
+    This is a wrapper around Nebula2's nSqlQuery and provides
     attribute-type-safe queries into the world database.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/refcounted.h"
@@ -75,7 +75,7 @@ public:
     /// return a single attribute value by attribute id
     matrix44 GetMatrix44(const Attr::Matrix44AttributeID& attrId, int rowIndex) const;
 
-private:    
+private:
     nString tableName;
     nArray<nString> resultAttrs;
     nArray<Db::Attribute> whereAttrs;
@@ -310,6 +310,6 @@ Query::GetMatrix44(const Attr::Matrix44AttributeID& attrId, int rowIndex) const
     return attribute.GetMatrix44();
 }
 
-}; // namespace Db
+} // namespace Db
 //------------------------------------------------------------------------------
 #endif

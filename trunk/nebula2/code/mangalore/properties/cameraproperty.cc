@@ -156,4 +156,4 @@ CameraProperty::OnRender()
     }
 }
 
-}; // namespace Properties
+} // namespace Properties

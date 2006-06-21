@@ -72,7 +72,6 @@ Resource::GetNode() const
     return this->refNode.get();
 }
 
-}; // namespace Graphics
-
+} // namespace Graphics
 //------------------------------------------------------------------------------
 #endif

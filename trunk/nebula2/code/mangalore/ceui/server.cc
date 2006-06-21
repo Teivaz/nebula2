@@ -276,4 +276,4 @@ bool Server::IsMouseOverGui() const {
     return ceGuiSystem->getWindowContainingMouse() != ceGuiSystem->getGUISheet();
 }
 
-}
+} // namespace CEUI

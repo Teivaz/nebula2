@@ -5,7 +5,7 @@
     @class Properties::ActorAnimationProperty
 
     Control the animations of a actor.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -35,6 +35,6 @@ protected:
 
 RegisterFactory(ActorAnimationProperty);
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

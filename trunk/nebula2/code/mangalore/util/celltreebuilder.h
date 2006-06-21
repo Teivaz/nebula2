@@ -5,11 +5,11 @@
     @class Util::CellTreeBuilder
 
     Attaches a cell structure to a graphics level.
-  
-    FIXME: It would certainly be more efficient to implement the actual quad 
+
+    FIXME: It would certainly be more efficient to implement the actual quad
     tree culling stuff withing a Cell class. The Nebula2 quadtree class
     is definitely better then a simple tree of Cells.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/nref.h"
@@ -33,11 +33,11 @@ public:
 private:
     /// create a quad tree and its children
     Graphics::Cell* CreateQuadTreeCell(Graphics::Cell* parentCell, uint curLevel, uint curCol, uint curRow);
-   
+
     nQuadTree quadTree;
     int numCellsBuilt;
 };
 
-}; // namespace Util
+} // namespace Util
 //------------------------------------------------------------------------------
 #endif

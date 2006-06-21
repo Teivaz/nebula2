@@ -7,7 +7,7 @@
     RigidBody is the internal base class for all types of rigid bodies.
     Subclasses of RigidBody implement specific shapes. RigidBodies can
     be connected by Joints to form a hierarchy.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -39,7 +39,7 @@ public:
         JointNode,
 
         NumLinkTypes,
-    };  
+    };
 
     /// an unique rigid body id
     typedef unsigned int Id;
@@ -533,7 +533,6 @@ RigidBody::GetEnableGravity() const
     return dBodyGetGravityMode(this->odeBodyId) != 0;
 }
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
-#endif    
+#endif

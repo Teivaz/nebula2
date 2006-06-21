@@ -33,7 +33,6 @@ private:
     void ParseJointRigidBodies(Composite* composite, const nStream& stream, Joint* joint);
 };
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

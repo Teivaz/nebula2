@@ -65,6 +65,6 @@ private:
     StateTableEntry* lastState;
 };
 
-}; // namespace FSM
+} // namespace FSM
 //------------------------------------------------------------------------------
 #endif

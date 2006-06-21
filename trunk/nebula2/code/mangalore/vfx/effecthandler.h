@@ -8,7 +8,7 @@
 
     PlayVisualEffect
     PlayShakeEffect
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "message/port.h"
@@ -34,7 +34,6 @@ public:
 
 RegisterFactory(EffectHandler);
 
-}; // namespace VFX
-
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

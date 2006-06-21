@@ -86,4 +86,4 @@ AMotor::UpdateTransform(const matrix44& m)
     }
 }
 
-}; // namespace Physics
+} // namespace Physics

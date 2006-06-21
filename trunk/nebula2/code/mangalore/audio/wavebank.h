@@ -6,7 +6,7 @@
 
     Holds a number of sound resources. There is usually one wave bank
     associated with a game level.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -25,7 +25,7 @@ class nSound3;
 namespace Audio
 {
 class WaveResource;
-    
+
 class WaveBank : public Foundation::RefCounted
 {
     DeclareRtti;
@@ -104,7 +104,6 @@ WaveBank::GetFilename() const
 }
 
 
-}; // namespace Audio
+} // namespace Audio
 //------------------------------------------------------------------------------
-#endif    
-
+#endif

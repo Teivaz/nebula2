@@ -38,8 +38,7 @@ private:
 
 RegisterFactory(SoundFxHandler);
 
-}; // namespace Audio
-
+} // namespace Audio
 //------------------------------------------------------------------------------
 #endif
 

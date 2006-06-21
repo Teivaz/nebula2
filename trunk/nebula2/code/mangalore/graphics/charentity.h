@@ -5,7 +5,7 @@
     @class Graphics::CharEntity
 
     A graphics entity specialized for rendering animated characters.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "graphics/entity.h"
@@ -39,7 +39,7 @@ public:
     /// set the current base animation (usually loop anims)
     void SetBaseAnimation(const nString& anim, float timeOffset);
     /// get current base animation
-    const nString& GetBaseAnimation() const;    
+    const nString& GetBaseAnimation() const;
     /// get base animation duration
     nTime GetBaseAnimationDuration() const;
     /// set the current overlay animation (usually oneshot anims)
@@ -74,7 +74,7 @@ public:
     bool HasCharacter3Set() const;
     /// get the character3 set
     nCharacter3Set* GetCharacter3Set();
-    
+
     /// DEBUG : this is just for the MILESTONE, check actorgraphicsproperty.cc
     void LoadNextSkinListInDirectory();
 
@@ -258,12 +258,11 @@ CharEntity::HasCharacter3Set() const
 */
 inline
 nCharacter3Set*
-CharEntity::GetCharacter3Set() 
+CharEntity::GetCharacter3Set()
 {
     return &this->character3Set;
 }
 
-}; // namespace Graphics
-
+} // namespace Graphics
 //------------------------------------------------------------------------------
-#endif    
+#endif

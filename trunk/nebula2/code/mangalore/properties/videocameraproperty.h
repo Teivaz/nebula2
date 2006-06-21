@@ -6,7 +6,7 @@
 
     A manually controlled camera property which implements different
     control models.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -48,6 +48,6 @@ private:
 
 RegisterFactory(VideoCameraProperty);
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
-#endif    
+#endif

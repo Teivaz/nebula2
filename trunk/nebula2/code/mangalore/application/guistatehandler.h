@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     A state handler which displays and manages a UI subsystem user interface.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "application/statehandler.h"
@@ -64,6 +64,6 @@ GuiStateHandler::GetGuiResource() const
     return this->resName;
 }
 
-}; // namespace Application
+} // namespace Application
 //------------------------------------------------------------------------------
 #endif

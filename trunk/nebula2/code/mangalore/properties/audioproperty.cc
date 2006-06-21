@@ -10,4 +10,4 @@ ImplementRtti(Properties::AudioProperty, Game::Property);
 ImplementFactory(Properties::AudioProperty);
 
 
-}; // namespace Properties
+} // namespace Properties

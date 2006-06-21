@@ -44,7 +44,7 @@ RegisterFactory(BallJoint);
 /**
 */
 inline
-void 
+void
 BallJoint::SetAnchor(const vector3& v)
 {
     this->anchor = v;
@@ -54,12 +54,12 @@ BallJoint::SetAnchor(const vector3& v)
 /**
 */
 inline
-const vector3& 
+const vector3&
 BallJoint::GetAnchor() const
 {
     return this->anchor;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

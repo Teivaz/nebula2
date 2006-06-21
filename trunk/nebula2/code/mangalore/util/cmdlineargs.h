@@ -3,12 +3,12 @@
 //------------------------------------------------------------------------------
 /**
     @class Util::CmdLineArgs
-    
+
     A universal cmd line argument parser. The command line string
-    must have the form 
+    must have the form
 
     cmd arg0[=]value0 arg1[=]value1 arg2[=]value2
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/nstring.h"
@@ -35,7 +35,7 @@ public:
     bool GetBool(const nString& name) const;
     /// get vector3 value
     vector3 GetVector3(const nString& name) const;
-    /// get vector4 value 
+    /// get vector4 value
     vector4 GetVector4(const nString& name) const;
     /// get matrix44 value
     matrix44 GetMatrix44(const nString& name) const;
@@ -54,6 +54,6 @@ private:
     nArray<nString> argValues;
 };
 
-}; // namespace Util
+} // namespace Util
 //------------------------------------------------------------------------------
 #endif

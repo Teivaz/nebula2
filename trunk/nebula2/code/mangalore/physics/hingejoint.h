@@ -48,7 +48,7 @@ RegisterFactory(HingeJoint);
 /**
 */
 inline
-void 
+void
 HingeJoint::SetAnchor(const vector3& v)
 {
     this->anchor = v;
@@ -58,7 +58,7 @@ HingeJoint::SetAnchor(const vector3& v)
 /**
 */
 inline
-const vector3& 
+const vector3&
 HingeJoint::GetAnchor() const
 {
     return this->anchor;
@@ -74,6 +74,6 @@ HingeJoint::AxisParams()
     return this->axisParams;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

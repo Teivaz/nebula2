@@ -184,4 +184,4 @@ PointNClickInputProperty::OnCameraZoomOut()
     GetEntity()->SendAsync(msg);
 }
 
-}; // namespace Properties
+} // namespace Properties

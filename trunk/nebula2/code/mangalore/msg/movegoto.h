@@ -8,7 +8,7 @@
     should move to the target point defined by the move goto message
     and stop there. If possible, the entity should steer around obstacles
     and use pathfinding to reach the target point.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -65,6 +65,6 @@ MoveGoto::GetPosition() const
     return this->pos;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

@@ -13,13 +13,13 @@
     with hundreds of game entities which would end up doing nothing because
     they just represent static geometry. Instead, everything static about
     the level is put into a single entity.
-    
+
     NOTE: usually you don't need to care about this class, it's used
     by the level loader which automatically collects all environment objects
     into a single game entity.
 
     (C) 2005 Radon Labs GmbH
-*/    
+*/
 #include "game/property.h"
 #include "physics/shape.h"
 
@@ -62,7 +62,6 @@ EnvironmentCollideProperty::AddShape(Physics::Shape* shape)
     this->collideShapes.Append(shape);
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif
-    

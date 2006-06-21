@@ -4,11 +4,11 @@
 /**
     @class Physics::MouseGripper
 
-    A MouseGripper lets the user manipulate object positions in the physics 
+    A MouseGripper lets the user manipulate object positions in the physics
     simulation by grabbing, dragging and releasing them. It's usually
     attached to the mouse, so that the user can intuitively manipulate
     the physics objects around him.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -191,6 +191,6 @@ MouseGripper::GetEntityIdUnderMouse() const
     return this->contactPoint.GetEntityId();
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

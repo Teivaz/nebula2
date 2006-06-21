@@ -5,7 +5,7 @@
     @class UI::Control
 
     Base class for interactive UI elements.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "ui/element.h"
@@ -156,7 +156,6 @@ Control::GetNavDown() const
     return this->navDown;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif
-    

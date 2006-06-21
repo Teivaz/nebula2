@@ -5,7 +5,7 @@
     @class VFX::ShakeEffect
 
     A shake effect applies a shake shake to the world as long as it's alive.
-    Get the resulting accumulated shake for a given position using the 
+    Get the resulting accumulated shake for a given position using the
     VFX::Server::ComputeAccumulatedShake() method.
 
     (C) 2005 Radon Labs GmbH
@@ -170,6 +170,6 @@ ShakeEffect::GetCurrentIntensity() const
     return this->curIntensity;
 }
 
-}; // namespace Vfx
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

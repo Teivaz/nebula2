@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class UI::FactoryManager
-  
+
     Creates user interface elements.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/refcounted.h"
@@ -47,6 +47,6 @@ FactoryManager::Instance()
     return Singleton;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

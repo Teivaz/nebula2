@@ -4,7 +4,7 @@
 /**
     @class Properties::PathAnimProperty
 
-    Attach this property to an entity to move the entity along an 
+    Attach this property to an entity to move the entity along an
     animation path. Take care that the property won't collide
     with other properties which influence an entity's position.
 
@@ -20,7 +20,7 @@ namespace Attr
     DeclareString(AnimPath);        // filename of animation file
     DeclareBool(AnimRelative);      // animate absolute position or from current position
     DeclareBool(AnimLoop);          // loop or clamp animations
-    DeclareBool(AnimPlaying);       // true if animation currently playing    
+    DeclareBool(AnimPlaying);       // true if animation currently playing
 };
 
 //------------------------------------------------------------------------------
@@ -68,8 +68,6 @@ private:
 
 RegisterFactory(PathAnimProperty);
 
-}; // namespace Properties
-
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif
-

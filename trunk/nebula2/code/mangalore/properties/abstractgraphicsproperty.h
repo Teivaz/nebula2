@@ -7,7 +7,7 @@
     Abstract Graphics Property.
 
     Baseclass for all Graphics Propertys.
-    
+
     (C) 2006 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -28,11 +28,11 @@ public:
 
     /// not active for sleeping entities
     virtual int GetActiveEntityPools() const;
-    
+
 };
 
 RegisterFactory(AbstractGraphicsProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

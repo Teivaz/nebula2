@@ -327,4 +327,4 @@ EntityManager::OnFrame()
     }
 }
 
-}; // namespace Managers
+} // namespace Managers

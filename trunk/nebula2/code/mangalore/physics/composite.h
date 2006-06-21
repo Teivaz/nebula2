@@ -13,7 +13,7 @@
 
     Composites may also contain optional static shapes. These are pure collide
     shapes which will move with the composite but will not act physically.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -251,7 +251,6 @@ Composite::GetShapeAt(int index) const
     return this->shapeArray[index];
 }
 
-}; // namespace Physics
-
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

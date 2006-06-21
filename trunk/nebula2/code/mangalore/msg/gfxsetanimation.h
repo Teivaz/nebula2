@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::GfxSetAnimation
-    
+
     Set base or overlay animation on an actor.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -113,6 +113,6 @@ GfxSetAnimation::GetOverlayAnimation() const
     return this->overlayAnim;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

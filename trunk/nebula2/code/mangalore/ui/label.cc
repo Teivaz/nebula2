@@ -25,4 +25,4 @@ Label::~Label()
     // empty
 }
 
-}; // namespace UI
+} // namespace UI

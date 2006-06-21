@@ -120,7 +120,7 @@ VideoCameraProperty::SetupDefaultAttributes()
     GetEntity()->SetVector3(Attr::VideoCameraCenterOfInterest, vector3::zero);
     GetEntity()->SetVector3(Attr::VideoCameraDefaultUpVec, vector3(0.0f, 1.0f, 0.0f));
 }
-}; // namespace Properties
+} // namespace Properties
 
 
 

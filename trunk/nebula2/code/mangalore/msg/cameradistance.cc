@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::CameraDistance, Message::Msg);
 ImplementFactory(Message::CameraDistance);
 ImplementMsgId(CameraDistance);
-}; // namespace Msg
+} // namespace Message

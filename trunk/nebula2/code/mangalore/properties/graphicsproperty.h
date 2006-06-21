@@ -74,6 +74,6 @@ GraphicsProperty::GetGraphicsEntities() const
     return this->graphicsEntities;
 }
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

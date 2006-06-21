@@ -478,4 +478,4 @@ ActorPhysicsProperty::GetPhysicsEntity() const
     return this->charPhysicsEntity;
 }
 
-}; // namespace Properties
+} // namespace Properties

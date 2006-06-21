@@ -24,6 +24,6 @@ public:
 
 RegisterFactory(EffectProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

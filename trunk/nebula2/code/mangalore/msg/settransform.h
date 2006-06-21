@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::SetTransform
-    
+
     Set the complete transform of a entity, including the  physics tranform.
     Use not per Frame, the physics won't like it!
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "msg/updatetransform.h"
@@ -23,6 +23,6 @@ class SetTransform : public UpdateTransform
 
 RegisterFactory(SetTransform);
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

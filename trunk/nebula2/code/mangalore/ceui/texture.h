@@ -99,6 +99,6 @@ bool Texture::isLoadFromMemory() const {
     return fromMemory;
 }
 
-}
-
+} // namespace CEUI
+//------------------------------------------------------------------------------
 #endif

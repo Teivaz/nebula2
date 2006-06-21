@@ -5,7 +5,7 @@
     @class Message::PlaySound
 
     Play a sound at the specific position.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -138,6 +138,6 @@ PlaySound::GetVolume() const
     return this->volume;
 }
 
-}; // namespace
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

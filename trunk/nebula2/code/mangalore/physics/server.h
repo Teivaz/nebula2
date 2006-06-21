@@ -327,7 +327,6 @@ Server::FindEntityByUniqueId(Entity::Id uniqueId) const
     return entity;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-

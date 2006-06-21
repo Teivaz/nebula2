@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Loader::NavMapLoader
-    
+
     Loads navigation maps into the world.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"
@@ -21,6 +21,6 @@ public:
     static bool Load(const nString& levelName);
 };
 
-}; // namespace Loader
+} // namespace Loader
 //------------------------------------------------------------------------------
-#endif    
+#endif

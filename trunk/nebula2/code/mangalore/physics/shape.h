@@ -5,7 +5,7 @@
     @class Physics::Shape
 
     Shapes are used in the physics subsystem for collision detection.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -46,7 +46,7 @@ public:
     virtual ~Shape() = 0;
     /// render debug visualization
     virtual void RenderDebug(const matrix44& t);
-    /// collision notifier 
+    /// collision notifier
     virtual bool OnCollide(Shape* shape);
     /// attach the shape to the world
     virtual bool Attach(dSpaceID spaceId);
@@ -243,8 +243,8 @@ Shape::GetMaterialType() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 Shape::SetNumCollisions(int v)
 {
     n_assert(v >= 0);
@@ -293,7 +293,7 @@ Shape::SetCategoryBits(uint cat)
     if (0 != this->odeGeomId)
     {
         dGeomSetCategoryBits(this->odeGeomId, this->categoryBits);
-    }        
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -361,7 +361,6 @@ Shape::GetShapeFromGeom(dGeomID geom)
     return (Shape*) dGeomGetData(geom);
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif
-    

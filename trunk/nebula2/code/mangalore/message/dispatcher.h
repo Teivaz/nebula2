@@ -59,6 +59,6 @@ private:
 
 RegisterFactory(Dispatcher);
 
-}; // namespace Message
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

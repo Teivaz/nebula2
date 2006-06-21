@@ -6,7 +6,7 @@
 
     The Input::Server object is the central object of the input
     subsystem.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nref.h"
@@ -66,6 +66,6 @@ Server::Instance()
     return Server::Singleton;
 }
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

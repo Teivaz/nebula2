@@ -63,6 +63,6 @@ Server::Instance()
     return Singleton;
 }
 
-}; // namespace Message
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

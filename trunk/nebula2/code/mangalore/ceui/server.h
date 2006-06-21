@@ -114,6 +114,6 @@ nTime Server::GetFrameTime() const {
     return this->frameTime;
 }
 
-}
-
+} // namespace CEUI
+//------------------------------------------------------------------------------
 #endif

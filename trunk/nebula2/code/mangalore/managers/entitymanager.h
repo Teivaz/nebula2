@@ -6,12 +6,12 @@
 
     The entity manager object keeps track of all active game entities
     and calls their per-frame-update methods to keep them alive. It
-    also contains methods to iterate through existing entities. 
-    Derive from this class if your application needs different or 
+    also contains methods to iterate through existing entities.
+    Derive from this class if your application needs different or
     more advanced game entity management, but make sure that all
     methods which are defined in entity manager still do the expected thing
     in your derived class.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/manager.h"
@@ -92,6 +92,6 @@ EntityManager::Instance()
     return Singleton;
 }
 
-}; // namespace Managers
+} // namespace Managers
 //------------------------------------------------------------------------------
 #endif

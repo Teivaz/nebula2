@@ -5,7 +5,7 @@
     @class Message::PlayVisualEffect
 
     Play a visual effect through the VFX subsystem.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -87,6 +87,6 @@ PlayVisualEffect::GetTransform() const
     return this->transform;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

@@ -376,4 +376,4 @@ FactoryManager::AddProperties(Entity* entity, const nString& categoryName) const
     }
 }
 
-}; // namespace Managers
+} // namespace Managers

@@ -71,4 +71,4 @@ AnimTable::Lookup(const nString& id, const nString& animName) const
     return dummyStr;
 }
 
-}; // namespace Graphics
+} // namespace Graphics

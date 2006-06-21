@@ -5,9 +5,9 @@
     @class Message::PlayShakeEffect
 
     Message to play a camera shake effect.
-    
+
     (C) 2005 Radon Labs GmbH
-*/    
+*/
 #include "message/msg.h"
 
 //------------------------------------------------------------------------------
@@ -140,6 +140,6 @@ PlayShakeEffect::GetIntensity() const
     return this->intensity;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

@@ -75,7 +75,6 @@ Bank::GetFilename() const
 }
 
 
-}; // namespace VFX
-
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

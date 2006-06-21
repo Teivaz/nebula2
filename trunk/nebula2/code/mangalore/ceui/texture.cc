@@ -51,4 +51,4 @@ void Texture::loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight) 
     fromMemory = true;
 }
 
-}
+} // namespace CEUI

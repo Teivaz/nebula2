@@ -49,4 +49,4 @@ Command::GetName() const
     return "NONE";
 }
 
-}; // namespace Script
+} // namespace Script

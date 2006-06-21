@@ -23,6 +23,6 @@ public:
     static nArray<Ptr<Graphics::Entity> > CreateAndSetupGraphicsEntities(const nString& resName, const matrix44& worldMatrix);
 };
 
-}; // namespace Util
+} // namespace Util
 //------------------------------------------------------------------------------
 #endif

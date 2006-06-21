@@ -3,23 +3,23 @@
 //------------------------------------------------------------------------------
 /**
     @class Game::Manager
-    
-    Managers are Singleton objects which care about some "specific global 
+
+    Managers are Singleton objects which care about some "specific global
     stuff". They should be subclassed by Mangalore applications to implement
     global aspects of the application (mainly global game play related stuff).
-    
+
     Managers are created directly through Factory<> and attached to the
     Game::Server object which will call several predefined virtual methods
     which are overridden by the subclasses.
-    
+
     Standard Mangalore uses several Managers to offer timing information
     (TimeManager), setup the game world (SetupManager), create entities
     and properties (FactoryManager), manage game entities (EntityManager)
     and so forth.
 
-    Managers are derived from Message::Port, so you *can* optionally use them to 
+    Managers are derived from Message::Port, so you *can* optionally use them to
     receive and process messages.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/port.h"
@@ -63,8 +63,6 @@ Manager::IsActive() const
     return this->isActive;
 }
 
-}; // namespace Game
+} // namespace Game
 //------------------------------------------------------------------------------
-#endif    
-    
-    
+#endif

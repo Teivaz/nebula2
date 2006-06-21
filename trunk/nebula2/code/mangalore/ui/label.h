@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     A simple GUI label.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "ui/element.h"
@@ -25,6 +25,6 @@ public:
 
 RegisterFactory(Label);
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

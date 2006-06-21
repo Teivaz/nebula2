@@ -3,11 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::AnimRewind
-  
+
     Rewind path animation.
-    
+
     (C) 2005 Radon Labs GmbH
-*/    
+*/
 #include "message/msg.h"
 
 //------------------------------------------------------------------------------
@@ -22,7 +22,6 @@ class AnimRewind : public Message::Msg
 
 RegisterFactory(AnimRewind);
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
-

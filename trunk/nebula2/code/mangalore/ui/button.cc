@@ -166,5 +166,5 @@ Button::OnRender()
     }
 }
 
-}; // namespace UI
+} // namespace UI
 

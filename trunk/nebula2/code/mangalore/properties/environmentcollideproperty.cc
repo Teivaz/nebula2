@@ -78,4 +78,4 @@ EnvironmentCollideProperty::OnDeactivate()
     Game::Property::OnDeactivate();
 }
 
-}; // namespace Properties
+} // namespace Properties

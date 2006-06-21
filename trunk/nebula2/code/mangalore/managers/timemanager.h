@@ -5,8 +5,8 @@
     @class Managers::TimeManager
 
     Singleton object which manages the current game time.
-    
-    (C) 2005 Radon Labs GmbH 
+
+    (C) 2005 Radon Labs GmbH
 */
 #include "game/manager.h"
 
@@ -62,6 +62,6 @@ TimeManager::Instance()
     return Singleton;
 }
 
-}; // namespace Managers
+} // namespace Managers
 //------------------------------------------------------------------------------
 #endif

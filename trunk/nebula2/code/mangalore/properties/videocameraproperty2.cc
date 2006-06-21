@@ -146,4 +146,4 @@ VideoCameraProperty2::OnRender()
     // important: call parent class at the end to apply any shake effects
     CameraProperty::OnRender();
 }
-}; // namespace Properties
+} // namespace Properties

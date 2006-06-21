@@ -47,6 +47,6 @@ SliderJoint::AxisParams()
     return this->axisParams;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

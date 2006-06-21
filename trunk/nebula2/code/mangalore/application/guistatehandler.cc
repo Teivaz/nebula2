@@ -139,4 +139,4 @@ GuiStateHandler::OnFrame()
     }
 }
 
-}; // namespace Application
+} // namespace Application

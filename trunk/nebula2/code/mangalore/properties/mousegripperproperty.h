@@ -4,9 +4,9 @@
 /**
     @class Properties::MouseGripperProperty
 
-    A MouseGripperProperty lets the user manipulate object positions in the physics 
+    A MouseGripperProperty lets the user manipulate object positions in the physics
     simulation by grabbing, dragging and releasing them. It's usually
-    attached to a Entity, using input from the mouse, so that the user can intuitively 
+    attached to a Entity, using input from the mouse, so that the user can intuitively
     manipulate the physics objects around him.
 
     (C) 2005 Radon Labs GmbH
@@ -170,6 +170,6 @@ MouseGripperProperty::GetEntityIdUnderMouse() const
     return this->contactPoint.GetEntityId();
 }
 
-}; // namespace Properties
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

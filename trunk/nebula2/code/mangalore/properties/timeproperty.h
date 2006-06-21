@@ -4,7 +4,7 @@
 /**
     @class Properties::TimeProperty
 
-    The time property adds the attribute "Time" to the entity. This 
+    The time property adds the attribute "Time" to the entity. This
     attributes contains the time since the time property has been
     attached to the entity.
 
@@ -40,6 +40,6 @@ private:
 
 RegisterFactory(TimeProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Loader::LevelLoader
-    
+
     Helper class for loading a complete level from the world database.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"
@@ -21,6 +21,6 @@ public:
     static bool Load(const nString& levelName);
 };
 
-}; // namespace Loader
+} // namespace Loader
 //------------------------------------------------------------------------------
 #endif

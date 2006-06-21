@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class Db::Attr
-    
+
     A database subsystem attribute. Attributes associate a name with a typed
     value. Names are implemented using Foundation's Id class, which means
     attribute names are compile-time safe and implemented as C++ objects.
@@ -11,17 +11,17 @@
     Things to know:
 
     - All attributes are readable.
-    - Attributes can be writable and/or storable, use IsWritable() or 
+    - Attributes can be writable and/or storable, use IsWritable() or
       IsStorable() to find out.
-    - db.xml instance attributes are writable and storable, class attributes 
+    - db.xml instance attributes are writable and storable, class attributes
       are only readable.
     - Attributes can be empty if no value has been set yet, empty attributes can
       still have a data type and id, use Clear() to make an attribute empty
-      without changing its type or id, use IsEmpty() to check whether an 
-      attribute is empty.  
-    - Empty db.xml table cells have empty attributes of the correct type and id 
+      without changing its type or id, use IsEmpty() to check whether an
+      attribute is empty.
+    - Empty db.xml table cells have empty attributes of the correct type and id
       assigned to them.
-    - Assigning a value will fail hard if the attribute is not writable or is 
+    - Assigning a value will fail hard if the attribute is not writable or is
       not of the same type.
 
     (C) 2005 Radon Labs GmbH
@@ -55,7 +55,7 @@ public:
         Vector4  = nVariant::Vector4,
         String   = nVariant::String,
         Matrix44 = nVariant::Matrix44,
-    };        
+    };
 
     /// default constructor
     Attribute();
@@ -190,7 +190,7 @@ public:
 private:
     /// put a read-only error message
     void PutWriteError() const;
-        
+
     Attr::AttributeID attrId;
     nVariant value;
     bool empty;
@@ -927,6 +927,6 @@ Attribute::AsString() const
     return str;
 }
 
-}; // namespace Db
+} // namespace Db
 //------------------------------------------------------------------------------
 #endif

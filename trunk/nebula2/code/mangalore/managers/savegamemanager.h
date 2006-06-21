@@ -111,6 +111,6 @@ SaveGameManager::GetStartLevelOverride() const
     return this->overrideStartLevel;
 }
 
-}; // namespace Managers
+} // namespace Managers
 //------------------------------------------------------------------------------
 #endif

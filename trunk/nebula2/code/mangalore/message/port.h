@@ -9,9 +9,9 @@
     Refcounting makes sure that messages are not deleted while
     they are attached to any port.
 
-    Message Ports are the basis for message Dispatchers and 
+    Message Ports are the basis for message Dispatchers and
     message Handlers.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -38,7 +38,7 @@ public:
     virtual void HandleMessage(Msg* msg);
 
 private:
-    nArray<Ptr<Msg> > msgQueue;    
+    nArray<Ptr<Msg> > msgQueue;
 };
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,6 @@ Port::Port() :
     this->msgQueue.SetFlags(nArray<Ptr<Msg> >::DoubleGrowSize);
 }
 
-}; // namespace Message
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
-    

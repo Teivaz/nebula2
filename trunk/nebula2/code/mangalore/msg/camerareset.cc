@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::CameraReset, Message::Msg);
 ImplementFactory(Message::CameraReset);
 ImplementMsgId(CameraReset);
-}; // namespace Msg
+} // namespace Message

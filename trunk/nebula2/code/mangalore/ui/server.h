@@ -5,7 +5,7 @@
     @class UI::Server
 
     Server for the Mangalore 3D-GUI subsystem.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/refcounted.h"
@@ -56,7 +56,7 @@ public:
     void HideGui();
 
     /// send a gui event to the UI
-    void PutEvent(const nString& eventName);    
+    void PutEvent(const nString& eventName);
     /// set current time
     void SetTime(nTime t);
     /// get current time
@@ -211,6 +211,6 @@ Server::GetMousePosition() const
     return this->mousePos;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

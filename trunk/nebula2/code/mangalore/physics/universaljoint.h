@@ -5,7 +5,7 @@
     @class Physics::UniversalJoint
 
     A universal joint. See ODE docs for details.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "physics/joint.h"
@@ -49,7 +49,7 @@ RegisterFactory(UniversalJoint);
 /**
 */
 inline
-void 
+void
 UniversalJoint::SetAnchor(const vector3& v)
 {
     this->anchor = v;
@@ -59,7 +59,7 @@ UniversalJoint::SetAnchor(const vector3& v)
 /**
 */
 inline
-const vector3& 
+const vector3&
 UniversalJoint::GetAnchor() const
 {
     return this->anchor;
@@ -75,6 +75,6 @@ UniversalJoint::AxisParams(uint axisIndex) const
     return this->axisParams[axisIndex];
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

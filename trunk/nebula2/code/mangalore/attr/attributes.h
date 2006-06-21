@@ -64,6 +64,6 @@ namespace Attr
     DeclareString(AnimSet);     // name of the animation set
     DeclareString(CharacterSet);// name of the character 3 charset
 
-}; // namespace Attr
+} // namespace Attr
 //------------------------------------------------------------------------------
 #endif

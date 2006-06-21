@@ -5,7 +5,7 @@
     @class UI::Canvas
 
     A canvas is the toplevel object of a ui hierarchy.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "ui/element.h"
@@ -65,6 +65,6 @@ Canvas::GetResourceName() const
     return this->resourceName;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

@@ -83,4 +83,4 @@ CapsuleShape::RenderDebug(const matrix44& parentTransform)
     }
 }
 
-}; // namespace Physics
+} // namespace Physics

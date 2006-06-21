@@ -265,4 +265,4 @@ SaveGameManager::LoadGame(const nString& saveGameName)
     return true;
 }
 
-}; // namespace Game
+} // namespace Game

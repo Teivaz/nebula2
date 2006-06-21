@@ -73,4 +73,4 @@ TimeProperty::OnBeginFrame()
     GetEntity()->SetFloat(Attr::Time, float(relTime));
 }
 
-}; // namespace Properties
+} // namespace Properties

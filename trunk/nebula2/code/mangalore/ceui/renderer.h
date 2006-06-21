@@ -137,6 +137,6 @@ bool Renderer::isQueueingEnabled() const {
     return queueingEnabled;
 }
 
-}
-
+} // namespace CEUI
+//------------------------------------------------------------------------------
 #endif

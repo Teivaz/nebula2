@@ -5,7 +5,7 @@
     @class Properties::CameraProperty
 
     A camera property adds the ability to manipulate the camera to an entity.
-    Please note that more advanced camera properties should always be 
+    Please note that more advanced camera properties should always be
     derived from the class camera property if camera focus handling is desired,
     since the FocusManager will only work on game entities which have
     a CameraProperty (or a subclass) attached.
@@ -14,8 +14,8 @@
     not derived from CameraProperty, but please be aware that the
     FocusManager will ignore those.
 
-    The camera property will generally 
-    
+    The camera property will generally
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
@@ -65,6 +65,6 @@ protected:
 
 RegisterFactory(CameraProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

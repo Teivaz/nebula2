@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::MoveSetVelocity
-    
+
     Set the (relative) linear velocity of an entity between 0.0 and 1.0.
     The actual resulting velocity also depends on the MaxVelocity
     attribute attached to the entity.
@@ -66,6 +66,6 @@ MoveSetVelocity::GetRelVelocity() const
     return this->relVelocity;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

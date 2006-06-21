@@ -5,7 +5,7 @@
     @class Physics::Entity
 
     A physics entity is the frontend to a physics simulation object.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
@@ -46,7 +46,7 @@ public:
     virtual void OnActivate();
     /// called when removed from game entity
     virtual void OnDeactivate();
-    /// return true if active 
+    /// return true if active
     bool IsActive() const;
     /// called when attached to physics level
     virtual void OnAttachedToLevel(Level* level);
@@ -202,7 +202,7 @@ Entity::GetUniqueId() const
 
 //------------------------------------------------------------------------------
 /**
-    Set the user data of the entity. This is a not-quite-so-nice way to 
+    Set the user data of the entity. This is a not-quite-so-nice way to
     store the game entity's unique id in the physics entity.
 */
 inline
@@ -269,6 +269,6 @@ Entity::IsCollisionEnabled() const
     return this->collisionEnabled;
 }
 
-}; // namespace Physics
+} // namespace Physics
 //------------------------------------------------------------------------------
 #endif

@@ -83,4 +83,4 @@ ActorAnimationProperty::RequestAnimation(const nString& baseAnimation, const nSt
     this->GetEntity()->SendSync(setAnimation);
 }
 
-}; // namespace Properties
+} // namespace Properties

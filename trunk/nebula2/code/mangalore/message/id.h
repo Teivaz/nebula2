@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::Id
-    
+
     A message identifier. This is automatically implemented in message classes
     using the DeclareMsgId and ImplementMsgId macros.
-   
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"
@@ -42,6 +42,6 @@ Id::operator==(const Id& rhs) const
     return (this == &rhs);
 }
 
-}; // namespace Message
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

@@ -87,6 +87,6 @@ ShakeEffectHelper::GetShakeCameraTransform() const
     return this->shakeCameraMatrix;
 }
 
-}; // namespace VFX
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

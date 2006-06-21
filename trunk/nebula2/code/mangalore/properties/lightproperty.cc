@@ -124,4 +124,4 @@ LightProperty::OnRender()
     Property::OnRender();
 }
 
-}; // namespace Properties
+} // namespace Properties

@@ -55,6 +55,6 @@ protected:
 
 RegisterFactory(SimpleGraphicsProperty);
 
-}; // namespace Property
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

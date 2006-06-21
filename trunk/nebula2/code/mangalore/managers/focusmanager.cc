@@ -341,4 +341,4 @@ FocusManager::SetDefaultFocus()
     SwitchToFirstCameraFocusEntity();
 }
 
-}; // namespace Managers
+} // namespace Managers

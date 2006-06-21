@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Loader::EntityLoaderBase
-    
-    Abstract loader helper for game entities. 
-    
+
+    Abstract loader helper for game entities.
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/nstring.h"
@@ -25,6 +25,6 @@ public:
     virtual bool Load(const nString& levelName);
 };
 
-}; // namespace Loader
+} // namespace Loader
 //------------------------------------------------------------------------------
 #endif

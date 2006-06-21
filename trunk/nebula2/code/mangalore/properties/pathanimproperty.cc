@@ -247,4 +247,4 @@ PathAnimProperty::UpdateAnimation()
     }
 }
 
-}; // namespace Properties
+} // namespace Properties

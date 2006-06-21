@@ -6,7 +6,7 @@
 
     The base class for all 2D user interface elements describes a rectangle
     and implements a hierarchy.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/refcounted.h"
@@ -247,6 +247,6 @@ Element::GetTooltipDelay() const
 }
 
 
-}; // namespace
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

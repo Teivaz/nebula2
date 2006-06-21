@@ -3,11 +3,11 @@
 //------------------------------------------------------------------------------
 /**
     @class Loader::EntityLoader
-    
+
     Loader helper for universal game entities. The properties which are
     attached to the entity are described in blueprints.xml, the attributes
     to attach come from the world database.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/nstring.h"
@@ -31,6 +31,6 @@ public:
 };
 RegisterFactory(EntityLoader);
 
-}; // namespace Loader
+} // namespace Loader
 //------------------------------------------------------------------------------
 #endif

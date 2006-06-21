@@ -10,4 +10,4 @@ namespace Properties
     ImplementFactory(Properties::EffectProperty);
 
 
-}; // namespace Properties
+} // namespace Properties

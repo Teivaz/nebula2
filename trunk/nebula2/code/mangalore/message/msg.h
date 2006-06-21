@@ -6,7 +6,7 @@
 
     Base class for new-style messages. Messages are now vanilla C++ objects
     instanciated from proper C++ classes with default constructor, and
-    proper setter/getter methods. This makes messages easier, safer and more 
+    proper setter/getter methods. This makes messages easier, safer and more
     intuitive to use.
 
     Messages are generally created and used like this now
@@ -94,6 +94,6 @@ Msg::GetName() const
     return this->GetClassName();
 }
 
-}; // namespace Message
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

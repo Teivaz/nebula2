@@ -36,4 +36,4 @@ AbstractGraphicsProperty::GetActiveEntityPools() const
     return Game::Entity::LivePool;
 }
 
-}; // namespace Properties
+} // namespace Properties

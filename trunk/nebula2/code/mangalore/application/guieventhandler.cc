@@ -39,5 +39,5 @@ GuiEventHandler::HandleEvent(UI::Event* e)
     this->guiStateHandler->OnEvent(e);
 }
 
-}; // namespace Application
+} // namespace Application
 

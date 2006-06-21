@@ -6,7 +6,7 @@
 
     Class with simple refcounting mechanism, and security check at
     application shutdown. Subsystems are advised to derive their
-    classes from the RefCounted class and enforce a correct 
+    classes from the RefCounted class and enforce a correct
     AddRef()/Release() behaviour.
 
     (C) 2003 RadonLabs GmbH
@@ -199,12 +199,6 @@ RefCounted::GetClassName() const
     return this->GetRtti()->GetName();
 }
 
-}; // namespace Foundation
-
+} // namespace Foundation
 //------------------------------------------------------------------------------
 #endif
-
-
-
-    
-    

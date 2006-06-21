@@ -3,12 +3,12 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::MoveDirection
-        
+
     A MoveDirection message. Expected behaviour is that the entity
     starts to move into the specified direction. The direction vector
     can be defined as camera relative or absolute. The velocity settings
     should be interpreted as a factor.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
@@ -92,7 +92,6 @@ MoveDirection::GetCameraRelative() const
     return this->camRelative;
 }
 
-}; // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
-
