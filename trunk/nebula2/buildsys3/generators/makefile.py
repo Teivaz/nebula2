@@ -63,7 +63,7 @@ class makefile:
             makeFile = file(os.path.join(defaultLocation, 'Makefile'), "w")
             
             makeFile.write("# Makefile for nebula\n")
-            makeFile.write("include ../../buildsys/config.mak\n\n")
+            makeFile.write("include ../../buildsys3/config.mak\n\n")
             
             for workspaceName in workspaceNames:
                 workspace = self.buildSys.workspaces[workspaceName]
@@ -363,7 +363,7 @@ class makefile:
         makeFile.write("#    %s.mak\n" % workspace.name)
         makeFile.write("#    AUTOMATICALLY GENERATED, DO NOT EDIT\n")
         makeFile.write("#--------------------------------------------------------------------\n")
-        makeFile.write("include ../../buildsys/config.mak\n")
+        makeFile.write("include ../../buildsys3/config.mak\n")
         makeFile.write("BASECFLAGS += $(EXTRA_CFLAGS)\n")
         makeFile.write("LIBDIR += $(EXTRA_LIBDIR)\n\n")
         makeFile.write("ifeq ($(N_PLATFORM),__WIN32__)\n")
