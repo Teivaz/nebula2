@@ -94,8 +94,8 @@ nSceneServer::~nSceneServer()
 bool
 nSceneServer::Open()
 {
-    n_assert(!this->isOpen);   
-    
+    n_assert(!this->isOpen);
+
     // parse renderpath XML file
     if (this->renderPath.OpenXml())
     {
@@ -153,7 +153,7 @@ nSceneServer::Close()
 
 //------------------------------------------------------------------------------
 /**
-    Begin building the scene. Must be called once before attaching 
+    Begin building the scene. Must be called once before attaching
     nSceneNode hierarchies using nSceneServer::Attach().
 
     @param  invView      the viewer position and orientation
@@ -195,7 +195,7 @@ nSceneServer::BeginScene(const matrix44& invView)
 
 //------------------------------------------------------------------------------
 /**
-    Attach a scene node to the scene. This will simply invoke 
+    Attach a scene node to the scene. This will simply invoke
     nSceneNode::Attach() on the scene node hierarchie's root object.
 */
 void
@@ -244,7 +244,7 @@ nSceneServer::BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(this->stackDepth < MaxHierarchyDepth);
 
     // initialize new group node
-    // FIXME: could be optimized to have no temporary 
+    // FIXME: could be optimized to have no temporary
     // object which must be copied onto array
     Group group;
     group.sceneNode = sceneNode;
@@ -319,6 +319,16 @@ nSceneServer::RenderScene()
     // render camera nodes in scene
     this->RenderCameraScene();
 
+    /// reset light passes in shape groups between renderpath
+    for (int i = 0; i < this->shapeBucket.Size(); i++)
+    {
+        const nArray<ushort>& shapeArray = this->shapeBucket[i];
+        for (int j = 0; j < shapeArray.Size(); j++)
+        {
+            this->groupArray[shapeArray[j]].lightPass = 0;
+        }
+    }
+
     // render final scene
     int sectionIndex = this->renderPath.FindSectionIndex("default");
     n_assert(-1 != sectionIndex);
@@ -338,11 +348,11 @@ nSceneServer::RenderCameraScene()
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     int i;
     for (i = 0; i < this->cameraArray.Size(); i++)
-    {          
+    {
         // get the camera node
         Group& cameraNodeGroup = this->groupArray[cameraArray[i]];
-        nAbstractCameraNode* cameraNode = (nAbstractCameraNode*) cameraNodeGroup.sceneNode;   
-    
+        nAbstractCameraNode* cameraNode = (nAbstractCameraNode*) cameraNodeGroup.sceneNode;
+
         // check if the render target available
         const nString& rpSectionName = cameraNode->GetRenderPathSection();
         int sectionIndex = this->renderPath.FindSectionIndex(rpSectionName);
@@ -387,21 +397,21 @@ nSceneServer::PresentScene()
         this->profEndScene_TextBuffer.Start();
         #endif
         gfxServer->DrawTextBuffer();
-        
+
         #if __NEBULA_STATS__
         this->profEndScene_TextBuffer.Stop();
         this->profEndScene_EndScene.Start();
         #endif
 
         gfxServer->EndScene();
-        
+
         #if __NEBULA_STATS__
         this->profEndScene_EndScene.Stop();
         this->profEndScene_PresentScene.Start();
         #endif
 
         gfxServer->PresentScene();
-        
+
         #if __NEBULA_STATS__
         this->profEndScene_PresentScene.Stop();
         #endif
@@ -424,7 +434,7 @@ nSceneServer::SplitNodes()
 {
     #if __NEBULA_STATS__
     this->profSplitNodes.Start();
-    #endif   
+    #endif
 
     ushort i;
     ushort num = this->groupArray.Size();
@@ -460,31 +470,31 @@ nSceneServer::SplitNodes()
                 this->shadowArray.Append(i);
             }
         }
-        
+
         if (group.sceneNode->HasCamera())
         {
             nAbstractCameraNode* newCamera = (nAbstractCameraNode*) group.sceneNode;
-            
+
             // HACK!!!: at the moment the cameras are only used for water, and all use
             // the same render target (because this is defined in the section, not by the
             // camera. Therefor it is useless to render more than one camera per section.
             // If later other cameras are used this must be fixed. A way must be found
             // to decide if 2 cameras are the same, or creating different rendertarget results.
-            
+
             // check if we alread have a camera using the same renderpath section
             int c;
             bool uniqueCamera = true;
             for (c = 0; c < this->cameraArray.Size(); c++)
             {
                 Group& group = this->groupArray[this->cameraArray[c]];
-                nAbstractCameraNode* existingCamera = (nAbstractCameraNode*) group.sceneNode;   
+                nAbstractCameraNode* existingCamera = (nAbstractCameraNode*) group.sceneNode;
                 if (existingCamera->GetRenderPathSection() == newCamera->GetRenderPathSection())
                 {
                     uniqueCamera = false;
                     break;
                 }
             }
-            
+
             if (uniqueCamera)
             {
                 this->cameraArray.Append(i);
@@ -509,7 +519,7 @@ nSceneServer::ValidateNodeResources()
     #if __NEBULA_STATS__
     this->profValidateResources.Start();
     #endif
-    
+
     // need to evaluate camera nodes first, because they create
     // textures used by other nodes
     ushort i;
@@ -522,9 +532,9 @@ nSceneServer::ValidateNodeResources()
             group.sceneNode->LoadResources();
         }
     }
-    
+
     // then evaluate the rest
-    num = this->groupArray.Size();   
+    num = this->groupArray.Size();
     for (i = 0; i < num; i++)
     {
         const Group& group = this->groupArray[i];
@@ -579,13 +589,13 @@ nSceneServer::CompareNodes(const ushort* i1, const ushort* i2)
     float diff = dist1.lensquared() - dist2.lensquared();
 
     if (sortingOrder == nRpPhase::FrontToBack)
-	{	
+	{
 		// (closest first)
         if (diff < 0.001f)      return -1;
 		else if (diff > 0.001f) return +1;
     }
 	else if (sortingOrder == nRpPhase::BackToFront)
-    {		
+    {
         if (diff > 0.001f)      return -1;
         else if (diff < 0.001f) return +1;
     }
@@ -638,7 +648,7 @@ nSceneServer::SortNodes()
     #endif
 
     // initialize the static viewer pos vector
-    viewerPos = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView).pos_component();    
+    viewerPos = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView).pos_component();
 
     // for each bucket: call the sorter hook
     int i;
@@ -695,7 +705,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
     // z-fighting
     matrix44 shadowProj = gfxServer->GetTransform(nGfxServer2::ShadowProjection);
     gfxServer->PushTransform(nGfxServer2::Projection, shadowProj);
-    
+
     if (gfxServer->BeginScene())
     {
         if (curPass.GetDrawShadows() == nRpPass::MultiLight)
@@ -705,7 +715,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
 
         // for each shadow casting light...
         int numShadowLights = this->shadowLightArray.Size();
-        if (maxShadowLights > numShadowLights) 
+        if (maxShadowLights > numShadowLights)
         {
             maxShadowLights = numShadowLights;
         }
@@ -713,11 +723,11 @@ nSceneServer::RenderShadow(nRpPass& curPass)
         if ((numShadowLights > 0) && (this->shadowArray.Size() > 0))
         {
             // begin shadow scene
-            if (shadowServer->BeginScene()) 
-            {    
+            if (shadowServer->BeginScene())
+            {
                 int shadowLightIndex;
                 for (shadowLightIndex = 0; shadowLightIndex < maxShadowLights; shadowLightIndex++)
-                {                    
+                {
                     // only process non-occluded lights
                     const LightInfo& lightInfo = this->shadowLightArray[shadowLightIndex];
                     Group& lightGroup = this->groupArray[lightInfo.groupIndex];
@@ -770,7 +780,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
                             this->CopyStencilBufferToTexture(curPass, lightInfo.shadowLightMask);
                         }
                     }
-                }    
+                }
                 shadowServer->EndScene();
             }
         }
@@ -779,7 +789,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
     if (curPass.GetDrawShadows() == nRpPass::MultiLight)
     {
         gfxServer->SetRenderTarget(0, 0);
-    }        
+    }
     gfxServer->PopTransform(nGfxServer2::Projection);
     gfxServer->SetHint(nGfxServer2::MvpOnly, false);
 }
@@ -844,7 +854,7 @@ nSceneServer::RenderPhaseLightModeOff(nRpPhase& curPhase)
                             this->dbgNumInstanceGroups->SetI(this->dbgNumInstanceGroups->GetI() + 1);
                         }
                         prevShapeNode = shapeNode;
-                    
+
                         // set modelview matrix for the shape
                         gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
 
@@ -866,7 +876,7 @@ nSceneServer::RenderPhaseLightModeOff(nRpPhase& curPhase)
 
 //------------------------------------------------------------------------------
 /**
-    Render a single shape with light mode FFP (Fixed Function Pipeline). 
+    Render a single shape with light mode FFP (Fixed Function Pipeline).
     Called by generic RenderShape() method.
 
     FIXME: obey light OCCLUSION status!!!
@@ -876,7 +886,7 @@ nSceneServer::RenderShapeLightModeFFP(const Group& shapeGroup)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     vector4 dummyShadowLightMask;
-        
+
     // Render with vertex-lighting and multiple light sources
     if (this->obeyLightLinks)
     {
@@ -903,7 +913,7 @@ nSceneServer::RenderShapeLightModeFFP(const Group& shapeGroup)
     else
     {
         // ignore light links, each shape is influenced by each light
-        // Optimization: if lighting has been applied for this 
+        // Optimization: if lighting has been applied for this
         // frame already, we don't need to do it again. This will only
         // work if rendering doesn't go through light links though
         if (!this->ffpLightingApplied)
@@ -940,7 +950,7 @@ nSceneServer::RenderPhaseLightModeFFP(nRpPhase& curPhase)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->SetLightingType(nGfxServer2::FFP);
-    
+
     uint numSeqs = curPhase.Begin();
     uint seqIndex;
     for (seqIndex = 0; seqIndex < numSeqs; seqIndex++)
@@ -978,7 +988,7 @@ nSceneServer::RenderPhaseLightModeFFP(nRpPhase& curPhase)
                             this->dbgNumInstanceGroups->SetI(this->dbgNumInstanceGroups->GetI() + 1);
                         }
                         prevShapeNode = shapeNode;
-                    
+
                         // set modelview matrix for the shape
                         gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
 
@@ -1012,7 +1022,7 @@ nSceneServer::RenderShapeLightModeShader(Group& shapeGroup, const nRpSequence& s
     {
         shd->SetBool(nShaderState::AlphaBlendEnable, firstLightAlpha);
     }
-    else                             
+    else
     {
         shd->SetBool(nShaderState::AlphaBlendEnable, true);
     }
@@ -1127,7 +1137,7 @@ nSceneServer::RenderPhaseLightModeShader(nRpPhase& curPhase)
                                         this->dbgNumInstanceGroups->SetI(this->dbgNumInstanceGroups->GetI() + 1);
                                     }
                                     prevShapeNode = shapeNode;
-                                
+
                                     // set modelview matrix for the shape
                                     gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
 
@@ -1174,7 +1184,7 @@ nSceneServer::DoRenderPath(nRpSection& rpSection)
         nRpPass& curPass = rpSection.GetPass(passIndex);
 
         if (curPass.GetDrawShadows() != nRpPass::NoShadows)
-        { 
+        {
             #if __NEBULA_STATS__
             this->profRenderShadow.Start();
             #endif
@@ -1287,7 +1297,7 @@ nSceneServer::ComputeLightClipPlanes(LightInfo& lightInfo)
         nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
 
         n_assert(0 != lightNode && lightNode->IsA(this->lightNodeClass));
-        
+
         lightInfo.clipPlanes.Reset();
 
         nLight::Type lightType = lightNode->GetType();
@@ -1433,8 +1443,8 @@ nSceneServer::CopyStencilBufferToTexture(nRpPass& rpPass, const vector4& shadowL
     nShader2* shd = rpPass.GetShader();
     if (shd)
     {
-        shd->SetVector4(nShaderState::ShadowIndex, shadowLightMask);   
-        gfxServer->SetShader(shd);    
+        shd->SetVector4(nShaderState::ShadowIndex, shadowLightMask);
+        gfxServer->SetShader(shd);
         shd->Begin(true);
         shd->BeginPass(0);
         rpPass.DrawFullScreenQuad();
@@ -1472,7 +1482,7 @@ nSceneServer::IssueOcclusionQuery(Group& group, const vector3& viewerPos)
     // occludes itself, the second checks if the viewer is in the bounding
     // box, and if yes, no occlusion check is done
     const bbox3& globalBox = group.renderContext->GetGlobalBox();
-    
+
     // check whether the bounding box is very small in one or more dimensions
     // which may lead to zbuffer artefacts during the occlusion check, in that
     // case, don't do an occlusion query for this object
@@ -1527,7 +1537,7 @@ nSceneServer::DoOcclusionQuery()
         // of the occlusion plane might be clipped which would return 0 drawn pixels
         // when the object really isn't occluded (simply turning off backface
         // culling won't help either in some cases!)
-        
+
         // FIXME: hmm, this method sucks... better to check viewer position against
         // a slightly scaled bounding box in IssueOcclusionQuery()!
         const vector3& viewerPos = gfxServer->GetTransform(nGfxServer2::InvView).pos_component();
@@ -1584,9 +1594,9 @@ nSceneServer::DoOcclusionQuery()
 
 //------------------------------------------------------------------------------
 /**
-    This method goes through all attached light sources and decides which 
+    This method goes through all attached light sources and decides which
     4 of them should cast shadows. This takes the occlusion status, distance and
-    range and intensity into account. The method should be called after 
+    range and intensity into account. The method should be called after
     occlusion culling. The result is that the shadowLightArray will be filled.
 */
 void
