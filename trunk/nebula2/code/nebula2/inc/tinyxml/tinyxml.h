@@ -822,7 +822,7 @@ public:
 	TiXmlAttribute*	Find( const TIXML_STRING& name );
 
 private:
-	//*ME:	Because of hidden/disabled copy-construktor in TiXmlAttribute (sentinel-element),
+	//*ME:	Because of hidden/disabled copy-constructor in TiXmlAttribute (sentinel-element),
 	//*ME:	this class must be also use a hidden/disabled copy-constructor !!!
 	TiXmlAttributeSet( const TiXmlAttributeSet& );	// not allowed
 	void operator=( const TiXmlAttributeSet& );	// not allowed (as TiXmlAttribute)
