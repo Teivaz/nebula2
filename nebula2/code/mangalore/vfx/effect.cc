@@ -80,7 +80,7 @@ Effect::Deactivate()
 
 //------------------------------------------------------------------------------
 /**
-    Call the Update() method once per frame. This checks whether the 
+    Call the Update() method once per frame. This checks whether the
     active duration is over, and if yes, returns true. If this is the case,
     the caller should release the effect object.
 */
@@ -90,15 +90,12 @@ Effect::Update()
     n_assert(this->IsActive());
     this->graphicsEntity->SetTransform(this->GetTransform());
 
-    nTime age = this->curTime - this->activationTime;
-    if (age > this->duration)
-    {
-        return false;
-    }
-    else
+    // if duration < 0.0f, always return true
+    if (this->duration < 0.0f || this->curTime - this->activationTime < this->duration)
     {
         return true;
     }
+    return false;
 }
 
 } // namespace VFX
