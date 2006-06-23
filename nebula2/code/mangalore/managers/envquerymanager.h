@@ -11,6 +11,7 @@
 */
 #include "game/manager.h"
 #include "game/entity.h"
+#include "mathlib/rectangle.h"
 
 //------------------------------------------------------------------------------
 namespace Managers
@@ -31,7 +32,7 @@ public:
     /// get the entity under the mouse cursor
     virtual Game::Entity* GetEntityUnderMouse() const;
     /// get the entities under the mouse drag drop rectangle area
-    virtual void GetEntitiesUnderMouseDragDropRect(vector2 dragPosition, vector2 dropPosition, nArray<Ptr<Game::Entity> >& entities);
+    virtual void GetEntitiesUnderMouseDragDropRect(const rectangle& dragDropRect, nArray<Ptr<Game::Entity> >& entities);
     /// get the mouse position in the 3d world
     virtual const vector3& GetMousePos3d() const;
     /// get the upVector of the face under the mouse cursor
