@@ -16,12 +16,12 @@
 class nClippingCameraNode : public nAbstractCameraNode
 {
 public:
-    /// construktor
+    /// constructor
     nClippingCameraNode();
-    /// destruktor
+    /// destructor
     virtual ~nClippingCameraNode();
 
-    /// function witch updates the camera 
+    /// function witch updates the camera
     virtual bool RenderCamera(const matrix44& modelWorldMatrix, const matrix44& viewMatrix, const matrix44& projectionMatrix);
 
 protected:
