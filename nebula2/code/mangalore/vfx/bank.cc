@@ -46,7 +46,7 @@ Bank::Open()
     int numRows = xmlTable.NumRows();
     n_assert(numRows >= 1);
     int numSounds = numRows - 1;
-    
+
     int effectIndex;
     for (effectIndex = 0; effectIndex < numSounds; effectIndex++)
     {
@@ -109,7 +109,6 @@ Bank::AddEffect(const nString& effectName, const nString& resourceName, nTime du
 {
     n_assert(effectName.IsValid());
     n_assert(resourceName.IsValid());
-    n_assert(duration > 0.0);
 
     // make sure the effect doesn't exist yet
     n_assert(!this->FindEffect(effectName));
