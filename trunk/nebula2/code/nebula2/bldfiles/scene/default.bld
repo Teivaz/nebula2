@@ -216,6 +216,12 @@ beginmodule ncameranode
     setheaders { ncameranode }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule noverlookcameranode
+    setdir scene
+    setfiles { noverlookcameranode_main }
+    setheaders { noverlookcameranode }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule nclippingcameranode
     setdir scene
     setfiles { nclippingcameranode_main }
