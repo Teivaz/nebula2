@@ -59,35 +59,13 @@ EnvQueryManager::GetEntityUnderMouse() const
    Get the entities under the mouse drag drop rectangle area
 */
 void
-EnvQueryManager::GetEntitiesUnderMouseDragDropRect(vector2 dragPosition, vector2 dropPosition, nArray<Ptr<Game::Entity> >& entities)
+EnvQueryManager::GetEntitiesUnderMouseDragDropRect(const rectangle& dragDropRect, nArray<Ptr<Game::Entity> >& entities)
 {
-    nArray<Ptr<Graphics::Entity> > graphicsEntities;
-    float width, height;
-    vector2 center;
-    if (dragPosition.x < dropPosition.x)
-    {
-        width = dropPosition.x - dragPosition.x;
-        center.x = dragPosition.x + width*0.5f;
-    }
-    else
-    {
-        width = dragPosition.x - dropPosition.x;
-        center.x = dropPosition.x + width*0.5f;
-    }
-    if (dragPosition.y < dropPosition.y)
-    {
-        height = dropPosition.y - dragPosition.y;
-        center.y = dragPosition.y + height*0.5f;
-    }
-    else
-    {
-        height = dragPosition.y - dropPosition.y;
-        center.y = dropPosition.y + height*0.5f;
-    }
-    line3 ray = nGfxServer2::Instance()->ComputeWorldMouseRay(center, 5000.0f);
+    line3 ray = nGfxServer2::Instance()->ComputeWorldMouseRay(dragDropRect.midpoint(), 5000.0f);
     float angleOfView = nGfxServer2::Instance()->GetCamera().GetAngleOfView();
 
-    Graphics::Server::Instance()->DragDropSelect(ray.end(), angleOfView*width, width/height, graphicsEntities);
+    nArray<Ptr<Graphics::Entity> > graphicsEntities;
+    Graphics::Server::Instance()->DragDropSelect(ray.end(), angleOfView*dragDropRect.width(), dragDropRect.width()/dragDropRect.height(), graphicsEntities);
 
     EntityManager* entityMgr = EntityManager::Instance();
     for (int i = 0; i < graphicsEntities.Size(); i++)
