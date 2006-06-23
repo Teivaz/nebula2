@@ -18,8 +18,8 @@ begintarget nnebula
         nmesh2 ntexture2 nfont2 nshader2 ngfxserver2
         naudioserver3 nsound3 nlistener3 nsoundresource
         nsceneserver nrenderpath nrendercontext nshadowskinshapenode nshadownode
-        nscenenode ntransformnode nabstractshadernode
-        nabstractcameranode ncameranode nclippingcameranode nreflectioncameranode
+        nscenenode ntransformnode nabstractshadernode nabstractcameranode
+        ncameranode noverlookcameranode nclippingcameranode nreflectioncameranode
         nmaterialnode nshapenode nattachmentnode nanimator nshaderanimator
         nvectoranimator nintanimator ntextureanimator nlightnode nfloatanimator
         ntransformanimator nskinanimator nskinshapenode nlodnode nskynode nskystate
