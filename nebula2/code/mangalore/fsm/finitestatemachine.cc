@@ -185,7 +185,7 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
         }
 
 		// parse further transitions
-		for (column = 4; column < numColumns; column++)
+		for (column = 3; column < numColumns; column++)
 		{
 			const nXmlTableCell& conditionCell = xmlTable->Cell(0, column);
 			const nXmlTableCell& transitionCell = xmlTable->Cell(row, column);
