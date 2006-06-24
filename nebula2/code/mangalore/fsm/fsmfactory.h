@@ -33,7 +33,6 @@ public:
     virtual State* CreateState(const nString& type);
 };
 
-};
+}; // namespace FSM
 //------------------------------------------------------------------------------
-
 #endif

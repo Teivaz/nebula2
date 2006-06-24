@@ -2,9 +2,11 @@
 #define FOUNDATION_FACTORY_H
 //------------------------------------------------------------------------------
 /**
+    @class Foundation::Factory
+
 	Facilities for creating objects by type name to support load/save mechanism.
 
-    (C) 2005 Radon Labs GmbH
+    (C) 2005 RadonLabs GmbH
 */
 #include "foundation/ptr.h"
 #include "util/narray.h"

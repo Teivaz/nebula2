@@ -4,8 +4,6 @@
 /**
     @class FSM::State
 
-    FIXME: use nString in methods!!!
-
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/ptr.h"
