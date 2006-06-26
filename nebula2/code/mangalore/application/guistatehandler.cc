@@ -58,7 +58,8 @@ GuiStateHandler::OnStateEnter(const nString& prevState)
     this->eventHandler->SetGuiStateHandler(this);
     UI::Server::Instance()->DisplayGui(this->resName, this->eventHandler);
 #ifdef MANGALORE_USE_CEGUI
-    CEUI::Server::Instance()->DisplayGui(this->resName);
+    CEUI::Server::Instance()->LoadWindowLayout(this->resName);
+    CEUI::Server::Instance()->DisplayGui();
 #endif
 }
 

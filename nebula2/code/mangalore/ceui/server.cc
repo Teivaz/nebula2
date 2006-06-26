@@ -22,6 +22,7 @@ Server::Server() {
     Singleton = this;
     renderer = 0;
     ceGuiSystem = 0;
+    rootWindow = 0;
     isOpen = false;
     time = 0.0;
     frameTime = 0.0;
@@ -244,28 +245,26 @@ void Server::LoadScheme(const nString& schemeName) {
 
 //------------------------------------------------------------------------------
 /**
+    load window layout from xml and display GUI
+*/
+void Server::LoadWindowLayout(const nString& resName) {
+    this->rootWindow = CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    create default root window and display GUI
+*/
+void Server::CreateEmptyLayout() {
+    this->rootWindow = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "CEUIRootWindow");
+}
+
+//------------------------------------------------------------------------------
+/**
     set default mouse cursor
 */
 void Server::SetDefaultMouseCursor(const nString& schemeName, const nString& cursorName) {
     ceGuiSystem->setDefaultMouseCursor(schemeName.Get(), cursorName.Get());
-}
-
-//------------------------------------------------------------------------------
-/**
-    Displays a new gui defined by a Nebula2 resource and sets
-    the (optional) associated event handler.
-*/
-void Server::DisplayGui(const nString& resName) {
-    CEGUI::Window* rootWindow = CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get());
-    ceGuiSystem->setGUISheet(rootWindow);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Hides the currently displayed 2D GUI.
-*/
-void Server::HideGui() {
-    ceGuiSystem->setGUISheet(NULL);
 }
 
 //-----------------------------------------------------------------------------

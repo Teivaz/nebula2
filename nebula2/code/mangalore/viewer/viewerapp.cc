@@ -461,8 +461,9 @@ ViewerApp::SetupCeGui()
 {
     ceuiServer->CreateFont("cegui:fonts/Commonwealth-10.font");
     ceuiServer->LoadScheme("cegui:schemes/TaharezLook.scheme");
+    ceuiServer->LoadWindowLayout("cegui:layouts/mviewer.layout");
     ceuiServer->SetDefaultMouseCursor("TaharezLook", "MouseArrow");
-    ceuiServer->DisplayGui("cegui:layouts/mviewer.layout");
+    ceuiServer->DisplayGui();
 }
 
 }; // namespace Viewer

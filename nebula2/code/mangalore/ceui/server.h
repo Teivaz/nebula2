@@ -4,6 +4,7 @@
 #include "foundation/refcounted.h"
 #include "foundation/ptr.h"
 #include "cegui/CEGUISystem.h"
+#include "cegui/CEGUIWindow.h"
 
 namespace CEUI
 {
@@ -40,23 +41,32 @@ public:
     void Trigger();
     /// render the user interface
     void Render();
-    /// create gui font
+    /// create GUI font
     void CreateFont(const nString& fontName);
-    /// load gui scheme
+    /// load GUI scheme
     void LoadScheme(const nString& schemeName);
+    /// load window layout
+    void LoadWindowLayout(const nString& resName);
+    /// create empty layout
+    void CreateEmptyLayout();
+    /// get root window
+    CEGUI::Window* GetRootWindow() const;
+    /// display GUI
+    void DisplayGui();
+    /// hide GUI
+    void HideGui();
+    /// check if current GUI visible
+    bool IsGuiVisible() const;
     /// set default mouse cursor
     void SetDefaultMouseCursor(const nString& schemeName, const nString& cursorName);
-    /// create and display a user interface
-    void DisplayGui(const nString& resName);
-    /// hide the current user interface
-    void HideGui();
-    /// is mouse over a UI element
+    /// check if mouse over an UI element
     bool IsMouseOverGui() const;
 
 private:
     static Server* Singleton;
     CEUI::Renderer* renderer;
     CEGUI::System* ceGuiSystem;
+    CEGUI::Window* rootWindow;
     bool isOpen;
     nTime time;
     nTime frameTime;
@@ -112,6 +122,34 @@ void Server::SetFrameTime(nTime f) {
 inline
 nTime Server::GetFrameTime() const {
     return this->frameTime;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+CEGUI::Window* Server::GetRootWindow() const {
+    return this->rootWindow;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void Server::DisplayGui() {
+    if (this->rootWindow != 0 && this->ceGuiSystem->getGUISheet() == 0) {
+        this->ceGuiSystem->setGUISheet(this->rootWindow);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void Server::HideGui() {
+    if (this->ceGuiSystem->getGUISheet() != 0) {
+        this->ceGuiSystem->setGUISheet(NULL);
+    }
 }
 
 } // namespace CEUI
