@@ -2,7 +2,7 @@
    @file networkdemoapp.cc
    @author Luis Jose Cabellos Gomez <luis.cabellos@tragnarion.com>
    @brief Definition of NetworkDemoApp class.
-   @brief $Id$ 
+   @brief $Id$
 
    This file is licensed under the terms of the Nebula License.
 */
@@ -45,7 +45,7 @@ NetworkDemoApp::~NetworkDemoApp()
 bool
 NetworkDemoApp::Open()
 {
-    const char* result;
+    nString result;
 
     n_assert(!this->isOpen);
 
@@ -81,7 +81,7 @@ NetworkDemoApp::Open()
     this->refGfxServer->OpenDisplay();
 
     // define the input mapping
-    // late initialization of input server, because it relies on 
+    // late initialization of input server, because it relies on
     // refGfxServer->OpenDisplay having been called
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     this->refScriptServer->RunScript("home:bin/stdinput.tcl", result);
@@ -110,7 +110,7 @@ NetworkDemoApp::Close()
     this->refScriptServer->Release();
     this->refResourceServer->Release();
     this->refConServer->Release();
-    this->refSceneServer->Release();    
+    this->refSceneServer->Release();
     this->refSessionServer->Release();
 
     this->isOpen = false;
@@ -183,7 +183,7 @@ NetworkDemoApp::Run()
             this->refSceneServer->EndScene();
             this->refSceneServer->RenderScene();             // renders the 3d scene
             this->refGfxServer->Clear(nGfxServer2::ColorBuffer, 0.0f, 0.4f, 0.5f, 0.0f, 1.0f, 0 );
-            this->refConServer->Render();                    
+            this->refConServer->Render();
             this->refSceneServer->PresentScene();            // present the frame
         }
 
@@ -272,5 +272,5 @@ NetworkDemoApp::HandleInput(float frameTime)
     }
 }
 //------------------------------------------------------------------------------
-//   EOF 
+//   EOF
 //------------------------------------------------------------------------------
