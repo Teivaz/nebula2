@@ -30,17 +30,18 @@ endmodule
 #-------------
 begintarget networkdemo
     settype exe
-    setmodules { 
-        networkdemo 
-        netclientdemo 
-        netserverdemo 
-        networkdemoapp 
+    setmodules {
+        networkdemo
+        netclientdemo
+        netserverdemo
+        networkdemoapp
     }
     settargetdeps {
         nkernel
         nnebula
         ndinput8
         ndirect3d9
+        ngui
         microtcl
         ntoollib
         nnetwork
@@ -56,6 +57,7 @@ beginworkspace networkdemo
         nnebula
         ndinput8
         ndirect3d9
+        ngui
         microtcl
         ntoollib
         nnetwork

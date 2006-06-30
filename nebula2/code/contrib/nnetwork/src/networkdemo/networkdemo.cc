@@ -2,7 +2,7 @@
    @file networkdemo.cc
    @author Luis Jose Cabellos Gomez <luis.cabellos@tragnarion.com>
    @brief Main function of Network Demo application.
-   @brief $Id$ 
+   @brief $Id$
 
    This file is licensed under the terms of the Nebula License.
 */
@@ -76,16 +76,16 @@ main(int argc, const char** argv)
 
      // initialize a display mode object
     nString title;
-    
+
     title.Append("NetworkDemo");
     nDisplayMode2 displayMode;
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, true, false, 0);
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, true, false, 0);
     }
 
     // initialize Nebula runtime
@@ -108,5 +108,5 @@ main(int argc, const char** argv)
     return 0;
 }
 //------------------------------------------------------------------------------
-//   EOF 
+//   EOF
 //------------------------------------------------------------------------------
