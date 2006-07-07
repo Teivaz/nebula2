@@ -6,7 +6,7 @@
     @ingroup NebulaDataTypes
 
     @brief A dynamic array template class, similar to the stl vector class.
-    
+
     Can also be set to a fixed size (SetFixedSize()) if the size of
     the array is known beforehand. This eliminates the memory overhead
     for pre-allocated elements if the array works in dynamic mode. To
@@ -23,7 +23,7 @@ template<class TYPE> class nArray
 public:
     typedef TYPE* iterator;
 
-    /// behaviour flags
+    /// behavior flags
     enum
     {
         DoubleGrowSize = (1<<0),    // when set, grow size doubles each turn
@@ -31,7 +31,7 @@ public:
 
     /// constructor with default parameters
     nArray();
-    /// constuctor with initial size and grow size
+    /// constructor with initial size and grow size
     nArray(int initialSize, int initialGrow);
     /// constructor with initial size, grow size and initial values
     nArray(int initialSize, int initialGrow, TYPE initialValue);
@@ -533,8 +533,8 @@ nArray<TYPE>::AppendArray(const nArray<TYPE>& rhs)
 
 //------------------------------------------------------------------------------
 /**
-    Make room for N new elements at the end of the array, and return a pointer 
-    to the start of the reserved area. This can be (carefully!) used as a fast 
+    Make room for N new elements at the end of the array, and return a pointer
+    to the start of the reserved area. This can be (carefully!) used as a fast
     shortcut to fill the array directly with data.
 */
 template<class TYPE>
@@ -667,7 +667,7 @@ nArray<TYPE>::operator==(const nArray<TYPE>& rhs) const
 
 //------------------------------------------------------------------------------
 /**
-    The inequality operator returns true if at least one element in the 
+    The inequality operator returns true if at least one element in the
     array is different, or the array sizes are different.
 */
 template<class TYPE>
