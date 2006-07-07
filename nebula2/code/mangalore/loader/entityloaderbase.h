@@ -17,7 +17,7 @@ namespace Loader
 class EntityLoaderBase : public Foundation::RefCounted
 {
 public:
-    /// construtcor
+    /// constructor
     EntityLoaderBase();
     /// destructor
     ~EntityLoaderBase();
