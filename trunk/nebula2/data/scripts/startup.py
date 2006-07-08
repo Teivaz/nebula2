@@ -262,6 +262,10 @@ def OnGuiServerOpen():
     skin.addbrush('quit_p', 'skin',       288,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('quit_h', 'skin',       288, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
 
+    skin.addbrush('hardpoint_n', 'skin',    0, 188, 48, 48, 1.0, 1.0, 1.0, 1.0)
+    skin.addbrush('hardpoint_p', 'skin',    0, 188, 48, 48, 0.5, 0.5, 0.5, 1.0)
+    skin.addbrush('hardpoint_h', 'skin',   48, 188, 48, 48, 1.0, 1.0, 1.0, 1.0)
+
     skin.addbrush('disp_n', 'skin',       384,  56, 48, 48, 1.0, 1.0, 1.0, 1.0)
     skin.addbrush('disp_p', 'skin',       384,  56, 48, 48, 0.5, 0.5, 0.5, 1.0)
     skin.addbrush('disp_h', 'skin',       384, 104, 48, 48, 1.0, 1.0, 1.0, 1.0)
