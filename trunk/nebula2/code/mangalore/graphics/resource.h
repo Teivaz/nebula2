@@ -8,6 +8,7 @@
     The resource name must consist of a category, a name and an optional
     subname, delimited by slashes, for example:
 
+    @verbatim
     resource name:      "doors/woodendoor"
     file system file:   "gfxlib:doors/woodendoor.n2"
     Nebula location:    "res/gfx/doors/woodendoor"
@@ -15,6 +16,7 @@
     resource name:      "doors/woodendoor/knob"
     file system file:   "gfxlib:doors/woodendoor.n2"
     Nebula location:    "res/gfx/doors/woodendoor/knob"
+    @endverbatim
 
     (C) 2003 RadonLabs GmbH
 */

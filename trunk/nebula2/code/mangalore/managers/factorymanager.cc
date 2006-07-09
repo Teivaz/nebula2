@@ -130,11 +130,13 @@ FactoryManager::CreateEntityByCategory(const nString& categoryName, Entity::Enti
     The template database entry is identified by the following SQL
     statement:
 
+    @code
     SELECT *
     FROM '_Entities'
     WHERE ROWTYPE='TEMPLATE' AND
     _Category='[categoryName]' AND
     Id='[templateName]'
+    @endcode
 
     A new GUID will be assigned to the entity.
     No new database entry will be created until the Entity::Save() method
