@@ -35,6 +35,9 @@ public:
     int duration;
     /// fade time.
     float fadeInTime;
+    /// loop type. (it has nAnimBuilder::Group::REPEAT or 
+    /// nAnimBuilder::Group::CLAMP for its value. default is 'REPEAT')
+    int loopType;
     /// state name.
     nString name;
     /// array for clips.

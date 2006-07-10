@@ -12,6 +12,7 @@
 #include "pluginlibs/nmaxlogdlg.h"
 
 #include "kernel/ntypes.h"
+#include "tools/nanimbuilder.h"
 
 //---------------------------------------------------------------------------
 /**
@@ -19,7 +20,8 @@
 nMaxAnimState::nMaxAnimState() :
     firstFrame(0),
     duration(0),
-    fadeInTime(0.0f)
+    fadeInTime(0.0f),
+    loopType(nAnimBuilder::Group::REPEAT)
 {
     // default clip.
     this->AddClip("one");

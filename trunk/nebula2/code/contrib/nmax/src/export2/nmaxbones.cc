@@ -770,7 +770,21 @@ bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) {
         if (numStateKeys <= 0 || numClipKeys <= 0)
             continue;
 
-        animGroup.SetLoopType(nAnimBuilder::Group::REPEAT);
+        // determine animations loop type. 
+        // the value is specified inside of nMaxNoteTrack::GetAnimState(). 
+        // default is 'REPEAT'.
+        switch(animState.loopType) 
+        {
+        case nAnimBuilder::Group::REPEAT:
+            animGroup.SetLoopType(nAnimBuilder::Group::REPEAT);
+        	break;
+        case nAnimBuilder::Group::CLAMP:
+            animGroup.SetLoopType(nAnimBuilder::Group::CLAMP);
+            break;
+        default:
+            break; // unknown loop type.
+        }
+        
         animGroup.SetKeyTime(keyDuration);
         animGroup.SetNumKeys(numClipKeys);
 
