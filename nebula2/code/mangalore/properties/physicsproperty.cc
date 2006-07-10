@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  properties/physicsproperty.cc
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "properties/physicsproperty.h"
 #include "game/entity.h"
@@ -115,7 +115,7 @@ PhysicsProperty::EnablePhysics()
         n_assert(physicsLevel);
         physicsLevel->AttachEntity(this->physicsEntity);
 
-        // call parrent to do the real enable
+        // call parent to do the real enable
         AbstractPhysicsProperty::EnablePhysics();
     }
 }
@@ -133,7 +133,7 @@ PhysicsProperty::DisablePhysics()
     n_assert(physicsLevel);
     physicsLevel->RemoveEntity(this->physicsEntity);
 
-    // call parrent
+    // call parent
     AbstractPhysicsProperty::DisablePhysics();
 }
 
@@ -143,10 +143,10 @@ PhysicsProperty::DisablePhysics()
 void
 PhysicsProperty::OnDeactivate()
 {
-    // call parrent to cleanup
+    // call parent to cleanup
     AbstractPhysicsProperty::OnDeactivate();
 
-    // release phy entity
+    // release physics entity
     if (this->physicsEntity != 0)
     {
         this->physicsEntity = 0;
