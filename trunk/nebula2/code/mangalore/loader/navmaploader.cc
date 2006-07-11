@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  loader/navmaploader.h
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/navmaploader.h"
 #include "db/server.h"
@@ -13,6 +13,9 @@
 namespace Loader
 {
 
+ImplementRtti(Loader::NavMapLoader, Foundation::RefCounted);
+ImplementFactory(Loader::NavMapLoader);
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -20,7 +23,7 @@ bool
 NavMapLoader::Load(const nString& levelName)
 {
     Db::Server* dbServer = Db::Server::Instance();
-    
+
     // create query which gives us the navmap of this level (if any)
     nString sql;
     sql.Format("SELECT * FROM _Navigation WHERE _Level='%s'", levelName.Get());

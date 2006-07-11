@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  loader/entityloader.cc
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/entityloader.h"
 #include "db/query.h"
@@ -12,11 +12,11 @@
 
 namespace Loader
 {
-using namespace Game;
+
 using namespace Managers;
 
-ImplementRtti(EntityLoader, EntityLoaderBase);
-ImplementFactory(EntityLoader);
+ImplementRtti(Loader::EntityLoader, Loader::EntityLoaderBase);
+ImplementFactory(Loader::EntityLoader);
 
 //------------------------------------------------------------------------------
 /**
@@ -48,7 +48,7 @@ EntityLoader::Load(const nString& levelName)
     for (categoryIndex = 0; categoryIndex < numCategories; categoryIndex++)
     {
         nString curCategory = categoryQuery->GetAttr(Attr::Name, categoryIndex).GetString();
-        
+
         // !!!!!!!!!!!!!!!!!!!!!!!!
         // HACK: Skip tree category
         if (curCategory != "Tree")
@@ -64,10 +64,10 @@ EntityLoader::Load(const nString& levelName)
             {
                 // create entity by guid, this will fully initialize the entity from the database
                 nString guid = entityQuery->GetAttr(Attr::GUID, entityIndex).GetString();
-                Ptr<Entity> gameEntity = FactoryManager::Instance()->CreateEntityByGuid(guid);
+                Ptr<Game::Entity> gameEntity = FactoryManager::Instance()->CreateEntityByGuid(guid);
 
                 // attach the entity to the world
-                EntityManager::Instance()->AttachEntity(gameEntity);            
+                EntityManager::Instance()->AttachEntity(gameEntity);
             }
         }
     }

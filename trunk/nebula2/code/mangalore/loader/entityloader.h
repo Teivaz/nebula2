@@ -8,9 +8,8 @@
     attached to the entity are described in blueprints.xml, the attributes
     to attach come from the world database.
 
-    (C) 2005 Radon Labs GmbH
+    (C) 2006 RadonLabs GmbH
 */
-#include "util/nstring.h"
 #include "loader/entityloaderbase.h"
 
 //------------------------------------------------------------------------------
@@ -21,6 +20,7 @@ class EntityLoader : public EntityLoaderBase
 {
     DeclareRtti;
     DeclareFactory(EntityLoader);
+
 public:
     /// constructor
     EntityLoader();
@@ -29,6 +29,7 @@ public:
     /// load entity objects into the level
     virtual bool Load(const nString& levelName);
 };
+
 RegisterFactory(EntityLoader);
 
 } // namespace Loader

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  loader/environmentloader.cc
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/environmentloader.h"
 #include "db/query.h"
@@ -21,11 +21,10 @@
 namespace Loader
 {
 using namespace Properties;
-using namespace Game;
 using namespace Managers;
 
-ImplementRtti(EnvironmentLoader, EntityLoaderBase);
-ImplementFactory(EnvironmentLoader);
+ImplementRtti(Loader::EnvironmentLoader, Loader::EntityLoaderBase);
+ImplementFactory(Loader::EnvironmentLoader);
 
 //------------------------------------------------------------------------------
 /**
@@ -157,11 +156,11 @@ EnvironmentLoader::CreateAnimatedEntity(Db::Query* query, int queryRowIndex)
     FactoryManager* factory = FactoryManager::Instance();
 
     // create a raw game entity
-    Entity* gameEntity = factory->CreateEntityByClassName("Entity");
+    Game::Entity* gameEntity = factory->CreateEntityByClassName("Entity");
 
     // attach required properties
-    Ptr<Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
-    Ptr<Property> pathAnimProperty = factory->CreateProperty("PathAnimProperty");
+    Ptr<Game::Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
+    Ptr<Game::Property> pathAnimProperty = factory->CreateProperty("PathAnimProperty");
     gameEntity->AttachProperty(graphicsProperty);
     gameEntity->AttachProperty(pathAnimProperty);
 
@@ -184,12 +183,12 @@ EnvironmentLoader::CreatePhysicsEntity(Db::Query* query, int queryRowIndex)
     FactoryManager* factory = FactoryManager::Instance();
 
     // create a game entity
-    Entity* gameEntity = factory->CreateEntityByClassName("Entity");
+    Game::Entity* gameEntity = factory->CreateEntityByClassName("Entity");
 
     // attach required properties (NOTE: the order of attachment is
     // important in this case)
-    Ptr<Property> physicsProperty  = factory->CreateProperty("PhysicsProperty");
-    Ptr<Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
+    Ptr<Game::Property> physicsProperty  = factory->CreateProperty("PhysicsProperty");
+    Ptr<Game::Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
     gameEntity->AttachProperty(physicsProperty);
     gameEntity->AttachProperty(graphicsProperty);
 

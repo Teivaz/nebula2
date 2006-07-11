@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  loader/server.cc
-//  (C) 2003 RadonLabs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/server.h"
 #include "foundation/factory.h"
@@ -8,6 +8,7 @@
 
 namespace Loader
 {
+
 ImplementRtti(Loader::Server, Foundation::RefCounted);
 ImplementFactory(Loader::Server);
 
@@ -99,7 +100,7 @@ Server::LoadLevel(const nString& levelName)
 /**
     Attach new entity loader to server.
 
-    @param  loader    loader class   
+    @param  loader    loader class
 */
 void
 Server::AttachLoader(EntityLoaderBase* loader)
@@ -113,7 +114,7 @@ Server::AttachLoader(EntityLoaderBase* loader)
 /**
     Remove given loader from server.
 
-    @param  loader    loader class   
+    @param  loader    loader class
 */
 void
 Server::RemoveLoader(EntityLoaderBase* loader)
@@ -140,10 +141,10 @@ Server::RemoveAllLoader()
 /**
     Get index of given loader
 
-    @param  loader    loader class   
+    @param  loader    loader class
     @return index     index of loader in list, returns -1 if no one found.
 */
-int 
+int
 Server::GetEntityLoaderIndex(EntityLoaderBase* loader) const
 {
     n_assert(0 != loader);

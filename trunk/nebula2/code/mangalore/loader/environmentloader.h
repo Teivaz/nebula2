@@ -7,11 +7,10 @@
     Helper class which loads all the environment objects into a level.
     Called by Loader::LevelLoader.
 
-    (C) 2005 Radon Labs GmbH
+    (C) 2006 RadonLabs GmbH
 */
-#include "util/nstring.h"
-#include "db/query.h"
 #include "loader/entityloaderbase.h"
+#include "db/query.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
@@ -20,6 +19,7 @@ class EnvironmentLoader : public EntityLoaderBase
 {
     DeclareRtti;
     DeclareFactory(EnvironmentLoader);
+
 public:
     /// constructor
     EnvironmentLoader();
@@ -38,6 +38,7 @@ private:
     /// create a game entity with graphics and physics
     void CreatePhysicsEntity(Db::Query* query, int queryRowIndex);
 };
+
 RegisterFactory(EnvironmentLoader);
 
 } // namespace Loader
