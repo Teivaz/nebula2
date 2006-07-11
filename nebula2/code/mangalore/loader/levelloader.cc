@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  loader/levelloader.cc
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/levelloader.h"
 #include "loader/server.h"
@@ -19,6 +19,9 @@
 
 namespace Loader
 {
+
+ImplementRtti(Loader::LevelLoader, Foundation::RefCounted);
+ImplementFactory(Loader::LevelLoader);
 
 //------------------------------------------------------------------------------
 /**

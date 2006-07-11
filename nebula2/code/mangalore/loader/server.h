@@ -9,11 +9,12 @@
     use higher level classes like the Game::SetupManager and
     Game::SaveGameManager.
 
-    (C) 2003 RadonLabs GmbH
+    (C) 2006 RadonLabs GmbH
 */
-#include "loader/userprofile.h"
+#include "foundation/refcounted.h"
 #include "foundation/ptr.h"
 #include "loader/entityloaderbase.h"
+#include "loader/userprofile.h"
 
 //------------------------------------------------------------------------------
 namespace Loader

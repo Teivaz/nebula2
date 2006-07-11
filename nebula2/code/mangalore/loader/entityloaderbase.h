@@ -6,9 +6,8 @@
 
     Abstract loader helper for game entities.
 
-    (C) 2005 Radon Labs GmbH
+    (C) 2006 RadonLabs GmbH
 */
-#include "util/nstring.h"
 #include "foundation/refcounted.h"
 
 //------------------------------------------------------------------------------
@@ -16,6 +15,8 @@ namespace Loader
 {
 class EntityLoaderBase : public Foundation::RefCounted
 {
+    DeclareRtti;
+
 public:
     /// constructor
     EntityLoaderBase();

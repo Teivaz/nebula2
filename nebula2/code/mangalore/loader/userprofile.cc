@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  loader/userprofile.cc
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/userprofile.h"
 #include "loader/server.h"
@@ -8,6 +8,7 @@
 
 namespace Loader
 {
+
 ImplementRtti(Loader::UserProfile, Foundation::RefCounted);
 ImplementFactory(Loader::UserProfile);
 
@@ -99,7 +100,7 @@ UserProfile::GetSaveGamePath(const nString& saveGameName) const
 
 //------------------------------------------------------------------------------
 /**
-    Set the user profile to its default state. This is empty in the 
+    Set the user profile to its default state. This is empty in the
     base class but should be overriden to something meaningful in
     application specific subclasses.
 */

@@ -1,11 +1,13 @@
 //------------------------------------------------------------------------------
 //  loader/entityloaderbase.cc
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/entityloaderbase.h"
 
 namespace Loader
 {
+
+ImplementRtti(Loader::EntityLoaderBase, Foundation::RefCounted);
 
 //------------------------------------------------------------------------------
 /**
@@ -28,10 +30,8 @@ EntityLoaderBase::~EntityLoaderBase()
 */
 bool
 EntityLoaderBase::Load(const nString& /*levelName*/)
-{    
+{
     return false;
 }
 
 } // namespace Loader
-
-

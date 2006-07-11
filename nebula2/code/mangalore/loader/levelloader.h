@@ -6,20 +6,25 @@
 
     Helper class for loading a complete level from the world database.
 
-    (C) 2005 Radon Labs GmbH
+    (C) 2006 RadonLabs GmbH
 */
-#include "kernel/ntypes.h"
-#include "util/nstring.h"
+#include "foundation/refcounted.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
 {
-class LevelLoader
+
+class LevelLoader : public Foundation::RefCounted
 {
+    DeclareRtti;
+    DeclareFactory(LevelLoader);
+
 public:
     /// load a complete level from the world database
     static bool Load(const nString& levelName);
 };
+
+RegisterFactory(LevelLoader);
 
 } // namespace Loader
 //------------------------------------------------------------------------------

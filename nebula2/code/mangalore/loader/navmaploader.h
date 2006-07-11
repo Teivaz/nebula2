@@ -6,20 +6,25 @@
 
     Loads navigation maps into the world.
 
-    (C) 2005 Radon Labs GmbH
+    (C) 2006 RadonLabs GmbH
 */
-#include "kernel/ntypes.h"
-#include "util/nstring.h"
+#include "foundation/refcounted.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
 {
-class NavMapLoader
+
+class NavMapLoader : Foundation::RefCounted
 {
+    DeclareRtti;
+    DeclareFactory(NavMapLoader);
+
 public:
     /// load navigation map into the level
     static bool Load(const nString& levelName);
 };
+
+RegisterFactory(NavMapLoader);
 
 } // namespace Loader
 //------------------------------------------------------------------------------
