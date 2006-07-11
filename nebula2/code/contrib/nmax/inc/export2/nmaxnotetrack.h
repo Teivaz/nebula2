@@ -71,7 +71,12 @@ public:
     const nMaxAnimState& GetState(int index);
 
 protected:
+    ///
     int GetNextFrame(int index, DefNoteTrack* n);
+    ///
+    nString ExtractNoteName(nString& rhs);
+    ///
+    nString ExtractLoopType(nString& rhs);
 
 protected:
     /// array for animation states which collected from note track.
