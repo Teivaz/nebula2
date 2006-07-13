@@ -1,18 +1,21 @@
 //------------------------------------------------------------------------------
 //  game/property.cc
-//  (C) 2005 Radon Labs GmbH
+//  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "game/property.h"
 #include "game/entity.h"
 
 namespace Game
 {
+
 ImplementRtti(Game::Property, Message::Port);
 
 //------------------------------------------------------------------------------
 /**
 */
-Property::Property() : active(false)
+Property::Property() :
+    active(false),
+    entity(0)
 {
     // empty
 }
@@ -22,12 +25,12 @@ Property::Property() : active(false)
 */
 Property::~Property()
 {
-    n_assert(!this->entity.isvalid());
+    // empty
 }
 
 //------------------------------------------------------------------------------
 /**
-    This method returns an OR'ed mask of entity pools where this 
+    This method returns an OR'ed mask of entity pools where this
     property is active. By default, the property is active in all
     entity pools (Live and Sleeping), if your subclassed property is
     only active in the Live pool, override this method and only return
@@ -35,7 +38,7 @@ Property::~Property()
 
     During AttachProperty() the entity will ask the property with this
     method whether it is active in the entity's current pool, if not,
-    the property will not even be added. 
+    the property will not even be added.
 */
 int
 Property::GetActiveEntityPools() const
@@ -46,7 +49,7 @@ Property::GetActiveEntityPools() const
 //------------------------------------------------------------------------------
 /**
     If a property adds attributes to an entity, override this method to setup
-    their default state. This method is called before the entity is even 
+    their default state. This method is called before the entity is even
     initialized from the database. After this method, entity attributes may
     be overwritten from the database, and after that from a stream.
 */
@@ -58,7 +61,7 @@ Property::SetupDefaultAttributes()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called by Game::Entity::ActivateProperties(). 
+    This method is called by Game::Entity::ActivateProperties().
     Use this method for one-time initializations of the property.
 */
 void
@@ -70,7 +73,7 @@ Property::OnActivate()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called by Game::Entity::DeactivateProperties(). Use this 
+    This method is called by Game::Entity::DeactivateProperties(). Use this
     method to cleanup stuff which has been initialized in OnActivate().
 */
 void
@@ -100,7 +103,7 @@ Property::OnLoad()
     This method is called from within Game::Entity::Save() before the
     entity attributes will be saved to the database. You can override
     this method in a subclass if actions are needed before a save happens
-    (this is usually the case if entity attributes need to be updated 
+    (this is usually the case if entity attributes need to be updated
     by the property before saving).
 */
 void
@@ -111,8 +114,8 @@ Property::OnSave()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called from Game::Entity::OnBeginFrame() on all 
-    properties attached to an entity in the order of attachment. Override this 
+    This method is called from Game::Entity::OnBeginFrame() on all
+    properties attached to an entity in the order of attachment. Override this
     method if your property has to do any work at the beginning of the frame.
 */
 void
@@ -124,7 +127,7 @@ Property::OnBeginFrame()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called from Game::Entity::OnMoveBefore() on all 
+    This method is called from Game::Entity::OnMoveBefore() on all
     properties attached to an entity in the order of attachment. Override this
     method if your property has any work to do before the physics subsystem
     is triggered.
@@ -175,16 +178,16 @@ Property::Accepts(Message::Msg* msg)
 //------------------------------------------------------------------------------
 /**
     This method is inherited from the Port class. If your property acts as
-    a message handler you must implement the HandleMessage() method to 
+    a message handler you must implement the HandleMessage() method to
     process the incoming messages. Please note that HandleMessage() will
     not be called "automagically" because the Property doesn't know at which
     point in the frame you want to handle pending messages.
 
-    Thus, you must call the HandlePendingMessages() yourself from either 
+    Thus, you must call the HandlePendingMessages() yourself from either
     OnBeginFrame(), OnMoveBefore(), OnMoveAfter() or OnRender().
 
     The simple rule is: if you override the Accepts() method, you must also call
-    HandlePendingMessages() either in OnBeginFrame(), OnMoveBefore(), 
+    HandlePendingMessages() either in OnBeginFrame(), OnMoveBefore(),
     OnMoveAfter() or OnRender().
 */
 void
