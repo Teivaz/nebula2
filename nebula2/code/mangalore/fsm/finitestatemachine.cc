@@ -55,8 +55,8 @@ FiniteStateMachine::ParseTransition(const nString& condition, const nString& tar
     Transition* transition = n_new(Transition);
     transition->condition = this->factory->CreateCondition(condition);
 
-	nArray<nString> transitionTokens;
-	int transitionTokenCount = targetAndActions.Tokenize("/", transitionTokens);
+    nArray<nString> transitionTokens;
+    int transitionTokenCount = targetAndActions.Tokenize("/", transitionTokens);
 
     n_assert(2 == transitionTokenCount);
 
@@ -84,7 +84,7 @@ FiniteStateMachine::ParseTransition(const nString& condition, const nString& tar
     // set actions
     if (transitionTokens[1] != "-")
     {
-    	nArray<nString> actionTokens;
+        nArray<nString> actionTokens;
         int actionTokenCount = transitionTokens[1].Tokenize("; \t\n", actionTokens);
 
         for (int i = 0; i < actionTokenCount; ++i)
@@ -150,12 +150,12 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
     n_assert(numColumns >= 1);
 
     n_assert(numRows - 1 > 0);
-	this->states.SetFixedSize(numRows - 1);
+    this->states.SetFixedSize(numRows - 1);
 
     // init states
     for (row = 1; row < numRows; row++)
     {
-		int stateIndex = row - 1;
+        int stateIndex = row - 1;
         const nXmlTableCell& idCell = xmlTable->Cell(row, 0);
 
         this->states[stateIndex].create();
@@ -167,7 +167,7 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
     // set state transitions
     for (row = 1; row < numRows; row++)
     {
-		int stateIndex = row - 1;
+        int stateIndex = row - 1;
 
         const nXmlTableCell& timeOutTimeCell = xmlTable->Cell(row, 1);
         const nXmlTableCell& timeOutTransitionCell = xmlTable->Cell(row, 2);
@@ -184,18 +184,18 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
             this->states[stateIndex]->transitions.Append(timeoutTransition);
         }
 
-		// parse further transitions
-		for (column = 3; column < numColumns; column++)
-		{
-			const nXmlTableCell& conditionCell = xmlTable->Cell(0, column);
-			const nXmlTableCell& transitionCell = xmlTable->Cell(row, column);
+        // parse further transitions
+        for (column = 3; column < numColumns; column++)
+        {
+            const nXmlTableCell& conditionCell = xmlTable->Cell(0, column);
+            const nXmlTableCell& transitionCell = xmlTable->Cell(row, column);
 
             Transition* transition = this->ParseTransition(conditionCell.AsString(), transitionCell.AsString(), stateTable);
             if (0 != transition)
             {
                 this->states[stateIndex]->transitions.Append(transition);
             }
-		}
+        }
     }
 
     return true;
@@ -263,9 +263,9 @@ FiniteStateMachine::Trigger()
             // select new state
             StateTableEntry* nextState = 0;
             if (transition->backToLastState && this->lastState != 0)
-		    {
+            {
                 nextState = this->lastState;
-			}
+            }
             else if (0 != transition->nextState)
             {
                 nextState = transition->nextState;
@@ -279,7 +279,7 @@ FiniteStateMachine::Trigger()
                 // break loop
                 break;
             }
-		}
+        }
     }
 
 }
