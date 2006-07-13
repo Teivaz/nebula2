@@ -11,7 +11,7 @@
     the Message::Port class and as such may receive and handle
     messages but they are not required to do so.
 
-    (C) 2005 Radon Labs GmbH
+    (C) 2006 RadonLabs GmbH
 */
 #include "message/port.h"
 #include "util/nstream.h"
@@ -69,7 +69,7 @@ protected:
     /// Remove entity.
     void ClearEntity();
 
-    Ptr<Entity> entity;
+    Entity* entity;
     bool active;
 };
 
