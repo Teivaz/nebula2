@@ -1,0 +1,78 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+new ntransformnode parallaxbump
+	sel parallaxbump
+	.setlocalbox -1.109223 0.000000 1.668219 1.612416 1.000000 2.168219
+	new ntransformnode model
+		sel model
+		.setlocalbox -1.109223 0.000000 1.668219 1.612416 1.000000 2.168219
+		new nshapenode static_0_0
+			sel static_0_0
+			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.000000 0.500000
+			.settexture "DiffMap0" "textures:buildings/pflasterpfeil.dds"
+			.settexture "BumpMap0" "textures:buildings/pflaster_bump.dds"
+			.setvector "MatDiffuse" 0.541276 0.496000 1.000000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
+			.setfloat "MatSpecularPower" 63.619999
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 24.964001
+			.setshader "static"
+			.setmesh "meshes:examples/parallaxbump_s_0.n3d2"
+			.setgroupindex 0
+			.setneedsvertexshader false
+		sel ..
+		new nshapenode static_0_1
+			sel static_0_1
+			.setlocalbox -0.514970 0.000000 0.514027 1.018163 0.000000 1.014027
+			.settexture "DiffMap0" "textures:buildings/pflasterpfeil.dds"
+			.settexture "BumpMap0" "textures:buildings/pflaster_bump.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
+			.setfloat "MatSpecularPower" 67.251999
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 24.964001
+			.setshader "static"
+			.setmesh "meshes:examples/parallaxbump_s_0.n3d2"
+			.setgroupindex 1
+			.setneedsvertexshader false
+		sel ..
+		new nshapenode static_0_2
+			sel static_0_2
+			.setlocalbox 0.000000 0.418872 2.522644 0.500000 0.418872 0.822656
+			.settexture "DiffMap0" "textures:buildings/pflasterpfeil.dds"
+			.settexture "BumpMap0" "textures:buildings/pflaster_bump.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
+			.setfloat "MatSpecularPower" 54.548000
+			.setint "CullMode" 1
+			.setfloat "BumpScale" 25.531099
+			.setshader "static"
+			.setmesh "meshes:examples/parallaxbump_s_0.n3d2"
+			.setgroupindex 2
+			.setneedsvertexshader false
+		sel ..
+		new nshapenode static_0_3
+			sel static_0_3
+			.setlocalbox -1.721639 0.000000 2.836437 1.000000 1.000000 1.000000
+			.settexture "DiffMap0" "textures:system/white.dds"
+			.settexture "BumpMap0" "textures:system/nobump.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatSpecular" 0.000000 0.000000 0.000000 0.000000
+			.setvector "MatAmbient" 0.100000 0.100000 0.100000 0.100000
+			.setfloat "MatSpecularPower" 64.000000
+			.setshader "static"
+			.setmesh "meshes:examples/parallaxbump_s_0.n3d2"
+			.setgroupindex 3
+			.setneedsvertexshader false
+		sel ..
+	sel ..
+sel ..
+# ---
+# Eof

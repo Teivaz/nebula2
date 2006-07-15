@@ -1,0 +1,17 @@
+/**
+    @defgroup NPKFile NPK File Management
+    @ingroup File
+
+    nNpkFileServer implements the nFileServer2 interface,
+    but works with @c npk files instead of the regular file
+    system. Npk files combine many individual files into
+    a single file, which may be faster for loading many
+    small files, especially on Windows.
+
+    The implementation of nNpkFileServer relies upon nNpkFile
+    and nNpkDirectory to provide the implementation of file
+    and directory objects respectively.
+
+    Some tools are provided for working with npk files as well.
+    See @ref NebulaToolsnnpktool for further information.
+*/

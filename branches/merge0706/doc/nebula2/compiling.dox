@@ -1,0 +1,225 @@
+/**
+
+@page Nebula2Compiling Compiling Nebula2
+
+    - @subpage Nebula2CompilingOSWin32
+    - @subpage Nebula2CompilingOSOSX
+    - @subpage Nebula2CompilingOSLinux
+  
+At the moment, Nebula 2 will compile on Win32, Linux and Mac OSX.  However, the only @ref nGfxServer2 and @ref nInputServer currently available are @ref nD3D9Server and @ref nDI8Server for Win32.
+
+@section Nebula2CompilingRequirements General Requirements
+
+Nebula has a script based build system that generates projects, solutions, workspaces or makefiles that you can open in your IDE or feed to your compiler.
+
+If you are using Microsoft Visual C++ (7.0 or later) you will need to install
+the following in order to run the build system:
+
+    - <a href="http://www.python.org">Python (2.4 recommended)</a>
+    - <a href="http://www.wxpython.org">WxPython (2.6 recommended)</a>
+
+If you are using some XCode, GNU/Linux, or the Visual C++ 2003 Toolkit
+(the free download, without Visual Studio), you will need Tcl8.4 to run
+the older build system. You can download Tcl8.4 from:
+
+    - <A HREF="http://www.tcl.tk">Tcl Developer Xchange</A> or
+    - <A HREF="http://tcl.sourceforge.net">Sourceforge</A> or 
+    - <A HREF="http://www.activestate.com">ActiveState</A>
+
+We are in the process of converting from the TCL-based build system
+to the Python-based build system, so these directions are expected
+to change in the future.
+*/
+/**
+@page Nebula2CompilingOSWin32 Compiling Nebula2 on Windows
+
+    - @ref Nebula2CompilingOSWin32Requirements
+    - @ref Nebula2CompilingOSWin32Preparation
+        - @ref Nebula2CompilingOSWin32PreparationVS7
+        - @ref Nebula2CompilingOSWin32PreparationVCTK
+    - @ref Nebula2CompilingOSWin32BuildFiles
+        - @ref Nebula2CompilingOSWin32BuildFilesVS7
+        - @ref Nebula2CompilingOSWin32BuildFilesOther
+    - @ref Nebula2CompilingOSWin32Compiling
+        - @ref Nebula2CompilingOSWin32CompilingVS7
+        - @ref Nebula2CompilingOSWin32CompilingOther
+    - @ref Nebula2CompilingOSWin32Troubleshooting
+
+@section Nebula2CompilingOSWin32Requirements Additional Requirements
+
+    - Windows 2000 or Windows XP (other Win32 platforms may work but have not been tested)
+        - Microsoft no longer supports using Windows 2000 with the most recent DirectX SDKs.
+    - Microsoft <A HREF="http://msdn.microsoft.com/directx">DirectX 9 SDK</A>. Nebula2 does not work with versions earlier than the <A HREF="http://www.microsoft.com/downloads/details.aspx?FamilyId=9216652F-51E0-402E-B7B5-FEB68D00F298&displaylang=en">2003 "Summer Update" version</A>. We do not support the 2004 Summer SDK due to bugs in that SDK, but the October 2004 and later versions are fine.
+    
+  - Visual 7.0 - 8.0 (.NET), or Visual C++ Toolkit 2003.
+  - Visual C++ 6 is no longer supported.
+
+If you are using Visual C++ Toolkit 2003, then you will need an updated <a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/default.htm">Core SDK</a> from Microsoft. Without this, Nebula will fail to compile due a missing @c shfolder.h, or because of the lack of headers/libs (in the toolkit).
+  
+@section Nebula2CompilingOSWin32Preparation Preparation
+
+  - Add @c nebula2/bin/win32 to your path
+
+@subsection  Nebula2CompilingOSWin32PreparationVS7 Visual C++ 7.0 and later
+
+Under "Tools->Options->Projects->VC++ Directories" make sure that the DX9 libs and include directories are before VStudio's lib and include directory paths (Note: Do not do this if you are using VC 8.0, the headers included with VC 8.0 are newer than those in the DX SDK).
+
+@subsection  Nebula2CompilingOSWin32PreparationVCTK Visual C++ 2003 Toolkit
+
+These instructions also apply if you are building using make and a regular copy of Visual C++.
+
+@note Instead of using GNU Make or Cygwin you might want to experiment with <a href="http://www.gotdotnet.com/team/cplusplus/">vcbuild</a>, we haven't tried it though so it may not work.
+
+In order to compile with the toolkit, you will need these additional requirements:
+
+    - GNU Make or a Cygwin environment
+
+If using a regular command prompt, make sure that <tt>make.exe</tt> is located on your path.
+
+@section Nebula2CompilingOSWin32BuildFiles Create The Build Files
+
+Anytime files are added or removed from Nebula 2 this step must be repeated.
+
+@subsection Nebula2CompilingOSWin32BuildFilesVS7 Visual C++ 7.0 and later
+
+Navigate to <code>nebula2/</code> and double click on <code>update.py</code>, if you correctly installed Python and wxPython you should see the Nebula 2 Build System application displayed. You can use this application to create the project and solution files for Visual Studio, in the directory <code>nebula2/build/vstudio##</code>. Read the manual that's available through Help->Manual on the Main Menu to figure out what you need to do before proceeding to the next step.
+
+@subsection Nebula2CompilingOSWin32BuildFilesOther Visual C++ 2003 Toolkit or Other
+
+@note If you're experimenting with vcbuild - generate build files for Visual C++ 7.1 as described above instead of using update.tcl as described below.
+
+Navigate to <code>nebula2/</code> and double click <code>update.tcl</code>. Makefiles for the Visual C++ 2003 Toolkit are located in the directory <code>nebula2/build/makefile</code>. You can tell that <code>update.tcl</code> has completed successfully when it pops up a featureless grey window.
+
+@section Nebula2CompilingOSWin32Compiling Compiling
+
+@subsection Nebula2CompilingOSWin32CompilingVS7 Visual C++ 7.0 and later
+
+Open the Nebula2.sln (or whatever solution you want to build) in the directory that corresponds to your version of Visual Studio. Then select Build->Build Solution from the Main Menu. The binaries will be located in <code>nebula2/bin/win32</code>, or <code>nebula2/bin/win32d</code> for debug versions.
+
+If you'd like to do a command-line based build using Visual Studio, rather than deal with Makefiles and the like, try using <tt>devenv.com /build</tt>:
+
+    - http://msdn.microsoft.com/library/en-us/vsintro7/html/vxlrfbuild.asp
+
+Note: be sure to use <tt>devenv.com</tt> rather than <tt>devenv.exe</tt> as it is lighter weight and still gets the job done.
+
+@subsection Nebula2CompilingOSWin32CompilingOther Visual C++ 2003 Toolkit or Other
+
+To create the correct build environment:
+  - Launch a Visual C++ 2003 Toolkit Prompt.
+  - Add path/to/your/directx/sdk/Lib to the "LIB" environment variable, and path/to/your/directx/sdk/Bin to the "INCLUDE" variable.
+  - Navigate to the directory in which the Microsoft Platform SDK is installed, and execute the "SetEnv" batch file.
+  - Navigate to your nebula2 "build/makefile" directory.
+    
+@note If you wish to compile in cygwin, you will need to create a custom script to set the PATH, INCLUDE, and LIB environment variables for the compiler to work.
+
+Run "make" to build nebula2. e.g:
+
+@verbatim
+    make [workspace]
+@endverbatim
+
+This will compile the workspace "[workspace]", or alternatively if a workspace is not specified, everything. Executable files will be located in <code>nebula2/bin/win32</code>, and will have a ".exe" extension.
+
+If you wish to compile a debug build, set the "N_DEBUG" parameter to "true", e.g.:
+
+@verbatim
+  make N_DEBUG=true [workspace]
+@endverbatim
+
+Executable files will then be located in <code>nebula2/bin/win32d</code>. 
+
+
+@section Nebula2CompilingOSWin32Troubleshooting Troubleshooting
+
+  - The IDE doesn't recognize .cc files as c++ source in VS7.1: 
+
+Open Studio, go to Tools...Options...Projects...VC++ Build...C/C++ File Extensions and add .cc. 
+
+  - The nmake fails 
+
+You may need to set up the Visual Studio environment variables. You can do this by running the VCVARS32.BAT batch file, which usually exists in a directory like C:\\Program Files\\Microsoft Visual Studio\\VC98\\Bin\\. If you get errors while running that batch file about being out of environment space, please see <A HREF="http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q230205&">this</A>.
+
+  - <code>error C2660: 'D3DXCreateFont' : function does not take 12 parameters</code>
+
+Install one of the supported versions of the DirectX 9 SDK, as described above.
+
+*/
+/**
+@page Nebula2CompilingOSOSX Compiling Nebula2 on Mac OS X
+
+    - @ref Nebula2CompilingOSOSXPreparation
+    - @ref Nebula2CompilingOSOSXBuildFiles
+    - @ref Nebula2CompilingOSOSXCompiling
+
+@section Nebula2CompilingOSOSXPreparation Preparation
+
+  - If you are using Panther (10.3), Apple has included TCL 8.4 so you
+    will not need to worry about installing this yourself.
+
+  - Add <code>nebula2/bin/macosx</code> to your path
+
+@section Nebula2CompilingOSOSXBuildFiles Create The Build Files
+
+From the command line, go to <code>nebula2/</code> and type
+
+@verbatim
+  tclsh8.4 update.tcl -build xcode
+@endverbatim
+
+<b>Note:</b> The executable name on OS X is <tt>tclsh8.4</tt> and not <tt>tclsh84</tt> as it is on Windows.
+
+This will build the XCode projects which will be located in the @c nebula2/build/xcode directory.  Any time files are added or removed from Nebula 2 this step must be repeated.
+
+@section Nebula2CompilingOSOSXCompiling Compiling
+
+Open the Xcode projects found in @c nebula2/build/xcode and build them.
+
+The binaries will be located in <code>nebula2/bin/macosx/</code>.
+*/
+/**
+@page Nebula2CompilingOSLinux Compiling Nebula2 on Linux
+
+    - @ref Nebula2CompilingOSLinuxRequirements
+    - @ref Nebula2CompilingOSLinuxPreparation
+    - @ref Nebula2CompilingOSLinuxBuildFiles
+    - @ref Nebula2CompilingOSLinuxCompiling
+
+@section Nebula2CompilingOSLinuxRequirements Additional Requirements
+
+  - GCC version 3.0 or later
+  - GNU make  
+
+@section Nebula2CompilingOSLinuxPreparation Preparation
+
+  - Add <code>nebula2/bin/linux</code> to your path
+
+@section Nebula2CompilingOSLinuxBuildFiles Create The Build Files
+
+From a terminal, go to <code>nebula2/</code> and type
+
+@verbatim
+  tclsh update.tcl -build makefile
+@endverbatim
+
+This will use the <code>.bld</code> files to create the Makefile's for compiling on linux, which are located in the directory <code>nebula2/build/makefile</code>. Anytime files are added or removed from Nebula 2 this step must be repeated.
+
+@section Nebula2CompilingOSLinuxCompiling Compiling
+
+From the command line, go to <code>nebula2/build/makefile</code>, and type
+
+@verbatim
+  make OSTYPE=linux [workspace]
+@endverbatim
+
+This will compile the workspace "[workspace]", or alternatively if a workspace is not specified, everything. Binary files will be located in <code>nebula2/bin/linux</code>.
+
+If you wish to compile a debug build, set the "N_DEBUG" parameter to "true", e.g.:
+
+@verbatim
+  make OSTYPE=linux N_DEBUG=true [workspace]
+@endverbatim
+
+Binary files will be located in <code>nebula2/bin/linuxd</code>. Additionally you can set "N_PROFILE" to add profiling flags.
+
+*/
+

@@ -1,0 +1,75 @@
+#-------------------------------------------------------------------------------
+#   network.bld
+#-------------------------------------------------------------------------------
+
+beginmodule nhttpserver
+    setdir network
+    setfiles {
+        nhttpserver_main nhttpserver_cmds 
+    }
+    setheaders {
+        nhttpserver nsessionattrpool
+    }
+    setlibs_win32 { wininet.lib rpcrt4.lib }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nnetclient
+    setdir network
+    setfiles {
+        nnetclient_main nnetclient_cmds
+    }
+    setheaders nnetclient
+endmodule
+#--------------------------------------------------------------------
+beginmodule nnetserver
+    setdir network
+    setfiles {
+        nnetserver_main nnetserver_cmds
+    }
+    setheaders nnetserver
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsessionclient
+    setdir network
+    setfiles {
+        nsessionclient_main nsessionclient_cmds
+    }
+    setheaders nsessionclient
+    setlibs_linux { uuid }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsessionclientcontext
+    setdir network
+    setfiles {
+        nsessionclientcontext_main nsessionclientcontext_cmds
+    }
+    setheaders nsessionclientcontext
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsessionserver
+    setdir network
+    setfiles {
+        nsessionserver_main nsessionserver_cmds
+    }
+    setheaders nsessionserver
+    setlibs_linux { uuid }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsessionservercontext
+    setdir network
+    setfiles {
+        nsessionservercontext_main nsessionservercontext_cmds
+    }
+    setheaders nsessionservercontext
+endmodule
+#--------------------------------------------------------------------
+begintarget nnetwork
+    annotate "The Nebula2 network modules"
+    settype lib
+    setmodules {
+        nsessionservercontext nsessionserver 
+        nsessionclientcontext nsessionclient
+        nnetserver nnetclient nhttpserver
+    }
+endtarget
+

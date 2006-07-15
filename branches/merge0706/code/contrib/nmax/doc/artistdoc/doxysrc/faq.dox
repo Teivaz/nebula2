@@ -1,0 +1,87 @@
+/**
+    @page NMaxFAQ FAQ
+
+    This section of the document provides FAQ(Frequently Asked Questions) 
+    on the toolkit.
+
+    @section NMaxFAQGeneral General
+
+    <dl>
+      <dt><b>Q:</b> Can I use 3DS Max5.1 with the toolkit?</dt>
+        <dd>
+        <b>A:</b> @b No. Currently 3DS Max 6 and its higher versions are only available.
+        But use 3DS Max 7 if it can be possible. 
+        3DS Max 7 has new features produces normal and height maps and other features
+        makes it more easy to produce game specific contents.
+        This toolkit mainly developed on 3DS Max 7.
+        See the @ref NMaxIntroSystems for requested requirements. 
+        </dd>
+    </dl>
+
+    <dl>
+      <dt><b>Q:</b> When 3DS Max starts it fails with a message box which tells initialization of 
+          the plugin was failed. How do I solve it? 
+        <dd>
+        <b>A:</b> Make it sure that you copied all necessary files not only <tt>'nmaxtoolbox.dlu'</tt> 
+        but also all other files to <tt>'$3dsmax/scripts/'</tt> directory.
+        See @ref NMaxInstallation page for more details about the installation.
+        </dd>
+      </dt>
+    </dl>
+
+    @section NMaxFAQMaterial Material
+
+    <dl>
+      <dt>
+      <b>Q:</b> 3DS Max 7 supports DirectX 9 FX files. Why the toolkit does
+      not support this feature?
+      </dt>
+        <dd>
+        <b>A:</b> Semantics and annotations which used for 3DS Max DX9 shader material are 
+        quiet different to Nebula's and it is hard to make Nebula's to be compatible to 
+        3DS Max. 
+        But you can easily edit and adjust parameters with supported Nebula custom
+        material editor and preview the changes. 
+        Also this approach makes the plugin more easy to write and maintain.
+        
+        See @ref NMaxHowtoUsingMaterialEditor section for more information on
+        Nebula custom material editor and supported features.
+        </dd>
+    </dl>
+
+
+    @section NMaxFAQExport Export
+
+    <dl>
+      <dt><b>Q:</b> Where can I find the exported files?</dt>
+       <dd>
+         <b>A:</b> You can find the exported files in the <b><tt>export</tt></b> directory.
+         For more details, see @ref NMaxHowtoExportWhereFiles section.
+       </dd>
+    </dl>
+
+    <dl>
+      <dt><b>Q:</b> The exported model is shown on with all black in the previewer even though  
+             the shape of the mesh and its animation seems to work fine. 
+             What's the wrong with it?
+      </dt>
+      <dd>
+        <b>A:</b> One of the possible case of this problem is that no light was set to the scene 
+        at all for the previewer. Check the light is correctly specified.
+        The default light object <tt>'/usr/scene/stdlight'</tt> should be shown on the console 
+        if you use the <tt>'nviewer.exe'</tt> for the preview.
+      </dd>
+    </dl>
+
+    <dl>
+      <dt><b>Q:</b> The model seems to be correctly exported but nothing is shown on the viewer.</dt>
+      <dd>
+        <b>A:</b> The problem might be the case of that exported model is too small to be shown.
+        See utility panel and click 'More' button and select <tt>'Nebula2'</tt> utility panel. 
+        There is a spin button to adjust scale value of a model. Adjust it to larger value than current 
+        one and try it to export again. (See @ref NMaxExportOptionsMesh section for more details)
+      </dd>
+    </dl>
+
+*/
+

@@ -1,0 +1,19 @@
+/**
+@defgroup OpenGL OpenGL Graphics Subsystem
+@ingroup NebulaGraphicsSystem
+@ingroup NebulaContribRendererModules
+@brief This is an initial implementation of an OpenGL-based renderer for Nebula 2.
+
+This implementation uses CgFX from nVidia to provide an equivalent to the
+Effects Framework from Microsoft.
+
+Requirements to build:
+
+    - Working Cg 1.2 or later installation:
+      http://developer.nvidia.com/object/cg_toolkit.html
+
+Known issues:
+    - These may be found in Bugzilla:
+      http://nebuladevice.cubik.org/bugs/query.cgi
+
+*/

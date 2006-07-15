@@ -1,0 +1,26 @@
+#-------------------------------------------------------------------------------
+# fsm.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::fsm
+    setdir fsm
+    settype cpp
+    setfiles { 
+        action
+        condition
+        finitestatemachine
+        fsmfactory
+        state
+        timeoutcondition
+    }
+    setheaders { 
+        action
+        condition
+        finitestatemachine
+        fsmfactory
+        state
+        timeoutcondition
+    }
+endmodule
+#-------------------------------------------------------------------------------

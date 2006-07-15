@@ -1,0 +1,86 @@
+/**
+    @page Nebula2Structure Structure of Nebula2
+
+    The design concept of Nebula2 structure is based on operating 
+    system's structure.
+
+    There are a few kind of structures for operating system such as
+    monolithic system, layered system, virtual system, client-server system 
+    and so on. Among the rest, Nebula structure is similiar to client-server
+    system, the strucure of most modern operating systems.
+    (Actually, Nebula was inspired by BeOS)
+
+    As shown in the figure, the Nebula2 game operating system is
+    consists of three layers:
+
+     - <b>Kernel layer</b> that create Nebula object and work of kernel level
+       tasks (such as memory management, threading, timer and so on.)
+     - <b>Server layer</b> consisting of a number of servers that each handle
+       the low-level work of common tasks (such as rendering, handling input,
+       running script and so on) 
+     - <b>Nebula Class layer</b> which gives programming interface to specific
+       tasks (such as transformation, meshes, particles, animations, textures
+       and shaders etc.)
+
+    @image html n2structure.jpg "Nebula2 Structure"
+    
+    @section NebulaStructureKernel Kernel
+
+    The bottom layer consists of the kernel part of Nebula system.
+    Most feature of Nebula kernel is similiar to what operating system's: 
+    <i>memory management, timer, threading, file system, creating and releasing 
+    object</i> (creating and killing process in operating system) and so on.
+
+    As like kernel is loaded at first when the boot time, Nebula kernel should
+    be created at first when application runs.
+
+    See @ref Kernel page for more details about Nebula kernel. 
+
+    @section NebulaStructureServer Server
+
+    Above the kernel lies the server layer.
+    As like client-server system, Nebula server layer is consists of several 
+    number of servers and each server provides it's service.
+    By splitting the game engine up into parts, each of which only handles 
+    one facet of the system. This leads that each part becomes <i>small</i>
+    and <i>manageable</i>.  One of the good thing to do this is that it
+    makes the architecture of engine to be modular. 
+
+    It is prefered to rewrite from bottom to up, instead of maintain
+    a large system or module for a long period of time cause it is
+    more easy and time saving way. The modula feature of Nebula enables
+    to do it.
+
+    @note The feature, <i>modular</i>, is not the concept only limitted to 
+    the server layer.
+    All Nebula system are intended to be modular by modular programming 
+    paradigm.
+
+    And otherwise Nebula server layer can be described as singleton from 
+    a pattern language point of view.
+    For intance, there's no need that an application needs two different
+    graphic servers, one for D3D and the other for OpenGL when it on the fly.
+    Most of the rest of the servers are similiar.
+    
+    @section NebulaStructureClass Nebula Class
+   
+    Above the server layer is the Class layer.
+    The Nebula class is object-oritented classes that programmer makes
+    use of when writes a game with Nebula engine. 
+    All C++ classes except server modules come under this layer.
+    The key feature of this layer is that it provides scriptable interface and
+    object persistence(<i>serialisaton</i>). 
+    The advantage of the scripting and serialisation mechanism are 
+    that all Nebula class can be modified via the console, have its state saved and
+    loaded and be cloned via script. This is one of the killing feature of Nebula.
+
+    The instance of Nebula class which is created by kernel is called 
+    Nebula object and it is one of the key parts to understand how 
+    Nebula is different to other engines and what to do for something you 
+    want to do.
+    
+    See @ref NebulaWritingClass for more details about Nebula class and 
+    how to write it. <br>
+    See @ref NebulaObjectSystem for more details about Nebula object.
+
+*/

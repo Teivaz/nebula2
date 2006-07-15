@@ -1,0 +1,77 @@
+<Composite type="standard" numBodies="24" numJoints="3" numMeshes="0">
+    <RigidBody name="Body" pos="0.000 5.721 -0.010" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube31" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body1" pos="0.000 4.676 0.494" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube30" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body2" pos="0.000 4.676 -0.583" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube29" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body3" pos="0.000 3.639 1.159" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube24" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body4" pos="0.000 3.639 0.082" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube23" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body5" pos="0.000 3.639 -0.986" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube22" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body6" pos="0.000 2.601 1.681" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube18" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body7" pos="0.000 2.601 0.604" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube17" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body8" pos="0.000 2.601 -0.464" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube16" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body9" pos="0.000 2.601 -1.544" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube15" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body10" pos="0.000 1.558 2.228" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube12" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body11" pos="0.000 1.558 1.150" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube11" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body12" pos="0.000 1.558 0.083" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube10" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body13" pos="0.000 1.558 -0.998" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube9" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body14" pos="0.000 1.558 -2.067" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube8" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body15" pos="0.000 0.508 -2.524" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube6" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body16" pos="0.000 0.508 -1.461" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube5" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body17" pos="0.000 0.508 -0.392" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube4" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body18" pos="0.000 0.508 0.688" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube3" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body19" pos="0.000 0.508 1.756" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube2" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body20" pos="0.000 0.508 2.834" rot="0.0000 0.0000 0.0000 1.0000" model="model/pCube1" numShapes="1">
+        <BoxShape pos="0.000 0.000 0.000" rot="0.0000 0.0000 0.0000 1.0000" size="1.000 1.000 1.000" mat="Wood" />
+    </RigidBody>
+    <RigidBody name="Body21" pos="1.109 12.694 0.000" rot="0.0000 0.0000 0.0000 1.0000" model="model/pSphere1" numShapes="1">
+        <SphereShape pos="0.000 0.000 0.000" radius="0.500" mat="Gold" />
+    </RigidBody>
+    <BallAndSocket name="BallAndSocket" anchor="-0.033 7.041 0.000" body1="Body21" />
+    <RigidBody name="Body22" pos="-0.673 12.735 1.925" rot="0.0000 0.0000 0.0000 1.0000" model="model/pSphere4" numShapes="1">
+        <SphereShape pos="0.000 0.000 0.000" radius="0.500" mat="Gold" />
+    </RigidBody>
+    <RigidBody name="Body23" pos="-1.382 12.357 -1.747" rot="0.0000 0.0000 0.0000 1.0000" model="model/pSphere5" numShapes="1">
+        <SphereShape pos="0.000 0.000 0.000" radius="0.500" mat="Gold" />
+    </RigidBody>
+    <BallAndSocket name="BallAndSocket1" anchor="-0.150 6.966 -0.075" body1="Body22" />
+    <BallAndSocket name="BallAndSocket2" anchor="-0.077 7.031 -0.338" body1="Body23" />
+</Composite>

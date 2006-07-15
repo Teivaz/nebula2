@@ -1,0 +1,107 @@
+/**
+   @page Nebula2ChangeLog Nebula 2 Change Log
+
+A full changelog can be found online at
+http://nebuladevice.sourceforge.net/changelog2.html.gz
+
+   - @ref Nebula2ChangesAug2005
+   - @ref Nebula2ChangesMay2005
+   - @ref Nebula2ChangesMay2004
+   - @ref Nebula2ChangesSept022003
+
+@section Nebula2ChangesAug2005 Aug 2005 Release
+   - The merges with Aug.2005. of Radon Labs including:
+      - Added animation event handler which enables user to handle animation event. 
+
+@section Nebula2ChangesMay2005 May 2005 Release
+   - The merges with Dec.2004. of Radon Labs including:
+      - new HDR renderer (which is the default preview renderer if the graphics
+        card can do shader model 2.0 and 16 bit floating point textures)
+      - fixed "Shadow disappears on Alt-Enter" bug. 
+      - fixed "Textures are not properly unloaded" bug.
+      - removed the RefillBuffers stuff in nMesh2, this was a confusing hack
+      - nGuiServer::Render() and nConServer::Render() moved to nRpPass::Begin().
+        You dont need to explicitly call those functions anymore.
+      - You should no longer call nGfxServer2::OpenDisplay()/CloseDisplay() in your
+        application, this is now handled inside nSceneServer::Open()/Close (this
+        was necessary for the new render path code)
+      - Added a RAM filesystem server to Nebula2 
+      - Integrated HDR renderer as optional render path (required shader model
+        2.0 with fp render targets)
+      - added a nGuiColorSliderGroup class 
+      - fixes to the display adjustments and scene control windows
+      - startup.tcl has been moved to home:data/scripts/starup.tcl 
+      - rewrote "render path" implementation and added new features (See 'renderpath'
+        directory)
+      - Fixed an assertion-bug in the animation subsystem (nAnimation::Group::TimeToIndex())
+      - ported everything to DX9.0c 
+      - cleaned up resource behaviour when D3D device is lost and restored,
+        the nResource class now has methods OnLost() and OnRestored(), where
+        subclasses can react accordingly 
+      - an nResource object can go into one of several states: Unloaded
+        (the object is generally un-initialized), Valid (everything is ok for rendering),
+        Lost (the resource is not available because the owner ist currently in a lost
+        state), Empty (the resource is available, but depends on external code to 
+        fill the resource with valid data -> this replaces the old 
+        RefillBuffersMode::NeededNow).
+      - Optimized Alt-TAB-behaviour (or generally, when the D3D device has been 
+        lost). Previously, all visual resources had been unloaded and reloaded when
+        the device has been restored, now resources will only unload/reload when really
+        required (which is when the D3D resources are placed in the DEFAULT pool).
+      - Added a new deformers including blend shape and skin mesh shape deformer.
+   - Many documentation improvements.
+   - Many new contributed modules, including:
+     - Added nOpenDE, a port of the ODE(Open Dynamics Engine).
+     - Added OpenGL graphics system.
+     - nSpacialDB for spacial database system.
+     - nSignal for signal system.
+     - nMaxToolBox, 3DSMax toolkit support.
+     - Visual Studio Add-in which allows to easy debugging.
+   - Various fixes of the bugs.
+
+
+@section Nebula2ChangesMay2004 May 2004 Release
+
+   - Two merges with Radon Labs including:
+      - A particle system.
+      - Optimization work.
+      - Rendering enhancements.
+      - A full blown in-game GUI system.
+      - Asynchronous loading of resources using threads.
+      - Totally rewritten shader library.
+      - Sound support using DirectSound.
+      - Video playback support using DirectShow.
+   - Parent window handle support on Windows.
+   - Screenshot support.
+   - Improved font rendering on Windows.
+   - A new build system with improved support for Windows, contributed
+     packages, and OS X.  Linux support is pending.
+   - More Linux and OS X support in general.
+   - Many documentation improvements.
+   - Many new contributed modules, including:
+      - Lua, Python and Ruby scripting support.
+      - Partial Java and .NET support.
+      - A port of the ChunkLOD terrain renderer.
+      - A geomipmapping terrain renderer.
+      - A 3D Studio Max exporter.
+      - Support for GameSWF, a Flash renderer.
+      - An OpenAL wrapper.
+      
+
+@section Nebula2ChangesSept022003 September 2, 2003 Release
+
+   - Lots of documentation improvements
+   - Reworked script API docs and made them part of the Doxygen output
+   - Fixed command line parsing to handle args with spaces in them by
+     allowing them to be quoted.
+   - Build system support for Linux, MacOS X and the use of Visual Studio 6
+     on Windows.
+   - Non-rendering, non-input portions of Nebula compile and run on Linux
+     and OS X.
+   - Fix handling of alt-tab.
+   - Fix /sys/servers/console.watch * crash.
+   - nArg supports list args.
+   - MicroTCL fixes.
+   - New tangent generation code in nMeshBuilder.
+   - Warnings fixes.
+*/

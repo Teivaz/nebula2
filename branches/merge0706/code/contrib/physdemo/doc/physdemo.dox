@@ -1,0 +1,5 @@
+/**
+    @defgroup PhysDemoContribModule PhysDemo
+    @ingroup NebulaContribSampleModules
+    @brief A sample application demonstrating physics.
+*/

@@ -1,0 +1,60 @@
+/**
+    @defgroup NMaxHowtoQuickStart Quick Start
+
+    @section NMaxHowtoQuickStartOverview Overview
+
+    This section of the document provides quick step by step walkthrough which allows
+    you to know how to export and preview your model within 3DS Max.
+
+    You should have installed the plugin and necessary max script files to its locations
+    before you go further.
+    See @ref NMaxInstallation for the information of the installation of the toolkit.
+
+
+    @section NMaxHowtoQuickStartStepByStep Step By Step
+
+    First, you need to load a model to export and see what the toolkit plugin does.
+
+    @image html quickstart01.png "Loaded model into 3DSMax"
+
+    You might want to modify and adjust some material settings of the material editor.
+    See @ref NMaxHowtoUsingMaterialEditor for the details on the use of Nebula2 custom 
+    material editor.
+
+    You also might want to change some settings of the mesh or script type and so on.
+    See @ref NMaxPerMeshOptions section for the details on per-mesh options and
+    @ref NMaxHowtoGlobalOptions section for the details on some global options something
+    like mesh and animation settings or exported script file type and so on.
+
+    Select <i>Nebula2 > Export</i> menu item. It will bring the export dialog on you.
+    Type the apporiate name which will be used for exported model and click <i>Ok</i>
+    button. 
+    The toolkit plugin will start the exporting task.
+    (see @ref NMaxHowtoExport section for the details of the exporting task)
+
+    @note
+    You can also use <i>File > Export</i> menu item which is the standard way for doing 
+    this. 
+
+    @image html quickstart02.png "Exportred model"
+
+    When the toolkit plugin exports the given model in a scene, it supresses some logs 
+    into <i>Nebula2 Exporter Logs</i> dialog. You can check the progress and the status of
+    the exporting task if you need. Also some warnings or errors will be shown on the dialog
+    if they are. 
+
+    At the end of the task, the toolkit plugin launches specified viewer to show you the 
+    exported model how that is shown on the Nebula engine. 
+    (defaultly nviewer.exe is used for the viewer)
+   
+    The following image show the exported model on the <tt>nviewer</tt> which applied 
+    per-pixel lighting and bump mapping. (It is only available on the hardware which supports 
+    these features)
+
+    @image html quickstart03.png "Exported model shown on nviewer"
+
+    If you wonder that where the exported files are, see @ref NMaxHowtoExportWhereFiles 
+    section for the details. 
+
+*/
+

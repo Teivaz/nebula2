@@ -1,0 +1,31 @@
+/**
+    @defgroup NebulaWatchedVariables Watched Variables
+    @ingroup Misc
+
+    @brief Watched variables are an easy way to view data
+    from the inner workings of the engine.
+
+    There are many simple examples of the use of nWatchedVar in the
+    nD3D9Server class.
+
+    To create one, simply define one in an appropriate scope, such
+    as on one a server object:
+
+    @code
+    nWatched dbgQueryNumRenderStateChanges;
+    @endcode
+
+    Then, initialize it with the name that it should use within
+    the @c /sys/var directory in the NamedObjectHierarchy, as well
+    as the type of the variable:
+
+    @code
+    dbgQueryNumRenderStateChanges("gfxNumRenderStateChanges", nArg::Int)
+    @endcode
+
+    Finally, update it as you need to:
+
+    @code
+    this->dbgQueryNumRenderStateChanges->SetI(this->statsNumRenderStateChanges);
+    @endcode
+*/

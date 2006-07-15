@@ -1,0 +1,9 @@
+/**
+    @defgroup NMapContribModule nMap
+    @ingroup NebulaContribTerrainModules
+    @brief nMap provides a terrain renderer that uses geometric mipmaps
+    to provide level of detail.
+
+    Uses Willem H. de Boer's geometric mipmapping technique with a static
+    vertex buffer to take advantage of modern graphics cards.
+*/

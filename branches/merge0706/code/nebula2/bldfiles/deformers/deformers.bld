@@ -1,0 +1,29 @@
+#-------------------------------------------------------------------------------
+#   deformers.bld
+#   ===========
+#   Nebula class package definition.
+#   (C) 2005 Kim, Hyoun Woo 
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
+beginmodule nmeshdeformer
+    setdir deformers
+    setfiles { nmeshdeformer }
+    setheaders { nmeshdeformer }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nskinmeshdeformer
+    setdir deformers
+    setfiles { nskinmeshdeformer }
+    setheaders { nskinmeshdeformer }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nblendshapedeformer
+    setdir deformers
+    setfiles { nblendshapedeformer }
+    setheaders { nblendshapedeformer }
+endmodule
+#-------------------------------------------------------------------------------
+#  EOF
+#-------------------------------------------------------------------------------
+

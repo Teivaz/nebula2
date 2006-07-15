@@ -1,0 +1,243 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "nmaxtoolbox.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// 한국어 resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_KOR)
+#ifdef _WIN32
+LANGUAGE LANG_KOREAN, SUBLANG_DEFAULT
+#pragma code_page(949)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_UTILITY_OPTION DIALOGEX 0, 0, 108, 388
+STYLE DS_SETFONT | WS_CHILD | WS_SYSMENU
+FONT 8, "MS Sans Serif", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Mesh",IDC_STATIC,3,1,102,213
+    GROUPBOX        "Animation",IDC_STATIC,3,218,102,69
+    CONTROL         "Normal",IDC_VERTEX_NORMAL,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,11,25,78,8
+    CONTROL         "Color",IDC_VERTEX_COLOR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,11,36,76,8
+    CONTROL         "Uv",IDC_VERTEX_UV,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    11,47,80,8
+    CONTROL         "n3d2",IDC_N3D2,"Button",BS_AUTORADIOBUTTON | WS_GROUP,9,
+                    193,37,11
+    CONTROL         "nvx2",IDC_NVX2,"Button",BS_AUTORADIOBUTTON,54,193,37,11
+    CONTROL         "nanim2",IDC_NANIM2,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,11,240,45,11
+    CONTROL         "nax2",IDC_NAX2,"Button",BS_AUTORADIOBUTTON,60,240,35,11
+    COMBOBOX        IDC_SELECT_SCRIPT_SERVER,9,328,88,82,CBS_DROPDOWN | 
+                    WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Save As",IDC_STATIC,7,184,95,25
+    GROUPBOX        "Save As",IDC_STATIC,7,230,95,26
+    GROUPBOX        "Vertex ",IDC_STATIC,7,12,94,60
+    GROUPBOX        "Skin",IDC_STATIC,7,109,94,71
+    LTEXT           "Max Joint Palette:",IDC_STATIC,12,121,82,11
+    LTEXT           "Weight Trash Hold:",IDC_STATIC,12,149,82,11
+    CONTROL         "Tangent",IDC_VERTEX_TANGENT,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,11,58,80,8
+    GROUPBOX        "Misc",IDC_STATIC,3,290,102,91
+    CONTROL         "Export Hidden Nodes",IDC_HIDDEN_OBJ,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,6,300,80,9
+    LTEXT           "Select Script Server:",IDC_STATIC,8,317,91,8
+    CONTROL         "",IDC_EDIT_MAXJOINTPALETTE,"CustEdit",WS_TABSTOP,12,133,
+                    69,10
+    CONTROL         "",IDC_SPIN_MAXJOINTPALETTE,"SpinnerControl",0x0,84,133,
+                    7,10
+    CONTROL         "",IDC_EDIT_WEIGHTHRESHOLD,"CustEdit",WS_TABSTOP,12,160,
+                    69,10
+    CONTROL         "",IDC_SPIN_WEIGHTHRESHOLD,"SpinnerControl",0x0,84,160,7,
+                    10
+    LTEXT           "Sample Rate:",IDC_STATIC,8,258,82,11
+    CONTROL         "",IDC_EDIT_SAMPLERATE,"CustEdit",WS_TABSTOP,8,269,69,10
+    CONTROL         "",IDC_SPIN_SAMPLERATE,"SpinnerControl",0x0,80,269,7,10
+    GROUPBOX        "Scale Geometry By",IDC_STATIC,7,76,94,30
+    CONTROL         "",IDC_EDIT_GEOMSCALE,"CustEdit",WS_TABSTOP,13,89,69,10
+    CONTROL         "",IDC_SPIN_GEOMSCALE,"SpinnerControl",0x0,85,89,7,10
+    COMBOBOX        IDC_SELECT_VERBOSE_LEVEL,8,360,89,82,CBS_DROPDOWN | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Verbose Level:",IDC_STATIC,7,349,91,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_UTILITY_OPTION, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 387
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // 한국어 resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// 영어(미국) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIR_SETTING DIALOGEX 0, 0, 406, 202
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Nebula Directory Setting Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,349,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,349,24,50,14
+    LTEXT           "'home' assign (e.g. 'D:\\Projects\\nebula2\\')",
+                    IDC_STATIC,15,10,148,9
+    EDITTEXT        IDC_EXT_DIRNAME,14,21,132,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_EXP_FILESEL,150,21,14,12
+    GROUPBOX        "Assigns",IDC_STATIC,7,44,192,149
+    EDITTEXT        IDC_EXT_ASSIGN_ANIM,58,56,132,12,ES_AUTOHSCROLL
+    RTEXT           "anims:",IDC_STATIC,16,58,38,8
+    EDITTEXT        IDC_EXT_ASSIGN_GFXLIB,58,72,132,12,ES_AUTOHSCROLL
+    RTEXT           "gfxlib:",IDC_STATIC,16,74,38,8
+    EDITTEXT        IDC_EXT_ASSIGN_GUI,58,88,132,12,ES_AUTOHSCROLL
+    RTEXT           "gui:",IDC_STATIC,16,90,38,8
+    EDITTEXT        IDC_EXT_ASSIGN_LIGHTS,58,104,132,12,ES_AUTOHSCROLL
+    RTEXT           "lights:",IDC_STATIC,16,106,38,8
+    EDITTEXT        IDC_EXT_ASSIGN_MESHES,58,120,132,12,ES_AUTOHSCROLL
+    RTEXT           "meshes:",IDC_STATIC,16,122,38,8
+    EDITTEXT        IDC_EXT_ASSIGN_SHADERS,58,136,132,12,ES_AUTOHSCROLL
+    RTEXT           "shaders:",IDC_STATIC,16,138,38,8
+    EDITTEXT        IDC_EXT_ASSIGN_TEXTURES,58,152,132,12,ES_AUTOHSCROLL
+    RTEXT           "textures:",IDC_STATIC,16,154,38,8
+    PUSHBUTTON      "Set default",IDC_SET_DEFAULT_ASSIGNS,108,171,82,15
+    GROUPBOX        "Paths",IDC_STATIC,207,44,192,149
+    EDITTEXT        IDC_EXT_PATH_ANIM,259,56,132,12,ES_AUTOHSCROLL
+    RTEXT           "Animation:",IDC_STATIC,217,58,38,8
+    EDITTEXT        IDC_EXT_PATH_GFXLIB,259,72,132,12,ES_AUTOHSCROLL
+    RTEXT           "Gfx:",IDC_STATIC,217,74,38,8
+    EDITTEXT        IDC_EXT_PATH_GUI,259,88,132,12,ES_AUTOHSCROLL
+    RTEXT           "Gui:",IDC_STATIC,217,90,38,8
+    EDITTEXT        IDC_EXT_PATH_LIGHTS,259,104,132,12,ES_AUTOHSCROLL
+    RTEXT           "Lights:",IDC_STATIC,217,106,38,8
+    EDITTEXT        IDC_EXT_PATH_MESHES,259,120,132,12,ES_AUTOHSCROLL
+    RTEXT           "Meshes:",IDC_STATIC,217,122,38,8
+    EDITTEXT        IDC_EXT_PATH_SHADERS,259,136,132,12,ES_AUTOHSCROLL
+    RTEXT           "Shaders:",IDC_STATIC,217,138,38,8
+    EDITTEXT        IDC_EXT_PATH_TEXTURES,259,152,132,12,ES_AUTOHSCROLL
+    RTEXT           "Textures:",IDC_STATIC,217,154,38,8
+    PUSHBUTTON      "Set default",IDC_SET_DEFAULT_PATHS,309,171,82,15
+    LTEXT           "Binary path (e.g. 'home:bin/win32d/')",IDC_STATIC,185,
+                    10,120,9
+    EDITTEXT        IDC_EXT_BINARY_PATH,185,21,132,12,ES_AUTOHSCROLL
+    GROUPBOX        "",IDC_STATIC,7,3,324,36
+END
+
+IDD_LOG_DLG DIALOGEX 0, 0, 322, 228
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Nebula2 Exporter Log"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Ok",IDOK,265,207,50,14
+    CONTROL         "",IDC_LOG_EDIT,"RichEdit20A",ES_MULTILINE | 
+                    ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | 
+                    WS_VSCROLL | WS_HSCROLL,7,7,308,194
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_DIR_SETTING, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 399
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 198
+    END
+
+    IDD_LOG_DLG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 315
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 221
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "nmaxtoolbox.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // 영어(미국) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

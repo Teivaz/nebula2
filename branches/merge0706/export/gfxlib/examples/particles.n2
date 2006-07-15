@@ -1,0 +1,39 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+.seteuler 0.000000 90.000000 0.000000
+new nparticleshapenode particletest
+    sel particletest
+    .setlocalbox 0.000000 0.000000 0.500000 1.000000 1.000000 0.000000
+    .settexture "DiffMap0" "textures:examples/dot.dds"
+    .setint "AlphaSrcBlend" 5
+    .setint "AlphaDstBlend" 6
+    .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+    .setshader "particle"
+    .setmesh "meshes:plane.n3d2"
+    .setgroupindex 0
+    .setemissionfrequency 50.000000 50.000000 50.000000 50.000000 0.250000 0.750000 20.000000 0.250000 0
+    .setparticlelifetime 5.000000 5.000000 5.000000 5.000000 0.250000 0.750000 10.000000 0.000000 0
+    .setparticlestartvelocity 2.000000 2.000000 2.000000 2.000000 0.250000 0.750000 1.000000 0.000000 0
+    .setparticlerotationvelocity 60.000000 60.000000 60.000000 60.000000 0.250000 0.750000 1.000000 0.000000 0
+    .setparticlescale 0.200000 0.200000 0.750000 2.000000 0.250000 0.750000 1.000000 0.000000 0
+    .setparticleweight 1.000000 1.000000 1.000000 1.000000 0.250000 0.750000 1.000000 0.000000 0
+    .setparticlergb 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 1.000000 0.200000 0.800000
+    .setparticlealpha 0.800000 1.000000 1.000000 0.800000 1.000000 0.750000 5.000000 0.000000 0
+    .setparticlesidevelocity1 0.000000 0.000000 0.000000 0.000000 0.200000 0.800000 0.000000 0.000000 0
+    .setparticlesidevelocity2 0.000000 0.000000 0.000000 0.000000 0.200000 0.800000 0.000000 0.000000 0
+    .setparticleairresistance 0.000000 0.000000 0.000000 0.000000 0.200000 0.800000 0.000000 0.000000 0
+    .setparticlevelocityfactor 1.000000 1.000000 1.000000 1.000000 0.200000 0.800000 0.000000 0.000000 0
+    .setemissionduration 100.000000
+    .setloop true
+    .setactivitydistance 100.000000
+    .setspreadangle 20.000000
+    .setbirthdelay 0.000000
+    .setstartrotation 24.000000
+    .setrenderoldestfirst true
+    .setglobalscale 1.000000
+    .setparticlesfollownode false
+    .setactive true
+sel ..
+# ---
+# Eof

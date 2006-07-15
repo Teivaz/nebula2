@@ -1,0 +1,46 @@
+#===============================================================================
+#  nnebula.bld
+#  The default Nebula2 distribution nnebula.lib library
+#
+#  Targets:
+#      nnebula
+#===============================================================================
+
+#===============================================================================
+#  nnebula Targets
+#===============================================================================
+begintarget nnebula
+    settype lib
+    setmodules {
+        nbinscriptserver ntclserver
+        nnpkfileserver nsharedmemory nramfileserver nvariableserver
+        ninputserver nresourceloader nresourceserver nresource nresourcebundle
+        nmesh2 ntexture2 nfont2 nshader2 ngfxserver2
+        naudioserver3 nsound3 nlistener3 nsoundresource
+        nsceneserver nrenderpath nrendercontext nshadowskinshapenode nshadownode
+        nscenenode ntransformnode nabstractshadernode nabstractcameranode
+        ncameranode noverlookcameranode nclippingcameranode nreflectioncameranode
+        nmaterialnode nshapenode nattachmentnode nanimator nshaderanimator
+        nvectoranimator nintanimator ntextureanimator nlightnode nfloatanimator
+        ntransformanimator nskinanimator nskinshapenode nlodnode nskynode nskystate
+        ncharacter nanimationserver nanimation nmemoryanimation nconserver
+        nparticle nparticleserver nparticleemitter nparticleshapenode
+        nparticle2 nparticleserver2 nparticle2emitter nparticleshapenode2
+        nswingshapenode nwindowhandler nwin32windowhandler
+        nmousecursor nmesharray ninstancestream nocclusionquery
+        ntransformcurveanimator nuvanimator
+        nprefserver nwin32prefserver ncaptureserver niniprefserver
+        nlocaleserver tinyxml xml
+        nblendshapenode nblendshapeanimator ncombinedanimation
+        nmeshdeformer nskinmeshdeformer nblendshapedeformer
+        nmultilayerednode ncharacter3node ncharacter3skinanimator
+        ntoolkitserver
+    }
+    setbundles {
+        nshadow2
+        nsql
+        nsqlite
+        nvideo
+    }
+endtarget
+

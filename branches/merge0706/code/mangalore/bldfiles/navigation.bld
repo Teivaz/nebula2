@@ -1,0 +1,27 @@
+#-------------------------------------------------------------------------------
+# navigation.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::navigation
+    setdir navigation
+    settype cpp
+    setfiles {
+        coverpoint
+        map
+        path3d
+        pathfinder
+        server
+        waypointlist
+    }
+    setheaders { 
+        coverpoint
+        map
+        path3d
+        pathfinder
+        server
+        waypoint
+        waypointlist
+    }
+endmodule
+#-------------------------------------------------------------------------------

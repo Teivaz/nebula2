@@ -1,0 +1,64 @@
+Nebula requires a change to ODE. The function dGeomTriMeshGetOpcodeModel needs to be added.
+
+Change #1: Forward declaration
+------------------------------
+In include\ode\collision_trimesh.h, change:
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+to:
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+namespace Opcode { class Model; }
+
+
+Change #2: Function declaration
+-------------------------------
+In include\ode\collision_trimesh.h, change:
+
+ODE_API void dGeomTriMeshDataUpdate(dTriMeshDataID g);
+
+to:
+
+ODE_API void dGeomTriMeshDataUpdate(dTriMeshDataID g);
+ODE_API Opcode::Model* dGeomTriMeshGetOpcodeModel(dGeomID g);
+
+
+Change #3: Function definition
+------------------------------
+In ode\src\collision_trimesh.cpp, add this function to the bottom of the file:
+
+Opcode::Model* dGeomTriMeshGetOpcodeModel(dGeomID g) {
+    dxTriMesh* Geom = (dxTriMesh*)g;
+    return &Geom->Data->BVTree;
+}
+
+Patch #1: Fix Memory leaks
+In ode\src\collision_kernel.cpp, change:
+
+static dxPosR* s_cachedPosR = 0;
+
+to:
+
+static dxPosR* s_cachedPosR = 0;
+
+namespace
+{
+
+class DisposeCachedPosr
+{
+public:
+    ~DisposeCachedPosr() {
+        if (s_cachedPosR) {
+            dFree(s_cachedPosR, sizeof(dxPosR));
+            s_cachedPosR = 0;
+            }
+        }
+    };
+    DisposeCachedPosr finalDispose;
+}

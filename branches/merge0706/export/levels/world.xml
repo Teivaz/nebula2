@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ascii" standalone="yes" ?>
+<MangaloreLevel AppName="Mangalore" Version="1.0">
+    <Global currentLevel = "stage1" />
+    <Level center="0.000 0.000 0.000" extents="2000.000 2000.000 2000.000" startLevel="true" id = "stage1">
+        <Objects>
+            <Object name="Kila" loc="db:Actor:Kila" pos="0.000 0.000 0.000" rot="0.000 0.000 0.000 1.000" scale="100.000 100.000 100.000" Graphics="examples/kila" AnimSet="Kila" Name="The Kila" InputFocus="true" CameraFocus="false" MaxVelocity="4.000" />
+            <Object name="Physics1" loc="db:Simple:Physics1" pos="0.000 0.000 -10.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" Graphics="examples/physics1" Physics="examples/physics1" Name="The Physics" InputFocus="false" CameraFocus="false" MaxVelocity="4.000" />
+            <Object name="Camera" loc="db:Camera:Camera" pos="0.000 10.000 10.000" rot="-0.225 0.000 0.000 0.975" scale="1.000 1.000 1.000" InputFocus="true" CameraFocus="true" FieldOfView="60.000" />
+        </Objects>
+        <Environment>
+            <EnvObject name="X_Dawn" res="examples/X_Dawn" pos="0.000 0.000 0.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+            <EnvObject name="multilayer" res="examples/multilayer" pos="0.000 0.000 0.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+            <EnvObject name="tree" res="examples/tree" pos="-10.000 0.000 -10.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+            <EnvObject name="fire" res="examples/fire" pos="10.000 1.000 -10.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" />
+        </Environment>
+        <Lights>
+            <Light name="pointlight1" type="Directional" color="2.000 1.953 1.749 1.000" rot = "-0.360 0.000 0.000 0.933" ambient = "0.107 0.107 0.107 1.000" pos="0.000 1000.000 1000.000" range="4000.000" castShadows="true" />
+        </Lights>
+    </Level>
+</MangaloreLevel>

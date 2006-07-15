@@ -1,0 +1,131 @@
+/**
+    @defgroup Audio3 Audio Subsystem
+
+    This section of the documentation covers Nebula audio system and it's
+    subsystems.
+
+      - @ref NebulaAudioSystemOverview
+      - @ref NebulaAudioSystemUsage
+
+    @section NebulaAudioSystemOverview Overview
+ 
+    The Nebula Audio System is consist of the following compenents:
+      - Audio Serever
+      - Listener
+      - Sound
+      - Sound Resource
+
+    <dl>
+      <dt><b>Audio Server</b> : </dt>
+        <dd>
+        It is Nebula audio server to create and initialize sound device 
+        of the user system. 
+        An @ref nAudioServer3 derived class implements does the actual specifics.
+
+        @note
+        Not likely any other Nebula server, the audio server does not need to 
+        trigger. See @ref NebulaTriggeringServers page for more details.
+        </dd>
+      <dt><b>Listener</b> : </dt>
+        <dd>
+        A listener can be considered as a controller for 3D sound effects. 
+        Commonly, the 3D sound effects in a application are affected not only 
+        by the position, orientation and velocity values of the sound sources, 
+        but also by the position, orientation and velocity values of the virtual 
+        listener. See the @ref nListener3 for more details.
+        </dd>
+      <dt><b>Sound</b> : </dt>
+        <dd>
+        It is a sound parameter hold for a game entity.
+        It is described as @ref nSound3 class and its subclasses.
+        </dd>
+      <dt><b>Sound Resource</b> : </dt>
+        <dd>
+        It is a container for a sound data. A sound data is format specific sound
+        file like @c .wav, @c .ogg etc.
+        It is described as @ref nSoundResource class and its subclasses.
+        </dd>
+    </dl>
+
+    The most difference between <b>'Sound'</b> and <b>'Sound Resource'</b> is that 
+    the 'Sound' cannot be shared among the game entities but 'Sound Resource' can be.
+    For an example, imagine that there are two soldiers as the game entity.
+    Both soldiers have same rifle so they will play out same sound when they fire 
+    the rifle. To play the sound of the rifle, both soldier should have its own
+    <b>Sound</b> object but the actual sound data both Sound objects refer is same 
+    <b>Sound Resource</b> cause they have same rifle. Though they play the same
+    sound, the volume or orientation of the sound can be different by the position 
+    of the each soldiers. That is the reason why each of the game entity should have 
+    its own 'Sound' object.
+
+
+    @section NebulaAudioSystemUsage Usage
+
+    This section of the documentation covers a brief usage of the Nebual 
+    audio system.
+
+    @subsection audio_init Audio Server Initialization
+
+    The audio server can be created from C++ or script code. The default
+    location of the audio server is @c /sys/servers/audio.
+
+    @code
+    nDSoundServer3* audioServer = (nDSoundServer3*)kernelserver->New("ndsoundserver3", "/sys/servers/audio");
+    @endcode
+
+    You can also create the audio server with tcl script like the following:
+    @verbatim
+    new ndsoundserver3 /sys/servers/audio
+    @endverbatim
+
+    With the above code sample, we created the instance of the nDSoundServer3 but 
+    you can use one of the other sound servers as well.
+
+    The next thing to do after the creation of the audio server is to initialize 
+    the audio server by calling its nAudioServer3::Open() function like the  
+    following code:
+    @code
+    audioServer->Open();
+    @endcode
+
+    All neccessary works for audio server were done. 
+    The next section shows how to play sounds in a game loop.
+
+
+    @subsection audio_play Sound Playing
+    
+    Sounds are played in a similiar way what the nodes are rendered.
+    Call nAudioServer3::BeginScene() before playing sounds and then
+    nAudioServer3::UpdateListener() to update the listener to set
+    any changes of the position, orientation or velocity values.
+    You can now play sounds. After playing sounds call 
+    nAudioServer::EndScene(). The following code shows how to play
+    sounds in a game loop:
+    @code
+    audioServer->BeginScene(time);
+    audioServer->UpdateListener(this->audioListener);
+    ...
+    // play sounds
+    ...
+    audioServer->EndScene();
+    @endcode
+
+
+    @subsection audio_shutdown Audio Server Shutdown
+    
+    When the application is closing, the audio server should be shutdown 
+    by calling its Close() member function:
+    @code
+    audioServer->Close();
+    @endcode
+
+*/
+
+/**
+    @defgroup NebulaDSAudioSystem Nebula Direct Sound Audio Subsystem
+    @ingroup NebulaAudioSystem
+
+    @brief The @ref NebulaDSAudioSystem is a wrapper around the Microsoft
+    <a href="http://msdn.microsoft.com/library/en-us/directx9_c/directX/htm/directsound.asp">DirectSound</a> library that implements the
+    @ref NebulaAudioSystem interface.
+*/

@@ -1,0 +1,18 @@
+/**
+    @defgroup Locale Locale Subsystem
+    @brief The Locale Subsystem simplifies localization of Nebula2 applications
+    to international markets.
+
+@section LocaleIntro Introduction
+
+...
+
+@section LocaleInitialization Initialization
+
+...
+
+@section LocaleUsage Usage
+
+...
+
+*/

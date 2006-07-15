@@ -1,0 +1,63 @@
+/**
+    @defgroup NXSIContribModule nXSI
+    @ingroup NebulaContribAssetToolchainModules
+    @brief nXSI is a dotXSI to Nebula2 converter.
+
+    @section NXSIIntroduction Introduction
+
+    TODO
+
+    @section NXSICompiling Compiling
+
+    Before building you need to get latest <a class="el" href="http://www.softimage.com/products/pipeline/ftk/">SoftimageFTK</a>
+    from <a class="el" href="http://www.softimage.com">Softimage homepage</a>.
+
+      -# Run @c update.tcl to generate workspace.
+      -# Ensure that you have a recent version of <a class="el" href="http://www.softimage.com/products/pipeline/ftk/">SoftimageFTK</a> (at least v3.6.2)
+      -# Open nxsi workspace and build it.
+
+    @section NXSIUsage Usage
+
+      @subsection NXSIModelling Modelling
+
+      For modelling you can use any 3D modelling product that support dotXSI file. There are bunch
+      of free export plugins on Softimage site. <a class="el" href="http://www.softimage.com/connect/xsi/">(quick link)</a>.
+
+      <b>HOWTO:</b>
+      -# create your mesh
+      -# give it a UVW mapping
+      -# give it a diffuse texture
+      -# export it
+      
+      @subsection NXSIConverting Converting
+      
+      <b>Usage:</b> <tt>nxsi xsiFilename --(output)</tt><br>
+
+      <b> Output: </b><br>
+
+        <tt>mesh=filename</tt>     (merges meshes in one .n3d2 or .nvx2 file)<br>
+        <tt>anim=filename</tt>     (merges anims in one .nanim2 or .nax2 file)<br>
+        <tt>script=filename</tt>   (creates the .n2 script that will create the model)<br>
+        <tt>auto</tt>              (creates all and names them automatically)<br>
+        <tt>mergeall</tt>          (merges all meshes and anims in one file)<br>
+        <tt>binary</tt>            (creates meshes and anims in binary format)<br>
+
+        <tt>scriptserver=name</tt> (default: ntclserver)<br>
+        <tt>help</tt>              (display this help)<br>
+
+      <b> Examples: </b><br>
+      
+      to create only mesh file<br>
+        <tt>nxsi cube.xsi --mesh=cube.n3d2</tt><br>
+
+      to create all automatically and merge meshes and anims (recommended)<br>
+        <tt>nxsi cube.xsi --auto --mergeall</tt><br>
+
+    @section NXSIIssues Known Issues
+
+      -# Missing good documentation
+      -# Missing (useful) error messages
+
+    (C) 2004 Ville Ruusutie
+*/
+//-----------------------------------------------------------------------------

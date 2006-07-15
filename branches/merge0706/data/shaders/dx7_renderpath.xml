@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- render path for DX7 fixed function pipeline -->
+<RenderPath name="dx7" shaderPath="home:data/shaders/fixed">
+
+    <!-- declare shaders and technique aliases -->
+    <Shader name="passes" file="shaders:passes.fx" />
+    <Shader name="phases" file="shaders:phases.fx" />
+    <Shader name="stencil_plane" file="shaders:stencil_plane.fx" />
+    <Shader name="static" file="shaders:shaders.fx" />
+    <Shader name="static_atest" file="shaders:shaders.fx" />
+    <Shader name="environment" file="shaders:shaders.fx" />
+    <Shader name="lightmapped" file="shaders:shaders.fx" />
+    <Shader name="lightmapped2" file="shaders:shaders.fx" />
+    <Shader name="unlightedlightmapped2" file="shaders:shaders.fx" />
+    <Shader name="unlightedalphalightmapped2" file="shaders:shaders.fx" />
+    <Shader name="skinned" file="shaders:shaders.fx" />
+    <Shader name="multitexskinned" file="shaders:shaders.fx" />
+    <Shader name="blended" file="shaders:shaders.fx" />
+    <Shader name="alpha" file="shaders:shaders.fx" />
+    <Shader name="alpha_uvanimation" file="shaders:shaders.fx" />
+    <Shader name="alpha_soft" file="shaders:shaders.fx" />
+    <Shader name="skinned_alpha" file="shaders:shaders.fx" />
+    <Shader name="alpha2" file="shaders:shaders.fx" />
+    <Shader name="environment_alpha" file="shaders:shaders.fx" />
+    <Shader name="ocean" file="shaders:shaders.fx" />
+    <Shader name="leaf" file="shaders:shaders.fx" />
+    <Shader name="tree" file="shaders:shaders.fx" />
+    <Shader name="grass" file="shaders:shaders.fx" />
+    <Shader name="grass_lightmapped" file="shaders:shaders.fx" />
+    <Shader name="cubeskybox" file="shaders:shaders.fx" />
+    <Shader name="skybox" file="shaders:shaders.fx"/>
+    <Shader name="default_nolight_nofog" file="shaders:shaders.fx" />
+    <Shader name="layered" file="shaders:shaders.fx" />
+    <Shader name="multilayered" file="shaders:shaders.fx" />
+    <Shader name="particle" file="shaders:shaders.fx" />
+    <Shader name="particle2" file="shaders:shaders.fx" />
+    <Shader name="gui3d" file="shaders:shaders.fx" />
+    <Shader name="water" file="shaders:water.fx" />
+    <!-- ASIM -->
+    <Shader name="underwaterground" file ="shaders:asim.fx" />
+    <Shader name="underwater" file ="shaders:asim.fx" />
+
+    <!-- declare variables -->
+    <Float4 name="ShadowColor" value="0.0 0.0 0.0 0.25" />
+    <Float4 name="FogDistances" value="10.0 100.0 0.0 0.0" />
+    <Float4 name="FogColor" value="0.5 0.5 0.5 1.0" />
+
+    <!-- the default section -->
+    <Section name="default">
+        <!-- render pass -->
+        <Pass name="color" shader="passes" technique="tPassColor" clearColor="0.0 0.0 0.0 1.0" clearDepth="1.0" clearStencil="0">
+
+            <Float4 name="FogDistances" variable="FogDistances" />
+            <Float4 name="FogColor" variable="FogColor" />\
+
+            <Phase name="opaque_nolight_nofog" shader="phases" technique="tPhaseOpaqueNoLightNoFog" sort="FrontToBack" lightMode="Off">
+                <Sequence shader="default_nolight_nofog" technique="tStatic" />
+            </Phase>
+            <Phase name="opaque" shader="phases" technique="tPhaseOpaqueNoFog" sort="FrontToBack" lightMode="FFP">
+                <Sequence shader="skybox" technique="tSkybox" />
+            </Phase>
+            <Phase name="opaque" shader="phases" technique="tPhaseOpaque" sort="FrontToBack" lightMode="FFP">
+                <Sequence shader="static" technique="tStatic" />
+                <Sequence shader="environment" technique="tEnvironment" />
+                <Sequence shader="lightmapped" technique="tLightmapped" />
+                <Sequence shader="lightmapped2" technique="tLightmapped2" />
+                <Sequence shader="unlightedlightmapped2" technique="tUnlightedLightmapped2" />
+                <Sequence shader="ocean" technique="tStatic" />
+                <Sequence shader="multitexskinned" technique="tSkinnedML" />
+            </Phase>
+            <Phase name="opaqueAlphaTest" shader="phases" technique="tPhaseOpaqueATest" sort="FrontToBack" lightMode="Shader">
+                <Sequence shader="static_atest" technique="tStaticATest"    firstLightAlpha="No" />
+            </Phase>
+            <Phase name="multipass" shader="phases" technique="tPhaseMultiPass" sort="FrontToBack" lightMode="FFP">
+                <Sequence shader="layered" technique="tLayered" />
+                <Sequence shader="multilayered" technique="tMultiLayered" />
+                <Sequence shader="underwaterground" technique="tUnderwaterGround" />
+            </Phase>
+            <Phase name="vsopaque" shader="phases" technique="tPhaseVsOpaque" sort="FrontToBack" lightMode="Shader">
+                <Sequence shader="blended" technique="tBlended" />
+                <Sequence shader="skinned" technique="tSkinned" />
+
+            </Phase>
+            <Phase name="opaqueVsAlphaTest" shader="phases" technique="tPhaseVsOpaqueATest" sort="FrontToBack" lightMode="Shader">
+                <Sequence shader="leaf" technique="tLeaf" />
+                <Sequence shader="tree" technique="tTree" />
+            </Phase>
+            <Phase name="alpha" shader="phases" technique="tPhaseAlpha" sort="BackToFront" lightMode="FFP">
+                <Sequence shader="alpha" technique="tStaticAlpha" />
+                <Sequence shader="alpha_uvanimation" technique="tUVAnimationAlpha" />
+                <Sequence shader="alpha_soft" technique="tStaticAlpha" />
+                <Sequence shader="alpha2" technique="tStaticAlpha2" />
+                <Sequence shader="environment_alpha" technique="tEnvironmentAlpha" />
+                <Sequence shader="underwater" technique="tUnderwater" />
+                <Sequence shader="unlightedalphalightmapped2" technique="tUnlightedAlphaLightmapped2" />
+            </Phase>
+            <Phase name="vsalpha" shader="phases" technique="tPhaseVsAlpha" sort="BackToFront" lightMode="Shader">
+                <Sequence shader="water" technique="tWater" />
+                <Sequence shader="skinned_alpha" technique="tSkinnedAlpha" />
+            </Phase>
+            <Phase name="vsalpha_nolight" shader="phases" technique="tPhaseVsAlpha" sort="BackToFront" lightMode="Off">
+                <Sequence shader="particle" technique="tParticle" />
+                <Sequence shader="particle2" technique="tParticle2" />
+            </Phase>
+        </Pass>
+
+        <!-- draw stencil shadows -->
+        <Pass name="shadow" drawShadows="Simple"/>
+        <Pass name="shadowPlane" shader="stencil_plane" drawQuad="Yes" shadowEnabledCondition="Yes">
+            <Float4 name="MatDiffuse" variable="ShadowColor" />
+        </Pass>
+
+        <!-- render 3d gui -->
+        <Pass name="gui3d" shader="passes" technique="tPassGui3D" clearDepth="1.0" clearStencil="0">
+            <Phase name="gui3d" shader="phases" technique="tPhaseGui3D" sort="None" lightMode="Shader">
+                <Sequence shader="gui3d" technique="tGui3DColor" />
+            </Phase>
+        </Pass>
+
+        <!-- post-draw stuff -->
+        <Pass name="gui" drawGui="Yes"/>
+    </Section>
+</RenderPath>

@@ -1,0 +1,65 @@
+#-------------------------------------------------------------------------------
+beginmodule networkdemo
+    setdir networkdemo
+    setfiles { networkdemo }
+endmodule
+
+beginmodule networkdemoapp
+    setdir networkdemo
+    setfiles { networkdemoapp }
+    setheaders { networkdemoapp }
+    setlibs_win32 { rpcrt4.lib }
+endmodule
+
+beginmodule netserverdemo
+    setdir networkdemo
+    setfiles { netserverdemo }
+    setheaders { netserverdemo }
+    setmoduledeps { nnetserver }
+endmodule
+
+beginmodule netclientdemo
+    setdir networkdemo
+    setfiles { netclientdemo }
+    setheaders { netclientdemo }
+    setmoduledeps { nnetclient }
+endmodule
+
+#-------------
+#BEGIN TARGETS
+#-------------
+begintarget networkdemo
+    settype exe
+    setmodules {
+        networkdemo
+        netclientdemo
+        netserverdemo
+        networkdemoapp
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        ngui
+        microtcl
+        ntoollib
+        nnetwork
+    }
+endtarget
+
+beginworkspace networkdemo
+    setbinarydir ./code/contrib/nnetwork/bin/
+    annotate "The Networkdemo workspace"
+    settargets {
+        networkdemo
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        ngui
+        microtcl
+        ntoollib
+        nnetwork
+    }
+endworkspace

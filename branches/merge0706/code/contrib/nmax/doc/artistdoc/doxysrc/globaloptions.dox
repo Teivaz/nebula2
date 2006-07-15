@@ -1,0 +1,88 @@
+/**
+    @defgroup NMaxHowtoGlobalOptions Setting Global Options
+
+    <b>The Nebula2 3DS Max Toolkit</b> provides its own utility panel of 
+    3DS Max which is used for setting various options needed for export task.
+    The description for each of the options are shown on the following.
+
+    @note
+    All global options in the utility panel are saved to the 
+    <tt>'nmaxtoolbox.ini'</tt> in the '$3dsmax/plugcfg' directory when 3DS Max
+    exit with the exception of the vertex options.
+
+    Select utility panel of 3DS Max then click '<b>More...</b>' button.
+    <b>Nebula2</b> will be shown on <b>Utilities</b> dialog as following images.
+
+    Select <b>Nebula2</b> and click 'Ok' button.
+
+    @image html globaloptions01.png
+
+    Now <b>Nebula Export Options</b> will be shown on the utility panel.
+
+    @section NMaxGlobalOptionsExport Export Options
+
+    @subsection NMaxExportOptionsMesh Mesh Export Options
+
+    <table border=0 cellspacing=0 cellpadding=0 width=100% >
+    <tr valign=top>
+    <td>
+            @image html goptions_mesh.png
+    </td>
+    <td> 
+    - Vertex options
+        - @b Normal - export vertex normal
+        - @b Color - export vertex color
+        - @b Uv - export texture uvs
+        - @b Tangent - export tangent
+
+    - <b>Scale Geometry By</b> - scaling geometry with the given value
+
+    - @b Skin
+        - Max Joint Palette - specifies maximum joint palette size
+        - Weight Trash hold - specifies vertex weight trash hold
+
+    - <b>Save As</b> - determines exported file format for .n3d2 for ASCII file or .nvx2 for binary file
+
+    </td>
+    </tr>
+    </table>
+
+    @subsection NMaxExportOptionsAnim Animation Export Options
+
+    <table border=0 cellspacing=0 cellpadding=0 width=100% >
+    <tr valign=top>
+    <td>
+    @image html goptions_anim.png
+    </td>
+    <td>
+    - <b>Save As</b> - determines exported file format for .nanim2 for ASCII file or .nax2 for binary file
+
+    - <b>Sample Rate</b> - specifies sampling rate
+
+    - <b>Add Joint Names</b> - export joint's names
+
+    </tr>
+    </table>
+
+
+    @subsection NMaxExportOptionsEtc Miscellaneous Options
+
+    <table border=0 cellspacing=0 cellpadding=0 width=100% >
+    <tr valign=top>
+    <td>
+    @image html goptions_etc.png
+    </td>
+    <td>
+    - <b>Export Hidden Nodes</b> - export hidden nodes
+
+    - <b>Select Script Server</b> - select persistent server which used for exporting. Tcl, Python and 
+      Lua servers are available by default. If you want to use the Ruby server, add the nRuby server target 
+      to the nmaxtoolbox build file (nmaxtoolbox.bld) and then rebuild the toolkit plugin. 
+
+    </tr>
+    </table>
+
+
+
+*/
+

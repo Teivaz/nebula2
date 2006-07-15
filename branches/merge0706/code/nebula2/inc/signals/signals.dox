@@ -1,0 +1,531 @@
+/**
+
+    @defgroup NebulaSignals Signal System
+    @ingroup Kernel
+
+    @brief The signal system for Nebula. It allows native and script code
+    to get called in a flexible way.
+
+    @section NebulaSignalsIntro Introduction to Nebula Signals
+
+    The implementation of signals is based on the proposal written by Bruce
+    Mitchener. There are some minor adaptations. The goals in the
+    implementation are:
+
+    - High performance signal emission, without penalties from C++ side.
+    - Type safety in compile time in C++ code.
+
+    Signals can be created in two ways:
+
+    -# Native signals: signals created in C++ code. This are faster to
+    execute and allow to use the type-safety checking at compile time.
+    -# Scripting signals: signals created from scripting. Can be created
+    at any time, but are slower.
+
+    Signals can be bound to objects in two ways:
+
+    -# Native bindings: bound to any C++ member function of a nObject
+    or derived (not needed to be a scripting command).
+    -# Scripting binding: bound to any nCmdProto or derived. In some
+    scripting languages (like Lua and Python) it is possible to create
+    nCmdProto to actually execute scripting code on binding, which gives
+    a lot of flexibility.
+
+    All combinations are possible without limitations.
+
+    The signal functionality is available for any nObject or derived.
+
+    @section NebulaSignalsProposal Nebula Signals Proposal
+
+    Include an adapted version of the proposal written by Bruce Mitchener here.
+    
+    @code
+    
+    From: Mateu Batle
+    To: Bruce Mitchener
+    Cc: nebuladevice-discuss@lists.sourceforge.net
+    Subject: Re: [Nebula-Discuss] Event / Signal system, draft 3
+    Date: Mon, 08 Nov 2004 20:31:43 +0100
+    
+    Hi !
+    
+    My 2 cents
+    
+    nSignal
+    -------
+    
+    I assume nSignal type signature will use the same system than nCmdProto. 
+    In fact, nSignal and nCmdProto are similar in some things like fourcc, 
+    input and output arguments and type signature.
+          
+    nSignalBinding
+    --------------      
+          
+    The issue about what to store (fourcc / nCmdProto) in nSignalBinding. I 
+    would choose nCmdProto, since it will be much faster. And we could have 
+    several ways to handle the issue with redefining nCmdProtos at runtime:
+    
+    a) Have a list of nSignalBinding objects either in nCmdProto or nClass. 
+    If a given nCmdProto is removed or redefined, then remove from list or 
+    change the nCmdProto ptr respectively. Maybe this is not needed, since 
+    next there is already some link between nSignalBinding and target 
+    objects, see next option.
+    
+    b) Misuse the existing reference to the target object in nSignalBinding 
+    somehow. One idea is to add some virtual member to nRef, which is 
+    implemented to suit our purposes in this case. Let's call it check(). 
+    The check function will have the following parameters:
+    
+    * int action. This is just an identifier which specifies what action 
+    happened in the target object that could need some intervention in the 
+    nRef handler. We could use NREF_ACTION_NCMDPROTO_CHANGED. This is 
+    important since we must check for this in the check handler, since an 
+    object could referenced by other things different than a nSignalBinding.
+    
+    * nReferenced *. Pointer to the object requiring the check.
+    
+    For this to work, nSignalBinding must inherit from nRef, instead of 
+    having it as a member variable. The check member function would be 
+    override, to do the proper thing. In this case, it would look for the 
+    class of the object, and resolve the fourcc to nCmdProto.
+    
+    The overhead added is that every nRef will have a virtual table ptr, 
+    because of the addition of the virtual member function.
+    
+    This mechanism could be used in the future for other uses. Although I 
+    agree it is not very clear and a bit quick & dirty solution. It is so 
+    unclear, that I would not bet it works :-)
+    
+    c) Leave the responsability to the programmer. I think the redefinition 
+    of nCmdProto is very uncommon, at least I have never seen any code using 
+    it. For a very uncommon case, I don't think we should add so much 
+    overhead. The same code that is doing the redefinition of commands, will 
+    have to issue the fix of signal bindings through some interface provided 
+    in the signal server for example.
+    
+    nSignalEmitter
+    --------------
+    
+    About BindSignal, if report error or not in the case of binding multiple 
+    times the same signal and nCmdProto. It does not come to my mind any 
+    real useful example having multiple invocations of the same binding. 
+    Anyway, if anybody thinks this is useful, we could have a parameter to 
+    indicate if perform the check for this or not. Or maybe a different 
+    function allowing repetitions.
+    
+    nSignalServer
+    --------------
+    
+    I think we need to specify the time when the event will be emitted in 
+    the PostSignal. The current spec just says the event happens the next 
+    time the signal server is triggered. The signal server must be 
+    configured to run every X seconds (predicted frame time for example), 
+    then when the signal server is triggered it runs all the events 
+    hapenning between currentTime and currentTime + X.
+    
+    Additionally, signal server must have functionality to clean the 
+    asynchronous queues for all signals, signals of a given type, signals to 
+    a specific object, ...
+    
+    
+    I look forward for your changes to the event / signal system proposal in 
+    relation to the nRoot refactoring, although I like the current state 
+    pretty much. I can help with implementation once the discussion about 
+    the proposal is finished.
+    
+    cheers !
+      Mateu
+    
+    _______________________________________________
+    Nebuladevice-discuss mailing list
+    Nebuladevice-discuss@lists.sourceforge.net
+    https://lists.sourceforge.net/lists/listinfo/nebuladevice-discuss
+    
+    @endcode    
+
+    @section NebulaSignalsUsage Usage of the Nebula Signals system
+
+    Below, we can see an explanation of the most common use cases. This section
+    is focused in the usage from native C++ code, with some use examples from 
+    scripting. To hide the complexities of the signal subsystem, some
+    preprocessor macros have been defined. Check the examples to see how to
+    use them.
+
+    @subsection NebulaSignalsUsageDeclaration Signal declaration
+    
+    This is done in a header file (<tt>.h</tt>) inside the public part
+    of the class definition. It declares the following parameters:
+
+@code
+    NSIGNAL_DECLARE(fourcc, RetType, SignalName, NumInArg, InArg, NumOutArg, OutArg)
+@endcode
+
+     - fourcc: nFourCC identifier of the signal (if 0 is provided one is calculated).
+     - RetType: return type for the signal.
+     - SignalName: name of the signal (signal names are case-sensitive).
+     - NumInArg: number of input arguments (from 0 to 6)
+     - InArg: list of argument types between parenthesis and separated by
+       commas: <tt>(bool, int, const char *)</tt>. In the case of 0 arguments
+       use <tt>()</tt>.
+     - NumOutArg: number of output arguments (from 0 to 6)
+     - OutArg: list of argument types between parenthesis and separated by
+       commas.  In the case of 0 arguments just use <tt>()</tt>.
+
+    There are many arguments, but they follow the standard ordering in for a C
+    function (return type, signalname, argumennts), so it should not be so
+    difficult to remember.
+
+    Signal name spaces have a class namespace, so they can be repeated in two
+    different classes provided one is not subclass of the other. The same is
+    true for the fourcc identifier.
+
+    Examples:
+
+@code
+    class MyClass
+    {
+    public:
+
+        NSIGNAL_DECLARE('COLL', bool, Collide, 2, (vector3 &, vector3 &), 0, ());
+        NSIGNAL_DECLARE('OMMV', bool, OnMouseMoved, 1, (vector2 &), 0, ());
+        NSIGNAL_DECLARE('OBDW', bool, OnButtonDown, 1, (vector2 &), 0, ());
+        NSIGNAL_DECLARE('OCHR', void, OnChar, 1, (int));
+        NSIGNAL_DECLARE('OKEY', void, OnKey, 1, (int));
+        NSIGNAL_DECLARE('TRIG', void, Trigger, 0, ());
+
+    };
+@endcode
+
+    @subsection NebulaSignalsUsageDefinition Signal definition
+    
+    Done in a code file (<tt>.cc</tt>), outside the scope of a function.
+    It defines the signal object. The header where the signal was declared
+    must be included before the definition. This is done because the signals
+    are static objects, and so follow the rules of declaration & definition
+    of static objects.
+
+@code
+    NSIGNAL_DEFINE(ClassName,SignalName)
+@endcode
+
+    Examples:
+
+@code
+    NSIGNAL_DEFINE(MyClass,Collide);
+    NSIGNAL_DEFINE(MyClass,OnMouseMoved);
+    NSIGNAL_DEFINE(MyClass,OnButtonDown);
+    NSIGNAL_DEFINE(MyClass,OnChar);
+    NSIGNAL_DEFINE(MyClass,OnKey);
+    NSIGNAL_DEFINE(MyClass,Trigger);
+@endcode
+
+    @subsection NebulaSignalsUsageRegistration Registration of signals
+    
+    This is the same as is done for scripting commands. It is done in the
+    <tt>n_initcmds</tt> function. Just use add one <tt>cl->AddSignal()</tt>
+    method call for every signal you have defined, and place all these
+    between <tt>cl->BeginSignals(NumberOfSignals)</tt> and
+    <tt>cl->EndSignals()</tt>.
+    
+    Example:
+
+@code
+    void
+    n_initcmds(nClass* cl)
+    {
+        cl->BeginCmds();
+        cl->EndCmds();
+        cl->BeginSignals(8);
+        cl->AddSignal(MyClass::SignalCollide);
+        cl->AddSignal(MyClass::SignalOnMouseMoved);
+        cl->AddSignal(MyClass::SignalOnButtonDown);
+        cl->AddSignal(MyClass::SignalOnChar);
+        cl->AddSignal(MyClass::SignalOnKey);
+        cl->AddSignal(MyClass::SignalTrigger);
+        cl->EndSignals();
+    }
+@endcode
+
+    Here we add the static signal objects directly to the class. As you can
+    see all signal objects are created with the 'Signal' prefix to avoid
+    name clashing, but this is not necessary.
+
+    It is also possible to use the macro <tt>NSIGNAL_OBJECT</tt> and to not
+    use the prefix 'Signal'. This macro is useful in all the calls that
+    required the object signal.
+    
+@code
+        cl->AddSignal( NSIGNAL_OBJECT( MyClass, Trigger ) );
+@endcode
+
+    @subsection NebulaSignalsUsageBinding Signal binding
+    
+    An emitter is the object emitting signals. Other objects
+    (receivers) must bind to the emitter to be able to catch the signals when
+    emitted. Any object derived from nObject can be a receiver. When the
+    receiver is bound, it is bound to an specific member function. The
+    binding action takes place inside a C++ code block. There are many
+    ways to add bindings to a signal, depending on the type of signal
+    and the type of binding.
+
+    For bindings of native signals to native bindings use:
+
+@code
+    emitter->BindSignal(SignalObject, Receiver, MemberFunctionPointer, priority);
+
+    obj->BindSignal(MyClass::SignalTrigger, recv, ReceiverClass::Trigger, 10);
+@endcode
+
+    Check out the other BindSignal methods in nSignalEmitter.
+
+@code
+    bool BindSignal(nFourCC signal4cc, nSignalBinding * binding);
+    bool BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdProto, int priority);
+    bool BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourCC, int priority, bool rebind = false);
+    bool BindSignal(nFourCC signal4cc, nObject * object, const char * cmdName, int priority, bool rebind = false);
+    bool BindSignal(const char * signalName, nObject * object, const char * cmdName, int priority);
+@endcode
+
+    The priority parameter allows to specify the order in which bound objects 
+    will be called on invocation of the signal. Priorities with lower number 
+    are called first.
+
+    @subsection NebulaSignalsUsageEmission Signal emission
+    
+    When the signal is emitted by the emitter object, all the bound
+    objects are called in priority order.
+
+    This is an example of signal emission from C++ code, with type checking
+    at compile time but only for native signals:
+
+@code
+    // emitter->SignalName(emitter, arg1, arg2, arg3);
+
+    emitter->SignalOnKey(emitter, 1024);
+@endcode
+
+    There are other ways of emitting signals, which are valid for any type
+    of signal, but don't check at compile time like the previous way. Examples:
+
+@code
+    emitter->EmitSignal( "onkey", 1024 );
+    emitter->EmitSignal( &MyClass::SignalOnKey, 1024 );
+    emitter->EmitSignal( &NSIGNAL_OBJECT( MyClass, OnKey ), 1024 );
+@endcode
+
+    The string name of the signal must be lower case.
+
+    @subsection NebulaSignalsUsageAsynchronous Asynchronous signals
+    
+    It is possible to emit a signal to be executed at the time specified.
+    For this the signal server must be active. The time is provided in a 
+    relative value from the current time. The following command emits
+    the signal in 10 seconds. If time 0 is specified the signals will be
+    executed in the next trigger invocation of the signal server.
+    
+    At the moment, there is no way to post signals with compile-time type 
+    checking (although this could be added if needed).
+    
+@code
+    emitter->PostSignal( 10.0f, "onkey", 1024 );
+    emitter->PostSignal( 10.0f, &MyClass::SignalOnKey, 1024 );
+    emitter->PostSignal( 10.0f, &NSIGNAL_OBJECT( MyClass, OnKey ), 1024 );
+@endcode
+
+    The method Trigger of the nSignalServer should be called to allow the 
+    asynchronous signals be called. The signal server executes all the signals
+    with posted time < currentAppTime.
+    
+@code
+    signalServer.Trigger( currentAppTime );
+@endcode
+
+    @subsection NebulaSignalsUsageTCL Scripting from TCL
+    
+    You can define signals from scripting code, these signals can be bound and 
+    emitted from script and from C++ code. The <tt>addsignal</tt> command
+    takes two parameters, the first one is the signal definition and the
+    second one is the FOURCC.
+    
+@code
+    /emitter.addsignal "v_newsignal_i" "SFS1"
+@endcode
+
+    The BindSignal method is visible to script. A posible call will be:
+
+@code
+    /emitter.bindsignal "onkey" /receiver "onkeyreceiver" 0 
+@endcode
+
+    The bind from scripting requires that the method be a cmd method.
+
+    From TCL scripting the signals are emitted this way:
+
+@code
+    # emit object.signalname arg1 arg2 arg3
+
+    emit /emitter.onkey 1024
+    emit .onkey 1024
+@endcode
+    
+    Emit and Post take the object plus signal name, but if the object isn't 
+    present and the signal name is preceded with a period, they take the actual 
+    pwd.
+
+    From scripting it is also possible to post signals and regular commands:
+
+@code
+    post 10.0 /emitter.onkey 1024
+@endcode
+
+    @subsection NebulaSignalsUsagePYTHON Scripting from Python
+
+    In Python the N.O.H. objects are mapped to Python objects, so the call to 
+    signals commands are different from TCL. In the next code we obtain the emitter
+    and receiver objects.
+    
+@code    
+    emitter = pynebula.lookup( '/emitter' )
+    receiver = pynebula.lookup( '/receiver' )
+@endcode
+
+    This is how to add a signal in Python.
+    
+@code
+    emitter.addsignal( 'v_newsignal_i', 'SFS1' )
+@endcode
+
+    This code shows how to bind a signal.
+
+@code
+    emitter.bindsignal( 'onkey', receiver, 'onkeyreceiver', 0 )
+@endcode
+
+    And this code shows how to emit and post a signal.
+    
+@code
+    emitter.emit( 'onkey', 1024 )
+
+    emitter.post( 10.0, 'onkey', 1024 )
+@endcode
+    
+    @subsection NebulaSignalsUsageLUA Scripting from Lua
+    
+    From Lua scripting you can bind signals to objects, emit signals and post
+    signals in the same way as Python scripting but with Lua syntax.
+    Lua objects are obtained by calling the lookup function too.
+    
+@code
+    obj = lookup( '/receiver' )
+    emitter = lookup( '/emitter' )
+    sel( '/emitter' )
+@endcode
+
+    This is how to add a signal in Lua.
+
+@code
+    call( 'addsignal', 'v_newsignal_i', 'SFS1' )
+@endcode
+
+    This code shows how to bind a signal.
+
+@code
+    call( 'bindsignal', 'onkey', obj, 'onkeyreceiver', 0 )
+@endcode
+
+    In Lua emit and post are also object methods. Emit and post aren't cmds
+    and can not be called with <i>call</i> function.
+
+@code
+    emitter:emit( 'onkey', 1024 )
+
+    emitter:post( 10.0, 'onkey', 1024 )
+@endcode
+
+    Lua allows you to add additional commands to a class's script interface at run-time.
+    You can then implement the new commands in script <b>per object</b>. These added 
+    commands can be bound and signaled.
+    
+    First there is a block of begincmds/endcmds to declare the script-side cmds which
+    must be added to the nClass.
+    
+    Second we obtain the thunk of the object, it is also neccesary to pin the thunk, so 
+    the Lua server can find it later and implement the commands. And then, we implement
+    the code for the script in that object.
+    
+    When the object is pinned, then we can implement the cmds.
+    
+    Inside the new script functions of Lua, we can access to the call object using <i>
+    self</i> implicit parameter.
+    
+@code
+    begincmds( 'receiverclass', 2 )
+       addcmd( 'receiverclass', 'v_ScriptCmds1_v' )
+       addcmd( 'receiverclass', 'v_ScriptCmds2_i' )
+    endcmds( 'receiverclass' )
+    
+    node = lookup( '/signals/receiver' )
+    pin(node)
+
+    function node:ScriptCmds1()
+       puts( 'function ScriptCmds1 called \n' )
+    end \n
+
+    function node:ScriptCmds2(num)
+       puts( 'function ScriptCmds2 called with '.. num ..'\\n' )
+    end
+@endcode
+
+    The block addcmds/endcmds from Lua don't effect the C++ block
+    AddCmds/EndCmds of the same class, only add new cmds on the scripting side.
+
+    The script command names are case-sensitive and not lower-case like the cmds 
+    from C++ code.
+    
+    The emit/post signal only effects the bound objects that have a script 
+    implementation of the script cmds.
+    
+@code
+    emitter->BindSignal( "trigger", Receiver, "ScriptCmds1", 0 );
+    emitter->BindSignal( "onkey", Receiver, "ScriptCmds2", 0 );
+
+    emitter->EmitSignal( "trigger" );
+    emitter->EmitSignal( "onkey", 1024 );
+@endcode
+
+    @section NebulaSignalsNotes Implementation notes
+
+    There are some changes between the original proposal and what has been
+    implemented. Changes have been motivated to improve performance and
+    type-safety.
+
+    - nSignal. It is not just a single class. It is derived from nCmdProto
+    for convenience. nSignal directly is used for signals defined from
+    scripting or from dynamic C++ code. But normal C++ code will use
+    nSignalNative template classes.
+
+    - nSignalRegistry. At the moment has all the nClass extensions, this
+    is mixed-in in nClass. It is better to be done separately
+    since allows easier refactoring in the future.
+
+    - nSignalBindingSet. A list of nSignalBinding.
+
+    - nSignalBinding. This is similar to nSignal, but it handles the signal
+    reception, that is the invocation of each object bound to a signal.
+    nSignalBinding is an abstract class. There are two subclasses,
+    nSignalBindingCmdProto for invocation through nCmd (used for scripting),
+    and nSignalBindingNative for invocation of native C++ code.
+    
+    - In the registration of signals the call
+    <tt>cl->BeginSignals(NumberOfSignals)</tt> specifies the number of
+    signals to add. This number is a hint to create a hash table to put
+    on the signals. It's possible to add more signals or less signals that
+    the parameter without crashing the application.
+    
+    - In the registration of script-side cmds (in Lua for example) the call to
+    endcmds actually does not do anything, and the begincmds(NumberOfSignals)
+    is also a hint to create a hash table. So it's posible to addcmds, after
+    the begincmds, for the same class 'ad eternum'. It is important to
+    remember to call only one single time to begincmds for that class in all
+    scripting code of all script servers.
+*/

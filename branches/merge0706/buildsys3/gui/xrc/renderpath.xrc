@@ -1,0 +1,718 @@
+<?xml version="1.0" ?>
+<resource>
+  <object class="wxFrame" name="RenderPathFrame">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxNotebook" name="Notebook">
+          <object class="notebookpage">
+            <label>Renderpathes</label>
+            <object class="wxPanel" name="RenderPathSheet">
+              <object class="wxBoxSizer">
+                <orient>wxHORIZONTAL</orient>
+                <object class="sizeritem">
+                  <object class="wxPanel" name="RPTreePanel"/>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <minsize>370,350</minsize>
+                </object>
+                <object class="sizeritem">
+                  <object class="wxPanel" name="RPWorkPanel">
+                    <object class="wxBoxSizer">
+                      <orient>wxVERTICAL</orient>
+                    </object>
+                  </object>
+                  <option>1</option>
+                  <flag>wxALL|wxEXPAND</flag>
+                  <minsize>500, 350</minsize>
+                </object>
+              </object>
+            </object>
+            <selected>1</selected>
+          </object>
+          <object class="notebookpage">
+            <label>Shaders</label>
+            <object class="wxPanel" name="ShadersSheet"/>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+    </object>
+    <title>RenderPath viewer</title>
+    <centered>1</centered>
+    <style>wxDEFAULT_FRAME_STYLE|wxSYSTEM_MENU|wxRESIZE_BORDER|wxMINIMIZE_BOX</style>
+  </object>
+  <object class="wxPanel" name="RenderPathPanel">
+    <object class="wxStaticBoxSizer">
+      <label>RenderPath</label>
+      <orient>wxVERTICAL</orient>
+      <object class="spacer">
+        <size>0,3</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="spacer">
+            <size>3,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>name </label>
+            </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTextCtrl" name="RPname"/>
+            <flag>wxALL|wxEXPAND</flag>
+            <minsize>70,-1</minsize>
+          </object>
+          <object class="spacer">
+            <size>10,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>shaderPath </label>
+            </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTextCtrl" name="RPshaderPath"/>
+            <flag>wxALL|wxEXPAND</flag>
+            <minsize>150,-1</minsize>
+          </object>
+        </object>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticLine"/>
+        <flag>wxALL|wxEXPAND</flag>
+        <border>2</border>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxListBox" name="RPShaderList">
+                  <content/>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxEXPAND|wxGROW</flag>
+                <border>2</border>
+                <minsize>-1,100</minsize>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>2</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label> file </label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="RPShader_file"/>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <vgap>2</vgap>
+                  <growablecols>1</growablecols>
+                </object>
+                <flag>wxALL|wxEXPAND</flag>
+              </object>
+              <label>Shaders</label>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxListBox" name="RPVarList">
+                  <content/>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxEXPAND|wxGROW</flag>
+                <border>2</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>2</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label> type </label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxComboBox" name="RPVar_type">
+                      <content/>
+                      <style>wxCB_READONLY</style>
+                    </object>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label> value </label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="RPVar_value"/>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <vgap>2</vgap>
+                  <growablecols>1</growablecols>
+                </object>
+                <flag>wxALL|wxEXPAND</flag>
+              </object>
+              <label>Variables</label>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+      <object class="spacer">
+        <size>0,3</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxStaticBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxListBox" name="RTList">
+              <content/>
+            </object>
+            <flag>wxALL|wxEXPAND</flag>
+            <border>2</border>
+          </object>
+          <object class="spacer">
+            <size>5,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>format* </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="RTformat">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>relSize </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <vgap>2</vgap>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="RTrelSize"/>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>width</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="RTwidth"/>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>height</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="RTheight"/>
+                <flag>wxGROW</flag>
+              </object>
+              <growablecols>1</growablecols>
+            </object>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+          <label>RenderTargets</label>
+        </object>
+        <option>1</option>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="RPSectionPanel">
+    <object class="wxStaticBoxSizer">
+      <label>Section</label>
+      <orient>wxVERTICAL</orient>
+      <object class="spacer">
+        <size>0,3</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="spacer">
+            <size>3,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>name</label>
+            </object>
+            <flag>wxALIGN_CENTRE_VERTICAL</flag>
+          </object>
+          <object class="spacer">
+            <size>10,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxTextCtrl" name="SECname">
+              <style>wxTE_READONLY</style>
+            </object>
+          </object>
+        </object>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="RPPassPanel">
+    <object class="wxStaticBoxSizer">
+      <label>Pass</label>
+      <orient>wxVERTICAL</orient>
+      <object class="spacer">
+        <size>0,3</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="spacer">
+            <size>5,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>shader*</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PSshader">
+                  <content/>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>clearColor</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="PSclearColor"/>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>clearDepth</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="PSclearDepth"/>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>clearStencil</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="PSclearStencil"/>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>drawQuad</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PSdrawQuad">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>drawShadows</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PSdrawShadows">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>occlusionQuery</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PSocclusionQuery">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>drawGui</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PSdrawGui">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>technique</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="PStechnique"/>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>shadowEnabledCondition </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PSshadowEnabledCondition">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <vgap>2</vgap>
+              <growablecols>1</growablecols>
+            </object>
+          </object>
+          <object class="spacer">
+            <size>5,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <label>RenderTargets</label>
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxListBox" name="PSrenderTargets">
+                      <content/>
+                    </object>
+                    <option>1</option>
+                    <flag>wxALL|wxEXPAND</flag>
+                    <border>2</border>
+                  </object>
+                </object>
+                <flag>wxALL|wxEXPAND</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticBoxSizer">
+                  <orient>wxVERTICAL</orient>
+                  <object class="sizeritem">
+                    <object class="wxListBox" name="PSVarList">
+                      <content/>
+                    </object>
+                    <option>1</option>
+                    <flag>wxALL|wxEXPAND</flag>
+                    <border>2</border>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxFlexGridSizer">
+                      <cols>2</cols>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label> type </label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxComboBox" name="PSVar_type">
+                          <content/>
+                        </object>
+                        <flag>wxGROW</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label> value </label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxTextCtrl" name="PSVar_value"/>
+                        <flag>wxGROW</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxStaticText">
+                          <label> variable </label>
+                        </object>
+                        <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                      </object>
+                      <object class="sizeritem">
+                        <object class="wxComboBox" name="PSVar_variable">
+                          <content/>
+                        </object>
+                        <flag>wxGROW</flag>
+                      </object>
+                      <growablecols>1</growablecols>
+                    </object>
+                  </object>
+                  <label>Variables</label>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxEXPAND</flag>
+              </object>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+        </object>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="RPPhasePanel">
+    <object class="wxStaticBoxSizer">
+      <label>Phase</label>
+      <orient>wxVERTICAL</orient>
+      <object class="spacer">
+        <size>0,3</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="spacer">
+            <size>5,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>shader*</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PHshader">
+                  <content/>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>sort*</label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PHsort">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>lightMode* </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="PHlightMode">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>technique </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="PHtechnique"/>
+                <flag>wxGROW</flag>
+              </object>
+              <growablecols>1</growablecols>
+            </object>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+          <object class="spacer">
+            <size>5,0</size>
+          </object>
+        </object>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+    </object>
+  </object>
+  <object class="wxPanel" name="RPSequencePanel">
+    <object class="wxStaticBoxSizer">
+      <label>Sequence</label>
+      <orient>wxVERTICAL</orient>
+      <object class="spacer">
+        <size>0,3</size>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="spacer">
+            <size>5,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxFlexGridSizer">
+              <cols>2</cols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>technique </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxTextCtrl" name="SEQtechnique"/>
+                <flag>wxGROW</flag>
+              </object>
+              <growablecols>1</growablecols>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>shaderUpdates </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="SEQshaderUpdates">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>firstLightAlpha </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="SEQfirstLightAlpha">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxStaticText">
+                  <label>mvpOnly </label>
+                </object>
+                <flag>wxALIGN_CENTRE_VERTICAL</flag>
+              </object>
+              <object class="sizeritem">
+                <object class="wxComboBox" name="SEQmvpOnly">
+                  <content/>
+                  <style>wxCB_READONLY</style>
+                </object>
+                <flag>wxGROW</flag>
+              </object>
+            </object>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+          <object class="spacer">
+            <size>5,0</size>
+          </object>
+          <object class="sizeritem">
+            <object class="wxStaticBoxSizer">
+              <orient>wxVERTICAL</orient>
+              <object class="sizeritem">
+                <object class="wxListBox" name="SEQVarList">
+                  <content/>
+                </object>
+                <option>1</option>
+                <flag>wxALL|wxEXPAND</flag>
+                <border>2</border>
+              </object>
+              <object class="sizeritem">
+                <object class="wxFlexGridSizer">
+                  <cols>2</cols>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label> type </label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxComboBox" name="SEQVar_type">
+                      <content/>
+                    </object>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label> value </label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxTextCtrl" name="SEQVar_value"/>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxStaticText">
+                      <label> variable </label>
+                    </object>
+                    <flag>wxALIGN_CENTRE_VERTICAL</flag>
+                  </object>
+                  <object class="sizeritem">
+                    <object class="wxComboBox" name="SEQVar_variable">
+                      <content/>
+                    </object>
+                    <flag>wxGROW</flag>
+                  </object>
+                  <growablecols>1</growablecols>
+                </object>
+              </object>
+              <label>Variables</label>
+            </object>
+            <option>1</option>
+            <flag>wxALL|wxEXPAND</flag>
+          </object>
+        </object>
+        <flag>wxALL|wxEXPAND</flag>
+      </object>
+    </object>
+  </object>
+</resource>

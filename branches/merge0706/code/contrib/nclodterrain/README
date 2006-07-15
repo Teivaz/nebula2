@@ -1,0 +1,108 @@
+Included here is the source for nCLODTerrain, the chunked LOD terrain
+implementation for The Nebula Device.
+
+To compile, unpack into code/contrib and re-run the update.tcl script in
+the Nebula root directory (typically whatever $RL_HOME is set to).
+You should then see a 'nchunklod' workspace/solution which you can compile.
+Note that you also need nopende installed in contrib, since clodterrain
+uses the nopende code for collision and dynamics.
+
+The nclodterrain module is usable for linking into other programs as a library,
+ and 'nclododeviewer' is an example of a viewer that uses both clodterrain
+and opende to bounce around a bunch of boxes.
+
+The descriptions below assume you are in code/contrib/nclodterrain/bin, as
+that is where all the relevant scripts are located.
+
+Also, note that to run the scripts below you need to run a program that
+has the nclodterrain nodes linked in!  The default 'nshlua' program
+does not have the nclodterrain nodes linked in, so you will just get an
+assertion error if you try to compile or view chunked LOD terrain.  There
+is an example program 'nclododeviewer' that you can run to compile or
+view terrain data.
+
+You will also have to add the splatterrain.fx shader to Nebula2's
+shaderlist.txt so that the scene server will know what the rendering
+priority of the shader is.  This requires editing one of these files:
+
+
+    nebula2/export/shaders/2.0/shaderlist.txt
+    nebula2/export/shaders/fixed/shaderlist.txt
+
+and adding the following line:
+
+    nclodshaders:splatterrain.fx
+
+after shaders:terraingrass.fx and before shaders:default.fx.  If this is not
+done, then you will get an assert when you try to view an nclodterrain sample.
+
+
+
+In order to use a terrain, you must 'compile' it from the bitmap-based
+form into a chunked vertex mesh/texture format.
+
+***To compile the terrain:
+
+You can compile two sorts of terrains.  Basically, they differ only in
+how the texture is applied.  You can drape one huge texture over the
+entire terrain (texture-mapped) or apply several small tiled detail
+textures based on a "tile map" (tile-mapped)
+
+***To compile a texture-mapped terrain:
+
+Select your input and output files. You need as input a greyscale or RGB heightmap
+and an RGB terrain texture.  The output is a tesselated mesh quadtree
+(a .clod file) and a texture quadtree (a .tqt file).  I have included
+an example script "compileterrain.lua" for this which is setup like:
+
+Heightmap:   code/contrib/nclodterrain/export/textures/examples/heightfield.bmp
+Texture:     code/contrib/nclodterrain/export/textures/examples/cloddiffuse.bmp
+
+Mesh output:  code/contrib/nclodterrain/export/terrains/examples/sample.clod
+TQT output:   code/contrib/nclodterrain/export/terrains/examples/sample.tqt
+
+You can of course edit the script file to change these locations.
+
+To do the compilation execute the script using nclododeviewer:
+
+    nclododeviewer -view compileterrain.lua
+
+
+***To compile a tile-mapped terrain:
+
+First, decide on which textures to use as your tiles.  For example, let's
+use grass, dirt, rock, and water.  We'll map these to indices 0,1,2, and 3.
+
+Select your input and output files. You need as input a greyscale or RGB
+heightmap and an indexed terrain texture.  The indexed texture should contain
+indexed values at each pixel to indicate which tile texture to put there. 
+For instance, paint pixels with index 0 everywhere you want grass, index 1
+where you want dirt, etc.
+
+The output is a tesselated mesh quadtree (a .clod file) and a texture quadtree
+(a .tqt file).  I have included an example script "compilesplatterrain.lua" for
+this which is setup like:
+
+Heightmap:   code/contrib/nclodterrain/export/textures/examples/heightfield.bmp
+Texture:     code/contrib/nclodterrain/export/textures/examples/tiles.bmp
+Tiles:       code/contrib/nclodterrain/export/textures/terrainsplat/{tile names}.bmp
+
+Mesh output:  code/contrib/nclodterrain/export/terrains/examples/sample.clod
+TQT output:   code/contrib/nclodterrain/export/terrains/examples/sample.tqt
+
+The actual command is:
+
+    nclododeviewer -view compilesplatterrain.lua
+
+
+***To view the resultant terrain:
+
+To view your terrain execute
+
+    nclododeviewer -view clod.n2
+
+Again, you can edit the script file clod.n2 to use other terrain files
+if you want.
+
+Gary Haussmann, 16 Mar 2004
+

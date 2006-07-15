@@ -1,0 +1,54 @@
+#--------------------------------------------------------------------
+#   nmaxbase.bld
+#   the base modules for the max plugins
+#   
+#   Modules:
+#       nmaxloghandler
+#       nmaxdll
+#     
+#   Targets:
+#     nmaxbase
+#-------------------------------------------------------------------------------
+beginmodule nmaxloghandler
+    annotate "a nebula2 log handler using the max features"
+
+    settype cpp
+    setplatform win32
+
+    setdir base
+    setfiles  { nmaxloghandler }
+    setheaders { nmaxloghandler }
+    
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxdll
+    annotate "The required dll exports for a max plugin"
+    
+    settype cpp
+    setplatform win32
+    
+    setdir base
+    setfiles   { nmaxdll }
+    setheaders { nmaxdll }
+    setmoddeffile nmaxdll
+    setlibs_win32 { paramblk2.lib }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxlistener
+    annotate "A module which enables log messages on maxscript listener"
+
+    settype cpp
+    setplatform win32
+
+    setdir base
+    setfiles { nmaxlistener }
+    setheaders { nmaxlistener }
+    setlibs_win32 { maxscrpt.lib }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nmaxbase
+   settype lib
+   setmodules { nmaxloghandler }
+endtarget
+#-------------------------------------------------------------------------------
+

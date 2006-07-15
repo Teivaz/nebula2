@@ -1,0 +1,51 @@
+#--------------------------------------
+# shdtuner.bld
+#--------------------------------------
+
+beginworkspace shdtuner
+    setbinarydir bin
+    settargets {
+        shdtuner
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        ngui
+        ntoollib
+        microtcl
+        npythonserver
+    }
+endworkspace
+
+begintarget shdtuner
+    settype exe
+    setmodules {
+        shdtuner
+        nshdtunerapp
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        ndinput8
+        ndirect3d9
+        ngui
+        ntoollib
+        microtcl
+        npythonserver
+    }
+endtarget
+
+beginmodule shdtuner
+    setdir shdtuner
+    setfiles { shdtuner }
+endmodule
+
+beginmodule nshdtunerapp
+    setdir shdtuner
+    setheaders { nshdtunerapp }
+    setfiles { nshdtunerapp_main nshdtunerapp_cmds }
+endmodule
+
+#--------------------------------------
+# Eof
+#--------------------------------------

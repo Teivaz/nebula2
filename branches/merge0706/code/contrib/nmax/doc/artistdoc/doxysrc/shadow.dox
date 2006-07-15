@@ -1,0 +1,41 @@
+/**
+    @defgroup NMaxHowtoShadows Shadows Howto
+
+    @section NMaxHowtoShadowsOverview Shadows Overview
+
+    The <b>Nebula2 3DSMax Toolkit</b> allows you to easily create shadow for 
+    your models. The next section follows the steps show you the basics of 
+    working with shadow in Nebula.
+
+    @image html shadow01.png "Shadow applied on the model. The model borrowed from Doom3 (c) Id software" 
+    
+
+    @section NMaxHowtoShadowsStepByStep Shadows Step By Step
+
+    @subsection NMaxHowtoShadowsStep1 Step 1: Create a Shadow Model
+
+      - Duplicate Original model. This will be used for shadow model.
+      - Hide the original model.
+      - Simplify the duplicated model if it is necessary.
+        - clean and close duplicates:  
+          - do not combine or merge the single parts, because if you do so it will be 
+            impossible to copy the skin weights later
+        - reduce the vertices from the duplicates must exist: 
+          - silhouette information (corners, borders, for example long nose, ears, or 
+            better everything which gives an object's silhouette its character).
+          - surface details (for example vertices which exist for texture propose...) 
+          - everything which has no special influence to the silhouette of the object attention
+          - shadowmodel and original model must have the same size, elsewhere artefacts will 
+            be created whether
+          - UV's, texture mapping, material, nebula shader etc.
+      - Select the shadow model and click <i>Nebula2/Mesh Options</i> menu item. 
+        - This will bring the mesh option rollout on the modify panel.
+      - Select <i>shadow</i> for the mesh type on the mesh options rollout.
+
+    @subsection NMaxHowtoShadowsStep2 Step 2: Bind a Shadow Model
+    ...
+
+    @subsection NMaxHowtoShadowsStep3 Step 3: Finish
+    ...
+
+*/

@@ -1,0 +1,109 @@
+#===============================================================================
+#  ndirect3d9.bld
+#  A DirectX 9 implementation of ngfxserver2 and related bits.
+#
+#  Modules:
+#      nd3d9server
+#      nd3d9mesh
+#      nd3d9shader
+#      nd3d9shaderinclude
+#      nd3d9texture
+#      nd3d9windowhandler
+#  Targets:
+#      ndirect3d9
+#===============================================================================
+
+#===============================================================================
+#  ndirect3d9 modules
+#===============================================================================
+beginmodule nd3d9server
+    setdir gfx2
+    setplatform win32
+    setfiles {
+        nd3d9server_main 
+        nd3d9server_resource 
+        nd3d9server_device
+        nd3d9server_render
+        nd3d9server_text
+        nd3d9server_lines
+        nd3d9server_shapes
+    }
+    setheaders { nd3d9server }
+    setlibs_win32 {
+        d3d9.lib d3dx9.lib dxguid.lib dxerr9.lib
+        user32.lib gdi32.lib advapi32.lib
+    }
+    setmoduledeps { nd3d9mesh nd3d9texture nd3d9shader }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9mesh
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9mesh_main }
+    setheaders { nd3d9mesh }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9occlusionquery
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9occlusionquery }
+    setheaders { nd3d9occlusionquery }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9mesharray
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9mesharray_main }
+    setheaders { nd3d9mesharray }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9texture
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9texture_main }
+    setheaders { nd3d9texture }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9shader
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9shader_main }
+    setheaders { nd3d9shader }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9shaderinclude
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9shaderinclude }
+    setheaders { nd3d9shaderinclude }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9font
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9font_main }
+    setheaders { nd3d9font }
+    setlibs_win32 { gdi32.lib }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nd3d9windowhandler
+    setdir gfx2
+    setplatform win32
+    setfiles { nd3d9windowhandler }
+    setheaders { nd3d9windowhandler }
+    setlibs_win32 { user32.lib }
+endmodule
+#-------------------------------------------------------------------------------
+
+#===============================================================================
+#  ndirect3d9 Targets
+#===============================================================================
+begintarget ndirect3d9
+    settype lib
+    setmodules {
+        nd3d9server nd3d9mesh nd3d9texture nd3d9shader nd3d9font
+        nd3d9shaderinclude nd3d9windowhandler nd3d9mesharray
+        nd3d9occlusionquery
+    }
+endtarget
+#-------------------------------------------------------------------------------

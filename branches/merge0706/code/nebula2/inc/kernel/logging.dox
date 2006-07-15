@@ -1,0 +1,43 @@
+/**
+    @defgroup Logging Logging
+    @ingroup Kernel
+    
+    This section of the documentation covers Nebula log system and its subsystems.
+
+    @section LogginOverview Overview
+
+    Nebula provides a log system which supports formatted output to the file
+    or platform specific dialog and so on.
+
+    Nebula2 provides the following functions for the log output:
+        - n_printf()
+        - n_message()
+        - n_error()
+        - n_dbgout() : win32 only
+
+
+    @section LogginUsage Usage
+
+    Using a log hanlder of the Nebula is simple.
+
+    - First, create a log handler and specifies it to the kernel server.
+    - Call proper log function whenever it is needed.
+
+    The following code shows an example how to create a log handler
+    and put a message out:
+    @code
+    nKernelServer kernelServer;
+
+    // create a log handler and specifies it to the kernel server.
+    #ifdef __WIN32__
+        nWin32LogHandler logHandler("nviewer");
+        kernelServer.SetLogHandler(&logHandler);
+    #endif
+    ...
+    // now, you can put the message out
+    n_message("Foo: %d", numfoo);
+    @endcode
+
+    - 26-Mar-05    kims    added details.
+
+*/

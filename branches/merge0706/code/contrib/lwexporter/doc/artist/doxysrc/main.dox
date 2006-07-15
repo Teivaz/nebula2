@@ -1,0 +1,61 @@
+/**
+    @mainpage Nebula 2 Exporter for Lightwave 3D
+
+
+    @section N2Exp4LWIntroOverview Overview
+
+    The <b>Nebula 2 Exporter for Lightwave 3D</b> consists of a suite of plugins 
+    for <b>Lightwave 3D</b> that provide modelers and animators with the ability to 
+    export their work to a format that's can be used by the <b>Nebula 2</b> 
+    3D engine. For a list of features see @ref N2Exp4LWFeatures.
+
+    This manual aims to describe everything that a modeler or animator needs to 
+    know in order to get their work from <b>Lightwave 3D</b> to <b>Nebula 2</b>.
+
+
+    @section N2Exp4LWIntroSystems System Requirements
+
+    - Windows 2000 or Windows XP
+    - The DirectX9 runtime
+    - NewTek <b>Lightwave 3D</b> (version 8.5+ recommended, may work with 7.5c+).
+    - A DX9 graphics card which supports DX shader model 2.0 is recommended, 
+      but cards that support DX7 should also work.
+
+
+    @section N2Exp4LWIntroInstall Installation
+
+    For the information on installation of the <b>Nebula 2 Exporter for Lightwave 3D</b>, 
+    see @ref N2Exp4LWInstallation.
+   
+   
+    @section N2Exp4LWIntroUsage Usage
+    
+    Common exporter usage is covered in the following sections:
+    - @ref N2Exp4LWCharacters
+    - @ref N2Exp4LWShaderTweaking
+
+
+    @section N2Exp4LWIntroSamples Samples
+
+    To help and illustrate features of the exporter, samples are provided. 
+    For the information on the samples, see @ref N2Exp4LWSamples.
+
+
+    @section N2Exp4LWIntroFAQ FAQ
+
+    For frequently asked questions see @ref N2Exp4LWFAQ.
+   
+
+    @section N2Exp4LWIntroCredits Credits
+
+    - Code: Vadim Macagon
+    - Testing and Art: Scott Lange
+    
+    Also thanks to Kim, Hyoun Woo, the author of the Nebula 2 Toolkit for 3DS Max,
+    whose work has been very useful as a reference.
+    
+    Parts of this documentation are inspired by the documentation for 
+    <a href="http://www.radonlabs.de/toolkit.html">The Nebula2 Toolkit For Maya</a>
+    from Radon Labs.
+*/
+

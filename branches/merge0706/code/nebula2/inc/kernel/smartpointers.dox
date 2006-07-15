@@ -1,0 +1,70 @@
+/**
+    @defgroup NebulaSmartPointers Smart Pointers
+    @ingroup NebulaDataTypes
+
+
+  If one object keeps a pointer to another object,
+  and the pointed-to object goes away, the first object is
+  left with an invalid object pointer. An nRef creates
+  a wire between the 2 objects, if the referenced object goes
+  away, the nRef will be invalidated and the object
+  holding the reference will be notified.
+
+  When creating a nRef you need to specify the type of object it
+  will be referencing.
+
+  @code
+      nRef<nSkinAnimator> refSkinAnimator;
+  @endcode
+
+  @note Only nRoot derived classes can be used with nRef or its subclasses.
+
+  Here a nRef is checked for validity and assigned to as if it
+  were a pointer.
+
+  @code
+      if (!refSkinAnimator.isvalid())
+      {
+          refSkinAnimator =  kernelServer->New("nskinanimator", "/usr/scene/node/animator");
+      }
+  @endcode
+
+  A nRef can be dereferenced just like a pointer.
+
+  @code
+      this->refSkinAnimator->Animate(this, renderContext);
+  @endcode
+
+  Use nRef::get() to get a pointer to the object
+
+  @code
+      nSkinAnimator* skinAnimator = refSkinAnimator.get();
+  @endcode
+
+  nAutoRef builds on nRef and adds the ability to revalidate itself by
+  looking up the referenced object by its path name. It is up to the nAutoRef
+  holder to ensure that the path name string stays in scope.
+
+  @code
+      // nAutoRef needs access to the kernel server
+      // in order to find objects by path name
+      nAutoRef<nGfxServer>  refGfxServer(kernelServer, "/sys/servers/gfx");
+  @endcode
+
+  or:
+
+  @code
+      // nAutoRef needs access to the kernel server
+      // in order to find objects by path name
+      nAutoRef<nGfxServer2> refGfxServer(kernelServer);
+
+      refGfxServer = "/sys/servers/gfx";
+  @endcode
+
+  An nDynAutoRef is the same as an nAutoRef except that it
+  maintains its own copy of the name string.
+
+  Technically, it's a class template implementing a smart pointer.
+
+  See also nHardRef & nHardRefServer.
+*/

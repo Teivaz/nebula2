@@ -1,0 +1,39 @@
+#===============================================================================
+#  dummy.bld
+#  Dummy build bits for the default Nebula2 distribution
+#
+#  Modules:
+#      dummy
+#  Targets:
+#      buildall
+#===============================================================================
+
+#===============================================================================
+#  default modules
+#===============================================================================
+beginmodule dummy
+    annotate "Simply used to build dummy lib targets"
+    setdir "."
+    setfiles { dummy }
+endmodule 
+
+#===============================================================================
+#  default targets
+#===============================================================================
+begintarget buildall
+    annotate "Simply used as a build all target in VC6"
+    settype lib
+    setmodules dummy
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ntoollib
+        nmeshtool
+        nremoteshell
+        nsh
+        nviewer
+    }
+endtarget 

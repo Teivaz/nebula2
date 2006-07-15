@@ -1,0 +1,22 @@
+#-------------------------------------------------------------------------------
+# foundation.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::foundation
+    setdir foundation
+    settype cpp
+    setfiles { 
+        factory
+        refcounted
+        server
+    }
+    setheaders { 
+        factory
+        ptr
+        refcounted
+        rtti
+        server
+    }
+endmodule
+#-------------------------------------------------------------------------------

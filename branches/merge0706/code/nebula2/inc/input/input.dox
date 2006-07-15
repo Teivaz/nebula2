@@ -1,0 +1,12 @@
+/**
+    @defgroup Input Input Subsystem
+
+    @section NebulaInputSystemOverview Overview
+
+    The input server is the central collection point for input events.
+    Basically anyone can feed input events into or read them
+    back from the global list of input events. The input server
+    also maps low level input events to high level 'app events', or
+    can bind the execution of script statements to input events.
+
+*/

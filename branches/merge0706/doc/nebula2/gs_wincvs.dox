@@ -1,0 +1,63 @@
+/**
+
+@page Nebula2ObtainingWinCVS Obtaining Nebula2 with WinCVS
+
+Obtaining Nebula is fairly easy. We will be using the WinCVS system to
+obtain the latest Nebula source code from CVS. You can obtain WinCVS from their
+<a href="http://www.wincvs.org/download.html">website</a>. Download the
+complete recommended package and not the bare package, the bare one lacks
+cvsnt, a vital part of WinCVS.
+
+You will also need Python and wxPython to use Nebula. You can
+obtain Python (2.4 or later) from <a href="http://www.python.org/download/"
+>here</a>, and wxPython (2.6.1 or later) from
+<a href="http://www.wxpython.org/download.php">here</a>.
+
+Installing Python is fairly simple, just follow the onscreen instructions.
+wxPython is just as easy, make sure that when the wxPython installation
+finishes that you choose to compile it. Simply make sure the checkbox next
+to 'Compile' is selected and finish the installation. A command prompt will
+popup shortly while wxPython is being compiled.
+
+Start up WinCVS. You will be presented with the following screen:
+
+@image html WinCVS_1.jpg
+
+Head up to the Remote menu and select 'Checkout Module'. The following screen
+will appear:
+
+@image html WinCVS_2.jpg
+
+ -# Into the module name box enter: nebula2
+ -# Into the local folder to checkout to enter the desired location to
+    download Nebula to. For instance I entered E: into this box as E: is 
+    my projects drive. Nebula will be downloaded to
+    <tt>E:\\&lt;module name&gt;</tt>.
+    So when I downloaded the sources with WinCVS, it was downloaded to
+    <tt>E:\\nebula2</tt>
+ -# Into the CVSROOT box enter:
+    <tt>:pserver:anonymous@cvs.sourceforge.net:/cvsroot/nebuladevice</tt>
+
+Do not modify any other options.
+
+Once you have entered that information the screen should look like this:
+
+@image html WinCVS_3.jpg
+
+Click OK and WinCVS will proceed to download nebula to the location you
+specified. When the download is complete and everything went Ok you will
+be presented with the following screen:
+
+@image html WinCVS_4.jpg
+
+The 'CVS exited normally with code 0' means that the Nebula module was
+downloaded successfully. If you got a code 1 that means there was a
+problem and you will most likely need to go back over the 
+settings you entered and make sure there is enough drive space and that you
+entered a valid module name, host name, and file path.
+
+Thats it, you now have the Nebula source and are ready to compile it
+using Visual Studio.
+
+*/
+

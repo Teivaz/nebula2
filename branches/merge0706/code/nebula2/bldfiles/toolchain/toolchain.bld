@@ -1,0 +1,157 @@
+#===============================================================================
+#  toolchain.bld
+#  The Nebula2 toolchain for managing meshes and textures
+#
+#  Modules:
+#      ngfxtool
+#      nanimtool
+#      nmeshtool
+#      nmeshbuilder
+#      nanimbuilder
+#      nresourcecompiler
+#      napplauncher
+#      nnodelist
+#      nviewerapp
+#      nmayacamcontrol
+#  Targets:
+#      ntoollib
+#      ngfxtool
+#      nanimtool
+#      nmeshtool
+#      nnpktool
+#===============================================================================
+
+#===============================================================================
+#  toolchain modules
+#===============================================================================
+beginmodule ngfxtool
+    annotate "Required module ngfxtool.exe"
+    setdir tools
+    setfiles {
+        ngfxtool
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimtool
+    annotate "Required module nanimtool.exe"
+    setdir tools
+    setfiles {
+        nanimtool
+    }
+    setmoduledeps  { nanimbuilder }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmeshtool
+    annotate "Required module nmeshtool.exe"
+    setdir tools
+    setfiles {
+        nmeshtool
+    }
+    setmoduledeps  { nmeshbuilder }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmeshbuilder
+    setdir tools
+    setfiles {
+        nmeshbuilder
+        nmeshbuilder_loadsave
+        nmeshbuilder_tangent
+        nskinpartitioner
+        nbspbuilder
+    }
+    setheaders { nmeshbuilder nskinpartitioner nbspbuilder }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nanimbuilder
+    setdir tools
+    setfiles { nanimbuilder }
+    setheaders { nanimbuilder }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nnpktool
+    setdir tools
+    setfiles { nnpktool }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nresourcecompiler
+    setdir tools
+    setfiles { nresourcecompiler }
+    setheaders { nresourcecompiler }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule napplauncher
+    setdir tools
+    setfiles { napplauncher }
+    setheaders { napplauncher }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nnodelist
+    setdir tools
+    setfiles { nnodelist }
+    setheaders { nnodelist }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nviewerapp
+    setdir tools
+    setfiles { nviewerapp }
+    setheaders { nviewerapp }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmayacamcontrol
+    setdir tools
+    setfiles { nmayacamcontrol }
+    setheaders { nmayacamcontrol }
+endmodule
+#-------------------------------------------------------------------------------
+
+#===============================================================================
+#  toolchain Targets
+#===============================================================================
+begintarget ntoollib
+    annotate "Lib that holds the core tool functionality"
+    settype lib
+    setmodules {
+        nmeshbuilder nanimbuilder nresourcecompiler
+        napplauncher nviewerapp nmayacamcontrol nnvx2loader
+        nn3d2loader nnodelist
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget ngfxtool
+    settype exe
+    setmodules { ngfxtool }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ntoollib
+        ngui        
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nanimtool
+    settype exe
+    setmodules { nanimtool }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nmeshtool
+    settype exe
+    setmodules { nmeshtool }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nnpktool
+    settype exe
+    setmodules { nnpktool nnpkfileserver}
+    settargetdeps {
+        nkernel
+    }
+endtarget
+#-------------------------------------------------------------------------------

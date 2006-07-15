@@ -1,0 +1,36 @@
+#-------------------------------------------------------------------------------
+# ui.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::ui
+    setdir ui
+    settype cpp
+    setfiles {
+        button
+        canvas
+        control
+        element
+        event
+        eventhandler
+        factorymanager
+        label
+        server
+        window
+        windoweventhandler
+    }
+    setheaders {
+        button
+        canvas
+        control
+        element
+        event
+        eventhandler
+        factorymanager
+        label
+        server
+        window
+        windoweventhandler
+    }
+endmodule
+#-------------------------------------------------------------------------------

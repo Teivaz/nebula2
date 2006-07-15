@@ -1,0 +1,62 @@
+/**
+    @defgroup NebulaGraphicsSystem Graphics System
+
+    This section of the documentation covers Nebula graphics system and it's
+    subsystems.
+    
+    - @ref NebulaGraphicsSystemCoordinates
+    - @ref NebulaGraphicsSystemMesh
+    - @ref NebulaGraphicsSystemTextures   
+
+    @section NebulaGraphicsSystemCoordinates Coordinate System
+    
+    The default coordinate system of Nebula is <b>right-handed</b> coordinate 
+    system but Nebula can use a left-handed coordinate system either. 
+    The defalt culling mode of Nebula is clockwise.
+
+    @note The default coordinate system of Direct3D is left-handed and OpenGL
+    uses a right-handed coordinate system.
+    
+    @section NebulaGraphicsSystemMesh Mesh Support
+
+    nMesh2 encapsulates a vertex and index buffer.  A mesh is loaded from a mesh 
+    resource file (@c .n3d2 for ASCII and @c .nvx2 for binary). A meshes vertex 
+    and index buffers are accesible via nMesh2::Lock() and nMesh2::Unlock().
+    
+    It is possible to give hints to the gfx system as to how the mesh will be 
+    used. The usage flags should be specified to nMesh2::SetUsage().
+    
+     - @c WriteOnce CPU only fills the vertex buffer once, and never touches it again.(default value)  
+     - @c WriteOnly CPU writes frequently to vertex buffer, but never read data back. 
+     - @c ReadOnly CPU reads from the vertex buffer, which can never be rendered.
+     - @c NPatch Obsolete.
+     - @c RTPatch Obsolete.
+     - @c PointSprite Mesh is used to provide point sprite data
+     - @c NeedsVertexShader Hints to the gfx system that this mesh will be used 
+       with a vertex shader. The @ref NebulaD3D9GraphicsSystem uses this to 
+       enable software vertex processing on systems that have no hardware vertex 
+       shader support.
+       
+    There's some other vertex components for tangent, binormals which for 
+    per-pixellighting and weights and joint indices for vertex skinning.
+                                                         
+    Another special helper class for mesh is nDynamicMesh for CPU 
+    generated geometry. (i.e. @ref NebulaParticleSystem)
+
+    @section NebulaGraphicsSystemTextures Texture support
+
+    The default image format for textures is @b DDS. Other image formats 
+    may be supported (see the docs for the actual graphics server used), but 
+    should only be used in tools or during testing as the loading is slow 
+    and the internal texture format can be inefficient. DDS files can be in many 
+    formats and support cube and volume textures (volume textures aren't yet 
+    supported in Nebula2), they can also contain mip map levels.
+
+    @note When using DDS files any mip maps you need should be pre generated 
+    as Nebula2 will assume the DDS file contains all needed mip maps. Nebula2 
+    will generate mip maps for other file formats.
+
+    For information on DDS, see:
+    - <a href="http://msdn.microsoft.com/library/en-us/directx9_c/directx/graphics/reference/DDSFileReference/ddsfileformat.asp">DDS Files</a>
+
+*/

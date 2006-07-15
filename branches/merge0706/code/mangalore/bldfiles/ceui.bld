@@ -1,0 +1,38 @@
+#-------------------------------------------------------------------------------
+# ceui.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::ceui
+    setdir ceui
+    settype cpp
+    setfiles {
+        server
+        renderer
+        texture
+        resourceprovider
+        logger
+    }
+    setheaders {
+        server
+        renderer
+        texture
+        resourceprovider
+        logger
+    }
+    setlibs_win32_debug {
+        CEGUIBase_d.lib
+        CEGUIFalagardWRBase_d.lib
+        CEGUITinyXMLParser_d.lib
+        freetype_d.lib
+        pcre_d.lib
+    }
+    setlibs_win32_release {
+        CEGUIBase.lib
+        CEGUIFalagardWRBase.lib
+        CEGUITinyXMLParser.lib
+        freetype.lib
+        pcre.lib
+    }    
+endmodule
+#-------------------------------------------------------------------------------

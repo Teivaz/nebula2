@@ -1,0 +1,20 @@
+/**
+    @defgroup NebulaCameraSystem Camera System
+    @ingroup NebulaGraphicsSystem
+
+
+    @section NebulaCameraSystemOverview Overview
+
+    The core part of the Nebula does not provide any application specific
+    camera module. 
+    Though there is @ref nCamera2 class but it provides only methods to set 
+    projection for othogonal or perspective either and view volume.
+    It means that you should create an application specific camera module 
+    for your own needs.
+
+    See @ref nMayaCamControl class which is used for <tt>nviewer</tt> 
+    application to provide a camera system similiar to what the Maya package 
+    does and @ref nAppCamera class if you use @ref nApplication class for 
+    your application.
+
+*/

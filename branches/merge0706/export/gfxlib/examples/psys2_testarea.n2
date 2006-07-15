@@ -1,0 +1,321 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+new ntransformnode psys2_testarea
+	sel psys2_testarea
+	.setlocalbox 0.000000 0.000000 1.416417 10.000000 10.000000 11.416417
+	new ntransformnode model
+		sel model
+		.setlocalbox 0.000000 0.000000 1.416417 10.000000 10.000000 11.416417
+		new nshapenode static_0_0
+			sel static_0_0
+			.setlocalbox -5.897816 9.494183 12.832834 2.659000 0.301438 0.000000
+			.settexture "DiffMap0" "textures:system/white.dds"
+			.settexture "BumpMap0" "textures:system/nobump.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setvector "MatSpecular" 0.000000 0.000000 0.000000 0.000000
+			.setvector "MatAmbient" 0.100000 0.100000 0.100000 0.100000
+			.setfloat "MatSpecularPower" 64.000000
+			.setshader "static"
+			.setmesh "meshes:examples/psys2_testarea_s_0.n3d2"
+			.setgroupindex 0
+			.setneedsvertexshader false
+		sel ..
+		new nparticleshapenode2 pemitter2_0_0
+			sel pemitter2_0_0
+			.setlocalbox 13.032845 -0.000000 -6.367177 0.029967 0.000000 0.029966
+			.settexture "DiffMap0" "textures:materials/rauch.dds"
+			.setint "AlphaSrcBlend" 5
+			.setint "AlphaDstBlend" 6
+			.setshader "particle2"
+			.setmesh "meshes:examples/psys2_testarea_pe2_0.n3d2"
+			.setgroupindex 0
+			.setneedsvertexshader false
+			.setemissionfrequency 36.000000 57.312000 78.624001 100.000000 0.333000 0.666000 0.000000 0.000000 0
+			.setparticlelifetime 2.100000 3.065700 4.031400 5.000000 0.333000 0.666000 0.000000 0.000000 0
+			.setparticlespreadmin 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlespreadmax 11.200000 11.200000 40.000000 72.000000 0.350000 0.721429 0.000000 0.000000 0
+			.setparticlestartvelocity 20.000000 15.820000 14.300000 20.000000 0.257143 0.628571 0.000000 0.000000 0
+			.setparticlerotationvelocity 800.000000 320.000000 80.000000 32.000000 0.078571 0.271429 0.000000 0.000000 0
+			.setparticlesize 1.100000 2.800000 4.200000 5.000000 0.271429 0.614286 0.000000 0.000000 0
+			.setparticlealpha 1.000000 0.940000 0.620000 0.000000 0.157143 0.571429 0.000000 0.000000 0
+			.setparticlemass 0.000000 1.400000 4.400000 10.000000 0.457143 0.778571 0.000000 0.000000 0
+			.settimemanipulator 1.000000 1.000000 1.000000 1.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlevelocityfactor 1.000000 0.380000 0.140000 0.000000 0.071429 0.185714 0.000000 0.000000 0
+			.setparticleairresistance 0.000000 0.920000 1.560000 2.000000 0.214286 0.500000 0.000000 0.000000 0
+			.setparticlergb 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.200000 0.800000
+			.setemissionduration 5.000000
+			.setloop true
+			.setactivitydistance 100.000000
+			.setrenderoldestfirst true
+			.setstartrotationmin 0.000000
+			.setstartrotationmax 0.000000
+			.setgravity -1.000000
+			.setparticlestretch 0.000000
+			.settiletexture 0
+			.setstretchtostart false
+			.setparticlevelocityrandomize 0.000000
+			.setparticlerotationrandomize 0.234060
+			.setparticlesizerandomize 0.297880
+			.setprecalctime 0.000000
+			.setrandomrotdir true
+			.setstretchdetail 1
+			.setviewanglefade false
+			.setstartdelay 0.000000
+		sel ..
+		new nparticleshapenode2 pemitter2_0_1
+			sel pemitter2_0_1
+			.setlocalbox -1.783454 9.868349 12.687401 0.935756 0.012714 0.000004
+			.settexture "DiffMap0" "textures:materials/rauch.dds"
+			.setint "AlphaSrcBlend" 5
+			.setint "AlphaDstBlend" 6
+			.setshader "particle2"
+			.setmesh "meshes:examples/psys2_testarea_pe2_0.n3d2"
+			.setgroupindex 1
+			.setneedsvertexshader false
+			.setemissionfrequency 20.000000 20.000000 20.000000 20.000000 0.264286 0.564286 0.000000 0.000000 0
+			.setparticlelifetime 1.600000 1.600000 1.600000 1.600000 0.333000 0.666000 0.000000 0.000000 0
+			.setparticlespreadmin 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlespreadmax 20.000000 20.000000 20.000000 20.000000 0.350000 0.721429 0.000000 0.000000 0
+			.setparticlestartvelocity 2.000000 1.560000 1.400000 2.000000 0.257143 0.628571 0.000000 0.000000 0
+			.setparticlerotationvelocity 800.000000 320.000000 80.000000 32.000000 0.078571 0.271429 0.000000 0.000000 0
+			.setparticlesize 0.550000 1.400000 2.100000 2.500000 0.271429 0.614286 0.000000 0.000000 0
+			.setparticlealpha 1.000000 1.000000 1.000000 1.000000 0.442857 0.814286 0.000000 0.000000 0
+			.setparticlemass 0.000000 1.400000 4.400000 10.000000 0.457143 0.778571 0.000000 0.000000 0
+			.settimemanipulator 1.000000 1.000000 1.000000 1.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlevelocityfactor 1.000000 1.000000 1.000000 1.000000 0.071429 0.185714 0.000000 0.000000 0
+			.setparticleairresistance 0.000000 0.920000 1.560000 2.000000 0.214286 0.500000 0.000000 0.000000 0
+			.setparticlergb 0.662970 0.837781 0.902000 0.662970 0.837781 0.902000 0.662970 0.837781 0.902000 0.662970 0.837781 0.902000 0.200000 0.800000
+			.setemissionduration 5.000000
+			.setloop true
+			.setactivitydistance 100.000000
+			.setrenderoldestfirst true
+			.setstartrotationmin 0.000000
+			.setstartrotationmax 0.000000
+			.setgravity -10.000000
+			.setparticlestretch 0.405300
+			.settiletexture 0
+			.setstretchtostart false
+			.setparticlevelocityrandomize 0.141840
+			.setparticlerotationrandomize 0.234060
+			.setparticlesizerandomize 0.496460
+			.setprecalctime 1.600000
+			.setrandomrotdir true
+			.setstretchdetail 1
+			.setviewanglefade false
+			.setstartdelay 0.000000
+		sel ..
+		new nparticleshapenode2 pemitter2_0_2
+			sel pemitter2_0_2
+			.setlocalbox -1.783455 -0.000000 10.392056 1.742513 0.000000 0.327562
+			.settexture "DiffMap0" "textures:materials/rauch.dds"
+			.setint "AlphaSrcBlend" 5
+			.setint "AlphaDstBlend" 6
+			.setshader "particle2"
+			.setmesh "meshes:examples/psys2_testarea_pe2_0.n3d2"
+			.setgroupindex 2
+			.setneedsvertexshader false
+			.setemissionfrequency 20.000000 20.000000 20.000000 20.000000 0.264286 0.564286 0.000000 0.000000 0
+			.setparticlelifetime 0.850000 0.850000 0.850000 0.850000 0.333000 0.666000 0.000000 0.000000 0
+			.setparticlespreadmin 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlespreadmax 25.000000 25.000000 25.000000 25.000000 0.350000 0.721429 0.000000 0.000000 0
+			.setparticlestartvelocity 9.000000 7.020000 6.300000 9.000000 0.257143 0.628571 0.000000 0.000000 0
+			.setparticlerotationvelocity 800.000000 320.000000 80.000000 32.000000 0.078571 0.271429 0.000000 0.000000 0
+			.setparticlesize 0.280000 1.000000 1.600000 2.000000 0.321429 0.657143 0.000000 0.000000 0
+			.setparticlealpha 0.000000 1.000000 0.700000 0.000000 0.078571 0.814286 0.000000 0.000000 0
+			.setparticlemass 1.800000 1.188000 0.900000 0.828000 0.328571 0.692857 0.000000 0.000000 0
+			.settimemanipulator 1.000000 1.000000 1.000000 1.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlevelocityfactor 1.000000 1.000000 1.000000 1.000000 0.257143 0.792857 0.000000 0.000000 0
+			.setparticleairresistance 0.000000 0.000000 0.000000 0.000000 0.214286 0.500000 0.000000 0.000000 0
+			.setparticlergb 0.662970 0.837781 0.902000 0.662970 0.837781 0.902000 0.662970 0.837781 0.902000 0.662970 0.837781 0.902000 0.200000 0.800000
+			.setemissionduration 5.000000
+			.setloop true
+			.setactivitydistance 100.000000
+			.setrenderoldestfirst true
+			.setstartrotationmin 0.000000
+			.setstartrotationmax 0.000000
+			.setgravity -12.000000
+			.setparticlestretch 0.255300
+			.settiletexture 0
+			.setstretchtostart true
+			.setparticlevelocityrandomize 0.127680
+			.setparticlerotationrandomize 0.234060
+			.setparticlesizerandomize 0.496460
+			.setprecalctime 0.000000
+			.setrandomrotdir true
+			.setstretchdetail 1
+			.setviewanglefade false
+			.setstartdelay 0.000000
+		sel ..
+		new nparticleshapenode2 pemitter2_0_3
+			sel pemitter2_0_3
+			.setlocalbox -3.198870 0.038900 -4.938718 0.029967 0.000000 0.029967
+			.settexture "DiffMap0" "textures:materials/rauch.dds"
+			.setint "AlphaSrcBlend" 5
+			.setint "AlphaDstBlend" 6
+			.setshader "particle2"
+			.setmesh "meshes:examples/psys2_testarea_pe2_0.n3d2"
+			.setgroupindex 3
+			.setneedsvertexshader false
+			.setemissionfrequency 144.000000 400.000000 0.000000 0.000000 0.050000 0.057143 0.000000 0.000000 0
+			.setparticlelifetime 1.271600 3.000000 2.422714 3.000000 0.050000 0.666000 0.000000 0.000000 0
+			.setparticlespreadmin 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlespreadmax 11.200000 11.200000 80.000000 72.000000 0.020000 0.050000 0.000000 0.000000 0
+			.setparticlestartvelocity 15.000000 1.000000 5.676000 1.000000 0.050000 0.666000 0.000000 0.000000 0
+			.setparticlerotationvelocity 700.000000 280.000000 70.000000 28.000000 0.078571 0.271429 0.000000 0.000000 0
+			.setparticlesize 0.264000 0.672000 1.008000 1.200000 0.271429 0.614286 0.000000 0.000000 0
+			.setparticlealpha 1.000000 0.940000 0.620000 0.000000 0.157143 0.571429 0.000000 0.000000 0
+			.setparticlemass 0.000000 1.400000 4.400000 10.000000 0.457143 0.778571 0.000000 0.000000 0
+			.settimemanipulator 1.000000 1.000000 1.000000 1.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlevelocityfactor 1.000000 0.380000 0.140000 0.000000 0.071429 0.185714 0.000000 0.000000 0
+			.setparticleairresistance 0.000000 0.920000 1.560000 2.000000 0.214286 0.500000 0.000000 0.000000 0
+			.setparticlergb 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.600000 0.200000 0.800000
+			.setemissionduration 2.000000
+			.setloop true
+			.setactivitydistance 100.000000
+			.setrenderoldestfirst true
+			.setstartrotationmin 0.000000
+			.setstartrotationmax 0.000000
+			.setgravity -10.000000
+			.setparticlestretch 0.000000
+			.settiletexture 0
+			.setstretchtostart false
+			.setparticlevelocityrandomize 0.000000
+			.setparticlerotationrandomize 0.234060
+			.setparticlesizerandomize 0.297880
+			.setprecalctime 0.000000
+			.setrandomrotdir true
+			.setstretchdetail 1
+			.setviewanglefade false
+			.setstartdelay 0.000000
+		sel ..
+		new nparticleshapenode2 pemitter2_0_4
+			sel pemitter2_0_4
+			.setlocalbox -3.198870 0.041067 -4.938718 0.029967 0.000000 0.029967
+			.settexture "DiffMap0" "textures:materials/feuer.dds"
+			.setint "AlphaSrcBlend" 2
+			.setint "AlphaDstBlend" 2
+			.setshader "particle2"
+			.setmesh "meshes:examples/psys2_testarea_pe2_0.n3d2"
+			.setgroupindex 4
+			.setneedsvertexshader false
+			.setemissionfrequency 150.000000 150.000000 0.000000 0.000000 0.050000 0.057143 0.000000 0.000000 0
+			.setparticlelifetime 0.800000 0.270700 0.262800 0.247000 0.050000 0.514286 0.000000 0.000000 0
+			.setparticlespreadmin 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlespreadmax 4.800000 10.200000 30.000000 30.000000 0.020000 0.050000 0.000000 0.000000 0
+			.setparticlestartvelocity 60.000000 60.000000 60.000000 60.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlerotationvelocity 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlesize 0.230000 0.125000 0.080000 0.080000 0.121429 0.350000 0.000000 0.000000 0
+			.setparticlealpha 0.000000 1.000000 1.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlemass 5.000000 5.000000 5.000000 5.000000 0.300000 0.700000 0.000000 0.000000 0
+			.settimemanipulator 1.000000 1.000000 1.000000 1.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlevelocityfactor 1.000000 0.260000 0.080000 0.000000 0.071429 0.142857 0.000000 0.000000 0
+			.setparticleairresistance 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlergb 1.000000 1.000000 1.000000 0.667000 0.667000 0.667000 0.334000 0.334000 0.334000 0.000000 0.000000 0.000000 0.200000 0.464286
+			.setemissionduration 2.000000
+			.setloop true
+			.setactivitydistance 100.000000
+			.setrenderoldestfirst true
+			.setstartrotationmin 0.000000
+			.setstartrotationmax 0.000000
+			.setgravity -10.000000
+			.setparticlestretch 0.080000
+			.settiletexture 0
+			.setstretchtostart false
+			.setparticlevelocityrandomize 0.638320
+			.setparticlerotationrandomize 0.000000
+			.setparticlesizerandomize 0.588680
+			.setprecalctime 0.000000
+			.setrandomrotdir false
+			.setstretchdetail 1
+			.setviewanglefade false
+			.setstartdelay 0.000000
+		sel ..
+		new nparticleshapenode2 pemitter2_0_5
+			sel pemitter2_0_5
+			.setlocalbox -3.198870 0.037812 -4.938718 0.029967 0.000000 0.029967
+			.settexture "DiffMap0" "textures:materials/feuer.dds"
+			.setint "AlphaSrcBlend" 2
+			.setint "AlphaDstBlend" 2
+			.setshader "particle2"
+			.setmesh "meshes:examples/psys2_testarea_pe2_0.n3d2"
+			.setgroupindex 5
+			.setneedsvertexshader false
+			.setemissionfrequency 150.000000 150.000000 0.000000 0.000000 0.050000 0.057143 0.000000 0.000000 0
+			.setparticlelifetime 0.200000 0.074600 0.078400 0.074600 0.050000 0.471429 0.000000 0.000000 0
+			.setparticlespreadmin 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlespreadmax 15.000000 30.000000 30.000000 30.000000 0.050000 0.700000 0.000000 0.000000 0
+			.setparticlestartvelocity 100.000000 100.000000 100.000000 100.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlerotationvelocity 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlesize 0.060000 0.123000 0.150000 0.150000 0.121429 0.350000 0.000000 0.000000 0
+			.setparticlealpha 0.000000 1.000000 1.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlemass 5.000000 5.000000 5.000000 5.000000 0.300000 0.700000 0.000000 0.000000 0
+			.settimemanipulator -1.000000 -1.000000 -1.000000 -1.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlevelocityfactor 1.000000 0.260000 0.080000 0.000000 0.071429 0.142857 0.000000 0.000000 0
+			.setparticleairresistance 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlergb 0.800000 0.800000 0.800000 0.467000 0.467000 0.467000 0.134000 0.134000 0.134000 0.000000 0.000000 0.000000 0.128571 0.421429
+			.setemissionduration 2.000000
+			.setloop true
+			.setactivitydistance 100.000000
+			.setrenderoldestfirst true
+			.setstartrotationmin 0.000000
+			.setstartrotationmax 0.000000
+			.setgravity -10.000000
+			.setparticlestretch 0.000000
+			.settiletexture 0
+			.setstretchtostart true
+			.setparticlevelocityrandomize 0.000000
+			.setparticlerotationrandomize 0.000000
+			.setparticlesizerandomize 0.340440
+			.setprecalctime 0.000000
+			.setrandomrotdir false
+			.setstretchdetail 1
+			.setviewanglefade false
+			.setstartdelay 0.000000
+		sel ..
+		new nparticleshapenode2 pemitter2_0_6
+			sel pemitter2_0_6
+			.setlocalbox -17.152777 7.491753 -11.666603 0.029966 0.000000 0.029967
+			.settexture "DiffMap0" "textures:materials/feuer.dds"
+			.setint "AlphaSrcBlend" 2
+			.setint "AlphaDstBlend" 2
+			.setshader "particle2"
+			.setmesh "meshes:examples/psys2_testarea_pe2_0.n3d2"
+			.setgroupindex 6
+			.setneedsvertexshader false
+			.setemissionfrequency 50.000000 50.000000 50.000000 50.000000 0.050000 0.564286 0.000000 0.000000 0
+			.setparticlelifetime 2.000000 2.000000 2.000000 2.000000 0.050000 0.471429 0.000000 0.000000 0
+			.setparticlespreadmin 0.000000 0.000000 82.800003 54.000004 0.471400 0.650000 0.000000 0.000000 0
+			.setparticlespreadmax 0.000000 180.000000 100.800003 162.000000 0.471400 0.678571 0.000000 0.000000 0
+			.setparticlestartvelocity 10.000000 10.000000 10.000000 10.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlerotationvelocity 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlesize 0.400000 0.162000 0.060000 0.060000 0.121429 0.350000 0.000000 0.000000 0
+			.setparticlealpha 0.000000 1.000000 1.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlemass 5.000000 5.000000 5.000000 5.000000 0.300000 0.700000 0.000000 0.000000 0
+			.settimemanipulator 1.000000 1.000000 1.000000 1.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlevelocityfactor 1.000000 0.260000 0.080000 0.000000 0.071429 0.142857 0.000000 0.000000 0
+			.setparticleairresistance 0.000000 0.000000 0.000000 0.000000 0.300000 0.700000 0.000000 0.000000 0
+			.setparticlergb 0.800000 0.800000 0.800000 0.467000 0.467000 0.467000 0.134000 0.134000 0.134000 0.000000 0.000000 0.000000 0.128571 0.421429
+			.setemissionduration 10.000000
+			.setloop true
+			.setactivitydistance 100.000000
+			.setrenderoldestfirst true
+			.setstartrotationmin 0.000000
+			.setstartrotationmax 0.000000
+			.setgravity 0.000000
+			.setparticlestretch 0.000000
+			.settiletexture 0
+			.setstretchtostart true
+			.setparticlevelocityrandomize 0.000000
+			.setparticlerotationrandomize 0.000000
+			.setparticlesizerandomize 0.340440
+			.setprecalctime 0.000000
+			.setrandomrotdir false
+			.setstretchdetail 1
+			.setviewanglefade false
+			.setstartdelay 0.000000
+		sel ..
+	sel ..
+sel ..
+# ---
+# Eof

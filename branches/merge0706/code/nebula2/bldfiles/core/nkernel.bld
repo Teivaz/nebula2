@@ -1,0 +1,271 @@
+#===============================================================================
+#  nkernel.bld
+#  The Nebula2 kernel and kernel required servers
+#
+#  Modules:
+#      ntimeserver
+#      npersistserver
+#      nfileserver2
+#      nfilenode
+#      nscriptserver
+#      nroot
+#      nenv
+#      nremoteserver
+#      nipc
+#      nkernel
+#      nmath - the math headers
+#      nutil - the utility headers
+#  Targets:
+#      nkernel
+#===============================================================================
+
+#===============================================================================
+#  mathlib
+#===============================================================================
+#-------------------------------------------------------------------------------
+beginmodule nmath
+    setdir mathlib
+    setheaders {
+        nmath
+        line triangle rectangle plane bbox sphere
+        euler eulerangles polar pknorm quaternion
+        envelopecurve vector3envelopecurve
+        matrix matrixdefs
+        _matrix33 _matrix44
+        _matrix33_sse _matrix44_sse
+        vector
+        _vector2 _vector3 _vector4
+        _vector3_sse _vector4_sse
+    }
+    setfiles {
+        quaternion
+        _matrix33 _matrix44
+        _matrix33_sse _matrix44_sse
+        _vector2 _vector3 _vector4
+        _vector3_sse _vector4_sse
+    }
+endmodule
+
+#===============================================================================
+#  signals
+#===============================================================================
+#-------------------------------------------------------------------------------
+beginmodule nsignal
+    setdir signals
+    setheaders {
+        nsignal
+        nsignalbinding
+        nsignalbindingcmdproto
+        nsignalbindingset
+        nsignalemitter
+        nsignalregistry
+        nsignalnative
+        nsignalbindingnative
+    }
+    setfiles {
+        nsignal
+        nsignalbindingcmdproto
+        nsignalbindingset
+        nsignalemitter
+        nsignalemitter_cmds
+        nsignalregistry
+    }
+endmodule
+beginmodule nsignalserver
+    setdir signals
+    setheaders {
+        nsignalserver
+    }
+    setfiles {
+        nsignalserver
+    }
+endmodule
+beginmodule lokiheaders
+    setdir "loki"
+    setheaders {
+        TypeManip Typelist static_check
+    }
+endmodule
+#===============================================================================
+#  utilities
+#===============================================================================
+#-------------------------------------------------------------------------------
+beginmodule nutil
+    setdir util
+    setheaders {
+        nangularpfeedbackloop
+        nanimkey
+        nanimkeyarray
+        nanimlooptype
+        narray
+        narray2
+        nattr
+        natom
+        nbitstream
+        nbucket
+        nbuffer
+        ndie
+        neditline
+        nfixedarray
+        nhashlist
+        nhashmap
+        nhashmap2
+        nhashnode
+        nhashtable
+        nhttpresponsecracker
+        nhttpformdatawrapper
+        nhttpsession
+        nipolkeyarray
+        nkeyarray
+        nlinebuffer
+        nlist
+        nmsgnode
+        nnode
+        nobjectlist
+        nobjectnode
+        npfeedbackloop
+        npidfeedbackloop
+        npquatfeedbackloop
+        npriorityarray
+        nquadtree
+        nringbuffer
+        nstack
+        nstartupchecker
+        nstream
+        nstring
+        nstrlist
+        nstrnode
+        ntabcomplete
+        nthreadvariable
+        nvariant
+    }
+    setfiles {
+        nbuffer
+        nhttpformdatawrapper
+        nhttpsession
+        nquadtree
+        nstartupchecker
+        nstream
+        nstring
+    }
+endmodule
+#===============================================================================
+#  nkernel modules
+#===============================================================================
+beginmodule ntimeserver
+    setdir kernel
+    setfiles { ntime_main ntime_cmds }
+    setheaders ntimeserver
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule npersistserver
+    setdir kernel
+    setfiles {
+        npersistserver_main npersistserver_beginend
+        npersistserver_load npersistserver_cmds
+    }
+    setheaders npersistserver
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nfileserver2
+    setdir kernel
+    setfiles {
+        nfileserver2_main
+        nfileserver2_cmds
+        nfile ndirectory ndirectorywatchhandler
+    }
+    setheaders { nfileserver2 nfile ndirectory ndirectorywatchhandler }
+    setframeworks_macosx { Carbon CoreFoundation }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nfilenode
+    setdir kernel
+    setfiles { nfilenode_main nfilenode_cmds }
+    setheaders { nfilenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nscriptserver
+    setdir kernel
+    setfiles   { nscriptserver_main }
+    setheaders { nscriptserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nobject
+    setdir kernel
+    setfiles   { nobject_main nobject_cmds }
+    setheaders { nobject }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nroot
+    setdir kernel
+    setfiles   { nroot_main nroot_cmds }
+    setheaders { nroot }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nenv
+    setdir kernel
+    setfiles   { nenv_main nenv_cmds }
+    setheaders { nenv }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nremoteserver
+    setdir kernel
+    setmoduledeps { nipc }
+    setfiles   { nremoteserver_main }
+    setheaders { nremoteserver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nkernel
+    setdir kernel
+    settype cpp
+    setfiles {
+        nkernelserver nkernel nclass ncmdproto ncmdprotonative
+        nhardrefserver nthread nloghandler ndefaultloghandler
+        nwin32loghandler nrefcounted ncrc ndbgalloc nreferenced
+    }
+    setheaders {
+        nsystem ntypes ndebug nkernelserver nprofiler nclass
+        ncmdproto ncmdprotonative ncmd narg nhardrefserver nref nautoref
+        ndynautoref nhardref nevent nmutex nthread nthreadsafelist nthreadsafearray
+        nloghandler ndefaultloghandler nwin32loghandler
+        nrefcounted nguid ncrc nreferenced
+        ndefclass ncmdprotonativecpp ncmdprototraits
+    }
+    setlibs_linux {
+        uuid
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nwin32wrapper
+    setdir kernel
+    setplatform win32
+    setfiles   { nwin32wrapper }
+    setheaders { nwin32wrapper }
+endmodule
+#===============================================================================
+#  nkernel targets
+#===============================================================================
+begintarget nkernel
+    annotate "The Nebula2 Kernel and required servers and bits."
+    settype lib
+    setmodules {
+        nkernel
+        nobject
+        nroot
+        ntimeserver
+        npersistserver
+        nfileserver2
+        nfilenode
+        nscriptserver
+        nenv
+        nremoteserver
+        nipc
+        nmath
+        nutil
+        nsignal
+        nsignalserver
+        nwin32wrapper
+        lokiheaders
+    }
+endtarget
+#-------------------------------------------------------------------------------

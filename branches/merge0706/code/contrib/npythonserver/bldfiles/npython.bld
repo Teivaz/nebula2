@@ -1,0 +1,121 @@
+#-----------------------------------------------------------------------------
+#    npython.bld
+#    ============
+#    nPython package definition
+#-----------------------------------------------------------------------------
+beginmodule npythonserver
+    setdir python
+    setfiles {
+         npythonobject npythonserver npythoncmds npythonrun ncmdprotopython
+    }
+    setheaders { npythonobject npythonserver ncmdprotopython }
+    setlibs_linux { python2.4 }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget npythonserver
+    settype lib
+    setmodules { npythonserver }
+    settargetdeps { nkernel nnebula microtcl }
+endtarget
+#-----------------------------------------------------------------------------
+beginmodule nshpython
+    setdir pythontest
+    setfiles { nshpython }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule pynebula
+    setdir pythontest
+    setfiles { pynebula }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule npyviewer
+    setdir pythontest
+    setfiles { npyviewer }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule npythonhooks
+    setdir pythontest
+    setfiles { npythonhooks }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget pynebula
+    annotate "Sample DLL for importing into Python"
+    settype dll    
+    setmodules {
+        pynebula
+        npythonhooks
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        ndirect3d9
+        ndinput8
+        nnetwork
+        npythonserver
+        ngui
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget npyviewer
+    annotate "Sample application:  Allows simple viewing of .n2 files and uses Python."
+    settype exe
+    setmodules {
+        npyviewer
+        npythonhooks
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ntoollib
+        ndshow
+        ndsound
+        ngui
+        nnetwork
+        npythonserver
+    }
+endtarget
+#-----------------------------------------------------------------------------
+begintarget nshpython
+    annotate "Sample application: A Nebula2 console based interface using Python."
+    settype exe
+    setmodules {
+        nshpython
+        npythonhooks
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndirect3d9
+        ndinput8
+        nnetwork
+        npythonserver
+        ngui
+    }
+endtarget
+#-----------------------------------------------------------------------------
+beginworkspace pythonserver
+    setbinarydir ./bin/
+    settargets {
+        nshpython
+        nkernel
+        nnebula
+        ndirect3d9 
+        nnetwork
+        ndinput8 
+        microtcl
+        npythonserver
+        pynebula
+        ntoollib
+        ndshow
+        ndsound
+        ngui
+        npyviewer
+    }
+endworkspace
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------

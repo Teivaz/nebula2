@@ -1,0 +1,70 @@
+#-----------------------------------------------------------------------------
+#    nspatialdb.bld
+#    ============
+#    Spatial database package definition
+#-----------------------------------------------------------------------------
+beginmodule nspatialsector
+    setdir spatialdb
+    setfiles {
+        nspatialsector_main nspatialsector_cmds 
+        nspatialelements nvisitorbase
+        nspatiallisthierarchy nspatialaabbtree
+        nvisiblefrustumvisitor nvisiblespherevisitor
+        ngeometryocclusionvisitor noccludedfrustumvisitor
+    }
+    setheaders {
+        nspatialsector nspatialelements nvisitorbase
+        nplaneclipper nfrustumclipper nsphereclipper 
+        nspatiallisthierarchy nspatialaabbtree
+        nvisiblefrustumvisitor nvisiblespherevisitor
+        ngeometryocclusionvisitor noccludedfrustumvisitor
+        ngenarrayvisitors
+    }
+endmodule
+
+beginmodule nscriptablesector
+    setdir spatialdb
+    setfiles { nscriptablesector_main nscriptablesector_cmds }
+    setheaders { nscriptablesector }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nsdbviewer
+    setdir sdbviewer
+    setfiles      { nsdbviewerapp nsdbviewer }
+    setheaders    { nsdbviewerapp }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget nspatialdb
+  	settype lib
+  	setmodules    { nspatialsector nscriptablesector }
+endtarget
+#-----------------------------------------------------------------------------
+begintarget nspatialdbapp
+    settype exe
+    setmodules { nsdbviewer }
+    settargetdeps {
+        nkernel nnebula ndirect3d9 ndinput8 microtcl nlua
+        ntoollib ngui ndshow nspatialdb
+    }
+endtarget
+#-----------------------------------------------------------------------------
+beginworkspace nspatialdb
+    setbinarydir ./bin/
+    annotate "The workspace for the spatial database sample application."
+    settargets {
+        nspatialdbapp
+        nspatialdb
+        ndirect3d9
+        ndinput8
+        microtcl
+        nlua
+        ntoollib
+        ngui
+        ndshow
+        nkernel
+        nnebula
+    }
+endworkspace
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------

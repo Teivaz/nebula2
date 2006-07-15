@@ -1,0 +1,28 @@
+#-------------------------------------------------------------------------------
+# managers.bld
+#
+# (C) 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::managers
+    setdir managers
+    settype cpp
+    setfiles { 
+        entitymanager
+        envquerymanager
+        factorymanager
+        focusmanager
+        savegamemanager
+        setupmanager
+        timemanager
+    }
+    setheaders { 
+        entitymanager
+        envquerymanager
+        factorymanager
+        focusmanager
+        savegamemanager
+        setupmanager
+        timemanager
+    }
+endmodule
+#-------------------------------------------------------------------------------

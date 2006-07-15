@@ -1,0 +1,28 @@
+#-------------------------------------------------------------------------------
+# loader.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::loader
+    setdir loader
+    settype cpp
+    setfiles {
+        entityloader
+        entityloaderbase
+        environmentloader
+        levelloader
+        navmaploader
+        server
+        userprofile
+    }
+    setheaders { 
+        entityloader
+        entityloaderbase
+        environmentloader
+        levelloader
+        navmaploader
+        server
+        userprofile
+    }
+endmodule
+#-------------------------------------------------------------------------------

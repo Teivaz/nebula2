@@ -1,0 +1,32 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+new ntransformnode stdlight
+    sel stdlight
+    .seteuler -45.000000 45.000000 0.000000
+    new nlightnode l
+        sel l
+        .setlocalbox 0.000000 0.000000 0.000000 1000.000000 1000.000000 1000.000000
+        .setposition 0.000000 0.000000 100.000000
+        .setfloat "LightRange" 1000.000000
+        .setvector "LightDiffuse" 1.000000 1.000000 1.000000 1.000000
+        .setvector "LightSpecular" 1.000000 1.000000 1.000000 1.000000
+        .setvector "LightAmbient" 0.250000 0.250000 0.250000 1.000000
+        .settype "Directional"
+        .setcastshadows true
+    sel ..
+sel ..
+#new nshapenode skybox
+#    sel skybox
+#    .setlocalbox 0.000000 0.000000 0.000000 225.000000 225.000000 225.000000
+#    .setlockviewer true
+#    .settexture "DiffMap0" "textures:system/white.dds"
+#    .setfloat "Intensity0" 1.000000
+#    .setvector "MatDiffuse" 0.290780 0.290780 0.290780 1.000000
+#    .setshader "skybox"
+#    .setmesh "meshes:skybox.n3d2"
+#    .setgroupindex 0
+#    .setneedsvertexshader false
+#sel ..
+# ---
+# Eof

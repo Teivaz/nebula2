@@ -1,0 +1,389 @@
+/**
+    @defgroup NLuaServerContribModule nLuaServer
+    @ingroup NebulaContribLanguageModules
+    @brief nLuaServer provides Lua 5 based scripting services for
+    Nebula
+    
+    <h2>Installation</h2>
+    This module should be checked out to @c nebula2/code/contrib/nluaserver,
+    after that just re-run @c nebula2/update.tcl and you should be ready
+    to go. Open up the @c luaserver solution/workspace in the appropriate
+    build directory (@c nebula2/build/XXXX) and build everything. You do
+    not need to download and build Lua itself, that's integrated into this
+    module.<br>
+    <br>
+    The Lua core (located under @c nebula2/code/contrib/nluaserver/inc/lua and
+    @c nebula2/code/contrib/nluaserver/src/lua) is subject to the terms
+    found in @c nebula2/code/contrib/nluaserver/inc/lua/COPYRIGHT<br>
+    <br>
+    
+    <h2>Distribution</h2>
+    @c nebthunker.lua and @c console.lua found under @c nebula2/code/contrib/nluaserver/bin 
+    are required for the proper functioning of nLuaServer and hence must be shipped with your
+    product. You can move them anywhere you like so long as your scripts can find them :)<br>
+    <br>
+    
+    <h2>Preamble</h2>
+    
+    For documentation on the Lua language see the Lua documentation.<br>
+    <br>
+    You will frequently encounter the terms <i>thunking</i> and <i>thunk</i> 
+    in this document, in this context thunking refers to creating a thunk
+    given a NOH object, and a thunk is a Lua table that acts as a wrapper
+    for a NOH object.<br>
+    <br>
+        
+    There are 2 kinds of commands in nLuaServer: Those that deal with NOH 
+    objects as simple text and those that deal with NOH objects by thunking 
+    a Lua table to behave more like a class instance.
+    
+    <h2>Simple Commands</h2> 
+        These provide scripts with access to the Nebula kernel, which allows 
+        you to create, destroy NOH objects and navigate through the NOH in script.<br>
+        - new(classname, path)<br>
+            Create a new object of the specified class at the specified
+            path in the NOH. Returns true on success and nil on failure.<br>
+            <br>
+            example:
+@verbatim
+new('n3dnode', 'camera')
+new('nglserver', '/sys/servers/gfx')
+@endverbatim
+            <br>
+        - delete(path)<br>
+             Delete the NOH object at the specified location in the NOH. 
+             Returns true on success and nil on failure.<br>
+             <br>
+             example:
+@verbatim
+delete('/usr/scene/shader')
+@endverbatim
+             <br>
+        - sel(path)<br>
+             Set the current working directory of the NOH to the specified
+             path. Returns true on success and nil on failure.<br>
+             <br>
+             example:
+@verbatim
+sel('/sys/servers/gfx')
+@endverbatim
+             <br>
+        - exit()<br>
+             Exit Nebula. Exit does not return a value.<br>
+             <br>
+        - puts(string)<br>
+             Echo the provided string to the Kernel server's log handler
+             chain.<br>
+             <br>
+             example:
+@verbatim
+puts('fish <)))<')<br>
+@endverbatim
+             <br>
+        - ls()<br>
+             Return a table containing the names of the children of the
+             current working directory in the NOH.<br>
+             <br>
+        - conls()<br>
+             Same as ls() but will also print out the output to the console.<br>
+             <br>
+        - call(funcname, ...)<br>
+             Execute the command given by funcname on the currently
+             selected object in the NOH.<br>
+             <br>
+             example:   
+@verbatim             
+-- acts on current object
+sel('/sys/servers/gfx')
+call('opendisplay')
+
+-- with arguments
+sel('/usr/camera')
+call('txyz', 4.3, 2, 1)
+@endverbatim
+             <br>
+        - concall(funcname, ...)<br>
+             Same as call() but will also print out the output of funcname
+             to the console (if there is any output).<br>
+             <br>
+        - mangle(assignpath)<br>
+             This is a hook to nFileServer2's ManglePath method. This will
+             expand any assigns in the specified path and return the result.<br>
+             <br>
+             example:   
+@verbatim             
+get(mangle('home:/data/tekdemos/light.n'))
+@endverbatim
+             <br>
+        - conmangle(assignpath)<br>
+             Same as mangle() but will also print the resulting path to the 
+             console.<br>
+             <br>
+        - exists(path)<br>
+             Returns true if the specified NOH object exists, false otherwise.<br>
+             <br>
+             example:   
+@verbatim
+exists('/sys/servers/audio')
+@endverbatim
+             <br>
+        - conexists(path)<br>
+             Same as exists() but will also print true/false to the console.<br>
+             <br>
+        - up()<br>
+             Same as sel('..')<br>
+             <br>
+        - pushcwd(path)/popcwd()<br>
+             Just exposes nKernelServer::Push/PopCwd(). Note that unlike
+             nKernelServer::PopCwd() popcwd() will return nothing.<br>
+             <br>
+             example:   
+@verbatim             
+/> sel('/another/place')
+/another/place> pushcwd('/some/where/in/paradise')
+/some/where/in/paradise> popcwd()
+/another/place>
+@endverbatim
+             <br>
+         
+    <h2>Thunks</h2>
+        Thunks provide a number of advantages.<br>
+        - A much nicer syntax for manipulating NOH objects via their script interface 
+          than that provided by call(). In effect thunking creates an OO system for
+          Lua.<br>
+        - Repeated access of Nebula script commands is faster with thunks, however the 
+          time taken to create a thunk maybe significant. You are best to test this
+          out for yourself.<br>
+        - Lua functions can be associated with thunks allowing you to extend a NOH
+          object's script interface at run-time, with the ability to call the
+          new commands from C++.<br>
+        <br>
+         
+    <h2>Thunk Commands</h2> 
+        These provide scripts with the ability to create, destroy and manipulate thunks.<br>
+        - delete(thunk)<br>
+             Works just like delete(path) above but takes a thunk instead.<br>
+             <br>
+             example:    
+@verbatim
+delete(nebula.usr.scene.object)
+@endverbatim
+             <br>
+        - psel()<br>
+             Return a thunk for the current working directory of the NOH.<br>
+             <br>
+        - sel(thunk)<br>
+             This is the same as sel(path) but take a thunk instead.<br>
+             <br>
+             example:
+@verbatim
+sel(nebula.sys.servers.file2)
+@endverbatim
+             <br>
+        - get(filename)<br>
+             Load and run a persistency script and return a thunk for
+             the NOH object created on success. Return nil on failure.<br>
+             <br>
+             example:   
+@verbatim
+someThunk = get('data/some.n')
+@endverbatim
+             <br>
+        - lookup(path)<br>
+             Return a thunk of the NOH object residing at the provided
+             path. This will not change the current working directory in 
+             Nebula.<br>
+             <br>
+             example:
+@verbatim
+audioThunk = lookup('/sys/servers/audio')
+@endverbatim
+             <br>
+        - pushcwd(thunk)<br>
+             Same as pushcwd(path) but takes a thunk instead.<br>
+             <br>
+        - pin(thunk)<br>
+             Pins a thunk.<br>
+             <br>
+        - unpin(thunk)<br>
+             Unpins a thunk.<br>
+             <br>
+        - IsZombieThunk(thunk)<br>
+             Return true if thunk is a zombie, false if it isn't and nil if some
+             error occured while trying to figure it out.<br>
+             <br>
+        - PruneNebThunks()<br>
+             Remove any zombie thunks from the <i>internal</i> thunk store.<br>
+             <br>
+        - begincmds(className, numCmds)<br>
+             Prepare to add the specified number of commands to the specified class.<br>
+             <br>
+        - addcmd(className, cmdName)<br>
+             Add the specified command declaration to the specified class,
+             begincmds(className, numCmds) must've been called for the specified
+             class before adding any commands.<br>
+             <br>
+        - endcmds(className)<br>
+             Finish adding commands to the specified class.<br>
+             <br>
+        <br>
+
+    <h2>Pinning</h2>
+         When a thunk is pinned a reference to it is stored in the <i>internal</i>
+         thunk store, unpinning removes the reference from the afforementioned store. 
+         lookup() and psel() first look in the thunk store to see
+         if a thunk for the corresponding NOH object already exists, and if it
+         does return it instead of creating a new thunk. This allows you to maintain
+         a 1:1 mapping between NOH objects and thunks, and is essential for
+         defining and using script-side commands (described below).<br>
+         <br>
+         
+    <h2>Zombie Thunks</h2>
+         If a NOH object is destroyed from C++ while a corresponding thunk remains 
+         alive then the thunk will refer to a non-existent NOH object. You won't
+         be able to use the thunk, trying to do so will result in an error, this
+         sort of thunk is called a zombie thunk. Ideally you should avoid creating
+         zombies, but if that fails IsZombieThunk() and PruneNebThunks() will help
+         you slay the living dead. You can use IsZombieThunk() to find out if a
+         particular thunk is a zombie. PruneNebThunks() will clean out zombies
+         from the <i>internal</i> thunk store, it should be followed by a
+         garbage collection phase to actually destroy the thunks.<br>
+         <br>
+         
+    <h2>Adding Script-Side Commands to Objects</h2>
+         The Lua server allows you to add additional commands to a class's script
+         interface at run-time (via begincmds(), addcmd(), endcmds()). You can
+         then implement the new commands in script <b>per object</b>. These commands
+         can then be called from C++ via the familiar nCmdProto/nCmd interface.
+         In order for all of this to work there must be a 1:1 mapping between objects
+         and thunks, this is accomplished by pinning. If you want to implement
+         new commands for a particular object first obtain a thunk for that object,
+         then pin that thunk so the Lua server can find it later and implement the
+         commands. An example of this is provided in the luatest project.<br>
+         <br>
+         Just to give you an idea of what this stuff can be used for... I used it 
+         for implementing event handlers for my GUI system widgets in script (or C++), 
+         you'll probably find some other uses for it :).<br>
+         <br>
+
+    <h2>nebthunker.lua</h2>
+         This script should be run on startup before trying to run any other script 
+         (refer to the Luatest startup.lua script for an example).
+         nebthunker.lua defines the metatable for thunks, this metatable allows for a 
+         cleaner syntax than that provided when using call(). When nebthunker.lua is 
+         executed it creates a new nebula thunk that refers to the NOH root, this is 
+         done for your convenience. 
+         nebthunker.lua also defines the PruneNebThunks() function.<br>
+         <br>
+         nebthunker.lua allows for syntax like this:<br>
+         <br>
+@verbatim
+nebula.sys.servers.gfx:opendisplay()
+@endverbatim
+         <br>
+         where a dot operator is used as the path separator and a ':' is
+         used to specify the method name.<br>
+         <br>
+         Note that for each path component (except the first) a lookup() is 
+         performed, so when you write nebula.sys.servers.gfx what actually 
+         happens is lookup('/sys'); lookup('/sys/servers'); lookup('/sys/servers/gfx'),
+         it will be faster to just write lookup('/sys/servers/gfx') however
+         sometimes looks are more important :). The quick solution to avoiding 
+         performance issues on repeated calls of this nature is to simply keep 
+         a reference to thunk.<br>
+         <br>
+            example:    
+@verbatim            
+a = nebula.sys.servers.gfx
+a:opendisplay()
+a:setclearcolor(1, 1, 1, 1)
+@endverbatim
+           <br>
+         
+    <h2>console.lua</h2>
+         This script file defines the conls(), conmangle(), conexists() and up()
+         functions, if you want to make use of these functions be sure
+         to load this script at startup, e.g. dofile(mangle('home:bin/console.lua'))
+         
+    <h2>Standard Lua Libraries</h2>
+         By default nLuaServer loads baselib, strlib, tablib, iolib and mathlib 
+         for convenience.<br>
+         <br>
+         If you want to add additional libraries to the server you can
+         do so by adding them in nLuaServer::nLuaServer().
+    
+    <h2>Debugging Lua code</h2>
+    Unfortunately there's currently no debugger for Lua code in the nLuaServer, you're
+    pretty much stuck with puts(). However to make debugging slightly less painful whenever
+    an error occurs in Lua code a stack trace will be printed out in addition to the
+    error message.
+    
+    Here's a sample error and the corresponding stack trace...
+@verbatim
+nLuaServer encountered a problem...
+[string "-- start.lua..."]:135: attempt to call global `Ooh_I_am_so_naughty' (a nil value)
+
+-- Stack Trace --
+[C] - #-1: Ooh_I_am_so_naughty (global/C)
+[string "-- start.lua..."] - #135: NaughtyFunctionC (global/Lua)
+[string "-- start.lua..."] - #139: GoodFunctionB (global/Lua)
+[string "-- start.lua..."] - #143: GoodFunctionA (global/Lua)
+[string "-- start.lua..."] - #147: GenerateStackTrace (global/Lua)
+[string "GenerateStackTrace()"] - #1: ??? (???/main)
+@endverbatim
+    The topmost entry in the stack trace is the last function called, the bottom entry 
+    is the first function called. Each entry has the following format (all fields are part 
+    of the lua_Debug structure):
+@verbatim
+short_src - #currentline: name (namewhat/what)
+@endverbatim
+    Lookup <a href="http://www.lua.org/manual/5.0/manual.html#4.1">lua_Debug</a> in the 
+    <a href="http://www.lua.org/manual/5.0/">Lua</a> manual for a description 
+    of the fields.
+    
+    If you want error messages and stack traces to be as helpful as possible you should
+    always identify each script file by putting it's name as a comment on the first line
+    of the script file, or any other short one line comment that uniquely identifies that
+    file. For example...
+@verbatim
+-- startup.lua
+... the rest of the file ...
+@endverbatim
+    The short_src field is usually obtained from that first line so it will help you 
+    locate the script file in which the error occured.
+
+    <h2>Luatest</h2>
+    This little project provides an example of the new features of the server.
+    Run nshlua as follows:
+@verbatim
+
+nshlua
+@endverbatim
+
+    Once it starts up press F11 to bring up the console, now do the following:
+@verbatim
+> dofile(mangle('home:code/contrib/nluaserver/data/luatest/start.lua'))
+> start()
+> sel('/test')
+> call('testscriptcmds')
+(output should indicate all 4 tests passed)
+> call('makezombies')
+> PruneNebThunks()
+(output should indicate 2 zombies were found)
+> GenerateStackTrace()
+(generates a Lua error and prints out a stack trace)
+> stop()
+> exit()
+@endverbatim
+    
+    It's a bit of a pain to type in the long path for the dofile() so if you plan on
+    running the luatest more than once you might want to copy 
+    @c nebula2/code/contrib/nluaserver/data/luatest to @c nebula2/data/luatest, and
+    then modify the assign at the top of @c start.lua to point to the new location, that
+    way you have less to type :)<br>
+    <br>
+    <br>
+    <br>
+    (c) 2004 Vadim Macagon & Matthew T. Welker
+*/
+

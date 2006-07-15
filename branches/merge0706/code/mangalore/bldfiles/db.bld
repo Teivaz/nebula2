@@ -1,0 +1,23 @@
+#-------------------------------------------------------------------------------
+# db.bld
+#
+# (C) 2005 Vadim Macagon, 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::db
+    setdir db
+    settype cpp
+    setfiles { 
+        attributecontainer
+        entity
+        query
+        server
+    }
+    setheaders { 
+        attribute
+        attributecontainer
+        entity
+        query
+        server
+    }
+endmodule
+#-------------------------------------------------------------------------------

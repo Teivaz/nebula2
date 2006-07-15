@@ -1,0 +1,5 @@
+/**
+    @defgroup Network Network/Multiplayer Subsystem
+    @brief nNetwork implements basic networking functionality.
+*/
+

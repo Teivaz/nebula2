@@ -1,0 +1,85 @@
+#-------------------------------------------------------------------------------
+#   Basic Examples
+#-------------------------------------------------------------------------------
+
+
+#-------------------------------------------------------------------------------
+#   Modules
+#-------------------------------------------------------------------------------
+beginmodule nsignaltestreceiver
+    setdir "signals_tutorial"
+    setheaders { nsignaltestreceiver }
+    setfiles { nsignaltestreceiver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nsignaltestemitter
+    setdir "signals_tutorial"
+    setheaders { nsignaltestemitter }
+    setfiles { nsignaltestemitter_main nsignaltestemitter_cmds }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule signals01
+    setdir "signals_tutorial"
+    setfiles { signals01 }
+    setheaders { }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule emitter
+    setdir "signals_tutorial"
+    setfiles { emitter_main emitter_cmds }
+    setheaders { emitter }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule receiver
+    setdir "signals_tutorial"
+    setfiles { receiver_main }
+    setheaders { receiver }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule receiverscript
+    setdir "signals_tutorial"
+    setfiles { receiverscript_main receiverscript_cmds }
+    setheaders { receiverscript }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule signals02
+    setdir "signals_tutorial"
+    setfiles { signals02 }
+endmodule
+
+#-------------------------------------------------------------------------------
+#   Targets
+#-------------------------------------------------------------------------------
+begintarget signals01
+    annotate "Example of defining, binding, emitting and posting signals"
+    settype exe
+    setmodules {
+        nsignaltestreceiver
+        nsignaltestemitter
+        signals01
+    }
+    settargetdeps {
+        nkernel
+    }
+endtarget
+
+begintarget signals02
+    annotate "Example of signals, and signals from scripting"
+    settype exe
+    setmodules {
+        emitter
+        receiver
+        receiverscript
+        signals02        
+        npythonhooks
+    }
+    settargetdeps {
+        nkernel
+        npythonserver
+        microtcl
+        nlua
+        nnebula
+        nnetwork
+        ngui
+    }
+endtarget    

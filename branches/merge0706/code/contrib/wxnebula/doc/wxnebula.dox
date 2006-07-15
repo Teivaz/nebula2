@@ -1,0 +1,17 @@
+/**
+@defgroup WxNebula wxNebula
+@ingroup NebulaContribMiscModules
+@brief wxNebula demonstrates the usage of wxPython with Nebula
+
+Usage notes:
+
+   - Install wxPython 2.5.x
+   - Build npythonserver
+   - Run this command line (with an appropriate path to the script and
+     executable):
+
+@verbatim
+    npyviewer.exe -startup wxnebula.py
+@endverbatim
+
+*/

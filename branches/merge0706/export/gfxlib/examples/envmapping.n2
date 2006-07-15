@@ -1,0 +1,40 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+new ntransformnode envmapping
+	sel envmapping
+	.setlocalbox -0.000000 -0.000000 -0.000000 1.500000 0.500000 1.491784
+	new ntransformnode model
+		sel model
+		.setlocalbox -0.000000 -0.000000 -0.000000 1.500000 0.500000 1.491784
+		new nshapenode static_0_0
+			sel static_0_0
+			.setlocalbox -0.000000 -0.000000 -0.000000 1.500000 0.500000 1.491784
+			.addanimator "../../tanim"
+			.seteuler 201.747192 0.000000 0.000000
+			.settexture "DiffMap0" "textures:materials/noise.dds"
+			.settexture "CubeMap0" "textures:environment/cloudyhills.dds"
+			.settexture "BumpMap0" "textures:system/nobump.dds"
+			.setvector "MatDiffuse" 0.836880 0.836880 0.836880 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 0.946424 1.000000 0.383000 1.000000
+			.setfloat "MatSpecularPower" 9.080000
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 0.000000
+			.setshader "environment"
+			.setmesh "meshes:examples/envmapping_s_0.n3d2"
+			.setgroupindex 0
+			.setneedsvertexshader false
+		sel ..
+	sel ..
+	new ntransformanimator tanim
+		sel tanim
+		.setchannel "time"
+		.setlooptype "loop"
+		.addeulerkey 0.000000 0.000000 0.000000 0.000000
+		.addeulerkey 6.000000 360.000000 0.000000 0.000000
+	sel ..
+sel ..
+# ---
+# Eof

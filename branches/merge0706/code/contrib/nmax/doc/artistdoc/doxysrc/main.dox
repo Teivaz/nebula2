@@ -1,0 +1,86 @@
+/**
+    @mainpage Nebula2 Toolkit For 3DS Max
+
+
+    @section NMaxIntroOverview Overview
+
+    Welcome to the <b>Nebula2 Toolkit for 3DS Max</b>.
+
+    The <b>Nebula2 Toolkit for 3DS Max</b> (aka nmaxtoolbox) provides a complete working  
+    environment for modelers and animators who need to create graphical content in  
+    <b>3DS Max</b> for the Open Source real-time 3D engine <b>The Nebula Device 2</b>. 
+    Also it provides toolset for programmers who want to construct their art tools within 3DS Max.
+
+    This manual gives you the information on how to construct contents using <b>Nebula2 Toolkit
+    for 3DS Max</b> with <b>3DS Max</b>.
+
+
+    @section NMaxIntroSystems System Requirements
+
+        - Windows 2000 or Windows XP
+        - The DirectX9 runtime
+        - Discreet <b>3DS Max6</b> or <b>3DS Max7.X</b> (3DS Max7.x is highly recommended)
+        - A DX9 graphics cards which supports DX shader model 2.0 is recommended.
+        - MS Excel 2003 or XP required to edit XML files for some configuration tables. (optional)
+
+
+    @section NMaxIntroInstall Installation
+
+    For the information on installation of the <b>Nebula Toolkit for 3DS Max</b>, see
+    @ref NMaxInstallation.
+
+
+    @section NMaxIntroFeatures Usages
+
+    The toolkit provides various features to allow artists to produce great contents
+    and save their work time.
+    Even the toolkit provides not only faculties to export models and animations but also 
+    useful features to use 3DSMax for game entity editor or whatever you want to extend.
+    
+    For the information on the toolkit features and supported 3DS Max features, 
+    see @ref NMaxFeatures.
+
+    This manual provides information and guide to use the toolkit.
+    For the information on how to use the toolkit, see @ref NMaxHowto.
+
+
+    @section NMaxIntroSamples Samples
+
+    To help and illustrate features of the toolkit, samples are provied. 
+    For the information on the samples, see @ref NMaxSamples.
+
+
+    @section NMaxIntroFAQ FAQ
+
+    For the information on the frequently askings and questions, see @ref NMaxFAQ.
+
+
+    @section NMaxIntroNotes Additional Notes
+    
+    This manual mainly provides useful information for artists who create art contents
+    for <b>The Nebula Devices 2</b>. If you need technical document for the toolkit, see
+    the <b>3DSMax Toolkit</b> pages of <b>Asset Toolchain</b> section in <b>Nebula2</b> 
+    document.
+
+
+    @section NMaxIntroCredits Credits
+
+    These are the people who have contributed to <b>Nebula2 Toolkit for 3DS Max</b>.
+
+        - <tt>Kim, Hyoun Woo</tt> - principal author.
+        - <tt>Ben Wooller</tt> - nmaxfloatanimator and nmaxuvanimator.
+        - <tt>Bruce Mitchener</tt> - syntax coloring of the export log dialog.
+        - <tt>Tobias Lang </tt> - sample for multiple uv coordinate sets.
+        - <tt>Ivan Tivonenko</tt> - various bug fixes and improvements which includes 
+          exporting of several skinned models at a time.
+
+    Thanks to:
+        - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts  
+          on the IGame libarary based Nebula 3DS Max exporter. 
+          That gave many helps on this toolkit.
+
+
+    (C)2005 Kim, Hyoun Woo
+
+*/
+

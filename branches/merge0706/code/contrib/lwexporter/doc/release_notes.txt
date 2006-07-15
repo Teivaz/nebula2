@@ -1,0 +1,25 @@
+------------------------------------------------------------------------------
+- Installation Instructions
+------------------------------------------------------------------------------
+
+1. If you have an existing installation of the exporter please backup the
+   contents of the 'work' and 'export' directories in the existing exporter 
+   installation directory, as they may be removed by the uninstaller.
+2. Uninstall the old version of the exporter.
+3. Run the installer for the new version of the exporter and follow the 
+   on-screen instructions. DO NOT install the exporter into the LightWave 
+   plugins directory, pretend you're installing a stand-alone application. 
+   The installer will create the proper Nebula 2 directory structure and the 
+   Lightwave plugin must remain where it is installed, if you move the plugin 
+   file elsewhere the exporter will not function correctly.
+
+------------------------------------------------------------------------------
+- Usage
+------------------------------------------------------------------------------
+
+For instructions on setting up and using the exporter please refer to the 
+CHM manual that was installed by the installer.
+
+------------------------------------------------------------------------------
+- EOF
+------------------------------------------------------------------------------

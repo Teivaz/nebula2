@@ -1,0 +1,150 @@
+/**
+    @defgroup Kernel Nebula Kernel
+
+      - @ref KernelOverview
+      - @ref KernelCreation
+      - @ref KernelFoldingObject
+
+    @section KernelOverview Overview
+
+    As a kernel is core part of an operating system, you can consider the kernel 
+    of the Nebula as similar thing.
+
+    The followings are most important tasks what the Nebula kernel does:
+
+      - handle modules
+      - create Nebula objects
+
+    One of the great feature of the Nebula is that it has <b>modular</b> architecture.
+    The Nebula engine consists of sperated parts of the packages and it makes easy to
+    maintain the whole system. 
+    Commonly a module is defined that code which can be loaded or unloaded to  
+    the kernel as its necessary.
+    Therefore, there should be something which loads modules and that is the kernerl.
+    Whereas the kernel of an operating system loads modules when it needs, the Nebula  
+    kernel loads all its necessary modules at the startup of the application.
+    See the following section @ref KernelCreation to know the way to add packages to 
+    the kernel server.
+
+    Second, the Nebula kernel responds to a creation of the Nebula objects.
+    As an operating system creates a process to do something for user tasks,
+    Nebula does that with 'Nebula Object' for its specific tasks. 
+    For an example, rendering a static mesh can be done with @ref nShapeNode.
+    The @ref nShapeNode is the Nebula object and @ref nKernelServer creates it.
+    As the @ref nShapeNode, all Nebula objects (aka. @ref nRoot derived classes)  
+    are created by calling nKerenelServer::New().
+    See @ref NebulaObjectSystem for more details about the Nebula object.
+
+    On the other hands, there are also many other tasks what the Nebula kernel modules do 
+    like memory management, file system, IPC handling, threading support and so on.
+    See the corresponding documents of modules and classes for more details.
+
+
+    @section KernelCreation Creating Kernel
+
+    The first thing to use Nebula in your application is to create a kernel.
+    The creation of the kernel of Nebula is done by creating @ref nKernelServer
+    class intance.
+
+    @code
+    // Create kernel server instance
+    nKernelServer kernelServer;
+    @endcode
+
+    The next thing to do after creating kernel server instance is to add packages
+    which are used in the application.
+
+    @code
+    // Add packages to use
+    kernelServer.AddPackage(nnebula);
+    ...
+    @endcode
+
+    Before adding package to the kernel server, the package should be defined 
+    with provided <tt>nNebulaUsePackage</tt> macro.
+
+    @code
+    nNebulaUsePackage(nnebula);
+    // Add other packages as its necessary
+    ...
+    @endcode
+
+    See <tt>src/tools/nviewer.cc</tt> file as fully detailed working example 
+    of it.
+
+
+    @section KernelFoldingObject A Folding Object System 
+
+    @par What a folding object is? 
+
+    You can see <b>$parser</b> and <b>$class</b> tag in <i>torus.n2</i> 
+    script file.
+
+    @code
+    # ---
+    # $parser:ntclserver$ $class:ntransformnode$
+    # ---
+
+    ...
+    @endcode
+
+    This code means that <b>'Create nTransformNode object  for it's name 
+    with filename of script file'</b> by nTclServer. Other object which 
+    are created by next to be a child node of a folding object. A folding 
+    object at this is a nTransformNode object and the object name of it 
+    is script filename.
+
+    So it's identical to this
+
+    @code
+    new ntransformnode torus
+        sel torus
+        ...
+    
+        new ntransformanimator rot
+            sel rot
+            ...
+            sel ..
+
+        new nshapenode shape0
+            sel shape0
+            sel ..
+        sel ..
+    @endcode
+
+    @par How to use a folding object?
+
+    There's a easy way to load whole resources using folding object system.
+
+    Consider that you have a directory for a character. The directory consists 
+    of a mesh file(<tt>.n3d2</tt>), some animation files (<tt>.nanim2</tt>), 
+    texture files(<tt>.dds</tt> and a script file (<tt>.n2</tt>)
+    
+    Let's consider a directory like this one:
+
+@verbatim
+    /mycharacter.n2 - the directory which contains resource files 
+        /_main.n2 - script file
+        /body.dds  - texture for character 
+        /walk.nanim2  - animation data file 
+        /body.n3d2 - mesh data file 
+@endverbatim
+
+    And you can load all resources in the directory with the given directory name;
+
+    @code
+    ...
+    kernelServer->PushCwd(this->refRootNode.get());
+    kernelServer->Load("mycharacter.n2"); // just pass the directory name.
+    kernelServer->PopCwd();
+    ...
+    @endcode
+
+    If you use folding object system, it is good to use <tt>.n2</tt> for
+    a postfix of the directory name but it's not crucial. But the script
+    file which exist in the directory should be <tt>_main.n2</tt> for
+    it's name.  nKernelServer looks up <tt>_main.n2</tt> when loading
+    object as a folding object.
+    
+
+*/

@@ -1,0 +1,35 @@
+#-------------------------------------------------------------------------------
+#   sql.bld
+#-------------------------------------------------------------------------------
+beginmodule nsqlserver
+    setdir sql
+    setfiles {
+        nsqlserver_main nsqlserver_cmds
+    }
+    setheaders nsqlserver
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsqldatabase
+    setdir sql
+    setfiles {
+        nsqldatabase_main nsqldatabase_cmds
+    }
+    setheaders nsqldatabase
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsqlquery
+    setdir sql
+    setheaders nsqlquery
+endmodule
+#--------------------------------------------------------------------
+beginmodule nsqlrow
+    setdir sql
+    setheaders nsqlrow
+endmodule
+#--------------------------------------------------------------------
+beginbundle nsql
+    annotate "The Nebula 2 sql modules"
+    setmodules {
+        nsqlserver nsqldatabase nsqlquery nsqlrow
+    }
+endbundle

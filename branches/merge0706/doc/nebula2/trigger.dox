@@ -1,0 +1,46 @@
+/**
+    @page NebulaTriggeringServers Triggering Servers
+
+    Servers in Nebula typically have @c Trigger methods that must be called
+    periodically, typically every frame, for necessary processing to occur.
+    You may trigger some things at different rates ie. trigger 
+    the input server at 30hz and everything else at frame rate. 
+
+    Servers that are very important to update are: 
+
+    <dl>
+      <dt>nConServer:</dt>
+        <dd>Collects any key presses, runs console commands, etc.
+        Failing to call this will yield the console inoperable.  This is
+        less necessary with the use of the GUI and its console. This is
+        automatically triggered by the input server when the input server
+        is triggered.</dd>
+      <dt>nGfxServer2:</dt>
+        <dd>Handles the windows message pump, or the equivalent on
+        other platforms. Failing to call this will cause the Nebula window
+        to act like it is locked up.</dd>
+      <dt>nGuiServer:</dt>
+        <dd>This handles all of the per-frame actions and dispatching
+        of mouse and input events. Calling this is critical to the correct
+        operation of the GUI.</dd>
+      <dt>nInputServer:</dt>
+        <dd>Collects any inputs from the OS, and deals with them,
+        checking input events etc. If you don't call this you can't press
+        any keys, move the mouse etc.<br>
+        @b *NOTE*: Unlike any other @c Trigger() method, this one takes a
+        parameter giving the current time.</dd>
+      <dt>nTimeServer:</dt>
+        <dd>Updates the time channels.  Failing to call this
+        will cause animation to break (among other things).</dd>
+    </dl>
+
+    Other servers have their own @c Trigger methods that are usually less
+    critical to the proper operation of Nebula in general, although they
+    must be called for some features to work correctly. These include: 
+
+      - nKernelServer
+      - nParticleServer
+      - nScriptServer
+      - nVideoServer
+*/
+

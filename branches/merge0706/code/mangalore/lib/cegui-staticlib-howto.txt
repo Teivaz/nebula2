@@ -1,0 +1,110 @@
+step1: remove dllexport and dllimport prefix
+CEGUIBase.h
+comment these lines
+/*#if defined( __WIN32__ ) || defined( _WIN32 )
+#   ifdef CEGUIBASE_EXPORTS
+#       define CEGUIEXPORT __declspec(dllexport)
+#   else
+#       define CEGUIEXPORT __declspec(dllimport)
+#   endif
+#       define CEGUIPRIVATE
+#else*/
+#       define CEGUIEXPORT
+#       define CEGUIPRIVATE
+//#endif
+
+CEGUIWidgetModule.h
+comment these lines
+/*#if defined( __WIN32__ ) || defined( _WIN32 )
+#   ifdef CEGUIWIDGETMODULE_EXPORTS
+#       define CEGUIWIDGETMODULE_API __declspec(dllexport)
+#   else
+#       define CEGUIWIDGETMODULE_API __declspec(dllimport)
+#   endif
+#else*/
+#   define CEGUIWIDGETMODULE_API
+//#endif
+
+CEGUIWindowRendererModule.h
+comment these lines
+/*#if defined( __WIN32__ ) || defined( _WIN32 )
+#   ifdef CEGUIWRMODULE_EXPORTS
+#       define CEGUIWRMODULE_API __declspec(dllexport)
+#   else
+#       define CEGUIWRMODULE_API __declspec(dllimport)
+#   endif
+#else*/
+#   define CEGUIWRMODULE_API
+//#endif
+
+CEGUITinyXMLParser.h
+comment these lines
+/*#if defined( __WIN32__ ) || defined( _WIN32 )
+#   ifdef CEGUITINYXMLPARSER_EXPORTS
+#       define CEGUITINYXMLPARSER_API __declspec(dllexport)
+#   else
+#       define CEGUITINYXMLPARSER_API __declspec(dllimport)
+#   endif
+#else*/
+#   define CEGUITINYXMLPARSER_API
+//#endif
+
+FalModule.h
+comment these lines
+/*#if defined( __WIN32__ ) || defined( _WIN32 )
+#   ifdef FALAGARDWRBASE_EXPORTS
+#       define FALAGARDBASE_API __declspec(dllexport)
+#   else
+#       define FALAGARDBASE_API __declspec(dllimport)
+#   endif
+#else*/
+#   define FALAGARDBASE_API
+//#endif
+
+step2: remove LoadLibrary()
+CEGUIDynamicModule.cpp
+in DynamicModule::DynamicModule(const String& name)
+comment these lines
+    /*
+    d_handle = DYNLIB_LOAD(d_moduleName.c_str());
+
+    // check for library load failure
+    if (!d_handle)
+        throw GenericException(
+            "DynamicModule::DynamicModule - Failed to load module '" +
+            d_moduleName + "': " + getFailureString());
+    */
+
+in DynamicModule::~DynamicModule()
+comment line
+    // DYNLIB_UNLOAD(d_handle);
+
+in DynamicModule::getSymbolAddress(const String& symbol) const
+modify this line
+    // return (void*)DYNLIB_GETSYM(d_handle, symbol.c_str());
+    return 0;
+
+step3: fix XMLParser loading
+CEGUISystem.cpp
+add include header
+#include "../XMLParserModules/TinyXMLParser/CEGUITinyXMLParser.h"
+in System::System(Renderer* renderer, ResourceProvider* resourceProvider, XMLParser* xmlParser, ScriptModule*  scriptModule, const String& configFile, const String& logFile)
+modify this line
+    //setupXMLParser();
+    d_xmlParser = new TinyXMLParser();
+in System::~System()
+modify this line
+    // cleanupXMLParser();
+    delete d_xmlParser;
+
+step4: fix rendererSet loading
+CEGUISceme.cpp
+add include header
+#include "../WindowRendererSets/Falagard/include/FalModule.h"
+in Scheme::loadWindowRendererFactories()
+modify this line
+            // (*cmod).module->registerAllFactories();
+            registerAllFactories();
+and modify this line
+                    // (*cmod).module->registerFactory((*elem).name);
+                    registerFactory((*elem).name);

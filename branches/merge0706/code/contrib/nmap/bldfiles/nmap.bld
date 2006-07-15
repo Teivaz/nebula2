@@ -1,0 +1,118 @@
+#===============================================================================
+#  nMapMods.bld
+#  The nMap classes
+#===============================================================================
+beginmodule nmap
+    setdir map
+    setfiles {
+        nmap_main
+        nmap_map
+        nmap_query
+        nmap_cmds
+    }
+    setheaders { nmap }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nmapnode
+    setdir map
+    setfiles {
+        nmapnode_main
+        nmapnode_map
+        nmapnode_render
+        nmapnode_cmds
+        mapblock
+        mapquadtree_main
+        mapquadtree_collect
+    }
+    setheaders { nmapnode mapblock mapquadtree }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nmapresourceloader
+    setdir map
+    setfiles { nmapresourceloader_cmds nmapresourceloader_main }
+    setheaders { nmapresourceloader }
+endmodule
+#--------------------------------------------------------------------
+beginmodule bboxqs
+    setdir map
+    setfiles { }
+    setheaders { bbox_qs }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nbmpfile
+    setdir map
+    setfiles { nbmpfile }
+    setheaders { nbmpfile }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nimagefile
+    setdir map
+    setfiles { nimagefile }
+    setheaders { nimagefile }
+endmodule
+#--------------------------------------------------------------------
+beginmodule npixelformat
+    setdir map
+    setfiles { npixelformat}
+    setheaders { npixelformat}
+endmodule
+#--------------------------------------------------------------------
+beginmodule mapviewer
+    setdir mapviewer
+    setfiles { mapviewer }
+endmodule
+#--------------------------------------------------------------------
+begintarget nmap
+    settype lib
+    setmodules {
+        nmap
+        nmapnode
+        nmapresourceloader
+        bboxqs
+        nbmpfile
+        nimagefile
+        npixelformat
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+    }
+endtarget
+#-------------------------------------------------------------------------------
+begintarget nmapviewer
+    annotate "Sample application:  Allows simple viewing of .n2 files"
+    settype exe
+    setmodules {
+        mapviewer
+        nviewerapp
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndshow
+        ngui
+        nmap
+        nnetwork
+        ndsound
+    }
+endtarget
+#--------------------------------------------------------------------
+beginworkspace nmap
+    setbinarydir ./bin/
+    settargets {
+        nmapviewer
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndshow
+        ngui
+        nmap
+        nnetwork
+        ndsound
+    }
+endworkspace

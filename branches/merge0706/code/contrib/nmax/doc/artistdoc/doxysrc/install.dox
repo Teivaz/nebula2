@@ -1,0 +1,60 @@
+/**
+    @page NMaxInstallation Installation
+
+    Once the <b>Nebula2 Toolkit for 3DS Max</b> was built, you can get the 3DS Max 
+    plugin, <b>nmaxtoolbox.dlu</b> file.
+
+    The following image shows the 3dsmax installed directory.
+
+    <table border=0 cellspacing=0 cellpadding=0 width=100% >
+    <tr valign=top>
+    <td>
+    @image html install01.png
+    </td>
+    <td> 
+        - 1) copy <b>nmaxtoolbox.dlu</b> to the <tt>$3dsmax/plugins</tt> directory.
+             copy <b>nmaximport.dli</b> to the same directory, if you need Nebula 3DS max importer.
+
+        - 2) copy the directory <b>scripts</b> and all files under the directory to the <tt>$3dsmax/scripts</tt> 
+           directory.
+          - You can find <tt>scripts</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/scripts</tt>.
+
+        - 3) copy <b>plugcfg</b> directory and all files under the directory to <tt>$3dsmax/plugcfg</tt> 
+           directory.
+          - You can find <tt>plugcfg</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/plugcfg</tt>.
+
+        - 4) Build nmaxtoolbox.chm for the artist's document. See <tt>nmax/doc/artistdoc/doxycfg</tt> directory.
+             You can build the doc with typing <tt>'>doxygen toolkitdocs'</tt> in commandline.
+             This will generate bunch of html files under <tt>nmax/doc/artistdoc/doxydoc/toolkit/html</tt>.
+             Compiled it using 'HTML Help Workshop'. It will generate <tt>nmaxtoolbox.chm</tt> and then copy it
+             to <tt>$3dsmax/scripts</tt> directory to be available it within 3DSMax.
+             
+
+    <td>
+    </tr>
+    </table>
+
+    After all files are copied, run 3DS Max.
+
+    @image html install02.png
+
+    Now you can see the new menu <b>Nebula2</b>. Select <b>Directory Setting...</b> menu item 
+    in the menu.
+
+    Specify your nebula2 installation directory to the home assign editbox and other settings 
+    if it is necessary. For more information on <b>path assigns</b>, see @ref NMaxPathAssigns.
+
+    You also should specify correct directory for <b>Binary path</b> to make the plugin work 
+    correctly when it preveiwes or exports. 
+    It is needed to run <tt>nviewer.exe</tt> when the plugin finsished to export. 
+      - Set the directory to <tt>home:bin/win32/</tt> if the plugin was built in <i>release</i> mode.
+      - Set the directory to <tt>home:bin/win32d/</tt> if the plugin was built in <i>debug</i> mode.
+
+    The reason above that is the plugin try to find <tt>nviewer.exe</tt> depends on its build 
+    type.(cause <tt>$win32</tt> is for release mode and <tt>$win32</tt> is for debug mode) 
+    But if both of the directories contain <tt>nviewer.exe</tt>, it will work without any problems.
+     
+    That's all. All tasks for installation was done and ready to go.
+
+*/
+

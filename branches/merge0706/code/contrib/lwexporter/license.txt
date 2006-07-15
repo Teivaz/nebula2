@@ -1,0 +1,7 @@
+The exporter code is covered by the standard Nebula 2 license you can find
+here http://nebuladevice.cubik.org/license/
+
+The sample Lightwave scenes, objects and textures found in the work dir
+cannot be used for commercial projects without the explicit written
+permission of the artists who contributed those assets. You may use these
+art assets in non-commercial projects free of charge.

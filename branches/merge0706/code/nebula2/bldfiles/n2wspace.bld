@@ -1,0 +1,37 @@
+#===============================================================================
+#  n2wspace.bld
+#  Holds the Nebula2 Distibution applications
+#
+#  Workspaces:
+#      Nebula2
+#===============================================================================
+
+#===============================================================================
+#  n2wspace Targets
+#===============================================================================
+beginworkspace Nebula2
+    setbinarydir ./bin/
+    annotate "The default Nebula 2 workspace, containing the core targets."
+    settargets {
+        buildall
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ntoollib
+        ngfxtool
+        nanimtool
+        nmeshtool
+        nremoteshell
+        nsh
+        nviewer
+        ndshow
+        ngui
+        nnpktool
+        nnetwork
+        napplication
+        xml
+    }
+endworkspace

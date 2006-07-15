@@ -1,0 +1,34 @@
+#-----------------------------------------------------------------------------
+# Extension module for Python that provides functions to kill processes on
+# Windows.
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+beginmodule pykillwinproc
+    setdir pykillwinproc
+    setfiles {
+        pykillwinproc
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+begintarget pykillwinproc
+    annotate "Extension module for Python that provides functions to kill processes on Windows."
+    settype dll
+    changedllextension pyd
+    setmodules {
+        pykillwinproc
+    }
+endtarget
+
+#-----------------------------------------------------------------------------
+beginworkspace pyKillWinProc
+    annotate "Contains an extension module for Python that provides functions to kill processes on Windows."
+    settargets {
+        pykillwinproc
+    }
+endworkspace
+
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------

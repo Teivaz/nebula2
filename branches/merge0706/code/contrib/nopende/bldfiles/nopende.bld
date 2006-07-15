@@ -1,0 +1,178 @@
+#-----------------------------------------------------------------------------
+#    nopende.bld
+#    ============
+#    nOpenDE package definition
+#-----------------------------------------------------------------------------
+beginmodule nopende
+    setdir opende
+    setheaders    { nopende nopendemarshal nopendelayer }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendeworld
+    setdir opende
+    setheaders  { nopendeworld }
+    setfiles    { nopendeworld_main nopendeworld_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendebody
+    setdir opende
+    setheaders  { nopendebody }
+    setfiles    { nopendebody_main nopendebody_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendejoint
+    setdir opende
+    setheaders  { nopendejoint }
+    setfiles    { nopendejoint_main nopendejoint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendeballjoint
+    setdir opende
+    setheaders  { nopendeballjoint }
+    setfiles    { nopendeballjoint_main nopendeballjoint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendehingejoint
+    setdir opende
+    setheaders  { nopendehingejoint }
+    setfiles    { nopendehingejoint_main nopendehingejoint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendesliderjoint
+    setdir opende
+    setheaders  { nopendesliderjoint }
+    setfiles    { nopendesliderjoint_main nopendesliderjoint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendeuniversaljoint
+    setdir opende
+    setheaders  { nopendeuniversaljoint }
+    setfiles    { nopendeuniversaljoint_main nopendeuniversaljoint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendehinge2joint
+    setdir opende
+    setheaders  { nopendehinge2joint }
+    setfiles    { nopendehinge2joint_main nopendehinge2joint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendefixedjoint
+    setdir opende
+    setheaders  { nopendefixedjoint }
+    setfiles    { nopendefixedjoint_main nopendefixedjoint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendeamotorjoint
+    setdir opende
+    setheaders  { nopendeamotorjoint }
+    setfiles    { nopendeamotorjoint_main nopendeamotorjoint_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendespace
+    setdir opende
+    setheaders  { nopendespace }
+    setfiles    { nopendespace_main nopendespace_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendesimplespace
+    setdir opende
+    setheaders  { nopendesimplespace }
+    setfiles    { nopendesimplespace_main }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendehashspace
+    setdir opende
+    setheaders  { nopendehashspace }
+    setfiles    { nopendehashspace_main nopendehashspace_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendequadtreespace
+    setdir opende
+    setheaders  { nopendequadtreespace }
+    setfiles    { nopendequadtreespace_main nopendequadtreespace_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendegeom
+    setdir opende
+    setheaders { nopendegeom }
+    setfiles   { nopendegeom_main nopendegeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendespheregeom
+    setdir opende
+    setheaders { nopendespheregeom }
+    setfiles   { nopendespheregeom_main nopendespheregeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendeboxgeom
+    setdir opende
+    setheaders { nopendeboxgeom }
+    setfiles   { nopendeboxgeom_main nopendeboxgeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendeplanegeom
+    setdir opende
+    setheaders { nopendeplanegeom }
+    setfiles   { nopendeplanegeom_main nopendeplanegeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendecapsulegeom
+    setdir opende
+    setheaders { nopendecapsulegeom }
+    setfiles   { nopendecapsulegeom_main nopendecapsulegeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopenderaygeom
+    setdir opende
+    setheaders { nopenderaygeom }
+    setfiles   { nopenderaygeom_main nopenderaygeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendetrimeshgeom
+    setdir opende
+    setheaders { nopendetrimeshgeom }
+    setfiles   { nopendetrimeshgeom_main nopendetrimeshgeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendetransformgeom
+    setdir opende
+    setheaders { nopendetransformgeom }
+    setfiles   { nopendetransformgeom_main nopendetransformgeom_cmds }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendepickserver
+    setdir opende
+    setheaders { nopendepickserver }
+    setfiles   { nopendepickserver_main }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule nopendeserver
+    setdir opende
+    setheaders { nopendeserver nopendetrimesh nopendesurface }
+    setfiles   { nopendeserver_main nopendeserver_cmds nopendetrimesh }
+    setlibs_win32 { ode.lib }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget nopende
+    settype lib
+    setmodules  { 
+        nopende nopendeworld nopendebody 
+        nopendejoint nopendeballjoint nopendehingejoint
+        nopendesliderjoint nopendeuniversaljoint nopendehinge2joint
+        nopendefixedjoint nopendeamotorjoint nopendespace
+        nopendesimplespace nopendehashspace nopendequadtreespace
+        nopendegeom nopendespheregeom nopendeboxgeom nopendeplanegeom
+        nopendecapsulegeom nopenderaygeom nopendetrimeshgeom
+        nopendetransformgeom nopendepickserver nopendeserver
+    }
+endtarget
+#-----------------------------------------------------------------------------
+beginworkspace nopende
+    annotate "A workspace that is useful for documentation generation but little else."
+    settargets {
+        nopende
+    }
+endworkspace
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------

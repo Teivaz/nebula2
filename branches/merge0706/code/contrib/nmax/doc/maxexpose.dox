@@ -1,0 +1,123 @@
+/**
+    @defgroup NMaxExposeContrib 3DSMax Function Publishing
+    @ingroup NebulaContribAssetToolchainModules
+    @ingroup NebulaContribLanguageModules
+    @brief nMaxExpose package exposes Nebula script commands to maxscript.
+
+    <h2>Introduction</h2>
+    nMaxExpose package is 3dsmax plugin which enables to call
+    Nebula2 script command with MaxScript. <br>
+
+    It makes you can use all Nebula script commands with maxscript.
+    For example use of this package, you can construct entity editing tool just adding 
+    custom attribute which is the feature of 3DSMax and writing some UI. 
+    All this can be easily done only with maxscript. <br> 
+    One good thing of this approach is that all custom data can be saved into 3DSMax 
+    file(.max) and can be loaded for later use of editing and can be exported to 
+    script file by Nebula's script server and serialization mechanism. <br>
+    So artist can make game assets and edit it's attributes within 3DSMax. 
+    All this assets are ready to use for game after it is exported to the form of 
+    script file.<br>
+
+    @see
+    For documentation on the maxscript, see the MaxScript Reference which
+    is provided with 3DSMax. <br>   
+
+    <h2>Installation</h2>
+    Before building the package, 3dsmax and 3dsmax SDK should be installed
+    on your system. <br>
+      -# Run update.tcl to generate workspace.
+      -# Ensure that the path of 3dsmax SDK is on your project path.
+      -# Build the package and copy it to <tt>$3dsmax\\plugins</tt> directory.
+      -# Run 3dsmax.
+
+    A sample maxscript file is provided with this package.     
+    This sample shows a simple NOH of Nebula using treeview control. <br>
+    <br>    
+    @note
+    This package was tested on 3dsmax5 with vc6 and 3dsmax6 with vc7 (also vc7.1)<br>
+    If you want to use this package with previous version of 3dsmax than 3dsmax5,
+    that version of 3dsmax should provide Function Publishing system.
+
+    <h2>Commands</h2>
+    All nmaxexpose commands can be tested on maxscript listener. You can find it where
+    <I>Utility Command Panel > MaxScript > Open Listener</I> menu in 3DSMax.
+
+      - <B>new</B> <I>"classname"</I> <I>"path"</I> <br> 
+          Create a new object of the specified class at the specified
+          path in the NOH. Returns object name on success and empty string
+          on failure. <br>
+          <br>
+          example:
+@verbatim
+    obj = nebula2.new "nroot" "usr/entity"
+@endverbatim
+          <br>
+      - <B>delete</B> <I>"path"</I> <br>
+          Delete the NOH object at the specified location in the NOH.
+          Returns true on success and false on failure.<br>
+          <br>
+          example:
+@verbatim
+    nebula2.delete "foo"
+@endverbatim
+          <br>
+      - <B>dir</B><I>()</I> <br>
+          Return a array containing the names of the children of the
+          current working directory in the NOH.<br>    
+          <br>
+      - <B>sel</B> <I>"path"</I><br>
+          Set the current working directory of the NOH to the specified
+          path. Returns current selected object name on success and empty
+          string on failure.<br>
+          <br>
+          example:
+@verbatim
+    sel "/usr/scene"
+@endverbatim
+          <br>  
+      - <B>lookup</B> <I>"path"</I> <br>
+          Return object name if there's the object in given path.<br>
+          <br>
+      - <B>nprint</B> <I>"message"</I> <br>
+          Put message on Nebula's log file (if it exist) and listener.
+          <br>
+
+      - <B>call</B> <I>"command"</I> <I>"arguments"</I> <br>
+          Execute the command given by command on the currently selected
+          object in the NOH. It also can be executed with given path and 
+          command.
+          A command which doesn't have any argument(void type) must be 
+          provided empty array.<br>
+          An arguments should be provied by maxscript array type.<br>
+          <br>
+          @note 
+            There's no way to execute <I>call</I> command with no argument even 
+            the command does not have any arguments. You should provide
+            empty array in that case. <br>
+          <br>
+
+          example:
+@verbatim
+    call ".saveas" "foo.n2"
+    call "/usr/entity.savease" "foo.n2"
+    call ".getcmds" #()
+@endverbatim
+          <br>
+      - <B>callv</B> <I>"command"</I> <br>
+          Synonym for <I>call</I> command except it takes no arguments.
+          It is convenient when you call void type of command. <br>
+          <br>
+          example:
+@verbatim
+    callv ".getcmds"
+@endverbatim
+          <br>
+
+    <h2>License</h2>
+    nMaxExpose is licensed under the terms of the Nebula License.
+
+    <br>
+    (C) 2004 Kim, Hyoun Woo <br>
+*/
+//-----------------------------------------------------------------------------

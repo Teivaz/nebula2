@@ -1,0 +1,37 @@
+/**
+    @page NMaxHowto Howto
+
+    Please refer to the following pages for the documentation of the toolkit 
+    plugin.
+    Each section of the document shows you the usage of the toolkit and details
+    to the work you need for making game assets of Nebula.
+
+    - @ref NMaxHowtoQuickStart
+    - @ref NMaxHowtoStaticScene 
+    - @ref NMaxHowtoGlobalOptions 
+    - @ref NMaxHowtoUsingMaterialEditor
+    - @ref NMaxHowtoChangeShaderParams
+    - @ref NMaxHowtoMultipleUv
+    - @ref NMaxWorkingNebulaMaterialWithMaxScript
+    - @ref NMaxPerMeshOptions
+    - @ref NMaxHowtoCharacters 
+    - @ref NMaxHowtoHierarchyNode 
+    - @ref NMaxHowtoShadows 
+    - @ref NMaxHowtoAnimations
+    - @ref NMaxLOD
+    - @ref NMaxHowtoExport
+    - @ref NMaxHowtoImport
+    - @ref NMaxScriptExtension
+    - @ref NMaxHowtoExpose
+    - @ref NMaxScriptGen
+    - @ref NMaxTerrainTools
+    - @ref NIniSetting
+
+*/
+
+/**
+    @page NMaxTerrainTools Using Terrain Tools
+
+    ...
+*/
+

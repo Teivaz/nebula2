@@ -1,0 +1,62 @@
+#-------------------------------------------------------------------------------
+# properties.bld
+#
+# (C) 2006 James Mastro
+#-------------------------------------------------------------------------------
+beginmodule mangalore::properties
+    setdir properties
+    settype cpp
+    setfiles {
+        abstractgraphicsproperty
+        abstractphysicsproperty
+        actoranimationproperty
+        actorgraphicsproperty
+        actorphysicsproperty
+        audioproperty
+        cameraproperty
+        chasecameraproperty
+        effectproperty
+        environmentcollideproperty
+        environmentgraphicsproperty
+        graphicsproperty
+        inputproperty
+        lightproperty
+        mousegripperproperty
+        pathanimproperty
+        physicsproperty
+        pointnclickinputproperty
+        posteffectproperty
+        simplegraphicsproperty
+        timeproperty
+        transformableproperty
+        videocameraproperty
+        videocameraproperty2
+    }
+    setheaders {
+        abstractgraphicsproperty
+        abstractphysicsproperty
+        actoranimationproperty
+        actorgraphicsproperty
+        actorphysicsproperty
+        audioproperty
+        cameraproperty
+        chasecameraproperty
+        effectproperty
+        environmentcollideproperty
+        environmentgraphicsproperty
+        graphicsproperty
+        inputproperty
+        lightproperty
+        mousegripperproperty
+        pathanimproperty
+        physicsproperty
+        pointnclickinputproperty
+        posteffectproperty
+        simplegraphicsproperty
+        timeproperty
+        transformableproperty
+        videocameraproperty
+        videocameraproperty2
+    }
+endmodule
+#-------------------------------------------------------------------------------

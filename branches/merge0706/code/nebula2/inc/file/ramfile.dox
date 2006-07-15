@@ -1,0 +1,7 @@
+/**
+    @defgroup RAMFile RAM File Management
+    @ingroup File
+
+    nRamFileServer works with files on memory.
+
+*/

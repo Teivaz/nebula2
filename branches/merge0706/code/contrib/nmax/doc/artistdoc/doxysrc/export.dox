@@ -1,0 +1,79 @@
+/**
+    @defgroup NMaxHowtoExport Exporting How to
+
+    @section NMaxHowtoExportOverview Overview
+
+    This section of the manual provides the information on the exporting features of 
+    toolkit.
+
+      - @ref NMaxHowtoExportHowto
+      - @ref NMaxHowtoExportBatchExport
+      - @ref NMaxHowtoExportWhereFiles
+
+    @section NMaxHowtoExportHowto How do I export my model?
+
+        - By default, <b>Hidden</b> nodes are not exported.
+            - A hidden node can be exported with checking the option of the global
+              options in 3DS Max Utility panel. 
+              See @ref NMaxExportOptionsEtc for more details.
+
+
+    @section NMaxHowtoExportBatchExport How can I do batch export for my files?
+
+    The <b>Nebula 3DSMax Toolkit</b> <b>Batch Export</b> allows you to batch export
+    a bunch of <i>.max</i> 3DSMax files at one time.
+    You can export all the max files under a specifed directory with one click.
+    This feature is very helpful to savinig amount of time for exporting on the large 
+    project which has many game assert.
+
+    @subsection NMaxHowtoExportBatchExportHowto Batch Export How to
+
+    First, select <i>'Batch Export'</i> menu item on the <i>Nebula2</i> menu.
+
+    @image html batchexport01.png "Batch Export menu item on Nebula2 menu"
+
+    You will see the <i>'Batch Export'</i> dialog like the following image.
+
+    @image html batchexport02.png "Batch Export dialog"
+
+    Next thing, you need to specify the top directory of all the max files which 
+    you want to export. Click <i>'Select source directory'</i> button which bring 
+    directory browser dialog up.
+
+    @image html batchexport03.png "Folder Selection dialog"
+
+    All the max files which is located under the specified top directory will be shown
+    in the <i>'max files under source directory'</i> list box.
+
+    Click <i>'Export'</i> button to export all files.
+
+    @image html batchexport04.png "Batch Export dialog with files to batch export"
+
+
+    @section NMaxHowtoExportWhereFiles Where Are My Files?
+
+    The toolkit uses the <b>Current Project Directory</b> to locate their files.
+
+    You can switch to a different project directory using 'Nebula2' menu in the
+    3DS Max.
+
+    - in 3DS Max: select the <i>Nebula2 > Directory Settings...</i> menu item 
+      and enter a new <b>Project Directory</b>.
+
+    For more information on <b>path assigns</b>, see @ref NMaxPathAssigns.
+
+    The @b export directory contains the exported graphics data in Nebula2 format. 
+    The contents of this directory is only important to programmers who want to 
+    load Nebula2 graphics objects into their applications.
+
+    - export
+        - gfxlib exported Nebula2 .n2 files in category subdirectories
+            - examples this is a category called examples
+                - eagle.n2 the Nebula2 version of exported eagle sample
+                - tiger.n2 etc...
+        - meshes exported mesh resource files loaded by the .n2 object files
+        - anims exported animation resource files loaded by the .n2 object files
+        - textures textures 
+
+*/
+

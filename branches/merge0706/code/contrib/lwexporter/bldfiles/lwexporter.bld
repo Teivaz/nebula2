@@ -1,0 +1,290 @@
+#-----------------------------------------------------------------------------
+# Lightwave Exporter Package
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+beginmodule nlwserver
+    annotate "Plugin definition(s) for Lightwave."
+    setdir lwexporter
+    setplatform win32
+    setfiles {
+        lwserver
+        dummy.cpp
+    }
+    setmoddeffile serv.def
+    setlibs_win32_debug {
+        wxbase26d.lib
+        wxmsw26d_core.lib
+        wxmsw26d_adv.lib
+        Rpcrt4.lib
+    }
+    setlibs_win32_release {
+        wxbase26.lib
+        wxmsw26_core.lib
+        wxmsw26_adv.lib
+    }
+    setlibs_win32 {
+        comctl32.lib
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwwrappers
+    annotate "Simple C++ wrappers for part of the Lightwave SDK."
+    setdir lwwrapper
+    setplatform win32
+    setheaders {
+        nlwglobals
+        nlwitemidchangelist
+        nlwcustomobjecthandler
+        nlwloadstate
+        nlwsavestate
+        nlwmeshinfo
+        nlwcallbacktemplates
+        nlwcmdexec
+    }
+    setfiles {
+        nlwglobals
+        nlwcustomobjecthandler
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwui
+    annotate "C++ wrappers for Lightwave panels and controls."
+    setdir lwwrapper
+    setplatform win32
+    setheaders {
+        nlwlayoutmonitor
+    }
+    setfiles {
+        nlwlayoutmonitor
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwwxui
+    annotate "Custom wxWidgets controls."
+    setdir lwwxui
+    setplatform win32
+    setheaders {
+        wxanimlistctrl
+        wxcolorctrl
+        wxcoloralphactrl
+        wxfloatsliderctrl
+        wxintsliderctrl
+        wxtexturefilectrl
+        wxfloatctrl
+        wxcustomevents
+    }
+    setfiles {
+        wxanimlistctrl
+        wxcolorctrl
+        wxcoloralphactrl
+        wxfloatsliderctrl
+        wxintsliderctrl
+        wxtexturefilectrl
+        wxfloatctrl
+        wxcustomevents
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwmodelerexporter
+    annotate "Lightwave Modeler plugin for exporting static meshes."
+    setdir lwexporter
+    setplatform win32
+    setheaders {
+        nlwmodelerexporter
+    }
+    setfiles {
+        nlwmodelerexporter
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwexportermaster
+    annotate "Lightwave Master plugin."
+    setdir lwexporter
+    setplatform win32
+    setheaders {
+        nlwexportermaster
+        nlwexportermasterpanel
+        nlwpreviewpanel
+        nlwexportpanel
+    }
+    setfiles {
+        nlwexportermaster
+        nlwexportermaster_activation
+        nlwexportermasterpanel
+        nlwpreviewpanel
+        nlwexportpanel
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwexportersettings
+    annotate "Storing, loading and displaying exporter settings."
+    setdir lwexporter
+    setplatform win32
+    setheaders {
+        nlwexportersettings
+        nlwexportersettingspanel
+        nlwexportnodeconfigpanel
+        nlwexportnodetype
+    }
+    setfiles {
+        nlwexportersettings
+        nlwexportersettingspanel
+        nlwexportnodeconfigpanel
+        nlwexportnodetype
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwobjectexportsettings
+    annotate "Lightwave Custom Object Handler plugin that stores object export settings."
+    setdir lwexporter
+    setplatform win32
+    setheaders {
+        nlwobjectexportsettings
+        nlwobjectexportsettings_ui
+        nlwanimationstate
+        nlwanimstatepanel
+    }
+    setfiles {
+        nlwobjectexportsettings
+        nlwobjectexportsettings_ui
+        nlwobjectexportsettings_activation
+        nlwanimstatepanel
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwshaderexportsettings
+    annotate "Lightwave Shader plugin for Nebula 2 shaders."
+    setdir lwexporter
+    setplatform win32
+    setheaders {
+        nlwshadereditor
+        nlwshaderpanel
+        nlwshaderpanelparam
+        nlwshaderexportsettings
+        nlwshaderpanelfactory
+        nlwshaderpaneltemplate
+    }
+    setfiles {
+        nlwshadereditor
+        nlwshaderpanel
+        nlwshaderpanelparam
+        nlwshaderpanelfactory
+        nlwshaderpaneltemplate
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwanimexport
+    annotate "Code that handles exporting of animation from Lightwave."
+    setdir lwexporter
+    setplatform win32
+    setheaders {
+        nlwskinanimexport
+        nlwanimexporthandler
+    }
+    setfiles {
+        nlwskinanimexport
+        nlwanimexporthandler
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+beginmodule nlwcommon
+    annotate "Utility classes that can be used by multiple Lightwave plugins."
+    setdir lwexporter
+    setplatform win32
+    setheaders {
+        nlwexporter
+        nlwexportnode
+        nlwmeshexport
+        nlwtextureexport
+        nlwsettingsregistry
+        nlwbonejointmap
+        nlwviewerremote
+    }
+    setfiles {
+        nlwexporter
+        nlwexportnode
+        nlwmeshexport
+        nlwtextureexport
+        nlwsettingsregistry
+        nlwbonejointmap
+        nlwviewerremote
+    }
+endmodule
+
+#-----------------------------------------------------------------------------
+begintarget n2lwexporter
+    settype dll
+    changedllextension p
+    setexceptions true
+    setresource_win32 code/contrib/lwexporter/N2LightwaveExporter.rc
+    setmodules {
+        nlwserver
+        nlwexportermaster
+        nlwexportersettings
+        nlwobjectexportsettings
+        nlwshaderexportsettings
+        nlwanimexport
+        nlwwrappers
+        nlwui
+        nlwcommon
+        nlwwxui
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ngui
+        ntoollib
+    }
+endtarget
+
+#-----------------------------------------------------------------------------
+#beginmodule charskeletonviewer
+#   setdir charskeletonviewer
+#    setplatform win32
+#    setfiles {
+#       charskeletonviewer
+#    }
+#endmodule
+
+#-----------------------------------------------------------------------------
+#begintarget charskeletonviewer
+#   settype exe
+#   setmodules {
+#       charskeletonviewer  
+#   }
+#   settargetdeps {
+#       nkernel
+#        nnebula
+#        microtcl
+#        ngui
+#        ntoollib
+#    }
+#endtarget
+
+#-----------------------------------------------------------------------------
+beginworkspace N2LightwaveExporter
+    annotate "Nebula 2 Exporter for Lightwave 3D"
+    settargets {
+        n2lwexporter
+        nkernel
+        ntoollib
+    }
+    addglobaldef _WIN32 1
+    addglobaldef _X86_ 1
+endworkspace
+
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------

@@ -1,0 +1,446 @@
+#-------------------------------------------------------------------------------
+#   gui.bld
+#
+#   (C) 2003 RadonLabs GmbH
+#-------------------------------------------------------------------------------
+
+beginmodule nguiwidget
+    setdir gui
+    setfiles {
+        nguiwidget_main nguiwidget_cmds
+    }
+    setheaders nguiwidget
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiformlayout
+    setdir gui
+    setfiles {
+        nguiformlayout_main nguiformlayout_cmds
+    }
+    setheaders nguiformlayout
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguislider2
+    setdir gui
+    setfiles {
+        nguislider2_main
+    }
+    setheaders nguislider2
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguibutton
+    setdir gui
+    setfiles {
+        nguibutton_main nguibutton_cmds
+    }
+    setheaders nguibutton
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguilabel
+    setdir gui
+    setfiles {
+        nguilabel_main
+    }
+    setheaders nguilabel
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitextlabel
+    setdir gui
+    setfiles {
+        nguitextlabel_main nguitextlabel_cmds
+    }
+    setheaders nguitextlabel
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitickerwidget
+    setdir gui
+    setfiles {
+        nguitickerwidget_main nguitickerwidget_cmds
+    }
+    setheaders nguitickerwidget
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitextbutton
+    setdir gui
+    setfiles {
+        nguitextbutton_main nguitextbutton_cmds
+    }
+    setheaders nguitextbutton
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitextentry
+    setdir gui
+    setfiles {
+        nguitextentry_main nguitextentry_cmds
+    }
+    setheaders nguitextentry
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiipaddressentry
+    setdir gui
+    setfiles {
+        nguiipaddressentry_main
+    }
+    setheaders nguiipaddressentry
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicheckbutton
+    setdir gui
+    setfiles {
+        nguicheckbutton_main nguicheckbutton_cmds
+    }
+    setheaders nguicheckbutton
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicheckbuttongroup
+    setdir gui
+    setfiles {
+        nguicheckbuttongroup_main nguicheckbuttongroup_cmds
+    }
+    setheaders nguicheckbuttongroup
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicheckbuttongroup2
+    setdir gui
+    setfiles {
+        nguicheckbuttongroup2_main
+    }
+    setheaders nguicheckbuttongroup2
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitextview
+    setdir gui
+    setfiles {
+        nguitextview_main nguitextview_cmds
+    }
+    setheaders nguitextview
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicmdentry
+    setdir gui
+    setfiles nguicmdentry_main
+    setheaders nguicmdentry
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitextureview
+    setdir gui
+    setfiles nguitextureview_main
+    setheaders nguitextureview
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiwindow
+    setdir gui
+    setfiles {
+        nguiwindow_main nguiwindow_cmds
+    }
+    setheaders nguiwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiclientwindow
+    setdir gui
+    setfiles {
+        nguiclientwindow_main nguiclientwindow_cmds
+    }
+    setheaders nguiclientwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiconsolewindow
+    setdir gui
+    setfiles nguiconsolewindow_main
+    setheaders nguiconsolewindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguidockwindow
+    setdir gui
+    setfiles nguidockwindow_main
+    setheaders nguidockwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitexbrowserwindow
+    setdir gui
+    setfiles nguitexbrowserwindow_main
+    setheaders nguitexbrowserwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiwatcherwindow
+    setdir gui
+    setfiles nguiwatcherwindow_main
+    setheaders nguiwatcherwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguisysteminfowindow
+    setdir gui
+    setfiles nguisysteminfowindow_main
+    setheaders nguisysteminfowindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitooltip
+    setdir gui
+    setfiles nguitooltip_main
+    setheaders nguitooltip
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguidirlister
+    setdir gui
+    setfiles { nguidirlister_main nguidirlister_cmds }
+    setheaders nguidirlister
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicategorybrowser
+    setdir gui
+    setfiles { nguicategorybrowser_main }
+    setheaders nguicategorybrowser
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguifiledialog
+    setdir gui
+    setfiles { nguifiledialog_main }
+    setheaders nguifiledialog
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguihorislidergroup
+    setdir gui
+    setfiles { nguihorislidergroup_main nguihorislidergroup_cmds }
+    setheaders nguihorislidergroup
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitabbedlayout
+    setdir gui
+    setfiles { nguitabbedlayout_main nguitabbedlayout_cmds }
+    setheaders { nguitabbedlayout }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiserver
+    setdir gui
+    setfiles {
+        nguiserver_main nguiserver_cmds nguiresource nguibrush
+    }
+    setheaders { nguiserver nguievent nguiresource nguibrush }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiskin
+    setdir gui
+    setfiles {
+        nguiskin_main nguiskin_cmds
+    }
+    setheaders { nguiskin }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguimessagebox
+    setdir gui
+    setfiles {
+        nguimessagebox_main
+    }
+    setheaders nguimessagebox
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicanvas
+    setdir gui
+    setfiles {
+        nguicanvas_main
+    }
+    setheaders nguicanvas
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguidiagramcanvas
+    setdir gui
+    setfiles {
+        nguidiagramcanvas_main
+    }
+    setheaders nguidiagramcanvas
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiadjustdisplaywindow
+    setdir gui
+    setfiles {
+        nguiadjustdisplaywindow_main
+    }
+    setheaders nguiadjustdisplaywindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicontextmenu
+    setdir gui
+    setfiles {
+        nguicontextmenu_main nguicontextmenu_cmds
+    }
+    setheaders nguicontextmenu
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguidragbox
+    setdir gui
+    setfiles {
+        nguidragbox_main nguidragbox_cmds
+    }
+    setheaders nguidragbox
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguigraphicsbrowserwindow
+    setdir gui
+    setfiles {
+        nguigraphicsbrowserwindow_main
+    }
+    setheaders nguigraphicsbrowserwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguisettingsform
+    setdir gui
+    setfiles {
+        nguisettingsform_main
+    }
+    setheaders nguisettingsform
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitexttable
+    setdir gui
+    setfiles {
+        nguitexttable_main
+    }
+    setheaders nguitexttable
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguitextwindow
+    setdir gui
+    setfiles {
+        nguitextwindow_main
+    }
+    setheaders nguitextwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiscenecontrolwindow
+    setdir gui
+    setfiles {
+        nguiscenecontrolwindow_main
+    }
+    setheaders nguiscenecontrolwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicoloradjust
+    setdir gui
+    setfiles {
+        nguicoloradjust_main
+    }
+    setheaders nguicoloradjust
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicoloradjustwindow
+    setdir gui
+    setfiles {
+        nguicoloradjustwindow_main
+    }
+    setheaders nguicoloradjustwindow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicolorlabel
+    setdir gui
+    setfiles {
+        nguicolorlabel_main
+    }
+    setheaders nguicolorlabel
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicolorpicker
+    setdir gui
+    setfiles {
+        nguicolorpicker_main
+    }
+    setheaders nguicolorpicker
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguicolorslidergroup
+    setdir gui
+    setfiles {
+        nguicolorslidergroup_main
+    }
+    setheaders nguicolorslidergroup
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguibar
+    setdir gui
+    setfiles {
+        nguibar_main
+    }
+    setheaders nguibar
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguifadeouttextlabel
+    setdir gui
+    setfiles {
+        nguifadeouttextlabel_main
+    }
+    setheaders nguifadeouttextlabel
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguislide
+    setdir gui
+    setfiles {
+        nguislide_main
+    }
+    setheaders nguislide
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguislideshow
+    setdir gui
+    setfiles {
+        nguislideshow_main
+        nguislideshow_cmds
+    }
+    setheaders nguislideshow
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiskyeditor
+    setdir gui
+    setfiles {
+        nguiskyeditor_main
+    }
+    setheaders nguiskyeditor
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguieventhandler
+    setdir gui
+    setfiles { nguieventhandler }
+    setheaders { nguieventhandler }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguimousecursor
+    setdir gui
+    setfiles { nguimousecursor_main }
+    setheaders { nguimousecursor }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguihardpointsbrowserwindow
+    setdir gui
+    setfiles { nguihardpointsbrowserwindow_main }
+    setheaders { nguihardpointsbrowserwindow }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguihardpointslister
+    setdir gui
+    setfiles { nguihardpointslister_main }
+    setheaders { nguihardpointslister }
+endmodule
+#--------------------------------------------------------------------
+begintarget ngui
+    annotate "The Nebula2 GUI modules"
+    settype lib
+    setmodules {
+        nguiwidget nguiformlayout nguislider2 nguibutton
+        nguilabel nguitextlabel nguitextbutton nguitextentry nguiipaddressentry
+        nguicheckbutton nguicheckbuttongroup nguicheckbuttongroup2
+        nguitextview nguicmdentry nguitextureview nguiwindow nguiclientwindow
+        nguiconsolewindow nguidockwindow nguitexbrowserwindow nguiwatcherwindow
+        nguisysteminfowindow nguitooltip nguidirlister nguicategorybrowser
+        nguihorislidergroup nguifiledialog nguiskin nguitickerwidget
+        nguitabbedlayout nguimessagebox nguiserver nguicanvas nguidiagramcanvas
+        nguiadjustdisplaywindow nguicontextmenu nguidragbox
+        nguigraphicsbrowserwindow nguisettingsform nguitexttable nguitextwindow
+        nguiscenecontrolwindow nguicoloradjust nguicoloradjustwindow
+        nguicolorlabel nguicolorpicker nguicolorslidergroup
+        nguibar nguifadeouttextlabel nguislide nguislideshow
+        nguieventhandler nguimousecursor nguihardpointsbrowserwindow
+        nguihardpointslister nguiskyeditor
+    }
+    settargetdeps {
+        ntoollib
+    }
+endtarget
+

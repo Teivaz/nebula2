@@ -1,0 +1,20 @@
+/**
+    @page NMaxPathAssigns Nebula2 Path Assigns
+
+    You may see filesystem paths like <b>"proj:work/gfxlib"</b>, or <b>"home:bin/win32"</b> 
+    throughout this documentation.<br> 
+    The <b>proj:</b> and <b>home:</b> parts in the paths are so called <i>assigns</i> used by  
+    Nebula2 as aliases for absolute directory paths.
+    For instance, the <b>home:</b> path assign stands for the toolkit's installation 
+    directory which is usually "C:\Dev\Nebula2", but can be 
+    different depending on the language version of Windows, and the user's choice 
+    at install time. 
+    It is quite obvious that using a simple <b>home:</b> assign is much more convenient 
+    then using a long, complicated directory path which can be located anywhere on 
+    the user's system. <br>
+    Nebula2 makes heavy use of filesystem assigns internally, 
+    but for toolkit users, only the <b>proj:</b> assign (which points to the <b>Current Project 
+    Directory</b>) and the <b>home:</b> assign (which points to the toolkit's installation 
+    directory) are relevant.
+
+*/

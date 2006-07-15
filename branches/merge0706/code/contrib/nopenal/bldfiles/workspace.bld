@@ -1,0 +1,22 @@
+#-----------------------------------------------------------------------------
+#   workspace.bld
+#   =============
+#   .bld file for workspace of nopenal package and demo app.
+#
+#   by Bang, Chang Kyu.
+#-----------------------------------------------------------------------------
+beginworkspace nopenal
+    settargets {
+        nopenal
+        nkernel
+        nnebula
+        ndirect3d9
+        ndinput8
+        microtcl
+        ndshow
+        ngui
+    }
+endworkspace
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------

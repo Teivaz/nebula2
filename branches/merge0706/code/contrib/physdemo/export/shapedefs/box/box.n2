@@ -1,0 +1,26 @@
+# ---
+# $parser:ntclserver$ $class:nshapenode$
+# ---
+new nuvanimator trot
+    sel trot
+    .setchannel "time"
+    .setlooptype "loop"
+    .addeulerkey 0 0.000000 0.000000 0.000000
+    .addeulerkey 0 5.000000 360.000000 0.000000
+sel ..
+.addanimator trot
+.setlocalbox -0.000001 0.000000 -0.000001 3.499848 0.999848 3.499849
+.setposition 0.000000 0.000000 0.000000
+.seteuler 0.000000 0.000000 0.000000
+.setscale 1.000000 1.000000 1.000000
+.setvector "MatAmbient" 0.300000 0.300000 0.300000 1.000000
+.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+.setvector "MatSpecular" 0.300000 0.300000 0.300000 1.000000
+.setfloat "MatSpecularPower" 32.000000
+.settexture "DiffMap0" "textures:box/cube.png"
+.settexture "BumpMap0" "textures:box/cube_nrm.png"
+.setshader "static"
+.setmesh "meshes:box/box.n3d2"
+.setgroupindex 0
+# ---
+# Eof
