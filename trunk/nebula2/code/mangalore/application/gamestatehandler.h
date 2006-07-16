@@ -13,7 +13,7 @@
     * LOAD LEVEL: game starts at the given level
     * LOAD SAVE GAME: game starts with the given save game
 
-    (C) 2003 RadonLabs GmbH
+    (C) 2006 RadonLabs GmbH
 */
 #include "application/statehandler.h"
 #include "gfx2/nmesh2.h"
@@ -72,7 +72,7 @@ public:
 
 protected:
     /// update timestamps for subsystems
-    void UpdateSubsystemTimes();
+    virtual void UpdateSubsystemTimes();
 
     SetupMode setupMode;
     nString exitState;
