@@ -30,6 +30,7 @@
 #include "properties/posteffectproperty.h"
 #include "properties/mousegripperproperty.h"
 #include "properties/actoranimationproperty.h"
+#include "properties/simplecameraproperty.h"
 
 namespace Managers
 {
@@ -66,14 +67,54 @@ FactoryManager::~FactoryManager()
 
 //------------------------------------------------------------------------------
 /**
-    Create a raw entity by its C++ class name name. This method should be
+    This reads all entity templates from the database and caches them for
+    faster execution later on.
+*/
+void
+FactoryManager::OnActivate()
+{
+    Manager::OnActivate();
+
+    // configure and execute a database query
+    if (Db::Server::Instance()->IsOpen())
+    {
+        this->cachedTemplateQuery = Db::Query::Create();
+        this->cachedTemplateQuery->SetTableName("_Entities");
+        this->cachedTemplateQuery->AddWhereAttr(Db::Attribute(Attr::_Type, "TEMPLATE"));
+        this->cachedTemplateQuery->BuildSelectStatement();
+        this->cachedTemplateQuery->Execute();
+        if (this->cachedTemplateQuery->GetNumRows() == 0)
+        {
+            n_error("FactoryManager::OnActivate(): no templates found in world database!");
+        }
+        n_assert(this->cachedTemplateQuery->HasColumn(Attr::_Category));
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This just releases the template cache query object.
+*/
+void
+FactoryManager::OnDeactivate()
+{
+    this->cachedTemplateQuery = 0;
+    Manager::OnDeactivate();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a raw entity by its C++ class name name. This method should be 
     extended by subclasses if a Mangalore application implements new
     Game::Entity subclasses.
 */
 Entity*
 FactoryManager::CreateEntityByClassName(const nString& cppClassName) const
 {
-    if ("Entity" == cppClassName) return Entity::Create();
+    if ("Entity" == cppClassName) 
+    {
+        return Entity::Create();
+    }
     else
     {
         n_error("Managers::FactoryManager::CreateEntity(): unknown entity class name '%s'!", cppClassName.Get());
@@ -101,8 +142,9 @@ FactoryManager::CreateEntityByCategory(const nString& categoryName, Entity::Enti
     {
         // create raw entity
         Entity* entity = this->CreateEntityByClassName(this->bluePrints[i].cppClass);
+        entity->SetDispatcher(this->CreateDispatcher());
         entity->SetEntityPool(entityPool);
-
+        
         // add properties as described in blueprints.xml
         this->AddProperties(entity, categoryName);
 
@@ -150,52 +192,82 @@ FactoryManager::CreateEntityByTemplate(const nString& categoryName, const nStrin
 {
 	n_assert(categoryName.IsValid());
 	n_assert(templateName.IsValid());
+    n_assert(this->cachedTemplateQuery.isvalid());
 
-    // create a database query to get the template attributes
-    Ptr<Db::Query> dbQuery = Db::Server::Instance()->CreateCategoryTemplateIdQuery(categoryName, templateName);
-	if (dbQuery->Execute())
+    // find the category in the cached template query
+    int rowIndex;
+    int numRows = this->cachedTemplateQuery->GetNumRows();
+    for (rowIndex = 0; rowIndex < numRows; rowIndex++)
     {
-        if (dbQuery->GetNumRows() == 0)
+        if ((this->cachedTemplateQuery->GetString(Attr::_Category, rowIndex) == categoryName) &&
+            (this->cachedTemplateQuery->GetString(Attr::Id, rowIndex) == templateName))
         {
-            n_error("Managers::FactoryManager::CreateEntityByTemplate(): no template entity with category='%s' and template='%s' in database!",
-                categoryName.Get(), templateName.Get());
-            return 0;
-        }
-        else if (dbQuery->GetNumRows() > 1)
-        {
-            n_error("Managers::FactoryManager::CreateEntityByTemplate(): more then one template entity with category='%s' and template='%s' in database!",
-                categoryName.Get(), templateName.Get());
-            return 0;
-        }
-        else
-        {
-            // create entity by category, this will just add properties
-	        Game::Entity* newEntity = this->CreateEntityByCategory(categoryName, entityPool);
-
-            // transfer attributes to entity
-            int colIndex;
-            int numColumns = dbQuery->GetNumColumns();
-            for (colIndex = 0; colIndex < numColumns; colIndex++)
-            {
-                newEntity->SetAttr(dbQuery->GetAttr(colIndex, 0));
-            }
-
-            // setup as instance
-            newEntity->SetString(Attr::_Type, "INSTANCE");
-
-            // set current level
-            newEntity->SetString(Attr::_Level, Managers::SetupManager::Instance()->GetCurrentLevel());
-
-            // set IsFromTemplate flag, to force the save of all attributes on the 1st save.
-            newEntity->SetCreatedFromTemplate(true);
-
-            return newEntity;
+            break;
         }
     }
-    // something went wrong...
-    n_error("Managers::FactoryManager::CreateEntityByTemplate(): failed to create entity with category='%s' and template='%s' in database!",
-        categoryName.Get(), templateName.Get());
-    return 0;
+    if (rowIndex == numRows)
+    {
+        // fallthrough: error!
+        n_error("Managers::FactoryManager::CreateEntityByTemplate(): no template entity with category='%s' and template='%s' in database!",
+            categoryName.Get(), templateName.Get());
+        return 0;
+    }
+
+    // create entity by category, this will just add properties
+    Game::Entity* newEntity = this->CreateEntityByCategory(categoryName, entityPool);
+
+    // transfer attributes to entity
+    int colIndex;
+    int numColumns = this->cachedTemplateQuery->GetNumColumns();
+    for (colIndex = 0; colIndex < numColumns; colIndex++)
+    {
+        if (this->cachedTemplateQuery->GetAttr(colIndex, rowIndex).IsValid())
+        {
+            newEntity->SetAttr(this->cachedTemplateQuery->GetAttr(colIndex, rowIndex));
+        }
+    }
+
+    // setup as instance, also need to overwrite GUID, since the
+    // new GUID value from CreateEntityByCategory() has been overwritten by
+    // the previous loop
+    newEntity->SetString(Attr::_Type, "INSTANCE");
+    nGuid guid;
+    guid.Generate();
+    newEntity->SetString(Attr::GUID, guid.Get());
+    
+    // set current level
+    newEntity->SetString(Attr::_Level, Managers::SetupManager::Instance()->GetCurrentLevel());
+
+    return newEntity;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create a entity as a clone of a existing one. A new GUID will be assigned.
+*/
+Entity*
+FactoryManager::CreateEntityByEntity(Entity* templateEntity, Entity::EntityPool entityPool) const
+{
+    n_assert(templateEntity != 0);
+    n_assert(templateEntity->HasAttr(Attr::_Category) && templateEntity->GetString(Attr::_Category).IsValid());
+    n_assert(templateEntity->HasAttr(Attr::Id) && templateEntity->GetString(Attr::Id).IsValid());
+
+    Entity* newEntity = this->CreateEntityByTemplate(templateEntity->GetString(Attr::_Category), templateEntity->GetString(Attr::Id));
+    n_assert(newEntity);
+ 
+    // copy all attributes from template (skip the GUID!)
+    const nArray<Db::Attribute>& templateAttrs = templateEntity->GetAttrs();
+    int i;
+    int num = templateAttrs.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (templateAttrs[i].GetAttributeID() != Attr::GUID)
+        {
+            newEntity->SetAttr(templateAttrs[i]);
+        }
+    }
+
+    return newEntity;    
 }
 
 //------------------------------------------------------------------------------
@@ -264,6 +336,77 @@ FactoryManager::CreateEntityByKeyAttr(const Db::Attribute& key, Entity::EntityPo
 
 //------------------------------------------------------------------------------
 /**
+    This will 'load' a new entities from the world database (AKA making the
+    entity 'live') and place it in the given entity pool (Live or Sleeping). 
+    This will create new entities, attach properties as described by 
+    blueprints.xml, and update the entities attributes from the database. 
+    Changes to attributes can later be written back to the
+    database by calling the Entity::Save() method.
+
+    NOTE: this method will not call the Entity::OnLoad() method, which may be
+    required to finally initialize the entity. The OnLoad() method expects
+    that all other entities in the level have already been loaded, so this
+    must be done after loading in a separate pass.
+
+    FIXME: This method does 1 + numEnities complete queries on the database!!
+*/
+nArray<Entity*>
+FactoryManager::CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, const nArray<Ptr<Game::Entity> >& filteredEntitys, Entity::EntityPool entityPool, bool failOnDBError) const
+{
+    nArray<Entity*> entities;
+
+    // get the entity attributes from the world database
+    Ptr<Db::Query> dbQuery = Db::Server::Instance()->CreateQuery();
+    dbQuery->SetTableName("_Entities");
+    dbQuery->AddWhereAttr(Db::Attribute(Attr::_Type, nString("INSTANCE")));
+    
+    // add attributes as where clause
+    int i;
+    for (i = 0; i < keys.Size(); i++)
+    {
+        dbQuery->AddWhereAttr(keys[i]);
+    }
+    // add filter entitys where not clause
+    for (i = 0; i < filteredEntitys.Size(); i++)
+    {
+        dbQuery->AddWhereAttr(filteredEntitys[i]->GetAttr(Attr::GUID), true); // NOT
+    }
+
+    // define results
+    dbQuery->AddResultAttr(Attr::_Category);
+    dbQuery->AddResultAttr(Attr::GUID);
+    dbQuery->BuildSelectStatement();
+    
+    if (dbQuery->Execute(failOnDBError))
+    {
+        if (dbQuery->GetNumRows() > 0)
+        {
+            for (i = 0; i < dbQuery->GetNumRows(); i++)
+            {
+                // get the category (blueprint) from the query result
+                nString categoryName = dbQuery->GetString(Attr::_Category, i);
+                nString guid = dbQuery->GetString(Attr::GUID, i);
+                
+                // create entity by category, this will attach properties and
+                // initialize attributes to their initial state
+                Entity* newEntity = this->CreateEntityByCategory(categoryName, entityPool);
+
+                // now overwrite the guid attribute so the entity knows where to initialize from
+                newEntity->SetString(Attr::GUID, guid);
+
+                // finally, let the entity load its attributes from the database
+                newEntity->LoadAttributesFromDatabase();
+
+                // that's it, the entity is complete
+                entities.Append(newEntity);
+            }
+        }
+    }
+    return entities;
+}
+
+//------------------------------------------------------------------------------
+/**
     Creates a new entity from the world database using a GUID as key.
     Simply calls CreateEntityByKeyAttr().
 */
@@ -271,6 +414,38 @@ Entity*
 FactoryManager::CreateEntityByGuid(const nString& guid, Entity::EntityPool entityPool) const
 {
     return this->CreateEntityByKeyAttr(Db::Attribute(Attr::GUID, guid), entityPool);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Create an entity from a row in a database reader object. This is the
+    fastest way to load many entities because only one database access must
+    be done for all entities. This is the way how levels and savegames are loaded.
+*/
+Entity*
+FactoryManager::CreateEntityByDbReader(Db::Reader* dbReader, int rowIndex, Entity::EntityPool entityPool) const
+{
+    n_assert(0 != dbReader);
+
+    // position the "read cursor"
+    dbReader->SetToRow(rowIndex);
+
+    // get the category (blueprint) and GUID
+    nString categoryName = dbReader->GetString(Attr::_Category);
+    nString guid = dbReader->GetString(Attr::GUID);
+    
+    // create entity by category, this will attach properties and
+    // initialize attributes to their initial state
+    Entity* newEntity = this->CreateEntityByCategory(categoryName, entityPool);
+
+    // now overwrite the guid attribute so the entity knows where to initialize from
+    newEntity->SetString(Attr::GUID, guid);
+
+    // finally, let the entity load its attributes from the database
+    newEntity->LoadAttributesFromDbReader(dbReader);
+
+    // that's it, the entity is complete
+    return newEntity;
 }
 
 //------------------------------------------------------------------------------
@@ -378,4 +553,13 @@ FactoryManager::AddProperties(Entity* entity, const nString& categoryName) const
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+    This Methode creates a Message Dispatcher for a Game Entity
+*/
+Message::Dispatcher*
+FactoryManager::CreateDispatcher() const
+{
+    return Message::Dispatcher::Create();
+}
 } // namespace Managers

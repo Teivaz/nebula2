@@ -56,10 +56,20 @@ CmdLineArgs::Error(const nString& argName) const
 
 //------------------------------------------------------------------------------
 /**
+    Returns the original command line.
+*/
+const nString&
+CmdLineArgs::GetCmdLine() const
+{
+    return this->cmdLine;
+}
+
+//------------------------------------------------------------------------------
+/**
     Returns the command name.
 */
 const nString&
-CmdLineArgs::GetCommandName() const
+CmdLineArgs::GetCmdName() const
 {
     return this->cmdName;
 }

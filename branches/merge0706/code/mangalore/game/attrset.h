@@ -18,11 +18,10 @@ class Entity;
 class AttrSet : public Foundation::RefCounted
 {
     DeclareRtti;
-
+    DeclareFactory(AttrSet);
 public:
     /// Add attributes to entity.
-    virtual void SetupEntity(Entity* entity) = 0;
-
+    virtual void SetupEntity(Entity* entity);
 };
 
 } // namespace Game

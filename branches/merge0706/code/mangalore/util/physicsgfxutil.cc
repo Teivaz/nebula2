@@ -209,6 +209,7 @@ PhysicsGfxUtil::SetupCompositeGraphics(const nString& resourceName,
         // setup for simple graphics without physics
         n_assert(graphicsEntities.Size() == 1);
         graphicsEntities[0]->SetResourceName(resourceName);
+        graphicsEntities[0]->SetTransform(composite->GetTransform());
         graphicsLevel->AttachEntity(graphicsEntities[0]);
         return false;
     }
@@ -275,6 +276,12 @@ PhysicsGfxUtil::TransferCompositeTransforms(Physics::Composite* composite, const
     }
     else
     {
+        const matrix44& transform = composite->GetTransform();
+        int i;
+        for (i = 0; i < graphicsEntities.Size(); i++)
+        {
+            graphicsEntities[i]->SetTransform(transform);
+        }
         return false;
     }
 }

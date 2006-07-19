@@ -39,6 +39,11 @@
 #include "util/nstream.h"
 #include "game/property.h"
 
+namespace Message
+{
+    class Port;
+}
+
 namespace Managers
 {
     class FactoryManager;
@@ -79,10 +84,14 @@ public:
     void SendSync(Message::Msg* msg);
     /// send an asynchronous message to the entity
     void SendAsync(Message::Msg* msg);
-    /// this method loads the entity attributes from the database, the entity must have a valid GUID attribute for this!
+    /// SLOW!!! load entity attributes from db, entity needs valid GUID attr
     void LoadAttributesFromDatabase();
-    /// this method saves the entity attributes to the database, the entity must have a valid GUID attribute for this!
+    /// SLOW!!! save entity attributes back to db, entity needs valid GUID attr
     void SaveAttributesToDatabase();
+    /// FAST FOR MANY ENTITIES!!! load entity attributes from a db reader, entity needs valid GUID attr
+    void LoadAttributesFromDbReader(Db::Reader* dbReader);
+    /// FAST FOR MANY ENTITIES!!! save entity attributes from a db reader, entity needs valid GUID attr
+    void SaveAttributesToDbWriter(Db::Writer* dbWriter);
 
     //=== callbacks ===
 
@@ -98,10 +107,20 @@ public:
     virtual void OnMoveAfter();
     /// called before rendering
     virtual void OnRender();
+    /// debug rendering called before rendering 
+    virtual void OnRenderDebug();
     /// called after loading from database has happened
     virtual void OnLoad();
+    /// called when the entity starts to live in the complete world
+    virtual void OnStart();
     /// called before saving from database happens
     virtual void OnSave();
+
+    //=== access to the embedded dispatcher (to be able to listen to msgs a entitys gets) ===
+    /// attach to the embedded dispatcher message port
+    void AttachPort(Message::Port* port);
+    /// remove from the embedded dispatcher message port
+    void RemovePort(Message::Port* port);
 
     //=== properties ===
 
@@ -159,10 +178,10 @@ public:
     /// does this contain attribute set `attrSet'?
     bool HasAttributeSet(const AttrSet* attrSet) const;
 
-    /// the entity was created from template, forces the save of all attributes once.
-    void SetCreatedFromTemplate(bool createdFromTemplate);
-    /// the entity was created from template, forces the save of all attributes once.
-    bool GetCreatedFromTemplate() const;
+    /// set Msg Dispatcher
+    void SetDispatcher(Message::Dispatcher* disp);
+    // get Msg Dispatcher
+    Message::Dispatcher* GetDispatcher() const;
 
 protected:
     /// setup the entity properties, called from OnActivate()
@@ -188,12 +207,33 @@ private:
     EntityPool entityPool;
 
     static EntityId uniqueIdCounter;
-
-    /// the entity was created from template, forces the save of all attributes
-    bool createdFromTemplate;
+    
+    bool activated;
+    bool isInOnActivate;
+    bool isInOnDeactivate;
 };
 
 RegisterFactory(Entity);
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Entity::SetDispatcher(Message::Dispatcher* disp)
+{
+    this->dispatcher = disp;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+Message::Dispatcher*
+Entity::GetDispatcher() const
+{
+    return this->dispatcher;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -426,26 +466,6 @@ Entity::EntityPool
 Entity::GetEntityPool() const
 {
     return this->entityPool;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-Entity::SetCreatedFromTemplate(bool created)
-{
-    this->createdFromTemplate = created;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-Entity::GetCreatedFromTemplate() const
-{
-    return this->createdFromTemplate;
 }
 
 } // namespace Game

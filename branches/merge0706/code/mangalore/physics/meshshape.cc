@@ -71,13 +71,13 @@ MeshShape::Attach(dSpaceID spaceId)
 
         // load the vertices and indices
         bool loadResult = false;
-        if (this->filename.CheckExtension("nvx2"))
-        {
-            loadResult = this->LoadNvx2();
-        }
-        else if (this->filename.CheckExtension("n3d2"))
+        if (this->filename.CheckExtension("n3d2"))
         {
             loadResult = this->LoadN3d2();
+        }
+        else if (this->filename.CheckExtension("nvx2"))
+        {
+            loadResult = this->LoadNvx2();
         }
         else
         {

@@ -9,6 +9,7 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
+#include "graphics/entity.h"
 
 //------------------------------------------------------------------------------
 namespace Message
@@ -20,6 +21,9 @@ class GfxAddAttachment : public Message::Msg
     DeclareMsgId;
 
 public:
+    /// constructor
+    GfxAddAttachment();
+
     /// set joint name
     void SetJointName(const nString& n);
     /// get joint name
@@ -28,6 +32,10 @@ public:
     void SetResourceName(const nString& n);
     /// get graphics resource name
     const nString& GetResourceName() const;
+    /// set as alternative the graphics entity
+    void SetGraphicsEntity(Graphics::Entity* gfxEntity);
+    /// get the alternative graphics entity
+    Graphics::Entity* GetGraphicsEntity();
     /// set optional offset matrix
     void SetOffsetMatrix(const matrix44& m);
     /// get offset matrix
@@ -36,6 +44,7 @@ public:
 private:
     nString jointName;
     nString resName;
+    Graphics::Entity* gfxEntity;
     matrix44 offsetMatrix;
 };
 
@@ -79,6 +88,26 @@ const nString&
 GfxAddAttachment::GetResourceName() const
 {
     return this->resName;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+GfxAddAttachment::SetGraphicsEntity(Graphics::Entity* gfxEntity)
+{
+    this->gfxEntity = gfxEntity;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+Graphics::Entity*
+GfxAddAttachment::GetGraphicsEntity()
+{
+    return this->gfxEntity;
 }
 
 //------------------------------------------------------------------------------

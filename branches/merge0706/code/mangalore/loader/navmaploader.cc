@@ -13,9 +13,6 @@
 namespace Loader
 {
 
-ImplementRtti(Loader::NavMapLoader, Foundation::RefCounted);
-ImplementFactory(Loader::NavMapLoader);
-
 //------------------------------------------------------------------------------
 /**
 */

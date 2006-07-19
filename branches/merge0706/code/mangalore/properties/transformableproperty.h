@@ -9,6 +9,7 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"
+#include "attr/attributes.h"
 
 //------------------------------------------------------------------------------
 namespace Properties

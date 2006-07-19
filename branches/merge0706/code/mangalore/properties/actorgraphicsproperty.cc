@@ -3,12 +3,13 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "properties/actorgraphicsproperty.h"
-#include "attr/attributes.h"
 #include "msg/gfxaddattachment.h"
 #include "msg/gfxremattachment.h"
 #include "msg/gfxsetanimation.h"
 #include "msg/gfxaddskin.h"
 #include "msg/gfxremskin.h"
+#include "msg/gfxsetcharacterset.h"
+#include "foundation/factory.h"
 #include "game/entity.h"
 #include "graphics/server.h"
 #include "graphics/level.h"
@@ -41,6 +42,8 @@ ActorGraphicsProperty::Accepts(Message::Msg* msg)
     if (msg->CheckId(Message::GfxSetAnimation::Id)) return true;
     if (msg->CheckId(Message::GfxAddSkin::Id)) return true;
     if (msg->CheckId(Message::GfxRemSkin::Id)) return true;
+    if (msg->CheckId(Message::GfxSetCharacterSet::Id)) return true;
+    if (msg->CheckId(Message::UpdateTransform::Id)) return true;
     return GraphicsProperty::Accepts(msg);
 }
 
@@ -57,7 +60,8 @@ ActorGraphicsProperty::HandleMessage(Message::Msg* msg)
         const nString& jointName = gfxAddAtt->GetJointName();
         const nString& rsrcName  = gfxAddAtt->GetResourceName();
         const matrix44& offset   = gfxAddAtt->GetOffsetMatrix();
-        this->AddAttachment(jointName, rsrcName, offset);
+        Graphics::Entity* gfxEntity = gfxAddAtt->GetGraphicsEntity();
+        this->AddAttachment(jointName, rsrcName, offset, gfxEntity);
     }
     else if (msg->CheckId(Message::GfxRemAttachment::Id))
     {
@@ -66,9 +70,8 @@ ActorGraphicsProperty::HandleMessage(Message::Msg* msg)
     }
     else if (msg->CheckId(Message::GfxSetAnimation::Id))
     {
-        Message::GfxSetAnimation* gfxSetAnim = (Message::GfxSetAnimation*) msg;
-        this->SetAnimation(gfxSetAnim->GetBaseAnimation(), gfxSetAnim->GetOverlayAnimation(), gfxSetAnim->GetBaseAnimTimeOffset());
-    }
+        this->SetAnimation((Message::GfxSetAnimation*) msg);
+    }    
     else if (msg->CheckId(Message::GfxAddSkin::Id))
     {
         Message::GfxAddSkin* gfxAddSkin = (Message::GfxAddSkin*) msg;
@@ -78,6 +81,16 @@ ActorGraphicsProperty::HandleMessage(Message::Msg* msg)
     {
         Message::GfxRemSkin* gfxRemSkin = (Message::GfxRemSkin*) msg;
         this->RemSkin(gfxRemSkin->GetSkinName());
+    }
+    else if (msg->CheckId(Message::GfxSetCharacterSet::Id))
+    {
+        Message::GfxSetCharacterSet* gfxSetCharacterSet = (Message::GfxSetCharacterSet*) msg;
+        this->SetCharacterSet(gfxSetCharacterSet->GetCharacterSet());
+    }
+    else if (msg->CheckId(Message::UpdateTransform::Id))
+    {
+        Message::UpdateTransform* updTransform = (Message::UpdateTransform*) msg;
+        this->graphicsEntities[0]->SetTransform(updTransform->GetMatrix());
     }
     else
     {
@@ -104,24 +117,23 @@ ActorGraphicsProperty::SetupDefaultAttributes()
 void
 ActorGraphicsProperty::SetupGraphicsEntities()
 {
-    n_assert(GetEntity()->HasAttr(Attr::Transform));
-
+    n_assert(this->GetEntity()->HasAttr(Attr::Transform));
+    
     // create and setup graphics property
 	Ptr<Graphics::CharEntity> ge = Graphics::CharEntity::Create();
-    ge->SetUserData(GetEntity()->GetUniqueId());
-    ge->SetResourceName(GetEntity()->GetString(Attr::Graphics));
-    ge->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
-    nString animSet = GetEntity()->GetString(Attr::AnimSet);
-    if (animSet.IsValid())
+    ge->SetResourceName(this->GetEntity()->GetString(Attr::Graphics));
+    ge->SetTransform(this->GetEntity()->GetMatrix44(Attr::Transform));
+    nString animMapping = this->GetEntity()->GetString(Attr::AnimSet);
+    if (animMapping.IsValid())
     {
-        ge->SetAnimationSet(animSet);
+        ge->SetAnimationMapping(animMapping);
     }
     else
     {
-        n_error("ActorGraphicsProperty::SetupGraphicsEntity(): entity '%s' has empty AnimSet attribute!",
-        GetEntity()->GetString(Attr::Id).Get());
+        n_error("ActorGraphicsProperty::SetupGraphicsEntity(): entity '%s' has empty AnimSet attribute!", 
+            this->GetEntity()->GetString(Attr::Id).Get());
     }
-
+    
     // attach graphics property to level
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
     n_assert(graphicsLevel);
@@ -134,7 +146,7 @@ ActorGraphicsProperty::SetupGraphicsEntities()
     if((numTokens == 3) && (tokens[0] == "characters") && (tokens[2] == "skeleton"))
     {
         pathToCharSet = pathToCharSet.ExtractDirName() + "skinlists/";
-        ge->SetCharacterSet(nString("gfxlib:")+pathToCharSet+GetEntity()->GetString(Attr::CharacterSet)+".xml");
+        ge->LoadCharacter3Set(nString("gfxlib:")+pathToCharSet+GetEntity()->GetString(Attr::CharacterSet)+".xml");
     };
 
     // set in parent class' graphics entity array
@@ -143,10 +155,9 @@ ActorGraphicsProperty::SetupGraphicsEntities()
 
 //------------------------------------------------------------------------------
 /**
-    Cleanup graphics entities
 */
 void
-ActorGraphicsProperty::CleanupGraphicsEntities()
+ActorGraphicsProperty::OnDeactivate()
 {
     // clear our attachments
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
@@ -155,16 +166,14 @@ ActorGraphicsProperty::CleanupGraphicsEntities()
     int num = this->attachments.Size();
     for (i = 0; i < num; i++)
     {
-        graphicsLevel->RemoveEntity(this->attachments[i].graphicsEntity);
+        if (this->attachments[i].newCreated)
+        {
+            graphicsLevel->RemoveEntity(this->attachments[i].graphicsEntity);
+        }
     }
     this->attachments.Clear();
-    Graphics::Entity* gfxEntity = this->graphicsEntities[0];
-    if (gfxEntity->GetCell())
-    {
-        graphicsLevel->RemoveEntity(gfxEntity);
-    }
-    this->graphicsEntities[0] = 0;
-    this->graphicsEntities.Clear();
+    
+    GraphicsProperty::OnDeactivate();
 }
 
 //------------------------------------------------------------------------------
@@ -172,16 +181,24 @@ ActorGraphicsProperty::CleanupGraphicsEntities()
     Set base and/or overlay animation.
 */
 void
-ActorGraphicsProperty::SetAnimation(const nString& baseAnim, const nString& overlayAnim, float baseAnimTimeOffset)
+ActorGraphicsProperty::SetAnimation(Message::GfxSetAnimation* msg)
 {
+    n_assert(0 != msg);
     Graphics::CharEntity* gfxEntity = this->GetGraphicsEntity();
-    if (baseAnim.IsValid())
+    if (msg->GetBaseAnimation().IsValid())
     {
-        gfxEntity->SetBaseAnimation(baseAnim, baseAnimTimeOffset);
+        if (msg->GetBaseAnimation() != gfxEntity->GetBaseAnimation())
+        {
+            gfxEntity->SetBaseAnimation(msg->GetBaseAnimation(), msg->GetFadeInTime(), msg->GetBaseAnimTimeOffset());
+        }
     }
-    if (overlayAnim.IsValid())
+    if (msg->GetOverlayAnimStop())
     {
-        gfxEntity->SetOverlayAnimation(overlayAnim);
+        gfxEntity->StopOverlayAnimation(msg->GetFadeInTime());
+    }
+    if (msg->GetOverlayAnimation().IsValid())
+    {
+        gfxEntity->SetOverlayAnimation(msg->GetOverlayAnimation(), msg->GetFadeInTime(), msg->GetOverlayAnimDurationOverride());
     }
 }
 
@@ -232,9 +249,9 @@ ActorGraphicsProperty::FindAttachment(const nString& jointName)
     to a character joint.
 */
 void
-ActorGraphicsProperty::AddAttachment(const nString& jointName, const nString& gfxResName, const matrix44& offsetMatrix)
+ActorGraphicsProperty::AddAttachment(const nString& jointName, const nString& gfxResName, const matrix44& offsetMatrix, Graphics::Entity* gfxEntity)
 {
-    n_assert(jointName.IsValid() && gfxResName.IsValid());
+    n_assert(jointName.IsValid() && (gfxResName.IsValid() || gfxEntity));
 
     // first check if previous attachment is identical to the current,
     // do nothing in this case
@@ -257,22 +274,34 @@ ActorGraphicsProperty::AddAttachment(const nString& jointName, const nString& gf
     int jointIndex = charEntity->GetJointIndexByName(jointName);
     if (-1 != jointIndex)
     {
-        // joint index is valid, create a new graphics entity
-		Ptr<Graphics::Entity> ge = Graphics::Entity::Create();
-        ge->SetUserData(GetEntity()->GetUniqueId());
-        ge->SetResourceName(gfxResName);
-        ge->SetVisible(false);
+        bool newCreated;
+        Ptr<Graphics::Entity> ge;
+        // if no gfxEntity is offered create a new one by resource name
+        if (!gfxEntity)
+        {
+            // joint index is valid, create a new graphics entity
+		    ge = Graphics::Entity::Create();
+            ge->SetResourceName(gfxResName);
+            ge->SetVisible(false);
+            newCreated = true;
 
-        // attach to graphics level
-        Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
-        n_assert(graphicsLevel);
-        graphicsLevel->AttachEntity(ge);
+            // attach to graphics level
+            Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
+            n_assert(graphicsLevel);
+            graphicsLevel->AttachEntity(ge);
+        }
+        else
+        {
+            ge = gfxEntity;
+            newCreated = false;
+        }
 
         // create a new attachment structure
         Attachment newAttachment;
         newAttachment.jointIndex = jointIndex;
         newAttachment.offsetMatrix = offsetMatrix;
         newAttachment.graphicsEntity = ge;
+        newAttachment.newCreated = newCreated;
         this->attachments.Append(newAttachment);
     }
 }
@@ -290,7 +319,10 @@ ActorGraphicsProperty::RemAttachment(const nString& jointName)
     int index;
     while ((index = this->FindAttachment(jointName)) != -1)
     {
-        graphicsLevel->RemoveEntity(this->attachments[index].graphicsEntity);
+        if (this->attachments[index].newCreated)
+        {
+            graphicsLevel->RemoveEntity(this->attachments[index].graphicsEntity);
+        }
         this->attachments.Erase(index);
     }
 }
@@ -305,7 +337,7 @@ ActorGraphicsProperty::UpdateAttachments()
     if (this->attachments.Size() > 0)
     {
         Graphics::CharEntity* charEntity = this->GetGraphicsEntity();
-        if (charEntity->IsNebulaCharacterInValidState())
+        if (0 != charEntity)
         {
             // update Nebula character skeleton
             charEntity->EvaluateSkeleton();
@@ -356,9 +388,9 @@ ActorGraphicsProperty::AddSkin(const nString& skinName)
     n_assert(skinName.IsValid());
     if (this->GetGraphicsEntity()->HasCharacter3Set())
     {
-        nCharacter3Set* char3Set = this->GetGraphicsEntity()->GetCharacter3Set();
-        n_assert(char3Set);
-        char3Set->SetSkinVisible(skinName, true);
+        nCharacter3Set* character3Set = (nCharacter3Set*) this->GetGraphicsEntity()->GetCharacterSet();
+        n_assert(character3Set);
+        character3Set->SetSkinVisible(skinName, true);
     }
 }
 
@@ -372,10 +404,53 @@ ActorGraphicsProperty::RemSkin(const nString& skinName)
     n_assert(skinName.IsValid());
     if (this->GetGraphicsEntity()->HasCharacter3Set())
     {
-        nCharacter3Set* char3Set = this->GetGraphicsEntity()->GetCharacter3Set();
-        n_assert(char3Set);
-        char3Set->SetSkinVisible(skinName, false);
+        nCharacter3Set* character3Set = (nCharacter3Set*) this->GetGraphicsEntity()->GetCharacterSet();
+        n_assert(character3Set);
+        character3Set->SetSkinVisible(skinName, false);
     }
 }
 
-} // namespace Properties
+//------------------------------------------------------------------------------
+/**
+    Sets the character set of the graphics entity.
+*/
+void
+ActorGraphicsProperty::SetCharacterSet(const nString& characterSetName)
+{
+    n_assert(characterSetName.IsValid());
+
+    Graphics::CharEntity* charEntity = this->GetGraphicsEntity();
+    n_assert(charEntity);
+
+    // ignore message if not Character3 character
+    if (!charEntity->HasCharacter3Set())
+    {
+        return;
+    }
+
+    // TODO: remove loaded skins/stop running animations?
+
+    // build filename of character set
+    // TODO : setting to character3mode dirty, only if graphic path matches a character3
+    nArray<nString> tokens;
+    nString pathToCharSet = this->GetEntity()->GetString(Attr::Graphics);
+    int numTokens = pathToCharSet.Tokenize("/", tokens);
+    if ((numTokens == 3) && (tokens[0] == "characters") && (tokens[2] == "skeleton"))
+    {
+        pathToCharSet = pathToCharSet.ExtractDirName() + "skinlists/";
+        
+        nString filename;
+        filename.Format("gfxlib:%s%s.xml", 
+            pathToCharSet.Get(), 
+            characterSetName.Get());
+
+        charEntity->LoadCharacter3Set(filename);
+    }
+    else
+    {
+        // invalid path to character set, I'm not sure if this is allowed to happen!?
+        n_error("invalid path to character set: %s", pathToCharSet.Get());
+    }
+}
+
+}; // namespace Properties

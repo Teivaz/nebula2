@@ -111,11 +111,6 @@ FocusManager::SetToNextEntity(bool cameraFocus, bool inputFocus)
             iter = entityArray.Begin();
         }
         Entity* entity = *iter;
-        //TODO that's HACK for DSA that Camera will not switch to NPC view
-        if (entity->FindProperty(CameraProperty::RTTI)
-            && entity->FindProperty(CameraProperty::RTTI)->IsInstanceOf(CameraProperty::RTTI))
-            continue;
-
         bool hasCameraProperty = (0 != entity->FindProperty(CameraProperty::RTTI));
         bool hasInputProperty  = (0 != entity->FindProperty(InputProperty::RTTI));
         if (cameraFocus && inputFocus && hasCameraProperty && hasInputProperty)
@@ -207,11 +202,14 @@ FocusManager::SetInputFocusEntity(Entity* entity)
     int num = entityManager->GetNumEntities();
     for (i = 0; i < num; i++)
     {
-        Entity* entity = entityManager->GetEntityAt(i);
-        InputProperty* inputProperty = (InputProperty*) entity->FindProperty(InputProperty::RTTI);
-        if (inputProperty && inputProperty->HasFocus())
+        Entity* currEntity = entityManager->GetEntityAt(i);
+        if (currEntity)
         {
-            inputProperty->OnLoseFocus();
+            InputProperty* inputProperty = (InputProperty*) currEntity->FindProperty(InputProperty::RTTI);
+            if (inputProperty && inputProperty->HasFocus())
+            {
+                inputProperty->OnLoseFocus();
+            }
         }
     }
     this->inputFocusEntity = 0;
@@ -256,11 +254,14 @@ FocusManager::SetCameraFocusEntity(Entity* entity)
     int num = entityManager->GetNumEntities();
     for (i = 0; i < num; i++)
     {
-        Entity* entity = entityManager->GetEntityAt(i);
-        CameraProperty* cameraProperty = (CameraProperty*) entity->FindProperty(CameraProperty::RTTI);
-        if (cameraProperty && cameraProperty->HasFocus())
+        Entity* currEntity = entityManager->GetEntityAt(i);
+        if (currEntity)
         {
-            cameraProperty->OnLoseFocus();
+            CameraProperty* cameraProperty = (CameraProperty*) currEntity->FindProperty(CameraProperty::RTTI);
+            if (cameraProperty && cameraProperty->HasFocus())
+            {
+                cameraProperty->OnLoseFocus();
+            }
         }
     }
     this->cameraFocusEntity = 0;

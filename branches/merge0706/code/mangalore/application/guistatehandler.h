@@ -8,12 +8,12 @@
 */
 #include "application/statehandler.h"
 #include "ui/event.h"
+#include "ui/window.h"
+#include "application/guieventhandler.h"
 
 //------------------------------------------------------------------------------
 namespace Application
 {
-class GuiEventHandler;
-
 class GuiStateHandler : public StateHandler
 {
     DeclareRtti;
@@ -39,6 +39,7 @@ public:
 
 private:
     nString resName;
+    Ptr<UI::Window> window;
     Ptr<GuiEventHandler> eventHandler;
 };
 

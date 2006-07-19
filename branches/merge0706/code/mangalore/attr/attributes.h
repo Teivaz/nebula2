@@ -24,8 +24,10 @@ namespace Attr
     DeclareString(_Type);
     DeclareString(_Category);
     DeclareString(_Level);
+    DeclareString(_Layers);
     DeclareString(_ID);
     DeclareBool(StartLevel);
+    DeclareBool(RandomEncounterLevel);
     DeclareString(GUID);
     DeclareVector3(Center);
     DeclareVector3(Extents);
@@ -33,6 +35,7 @@ namespace Attr
     DeclareString(Id);
     DeclareString(Name);
     DeclareString(Placeholder);
+    DeclareBool(Rot180);
     DeclareMatrix44(Transform);
     DeclareInt(AnimIndex);
     DeclareString(Physics);
@@ -60,9 +63,10 @@ namespace Attr
     // (simple) graphics property
     DeclareString(Graphics);    // name of the graphics resource
 
-    // actor graphics property
+    // actor graphics and sound property
     DeclareString(AnimSet);     // name of the animation set
     DeclareString(CharacterSet);// name of the character 3 charset
+    DeclareString(SoundSet);     // name of the sound set
 
 } // namespace Attr
 //------------------------------------------------------------------------------

@@ -31,14 +31,16 @@ public:
 
     /// get the entity under the mouse cursor
     virtual Game::Entity* GetEntityUnderMouse() const;
-    /// get the entities under the mouse drag drop rectangle area
-    virtual void GetEntitiesUnderMouseDragDropRect(const rectangle& dragDropRect, nArray<Ptr<Game::Entity> >& entities);
     /// get the mouse position in the 3d world
     virtual const vector3& GetMousePos3d() const;
     /// get the upVector of the face under the mouse cursor
     virtual const vector3& GetUpVector() const;
     /// return true if mouse is over "something"
     virtual bool HasMouseIntersection() const;
+    /// get all entities in a given spherical area
+    virtual nArray<Ptr<Game::Entity> > GetEntitiesInSphere(const vector3& midPoint, float radius);
+    /// get all entities in a given box shaped area
+    virtual nArray<Ptr<Game::Entity> > GetEntitiesInBox(const vector3& scale, const matrix44& m); 
     /// called per-frame by game server
     virtual void OnFrame();
 
@@ -63,45 +65,6 @@ EnvQueryManager::Instance()
 {
     n_assert(0 != Singleton);
     return Singleton;
-}
-
-//------------------------------------------------------------------------------
-/**
-    This returns the position where a vector through the mouse position
-    intersects the 3d world (or the nearest entity). If the mouse doesn't
-    intersect, the result will be undefined, and the method
-    HasMouseIntersection() returns false.
-*/
-inline
-const vector3&
-EnvQueryManager::GetMousePos3d() const
-{
-    return this->mousePos3d;
-}
-
-//------------------------------------------------------------------------------
-/**
-    This returns the upvector of the face under the mousecursor.
-    If the mouse doesn't intersect, the result will be undefined,
-    and the method HasMouseIntersection() returns false.
-*/
-inline
-const vector3&
-EnvQueryManager::GetUpVector() const
-{
-    return this->upVector;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Returns true if the vector through the current mouse position intersects
-    the world, or an entity, false if no intersection exists.
-*/
-inline
-bool
-EnvQueryManager::HasMouseIntersection() const
-{
-    return this->mouseIntersection;
 }
 
 } // namespace Managers

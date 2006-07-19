@@ -3,6 +3,7 @@
 //  (C) 2006 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "properties/abstractgraphicsproperty.h"
+#include "attr/attributes.h"
 #include "game/entity.h"
 
 namespace Properties
@@ -24,6 +25,17 @@ AbstractGraphicsProperty::AbstractGraphicsProperty()
 AbstractGraphicsProperty::~AbstractGraphicsProperty()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**    
+    Get the default graphics resource, which is Attr::Graphics.
+    subclasses may override this to provide a self managed resource.
+*/
+nString
+AbstractGraphicsProperty::GetGraphicsResource()
+{
+    return GetEntity()->GetString(Attr::Graphics);
 }
 
 //------------------------------------------------------------------------------

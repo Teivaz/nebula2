@@ -44,8 +44,6 @@ private:
     virtual void OnFrame();
     /// setup the gui system
     virtual void SetupGui();
-    /// setup the cegui system
-    virtual void SetupCeGui();
     /// setup application state handlers
     virtual void SetupStateHandlers();
 #ifdef __WIN32__

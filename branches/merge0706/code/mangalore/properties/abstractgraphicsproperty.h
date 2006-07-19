@@ -29,6 +29,8 @@ public:
     /// not active for sleeping entities
     virtual int GetActiveEntityPools() const;
 
+    /// override to provide a self managed graphics resource (default is Attr::Graphics)
+    virtual nString GetGraphicsResource();
 };
 
 RegisterFactory(AbstractGraphicsProperty);

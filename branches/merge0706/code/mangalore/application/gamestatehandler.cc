@@ -31,9 +31,12 @@ GameStateHandler::GameStateHandler() :
     setupMode(EmptyWorld),
     exitState("Exit"),
     physicsVisualizationEnabled(false),
-    fovVisualization(false)
+    fovVisualization(false),
+    gameEntityVisualizationEnabled(false)
 {
-    // empty
+    PROFILER_INIT(this->profCompleteFrame, "profMangaCompleteFrame");
+    PROFILER_INIT(this->profParticleUpdates, "profMangaParticleUpdates");
+    PROFILER_INIT(this->profRender, "profMangaRender");
 }
 
 //------------------------------------------------------------------------------
@@ -50,9 +53,11 @@ GameStateHandler::~GameStateHandler()
 void
 GameStateHandler::OnStateEnter(const nString& prevState)
 {
+    TimeManager::Instance()->ResetAll();
+    TimeManager::Instance()->Update();
+
     this->physicsVisualizationEnabled = false;
     this->graphicsVisualizationEnabled = false;
-    this->UpdateSubsystemTimes();
 
     SetupManager* setupManager = SetupManager::Instance();
     SaveGameManager* saveGameManager = SaveGameManager::Instance();
@@ -64,7 +69,6 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     else if (NewGame == this->setupMode)
     {
         // use override start level, or the startup level from the world database?
-        saveGameManager->SetWorldDbOverride(this->GetDbName());
         saveGameManager->SetStartLevelOverride(this->GetLevelName());
         saveGameManager->NewGame();
     }
@@ -74,16 +78,23 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     }
     else if (LoadLevel == this->setupMode)
     {
-        setupManager->SetCurrentLevel(this->GetLevelName());
+        // show progress bar UI
+        Loader::Server* loaderServer = Loader::Server::Instance();
+        loaderServer->OpenProgressIndicator();
 
-        // notify application state handler
+        loaderServer->SetProgressText("On Load Before...");
+        loaderServer->UpdateProgressDisplay();
+        setupManager->SetCurrentLevel(this->GetLevelName());
         this->OnLoadBefore();
 
-        // setup world from current game
+        loaderServer->SetProgressText("Setup World...");
+        loaderServer->UpdateProgressDisplay();
         setupManager->SetupWorldFromCurrentLevel();
 
-        // notify application state handler
+        loaderServer->SetProgressText("On Load After...");
+        loaderServer->UpdateProgressDisplay();
         this->OnLoadAfter();
+        loaderServer->CloseProgressIndicator();
     }
     else if (LoadSaveGame == this->setupMode)
     {
@@ -91,7 +102,6 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     }
 
     // clear the startup level and save game name
-    this->SetDbName("");
     this->SetLevelName("");
     this->SetSaveGame("");
 
@@ -110,41 +120,16 @@ GameStateHandler::OnStateLeave(const nString& nextState)
 
 //------------------------------------------------------------------------------
 /**
-    This updates the timing information for all Mangalore subsystems.
-*/
-void
-GameStateHandler::UpdateSubsystemTimes()
-{
-    nTime time = App::Instance()->GetTime();
-    nTime frameTime = App::Instance()->GetFrameTime();
-    Input::Server::Instance()->SetTime(time);
-    Physics::Server::Instance()->SetTime(time);
-    VFX::Server::Instance()->SetTime(time);
-    Audio::Server::Instance()->SetTime(time);
-    Graphics::Server::Instance()->SetTime(time);
-    Graphics::Server::Instance()->SetFrameTime(frameTime);
-    UI::Server::Instance()->SetTime(time);
-    UI::Server::Instance()->SetFrameTime(frameTime);
-#ifdef MANGALORE_USE_CEGUI
-    CEUI::Server::Instance()->SetTime(time);
-    CEUI::Server::Instance()->SetFrameTime(frameTime);
-#endif
-    nGuiServer::Instance()->SetTime(time);
-    TimeManager::Instance()->SetTime(time);
-    TimeManager::Instance()->SetFrameTime(frameTime);
-}
-
-//------------------------------------------------------------------------------
-/**
     The per-frame handler method.
 */
 nString
 GameStateHandler::OnFrame()
 {
+    PROFILER_START(this->profCompleteFrame);
     bool running = true;
 
-    // distribute timestamps to interested subsystems
-    this->UpdateSubsystemTimes();
+    // let the time manager update its time
+    TimeManager::Instance()->Update();
 
     // toggle visualizations
     if (nInputServer::Instance()->GetButton("togglePhysicsVisualization"))
@@ -159,6 +144,10 @@ GameStateHandler::OnFrame()
     {
         this->fovVisualization = !this->fovVisualization;
     }
+    if (nInputServer::Instance()->GetButton("toggleGameEntityVisualization"))
+    {
+        this->gameEntityVisualizationEnabled = !this->gameEntityVisualizationEnabled;
+    }
 
     // trigger subsystem and Nebula servers
     nVideoServer::Instance()->Trigger();
@@ -167,20 +156,23 @@ GameStateHandler::OnFrame()
 
     // trigger the audio and game subsystems
     Audio::Server::Instance()->BeginScene();
+    Navigation::Server::Instance()->OnBeginFrame();
     Game::Server::Instance()->OnFrame();
+    Navigation::Server::Instance()->OnEndFrame();
     Audio::Server::Instance()->EndScene();
     VFX::Server::Instance()->BeginScene();
+
+    PROFILER_START(this->profParticleUpdates);
     nParticleServer::Instance()->Trigger();
     nParticleServer2::Instance()->Trigger();
-    running &= Graphics::Server::Instance()->Trigger();
+    PROFILER_STOP(this->profParticleUpdates);
 
+    PROFILER_START(this->profRender);
+    running &= Graphics::Server::Instance()->Trigger();    
     if (Graphics::Server::Instance()->BeginRender())
     {
         UI::Server::Instance()->Render();
         Graphics::Server::Instance()->Render();
-#ifdef MANGALORE_USE_CEGUI
-        CEUI::Server::Instance()->Render();
-#endif
         if (this->graphicsVisualizationEnabled)
         {
             Graphics::Server::Instance()->RenderDebug();
@@ -193,13 +185,19 @@ GameStateHandler::OnFrame()
         {
             Navigation::Server::Instance()->RenderDebug();
         }
+        if (this->gameEntityVisualizationEnabled)
+        {
+            Game::Server::Instance()->RenderDebug();
+        }
         Graphics::Server::Instance()->EndRender();
     }
+    PROFILER_STOP(this->profRender);
     VFX::Server::Instance()->EndScene();
 
     // trigger kernel server
     nKernelServer::Instance()->Trigger();
 
+    PROFILER_STOP(this->profCompleteFrame);
     if (!running)
     {
         return this->exitState;

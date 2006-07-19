@@ -53,8 +53,19 @@ private:
     /// broadcast an asynchronous message to all registered message ports, use Msg::BroadcastAsync()!
     void BroadcastAsync(Msg* msg);
 
+    /// cleanup empty msg ports when not in broadcasting trigger
+    void CleanupEmptyPorts();
+
+    /// begin broadcasting
+    void BeginBroadcast();
+    /// is in broadcasting trigger
+    bool IsInBroadcast() const;
+    /// end handle message
+    void EndBroadcast();
+
     bool isOpen;
     nArray<Ptr<Port> > portArray;
+    int broadcastLockCount; ///< in the handle message trigger
 };
 
 RegisterFactory(Server);

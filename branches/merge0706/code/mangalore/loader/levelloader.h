@@ -8,23 +8,18 @@
 
     (C) 2006 RadonLabs GmbH
 */
-#include "foundation/refcounted.h"
+#include "kernel/ntypes.h"
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
 {
-
-class LevelLoader : public Foundation::RefCounted
+class LevelLoader
 {
-    DeclareRtti;
-    DeclareFactory(LevelLoader);
-
 public:
     /// load a complete level from the world database
     static bool Load(const nString& levelName);
 };
-
-RegisterFactory(LevelLoader);
 
 } // namespace Loader
 //------------------------------------------------------------------------------

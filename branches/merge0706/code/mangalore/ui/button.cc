@@ -40,7 +40,6 @@ Button::OnCreate(Element* parent)
     Control::OnCreate(parent);
 
     // parse attributes
-    this->SetText(this->gfxNode->GetStringAttr("rlGuiText"));
     this->SetEventName(this->gfxNode->GetStringAttr("rlGuiEvent"));
 
     // lookup visuals (NOTE: visuals are optionals)
@@ -55,10 +54,10 @@ Button::OnCreate(Element* parent)
     Called on mouse move. This sets the mouse over state of the button,
     and may cancel the pressed state if the mouse moves outside of the button.
 */
-void
+bool
 Button::OnMouseMove(const vector2& mousePos)
 {
-    if (this->IsEnabled() && this->Inside(mousePos))
+    if (this->IsVisible() && this->IsEnabled() && this->Inside(mousePos))
     {
         this->mouseOver = true;
     }
@@ -66,7 +65,7 @@ Button::OnMouseMove(const vector2& mousePos)
     {
         this->mouseOver = false;
     }
-    Control::OnMouseMove(mousePos);
+    return Control::OnMouseMove(mousePos);
 }
 
 //------------------------------------------------------------------------------
@@ -74,44 +73,55 @@ Button::OnMouseMove(const vector2& mousePos)
     Called on left mouse button down. This sets the pressed state of the
     button.
 */
-void
+bool
 Button::OnLeftButtonDown(const vector2& mousePos)
 {
-    if (this->IsEnabled() && this->Inside(mousePos))
+    if (this->IsVisible() && this->IsEnabled())
     {
-        this->pressed = true;
+        // just update the pressed state, this does not handle the event
+        if (this->Inside(mousePos))
+        {
+            this->pressed = true;            
+        }
+        else
+        {
+            this->pressed = false;
+        }
     }
-    else
-    {
-        this->pressed = false;
-    }
-    Control::OnLeftButtonDown(mousePos);
+    return Control::OnLeftButtonDown(mousePos);
 }
 
 //------------------------------------------------------------------------------
 /**
     Called on left mouse button up. This sends the button event.
 */
-void
+bool
 Button::OnLeftButtonUp(const vector2& mousePos)
 {
-    if (this->IsEnabled() && this->Inside(mousePos) && this->IsPressed())
+    bool handled = false;
+    if (this->IsVisible() && this->IsEnabled() && this->Inside(mousePos) && this->IsPressed())
     {
         this->PutEvent(this->GetEventName());
+        handled = true;
     }
     this->pressed = false;
-    Control::OnLeftButtonUp(mousePos);
+    return (handled || Control::OnLeftButtonUp(mousePos));
 }
 
 //------------------------------------------------------------------------------
 /**
     Called on right button down. This may cancel the pressed state.
 */
-void
+bool
 Button::OnRightButtonDown(const vector2& mousePos)
 {
-    this->pressed = false;
-    Control::OnRightButtonDown(mousePos);
+    bool handled = false;
+    if (this->pressed)
+    {
+        this->pressed = false;
+        handled = true;
+    }
+    return (handled || Control::OnRightButtonDown(mousePos));
 }
 
 //------------------------------------------------------------------------------
@@ -133,35 +143,38 @@ Button::OnRender()
     }
 
     // now decide which one is visible
-    if (this->IsEnabled())
+    if (this->IsVisible())
     {
-        if (this->IsPressed() && this->IsMouseOver())
+        if (this->IsEnabled())
         {
-            if (this->visuals[Pressed].isvalid())
+            if (this->IsPressed() && this->IsMouseOver())
             {
-                this->visuals[Pressed]->SetActive(true);
+                if (this->visuals[Pressed].isvalid())
+                {
+                    this->visuals[Pressed]->SetActive(true);
+                }
             }
-        }
-        else if (this->IsMouseOver())
-        {
-            if (this->visuals[MouseOver].isvalid())
+            else if (this->IsMouseOver())
             {
-                this->visuals[MouseOver]->SetActive(true);
+                if (this->visuals[MouseOver].isvalid())
+                {
+                    this->visuals[MouseOver]->SetActive(true);
+                }
+            }
+            else
+            {
+                if (this->visuals[Normal].isvalid())
+                {
+                    this->visuals[Normal]->SetActive(true);
+                }
             }
         }
         else
         {
-            if (this->visuals[Normal].isvalid())
+            if (this->visuals[Disabled].isvalid())
             {
-                this->visuals[Normal]->SetActive(true);
+                this->visuals[Disabled]->SetActive(true);
             }
-        }
-    }
-    else
-    {
-        if (this->visuals[Disabled].isvalid())
-        {
-            this->visuals[Disabled]->SetActive(true);
         }
     }
 }

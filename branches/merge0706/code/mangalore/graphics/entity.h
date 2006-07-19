@@ -19,6 +19,7 @@
 #include "graphics/resource.h"
 #include "misc/nwatched.h"
 #include "scene/ntransformnode.h"
+#include "game/time/timesource.h"
 
 //------------------------------------------------------------------------------
 namespace Graphics
@@ -57,7 +58,6 @@ public:
     {
         CameraLink = 0,     // a camera link
         LightLink,          // a light link
-        SelectLink,         // a drag drop selection link
 
         NumLinkTypes,
     };
@@ -88,16 +88,37 @@ public:
     virtual void SetTransform(const matrix44& m);
     /// get the current world space transformation
     const matrix44& GetTransform() const;
+
+    /// set an optional external time source, otherwise use Graphics::Server's time
+    void SetTimeSource(Game::TimeSource* timeSource);
+    /// get optional time source, can be 0
+    Game::TimeSource* GetTimeSource() const;
     /// set time factor
     void SetTimeFactor(float f);
     /// get time factor
     float GetTimeFactor() const;
+    /// reset the activation time stamp
+    void ResetActivationTime();
+    /// get entity's activation time
+    nTime GetActivationTime() const;
     /// get current entity local time
     nTime GetEntityTime() const;
+    
     /// set entity visibility status
     void SetVisible(bool b);
     /// get entity visibility status
     bool GetVisible() const;
+    /// set max visible distance
+    void SetMaxDistance(float d);
+    /// get max visible distance
+    float GetMaxDistance() const;
+    /// set min visible screen size
+    void SetMinSize(float s);
+    /// get min visible screen size
+    float GetMinSize() const;
+    /// check if visible by distance and screen size
+    bool TestLodVisibility();
+    
     /// set name of graphics resource
     void SetResourceName(const nString& n);
     /// get name of graphics resource
@@ -110,6 +131,7 @@ public:
     const nString& GetShadowResourceName() const;
     /// get shadow resource object
     const Resource& GetShadowResource() const;
+    
     /// modify the local bounding box, usually this is computed automatically on creation
     void SetLocalBox(const bbox3& box);
     /// get the entity's local bounding box in model space
@@ -118,6 +140,7 @@ public:
     const bbox3& GetBox();
     /// get the bounding box extended to take shadows from linked lights into account
     const bbox3& GetShadowBox();
+    
     /// get the cell the entity is currently attached to
     Cell* GetCell() const;
     /// clear links (decrs refcount)
@@ -136,10 +159,6 @@ public:
     void SetRenderFlag(nRenderContext::Flag f, bool b);
     /// get a Nebula2 render flag
     bool GetRenderFlag(nRenderContext::Flag f) const;
-    /// set user data, this is a dirty way to get this physics entity's game entity
-    void SetUserData(int d);
-    /// get user data
-    int GetUserData() const;
 
 protected:
     /// update the render context variables
@@ -177,11 +196,70 @@ protected:
 
     nTime activateTime;
     float timeFactor;
-
-    int userData;
+    Ptr<Game::TimeSource> extTimeSource;
+    float maxVisibleDistance;
+    float minVisibleSize;
 };
 
-RegisterFactory(Entity);
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Entity::SetMinSize(float s)
+{
+    this->minVisibleSize = s;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+Entity::GetMinSize() const
+{
+    return this->minVisibleSize;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Entity::SetMaxDistance(float d)
+{
+    this->maxVisibleDistance = d;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+Entity::GetMaxDistance() const
+{
+    return this->maxVisibleDistance;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Entity::SetTimeSource(Game::TimeSource* timeSource)
+{
+    this->extTimeSource = timeSource;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+Game::TimeSource*
+Entity::GetTimeSource() const
+{
+    return this->extTimeSource.get_unsafe();
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -201,6 +279,16 @@ float
 Entity::GetTimeFactor() const
 {
     return this->timeFactor;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nTime
+Entity::GetActivationTime() const
+{
+    return this->activateTime;
 }
 
 //------------------------------------------------------------------------------
@@ -364,29 +452,6 @@ bool
 Entity::GetRenderFlag(nRenderContext::Flag f) const
 {
     return this->renderContext.GetFlag(f);
-}
-
-//------------------------------------------------------------------------------
-/**
-    Set the user data of the entity. This is a not-quite-so-nice way to
-    store the game entity's unique id in the physics entity.
-*/
-inline
-void
-Entity::SetUserData(int d)
-{
-    this->userData = d;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Get the user data associated with this physics entity.
-*/
-inline
-int
-Entity::GetUserData() const
-{
-    return this->userData;
 }
 
 } // namespace Graphics

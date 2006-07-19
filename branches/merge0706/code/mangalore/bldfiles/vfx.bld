@@ -13,6 +13,14 @@ beginmodule mangalore::vfx
         server
         shakeeffect
         shakeeffecthelper
+        animeffect
+        attachmenteffect
+        graphicseffect
+        guieffect
+        lighteffect
+        sendmessageeffect
+        soundeffect
+        texteffect
     }
     setheaders { 
         bank
@@ -21,6 +29,14 @@ beginmodule mangalore::vfx
         server
         shakeeffect
         shakeeffecthelper
+        animeffect
+        attachmenteffect
+        graphicseffect
+        guieffect
+        lighteffect
+        sendmessageeffect
+        soundeffect
+        texteffect
     }
 endmodule
 #-------------------------------------------------------------------------------

@@ -205,6 +205,11 @@ Resource::Load()
             for (index = 2; index < tokens.Size(); index++)
             {
                 this->refNode = (nTransformNode*) this->refNode->Find(tokens[index].Get());
+                if (!this->refNode.isvalid())
+                {
+                    // break into the following error message
+                    break;
+                }
             }
         }
 

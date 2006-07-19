@@ -69,6 +69,8 @@ public:
     void SetLinkIndex(int i);
     /// get link index
     int GetLinkIndex() const;
+    /// get ode joint id
+    dJointID GetJointId() const;
 
 protected:
     /// get a debug visualization color
@@ -173,6 +175,15 @@ vector4
 Joint::GetDebugVisualizationColor() const
 {
     return vector4(1.0f, 0.0f, 1.0f, 1.0f);
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+dJointID 
+Joint::GetJointId() const
+{
+    return this->odeJointId;
 }
 
 } // namespace Physics

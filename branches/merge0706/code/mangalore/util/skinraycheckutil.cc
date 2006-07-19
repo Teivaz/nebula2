@@ -7,7 +7,8 @@
 #include "graphics/resource.h"
 #include "character/ncharacter2.h"
 #include "managers/timemanager.h"
-
+#include "kernel/nfileserver2.h"
+#include "game/time/systemtimesource.h"
 
 namespace Util
 {
@@ -20,9 +21,9 @@ SkinRayCheckUtil::SkinRayCheckUtil():
     charSkeletonDirty(false),
     initialized(false),
     lastUpdateFrameId(0),
-    segmentationWidth(0),
     useLastFaceOptimization(true),
-    lastFace(-1)
+    lastFace(-1),
+    invertZ(true)
 {
     // empty
 }
@@ -44,8 +45,8 @@ SkinRayCheckUtil::~SkinRayCheckUtil()
 //------------------------------------------------------------------------------
 /**
 */
-void
-SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity)
+bool
+SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity, nString meshName)
 {
     n_assert(entity);
 
@@ -54,17 +55,42 @@ SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity)
     nArray<nShapeNode*> shapeNodes;
     // find all subordinated shapenodes
     this->FindShapeNodes(node, shapeNodes);
+
+    int shapeNodeIndex = -1;
+    if (meshName.IsEmpty())
+    {
+        shapeNodeIndex = 0;
+    }
+    else
+    {
+        int i;
+        for (i=0; i < shapeNodes.Size(); i++)
+        {
+            nString name = shapeNodes[i]->GetMesh();
+            name = name.ExtractFileName();
+            if (name.FindStringIndex(meshName,0) >= 0)
+            {
+                shapeNodeIndex = i;
+                break;
+            }
+        }
+
+        //if (shapeNodeIndex < 0) n_error("shapeNode with mesh: %s not found!", meshName.Get());
+        if (shapeNodeIndex < 0) return false;
+    }
+
     // handle a skinned mesh
     if (entity->IsA(Graphics::CharEntity::RTTI) &&
         shapeNodes.Size() > 0 &&
-        shapeNodes[0]->IsA(nKernelServer::Instance()->FindClass("nskinshapenode")))
+        shapeNodes[shapeNodeIndex]->IsA(nKernelServer::Instance()->FindClass("nskinshapenode")))
     {
         this->meshType = SkinRayCheckUtil::Skinned;
 
         CharEntity* charEntity = (CharEntity*) entity;
         nCharacter2* nebCharacter = charEntity->GetCharacterPointer();
         // FIXME: only the first shapenode will be used
-        this->skinShapeNode = (nSkinShapeNode*) shapeNodes[0]; 
+        this->shapeNode = shapeNodes[shapeNodeIndex];
+        this->skinShapeNode = (nSkinShapeNode*) this->shapeNode; 
 
         this->charEntity = charEntity;
 
@@ -94,9 +120,9 @@ SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity)
         this->meshType = SkinRayCheckUtil::Static;
 
         // FIXME: only the first shapenode will be used
-        nShapeNode* shapeNode = shapeNodes[0];
-        this->meshGroupIndex = shapeNode->GetGroupIndex();
-        this->refOriginalMesh = shapeNode->GetMeshObject();
+        this->shapeNode = shapeNodes[shapeNodeIndex];
+        this->meshGroupIndex = this->shapeNode->GetGroupIndex();
+        this->refOriginalMesh = this->shapeNode->GetMeshObject();
         
         //initialize rsistent mesh
         this->InitResistentMesh();
@@ -112,6 +138,7 @@ SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity)
     {
         n_error("Unsupported type of GraphicsEntity or nShapeNode!");
     }
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -124,7 +151,7 @@ SkinRayCheckUtil::InitResistentMesh()
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     // create the skinned mesh, this will be filled by the CPU with skinned data
     nString resistentMeshName = this->resourceName + "r";
-    nMesh2* resistentMesh = gfxServer->NewMesh(resistentMeshName.Get());
+    nMesh2* resistentMesh = gfxServer->NewMesh("");
     this->refResistentMesh = resistentMesh;
     nMesh2* originalMesh = this->refOriginalMesh;
     if (!resistentMesh->IsLoaded())
@@ -174,6 +201,10 @@ SkinRayCheckUtil::InitResistentMesh()
         }
         originalMesh->UnlockIndices();
         resistentMesh->UnlockIndices();
+
+        this->refResistentMeshResourceLoader = (nMeshCopyResourceLoader*) nKernelServer::Instance()->New("nmeshcopyresourceloader", "resmeshresloader");
+        this->refResistentMeshResourceLoader->SetSourceMesh(this->refOriginalMesh.get());
+        resistentMesh->SetResourceLoader(this->refResistentMeshResourceLoader->GetFullName());
     }
     if (!this->refSkinnedMesh.isvalid()) this->refSkinnedMesh = this->refResistentMesh;
 }
@@ -187,7 +218,6 @@ SkinRayCheckUtil::UpdateFaces()
 {
     n_assert(this->refSkinnedMesh);
     nMesh2* mesh = this->refSkinnedMesh;
-
     const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
     ushort startIndex = meshGroup.GetFirstIndex();
     float* vertices = mesh->LockVertices();
@@ -207,32 +237,11 @@ SkinRayCheckUtil::UpdateFaces()
         this->faces[faceIndex].p1 = *(vector3*)(vertices + indices[ii + 1] * vertexWidth);
         this->faces[faceIndex].p2 = *(vector3*)(vertices + indices[ii + 2] * vertexWidth);
 
-        ///----begin preparation for segmentation optimization----
-        // check if segmentationIndex is still correct
-        if (this->faces[faceIndex].segmentationIndex > -1)
+        if (!this->invertZ)
         {
-            if (this->segmentationBoxes[this->faces[faceIndex].segmentationIndex].contains(this->faces[faceIndex].p0) &&
-                this->segmentationBoxes[this->faces[faceIndex].segmentationIndex].contains(this->faces[faceIndex].p1) &&
-                this->segmentationBoxes[this->faces[faceIndex].segmentationIndex].contains(this->faces[faceIndex].p2))
-            {
-                // do nothing
-            }
-            else this->faces[faceIndex].segmentationIndex = -1;
-        }
-        // if segmentationIndex is not correct compute new
-        if (this->faces[faceIndex].segmentationIndex == -1)
-        {
-            int i;
-            for(i=0; i<this->segmentationBoxes.Size(); i++)
-            {
-                if (this->segmentationBoxes[i].contains(this->faces[faceIndex].p0) &&
-                    this->segmentationBoxes[i].contains(this->faces[faceIndex].p1) &&
-                    this->segmentationBoxes[i].contains(this->faces[faceIndex].p2))
-                {
-                    this->faces[faceIndex].segmentationIndex = i;
-                    break;
-                }
-            }
+            this->faces[faceIndex].p0.rotate(vector3(0,1,0), N_PI);
+            this->faces[faceIndex].p1.rotate(vector3(0,1,0), N_PI);
+            this->faces[faceIndex].p2.rotate(vector3(0,1,0), N_PI);
         }
     }
     mesh->UnlockIndices();
@@ -249,54 +258,13 @@ SkinRayCheckUtil::InitFaceArray()
     // allocate the faces array
     const nMeshGroup& meshGroup = this->refSkinnedMesh->Group(this->meshGroupIndex);
     face emptyFace;
-    emptyFace.segmentationIndex = -1;
     this->faces.SetSize(meshGroup.GetNumIndices() / 3);
     this->faces.Clear(emptyFace);
 
-    // prepare segmentation
-    // FIXME: has to be checked! Somewhere may be a mistake...
-    int numSegementations = this->segmentationWidth * this->segmentationWidth * this->segmentationWidth;
-    this->segmentationBoxes.SetSize(numSegementations);
-    bbox3 bbox = this->activeEntity->GetLocalBox();
-    //matrix44 m;
-    //m.ident();
-    //bbox.transform(m);
-    //m = this->activeEntity->GetTransform();
-
-    int i;
-    int j;
-    int k;
-    float xLen = bbox.size().x / this->segmentationWidth;
-    float yLen = bbox.size().y / this->segmentationWidth;
-    float zLen = bbox.size().z / this->segmentationWidth;
-    vector3 mainCenter = bbox.center();
-    vector3 subCenter;
-    vector3 extend;
-    extend.x = xLen*0.5f;
-    extend.y = yLen*0.5f;
-    extend.z = zLen*0.5f;
-    for (i=0; i < this->segmentationWidth; i++)
-    {
-        subCenter.x = mainCenter.x - (xLen * this->segmentationWidth * 0.5f) + ((i + 0.5f) * xLen);
-        for (j=0; j < this->segmentationWidth; j++)
-        {
-            subCenter.y = mainCenter.y - (yLen * this->segmentationWidth * 0.5f) + ((j + 0.5f) * yLen);
-            for (k=0; k < this->segmentationWidth; k++)
-            {
-                subCenter.z = mainCenter.z - (zLen * this->segmentationWidth * 0.5f) + ((k + 0.5f) * zLen);
-                int index = (i*this->segmentationWidth) + (j*this->segmentationWidth) + k;
-                this->segmentationBoxes[index].set(subCenter,extend);
-            }
-        }
-    }
-    
-    this->vertices.SetSize(meshGroup.GetNumIndices());  //DEBUG
-
-    /*this->UpdateFaces();
-    for (i=0; i < this->faces.Size(); i++)
-    {
-        this->FindNeighbourFaces(i);
-    }*/
+    this->UpdateFaces();
+    this->DoMeshCleanUp();
+    this->FillNeighbourFaceMap();
+    this->InitVertexColorMap();
 }
 
 //------------------------------------------------------------------------------
@@ -309,9 +277,10 @@ SkinRayCheckUtil::InitSkinnedMesh()
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     // create the skinned mesh, this will be filled by the CPU with skinned data
     nString skinnedMeshName = this->resourceName + "s";
-    nMesh2* skinnedMesh = gfxServer->NewMesh(skinnedMeshName.Get());
+    //nMesh2* skinnedMesh = gfxServer->NewMesh(skinnedMeshName.Get());
+    nMesh2* skinnedMesh = gfxServer->NewMesh("");
     this->refSkinnedMesh = skinnedMesh;
-    nMesh2* bindPoseMesh = this->refResistentMesh;
+    nMesh2* bindPoseMesh = this->refOriginalMesh;
     if (!skinnedMesh->IsLoaded())
     {
         //skinnedMesh->SetVertexUsage(nMesh2::ReadWrite | nMesh2::NeedsVertexShader);
@@ -374,6 +343,10 @@ SkinRayCheckUtil::InitSkinnedMesh()
         }
         bindPoseMesh->UnlockEdges();
         skinnedMesh->UnlockEdges();
+
+        this->refSkinnedMeshResourceLoader = (nMeshCopyResourceLoader*) nKernelServer::Instance()->New("nmeshcopyresourceloader", "skinmeshresloader");
+        this->refSkinnedMeshResourceLoader->SetSourceMesh(this->refOriginalMesh.get());
+        skinnedMesh->SetResourceLoader(this->refSkinnedMeshResourceLoader->GetFullName());
     }
 }
 
@@ -391,6 +364,7 @@ SkinRayCheckUtil::UpdateSkinning()
 {
     n_assert(this->charSkeleton);    
     n_assert(this->skinShapeNode);
+
     nMesh2* srcMesh = this->refResistentMesh;
     nMesh2* dstMesh = this->refSkinnedMesh;
     float* srcVertexBase = srcMesh->LockVertices();
@@ -408,6 +382,10 @@ SkinRayCheckUtil::UpdateSkinning()
 
         const nMeshGroup& srcGroup = srcMesh->Group(groupIndex);
         const nMeshGroup& dstGroup = dstMesh->Group(groupIndex);
+
+        
+
+
         int numSrcVertices = srcGroup.GetNumVertices();
         int numDstVertices = dstGroup.GetNumVertices();
         n_assert(numSrcVertices == numDstVertices);
@@ -463,7 +441,7 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
     matrix44 trans = this->activeEntity->GetTransform();
     vector3 transPos = trans.pos_component();
     trans.translate(-transPos);
-    trans.rotate(vector3(0,1,0), N_PI);
+    if (this->invertZ) trans.rotate(vector3(0,1,0), N_PI);
     trans.translate(transPos);
     matrix44 invTrans = trans;
     invTrans.invert();
@@ -475,10 +453,27 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
     bbox3 bbox = this->activeEntity->GetBox();
     if (ray.distance(bbox.center()) > (bbox.diagonal_size()*0.5f)) return false;
 
-    uint currentFrameId = Managers::TimeManager::Instance()->GetFrameId();
-
+    uint currentFrameId = Game::SystemTimeSource::Instance()->GetFrameId();
     bool updateFaces = false;
 
+    if (this->refResistentMeshResourceLoader->HasBeenReloaded() ||
+        this->refSkinnedMeshResourceLoader->HasBeenReloaded())
+    {
+
+        //this->refResistentMesh->Unload();
+        //this->refSkinnedMesh->Unload();
+        //initialize rsistent mesh
+        //this->InitResistentMesh();
+        // initialize skinned mesh
+        //this->InitSkinnedMesh();
+        // update skinned mesh
+        this->UpdateSkinning();
+        // create the face normals
+        this->UpdateFaces(); 
+    
+        this->refResistentMeshResourceLoader->ResetReloadFlag();
+        this->refSkinnedMeshResourceLoader->ResetReloadFlag();
+    }
 
     // Only update once a frame
     // only skinned meshes have to be updated
@@ -499,18 +494,26 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
     {
         // Optimization: Before updating all faces/vertices, 
         // just update the last intersected one and check it.
-        if (updateFaces) this->UpdateSingleFace(this->lastFace);
-        if (this->Intersects(this->faces[this->lastFace], tRay, newFaceIntersection))
+
+        nArray<int> faceList;
+        this->FindNeighbourFaces(this->lastFace, faceList, 1);
+        int i;
+        for (i=0; i < faceList.Size(); i++)
         {
-            // collect information about face intersection and append to array
-            newFaceIntersection.faceIndex = this->lastFace;
-            newFaceIntersection.distance = ray.start().distance(ray.start(), newFaceIntersection.intersectionPoint);
-            newFaceIntersection.intersectionPoint = trans.transform_coord(newFaceIntersection.intersectionPoint);
-            newFaceIntersection.normal = trans.transform_coord(newFaceIntersection.normal);
-            newFaceIntersection.normal = newFaceIntersection.normal - trans.pos_component();
-            newFaceIntersection.normal.norm();
-            intersectedFaces.Append(newFaceIntersection);
-            intersected = true;
+            if (updateFaces) this->UpdateSingleFace(faceList[i]);
+            if (this->Intersects(this->faces[faceList[i]], tRay, newFaceIntersection))
+            {
+                // collect information about face intersection and append to array
+                newFaceIntersection.faceIndex = faceList[i];
+                newFaceIntersection.intersectionPoint = trans.transform_coord(newFaceIntersection.intersectionPoint);
+                newFaceIntersection.distance = ray.start().distance(ray.start(), newFaceIntersection.intersectionPoint);
+                newFaceIntersection.normal = trans.transform_coord(newFaceIntersection.normal);
+                newFaceIntersection.normal = newFaceIntersection.normal - trans.pos_component();
+                newFaceIntersection.normal.norm();
+                intersectedFaces.Append(newFaceIntersection);
+                intersected = true;
+                break;
+            }
         }
     }
 
@@ -527,8 +530,8 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
             {
                 // collect information about face intersection and append to array
                 newFaceIntersection.faceIndex = i;
-                newFaceIntersection.distance = ray.start().distance(ray.start(), newFaceIntersection.intersectionPoint);
                 newFaceIntersection.intersectionPoint = trans.transform_coord(newFaceIntersection.intersectionPoint);
+                newFaceIntersection.distance = ray.start().distance(ray.start(), newFaceIntersection.intersectionPoint);
                 newFaceIntersection.normal = trans.transform_coord(newFaceIntersection.normal);
                 newFaceIntersection.normal = newFaceIntersection.normal - trans.pos_component();
                 newFaceIntersection.normal.norm();
@@ -592,19 +595,10 @@ SkinRayCheckUtil::FindShapeNodes(nRoot *parent, nArray<nShapeNode*> &shapeNodes)
 bool
 SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& intersectionData)
 {
-    // segmentation optimization: 
-    // if ray doesn't intersects the faces segmentation, it doesn't has be checked
-    //matrix44 m = this->activeEntity->GetTransform();
-    //line3 tRay(m.transform_coord(line.start()), m.transform_coord(line.end()));
-    /*if (poly.segmentationIndex == -1 ||
-        tRay.distance(this->segmentationBoxes[poly.segmentationIndex].center()) 
-        <= (this->segmentationBoxes[poly.segmentationIndex].diagonal_size() * 0.5f))
-    {*/
-
-        vector3 n;
-        vector3 pa = poly.p0;
-        vector3 pb = poly.p1;
-        vector3 pc = poly.p2;
+    vector3 n;
+    vector3 pa = poly.p0;
+    vector3 pb = poly.p1;
+    vector3 pc = poly.p2;
 
         vector3 p2 = line.start();
         vector3 p1 = line.end();
@@ -619,6 +613,7 @@ SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& in
         n.z = (pb.x - pa.x)*(pc.y - pa.y) - (pb.y - pa.y)*(pc.x - pa.x);
         n.norm();
         intersectionData.normal = n;
+    // make sure to hit only the front of a face
         vector3 lineVec = line.vec();
         lineVec.norm();
         if (n.dot(lineVec)> 0) return false;
@@ -635,6 +630,11 @@ SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& in
         ip.z = (float)(p1.z + mu * (p2.z - p1.z));
         intersectionData.intersectionPoint = ip;
 
+    // to compensate a rounding error at the face edges we move the 
+    // intersection point a little bit to the center of the face.
+    vector3 center = (pa + pb + pc)/3;
+    ip = ip + (center - ip) * 0.01f;
+
         /* Determine whether or not the intersection point is bounded by pa,pb,pc */
         float a1, a2, a3;
         pa1 = pa - ip;
@@ -649,145 +649,8 @@ SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& in
         double total = n_acos(a1) + n_acos(a2) + n_acos(a3);
         if (abs(total - (2*N_PI)) > 0.00001f) return false;
         else return true;
-    /*}
-    else 
-    {  
-        return false;
-    }*/
 }
 
-//------------------------------------------------------------------------------
-/**   
-    determines the uv coordinate of an intersection point.
-*/
-bool
-SkinRayCheckUtil::GetIntersectionUV(int uvNr, faceIntersection &intersection, vector2& resultUV)
-{
-    n_assert(this->refResistentMesh.isvalid());
-    nMesh2* skinnedMesh = this->refSkinnedMesh.get();
-    nMesh2* resistentMesh = this->refResistentMesh.get();
-
-    bool exists = false;
-    int offset;
-
-    switch(uvNr)
-    {
-        case -1: //----DEBUG----
-            {
-                if(resistentMesh->HasAllVertexComponents(nMesh2::Color))
-                {
-                    exists = true;
-                    offset = resistentMesh->GetVertexComponentOffset(nMesh2::Color);
-                }
-                break;
-            }  //-------------
-        case 0: 
-            {
-                if(resistentMesh->HasAllVertexComponents(nMesh2::Uv0))
-                {
-                    exists = true;
-                    offset = resistentMesh->GetVertexComponentOffset(nMesh2::Uv0);
-                }
-                break;
-            }
-        case 1: 
-            {
-                if(resistentMesh->HasAllVertexComponents(nMesh2::Uv1))
-                {
-                    exists = true;
-                    offset = resistentMesh->GetVertexComponentOffset(nMesh2::Uv1);
-                }
-                break;
-            }
-        case 2: 
-            {
-                if(resistentMesh->HasAllVertexComponents(nMesh2::Uv2))
-                {
-                    exists = true;
-                    offset = resistentMesh->GetVertexComponentOffset(nMesh2::Uv2);
-                }
-                break;
-            }
-        case 3: 
-            {
-                if(resistentMesh->HasAllVertexComponents(nMesh2::Uv3))
-                {
-                    exists = true;
-                    offset = resistentMesh->GetVertexComponentOffset(nMesh2::Uv3);
-                }
-                break;
-            }
-        default: exists = false; break;
-    }
-
-    if (exists)
-    {
-
-        // read vertex positions from skinned mesh
-        const nMeshGroup& skinnedMeshGroup = skinnedMesh->Group(this->meshGroupIndex);
-        ushort startIndex = skinnedMeshGroup.GetFirstIndex();
-        float* vertices = skinnedMesh->LockVertices();
-        ushort* indices = skinnedMesh->LockIndices();
-        int vertexWidth = skinnedMesh->GetVertexWidth();
-
-        int ii = startIndex + intersection.faceIndex * 3;
-
-        vector3 p0 = *(vector3*)(vertices + indices[ii] * vertexWidth);
-        vector3 p1 = *(vector3*)(vertices + indices[ii + 1] * vertexWidth);
-        vector3 p2 = *(vector3*)(vertices + indices[ii + 2] * vertexWidth);
-
-        skinnedMesh->UnlockIndices();
-        skinnedMesh->UnlockVertices();
-
-
-        // read information from resistent mesh
-        const nMeshGroup& resistentMeshGroup = resistentMesh->Group(this->meshGroupIndex);
-        startIndex = resistentMeshGroup.GetFirstIndex();
-        vertices = resistentMesh->LockVertices();
-        indices = resistentMesh->LockIndices();
-        vertexWidth = resistentMesh->GetVertexWidth();
-
-        ii = startIndex + intersection.faceIndex * 3;
-
-        vector2 p0uv = *(vector2*)(vertices + indices[ii] * vertexWidth + offset);
-        vector2 p1uv = *(vector2*)(vertices + indices[ii + 1] * vertexWidth + offset);
-        vector2 p2uv = *(vector2*)(vertices + indices[ii + 2] * vertexWidth + offset);
-
-        vector4 col;
-
-        col = *(vector4*)(vertices + indices[ii] * vertexWidth + offset);
-        col.y += 0.05f;
-        n_clamp(col.y,0,1);
-        *(vector4*)(vertices + indices[ii] * vertexWidth + offset) = col;   //DEBUG
-
-        col = *(vector4*)(vertices + indices[ii+1] * vertexWidth + offset);
-        col.y += 0.05f;
-        n_clamp(col.y,0,1);
-        *(vector4*)(vertices + indices[ii + 1] * vertexWidth + offset) = col;   //DEBUG
-
-        col = *(vector4*)(vertices + indices[ii+2] * vertexWidth + offset);
-        col.y += 0.05f;
-        n_clamp(col.y,0,1);
-        *(vector4*)(vertices + indices[ii + 2] * vertexWidth + offset) = col;   //DEBUG
-
-        vector3 ip = intersection.intersectionPoint;
-        vector3 weight;
-        weight.x = ip.distance(ip, p0);
-        weight.y = ip.distance(ip, p1);
-        weight.z = ip.distance(ip, p2);
-        float weightSum = weight.x + weight.y + weight.z;
-        weight = weight / weightSum;
-        resultUV = (p0uv * weight.x) + (p1uv * weight.y) + (p2uv * weight.z);
-
-        resistentMesh->UnlockIndices();
-        resistentMesh->UnlockVertices();
-
-        this->UpdateOriginalMesh();
-        
-        return true;
-    }
-    else return false;
-}
 
 //------------------------------------------------------------------------------
 /**   
@@ -907,40 +770,21 @@ SkinRayCheckUtil::SetVertexColorOfFace(int faceIndex, const vector4& col)
     
 */
 bool
-SkinRayCheckUtil::AddVertexColorOfFace(int faceIndex, const vector4& col)
+SkinRayCheckUtil::AddVertexColorOfFace(int faceIndex, const vector4& col, const vector3& intersectionPoint, float radius)
 {
-    n_assert(this->refResistentMesh.isvalid());
-    nMesh2* mesh = this->refResistentMesh;
-
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
-    {
-        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
-        ushort startIndex = meshGroup.GetFirstIndex();
-        float* vertices = mesh->LockVertices();
-        ushort* indices = mesh->LockIndices();
-        int vertexWidth = mesh->GetVertexWidth();
-        int offset = mesh->GetVertexComponentOffset(nMesh2::Color);
-
-        int ii = startIndex + faceIndex * 3;
-        vector4 tempCol;
-        int k;
-        for (k=0; k < 3; k++)
-        {
-            tempCol = *(vector4*)(vertices + indices[ii+k] * vertexWidth + offset);
-            tempCol +=col;
-            tempCol.x = n_clamp(tempCol.x, 0, 1);
-            tempCol.y = n_clamp(tempCol.y, 0, 1);
-            tempCol.z = n_clamp(tempCol.z, 0, 1);
-            tempCol.w = n_clamp(tempCol.w, 0, 1);
-            *(vector4*)(vertices + indices[ii+k] * vertexWidth + offset) = tempCol;
-        }
-        
-        mesh->UnlockIndices();
-        mesh->UnlockVertices();
-        this->UpdateOriginalMesh();
-        return true;  
-    }
-    else return false;
+    nArray<int> vertexList;
+    vector3 p, q;
+    matrix44 trans = this->activeEntity->GetTransform();
+    vector3 transPos = trans.pos_component();
+    trans.translate(-transPos);
+    if (this->invertZ) trans.rotate(vector3(0,1,0), N_PI);
+    trans.translate(transPos);
+    matrix44 invTrans = trans;
+    invTrans.invert();
+    q = invTrans.transform_coord(intersectionPoint);
+    p = (this->faces[faceIndex].p0 + this->faces[faceIndex].p1 + this->faces[faceIndex].p2) * 0.33333333f;
+    this->FindVerticesInRange(faceIndex, q, radius, vertexList);
+    return this->PaintVertexList(vertexList, col, true);
 }
 
 //------------------------------------------------------------------------------
@@ -1072,61 +916,6 @@ SkinRayCheckUtil::UpdateOriginalMesh()
 /**
 */
 void
-SkinRayCheckUtil::FindNeighbourFaces(int faceIndex)
-{
-    int i;
-    for (i=0; i < this->faces.Size(); i++)
-    {
-        if (this->faces[i].neighbourFaces.FindIndex(faceIndex) > -1)
-        {
-            this->faces[faceIndex].neighbourFaces.Append(i);
-        }
-        else 
-        if (((this->faces[faceIndex].p0.x == this->faces[i].p0.x &&
-            this->faces[faceIndex].p0.y == this->faces[i].p0.y &&
-            this->faces[faceIndex].p0.z == this->faces[i].p0.z) ||
-            (this->faces[faceIndex].p0.x == this->faces[i].p1.x &&
-            this->faces[faceIndex].p0.y == this->faces[i].p1.y &&
-            this->faces[faceIndex].p0.z == this->faces[i].p1.z) ||
-            (this->faces[faceIndex].p0.x == this->faces[i].p2.x &&
-            this->faces[faceIndex].p0.y == this->faces[i].p2.y &&
-            this->faces[faceIndex].p0.z == this->faces[i].p2.z)) ||
-
-            ((this->faces[faceIndex].p1.x == this->faces[i].p0.x &&
-            this->faces[faceIndex].p1.y == this->faces[i].p0.y &&
-            this->faces[faceIndex].p1.z == this->faces[i].p0.z) ||
-            (this->faces[faceIndex].p1.x == this->faces[i].p1.x &&
-            this->faces[faceIndex].p1.y == this->faces[i].p1.y &&
-            this->faces[faceIndex].p1.z == this->faces[i].p1.z) ||
-            (this->faces[faceIndex].p1.x == this->faces[i].p2.x &&
-            this->faces[faceIndex].p1.y == this->faces[i].p2.y &&
-            this->faces[faceIndex].p1.z == this->faces[i].p2.z)) ||
-
-            ((this->faces[faceIndex].p2.x == this->faces[i].p0.x &&
-            this->faces[faceIndex].p2.y == this->faces[i].p0.y &&
-            this->faces[faceIndex].p2.z == this->faces[i].p0.z) ||
-            (this->faces[faceIndex].p2.x == this->faces[i].p1.x &&
-            this->faces[faceIndex].p2.y == this->faces[i].p1.y &&
-            this->faces[faceIndex].p2.z == this->faces[i].p1.z) ||
-            (this->faces[faceIndex].p2.x == this->faces[i].p2.x &&
-            this->faces[faceIndex].p2.y == this->faces[i].p2.y &&
-            this->faces[faceIndex].p2.z == this->faces[i].p2.z)))
-        {
-            this->faces[faceIndex].neighbourFaces.Append(i);
-        }
-    }
-    if (this->faces[faceIndex].neighbourFaces.Size() > 20)
-    {
-        int num = this->faces[faceIndex].neighbourFaces.Size();
-        bool stop = true;
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Face list will be updated from the skinned or static mesh
-*/
-void
 SkinRayCheckUtil::UpdateSingleFace(int faceIndex)
 {
     n_assert(this->refSkinnedMesh);
@@ -1140,7 +929,6 @@ SkinRayCheckUtil::UpdateSingleFace(int faceIndex)
     int vertexWidth = mesh->GetVertexWidth();
     int numFaces = this->faces.Size();
     n_assert(meshGroup.GetNumIndices() == (numFaces * 3));
-    //matrix44 m = this->activeEntity->GetTransform();
 
     /// each face gets 3 own vertices
     int ii = startIndex + faceIndex * 3;
@@ -1148,18 +936,558 @@ SkinRayCheckUtil::UpdateSingleFace(int faceIndex)
     this->faces[faceIndex].p1 = *(vector3*)(vertices + indices[ii + 1] * vertexWidth);
     this->faces[faceIndex].p2 = *(vector3*)(vertices + indices[ii + 2] * vertexWidth);
 
-    //this->faces[faceIndex].p0.rotate(vector3(0,1,0), N_PI);
-    //this->faces[faceIndex].p1.rotate(vector3(0,1,0), N_PI);
-    //this->faces[faceIndex].p2.rotate(vector3(0,1,0), N_PI);
-
-    ////FIXME: better transform ray and retransform result while raychecking!!!
-    //
-    //this->faces[faceIndex].p0 = m.transform_coord(this->faces[faceIndex].p0);
-    //this->faces[faceIndex].p1 = m.transform_coord(this->faces[faceIndex].p1);
-    //this->faces[faceIndex].p2 = m.transform_coord(this->faces[faceIndex].p2);
-
     mesh->UnlockIndices();
     mesh->UnlockVertices();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+SkinRayCheckUtil::PaintVertexList(const nArray<int> &vertexList, const vector4 &col, bool addCol)
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    {
+        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+        ushort startIndex = meshGroup.GetFirstIndex();
+        float* vertices = mesh->LockVertices();
+        int vertexWidth = mesh->GetVertexWidth();
+        int offset = mesh->GetVertexComponentOffset(nMesh2::Color);
+
+        int i;
+        for (i=0; i < vertexList.Size(); i++)
+        {
+            vector4 tempCol;
+            if (addCol)
+            {
+                tempCol = *(vector4*)(vertices + vertexList[i] * vertexWidth + offset);
+                tempCol +=col;
+            }
+            else
+            {
+                tempCol = col;
+            }
+            tempCol.x = n_clamp(tempCol.x, 0, 1);
+            tempCol.y = n_clamp(tempCol.y, 0, 1);
+            tempCol.z = n_clamp(tempCol.z, 0, 1);
+            tempCol.w = n_clamp(tempCol.w, 0, 1);
+            *(vector4*)(vertices + vertexList[i] * vertexWidth + offset) = tempCol;
+        }
+        
+        mesh->UnlockVertices();
+        this->UpdateOriginalMesh();
+        return true;  
+    }
+    else return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::FindVerticesInRange(int faceIndex, const vector3& intersectionPoint, float radius, nArray<int>& vertexList)
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+    ushort startIndex = meshGroup.GetFirstIndex();
+    ushort* indices = mesh->LockIndices();
+
+    int ii = startIndex + faceIndex * 3;
+
+    int vertex0, vertex1, vertex2;
+    
+    vertex0 = indices[ii];
+    vertex1 = indices[ii+1];
+    vertex2 = indices[ii+2];
+
+    if (intersectionPoint.distance(this->faces[faceIndex].p0, intersectionPoint) < radius)
+    {
+        if (!vertexList.Find(vertex0))
+        {
+            vertexList.Append(vertex0);
+            int i;
+            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v0].Size(); i++)
+            {
+                this->FindVerticesInRange(this->neighbourFacesMap[this->faces[faceIndex].v0][i], intersectionPoint, radius, vertexList);
+            }
+        }
+    }
+
+    if (intersectionPoint.distance(this->faces[faceIndex].p1, intersectionPoint) < radius)
+    {
+        if (!vertexList.Find(vertex1))
+        {
+            vertexList.Append(vertex1);
+            int i;
+            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v1].Size(); i++)
+            {
+                this->FindVerticesInRange(this->neighbourFacesMap[this->faces[faceIndex].v1][i], intersectionPoint, radius, vertexList);
+            }
+        }
+    }
+
+    if (intersectionPoint.distance(this->faces[faceIndex].p2, intersectionPoint) < radius)
+    {
+        if (!vertexList.Find(vertex2))
+        {
+            vertexList.Append(vertex2);
+            int i;
+            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v2].Size(); i++)
+            {
+                this->FindVerticesInRange(this->neighbourFacesMap[this->faces[faceIndex].v2][i], intersectionPoint, radius, vertexList);
+            }
+        }
+    }
+    
+    mesh->UnlockIndices();
+}
+
+//------------------------------------------------------------------------------
+/**
+    FIXME: Not tested if it works right!
+*/
+void
+SkinRayCheckUtil::FindNeighbourVertices(int vertexIndex, nArray<int>& vertexList, int depth)
+{
+    if (depth >= 0)
+    {
+        if (!vertexList.Find(vertexIndex))
+        {
+            vertexList.Append(vertexIndex);
+            int i;
+            for (i=0; i < this->neighbourFacesMap[vertexIndex].Size(); i++)
+            {
+                int v0, v1, v2;
+                this->GetVerticesOfFace(this->neighbourFacesMap[vertexIndex][i], v0, v1, v2);
+                this->FindNeighbourVertices(v0, vertexList, depth-1);
+                this->FindNeighbourVertices(v1, vertexList, depth-1);
+                this->FindNeighbourVertices(v2, vertexList, depth-1);
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::FindNeighbourFaces(int faceIndex, nArray<int>& faceList, int depth)
+{
+    if (depth >= 0)
+    {
+        n_assert(this->refResistentMesh.isvalid());
+        nMesh2* mesh = this->refResistentMesh;
+
+        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+        ushort startIndex = meshGroup.GetFirstIndex();
+        ushort* indices = mesh->LockIndices();
+
+        int ii = startIndex + faceIndex * 3;
+
+        int vertex0, vertex1, vertex2;
+        
+        vertex0 = indices[ii];
+        vertex1 = indices[ii+1];
+        vertex2 = indices[ii+2];
+
+        if (!faceList.Find(faceIndex))
+        {
+            faceList.Append(faceIndex);
+            int i;
+            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v0].Size(); i++)
+            {
+                this->FindNeighbourFaces(this->neighbourFacesMap[this->faces[faceIndex].v0][i], faceList, depth-1);
+            }
+
+            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v1].Size(); i++)
+            {
+                this->FindNeighbourFaces(this->neighbourFacesMap[this->faces[faceIndex].v1][i], faceList, depth-1);
+            }
+
+            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v2].Size(); i++)
+            {
+                this->FindNeighbourFaces(this->neighbourFacesMap[this->faces[faceIndex].v2][i], faceList, depth-1);
+            }
+        }
+        mesh->UnlockIndices();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::GetVerticesOfFace(int faceIndex, int &v0, int &v1, int &v2)
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+    ushort startIndex = meshGroup.GetFirstIndex();
+    ushort* indices = mesh->LockIndices();
+
+    int ii = startIndex + faceIndex * 3;
+    
+    v0 = indices[ii];
+    v1 = indices[ii+1];
+    v2 = indices[ii+2];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::DoMeshCleanUp()
+{
+    n_assert(this->shapeNode);
+
+    this->backupMesh.Clear();
+    this->cleanMesh.Clear();
+
+    nFileServer2* fileServer = nFileServer2::Instance();
+    nString meshName(this->shapeNode->GetMeshObject()->GetFilename());
+    this->backupMesh.Load(fileServer, meshName.Get());
+    this->cleanMesh = this->backupMesh;
+    this->cleanMesh.ForceVertexComponents(nMeshBuilder::Vertex::COORD + 
+                                          nMeshBuilder::Vertex::COLOR +
+                                          nMeshBuilder::Vertex::WEIGHTS +
+                                          nMeshBuilder::Vertex::JINDICES);
+    this->cleanMesh.Cleanup(&this->collapseMap);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::FillNeighbourFaceMap()
+{
+    nArray<nMeshBuilder::Group> groupMap;
+    this->cleanMesh.BuildGroupMap(groupMap);
+    int numTriangles = groupMap[this->meshGroupIndex].GetNumTriangles();
+    int numVertices = this->cleanMesh.GetNumVertices();
+    
+    n_assert(numTriangles == this->faces.Size());
+
+    // WORK ---
+
+
+    n_assert(this->refResistentMesh.isvalid());
+    this->neighbourFacesMapOverOriginalVertex.SetFixedSize(this->refResistentMesh->Group(this->meshGroupIndex).GetNumVertices());
+
+
+    // WORK ---
+
+    nMeshBuilder::Group* group = &groupMap[this->meshGroupIndex];
+    this->neighbourFacesMap.SetFixedSize(numVertices);
+
+    int faceIndex;
+    int firstTriangle = group->GetFirstTriangle();
+    for (faceIndex=0; faceIndex < numTriangles; faceIndex++)
+    {
+        this->cleanMesh.GetTriangleAt(firstTriangle + faceIndex).GetVertexIndices(this->faces[faceIndex].v0,
+                                                                                   this->faces[faceIndex].v1,
+                                                                                   this->faces[faceIndex].v2);
+        this->neighbourFacesMap[this->faces[faceIndex].v0].Append(faceIndex);
+        this->neighbourFacesMap[this->faces[faceIndex].v1].Append(faceIndex);
+        this->neighbourFacesMap[this->faces[faceIndex].v2].Append(faceIndex);
+
+        int i;
+        for (i=0; i < this->collapseMap[this->faces[faceIndex].v0].Size(); i++)
+        {
+            this->neighbourFacesMapOverOriginalVertex[this->collapseMap[this->faces[faceIndex].v0][i]].Append(faceIndex);
+        }
+        for (i=0; i < this->collapseMap[this->faces[faceIndex].v1].Size(); i++)
+        {
+            this->neighbourFacesMapOverOriginalVertex[this->collapseMap[this->faces[faceIndex].v1][i]].Append(faceIndex);
+        }
+        for (i=0; i < this->collapseMap[this->faces[faceIndex].v2].Size(); i++)
+        {
+            this->neighbourFacesMapOverOriginalVertex[this->collapseMap[this->faces[faceIndex].v2][i]].Append(faceIndex);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::InitVertexColorMap()
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    {
+        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+        int numVertices = meshGroup.GetNumVertices();
+        int startVertex = meshGroup.GetFirstVertex();
+        int vertexWidth = mesh->GetVertexWidth();
+        int offset = mesh->GetVertexComponentOffset(nMesh2::Color);
+        
+        this->vertexColorMap.SetFixedSize(numVertices);
+        float* vertices = mesh->LockVertices();
+        
+        int i;
+        for (i=0; i < numVertices; i++)
+        {
+            this->vertexColorMap[i] = *(vector4*)(vertices + (startVertex + i) * vertexWidth + offset);
+        }
+        
+        mesh->UnlockVertices();
+
+        this->startVertex = startVertex;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::InitVertexPosMap()
+{
+    n_assert(this->refSkinnedMesh.isvalid());
+    nMesh2* mesh = this->refSkinnedMesh;
+
+    const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+    int numVertices = meshGroup.GetNumVertices();
+    int startVertex = meshGroup.GetFirstVertex();
+    int vertexWidth = mesh->GetVertexWidth();
+    int offset = 0;
+    
+    this->vertexPosMap.SetFixedSize(numVertices);
+    float* vertices = mesh->LockVertices();
+    
+    int i;
+    for (i=0; i < numVertices; i++)
+    {
+        this->vertexPosMap[i] = *(vector3*)(vertices + (startVertex + i) * vertexWidth + offset);
+    }
+    
+    mesh->UnlockVertices();
+
+    this->startVertex = startVertex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::InitVertexNormalMap()
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    if(mesh->HasAllVertexComponents(nMesh2::Normal))
+    {
+        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+        int numVertices = meshGroup.GetNumVertices();
+        int startVertex = meshGroup.GetFirstVertex();
+        int vertexWidth = mesh->GetVertexWidth();
+        int offset = mesh->GetVertexComponentOffset(nMesh2::Normal);
+        
+        this->vertexNormalMap.SetFixedSize(numVertices);
+        float* vertices = mesh->LockVertices();
+        
+        int i;
+        for (i=0; i < numVertices; i++)
+        {
+            this->vertexNormalMap[i] = *(vector3*)(vertices + (startVertex + i) * vertexWidth + offset);
+        }
+        
+        mesh->UnlockVertices();
+
+        this->startVertex = startVertex;
+    }
+}
+
+
+
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::UpdateVertexColorMapByList(const nArray<int>& vertexList)
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    {
+        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+        int numVertices = meshGroup.GetNumVertices();
+        int startVertex = meshGroup.GetFirstVertex();
+        int vertexWidth = mesh->GetVertexWidth();
+        int offset = mesh->GetVertexComponentOffset(nMesh2::Color);
+        
+        float* vertices = mesh->LockVertices();
+        
+        int i;
+        for (i=0; i < vertexList.Size(); i++)
+        {
+            this->vertexColorMap[vertexList[i]] = *(vector4*)(vertices + (startVertex + vertexList[i]) * vertexWidth + offset);
+        }
+        
+        mesh->UnlockVertices();
+
+        this->startVertex = startVertex;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::UpdateVertexPosMapByList(const nArray<int>& vertexList)
+{
+    n_assert(this->refSkinnedMesh.isvalid());
+    nMesh2* mesh = this->refSkinnedMesh;
+
+    const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+    int numVertices = meshGroup.GetNumVertices();
+    int startVertex = meshGroup.GetFirstVertex();
+    int vertexWidth = mesh->GetVertexWidth();
+    int offset = 0;
+
+    float* vertices = mesh->LockVertices();
+    
+    int i;
+    for (i=0; i < vertexList.Size(); i++)
+    {
+        this->vertexPosMap[vertexList[i]] = *(vector3*)(vertices + (startVertex + vertexList[i]) * vertexWidth + offset);
+    }
+    
+    mesh->UnlockVertices();
+
+    this->startVertex = startVertex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::UpdateVertexNormalMapByList(const nArray<int>& vertexList)
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    if(mesh->HasAllVertexComponents(nMesh2::Normal))
+    {
+        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+        int numVertices = meshGroup.GetNumVertices();
+        int startVertex = meshGroup.GetFirstVertex();
+        int vertexWidth = mesh->GetVertexWidth();
+        int offset = mesh->GetVertexComponentOffset(nMesh2::Normal);
+        
+        float* vertices = mesh->LockVertices();
+        
+        int i;
+        for (i=0; i < vertexList.Size(); i++)
+        {
+            this->vertexNormalMap[vertexList[i]] = *(vector3*)(vertices + (startVertex + vertexList[i]) * vertexWidth + offset);
+        }
+        
+        mesh->UnlockVertices();
+
+        this->startVertex = startVertex;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+SkinRayCheckUtil::UpdateFromVertexColorMap()
+{
+    n_assert(this->refResistentMesh.isvalid());
+    nMesh2* mesh = this->refResistentMesh;
+
+    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    {
+        const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
+        int numVertices = meshGroup.GetNumVertices();
+        int startVertex = meshGroup.GetFirstVertex();
+        int vertexWidth = mesh->GetVertexWidth();
+        int offset = mesh->GetVertexComponentOffset(nMesh2::Color);
+
+        float* vertices = mesh->LockVertices();
+        
+        int i;
+        for (i=0; i < this->vertexColorMap.Size(); i++)
+        {
+            *(vector4*)(vertices + (startVertex + i) * vertexWidth + offset) = this->vertexColorMap[i];
+        }
+        mesh->UnlockVertices();
+        this->UpdateOriginalMesh();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Heronische Flächenformel
+*/
+float
+SkinRayCheckUtil::GetSizeOfFace(int faceIndex)
+{
+    vector3 a = this->faces[faceIndex].p0;
+    vector3 b = this->faces[faceIndex].p1;
+    vector3 c = this->faces[faceIndex].p2;
+
+    float ab = a.distance(a, b);
+    float bc = b.distance(b, c);
+    float ca = c.distance(c, a);
+
+    float s = (ab + bc + ca) / 2;
+    return sqrt(s * (s-ab) * (s-bc) * (s-ca));
+}
+
+//------------------------------------------------------------------------------
+/**
+    
+*/
+float
+SkinRayCheckUtil::GetSizeOfVertexFace(int vertexIndex)
+{
+    vertexIndex += this->startVertex;
+    float size = 0;
+    int i;
+    for (i = 0; i < this->neighbourFacesMapOverOriginalVertex[vertexIndex].Size(); i++)
+    {
+        size += this->GetSizeOfFace(this->neighbourFacesMapOverOriginalVertex[vertexIndex][i]);
+    }
+    return size;
+}
+
+//------------------------------------------------------------------------------
+/**
+    
+*/
+int
+SkinRayCheckUtil::GetVertexFromFace(int faceIndex, int vertexNr)
+{
+    if (vertexNr == 0) return this->collapseMap[this->faces[faceIndex].v0][0];
+    else if (vertexNr == 1) return this->collapseMap[this->faces[faceIndex].v1][0];
+    else if (vertexNr == 2) return this->collapseMap[this->faces[faceIndex].v2][0];
+    n_error("Only vertexNr 0 - 2!");
+    return -1;
 }
 
 };

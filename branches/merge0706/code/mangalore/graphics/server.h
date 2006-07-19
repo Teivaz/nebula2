@@ -29,6 +29,7 @@
 #include "gfx2/ndisplaymode2.h"
 #include "graphics/entity.h"
 #include "graphics/animtable.h"
+#include "util/ndictionary.h"
 
 //------------------------------------------------------------------------------
 namespace Graphics
@@ -91,8 +92,14 @@ public:
     CameraEntity* GetCamera() const;
     /// get current frame id
     uint GetFrameId() const;
-    /// drag drop select
-    void DragDropSelect(const vector3& lookAt, float angleOfView, float aspectRatio, nArray<Ptr<Entity> >& entities);
+    /// set max distance threshold for a graphics entity class
+    void SetDistThreshold(const Foundation::Rtti* type, float maxDist);
+    /// get max distance threshold for a graphics entity class
+    float GetDistThreshold(const Foundation::Rtti* type) const;
+    /// set max screen size threshold for a graphics entity class
+    void SetSizeThreshold(const Foundation::Rtti* type, float minSize);
+    /// get max screen size threshold for a graphics entity class
+    float GetSizeThreshold(const Foundation::Rtti* type) const;
 
 private:
     friend class LightEntity;
@@ -123,6 +130,11 @@ private:
     nTime time;
     nTime frameTime;
 
+    nDictionary<const Foundation::Rtti*, float> lodDistThresholds;
+    nDictionary<const Foundation::Rtti*, float> lodSizeThresholds;
+    static const float maxLodDistThreshold;
+    static const float minLodSizeThreshold;
+
     #if __NEBULA_STATS__
     nWatched numShapesVisible;
     nWatched numLightsVisible;
@@ -133,15 +145,77 @@ private:
     nWatched numCellsOutsideLight;
     nWatched numCellsVisibleCamera;
     nWatched numCellsVisibleLight;
-    nProfiler profMangaRender_GfxRender;
-    nProfiler profMangaRender_GfxEndRender_LevelEndRender;
-    nProfiler profMangaRender_GfxEndRender_CaptureTrigger;
-    nProfiler profMangaRender_GfxEndRender_PresentScene;
     #endif
 
 };
 
-RegisterFactory(Server);
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Server::SetDistThreshold(const Foundation::Rtti* type, float maxDist)
+{
+    if (!this->lodDistThresholds.Contains(type))
+    {
+        this->lodDistThresholds.Add(type, maxDist);
+    }
+    else
+    {
+        this->lodDistThresholds[type] = maxDist;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+Server::GetDistThreshold(const Foundation::Rtti* type) const
+{
+    if (this->lodDistThresholds.Contains(type))
+    {
+        return this->lodDistThresholds[type];
+    }
+    else
+    {
+        return maxLodDistThreshold;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Server::SetSizeThreshold(const Foundation::Rtti* type, float minSize)
+{
+    if (!this->lodSizeThresholds.Contains(type))
+    {
+        this->lodSizeThresholds.Add(type, minSize);
+    }
+    else
+    {
+        this->lodSizeThresholds.Add(type, minSize);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+Server::GetSizeThreshold(const Foundation::Rtti* type) const
+{
+    if (this->lodSizeThresholds.Contains(type))
+    {
+        return this->lodSizeThresholds[type];
+    }
+    else
+    {
+        return minLodSizeThreshold;
+    }
+}
 
 //------------------------------------------------------------------------------
 /**

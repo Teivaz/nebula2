@@ -6,6 +6,8 @@
 #include "ui/server.h"
 #include "foundation/factory.h"
 #include "graphics/lightentity.h"
+#include "kernel/nfileserver2.h"
+#include "game/time/guitimesource.h"
 
 namespace UI
 {
@@ -75,26 +77,32 @@ Canvas::OnCreate(UI::Element* parent)
     // canvases don't have parents
     n_assert(0 == parent);
 
-    // create graphics entity
+    // create graphics entity, first check if it actually exists...
     n_assert(this->resourceName.IsValid());
-	this->graphicsEntity = Graphics::Entity::Create();
-    this->graphicsEntity->SetResourceName(this->resourceName);
-    this->graphicsEntity->SetRenderFlag(nRenderContext::DoOcclusionQuery, false);
-    this->graphicsEntity->OnActivate();
+    nString resPath;
+    resPath.Format("gfxlib:%s.n2", this->resourceName.Get());
+    if (nFileServer2::Instance()->FileExists(resPath))
+    {
+	    this->graphicsEntity = Graphics::Entity::Create();
+        this->graphicsEntity->SetTimeSource(Game::GuiTimeSource::Instance());
+        this->graphicsEntity->SetResourceName(this->resourceName);
+        this->graphicsEntity->SetRenderFlag(nRenderContext::DoOcclusionQuery, false);
+        this->graphicsEntity->OnActivate();
 
-    // find the Nebula node which represents the canvas
-    nTransformNode* rootNode   = this->graphicsEntity->GetResource().GetNode();
-    nTransformNode* canvasNode = this->FindCanvasNodeInHierarchy(rootNode);
-    n_assert(canvasNode);
-    this->SetGfxNode(canvasNode);
+        // find the Nebula node which represents the canvas
+        nTransformNode* rootNode   = this->graphicsEntity->GetResource().GetNode();
+        nTransformNode* canvasNode = this->FindCanvasNodeInHierarchy(rootNode);
+        n_assert(canvasNode);
+        this->SetGfxNode(canvasNode);
 
-    // establish link between UIServer's light source and new graphics entity
-    Graphics::LightEntity* lightEntity = Server::Instance()->GetLightEntity();
-    this->graphicsEntity->AddLink(Graphics::Entity::LightLink, lightEntity);
-    lightEntity->AddLink(Graphics::Entity::LightLink, this->graphicsEntity);
+        // establish link between UIServer's light source and new graphics entity
+        Graphics::LightEntity* lightEntity = Server::Instance()->GetLightEntity();
+        this->graphicsEntity->AddLink(Graphics::Entity::LightLink, lightEntity);
+        lightEntity->AddLink(Graphics::Entity::LightLink, this->graphicsEntity);
 
-    // create child elements
-    Element::OnCreate(parent);
+        // create child elements
+        Element::OnCreate(parent);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -103,9 +111,11 @@ Canvas::OnCreate(UI::Element* parent)
 void
 Canvas::OnDestroy()
 {
-    this->graphicsEntity->OnDeactivate();
-    this->graphicsEntity = 0;
-
+    if (this->graphicsEntity.isvalid())
+    {
+        this->graphicsEntity->OnDeactivate();
+        this->graphicsEntity = 0;
+    }
     Element::OnDestroy();
 }
 
@@ -115,11 +125,14 @@ Canvas::OnDestroy()
 void
 Canvas::OnRender()
 {
-    // first distribute to children
-    Element::OnRender();
-   
-    // then render our graphics entity
-    this->graphicsEntity->Render();
+    if (this->IsVisible())
+    {
+        // first distribute to children
+        Element::OnRender();
+       
+        // then render our graphics entity
+        this->graphicsEntity->Render();
+    }
 }
 
 } // namespace UI

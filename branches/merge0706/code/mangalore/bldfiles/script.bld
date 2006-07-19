@@ -6,12 +6,10 @@ beginmodule mangalore::script
     settype cpp
     setfiles { 
         command
-        echo
         server
     }
     setheaders { 
         command
-        echo
         server
     }
 endmodule

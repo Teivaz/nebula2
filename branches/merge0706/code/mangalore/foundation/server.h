@@ -72,6 +72,10 @@ public:
     const nString& GetAppName() const;
     /// get vendor name
     const nString& GetVendorName() const;
+    /// set path to startup.tcl
+    void SetStartupPath(const nString& path);
+    /// get path to startup.tcl
+    const nString& GetStartupPath() const;
     /// startup
     bool Open();
     /// shutdown
@@ -88,6 +92,7 @@ private:
     nString projDir;
     nString appName;
     nString vendorName;
+    nString startupPath; // defaults to home:data/scripts/
 
     nKernelServer* kernelServer;
 #ifdef __WIN32__
@@ -170,6 +175,27 @@ Server::GetVendorName() const
 {
     return this->vendorName;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Server::SetStartupPath(const nString& path)
+{
+    this->startupPath = path;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+Server::GetStartupPath() const
+{
+    return this->startupPath;
+}
+
 
 } // namespace Foundation
 //------------------------------------------------------------------------------

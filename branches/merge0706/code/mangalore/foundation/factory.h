@@ -27,7 +27,7 @@ public:
 	/// The one and only instance.
 	static Factory* Instance();
 	/// Optional destructor.
-	/// static void Destroy();
+	static void Destroy();
 
 	/// Map factory function `function' to class name `className'.
 	void Add(FactoryFunction function, const nString& className);
@@ -35,6 +35,11 @@ public:
 	bool Has(const nString& className) const;
 	/// Create object associated with `className'.
 	RefCounted* Create(const nString& className) const;
+
+    /// Get the total number of known classes.
+    int GetNumClassNames() const;
+    /// Get the string class name at the given index.
+    const nString& GetClassNameAt(int index) const;
 
 protected:
 	/// Constructor.

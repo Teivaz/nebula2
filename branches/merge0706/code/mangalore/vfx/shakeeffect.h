@@ -10,13 +10,13 @@
 
     (C) 2005 Radon Labs GmbH
 */
-#include "foundation/refcounted.h"
+#include "vfx/effect.h"
 #include "mathlib/nmath.h"
 
 //------------------------------------------------------------------------------
 namespace VFX
 {
-class ShakeEffect : public Foundation::RefCounted
+class ShakeEffect : public Effect
 {
     DeclareRtti;
 	DeclareFactory(ShakeEffect);
@@ -26,10 +26,6 @@ public:
     ShakeEffect();
     /// destructor
     virtual ~ShakeEffect();
-    /// set position
-    void SetPosition(const vector3& p);
-    /// get position
-    const vector3& GetPosition() const;
     /// set range
     void SetRange(float r);
     /// get range
@@ -38,52 +34,18 @@ public:
     void SetIntensity(float i);
     /// get intensity
     float GetIntensity() const;
-    /// set duration in seconds
-    void SetDuration(nTime s);
-    /// get duration in seconds
-    nTime GetDuration() const;
-    /// start shake effect playback
-    void Play();
-    /// stop shake effect playback
-    void Stop();
-    /// return true if still playing
-    bool IsPlaying() const;
-    /// trigger the shake effect
-    void Trigger();
-    /// get current intensity, valid after Trigger has been called
+    /// start the effect
+    virtual void OnStart();
+    /// trigger the effect
+    virtual void OnFrame();
+    /// get current intensity, valid after Update has been called
     float GetCurrentIntensity() const;
 
 private:
-    vector3 position;
     float range;
     float intensity;
-    bool isPlaying;
-    nTime duration;
-    nTime startTime;
     float curIntensity;     // current intensity, updated by Trigger
 };
-
-RegisterFactory(ShakeEffect);
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-ShakeEffect::SetPosition(const vector3& p)
-{
-    this->position = p;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const vector3&
-ShakeEffect::GetPosition() const
-{
-    return this->position;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -103,41 +65,6 @@ float
 ShakeEffect::GetRange() const
 {
     return this->range;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-ShakeEffect::SetDuration(nTime d)
-{
-    // don't allow a zero duration
-    if (d <= N_TINY)
-    {
-        d = 0.001f;
-    }
-    this->duration = d;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTime
-ShakeEffect::GetDuration() const
-{
-    return this->duration;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-ShakeEffect::IsPlaying() const
-{
-    return this->isPlaying;
 }
 
 //------------------------------------------------------------------------------

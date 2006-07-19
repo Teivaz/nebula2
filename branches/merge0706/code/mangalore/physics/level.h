@@ -28,7 +28,6 @@ class Entity;
 class Shape;
 class Server;
 class Ray;
-class MouseGripper;
 
 class Level : public Foundation::RefCounted
 {
@@ -46,8 +45,6 @@ public:
     virtual void OnDeactivate();
     /// perform one (or more) simulation steps depending on current time
     virtual void Trigger();
-    /// access to global embedded mouse gripper
-    MouseGripper* GetMouseGripper() const;
     /// attach a physics entity to the level
     void AttachEntity(Entity* entity);
     /// remove a physics entity from the level
@@ -114,17 +111,18 @@ protected:
     };
     nTime simTimeStamp;
     dJointGroupID contactJointGroup;
-    Ptr<MouseGripper> mouseGripper;
 
     nHashMap2<nTime> collisionSounds;
 
-    nProfiler profFrameBefore;
-    nProfiler profFrameAfter;
-    nProfiler profStepBefore;
-    nProfiler profStepAfter;
-    nProfiler profCollide;
-    nProfiler profStep;
-    nProfiler profJointGroupEmpty;
+    PROFILER_DECLARE(profFrameBefore);
+    PROFILER_DECLARE(profFrameAfter);
+    PROFILER_DECLARE(profStepBefore);
+    PROFILER_DECLARE(profStepAfter);
+    PROFILER_DECLARE(profCollide);
+    PROFILER_DECLARE(profStep);
+    PROFILER_DECLARE(profJointGroupEmpty);
+
+    #ifdef __NEBULA_STATS__
     int statsNumSpaceCollideCalled;              // number of times dSpaceCollide has been invoked
     int statsNumNearCallbackCalled;              // number of times the near callback has been invoked
     int statsNumCollideCalled;                   // number of times the collide function has been invoked
@@ -132,6 +130,7 @@ protected:
     int statsNumSpaces;
     int statsNumShapes;
     int statsNumSteps;
+    #endif
 };
 
 RegisterFactory(Level);
@@ -270,16 +269,6 @@ nTime
 Level::GetStepSize() const
 {
     return this->stepSize;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-MouseGripper*
-Level::GetMouseGripper() const
-{
-    return this->mouseGripper;
 }
 
 } // namespace Physics

@@ -29,16 +29,16 @@ Bank::~Bank()
 
 //------------------------------------------------------------------------------
 /**
-    Open an effect xls table and parse it.
+	Open an effect xls table and parse it.
 
-    @return         true if succeeded, false if not
+    @return         true if succed, false if not
 */
 bool
 Bank::Open()
 {
     if (!this->xmlSpreadSheet.Open())
     {
-        n_error("VFX::Bank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename().Get());
+		n_error("VFX::Bank::Open(): failed to load '%s'", this->xmlSpreadSheet.GetFilename());
         return false;
     }
 
@@ -46,17 +46,22 @@ Bank::Open()
     int numRows = xmlTable.NumRows();
     n_assert(numRows >= 1);
     int numSounds = numRows - 1;
-
+    
     int effectIndex;
     for (effectIndex = 0; effectIndex < numSounds; effectIndex++)
     {
         int rowIndex = effectIndex + 1;
 
-        // create a new effect resource
+		// create a new effect resource
         const nString& name = xmlTable.Cell(rowIndex, "Name").AsString();
-        const nString& gfxResource = xmlTable.Cell(rowIndex, "File").AsString();
+		const nString& gfxResource = xmlTable.Cell(rowIndex, "File").AsString();
         float timeout = xmlTable.Cell(rowIndex, "Timeout").AsFloat();
-        this->AddEffect(name, gfxResource, timeout);
+        float hotSpot = 0.0f;
+        if (xmlTable.HasColumn("Hotspot"))
+        {
+            hotSpot = xmlTable.Cell(rowIndex, "Hotspot").AsFloat();
+        }
+        this->AddGraphicsEffect(name, gfxResource, timeout, hotSpot);
     }
     return true;
 }
@@ -64,12 +69,12 @@ Bank::Open()
 
 //------------------------------------------------------------------------------
 /**
-    Close the audio xls table.
+	Close the audio xls table.
 */
 void
 Bank::Close()
 {
-    this->xmlSpreadSheet.Close();
+	this->xmlSpreadSheet.Close();
 }
 
 
@@ -77,9 +82,9 @@ Bank::Close()
 /**
     Find an effect template by name.
 
-    @param  name      name of effect to find
+    @param  effectName      name of effect to find
 */
-Effect*
+GraphicsEffect*
 Bank::FindEffect(const nString& name)
 {
     n_assert(name.IsValid());
@@ -103,22 +108,27 @@ Bank::FindEffect(const nString& name)
     @param  effectName      name by which the effect is identified
     @param  resourceName    graphics resource name
     @param  duration        duration of the effect
+    @param  hotspot         hotspot time of the effect
 */
 void
-Bank::AddEffect(const nString& effectName, const nString& resourceName, nTime duration)
+Bank::AddGraphicsEffect(const nString& effectName, const nString& resourceName, nTime duration, nTime hotspot)
 {
     n_assert(effectName.IsValid());
-    n_assert(resourceName.IsValid());
+    n_assert(duration > 0.0);
 
     // make sure the effect doesn't exist yet
     n_assert(!this->FindEffect(effectName));
 
     // create a new effect object and add it to effect array
-    Effect* newEffect = Effect::Create();
-    newEffect->SetName(effectName);
-    newEffect->SetResourceName(resourceName);
-    newEffect->SetDuration(duration);
-    this->effectArray.Append(newEffect);
+    if (resourceName.IsValid())
+    {
+        GraphicsEffect* newEffect = GraphicsEffect::Create();
+        newEffect->SetName(effectName);
+        newEffect->SetResourceName(resourceName);
+        newEffect->SetDuration(duration);
+        newEffect->SetHotspotTime(hotspot);
+        this->effectArray.Append(newEffect);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -129,14 +139,18 @@ Bank::AddEffect(const nString& effectName, const nString& resourceName, nTime du
     @param  templateEffectName      name of effect to clone from
     @param  transform               the world position at which the effect should be created
 */
-Effect*
-Bank::CreateEffect(const nString& templateEffectName, const matrix44& transform)
+GraphicsEffect*
+Bank::CreateGraphicsEffect(const nString& templateEffectName, const matrix44& transform)
 {
     n_assert(templateEffectName.IsValid());
-    Effect* templateEffect = this->FindEffect(templateEffectName);
+    GraphicsEffect* templateEffect = this->FindEffect(templateEffectName);
     if (templateEffect)
     {
-        Effect* newEffect = n_new(Effect(*templateEffect));
+        GraphicsEffect* newEffect = GraphicsEffect::Create();
+        newEffect->SetName(templateEffect->GetName());
+        newEffect->SetDuration(templateEffect->GetDuration());
+        newEffect->SetHotspotTime(templateEffect->GetHotspotTime());
+        newEffect->SetResourceName(templateEffect->GetResourceName());
         newEffect->SetTransform(transform);
         return newEffect;
     }

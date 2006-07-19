@@ -14,7 +14,7 @@ ImplementFactory(Graphics::CameraEntity);
 /**
 */
 CameraEntity::CameraEntity() :
-    camera(60.0f, 4.0f / 3.0f, 0.1f, 5000.0f),
+    camera(60.0f, 4.0f / 3.0f, 0.1f, 2500.0f),
     viewProjDirty(false)
 {
     // empty
@@ -118,6 +118,20 @@ CameraEntity::GetViewProjection()
         this->UpdateViewProjection();
     }
     return this->viewProjMatrix;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns the current view matrix.
+*/
+const matrix44&
+CameraEntity::GetView()
+{
+    if (this->viewProjDirty)
+    {
+        this->UpdateViewProjection();
+    }
+    return this->viewMatrix;
 }
 
 //------------------------------------------------------------------------------

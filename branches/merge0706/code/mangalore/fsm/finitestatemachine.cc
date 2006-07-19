@@ -169,8 +169,14 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
     {
         int stateIndex = row - 1;
 
-        const nXmlTableCell& timeOutTimeCell = xmlTable->Cell(row, 1);
-        const nXmlTableCell& timeOutTransitionCell = xmlTable->Cell(row, 2);
+		const nXmlTableCell& updateActionCell = xmlTable->Cell(row, 1);
+        const nXmlTableCell& timeOutTimeCell = xmlTable->Cell(row, 2);
+        const nXmlTableCell& timeOutTransitionCell = xmlTable->Cell(row, 3);
+
+        if (strcmp(updateActionCell.AsString().Get(), "-"))
+        {
+            n_error("Update Actions are not supported anymore");
+        }
 
         Transition* timeoutTransition = this->ParseTransition("TimeOut", timeOutTransitionCell.AsString().Get(), stateTable);
         if (0 != timeoutTransition)

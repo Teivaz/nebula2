@@ -10,7 +10,9 @@
 
     (C) 2006 RadonLabs GmbH
 */
+#include "util/nstring.h"
 #include "loader/entityloaderbase.h"
+#include "game/entity.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
@@ -20,16 +22,18 @@ class EntityLoader : public EntityLoaderBase
 {
     DeclareRtti;
     DeclareFactory(EntityLoader);
-
 public:
     /// constructor
     EntityLoader();
     /// destructor
     ~EntityLoader();
     /// load entity objects into the level
-    virtual bool Load(const nString& levelName);
-};
+    virtual bool Load(Db::Reader* dbReader);
 
+private:
+    /// update the progress indicator
+    void UpdateProgressIndicator(Game::Entity* gameEntity);
+};
 RegisterFactory(EntityLoader);
 
 } // namespace Loader

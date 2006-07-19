@@ -93,7 +93,7 @@ bool
 ViewerApp::Open()
 {
     //DebugBreak();
-    //this->SetupFromCmdLineArgs();
+    this->SetupFromCmdLineArgs();
     if (App::Open())
     {
         // FIXME: turn off clip plane fencing and occlusion query (FOR NOW)
@@ -103,7 +103,6 @@ ViewerApp::Open()
 
         //Setup GUI
         SetupGui();
-        SetupCeGui();
 
         // redirect resource assigns if necessary, this
         // is the case if the viewer acts as toolkit previewer
@@ -210,7 +209,7 @@ void
 ViewerApp::OnFrame()
 {
     Input::Server* inputServer = Input::Server::Instance();
-    if (inputServer->GetButton("timeReset"))
+    if (inputServer->GetButtonClicked("timeReset"))
     {
         if (this->loadedEntity)
         {
@@ -231,11 +230,6 @@ ViewerApp::SetupStateHandlers()
     Ptr<Application::GameStateHandler> gameStateHandler = n_new(Application::GameStateHandler);
     gameStateHandler->SetName("Game");
     gameStateHandler->SetExitState("Exit");
-
-    if (this->GetWorldDb().IsValid())
-    {
-        gameStateHandler->SetDbName(this->GetWorldDb());
-    }
 
     // if a startup level has been set, directly start with the location state
     if (this->GetStartupLevel().IsValid())
@@ -451,19 +445,6 @@ ViewerApp::SetupGui()
     textLabel->OnShow();
 
     kernelServer->PopCwd();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-ViewerApp::SetupCeGui()
-{
-    ceuiServer->CreateFont("cegui:fonts/Commonwealth-10.font");
-    ceuiServer->LoadScheme("cegui:schemes/TaharezLook.scheme");
-    ceuiServer->LoadWindowLayout("cegui:layouts/mviewer.layout");
-    ceuiServer->SetDefaultMouseCursor("TaharezLook", "MouseArrow");
-    ceuiServer->DisplayGui();
 }
 
 }; // namespace Viewer

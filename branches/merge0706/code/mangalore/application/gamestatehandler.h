@@ -19,6 +19,7 @@
 #include "gfx2/nmesh2.h"
 #include "gfx2/ntexture2.h"
 #include "gfx2/nshader2.h"
+#include "kernel/nprofiler.h"
 
 //------------------------------------------------------------------------------
 namespace Application
@@ -47,10 +48,6 @@ public:
     void SetSetupMode(SetupMode mode);
     /// get the setup mode
     SetupMode GetSetupMode() const;
-    /// set database filename
-    void SetDbName(const nString& n);
-    /// get database name
-    const nString& GetDbName() const;
     /// set level filename, required by setup mode LoadLevel
     void SetLevelName(const nString& n);
     /// get level name
@@ -70,18 +67,19 @@ public:
     /// called each frame as long as state is current, return new state
     virtual nString OnFrame();
 
-protected:
-    /// update timestamps for subsystems
-    void UpdateSubsystemTimes();
-
+private:
     SetupMode setupMode;
     nString exitState;
-    nString dbName;
     nString levelName;
     nString saveGame;
     bool physicsVisualizationEnabled;
     bool graphicsVisualizationEnabled;
+    bool gameEntityVisualizationEnabled;
     bool fovVisualization;
+
+    PROFILER_DECLARE(profCompleteFrame);
+    PROFILER_DECLARE(profParticleUpdates);
+    PROFILER_DECLARE(profRender);
 };
 
 RegisterFactory(GameStateHandler);
@@ -124,26 +122,6 @@ const nString&
 GameStateHandler::GetExitState() const
 {
     return this->exitState;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-GameStateHandler::SetDbName(const nString& n)
-{
-    this->dbName = n;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-GameStateHandler::GetDbName() const
-{
-    return this->dbName;
 }
 
 //------------------------------------------------------------------------------

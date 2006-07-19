@@ -43,12 +43,12 @@ public:
     virtual bool SaveGame(const nString& saveGameName);
     /// load an existing save game
     virtual bool LoadGame(const nString& saveGameName);
+    /// get name of startup level (defined in world database)
+    nString GetStartupLevel();
 
 private:
     /// get world database
     nString GetWorldDb();
-    /// query the world database for the startup level
-    nString QueryStartupLevel();
 
     static SaveGameManager* Singleton;
     nString overrideWorldDb;

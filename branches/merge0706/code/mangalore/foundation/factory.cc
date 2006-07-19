@@ -14,18 +14,17 @@ Factory* Factory::instance = 0;
 */
 Factory* Factory::Instance()
 {
-/*	if (instance == 0)
+	if (instance == 0)
 	{
 		instance = new Factory;
 		n_assert(instance != 0);
 	}
-	return instance;*/
-	static Factory instance;
-	return &instance;
+	return instance;
 }
 
 //------------------------------------------------------------------------------
 /**
+*/
 void
 Factory::Destroy()
 {
@@ -34,7 +33,7 @@ Factory::Destroy()
 		delete instance;
 		instance = 0;
 	}
-}*/
+}
 
 
 //------------------------------------------------------------------------------
@@ -96,5 +95,20 @@ Factory::Create(const nString& className) const
 	return 0;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+int Factory::GetNumClassNames() const
+{
+    return this->table.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+const nString& Factory::GetClassNameAt(int index) const
+{
+    return this->table[index].name;
+}
 
 } // namespace Foundation

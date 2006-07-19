@@ -44,8 +44,6 @@ public:
     virtual void OnActivate();
     /// called from Entity::DeactivateProperties()
     virtual void OnDeactivate();
-    /// called before rendering happens
-    virtual void OnRender();
 
     /// return true if message is accepted
     virtual bool Accepts(Message::Msg* msg);
@@ -55,24 +53,17 @@ public:
 protected:
     /// setup graphics entities
     virtual void SetupGraphicsEntities();
-    /// cleanup graphics entities
-    virtual void CleanupGraphicsEntities();
+    /// update the graphics entity's transform
+    virtual void UpdateTransform(const matrix44& m, bool setDirectly=false);
 
     nArray<Ptr<Graphics::Entity> > graphicsEntities;
+
+private:
+    // Shows or hides all attached graphics entities (Message::GfxSetVisible).
+    void SetVisible(bool visible);
 };
 
 RegisterFactory(GraphicsProperty);
-
-//------------------------------------------------------------------------------
-/**
-    Get a reference to the array of graphics entities
-*/
-inline
-const nArray<Ptr<Graphics::Entity> >&
-GraphicsProperty::GetGraphicsEntities() const
-{
-    return this->graphicsEntities;
-}
 
 } // namespace Properties
 //------------------------------------------------------------------------------
