@@ -15,6 +15,7 @@
 #include "game/entity.h"
 #include "managers/envquerymanager.h"
 #include "managers/timemanager.h"
+#include "game/time/inputtimesource.h"
 
 namespace Properties
 {
@@ -51,27 +52,27 @@ PointNClickInputProperty::OnBeginFrame()
     if (FocusManager::Instance()->GetInputFocusEntity() == GetEntity())
     {
         Input::Server* inputServer = Input::Server::Instance();
-        if (inputServer->GetButton("lmbDown"))
+        if (inputServer->GetButtonDown("mouseLMB"))
         {
             this->OnLmbDown();
         }
-        else if (inputServer->GetButton("lmbPressed"))
+        else if (inputServer->GetButtonPressed("mouseLMB"))
         {
             this->OnLmbPressed();
         }
-        if (inputServer->GetButton("mmbPressed"))
+        if (inputServer->GetButtonPressed("mouseMMB"))
         {
             this->OnMmbPressed();
         }
-        if (inputServer->GetButton("rmbDown"))
+        if (inputServer->GetButtonDown("mouseRMB"))
         {
             this->OnRmbDown();
         }
-        if (inputServer->GetButton("vwrZoomIn"))
+        if (inputServer->GetButtonClicked("mouseWheelUp"))
         {
             this->OnCameraZoomIn();
         }
-        if (inputServer->GetButton("vwrZoomOut"))
+        if (inputServer->GetButtonClicked("mouseWheelDown"))
         {
             this->OnCameraZoomOut();
         }
@@ -96,7 +97,7 @@ PointNClickInputProperty::SendMoveGoto()
         GetEntity()->SendAsync(msg);
 
         // record the current time for the HandleLMBPressed() method
-        this->moveGotoTime = TimeManager::Instance()->GetTime();
+        this->moveGotoTime = InputTimeSource::Instance()->GetTime();
     }
 }
 
@@ -120,7 +121,7 @@ PointNClickInputProperty::OnLmbDown()
 void
 PointNClickInputProperty::OnLmbPressed()
 {
-    nTime curTime = TimeManager::Instance()->GetTime();
+    nTime curTime = InputTimeSource::Instance()->GetTime();
     if ((curTime - this->moveGotoTime) > 0.25f)
     {
         this->SendMoveGoto();
@@ -136,8 +137,8 @@ PointNClickInputProperty::OnMmbPressed()
 {
     // get horizontal and vertical mouse movement
     Input::Server* inputServer = Input::Server::Instance();
-    float x = inputServer->GetSlider("vwrLeft") - inputServer->GetSlider("vwrRight");
-    float y = inputServer->GetSlider("vwrUp") - inputServer->GetSlider("vwrDown");
+    float x = inputServer->GetSlider("mouseLeft") - inputServer->GetSlider("mouseRight");
+    float y = inputServer->GetSlider("mouseUp") - inputServer->GetSlider("mouseDown");
     
     // create CameraOrbit message
 	Ptr<Message::CameraOrbit> msg = Message::CameraOrbit::Create();

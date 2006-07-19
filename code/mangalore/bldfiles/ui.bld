@@ -18,6 +18,12 @@ beginmodule mangalore::ui
         server
         window
         windoweventhandler
+        dragbox
+        dragboxdisplay
+        dynamiclabel
+        frame
+        progressbarwindow
+        textbutton
     }
     setheaders {
         button
@@ -31,6 +37,12 @@ beginmodule mangalore::ui
         server
         window
         windoweventhandler
+        dragbox
+        dragboxdisplay
+        dynamiclabel
+        frame
+        progressbarwindow
+        textbutton
     }
 endmodule
 #-------------------------------------------------------------------------------

@@ -58,11 +58,11 @@ SetupManager::SetCurrentLevel(const nString& levelName)
     levelQuery->Execute();
     if (levelQuery->GetNumRows() == 0)
     {
-        n_error("SetupManager::SetupWorldFromLevel(): level '%s' not found in world database!", levelName.Get());
+        n_error("SetupManager::SetCurrentLevel(): level '%s' not found in world database!", levelName.Get());
     }
 
     // update the CurrentLevel global attribute
-    Db::Server::Instance()->WriteAttr("_Global", Db::Attribute(Attr::_Dummy, nString("x")), Db::Attribute(Attr::CurrentLevel, levelName));
+    Db::Server::Instance()->SetGlobalString(Attr::CurrentLevel, levelName);
 }
 
 //------------------------------------------------------------------------------
@@ -72,9 +72,7 @@ SetupManager::SetCurrentLevel(const nString& levelName)
 nString
 SetupManager::GetCurrentLevel() const
 {
-    Db::Attribute curLevel(Attr::CurrentLevel);
-    Db::Server::Instance()->ReadAttr("_Global", Db::Attribute(Attr::_Dummy, nString("x")), curLevel);
-    return curLevel.GetString();
+    return Db::Server::Instance()->GetGlobalString(Attr::CurrentLevel);
 }
 
 //------------------------------------------------------------------------------
@@ -98,6 +96,9 @@ SetupManager::SetupEmptyWorld()
 
     // open navigation subsystem
     Navigation::Server::Instance()->Open();
+
+    // start the empty game world
+    Game::Server::Instance()->Start();
 }
 
 //------------------------------------------------------------------------------
@@ -115,6 +116,17 @@ SetupManager::SetupWorldFromCurrentLevel()
 
     // load level from database
     Loader::Server::Instance()->LoadLevel(this->GetCurrentLevel());
+
+    // invoke OnLoad() on everything
+    Game::Server::Instance()->Load();
+    
+    // start the game world
+    Loader::Server* loaderServer = Loader::Server::Instance();
+    loaderServer->SetProgressText("Starting Game World...");
+    loaderServer->UpdateProgressDisplay();
+    Game::Server::Instance()->Start();
+    loaderServer->SetProgressText("After Start Game World...");
+    loaderServer->UpdateProgressDisplay();
 }
 
 //------------------------------------------------------------------------------
@@ -126,8 +138,14 @@ SetupManager::SetupWorldFromCurrentLevel()
 void
 SetupManager::CleanupWorld()
 {
+    // stop the game world
+    Game::Server::Instance()->Stop();
+    
     // flush world state back into the database
-    Game::Server::Instance()->Save();
+    if (Db::Server::Instance()->IsOpen())
+    {
+        Game::Server::Instance()->Save();
+    }
 
     // clear all game entities
     EntityManager::Instance()->RemoveAllEntities();
@@ -140,4 +158,43 @@ SetupManager::CleanupWorld()
     Navigation::Server::Instance()->Close();
 }
 
-} // namespace Game
+
+
+//------------------------------------------------------------------------------
+/**
+	checks if the RandomEncounterLevel flag is set for this Level
+*/
+bool
+SetupManager::IsRandomEncounterLevel(const nString& n)
+{
+    // query for random encounters 
+    Db::Server* dbServer = Db::Server::Instance();
+    Ptr<Db::Query> query = dbServer->CreateQuery();
+    query->SetTableName("_Entities");
+    query->AddWhereAttr(Db::Attribute(Attr::_Type, "TEMPLATE"));
+    query->AddWhereAttr(Db::Attribute(Attr::_Category, ".Levels"));
+	query->AddWhereAttr(Db::Attribute(Attr::Id, n));
+    query->BuildSelectStatement();
+    
+    if (query->Execute())
+    {
+        int rowIndex = 0;
+        int numRows = query->GetNumRows();
+
+		if( numRows )
+		{
+			if(query->HasAttr(Attr::RandomEncounterLevel, rowIndex))
+			{
+				return query->GetBool(Attr::RandomEncounterLevel, rowIndex);
+			}
+		}
+    }
+
+	return true;
+}
+
+
+
+
+
+}; // namespace Game

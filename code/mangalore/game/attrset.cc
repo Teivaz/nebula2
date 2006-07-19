@@ -7,6 +7,15 @@
 namespace Game
 {
 ImplementRtti(Game::AttrSet, Foundation::RefCounted);
+ImplementFactory(Game::AttrSet);
 
+//------------------------------------------------------------------------------
+/**
+*/
+void
+AttrSet::SetupEntity(Entity* entity)
+{
+    // empty
+}
 
 };

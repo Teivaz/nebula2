@@ -23,6 +23,7 @@
 */
 #include "game/manager.h"
 #include "game/entity.h"
+#include "foundation/ptr.h"
 
 //------------------------------------------------------------------------------
 namespace Managers
@@ -70,14 +71,17 @@ private:
 
     /// generalized 'set focus to next entity' method
     void SetToNextEntity(bool cameraFocus, bool inputFocus);
-    /// actually switch focus entities
-    void SwitchFocusEntities();
+    
     /// set focus to first Entity with CameraProperty if an Entity with
     /// VideoCameraProperty exists it will get the focus.
     /// report if such entity is found
     bool SwitchToFirstCameraFocusEntity();
 
 protected:
+
+    /// actually switch focus entities
+    void SwitchFocusEntities();
+    
     Ptr<Game::Entity> inputFocusEntity;
     Ptr<Game::Entity> cameraFocusEntity;
     Ptr<Game::Entity> newInputFocusEntity;

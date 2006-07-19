@@ -7,11 +7,16 @@
 #include "video/nvideoserver.h"
 #include "input/ninputserver.h"
 #include "gfx2/ngfxserver2.h"
+#include "managers/timemanager.h"
+#include "game/time/systemtimesource.h"
 
 namespace Application
 {
 ImplementRtti(Application::PlayVideoHandler, Application::StateHandler);
 ImplementFactory(Application::PlayVideoHandler);
+
+using namespace Managers;
+using namespace Game;
 
 //------------------------------------------------------------------------------
 /**
@@ -36,6 +41,8 @@ PlayVideoHandler::~PlayVideoHandler()
 void
 PlayVideoHandler::OnStateEnter(const nString& prevState)
 {
+    TimeManager::Instance()->ResetAll();
+    TimeManager::Instance()->Update();
     StateHandler::OnStateEnter(prevState);
 	n_assert(!this->videoFileName.IsEmpty());
     nVideoServer::Instance()->SetEnableScaling(this->GetEnableScaling());
@@ -50,6 +57,7 @@ PlayVideoHandler::OnFrame()
 {
     nString returnState = App::Instance()->GetCurrentState();
     
+    TimeManager::Instance()->Update();
     nInputServer* inputServer = nInputServer::Instance();
     nVideoServer* videoServer = nVideoServer::Instance();
     nGfxServer2* gfxServer    = nGfxServer2::Instance();
@@ -59,9 +67,7 @@ PlayVideoHandler::OnFrame()
     {
         // trigger input and video servers
         videoServer->Trigger();
-        
-        nTime time = App::Instance()->GetStateTime();
-        inputServer->Trigger(time);
+        inputServer->Trigger(SystemTimeSource::Instance()->GetTime());
 
 	    // check if video has finished
 	    if (!videoServer->IsPlaying())

@@ -58,7 +58,7 @@ public:
 
 protected:
     /// do a collision check
-    vector3 DoCollideCheck(const vector3& from, const vector3& to);
+    virtual vector3 DoCollideCheck(const vector3& from, const vector3& to);
     /// handle a camera reset message
     virtual void HandleCameraReset();
     /// handle a camera orbit message

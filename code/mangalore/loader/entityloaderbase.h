@@ -8,22 +8,23 @@
 
     (C) 2006 RadonLabs GmbH
 */
+#include "util/nstring.h"
 #include "foundation/refcounted.h"
+#include "db/reader.h"
+#include "ui/progressbarwindow.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
 {
 class EntityLoaderBase : public Foundation::RefCounted
 {
-    DeclareRtti;
-
 public:
     /// constructor
     EntityLoaderBase();
     /// destructor
     ~EntityLoaderBase();
     /// load entity objects into the level
-    virtual bool Load(const nString& levelName);
+    virtual bool Load(Db::Reader* dbReader);
 };
 
 } // namespace Loader

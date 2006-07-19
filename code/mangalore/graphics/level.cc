@@ -4,9 +4,13 @@
 //------------------------------------------------------------------------------
 #include "graphics/level.h"
 #include "graphics/cell.h"
+#include "gfx2/ngfxserver2.h"
+#include "particle/nparticleserver.h"
 #include "scene/nsceneserver.h"
 #include "graphics/cameraentity.h"
 #include "graphics/lightentity.h"
+#include "misc/nconserver.h"
+#include "graphics/server.h"
 
 namespace Graphics
 {
@@ -16,16 +20,16 @@ ImplementFactory(Graphics::Level);
 //------------------------------------------------------------------------------
 /**
 */
-Level::Level() :
-    watchCameraPos("mangaCameraPos", nArg::Float4),
-    profFindVisibleLights("profMangaGfxFindVisibleLights"),
-    profFindLitObjects("profMangaGfxFindLitObjects"),
-    profFindVisibleObjects("profMangaGfxFindVisibleObjects"),
-    profCameraRenderBefore("profMangaGfxCameraRenderBefore"),
-    profCameraRender("profMangaGfxCameraRender"),
-    profClearLinks("profMangaGfxClearLinks")
+Level::Level()
 {
     this->defaultCamera.create();
+
+    PROFILER_INIT(this->profFindVisibleLights, "profMangaGfxFindVisibleLights");
+    PROFILER_INIT(this->profFindLitObjects, "profMangaGfxFindLitObjects");
+    PROFILER_INIT(this->profFindVisibleObjects, "profMangaGfxFindVisibleObjects");
+    PROFILER_INIT(this->profCameraRenderBefore, "profMangaGfxCameraRenderBefore");
+    PROFILER_INIT(this->profCameraRender, "profMangaGfxCameraRender");
+    PROFILER_INIT(this->profClearLinks, "profMangaGfxClearLinks");
 }
 
 //------------------------------------------------------------------------------
@@ -122,6 +126,8 @@ void
 Level::AttachEntity(Entity* entity)
 {
     n_assert(this->rootCell != 0);
+    entity->SetMaxDistance(Server::Instance()->GetDistThreshold(entity->GetRtti()));
+    entity->SetMinSize(Server::Instance()->GetSizeThreshold(entity->GetRtti()));
     entity->OnActivate();
     this->rootCell->InsertEntity(entity);
 }
@@ -152,17 +158,20 @@ Level::BeginRender()
     n_assert(this->rootCell != 0);
     n_assert(this->curCamera != 0);
 
+    Foundation::Server* fndServer = Foundation::Server::Instance();
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    nSceneServer* sceneServer = nSceneServer::Instance();
+
     // clear light and camera links
-    this->profClearLinks.Start();
+    PROFILER_START(this->profClearLinks);
     this->rootCell->ClearLinks(Entity::CameraLink);
     this->rootCell->ClearLinks(Entity::LightLink);
-    this->profClearLinks.Stop();
+    PROFILER_STOP(this->profClearLinks);
 
     // compute the current view/projection matrix
     const matrix44& view = this->curCamera->GetTransform();
-
-    // update camera pos statistics
-    this->watchCameraPos->SetV3(view.pos_component());
+    const matrix44& proj = this->curCamera->GetCamera().GetProjection();
+    matrix44 viewProjection = view * proj;
 
     // first, get all visible light sources
     // NOTE: at first glance it look bad to traverse twice through
@@ -170,12 +179,12 @@ Level::BeginRender()
     // shapes). Unfortunately this is necessary because entities
     // need to compute their shadow bounding boxes for view culling,
     // so they need their light links updated first!
-    this->profFindVisibleLights.Start();
+    PROFILER_START(this->profFindVisibleLights);
     this->rootCell->UpdateLinks(this->curCamera, Entity::Light, Entity::CameraLink);
-    this->profFindVisibleLights.Stop();
+    PROFILER_STOP(this->profFindVisibleLights);
 
     // for each light source, gather entities lit by this light source
-    this->profFindLitObjects.Start();
+    PROFILER_START(this->profFindLitObjects);
     int numVisibleLights = this->curCamera->GetNumLinks(Entity::CameraLink);
     int visibleLightIndex;
     for (visibleLightIndex = 0; visibleLightIndex < numVisibleLights; visibleLightIndex++)
@@ -184,15 +193,15 @@ Level::BeginRender()
         n_assert(lightEntity->GetType() == Entity::Light);
         this->rootCell->UpdateLinks(lightEntity, Entity::Shape, Entity::LightLink);
     }
-    this->profFindLitObjects.Stop();
+    PROFILER_STOP(this->profFindLitObjects);
 
     // gather shapes visible from the camera
-    this->profFindVisibleObjects.Start();
+    PROFILER_START(this->profFindVisibleObjects);
     this->rootCell->UpdateLinks(this->curCamera, Entity::Shape, Entity::CameraLink);
-    this->profFindVisibleObjects.Stop();
+    PROFILER_STOP(this->profFindVisibleObjects);
 
     // begin rendering the scene
-    if (nSceneServer::Instance()->BeginScene(this->curCamera->GetTransform()))
+    if (sceneServer->BeginScene(this->curCamera->GetTransform()))
     {
         return true;
     }
@@ -212,13 +221,13 @@ Level::Render()
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     nSceneServer* sceneServer = nSceneServer::Instance();
 
-    this->profCameraRenderBefore.Start();
+    PROFILER_START(this->profCameraRenderBefore);
     this->curCamera->OnRenderBefore();
-    this->profCameraRenderBefore.Stop();
+    PROFILER_STOP(this->profCameraRenderBefore);
 
-    this->profCameraRender.Start();
+    PROFILER_START(this->profCameraRender);
     this->curCamera->Render();
-    this->profCameraRender.Stop();
+    PROFILER_STOP(this->profCameraRender);
 
     sceneServer->EndScene();
     sceneServer->RenderScene();

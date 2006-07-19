@@ -34,6 +34,8 @@ public:
     virtual void OnDestroy();
     /// called before the gui hierarchy is rendered
     virtual void OnRender();
+    /// get graphics entity of canvas
+    Graphics::Entity* GetGraphicsEntity() const;
 
 private:
     /// recursively find the first canvas node in the hierarchy
@@ -43,7 +45,16 @@ private:
     Ptr<Graphics::Entity> graphicsEntity;
 };
 
-RegisterFactory(Canvas);
+//------------------------------------------------------------------------------
+/**
+    NOTE: this method may return 0!
+*/
+inline
+Graphics::Entity*
+Canvas::GetGraphicsEntity() const
+{
+    return this->graphicsEntity.get_unsafe();
+}
 
 //------------------------------------------------------------------------------
 /**

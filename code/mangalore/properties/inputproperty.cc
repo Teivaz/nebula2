@@ -133,9 +133,9 @@ InputProperty::OnBeginFrame()
         
         // move focus to next entity when Tab is pressed,
         // only cycle camera focus on Ctrl + Tab
-        if (inputServer->GetButton("tabDown"))
+        if (inputServer->GetButtonDown("tab"))
         {
-            if (inputServer->GetButton("ctrlPressed"))
+            if (inputServer->GetButtonPressed("ctrl"))
             {
                 FocusManager::Instance()->SetCameraFocusToNextEntity();
             }

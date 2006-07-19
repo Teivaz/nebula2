@@ -21,6 +21,8 @@ public:
     Label();
     /// destructor
     virtual ~Label();
+    /// called before the gui hierarchy is rendered
+    virtual void OnRender();
 };
 
 RegisterFactory(Label);

@@ -22,10 +22,10 @@ class PlayShakeEffect : public Message::Msg
 public:
     /// constructor
     PlayShakeEffect();
-    /// set position
-    void SetPosition(const vector3& pos);
-    /// get position
-    const vector3& GetPosition() const;
+    /// set transform
+    void SetTransform(const matrix44& tform);
+    /// get transform
+    const matrix44& GetTransform() const;
     /// set range
     void SetRange(float r);
     /// get range
@@ -40,7 +40,7 @@ public:
     float GetIntensity() const;
 
 private:
-    vector3 position;
+    matrix44 transform;
     float range;
     float duration;
     float intensity;
@@ -65,19 +65,19 @@ PlayShakeEffect::PlayShakeEffect() :
 */
 inline
 void
-PlayShakeEffect::SetPosition(const vector3& pos)
+PlayShakeEffect::SetTransform(const matrix44& tform)
 {
-    this->position = pos;
+    this->transform = tform;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const vector3&
-PlayShakeEffect::GetPosition() const
+const matrix44&
+PlayShakeEffect::GetTransform() const
 {
-    return this->position;
+    return this->transform;
 }
 
 //------------------------------------------------------------------------------

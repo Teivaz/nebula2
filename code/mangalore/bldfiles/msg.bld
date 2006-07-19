@@ -18,6 +18,8 @@ beginmodule mangalore::msg
         gfxremattachment
         gfxremskin
         gfxsetanimation
+        gfxsetcharacterset
+        gfxsetvisible
         movedirection
         movefollow
         movegoto
@@ -43,6 +45,8 @@ beginmodule mangalore::msg
         gfxremattachment
         gfxremskin
         gfxsetanimation
+        gfxsetcharacterset
+        gfxsetvisible
         movedirection
         movefollow
         movegoto
@@ -57,4 +61,28 @@ beginmodule mangalore::msg
         updatetransform
     }
 endmodule
+#-------------------------------------------------------------------------------
+beginmodule mangalore::msg::ui
+    setdir msg/ui
+    settype cpp
+    setfiles { 
+        dragboxcancelled
+        dragboxready
+        dragboxstarted
+        dragboxupdated
+    }
+    setheaders { 
+        dragboxcancelled
+        dragboxready
+        dragboxstarted
+        dragboxupdated
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginbundle mangalore::msg
+    setmodules {
+        mangalore::msg
+        mangalore::msg::ui
+    }
+endbundle
 #-------------------------------------------------------------------------------

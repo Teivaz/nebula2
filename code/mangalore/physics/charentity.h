@@ -11,6 +11,7 @@
 
     (C) 2003 RadonLabs GmbH
 */
+#include "foundation/ptr.h"
 #include "physics/entity.h"
 #include "physics/materialtable.h"
 #include "physics/filterset.h"
@@ -48,6 +49,8 @@ public:
     virtual void SetTransform(const matrix44& m);
     /// get the current world space transformation
     virtual matrix44 GetTransform() const;
+    /// return true if transformation has changed between OnFrameBefore() and OnFrameAfter()
+    virtual bool HasTransformChanged() const;
     /// get the current world space velocity
     virtual vector3 GetVelocity() const;
     /// set the intended velocity vector
@@ -92,9 +95,9 @@ protected:
     /// return distance to ground (only within ball radius)
     bool CheckGround(float& dist);
     /// create the default composite, used when character is alive
-    void CreateDefaultComposite();
+    virtual void CreateDefaultComposite();
     /// create optional ragdoll composite
-    void CreateRagdollComposite();
+    virtual void CreateRagdollComposite();
 
     vector3 desiredVelocity;
     vector3 lookatDirection;    // looks into last valid desiredVelocity direction
@@ -113,6 +116,7 @@ protected:
     FilterSet groundExcludeSet;
 
     Ptr<AreaImpulse> ragdollImpulse;
+    bool wasDisabledInTheLastFrame;
 };
 
 RegisterFactory(CharEntity);

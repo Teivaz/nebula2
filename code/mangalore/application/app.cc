@@ -7,15 +7,17 @@
 #include "kernel/nfileserver2.h"
 #include "gui/nguiserver.h"
 #include "application/statehandler.h"
-#include "managers/entitymanager.h"
-#include "managers/envquerymanager.h"
-#include "managers/factorymanager.h"
-#include "managers/focusmanager.h"
-#include "managers/savegamemanager.h"
-#include "managers/setupmanager.h"
-#include "managers/timemanager.h"
 #include "loader/entityloader.h"
 #include "loader/environmentloader.h"
+#include "game/time/systemtimesource.h"
+#include "game/time/gametimesource.h"
+#include "game/time/inputtimesource.h"
+#include "game/time/guitimesource.h"
+
+#ifdef __NEBULA_STATS__
+// count the DB querys per frame
+#include "sql/nsqlite3query.h"
+#endif
 
 nNebulaUsePackage(ui);
 
@@ -29,14 +31,7 @@ App* App::Singleton = 0;
 App::App() :
     foundationServer(0),
     isOpen(false),
-    isRunning(false),
-    isPaused(false),
-    time(0.0),
-    stateTime(0.0),
-    frameTime(0.0),
-    lastRealTime(0.0),
-    timeFactor(1.0f),
-    pauseTime(0.0)
+    isRunning(false)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -198,20 +193,16 @@ App::SetupFromCmdLineArgs()
     // setup optional startup savegame or level paths
     this->SetStartupSavegame(this->cmdLineArgs.GetStringArg("-loadgame", 0));
     this->SetStartupLevel(this->cmdLineArgs.GetStringArg("-level", 0));
-    this->SetWorldDb(this->cmdLineArgs.GetStringArg("-db", 0));
-
+    
     // setup display mode
     nDisplayMode2 mode = this->GetDisplayMode();
-    if (this->cmdLineArgs.HasArg("-fullscreen"))
+    if ( (this->cmdLineArgs.HasArg("-fullscreen") && this->cmdLineArgs.GetBoolArg("-fullscreen")) || this->GetForceFullscreen())
     {
-        if (this->cmdLineArgs.GetBoolArg("-fullscreen") | this->GetForceFullscreen())
-        {
-            mode.SetType(nDisplayMode2::Fullscreen);
-        }
-        else
-        {
-            mode.SetType(nDisplayMode2::Windowed);
-        }
+        mode.SetType(nDisplayMode2::Fullscreen);
+    }
+    else
+    {
+        mode.SetType(nDisplayMode2::Windowed);
     }
     mode.SetXPos(this->cmdLineArgs.GetIntArg("-x", mode.GetXPos()));
     mode.SetYPos(this->cmdLineArgs.GetIntArg("-y", mode.GetYPos()));
@@ -244,6 +235,57 @@ App::SetupFromCmdLineArgs()
 
 //------------------------------------------------------------------------------
 /**
+    Setup the default input mapping.
+*/
+void
+App::SetupDefaultInputMapping()
+{
+    Input::Server* inputServer = Input::Server::Instance();
+
+    // per default the input server keep track of the 2d windows mouse position
+    inputServer->AddMapping("mousePosition", "mouse0:position");
+    
+    inputServer->AddMapping("mouseLMB", "mouse0:btn0");
+    inputServer->AddMapping("mouseRMB", "mouse0:btn1");
+    inputServer->AddMapping("mouseMMB", "mouse0:btn2");
+    inputServer->AddMapping("mouseWheelDown", "relmouse0:+zbtn");
+    inputServer->AddMapping("mouseWheelUp", "relmouse0:-zbtn");
+    inputServer->AddMapping("mouseLeft", "relmouse0:-x");
+    inputServer->AddMapping("mouseRight", "relmouse0:+x");
+    inputServer->AddMapping("mouseUp", "relmouse0:-y");
+    inputServer->AddMapping("mouseDown", "relmouse0:+y");
+
+    // for the character/text input add a default mapping
+    inputServer->AddMapping("textinput", "keyb0:characters");
+
+    inputServer->AddMapping("ctrl", "keyb0:ctrl");
+    inputServer->AddMapping("shift", "keyb0:shift");
+    inputServer->AddMapping("space", "keyb0:space");
+    inputServer->AddMapping("tab", "keyb0:tab");
+    inputServer->AddMapping("escape", "keyb0:esc");
+}
+
+//------------------------------------------------------------------------------
+/**
+    This setups the time sources for the application and attaches them
+    to the time manager. Overwrite/extend as needed in subclass.
+*/
+void
+App::SetupTimeSources()
+{
+    Ptr<Game::SystemTimeSource> systemTimeSource = Game::SystemTimeSource::Create();
+    Ptr<Game::GameTimeSource> gameTimeSource = Game::GameTimeSource::Create();
+    Ptr<Game::InputTimeSource> inputTimeSource = Game::InputTimeSource::Create();
+    Ptr<Game::GuiTimeSource> guiTimeSource = Game::GuiTimeSource::Create();
+    Managers::TimeManager* timeManager = Managers::TimeManager::Instance(); 
+    timeManager->AttachTimeSource(systemTimeSource);
+    timeManager->AttachTimeSource(gameTimeSource);
+    timeManager->AttachTimeSource(inputTimeSource);
+    timeManager->AttachTimeSource(guiTimeSource);
+}
+
+//------------------------------------------------------------------------------
+/**
     Setup the Game subsystem. This is most likely to be different in
     a derived application, so it lives in its own method which can
     be overwritten by a subclass.
@@ -254,21 +296,25 @@ App::SetupGameSubsystem()
     this->gameServer = Game::Server::Create();
     this->gameServer->Open();
 
-    Ptr<Managers::EntityManager> entityManager = Managers::EntityManager::Create();
-    Ptr<Managers::EnvQueryManager> envQueryManager = Managers::EnvQueryManager::Create();
-    Ptr<Managers::FocusManager> focusManager = Managers::FocusManager::Create();
-    Ptr<Managers::SaveGameManager> saveGameManager = Managers::SaveGameManager::Create();
-    Ptr<Managers::SetupManager> setupManager = Managers::SetupManager::Create();
+    // setup the time manager first before everything else
     Ptr<Managers::TimeManager> timeManager = Managers::TimeManager::Create();
-    Ptr<Managers::FactoryManager> factoryManager = Managers::FactoryManager::Create();
-
-    this->gameServer->AttachManager(entityManager);
-    this->gameServer->AttachManager(envQueryManager);
-    this->gameServer->AttachManager(focusManager);
-    this->gameServer->AttachManager(saveGameManager);
-    this->gameServer->AttachManager(setupManager);
     this->gameServer->AttachManager(timeManager);
-    this->gameServer->AttachManager(factoryManager);
+    this->SetupTimeSources();
+
+    // setup the other managers...
+    this->entityManager = Managers::EntityManager::Create();
+    this->envQueryManager = Managers::EnvQueryManager::Create();
+    this->focusManager = Managers::FocusManager::Create();
+    this->saveGameManager = Managers::SaveGameManager::Create();
+    this->setupManager = Managers::SetupManager::Create();
+    this->factoryManager = Managers::FactoryManager::Create();
+
+    this->gameServer->AttachManager(this->entityManager);
+    this->gameServer->AttachManager(this->envQueryManager);
+    this->gameServer->AttachManager(this->focusManager);
+    this->gameServer->AttachManager(this->saveGameManager);
+    this->gameServer->AttachManager(this->setupManager);
+    this->gameServer->AttachManager(this->factoryManager);
 }
 
 //------------------------------------------------------------------------------
@@ -278,6 +324,19 @@ App::SetupGameSubsystem()
 void
 App::CleanupGameSubsystem()
 {
+    this->gameServer->RemoveManager(this->factoryManager);
+    this->gameServer->RemoveManager(this->setupManager);
+    this->gameServer->RemoveManager(this->saveGameManager);
+    this->gameServer->RemoveManager(this->focusManager);
+    this->gameServer->RemoveManager(this->envQueryManager);
+    this->gameServer->RemoveManager(this->entityManager);
+    this->factoryManager = 0;
+    this->setupManager = 0;
+    this->saveGameManager = 0;
+    this->focusManager = 0;
+    this->envQueryManager = 0;
+    this->entityManager = 0;
+
     this->gameServer->Close();
     this->gameServer = 0;
 }
@@ -292,6 +351,10 @@ App::SetupSubsystems()
 {
     // setup the foundation subsystem
     this->foundationServer->SetProjectDir(this->projDir);
+    if(this->GetStartupPath().IsValid())
+    {
+        this->foundationServer->SetStartupPath(this->GetStartupPath());
+    }
     this->foundationServer->Open();
 
     // setup the script subsystem
@@ -318,30 +381,30 @@ App::SetupSubsystems()
 
     // setup the input subsystem
     this->inputServer = Input::Server::Create();
+    this->SetupDefaultInputMapping();
     this->inputServer->Open();
-
     // setup the audio subsystem
     this->audioServer = Audio::Server::Create();
     this->audioServer->Open();
-    if (nFileServer2::Instance()->FileExists("proj:data/tables/sound.xml"))
+    if (nFileServer2::Instance()->FileExists("data:tables/sound.xml"))
     {
-        this->audioServer->OpenWaveBank("proj:data/tables/sound.xml");
+        this->audioServer->OpenWaveBank("data:tables/sound.xml");
     }
     else
     {
-        n_printf("Warning: proj:data/tables/sound.xml doesn't exist!\n");
+        n_printf("Warning: tables:sound.xml doesn't exist!\n");
     }
 
     // setup the vfx subsystem
     this->vfxServer = VFX::Server::Create();
     this->vfxServer->Open();
-    if (nFileServer2::Instance()->FileExists("proj:data/tables/effects.xml"))
+    if (nFileServer2::Instance()->FileExists("data:tables/effects.xml"))
     {
-        this->vfxServer->OpenEffectBank("proj:data/tables/effects.xml");
+        this->vfxServer->OpenEffectBank("data:tables/effects.xml");
     }
     else
     {
-        n_printf("Warning: proj:data/tables/effects.xml doesn't exist!\n");
+        n_printf("Warning: data:tables/effects.xml doesn't exist!\n");
     }
 
     // setup the navigation subsystem
@@ -486,14 +549,6 @@ App::Open()
 
     // setup members
     this->isRunning = false;
-    this->isPaused  = false;
-
-    this->time = 0.0;
-    this->stateTime = 0.0;
-    this->frameTime = 0.0;
-    this->pauseTime = 0.0;
-    this->stateTransitionTimeStamp = 0.0;
-    this->lastRealTime = 0.0;
 
     // initialize app settings
     this->SetupFromDefaults();
@@ -509,9 +564,6 @@ App::Open()
     // setup the Mangalore subsystems
     this->SetupSubsystems();
     this->SetupGameSubsystem();
-
-    // update time stamps
-    this->UpdateTimes();
 
     // setup application state handlers
     this->curState.Clear();
@@ -567,8 +619,10 @@ App::Run()
 {
     while (this->GetCurrentState() != "Exit")
     {
-        // update the times
-        this->UpdateTimes();
+        #ifdef __NEBULA_STATS__
+        // reset the per frame db access counter
+        nSQLite3Query::dbAccessCount = 0;
+        #endif
 
         // call the current state handler
         StateHandler* curStateHandler = this->FindStateHandlerByName(this->GetCurrentState());
@@ -591,66 +645,11 @@ App::Run()
 
         // give up time slice
         n_sleep(0.0);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    FIXME: this needs some better implementation with a "paused counter".
-*/
-void
-App::SetPaused(bool b)
-{
-    if (b)
-    {
-        if (!this->isPaused)
-        {
-            this->isPaused = true;
-            this->pauseTime = this->time;
-        }
-    }
-    else
-    {
-        if (this->isPaused)
-        {
-            this->isPaused = false;
-            this->time = this->pauseTime;
-        }
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Update the internal times.
-
-    - 24-Apr-05 floh    trigger time server
-    - 28-Apr-05 floh    removed check for too high frametimes
-    - 29-Apr-05 jo      readd a fixed check for too high frametimes
-*/
-void
-App::UpdateTimes()
-{
-    if (!this->IsPaused())
-    {
-        nTimeServer* timeServer = nTimeServer::Instance();
-        timeServer->Trigger();
-        nTime realTime = timeServer->GetTime();
-        nTime diff = (realTime - this->lastRealTime) * this->timeFactor;
-        this->lastRealTime = realTime; // update real timestamp
-
-        // handle time exceptions
-        if (diff <= 0.0)
-        {
-            diff = 0.0001;
-        }
-        else if (diff > 0.5)
-        {
-            diff = 0.5;
-        }
-
-        this->time = this->time + diff;
-        this->frameTime = diff;
-        this->stateTime = this->time - this->stateTransitionTimeStamp;
+        #ifdef __NEBULA_STATS__
+        // show the db access count
+        nWatched dbAccess("profMangaDBQuerysPerFrame", nArg::Int);
+        dbAccess->SetI(nSQLite3Query::dbAccessCount);
+        #endif
     }
 }
 
@@ -682,8 +681,6 @@ App::DoStateTransition()
         }
     }
     this->requestedState.Clear();
-    this->UpdateTimes();
-    this->stateTransitionTimeStamp = this->time;
 }
 
 //------------------------------------------------------------------------------
@@ -755,7 +752,7 @@ App::FindStateHandlerByRtti(const Foundation::Rtti& rtti) const
     int num = this->GetNumStates();
     for (i = 0; i < num; i++)
     {
-        if (this->stateHandlers[i]->IsA(rtti))
+        if (this->stateHandlers[i]->IsInstanceOf(rtti))
         {
             return this->stateHandlers[i];
         }

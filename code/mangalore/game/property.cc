@@ -7,15 +7,12 @@
 
 namespace Game
 {
-
 ImplementRtti(Game::Property, Message::Port);
 
 //------------------------------------------------------------------------------
 /**
 */
-Property::Property() :
-    active(false),
-    entity(0)
+Property::Property() : active(false)
 {
     // empty
 }
@@ -25,7 +22,7 @@ Property::Property() :
 */
 Property::~Property()
 {
-    // empty
+    n_assert(!this->entity.isvalid());
 }
 
 //------------------------------------------------------------------------------
@@ -44,6 +41,23 @@ int
 Property::GetActiveEntityPools() const
 {
     return (Entity::LivePool | Entity::SleepingPool);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns whether this property should be attached to entities in the given 
+    state.
+
+    The deault implementation returns true, i.e. this property is always
+    attached to entites, regardless of the given state. 
+    
+    Properties that do not want this behaviour should override this method and
+    return the correct flag.
+*/
+bool
+Property::IsActiveInState(const nString& state) const
+{
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -94,6 +108,18 @@ Property::OnDeactivate()
 */
 void
 Property::OnLoad()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called from within Game::Entity::OnStart(). This is the moment
+    when the world is complete and the entity can establish connections to other
+    entitys.
+*/
+void
+Property::OnStart()
 {
     // empty
 }
@@ -163,6 +189,17 @@ Property::OnRender()
     // empty
 }
 
+//------------------------------------------------------------------------------
+/**
+    This method is called from Game::Entity::OnRenderDebug() on all
+    properties attached to an entity in the order of attachment. It's meant for debug
+    issues. It will be called when debug mode is enabled.
+*/
+void
+Property::OnRenderDebug()
+{
+    // empty
+}
 //------------------------------------------------------------------------------
 /**
     This method is inherited from the Port class. If your property acts as

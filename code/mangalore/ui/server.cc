@@ -3,12 +3,14 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "ui/server.h"
-#include "ui/canvas.h"
 #include "ui/eventhandler.h"
 #include "ui/event.h"
 #include "ui/factorymanager.h"
 #include "foundation/factory.h"
 #include "input/ninputserver.h"
+#include "input/event.h"
+#include "input/server.h"
+#include "input/mapping.h"
 #include "gui/nguiserver.h"
 #include "ui/window.h"
 
@@ -30,6 +32,15 @@ Server::Server() :
 {
     n_assert(0 == Singleton);
     Singleton = this;
+
+    // set the projection matrix for gui elements, this must be
+    // the same as used in the gui vertex shader!
+    this->guiProjMatrix.set(0.5f, 0.0f,    0.0f, 0.0f,
+                            0.0f, 0.6667f, 0.0f, 0.0f,
+                            0.0f, 0.0f,   -0.5f, 0.0f,
+                            0.0f, 0.0f,    0.5f, 1.0f);
+    this->invGuiProjMatrix = this->guiProjMatrix;
+    this->invGuiProjMatrix.invert();
 }
 
 //------------------------------------------------------------------------------
@@ -72,6 +83,11 @@ Server::Open()
     this->lightEntity->SetLight(light);
     this->lightEntity->OnActivate();
 
+    // hook on input mappings
+    Input::Server* inputServer = Input::Server::Instance();
+    n_assert(inputServer->HasMapping("mousePosition"));
+    inputServer->AttachInputSink("mousePosition", 100, this);
+
     this->isOpen = true;
     return true;
 }
@@ -83,11 +99,23 @@ void
 Server::Close()
 {
     n_assert(this->isOpen);
-    this->HideGui();
-    this->windows.Clear();
+    int i;
+    for (i = 0; i < this->windows.Size(); i++)
+    {
+        if (this->windows[i].isvalid() && this->windows[i]->IsOpen())
+        {
+            this->windows[i]->Close();
+        }
+    }
     this->lightEntity->OnDeactivate();
     this->lightEntity = 0;
     this->factoryManager = 0;
+    
+    // remove from input mappings
+    Input::Server* inputServer = Input::Server::Instance();
+    n_assert(inputServer->HasMapping("mousePosition"));
+    inputServer->RemoveInputSink("mousePosition", this);
+
     this->isOpen = false;
 }
 
@@ -101,7 +129,17 @@ Server::AttachWindow(Window* window)
 {
     n_assert(window);
     n_assert(this->windows.Find(window) == 0);
-    this->windows.Append(window);
+    
+    // find a free slot in the window array
+    int freeIndex = this->windows.FindIndex(0);
+    if (-1 != freeIndex)
+    {
+        this->windows[freeIndex] = window;
+    }
+    else
+    {
+        this->windows.Append(window);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -113,50 +151,10 @@ void
 Server::RemoveWindow(Window* window)
 {
     n_assert(window);
-    n_assert(this->windows.Find(window) != 0);
-    nArray<Ptr<Window> >::iterator iter = this->windows.Find(window);
-    n_assert(iter);
-    this->windows.Erase(iter);
-}
-
-//------------------------------------------------------------------------------
-/**
-    *** OBSOLETE ***
-
-    Displays a new gui defined by a Nebula2 resource and sets
-    the (optional) associated event handler.
-*/
-void
-Server::DisplayGui(const nString& resName, Message::Port* handler)
-{
-    this->curCanvas = (Canvas*) FactoryManager::Instance()->CreateElement("Canvas");
-    n_assert(this->curCanvas->IsInstanceOf(Canvas::RTTI));
-    this->curCanvas->SetResourceName(resName);
-    this->curCanvas->OnCreate(0);
-    this->curEventHandler = handler;
-}
-
-//------------------------------------------------------------------------------
-/**
-    *** OBSOLETE ***
-
-    Hides the currently displayed 2D GUI.
-*/
-void
-Server::HideGui()
-{
-    if (this->curCanvas.isvalid())
+    int index = this->windows.FindIndex(window);
+    if (index != -1)
     {
-        if (this->inTrigger)
-        {
-            this->curCanvas->SetDismissed(true);
-        }
-        else
-        {
-            this->curCanvas->OnDestroy();
-            this->curCanvas = 0;
-        }
-        this->curEventHandler = 0;
+        this->windows[index] = 0;
     }
 }
 
@@ -166,180 +164,79 @@ Server::HideGui()
 void
 Server::Render()
 {
-    if (this->curCanvas.isvalid() || this->windows.Size() > 0)
+    if (this->windows.Size() > 0)
     {
         this->lightEntity->Render();
-    }
-
-    // OBSOLETE
-    if (this->curCanvas.isvalid() && this->curCanvas->IsValid())
-    {
-        this->curCanvas->OnRender();
     }
     int i;
     for (i = 0; i < this->windows.Size(); i++)
     {
-        this->windows[i]->OnRender();
+        if (this->windows[i].isvalid())
+        {
+            this->windows[i]->OnRender();
+        }
+    }
+}
+ 
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+Server::Accepts(Message::Msg* msg)
+{
+    n_assert(msg);
+    if (this->isOpen && msg->CheckId(Input::Event::Id)) return true;
+    return Message::Port::Accepts(msg);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Server::HandleMessage(Message::Msg* msg)
+{
+    n_assert(msg);
+
+    if (this->isOpen && msg->CheckId(Input::Event::Id))
+    {
+        Input::Event* event = static_cast<Input::Event*>(msg);
+        if (event->GetType() == Input::Event::MouseMoved)
+        {
+            this->mousePos = event->GetRelMousePosition();
+        }
+    }
+    else
+    {
+        Message::Port::HandleMessage(msg);
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Trigger the ui server. This distributes input to the current canvas.
+    Trigger the ui server. This distributes input to the current window.
 */
 void
 Server::Trigger()
 {
-    // HACK
+    // HACK, don't collide with the old style Nebula2 gui
     if (nGuiServer::Instance()->IsMouseOverGui())
     {
         return;
     }
 
     Ptr<Window> activeWindow = this->GetActiveWindow();
-    Ptr<Canvas> activeCanvas = this->GetToplevelCanvas();
     this->inTrigger = true;
 
-    // process raw input from the Nebula2 input server 
-    nInputServer* inputServer = nInputServer::Instance();
-    nInputEvent* ie;
-    for (ie = inputServer->FirstEvent(); ie; ie = inputServer->NextEvent(ie))
-    {
-        // handle mouse input
-        if (ie->GetDeviceId() == N_INPUT_MOUSE(0))
-        {
-            switch (ie->GetType())
-            {
-                case N_INPUT_MOUSE_MOVE:
-                    {
-                        vector2 mousePos(ie->GetRelXPos(), ie->GetRelYPos());
-                        this->mousePos = mousePos;
-                        if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                        {
-                            activeCanvas->OnMouseMove(mousePos);
-                        }
-                        if (activeWindow.isvalid())
-                        {
-                            activeWindow->OnMouseMove(mousePos);
-                        }
-                    }
-                    break;
-
-                case N_INPUT_BUTTON_DOWN:
-                    {
-                        vector2 mousePos(ie->GetRelXPos(), ie->GetRelYPos());
-                        if (ie->GetButton() == 0) 
-                        {
-                            if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                            {
-                                activeCanvas->OnLeftButtonDown(mousePos);
-                            }
-                            if (activeWindow.isvalid())
-                            {
-                                activeWindow->OnLeftButtonDown(mousePos);
-                            }
-                        }
-                        else if (ie->GetButton() == 1)
-                        {
-                            if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                            {
-                                activeCanvas->OnRightButtonDown(mousePos);
-                            }
-                            if (activeWindow.isvalid())
-                            {
-                                activeWindow->OnRightButtonDown(mousePos);
-                            }
-                        }
-                    }
-                    break;
-
-                case N_INPUT_BUTTON_UP:
-                    {
-                        vector2 mousePos(ie->GetRelXPos(), ie->GetRelYPos());
-                        if (ie->GetButton() == 0) 
-                        {
-                            if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                            {
-                                activeCanvas->OnLeftButtonUp(mousePos);
-                            }
-                            if (activeWindow.isvalid())
-                            {
-                                activeWindow->OnLeftButtonUp(mousePos);
-                            }
-                        }
-                        else if (ie->GetButton() == 1)
-                        {
-                            if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                            {
-                                activeCanvas->OnRightButtonUp(mousePos);
-                            }
-                            if (activeWindow.isvalid())
-                            {
-                                activeWindow->OnRightButtonUp(mousePos);
-                            }
-                        }
-                    }
-                    break;
-            }
-        }
-
-        // handle keyboard input
-        if (ie->GetDeviceId() == N_INPUT_KEYBOARD(0))
-        {
-            switch (ie->GetType())
-            {
-                case N_INPUT_KEY_CHAR:
-                    if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                    {
-                        activeCanvas->OnChar(ie->GetChar());
-                    }
-                    if (activeWindow.isvalid())
-                    {
-                        activeWindow->OnChar(ie->GetChar());
-                    }
-                    break;
-
-                case N_INPUT_KEY_DOWN:
-                    if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                    {
-                        activeCanvas->OnKeyDown(ie->GetKey());
-                    }
-                    if (activeWindow.isvalid())
-                    {
-                        activeWindow->OnKeyDown(ie->GetKey());
-                    }
-                    break;
-
-                case N_INPUT_KEY_UP:
-                    if (activeCanvas.isvalid() && activeCanvas->IsValid())
-                    {
-                        activeCanvas->OnKeyUp(ie->GetKey());
-                    }
-                    if (activeWindow.isvalid())
-                    {
-                        activeWindow->OnKeyUp(ie->GetKey());
-                    }
-                    break;
-            }
-        }
-    }
-
     // call the per-frame method
-    if (activeCanvas.isvalid() && activeCanvas->IsValid())
-    {
-        activeCanvas->OnFrame();
-    }
-    nArray<Ptr<Window> > copyOfWindowArray = this->windows;
     int i;
-    int num = copyOfWindowArray.Size();
+    int num = this->windows.Size();
     for (i = 0; i < num; i++)
     {
-        copyOfWindowArray[i]->OnFrame();
-    }
-    if (this->curCanvas.isvalid() && this->curCanvas->IsDismissed())
-    {
-        this->curCanvas->OnDestroy();
-        this->curCanvas = 0;
+        if (this->windows[i].isvalid())
+        {
+            // note: window may have been closed when this method returns!
+            this->windows[i]->OnFrame();
+        }
     }
     this->inTrigger = false;
 }
@@ -349,10 +246,9 @@ Server::Trigger()
     Creates a GUI event and sends it to the currently set event handler.
 */
 void
-Server::PutEvent(const nString& eventName)
+Server::PutEvent(Event* guiEvent)
 {
-    Ptr<Event> guiEvent = Event::Create();
-    guiEvent->SetEventName(eventName);
+    n_assert(0 != guiEvent);
     if (this->curEventHandler.isvalid())
     {
         guiEvent->SendSync(this->curEventHandler);
@@ -381,15 +277,30 @@ Server::ShowToolTip(const nString& tooltip)
 bool
 Server::IsMouseOverGui() const
 {
-    if (this->curCanvas.isvalid() || (this->windows.Size() > 0))
+    if (this->GetActiveWindow() != 0)
     {
         // TODO: because the canvas always is fullscreen at the moment and
         // because there only one canvas is allowed, the inside check is useless
         // if a canvas is open the mouse will be over gui.
         return true;
     }
-    // fallthrough: mouse not over any gui element
     return false;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    This takes a 2d screen space position and converts it into a in view space. 
+    This is a slightly modified version of nGfxServer2::ComputeWorldMouseRay().
+*/
+vector3
+Server::ScreenSpacePosToViewSpace(const vector2& screenSpacePos)
+{
+    // Compute mouse position in world coordinates.
+    vector3 screenCoord3D((screenSpacePos.x - 0.5f) * 2.0f, (screenSpacePos.y - 0.5f) * 2.0f, 1.0f);
+    vector3 viewCoord = this->GetInvGuiProjectionMatrix() * screenCoord3D;
+    viewCoord.y = -viewCoord.y;
+    viewCoord.z = 0.0f;
+    return viewCoord;
 }
 
 } // namespace UI

@@ -9,7 +9,7 @@
 #include "msg/settransform.h"
 #include "game/entity.h"
 #include "anim2/nanimationserver.h"
-#include "managers/timemanager.h"
+#include "game/time/systemtimesource.h"
 
 namespace Attr
 {
@@ -243,7 +243,7 @@ PathAnimProperty::UpdateAnimation()
         this->GetEntity()->SendSync(msg);
 
         // update animation time
-        this->animTime += (float) TimeManager::Instance()->GetFrameTime();
+        this->animTime += (float) SystemTimeSource::Instance()->GetFrameTime();
     }
 }
 

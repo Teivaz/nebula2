@@ -8,23 +8,18 @@
 
     (C) 2006 RadonLabs GmbH
 */
-#include "foundation/refcounted.h"
+#include "kernel/ntypes.h"
+#include "util/nstring.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
 {
-
-class NavMapLoader : Foundation::RefCounted
+class NavMapLoader
 {
-    DeclareRtti;
-    DeclareFactory(NavMapLoader);
-
 public:
     /// load navigation map into the level
     static bool Load(const nString& levelName);
 };
-
-RegisterFactory(NavMapLoader);
 
 } // namespace Loader
 //------------------------------------------------------------------------------

@@ -18,6 +18,7 @@
 */
 #include "properties/abstractphysicsproperty.h"
 #include "physics/entity.h"
+#include "attr/attributes.h"
 
 //------------------------------------------------------------------------------
 namespace Properties
@@ -55,22 +56,14 @@ protected:
     /// disable and cleanup the physics, overload in subclass
     virtual void DisablePhysics();
 
+    /// create physics entity
+    virtual Physics::Entity* CreatePhysicsEntity();
+
 private:
     Ptr<Physics::Entity> physicsEntity;
 };
 
 RegisterFactory(PhysicsProperty);
-
-//------------------------------------------------------------------------------
-/**
-    Get pointer to physics entity. Note that this method may return 0!
-*/
-inline
-Physics::Entity*
-PhysicsProperty::GetPhysicsEntity() const
-{
-    return this->physicsEntity.get_unsafe();
-}
 
 } // namespace Properties
 //------------------------------------------------------------------------------

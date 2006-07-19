@@ -11,13 +11,11 @@ begintarget mangalorelib
         mangalore::foundation
         mangalore::managers
         mangalore::message
-        mangalore::msg
         mangalore::properties
         mangalore::graphics
         mangalore::input
         mangalore::loader
-        mangalore::physics
-        mangalore::game
+        mangalore::physics        
         mangalore::fsm
         mangalore::audio
         mangalore::navigation
@@ -30,6 +28,8 @@ begintarget mangalorelib
     }
     setbundles {
         mangalore::util
+        mangalore::game
+        mangalore::msg
     }
     settargetdeps {
         nkernel

@@ -7,8 +7,6 @@
 namespace Loader
 {
 
-ImplementRtti(Loader::EntityLoaderBase, Foundation::RefCounted);
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -29,8 +27,9 @@ EntityLoaderBase::~EntityLoaderBase()
 /**
 */
 bool
-EntityLoaderBase::Load(const nString& /*levelName*/)
-{
+EntityLoaderBase::Load(Db::Reader* dbReader)
+{    
+    n_assert(dbReader);
     return false;
 }
 

@@ -49,16 +49,27 @@ EffectHandler::HandleMessage(Message::Msg* msg)
     {
         // play a visual effect 
         Message::PlayVisualEffect* pveMsg = (Message::PlayVisualEffect*) msg;
-        server->PlayEffect(pveMsg->GetName(), pveMsg->GetTransform());
+        GraphicsEffect* effect = server->CreateGraphicsEffect(pveMsg->GetName(), pveMsg->GetTransform());
+        if (0 != effect)
+        {
+            server->AttachEffect(effect);
+        }
+        else
+        {
+        #ifdef _DEBUG
+            n_printf("EffectHandler::HandleMessage: effect '%s' not found! \n", pveMsg->GetName().Get());
+        #endif // _DEBUG
+        }
     }
     else if (msg->CheckId(Message::PlayShakeEffect::Id))
     {
         // play a shake effect
         Message::PlayShakeEffect* pseMsg = (Message::PlayShakeEffect*) msg;
-        server->PlayShakeEffect(pseMsg->GetPosition(),
-                                pseMsg->GetRange(),
-                                pseMsg->GetDuration(),
-                                pseMsg->GetIntensity());
+        ShakeEffect* effect = server->CreateShakeEffect(pseMsg->GetTransform(),
+                                  pseMsg->GetRange(),
+                                  pseMsg->GetDuration(),
+                                  pseMsg->GetIntensity());
+        server->AttachEffect(effect);
     }
 }
 

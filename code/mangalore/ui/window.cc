@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "ui/window.h"
 #include "ui/server.h"
+#include "ui/event.h"
 
 namespace UI
 {
@@ -30,6 +31,20 @@ Window::~Window()
 
 //------------------------------------------------------------------------------
 /**
+    This method can be used before Open() to preload the graphics resources
+    required by the window.
+*/
+void
+Window::PreloadResource()
+{
+    n_assert(!this->gfxResource.isvalid());
+    this->gfxResource = Graphics::Resource::Create();
+    this->gfxResource->SetName(this->resName);
+    this->gfxResource->Load();
+}
+
+//------------------------------------------------------------------------------
+/**
     Opens the window. This will register the window with the
     UI::Server, make the window visible and start to process UI
     messages.
@@ -47,10 +62,6 @@ Window::Open()
     this->canvas->SetResourceName(this->resName);
     this->canvas->OnCreate(0);
 
-    // create event handler
-    this->eventHandler = WindowEventHandler::Create();
-    this->eventHandler->SetWindow(this);
-
     // attach the window to the UI::Server
     UI::Server::Instance()->AttachWindow(this);
 }
@@ -64,12 +75,11 @@ void
 Window::Close()
 {
     n_assert(this->IsOpen());
+    this->isOpen = false;
     this->closedFromEventHandler = false;
-    this->eventHandler = 0;
     this->canvas->OnDestroy();
     this->canvas = 0;
     UI::Server::Instance()->RemoveWindow(this);
-    this->isOpen = false;
 }
 
 //------------------------------------------------------------------------------
@@ -93,7 +103,12 @@ Window::CloseFromEventHandler()
 void
 Window::HandleEvent(Event* e)
 {
-    // implement in subclass!
+    n_assert(e);
+    n_printf("Window::HandleEvent: %s\n", e->GetEventName().Get());
+    if (this->extEventHandler.isvalid())
+    {
+        this->extEventHandler->HandleEvent(e);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -126,110 +141,6 @@ Window::OnRender()
     if (this->IsOpen())
     {
         this->canvas->OnRender();
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when the mouse is moved.
-*/
-void
-Window::OnMouseMove(const vector2& mousePos)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnMouseMove(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when the left mouse button is pressed.
-*/
-void
-Window::OnLeftButtonDown(const vector2& mousePos)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnLeftButtonDown(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when the left mouse button is released.
-*/
-void
-Window::OnLeftButtonUp(const vector2& mousePos)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnLeftButtonUp(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when the right mouse button is pressed.
-*/
-void
-Window::OnRightButtonDown(const vector2& mousePos)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnRightButtonDown(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when the right mouse button is released.
-*/
-void
-Window::OnRightButtonUp(const vector2& mousePos)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnRightButtonUp(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when a character has been input.
-*/
-void
-Window::OnChar(uchar charCode)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnChar(charCode);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when a key has been pressed.
-*/
-void
-Window::OnKeyDown(nKey key)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnKeyDown(key);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Called by UI::Server when a key has been released.
-*/
-void
-Window::OnKeyUp(nKey key)
-{
-    if (this->IsOpen())
-    {
-        this->canvas->OnKeyUp(key);
     }
 }
 

@@ -48,6 +48,10 @@ public:
     virtual void OnLoad();
     /// called before saving game state
     virtual void OnSave();
+    /// called by Game::Server::Start() when the world is started
+    virtual void OnStart();
+    /// render a debug visualization 
+    virtual void OnRenderDebug();
 
 private:
     bool isActive;

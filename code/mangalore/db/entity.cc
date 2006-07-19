@@ -4,8 +4,9 @@
 //------------------------------------------------------------------------------
 #include "db/entity.h"
 #include "db/server.h"
-#include "db/query.h"
 #include "attr/attributes.h"
+#include "db/reader.h"
+#include "db/writer.h"
 
 namespace Db
 {
@@ -15,7 +16,7 @@ ImplementFactory(Db::Entity);
 //------------------------------------------------------------------------------
 /**
 */
-Entity::Entity()
+Entity::Entity() : tableName("_Entities")
 {
     // empty
 }
@@ -30,54 +31,80 @@ Entity::~Entity()
 
 //------------------------------------------------------------------------------
 /**
+    Load entity from an existing Reader object. This method is fast for many
+    objects, since only one query for all objects will be executed.
+*/
+void
+Entity::LoadFromReader(Reader* reader)
+{
+    n_assert(reader);
+    nArray<Attribute> attrs = reader->GetAttrs();
+    int i;
+    for (i = 0; i < attrs.Size(); i++)
+    {
+        this->attrs.SetAttr(attrs[i]);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     This loads all attributes from the world database into the entity. Existing
     attribute values will be overwritten with values from the db. If 
     existing attributes don't exist in the db, they won't be touched.
+
+    NOTE: for loading many entities, this method is slow, use LoadFromReader()
+    instead!
 */
 void
 Entity::Load()
 {
-    nArray<Attribute> dbAttrs = Server::Instance()->ReadAttrs("_Entities", this->GetAttr(Attr::GUID));
-
-    // overwrite entity attributes one by one, so that existing entity attributes
-    // which are not in the db won't be erased
-    int i;
-    int num = dbAttrs.Size();
-    for (i = 0; i < num; i++)
+    Ptr<Reader> reader = Reader::Create();
+    reader->SetTableName(this->tableName);
+    reader->AddFilterAttr(this->GetAttr(Attr::GUID));
+    if (reader->Open())
     {
-        this->attrs.SetAttr(dbAttrs[i]);
+        n_assert(reader->GetNumRows() == 1);
+        reader->SetToRow(0);
+        this->LoadFromReader(reader);
+        reader->Close();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Write the current attributes from the db entity back into a writer object.
+    This method is fast for many objects since all writes will be cached
+    and only one database access takes place for all entities.
+*/
+void
+Entity::SaveToWriter(Writer* writer)
+{
+    n_assert(writer);
+    if (this->HasAttr(Attr::GUID))
+    {
+        writer->BeginRow();
+        writer->SetAttrs(this->attrs.GetAttrs());
+        writer->EndRow();
     }
 }
 
 //------------------------------------------------------------------------------
 /**
     Write the current attributes from the db entity back into the database.
-    Only attributes which are storable will be written back. This will
-    update an existing or create a new row in the database. Also, new columns
-    will be added to the _Entities table in the database if there are storable
-    attributes on the entity which don't have a database column yet.
 
-    saveAllAttributes - Save all attributes if flag is set.
+    NOTE: for saving many entities, this method is very slow, use LoadFromReader()
+    instead!
 */
 void
-Entity::Save(bool saveAllAttributes)
+Entity::Save()
 {
-    if (this->HasAttr(Attr::GUID))
+    Ptr<Writer> writer = Writer::Create();
+    writer->SetTableName(this->tableName);
+    writer->SetPrimaryKey(Attr::GUID);
+    if (writer->Open())
     {
-        // get all storable attributes from the entity
-        const nArray<Attribute>& attrArray = this->attrs.GetAttrs();
-        nArray<Attribute> storableAttrs(32, 32);
-        
-        int num = attrArray.Size();
-        int i;
-        for (i = 0; i < num; i++)
-        {
-            if (saveAllAttributes || attrArray[i].IsStorable())
-            {
-                storableAttrs.Append(attrArray[i]);
-            }
-        }
-        Server::Instance()->WriteAttrs("_Entities", this->attrs.GetAttr(Attr::GUID), storableAttrs);
+        this->SaveToWriter(writer);
+        writer->Close();
     }
 }
 

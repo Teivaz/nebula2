@@ -56,6 +56,8 @@ public:
     virtual void OnMoveBefore();
     /// called after movement has happened
     virtual void OnMoveAfter();
+    /// called on debug visualization
+    virtual void OnRenderDebug();
 
     /// get a pointer to the physics entity
     virtual Physics::Entity* GetPhysicsEntity() const;
@@ -99,6 +101,7 @@ protected:
     nPFeedbackLoop<vector3> smoothedPosition;
     nAngularPFeedbackLoop smoothedHeading;
 
+    float gotoTargetDist;
     float followTargetDist;
     Ptr<Navigation::Path3D> gotoPath;
     int curGotoSegment;

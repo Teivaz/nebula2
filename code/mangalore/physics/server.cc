@@ -530,15 +530,6 @@ Server::RenderDebug()
 
 //------------------------------------------------------------------------------
 /**
-*/
-MouseGripper*
-Server::GetMouseGripper() const
-{
-    return this->curLevel->GetMouseGripper();
-}
-
-//------------------------------------------------------------------------------
-/**
     This method returns all physics entities touching the given spherical
     area. The method creates a sphere shape and calls its collide
     method, so it's quite fast. Note that entities will be appended to the
@@ -602,14 +593,20 @@ Server::GetEntitiesInSphere(const vector3& pos, float radius, const FilterSet& e
     @return             number of entities touching the box
 */
 int
-Server::GetEntitiesInBox(const matrix44& m, const vector3& size, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result)
+Server::GetEntitiesInBox(const vector3& scale, const matrix44& m, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result)
 {
-    n_assert(size.x >= 0.0f && size.y >= 0.0f && size.z >= 0.0f);
+    n_assert(scale.x >= 0 && scale.y >= 0 && scale.z >= 0);
     n_assert(this->GetLevel());
     int oldResultSize = result.Size();
 
-    // create a sphere shape and perform collision check
-    Ptr<BoxShape> boxShape = this->CreateBoxShape(m, MaterialTable::StringToMaterialType("Wood"), size);
+    // create a box shape and perform collision check
+    matrix44 mNew;
+    mNew.x_component() = m.x_component()/scale.x;
+    mNew.y_component() = m.y_component()/scale.y;
+    mNew.z_component() = m.z_component()/scale.z;
+    mNew.set_translation(m.pos_component());
+
+    Ptr<BoxShape> boxShape = this->CreateBoxShape(mNew, MaterialTable::StringToMaterialType("Wood"), scale);
     boxShape->Attach(this->GetLevel()->GetOdeDynamicSpaceId());
     this->contactPoints.Reset();
     boxShape->Collide(excludeSet, this->contactPoints);

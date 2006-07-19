@@ -62,6 +62,9 @@ Server::Server(const nString& vendor, const nString& app, const nString& logName
     this->kernelServer->AddPackage(ndshow);
 
     this->kernelServer->SetLogHandler(&(this->logHandler));
+
+    // init default statup path
+    this->startupPath = "home:data/scripts/";
 }
 
 //------------------------------------------------------------------------------
@@ -191,14 +194,7 @@ Server::Open()
 
     // run startup script
     nString result;
-    if (this->GetProjectDir().IsValid())
-    {
-        this->scriptServer->RunScript("proj:data/scripts/startup.tcl", result);
-    }
-    else
-    {
-        this->scriptServer->RunScript("home:data/scripts/startup.tcl", result);
-    }
+    this->scriptServer->RunScript((this->GetStartupPath() + "startup.tcl").Get(), result);    
 
     // call OnStartup script function
     this->scriptServer->Run("OnStartup", result);

@@ -43,6 +43,8 @@ public:
     void SetupWorldFromCurrentLevel();
     /// cleanup the game world
     void CleanupWorld();
+	/// checks if the RandomEncounterLevel flag is set
+	bool IsRandomEncounterLevel(const nString& n);
 
 private:
     static SetupManager* Singleton;

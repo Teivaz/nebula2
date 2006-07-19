@@ -8,6 +8,8 @@
 #include "graphics/server.h"
 #include "graphics/cameraentity.h"
 #include "game/entity.h"
+#include "msg/updatetransform.h"
+#include "properties/pathanimproperty.h"
 
 // video camera specific attributes
 namespace Attr
@@ -22,6 +24,7 @@ ImplementFactory(Properties::VideoCameraProperty);
 
 using namespace Game;
 using namespace Managers;
+using namespace Message;
 
 //------------------------------------------------------------------------------
 /**
@@ -41,6 +44,49 @@ VideoCameraProperty::~VideoCameraProperty()
 
 //------------------------------------------------------------------------------
 /**
+    This adds the default attributes to the property.
+*/
+void
+VideoCameraProperty::SetupDefaultAttributes()
+{
+    CameraProperty::SetupDefaultAttributes();
+
+    vector3 identity;
+    GetEntity()->SetVector3(Attr::VideoCameraCenterOfInterest, identity);
+    GetEntity()->SetVector3(Attr::VideoCameraDefaultUpVec, vector3(0.0f, 1.0f, 0.0f));
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+VideoCameraProperty::Accepts(Msg* msg)
+{
+    if (msg->CheckId(UpdateTransform::Id)) return true;
+    return CameraProperty::Accepts(msg);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+VideoCameraProperty::HandleMessage(Msg* msg)
+{
+    if (msg->CheckId(UpdateTransform::Id))
+    {
+        // this is coming usually from the AnimPath property
+        Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
+        n_assert(camera != 0);
+        camera->SetTransform(((UpdateTransform*)msg)->GetMatrix());
+    }
+    else
+    {
+        CameraProperty::HandleMessage(msg);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 void
 VideoCameraProperty::OnActivate()
@@ -48,10 +94,10 @@ VideoCameraProperty::OnActivate()
     CameraProperty::OnActivate();
 
     // initialize the Maya camera object
-    const matrix44 m = GetEntity()->GetMatrix44(Attr::Transform);
+    const matrix44& m = GetEntity()->GetMatrix44(Attr::Transform);
     this->mayaCamera.SetDefaultEyePos(m.pos_component());
-    this->mayaCamera.SetDefaultUpVec(GetEntity()->GetVector3(Attr::VideoCameraDefaultUpVec));
-    this->mayaCamera.SetDefaultCenterOfInterest(GetEntity()->GetVector3(Attr::VideoCameraCenterOfInterest));
+    this->mayaCamera.SetDefaultUpVec(m.y_component());
+    this->mayaCamera.SetDefaultCenterOfInterest(m.pos_component() - m.z_component() * 10.0f);
     this->mayaCamera.Initialize();
 }
 
@@ -61,12 +107,6 @@ VideoCameraProperty::OnActivate()
 void
 VideoCameraProperty::OnObtainFocus()
 {
-    // update focus attribute
-    GetEntity()->SetBool(Attr::CameraFocus, true);
-
-    Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
-    camera->GetCamera().SetPerspective(60.0f, 4.0f/3.0f, 0.01f, 5000.0f);
-
     CameraProperty::OnObtainFocus();
 }
 
@@ -79,7 +119,7 @@ VideoCameraProperty::OnRender()
     if (FocusManager::Instance()->GetInputFocusEntity() == GetEntity())
     {
         // feed the Maya camera object with input
-        Input::Server* inputServer = Input::Server::Instance();
+        nInputServer* inputServer = nInputServer::Instance();
 
         if (inputServer->GetButton("ctrlPressed"))
         {
@@ -99,27 +139,21 @@ VideoCameraProperty::OnRender()
 
     if (FocusManager::Instance()->GetCameraFocusEntity() == GetEntity())
     {
-        // update the graphics subsystem's camera transform
-        Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
-        n_assert(camera != 0);
-        camera->SetTransform(this->mayaCamera.GetViewMatrix());
+        if (!(GetEntity()->HasAttr(Attr::AnimPath) && GetEntity()->GetString(Attr::AnimPath).IsValid()))
+        {
+            // only use the internal matrix if we are not animated
+            Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
+            n_assert(camera != 0);
+            float fov = this->GetEntity()->GetFloat(Attr::FieldOfView);
+            camera->GetCamera().SetPerspective(fov, 4.0f/3.0f, 0.1f, 2500.0f);
+            camera->SetTransform(this->mayaCamera.GetViewMatrix());
+        }
     }
 
     // important: call parent class at the end to apply any shake effects
     CameraProperty::OnRender();
 }
-//------------------------------------------------------------------------------
-/**
-    This adds the default attributes to the property.
-*/
-void
-VideoCameraProperty::SetupDefaultAttributes()
-{
-    CameraProperty::SetupDefaultAttributes();
 
-    GetEntity()->SetVector3(Attr::VideoCameraCenterOfInterest, vector3::zero);
-    GetEntity()->SetVector3(Attr::VideoCameraDefaultUpVec, vector3(0.0f, 1.0f, 0.0f));
-}
 } // namespace Properties
 
 

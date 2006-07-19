@@ -48,6 +48,8 @@ public:
     void SetTransform(const matrix44& m);
     /// get position and orientation.
     const matrix44& GetTransform() const;
+    /// return true if transformation has changed during frame
+    bool HasTransformChanged() const;
     /// begin adding rigid bodies to the composite
     virtual void BeginBodies(int num);
     /// add a rigid body to the composite (incs refcount)
@@ -121,7 +123,10 @@ protected:
     /// clear shapes
     void ClearShapes();
 
+    matrix44 frameBeforeTransform;
     matrix44 transform;
+    bool transformChanged;
+    bool transformWasSet;
     nFixedArray<Ptr<RigidBody> > bodyArray;
     nFixedArray<Ptr<Joint> > jointArray;
     nFixedArray<Ptr<Shape> > shapeArray;
@@ -249,6 +254,17 @@ Shape*
 Composite::GetShapeAt(int index) const
 {
     return this->shapeArray[index];
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if transformation has changed during frame.
+*/
+inline
+bool
+Composite::HasTransformChanged() const
+{
+    return this->transformChanged;
 }
 
 } // namespace Physics

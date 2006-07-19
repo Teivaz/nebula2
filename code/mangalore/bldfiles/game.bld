@@ -22,3 +22,29 @@ beginmodule mangalore::game
     }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule mangalore::game::time
+    setdir game/time
+    settype cpp
+    setfiles { 
+        gametimesource
+        guitimesource
+        inputtimesource
+        systemtimesource
+        timesource
+    }
+    setheaders { 
+        gametimesource
+        guitimesource
+        inputtimesource
+        systemtimesource
+        timesource
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginbundle mangalore::game
+    setmodules {
+        mangalore::game
+        mangalore::game::time        
+    }
+endbundle
+#-------------------------------------------------------------------------------

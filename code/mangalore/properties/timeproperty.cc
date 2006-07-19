@@ -3,7 +3,7 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "properties/timeproperty.h"
-#include "managers/timemanager.h"
+#include "game/time/gametimesource.h"
 #include "game/entity.h"
 #include "attr/attributes.h"
 
@@ -13,7 +13,6 @@ ImplementRtti(Properties::TimeProperty, Game::Property);
 ImplementFactory(Properties::TimeProperty);
 
 using namespace Game;
-using namespace Managers;
 
 //------------------------------------------------------------------------------
 /**
@@ -49,7 +48,7 @@ void
 TimeProperty::SetupDefaultAttributes()
 {
     Property::SetupDefaultAttributes();
-    GetEntity()->SetFloat(Attr::Time, 0.0f);
+    this->GetEntity()->SetFloat(Attr::Time, 0.0f);
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +58,7 @@ void
 TimeProperty::OnActivate()
 {
     Property::OnActivate();
-    this->attachTime = TimeManager::Instance()->GetTime();
+    this->attachTime = GameTimeSource::Instance()->GetTime();
 }
 
 //------------------------------------------------------------------------------
@@ -68,9 +67,9 @@ TimeProperty::OnActivate()
 void
 TimeProperty::OnBeginFrame()
 {
-    nTime absTime = TimeManager::Instance()->GetTime();
+    nTime absTime = GameTimeSource::Instance()->GetTime();
     nTime relTime = absTime - this->attachTime;
-    GetEntity()->SetFloat(Attr::Time, float(relTime));
+    this->GetEntity()->SetFloat(Attr::Time, float(relTime));
 }
 
 } // namespace Properties

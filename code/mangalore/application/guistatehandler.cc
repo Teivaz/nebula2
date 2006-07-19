@@ -12,11 +12,14 @@
 #include "particle/nparticleserver2.h"
 #include "vfx/server.h"
 #include "managers/setupmanager.h"
+#include "managers/timemanager.h"
 
 namespace Application
 {
 ImplementRtti(Application::GuiStateHandler, Application::StateHandler);
 ImplementFactory(Application::GuiStateHandler);
+
+using namespace Managers;
 
 //------------------------------------------------------------------------------
 /**
@@ -53,14 +56,22 @@ GuiStateHandler::OnEvent(UI::Event* event)
 void
 GuiStateHandler::OnStateEnter(const nString& prevState)
 {
-    Managers::SetupManager::Instance()->SetupEmptyWorld();
+    // reset time
+    TimeManager::Instance()->ResetAll();
+    TimeManager::Instance()->Update();
+
+    // setup empty world
+    SetupManager::Instance()->SetupEmptyWorld();
+
+    // setup event handler
     this->eventHandler = GuiEventHandler::Create();
     this->eventHandler->SetGuiStateHandler(this);
-    UI::Server::Instance()->DisplayGui(this->resName, this->eventHandler);
-#ifdef MANGALORE_USE_CEGUI
-    CEUI::Server::Instance()->LoadWindowLayout(this->resName);
-    CEUI::Server::Instance()->DisplayGui();
-#endif
+
+    // create window and attach event handler
+    this->window = UI::Window::Create();
+    this->window->SetResource(this->GetGuiResource());
+    this->window->SetEventHandler(this->eventHandler);
+    this->window->Open();
 }
 
 //------------------------------------------------------------------------------
@@ -71,12 +82,15 @@ GuiStateHandler::OnStateEnter(const nString& prevState)
 void
 GuiStateHandler::OnStateLeave(const nString& nextState)
 {
-    UI::Server::Instance()->HideGui();
-#ifdef MANGALORE_USE_CEGUI
-    CEUI::Server::Instance()->HideGui();
-#endif
+    // release window
+    this->window->Close();
+    this->window = 0;
+
+    // release event handler
     this->eventHandler = 0;
-    Managers::SetupManager::Instance()->CleanupWorld();
+
+    // cleanup world
+    SetupManager::Instance()->CleanupWorld();
 }
 
 //------------------------------------------------------------------------------
@@ -89,19 +103,8 @@ GuiStateHandler::OnFrame()
     nScriptServer* scriptServer = Foundation::Server::Instance()->GetScriptServer();
     bool running = true;
 
-    // distribute timestamps to interested subsystems
-    nTime time = App::Instance()->GetTime();
-    nTime frameTime = App::Instance()->GetFrameTime();
-    Input::Server::Instance()->SetTime(time);
-    VFX::Server::Instance()->SetTime(time);
-    Audio::Server::Instance()->SetTime(time);
-    UI::Server::Instance()->SetTime(time);
-    UI::Server::Instance()->SetFrameTime(frameTime);
-#ifdef MANGALORE_USE_CEGUI
-    CEUI::Server::Instance()->SetTime(time);
-    CEUI::Server::Instance()->SetFrameTime(frameTime);
-#endif
-    nGuiServer::Instance()->SetTime(time);
+    // let the time manager update its time
+    TimeManager::Instance()->Update();
 
     // trigger subsystem and Nebula servers
     nVideoServer::Instance()->Trigger();
@@ -113,15 +116,13 @@ GuiStateHandler::OnFrame()
     VFX::Server::Instance()->BeginScene();
     nParticleServer::Instance()->Trigger();
     nParticleServer2::Instance()->Trigger();
-
+    UI::Server::Instance()->Trigger();
+    
     running &= Graphics::Server::Instance()->Trigger();
     if (Graphics::Server::Instance()->BeginRender())
     {
         UI::Server::Instance()->Render();
         Graphics::Server::Instance()->Render();
-#ifdef MANGALORE_USE_CEGUI
-        CEUI::Server::Instance()->Render();
-#endif
         Graphics::Server::Instance()->EndRender();
     }
     VFX::Server::Instance()->EndScene();

@@ -13,6 +13,7 @@
 #include "navigation/waypointlist.h"
 #include "navigation/coverpoint.h"
 #include "navigation/map.h"
+#include "kernel/nprofiler.h"
 
 //------------------------------------------------------------------------------
 namespace Navigation
@@ -37,8 +38,10 @@ public:
     void Close();
     /// Open?
     bool IsOpen() const;
+    void OnBeginFrame();
+    void OnEndFrame();
     /// New path from point `a' to point `b'.
-    Path3D* MakePath(const vector3& a, const vector3& b) const;
+    Path3D* MakePath(const vector3& a, const vector3& b);
     /// Update path with new target position `targetPos'.
     void UpdatePath(Path3D* path, const vector3& targetPos);
     /// Add a way point
@@ -62,6 +65,7 @@ private:
     nArray<Ptr<WayPointList> > wayPointLists;
     nArray<CoverPoint> coverPointList;
     Ptr<Map> map;
+    PROFILER_DECLARE(profNavMakePath);
 };
 
 RegisterFactory(Server);
@@ -104,7 +108,7 @@ inline
 Map*
 Server::GetMap() const
 {
-    return this->map;
+    return this->map.get_unsafe();
 }
 
 } // namespace Navigation

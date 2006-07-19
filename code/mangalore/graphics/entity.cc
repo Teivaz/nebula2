@@ -11,6 +11,7 @@
 #include "graphics/server.h"
 #include "gfx2/ngfxserver2.h"
 #include "graphics/lightentity.h"
+#include "mathlib/sphere.h"
 
 namespace Graphics
 {
@@ -29,7 +30,8 @@ Entity::Entity() :
     shadowBoxUpdatedFrameId(0),
     activateTime(0.0),
     timeFactor(1.0f),
-    userData(0)
+    maxVisibleDistance(10000.0f),
+    minVisibleSize(0.0f)
 {
     // initialize link arrays for double grow size,
     // normal entities need rather small arrays, while cameras and
@@ -118,10 +120,7 @@ Entity::OnActivate()
     n_assert(!this->resource.IsLoaded());
     n_assert(!this->shadowResource.IsLoaded());
 
-    // set the creation time
-    this->activateTime = Server::Instance()->GetTime();
-
-    // load the graphics resource, unless this is a camera
+    this->ResetActivationTime();
     if (this->GetType() != Camera)
     {
         this->ValidateResource();
@@ -290,12 +289,39 @@ Entity::GetBoxClipStatus(const bbox3& box)
 
 //------------------------------------------------------------------------------
 /**
+    Reset the activation time to the current time.
+*/
+void
+Entity::ResetActivationTime()
+{
+    if (this->extTimeSource.isvalid())
+    {
+        this->activateTime = this->extTimeSource->GetTime();
+    }
+    else
+    {
+        this->activateTime = Server::Instance()->GetTime();
+    }    
+}
+
+//------------------------------------------------------------------------------
+/**
     Get the current entity-local time.
 */
 nTime
 Entity::GetEntityTime() const
 {
-    return this->timeFactor * (Server::Instance()->GetTime() - this->activateTime);
+    nTime curTime;
+    if (this->extTimeSource.isvalid())
+    {
+        curTime = this->extTimeSource->GetTime();
+    }
+    else
+    {
+        curTime = Server::Instance()->GetTime();
+    }
+    nTime t = this->timeFactor * (curTime - this->activateTime);
+    return n_max(0.0, t);
 }
 
 //------------------------------------------------------------------------------
@@ -307,11 +333,11 @@ Entity::UpdateRenderContextVariables()
 {
     float entityTime = (float) this->GetEntityTime();
     this->renderContext.SetTransform(this->transform);
-    this->shadowRenderContext.SetTransform(this->transform);
     this->renderContext.GetVariable(this->timeVarHandle)->SetFloat(entityTime);
     if (this->shadowResource.IsLoaded())
     {
-        this->renderContext.GetVariable(this->timeVarHandle)->SetFloat(entityTime);
+        this->shadowRenderContext.SetTransform(this->transform);
+        this->shadowRenderContext.GetVariable(this->timeVarHandle)->SetFloat(entityTime);
     }
 }
 
@@ -345,55 +371,56 @@ Entity::OnRenderAfter()
 void
 Entity::Render()
 {
-    n_assert(this->GetVisible());
-
-    // make sure we're valid for rendering
-    this->ValidateResource();
-
-    // update render context variables and transformations
-    this->UpdateRenderContextVariables();
-
-    // set current frame id
-    this->renderContext.SetFrameId(Graphics::Server::Instance()->GetFrameId());
-
-    // update render context light links
-    this->renderContext.ClearLinks();
-    int numLinks = this->GetNumLinks(LightLink);
-    int linkIndex;
-    for (linkIndex = 0; linkIndex < numLinks; linkIndex++)
+    if (this->GetVisible())
     {
-        this->renderContext.AddLink(&(this->GetLinkAt(LightLink, linkIndex)->renderContext));
-    }
-    if (this->shadowResource.IsLoaded())
-    {
-        this->shadowRenderContext.ClearLinks();
+        // make sure we're valid for rendering
+        this->ValidateResource();
+
+        // update render context variables and transformations
+        this->UpdateRenderContextVariables();
+
+        // set current frame id
+        this->renderContext.SetFrameId(Graphics::Server::Instance()->GetFrameId());
+
+        // update render context light links
+        this->renderContext.ClearLinks();
+        int numLinks = this->GetNumLinks(LightLink);
+        int linkIndex;
         for (linkIndex = 0; linkIndex < numLinks; linkIndex++)
         {
-            this->shadowRenderContext.AddLink(&(this->GetLinkAt(LightLink, linkIndex)->renderContext));
+            this->renderContext.AddLink(&(this->GetLinkAt(LightLink, linkIndex)->renderContext));
         }
-    }
+        if (this->shadowResource.IsLoaded())
+        {
+            this->shadowRenderContext.ClearLinks();
+            for (linkIndex = 0; linkIndex < numLinks; linkIndex++)
+            {
+                this->shadowRenderContext.AddLink(&(this->GetLinkAt(LightLink, linkIndex)->renderContext));
+            }
+        }
+        
+        // update render context's bounding box
+        if (this->GetType() == Light)
+        {
+            // lights use the usual bounding box
+            this->renderContext.SetGlobalBox(this->GetBox());
+        }
+        else
+        {
+            // shape use the extruded shadow bounding box
+            this->renderContext.SetGlobalBox(this->GetShadowBox());
+        }
 
-    // update render context's bounding box
-    if (this->GetType() == Light)
-    {
-        // lights use the usual bounding box
-        this->renderContext.SetGlobalBox(this->GetBox());
-    }
-    else
-    {
-        // shape use the extruded shadow bounding box
-        this->renderContext.SetGlobalBox(this->GetShadowBox());
-    }
+        // attach graphics resource node to scene
+        nSceneServer* sceneServer = nSceneServer::Instance();
+        sceneServer->Attach(&(this->renderContext));
 
-    // attach graphics resource node to scene
-    nSceneServer* sceneServer = nSceneServer::Instance();
-    sceneServer->Attach(&(this->renderContext));
-
-    // attach optional shadow node
-    if (this->shadowResource.IsLoaded())
-    {
-        this->shadowRenderContext.SetGlobalBox(this->renderContext.GetGlobalBox());
-        sceneServer->Attach(&(this->shadowRenderContext));
+        // attach optional shadow node
+        if (this->shadowResource.IsLoaded())
+        {
+            this->shadowRenderContext.SetGlobalBox(this->renderContext.GetGlobalBox());
+            sceneServer->Attach(&(this->shadowRenderContext));
+        }
     }
 }
 
@@ -565,6 +592,41 @@ Entity::GetShadowBox()
         // NOTE: stupid construct, but nice for setting a break point
         return this->shadowBox;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Test visibility of entity depending on screen space size and distance.
+    Returns true if visibility check is positive.
+*/
+bool
+Entity::TestLodVisibility()
+{
+    // check distance to viewer
+    CameraEntity* camera = Server::Instance()->GetCamera();
+    n_assert(camera);
+    const vector3& cameraPos = camera->GetTransform().pos_component();
+    const vector3& myPos = this->GetTransform().pos_component();
+    float dist = vector3(cameraPos - myPos).len();
+    if (dist > this->maxVisibleDistance)
+    {
+        return false;
+    }
+
+    // check screen space size
+    const bbox3& globalBoundingBox = this->GetBox();
+    sphere worldSphere(globalBoundingBox.center(), globalBoundingBox.diagonal_size() * 0.5f);
+    const matrix44& view = camera->GetView();
+    const matrix44& proj = camera->GetCamera().GetProjection();
+    rectangle screenRect = worldSphere.project_screen_rh(view, proj, camera->GetCamera().GetNearPlane());
+    float screenSize = n_max(screenRect.width(), screenRect.height());
+    if (screenSize < this->minVisibleSize)
+    {
+        return false;
+    }
+
+    // visible!
+    return true;
 }
 
 } // namespace Graphics

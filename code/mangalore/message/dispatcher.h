@@ -53,8 +53,20 @@ public:
     /// remove a message port
     void RemovePort(Port* port);
 
+protected:
+    /// cleanup empty msg ports when not in handle message trigger
+    virtual void CleanupEmptyPorts();
+
+    /// begin handle message
+    void BeginHandleMessage();
+    /// is in handle message tigger
+    bool IsInHandleMessage() const;
+    /// end handle message
+    void EndHandleMessage();
 private:
     nArray<Ptr<Port> > portArray;
+    /// in the handle message trigger
+    int handleMsgLockCount;
 };
 
 RegisterFactory(Dispatcher);

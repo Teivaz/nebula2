@@ -15,6 +15,9 @@
 //------------------------------------------------------------------------------
 namespace Db
 {
+class Reader;
+class Writer;
+
 class Entity : public Foundation::RefCounted
 {
     DeclareRtti;
@@ -25,10 +28,14 @@ public:
     Entity();
     /// destructor
     virtual ~Entity();
-    /// update attribute values from db, requires a valid GUID attribute!
+    /// update attribute from an existing Reader object
+    void LoadFromReader(Reader* reader);
+    /// write attributes to writer object
+    void SaveToWriter(Writer* writer);
+    /// update attribute values from db, requires a valid GUID attribute! (SLOW!)
     void Load();
-    /// write attribute values to db
-    void Save(bool saveAllAtrributes);
+    /// write attribute values to db (SLOW!)
+    void Save();
     /// check if an attribute exists on the entity
     bool HasAttr(const Attr::AttributeID& attrId) const;
     /// set a single attribute on the entity
@@ -38,11 +45,39 @@ public:
     /// direct access to the attribute array
     const nArray<Attribute>& GetAttrs() const;
 
+    /// Set the table name for Load()/Save() methods
+    void SetTableName(const nString& table);
+    /// Get the table name that used from Load()/Save() methods
+    const nString& GetTableName() const;
+
 private:
+    nString     tableName;
     AttributeContainer attrs;
 };
 
 RegisterFactory(Entity);
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Entity::SetTableName(const nString& table)
+{
+    n_assert(table.IsValid());
+
+    this->tableName = table;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString& 
+Entity::GetTableName() const
+{
+    return this->tableName;
+}
 
 };  // namespace Db
 //------------------------------------------------------------------------------

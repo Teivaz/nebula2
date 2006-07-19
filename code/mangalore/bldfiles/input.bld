@@ -6,7 +6,28 @@
 beginmodule mangalore::input
     setdir input
     settype cpp
-    setfiles { server }
-    setheaders { server }
+    setfiles { 
+        server
+        axissource
+        buttonsource
+        chain
+        event
+        keysource
+        mapping
+        mousesource
+        source
+    }
+    setheaders {
+        server
+        axissource
+        buttonsource
+        chain
+        event
+        keysource
+        mapping
+        mousesource
+        priority
+        source 
+    }
 endmodule
 #-------------------------------------------------------------------------------

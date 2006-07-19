@@ -13,7 +13,9 @@ ImplementFactory(Db::Query);
 //------------------------------------------------------------------------------
 /**
 */
-Query::Query()
+Query::Query() :
+    whereAttrs(32, 32),
+    updateAttrs(128, 128)
 {
     // empty
 }
@@ -32,6 +34,9 @@ Query::~Query()
     If no result attributes are given, all attributes for the database
     record will be returned (SELECT * FROM). If no WHERE attributes are
     given, the entire table contents will be returned.
+
+    If attributes are used in where or result that does not exists
+    as colum of the table the function return false.
 */
 void
 Query::BuildSelectStatement()
@@ -61,18 +66,15 @@ Query::BuildSelectStatement()
         int i;
         for (i = 0; i < this->whereAttrs.Size(); i++)
         {
-            this->sqlStatement.Append("\"");
-            this->sqlStatement.Append(this->whereAttrs[i].GetName());
-            this->sqlStatement.Append("\"='");
-            this->sqlStatement.Append(this->whereAttrs[i].AsString());
-            if ((i + 1) < this->whereAttrs.Size())
-            {
-                this->sqlStatement.Append("' AND ");
-            }
-            else
-            {
-                this->sqlStatement.Append("'");
-            }
+            bool lastElement = (i + 1) >= this->whereAttrs.Size();
+            nString clause;
+            clause.Format("%s (%s='%s') %s",
+                this->whereAttrs[i].not ? "NOT" : "",
+                this->whereAttrs[i].attr.GetName().Get(),
+                this->whereAttrs[i].attr.AsString().Get(),
+                !lastElement ? "AND " : ""
+                );
+            this->sqlStatement.Append(clause);
         }
     }
 }
@@ -110,17 +112,50 @@ Query::BuildUpdateStatement()
     this->sqlStatement.Append(" WHERE ");
     for (i = 0; i < this->whereAttrs.Size(); i++)
     {
-        this->sqlStatement.Append("\"");
-        this->sqlStatement.Append(this->whereAttrs[i].GetName());
-        this->sqlStatement.Append("\"='");
-        this->sqlStatement.Append(this->whereAttrs[i].AsString());
-        if ((i + 1) < this->whereAttrs.Size())
+        bool lastElement = (i + 1) >= this->whereAttrs.Size();
+        nString clause;
+        clause.Format("%s (%s='%s') %s",
+            this->whereAttrs[i].not ? "NOT" : "",
+            this->whereAttrs[i].attr.GetName().Get(),
+            this->whereAttrs[i].attr.AsString().Get(),
+            !lastElement ? "AND " : ""
+            );
+        this->sqlStatement.Append(clause);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method constructs an attribute-type-safe DELETE statement.
+*/
+void
+Query::BuildDeleteStatement()
+{
+    n_assert(this->tableName.IsValid());
+    n_assert(this->whereAttrs.Size() > 0);
+
+    this->sqlStatement = "DELETE FROM ";
+    this->sqlStatement.Append(this->tableName);
+
+    this->sqlStatement.Append(" WHERE ");
+    if (this->whereAttrs.Size() == 0)
+    {
+        this->sqlStatement.Append(" *");
+    }
+    else
+    {
+        int i;
+        for (i = 0; i < this->whereAttrs.Size(); i++)
         {
-            this->sqlStatement.Append("' AND ");
-        }
-        else
-        {
-            this->sqlStatement.Append("'");
+            bool lastElement = (i + 1) >= this->whereAttrs.Size();
+            nString clause;
+            clause.Format("%s (%s='%s') %s",
+                this->whereAttrs[i].not ? "NOT" : "",
+                this->whereAttrs[i].attr.GetName().Get(),
+                this->whereAttrs[i].attr.AsString().Get(),
+                !lastElement ? "AND " : ""
+                );
+            this->sqlStatement.Append(clause);
         }
     }
 }
@@ -131,14 +166,14 @@ Query::BuildUpdateStatement()
     attribute form, and stores the result in the query object.
 */
 bool
-Query::Execute()
+Query::Execute(bool failOnError)
 {
     n_assert(this->sqlStatement.IsValid());
     nSqlDatabase* db = Server::Instance()->GetSqlDatabase();
     
     // create a Nebula2 sqlQuery object
     nSqlQuery* sqlQuery = db->CreateQuery(this->sqlStatement);
-    sqlQuery->Execute();
+    bool querySuccess = sqlQuery->Execute(failOnError);
 
     // convert result to Mangalore attributes
     this->result.SetSize(sqlQuery->GetColumns().Size(), sqlQuery->GetNumRows());
@@ -147,24 +182,20 @@ Query::Execute()
     const nArray<nString>& resColumns = sqlQuery->GetColumns();
     int colIndex;
     int numCols = resColumns.Size();
-    nArray<Attribute> attrs( 0, 16 ); // we know size beforehand, create empty
-    attrs.SetFixedSize( numCols );    // then set fixed size
+    nFixedArray<Attribute> attrs(numCols);
     for (colIndex = 0; colIndex < numCols; colIndex++)
     {
         const nString& columnTitle = resColumns[colIndex];
         Attr::AttributeID attrId = Attr::AttributeID::FindAttributeID(columnTitle);
-        if ( !attrId.IsValid() )
+        if (!attrId.IsValid())
         {
-            n_error
-            (
-            "Error in table \"%s\", unknown attribute ID \"%s\"\n(SQL Statement: %s)",
-                this->tableName.Get(),
-                columnTitle.Get(),
-                sqlQuery->GetSqlStatement().Get()
-            );
+            n_error("Query::Execute(): Error in table \"%s\", unknown attribute ID \"%s\"\n(SQL Statement: %s)",
+                    this->tableName.Get(),
+                    columnTitle.Get(),
+                    sqlQuery->GetSqlStatement().Get());
         }
 
-        attrs[ colIndex ].SetAttributeID( attrId );
+        attrs[colIndex].SetAttributeID(attrId);
     }
 
     // convert attributes and write to result array, hmm, this
@@ -213,7 +244,7 @@ Query::Execute()
                         break;
 
                     default:
-                        n_assert2( false, "Known attribute type" );
+                        n_error("Query::Execute(): invalid attribute type!");
                         attrs[colIndex].Clear();
                         break;
 
@@ -229,7 +260,7 @@ Query::Execute()
         }
     }
     sqlQuery->Release();
-    return (numRows > 0);
+    return querySuccess;
 }
 
 //------------------------------------------------------------------------------

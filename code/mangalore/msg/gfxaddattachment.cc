@@ -9,4 +9,13 @@ namespace Message
 ImplementRtti(Message::GfxAddAttachment, Message::Msg);
 ImplementFactory(Message::GfxAddAttachment);
 ImplementMsgId(GfxAddAttachment);
+
+//------------------------------------------------------------------------------
+/**
+*/
+GfxAddAttachment::GfxAddAttachment():
+    gfxEntity(0)
+{
+    // empty
+}
 };

@@ -3,8 +3,8 @@
 //------------------------------------------------------------------------------
 /**
     @class UI::Button
-
-    A simple button UI element.
+    
+    A simple graphical button UI element.
 
     (C) 2005 Radon Labs GmbH
 */
@@ -17,16 +17,11 @@ class Button : public Control
 {
     DeclareRtti;
 	DeclareFactory(Button);
-
 public:
     /// constructor
     Button();
     /// destructor
     virtual ~Button();
-    /// set button text
-    void SetText(const nString& t);
-    /// get button text
-    const nString& GetText() const;
     /// set event name
     void SetEventName(const nString& e);
     /// get event name
@@ -40,13 +35,13 @@ public:
     /// called before the gui hierarchy is rendered
     virtual void OnRender();
     /// called when mouse is moved
-    virtual void OnMouseMove(const vector2& mousePos);
+    virtual bool OnMouseMove(const vector2& mousePos);
     /// called when left mouse button is pressed over element
-    virtual void OnLeftButtonDown(const vector2& mousePos);
+    virtual bool OnLeftButtonDown(const vector2& mousePos);
     /// called when left mouse button is released over element
-    virtual void OnLeftButtonUp(const vector2& mousePos);
+    virtual bool OnLeftButtonUp(const vector2& mousePos);
     /// called when right mouse button is pressed over element
-    virtual void OnRightButtonDown(const vector2& mousePos);
+    virtual bool OnRightButtonDown(const vector2& mousePos);
 
 protected:
     /// control states
@@ -60,34 +55,12 @@ protected:
         NumVisualStates,
     };
 
-    nString text;
     nString eventName;
     bool mouseOver;
     bool pressed;
     nFixedArray<nRef<nTransformNode> > visuals;
 };
-
 RegisterFactory(Button);
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-Button::SetText(const nString& t)
-{
-    this->text = t;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-Button::GetText() const
-{
-    return this->text;
-}
 
 //------------------------------------------------------------------------------
 /**
