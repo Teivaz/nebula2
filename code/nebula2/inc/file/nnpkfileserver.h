@@ -76,6 +76,8 @@ public:
     virtual int ParseDirectory(const nString& dirName, const nString& extension);
     /// release npk file wrappers matching pattern
     virtual void ReleaseNpkFiles(const nString& pattern);
+    /// pack a directory into a new NPK file
+    virtual bool Pack(const nString& rootPath, const nString& dirName, const nString& npkName, bool noTopLevelName);
 
 private:
     /// add one npk file to the internal list

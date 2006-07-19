@@ -38,9 +38,7 @@ nAnimLoopType::ToString(nAnimLoopType::Type t)
     {
         case Loop:  return nString("loop");
         case Clamp: return nString("clamp");
-        default:
-            n_error("nAnimLoopType::ToString(): invalid enum value!");
-            return nString("");
+        default:    return nString("clamp");
     }
 }
 
@@ -55,8 +53,7 @@ nAnimLoopType::FromString(const nString& s)
     else if (s == "clamp") return Clamp;
     else
     {
-        n_error("nAnimLoopType::ToString(): invalid loop type '%s'\n", s.Get());
-        return Loop;
+        return Clamp;
     }
 }
 

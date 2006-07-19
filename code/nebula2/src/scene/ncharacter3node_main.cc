@@ -11,14 +11,15 @@
 #include "character/ncharacter3set.h"
 #include "util/nstream.h"
 
-nNebulaScriptClass(nCharacter3Node, "ntransformnode");
+nNebulaClass(nCharacter3Node, "ntransformnode");
 
 //------------------------------------------------------------------------------
 /**
 */
-nCharacter3Node::nCharacter3Node():
-    characterSetIndex(-1)
+nCharacter3Node::nCharacter3Node()//:
+//    characterSetIndex(-1)
 {
+    this->transformNodeClass = nKernelServer::Instance()->FindClass("ntransformnode");
 }
 
 //------------------------------------------------------------------------------
@@ -29,6 +30,39 @@ nCharacter3Node::~nCharacter3Node()
     // empty
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nCharacter3Node::UpdateBoundingBox()
+{
+    // FIXME : something's not calculated correct here, the boundbox is definately too large
+    //         nevertheless it is acceptable for the moment
+    bbox3 box;
+    int i;
+    for (i = 0; i < this->loadedSkins.Size(); i++)
+    {
+        if (this->loadedSkins[i]->IsA(this->transformNodeClass))
+        {
+            nTransformNode* node = (nTransformNode*) this->loadedSkins[i];
+            bbox3 skinBox = node->GetLocalBox();
+            matrix44 skinMatrix = node->GetTransform();
+            skinBox.transform(skinMatrix);
+            box.extend(skinBox);
+
+        }
+    }
+    this->SetLocalBox(box);
+
+    nSceneNode* parent = (nSceneNode*) this->GetParent();
+    while (parent && parent->IsA(this->transformNodeClass))
+    {
+        bbox3 parentBox = parent->GetLocalBox();
+        parentBox.extend(box);
+        parent->SetLocalBox(parentBox);
+        parent = (nSceneNode*) parent->GetParent();
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -38,95 +72,52 @@ nCharacter3Node::RenderTransform(nSceneServer* sceneServer, nRenderContext* rend
 {
     bool success = true;
 
-    int i;
-    nClass* nTransformNodeClass = this->kernelServer->FindClass("ntransformnode");
+    // read character set variable from rendercontext
+    nVariable::Handle characterSetHandle = nVariableServer::Instance()->GetVariableHandleByName("charSetPointer");
+    nVariable* var = renderContext->FindLocalVar(characterSetHandle);
+    n_assert(0 != var);
+    nCharacter3Set* characterSet = (nCharacter3Set*) var->GetObj();
+    n_assert(characterSet);
 
-    // read characterset variable from rendercontext
-    if(this->characterSetIndex != -1)
+    if (!characterSet->IsValid())
     {
-        nVariable& varCharacter3Set = renderContext->GetLocalVar(this->characterSetIndex);
-        nCharacter3Set* charSet = (nCharacter3Set*) varCharacter3Set.GetObj();
-        if((charSet) && (charSet->IsValid()))
+        if (!this->AreResourcesValid())
         {
-            // ok, valid characterset found
+            this->LoadResources();
+        }
+        characterSet->Init(this);
+    }
 
-            // set skins
-            for( i = 0; i < this->loadedSkins.Size(); i++)
-            {
-                if(this->loadedSkins[i]->IsA(nTransformNodeClass))
-                {
-                    nTransformNode* node = (nTransformNode*) this->loadedSkins[i];
-                    bool isVisible = charSet->IsSkinVisibleAtIndex(i);
-                    node->SetActive( isVisible );
-                };
-            };
- 
-            // set animation
-            nCharacter3SkinAnimator* animator = this->FindMySkinAnimator();
-            const char* stateChannel = animator->GetStateChannel();
-            int setAnim = charSet->GetCurrentAnimation();
-            nVariable::Handle varHandle;
-            varHandle = nVariableServer::Instance()->GetVariableHandleByName(stateChannel);
-            nVariableServer::Instance()->SetIntVariable(varHandle, setAnim);
-
-            // set variation
-//            animator->SetCurrentVariation(charSet->GetCurrentVariationIndex());
-        };
-    };
-
-    success &= nTransformNode::RenderTransform(sceneServer, renderContext, parentMatrix);
-
-
-    // FIXME : something's not calculated correct here, the boundbox is definately too large
-    //         nevertheless it is acceptable for the moment
-    bbox3 myNewBBox;
-    // update boundbox
-    for( i = 0; i < this->loadedSkins.Size(); i++)
+    // activate skins
+    int i;
+    for (i = 0; i < this->loadedSkins.Size(); i++)
     {
-        if(this->loadedSkins[i]->IsA(nTransformNodeClass))
+        if (this->loadedSkins[i]->IsA(this->transformNodeClass))
         {
             nTransformNode* node = (nTransformNode*) this->loadedSkins[i];
-            if(node->GetActive())
-            {
-                // extend boundbox
-                bbox3 skinBox = node->GetLocalBox();
-                matrix44 skinMatrix = node->GetTransform();
-                skinBox.transform(skinMatrix);
-                myNewBBox.extend(skinBox);
-            };
+            bool isVisible = characterSet->IsSkinVisibleAtIndex(i);
+            node->SetActive(isVisible);
+        }
+    }
 
-        };
-    };
-    this->SetLocalBox(myNewBBox);
-
-
+    success &= nTransformNode::RenderTransform(sceneServer, renderContext, parentMatrix);
+    
     return success;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-void
-nCharacter3Node::RenderContextCreated(nRenderContext* renderContext)
-{
-    nTransformNode::RenderContextCreated(renderContext);
-    nVariable var;
-    var.SetType(nVariable::Object);
-    var.SetObj(0);
-    this->characterSetIndex = renderContext->AddLocalVar(var);
-    this->FindMySkinAnimator()->SetCharacterSetIndexHandle(this->characterSetIndex);
-};
-
-//------------------------------------------------------------------------------
-/**
-*/
-/*
-bool 
-nCharacter3Node::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
-{
-    return nSceneNode::RenderGeometry(sceneServer, renderContext);
-};
-*/
+//void
+//nCharacter3Node::RenderContextCreated(nRenderContext* renderContext)
+//{
+    //nTransformNode::RenderContextCreated(renderContext);
+    //nVariable var;
+    //var.SetType(nVariable::Object);
+    //var.SetObj(0);
+    //this->characterSetIndex = renderContext->AddLocalVar(var);
+    //this->FindMySkinAnimator()->SetCharacterSetIndexHandle(this->characterSetIndex);
+//}
 
 //------------------------------------------------------------------------------
 /**
@@ -136,15 +127,16 @@ nCharacter3Node::LoadResources()
 {
     bool result = true;
 
-    if(!this->AreResourcesValid())
+    if (!this->AreResourcesValid())
     {
         result &= nSceneNode::LoadResources();
         nString name = this->GetName();
         this->LoadSkinsFromSubfolder(nString("gfxlib:characters/")+name+"/skins");
+        this->UpdateBoundingBox();
 
         // now try to initialize the characternodes by using the default skin list
-        nString skinList,variation;
-        if(this->ReadCharacterStuffFromXML(nString("proj:export/gfxlib/characters/")+name+"/skinlists/_auto_default_.xml",skinList,variation))
+        nString skinList, variation;
+        if (nCharacter3Node::ReadCharacterStuffFromXML(nString("proj:export/gfxlib/characters/")+name+"/skinlists/_auto_default_.xml", skinList, variation))
         {
             nArray<nString> skin;
             skinList.Tokenize(" ",skin);
@@ -152,37 +144,36 @@ nCharacter3Node::LoadResources()
             // set skins
             nClass* nTransformNodeClass = this->kernelServer->FindClass("ntransformnode");
             int i,k;
-            for( i = 0; i < this->loadedSkins.Size(); i++)
+            for (i = 0; i < this->loadedSkins.Size(); i++)
             {
                 nArray<nString> nameTokens;
                 int numTokens = this->loadedSkinName[i].Tokenize("/",nameTokens);
 
-                if(this->loadedSkins[i]->IsA(nTransformNodeClass))
+                if (this->loadedSkins[i]->IsA(nTransformNodeClass))
                 {
                     nTransformNode* node = (nTransformNode*) this->loadedSkins[i];
 
                     bool visible = false;
-
-                    if(numTokens == 3)
+                    if (numTokens == 3)
                     {
-                        for(k = 0; k < skin.Size(); k += 3)
+                        for (k = 0; k < skin.Size(); k += 3)
                         {   
-                            if( (skin[k] == nameTokens[0]) &&
+                            if ((skin[k] == nameTokens[0]) &&
                                 (skin[k+1] == nameTokens[1]) &&
-                                (skin[k+2] == nameTokens[2]) )
+                                (skin[k+2] == nameTokens[2]))
                             {
                                 visible = true;
-                            };
-                        };
-                    };
+                            }
+                        }
+                    }
                     node->SetActive(visible);
-                };
-            };
-        };
-    };
+                }
+            }
+        }
+    }
 
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -190,21 +181,20 @@ nCharacter3Node::LoadResources()
 void 
 nCharacter3Node::UnloadResources()
 {
-    if(this->AreResourcesValid())
+    if (this->AreResourcesValid())
     {
         nSceneNode::UnloadResources();
-    };
-};
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-int
-nCharacter3Node::GetRenderContextCharacterSetIndex() const
-{
-    return this->characterSetIndex;
-};
-
+//int
+//nCharacter3Node::GetRenderContextCharacterSetIndex() const
+//{
+//    return this->characterSetIndex;
+//}
 
 //------------------------------------------------------------------------------
 /**
@@ -214,12 +204,12 @@ nCharacter3Node::GetNamesOfLoadedSkins() const
 {
     nArray<nString> result;
     int i;
-    for( i = 0; i < this->loadedSkins.Size(); i++)
+    for (i = 0; i < this->loadedSkins.Size(); i++)
     {
         result.Append(this->loadedSkins[i]->GetName());
-    };
+    }
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -228,8 +218,7 @@ nArray<nString>
 nCharacter3Node::GetFullNamesOfLoadedSkins() const
 {
     return this->loadedSkinName;
-};
-
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -239,32 +228,32 @@ nCharacter3Node::FindMySkinAnimator()
 {
     // Find nCharacter3SkinAnimator Class
     nClass* nCharacter3SkinAnimatorClass = this->kernelServer->FindClass("ncharacter3skinanimator");
-    nCharacter3SkinAnimator* firstFoundNode = (nCharacter3SkinAnimator*)this->FindFirstInstance(this, nCharacter3SkinAnimatorClass);        
+    nCharacter3SkinAnimator* firstFoundNode = (nCharacter3SkinAnimator*) this->FindFirstInstance(this, nCharacter3SkinAnimatorClass);        
     n_assert(firstFoundNode);
     return firstFoundNode;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-nArray<nString>
+const nArray<nString>&
 nCharacter3Node::GetNamesOfLoadedAnimations()
 {
     nCharacter3SkinAnimator* animator = this->FindMySkinAnimator();
+    n_assert(0 != animator);
     return animator->GetNamesOfLoadedAnimations();
-};
-
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-nArray<nString>
+const nArray<nString>&
 nCharacter3Node::GetNamesOfLoadedVariations()
 {
     nCharacter3SkinAnimator* animator = this->FindMySkinAnimator();
+    n_assert(0 != animator);
     return animator->GetNamesOfLoadedVariations();
-};
-
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -275,54 +264,55 @@ nCharacter3Node::LoadSkinsFromSubfolder(nString path)
     nDirectory* dir = nFileServer2::Instance()->NewDirectoryObject();
     if (dir->Open(path.Get()))
     {
-        if (dir->SetToFirstEntry()) do
+        if (dir->SetToFirstEntry())
         {
-            if (dir->GetEntryType() == nDirectory::FILE)
+            do
             {
-                nString curPath = dir->GetEntryName();
-                if(curPath.CheckExtension("n2"))
+                if (dir->GetEntryType() == nDirectory::FILE)
                 {
-//                    n_printf("Loading %s ... ",curPath.Get());
-                    // load new object
-
-                    nKernelServer* kernelServer = nKernelServer::Instance();
-                    kernelServer->PushCwd(this);
-                    nRoot* nObj = (nRoot*)kernelServer->Load(curPath.Get());
-                    n_assert(nObj);
-                    kernelServer->PopCwd();
-
-                    this->loadedSkins.Append(nObj);
-
-                    nString name;
-                    nArray<nString> directories;
-                    int tokens = curPath.Tokenize("/",directories);
-                    if(tokens >= 3)
+                    nString curPath = dir->GetEntryName();
+                    if (curPath.CheckExtension("n2"))
                     {
-                        name.Append(directories[directories.Size()-3]);
-                        name.Append("/");
-                    };
-                    if(tokens >= 2)
-                    {
-                        name.Append(directories[directories.Size()-2]);
-                        name.Append("/");
-                    };
-                    name.Append(curPath.ExtractFileName());
-                    name.StripExtension();
-                    this->loadedSkinName.Append(name);
+                        // load new object
+                        nKernelServer* kernelServer = nKernelServer::Instance();
+                        kernelServer->PushCwd(this);
+                        nRoot* nObj = (nRoot*)kernelServer->Load(curPath.Get());
+                        n_assert(nObj);
+                        kernelServer->PopCwd();
 
-//                    n_printf("Done!\n");
-                };
+                        this->loadedSkins.Append(nObj);
+
+                        nString name;
+                        nArray<nString> directories;
+                        int tokens = curPath.Tokenize("/",directories);
+                        if (tokens >= 3)
+                        {
+                            name.Append(directories[directories.Size()-3]);
+                            name.Append("/");
+                        }
+                        if (tokens >= 2)
+                        {
+                            name.Append(directories[directories.Size()-2]);
+                            name.Append("/");
+                        }
+                        name.Append(curPath.ExtractFileName());
+                        name.StripExtension();
+                        this->loadedSkinName.Append(name);
+                    }
+                }
+                else if (dir->GetEntryType() == nDirectory::DIRECTORY)
+                {
+                    // recurse
+                    this->LoadSkinsFromSubfolder(path + "/" + dir->GetEntryName().ExtractFileName());
+                }
             }
-            else if (dir->GetEntryType() == nDirectory::DIRECTORY)
-            {
-                // recurse
-                this->LoadSkinsFromSubfolder(path + "/" + dir->GetEntryName().ExtractFileName());
-            }
-        } while (dir->SetToNextEntry());
+            while (dir->SetToNextEntry());
+        }
         dir->Close();
-    };
+    }
+
     delete dir;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -366,44 +356,44 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
     resultSkinList = "";
 
     fileName = nFileServer2::Instance()->ManglePath(fileName);
-    if(!nFileServer2::Instance()->FileExists(fileName))
+    if (!nFileServer2::Instance()->FileExists(fileName))
     {
         return false;
-    };
+    }
 
     nString skins;
 
     nStream stream;
     stream.SetFilename(fileName);
     stream.Open(nStream::Read);
-    if((!stream.IsOpen()) || (!stream.HasNode("/skins")))
+    if ((!stream.IsOpen()) || (!stream.HasNode("/skins")))
     {
         // something went wrong, return
         return false;
-    };
+    }
 
     stream.SetToNode("/skins");
-    if(stream.SetToFirstChild())
+    if (stream.SetToFirstChild())
     {
         do
         {
             nString current = stream.GetCurrentNodeName();
             skins += current + nString(" ");
             
-            if(!stream.SetToFirstChild())
+            if (!stream.SetToFirstChild())
             {
                 // something went wrong, return
-                return false;
-            };
+                return "failed";
+            }
 
             current = stream.GetCurrentNodeName();
             skins += current + nString(" ");
 
-            if(!stream.SetToFirstChild())
+            if (!stream.SetToFirstChild())
             {
                 // something went wrong, return
-                return false;
-            };
+                return "failed";
+            }
             
             current = stream.GetCurrentNodeName();
             skins += current + nString(" ");
@@ -411,31 +401,32 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
             stream.SetToParent();
             stream.SetToParent();
 
-        } while(stream.SetToNextChild());
-    };
+        }
+        while (stream.SetToNextChild());
+    }
 
-    if(stream.HasNode("/variation"))
+    if (stream.HasNode("/variation"))
     {
         stream.SetToNode("/variation");
-        if(stream.SetToFirstChild())
+        if (stream.SetToFirstChild())
         {
             resultVariation = stream.GetCurrentNodeName();
-        };
-    };
+        }
+    }
 
     stream.Close();
    
     resultSkinList = skins;
 
     return true;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
     save skinlist to a XML file
 */
 bool
-nCharacter3Node::WriteCharacterStuffFromXML(nString fileName, nString skins,nString variation)
+nCharacter3Node::WriteCharacterStuffFromXML(nString fileName, nString skins, nString variation)
 {
     fileName = nFileServer2::Instance()->ManglePath(fileName);
     nArray<nString> skin;
@@ -444,15 +435,15 @@ nCharacter3Node::WriteCharacterStuffFromXML(nString fileName, nString skins,nStr
     nStream stream;
     stream.SetFilename(fileName);
     stream.Open(nStream::Write);
-    if(!stream.IsOpen())
+    if (!stream.IsOpen())
     {
         // something went wrong, return
         return false;
-    };
+    }
 
     stream.BeginNode("skins");
     int i;
-    for(i = 0; i < skin.Size(); i += 3)
+    for (i = 0; i < skin.Size(); i += 3)
     {
         stream.BeginNode(skin[i]);
         stream.BeginNode(skin[i+1]);
@@ -460,16 +451,16 @@ nCharacter3Node::WriteCharacterStuffFromXML(nString fileName, nString skins,nStr
         stream.EndNode();
         stream.EndNode();
         stream.EndNode();
-    };
+    }
     stream.EndNode();
-    if(variation.IsValid())
+    if (variation.IsValid())
     {
         stream.BeginNode("variation");
             stream.BeginNode(variation);
             stream.EndNode();
         stream.EndNode();
-    };
+    }
     stream.Close();
 
     return true;
-};
+}

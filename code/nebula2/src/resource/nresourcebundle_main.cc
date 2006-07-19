@@ -43,11 +43,11 @@ nResourceBundle::LoadResource()
     nString filename = this->GetFilename();
 
     // open the resource bundle file
-    nFile* hdrFile = nFileServer2::Instance()->NewFileObject();
+    nFile* hdrFile = this->refFileServer->NewFileObject();
     if (hdrFile->Open(filename.Get(), "rb"))
     {
         // open a second file handle to the data block
-        nFile* dataFile = nFileServer2::Instance()->NewFileObject();
+        nFile* dataFile = this->refFileServer->NewFileObject();
         success = dataFile->Open(filename.Get(), "rb");
         n_assert(success);
 

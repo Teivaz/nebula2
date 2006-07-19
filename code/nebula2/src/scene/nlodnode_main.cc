@@ -13,8 +13,8 @@ nNebulaScriptClass(nLodNode, "ntransformnode");
 /**
 */
 nLodNode::nLodNode() :
-    minDistance(-100.0f),
-    maxDistance(100.0f)
+    minDistance(-5000.0f),
+    maxDistance(5000.0f)
 {
     this->transformNodeClass = kernelServer->FindClass("ntransformnode");
 }

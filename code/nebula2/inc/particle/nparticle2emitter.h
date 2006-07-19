@@ -3,25 +3,18 @@
 //------------------------------------------------------------------------------
 /**    
     @class nParticle2Emitter
-    @ingroup Particle
+    @ingroup NebulaParticleSystem
 
-    The particle2 emitter class.
+
+    The particle emitter class for the Particle2 system.
 
     (C) 2003 RadonLabs GmbH
 */
-
 #include "particle/nparticleserver2.h"
 #include "particle/nparticle2.h"
 #include "gfx2/nmesh2.h"
 #include "gfx2/ndynamicmesh.h"
-#include "scene/nshapenode.h"
-#include "util/nringbuffer.h"
-#include "mathlib/envelopecurve.h"
 #include "mathlib/bbox.h"
-#include "mathlib/vector3envelopecurve.h"
-
-// sorry, need a define
-#define PARTICLE_TIME_DETAIL    100
 
 class nParticleServer2;
 
@@ -45,9 +38,11 @@ public:
         ParticleVelocityFactor,
         ParticleMass,
         TimeManipulator,
+
         Filler1,            // filler for getting a CurveTypeCount that's power of two
         Filler2,            // filler for getting a CurveTypeCount that's power of two
         Filler3,            // filler for getting a CurveTypeCount that's power of two
+
         CurveTypeCount,
     };
 
@@ -64,25 +59,29 @@ public:
         float   color;      // colors get coded into 1 float
     } tParticleVertex;
 
+    static const int ParticleTimeDetail = 100;
 
     /// constructor
     nParticle2Emitter();
     /// destructor
     virtual ~nParticle2Emitter();
 
-    /// set transform matrix
+    /// set current emitter transformation
     void SetTransform(const matrix44& transform);
-
+    /// get current emitter transformation
+    const matrix44& GetTransform() const;
     /// set the start time
-    void SetStartTime(nTime time);
+    void SetStartTime(float time);
+    /// get the start time
+    float GetStartTime() const;
     /// set the end time
-    void SetEmissionDuration(nTime time);
+    void SetEmissionDuration(float time);
     /// get the emission duration
-    nTime GetEmissionDuration() const;
+    float GetEmissionDuration() const;
     /// set if loop emitter or not
-    void SetLoop(bool b);
+    void SetLooping(bool b);
     /// is it a loop emitter ?
-    bool GetLoop(void) const;
+    bool GetLooping() const;
     /// set the activity distance
     void SetActivityDistance(float f);
     /// get the distance to the viewer beyond which the emitter stops emitting
@@ -92,20 +91,20 @@ public:
     /// get wether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
 
-    /// erase dead particles, create new
-    virtual void Trigger(nTime curTime);
-    /// called by particle server
-    void Render(nTime curTime);
+    /// update particles
+    void Update(float curTime);
+    /// render particles
+    void Render(float curTime);
 
-    /// Set the mesh that emittes particles
+    /// set the mesh that emittes particles
     void SetEmitterMesh(nMesh2*);
     /// get mesh that emits
     nMesh2* GetEmitterMesh() const;
+    /// set emitter mesh group index
+    void SetEmitterMeshGroupIndex(int index);
+    /// get emitter mesh group index
+    int GetEmitterMeshGroupIndex() const;
 
-    /// set mesh group index
-    void SetMeshGroupIndex(int index);
-    /// get mesh group index
-    int GetMeshGroupIndex() const;
     /// set bounding box
     void SetBoundingBox(const bbox3& b);
     /// get bounding box
@@ -115,125 +114,153 @@ public:
     /// get the wind
     const nFloat4& GetWind() const;
 
-    /// returns true if emitter is ready for emitting
-    bool AreResourcesValid();
-    
-    // Initializing, call once after setting parameters
-    void Open();
+    /// return true if particle system has been initialized
+    bool IsValid() const;
+    /// initializing, call once after setting parameters
+    void Initialize();
 
-    // Signal that all necessary values have been set and emitting can begin
-    void SetIsSetUp(bool isSetUp);
-    // Return if emitter is set up
-    bool IsSetUp() const;
+    /// signal that all necessary values have been set and emitting can begin
+    void SetIsSetup(bool b);
+    /// return if emitter is set up
+    bool IsSetup() const;
 
-    /// set static - curve - references
-    void    SetStaticCurvePtr(float* ptr);
-    /// set gravity force
-    void    SetGravity(float gravity);
-    /// set minimum rotation angle at emission
-    void    SetStartRotationMin(float value);
-    /// set maximum rotation angle at emission
-    void    SetStartRotationMax(float value);
-    /// set amount (time) of stretching
-    void    SetParticleStretch(float value);
-    /// set texture tiling parts
-    void    SetTileTexture(int value);
-    /// set if particles should be stretched to the emission startpoint 
-    void    SetStretchToStart(bool value);
-    /// set Velocity Randomize
-    void    SetParticleVelocityRandomize(float value);
-    /// set Rotation Randomize
-    void    SetParticleRotationRandomize(float value);
-    /// set Size Randomize
-    void    SetParticleSizeRandomize(float value);
-    /// set random rotation direction
-    void    SetRandomRotDir(bool value);
-    /// set Precalculation time
-    void    SetPrecalcTime(float value);
-    /// set random rotation direction
-    void    SetStretchDetail(int value);
-    /// set random rotation direction
-    void    SetViewAngleFade(bool value);
-    /// set start delay
-    void    SetStartDelay(float value);
-   
+    /// set pointer to parameter curves (identical for all instances of a particle system)
+    void SetStaticCurvePtr(float* ptr);
+    /// return true if static curve pointer is valid
+    bool IsStaticCurvePtrValid() const;
     /// called when remotecontrol (maya) changes the curves
-    void    CurvesChanged();
+    void NotifyCurvesChanged();
 
+    /// set gravity force
+    void SetGravity(float gravity);
+    /// set minimum rotation angle at emission
+    void SetStartRotationMin(float value);
+    /// set maximum rotation angle at emission
+    void SetStartRotationMax(float value);
+    /// set amount (time) of stretching
+    void SetParticleStretch(float value);
+    /// set texture tiling parts
+    void SetTileTexture(int value);
+    /// set if particles should be stretched to the emission startpoint 
+    void SetStretchToStart(bool value);
+    /// set Velocity Randomize
+    void SetParticleVelocityRandomize(float value);
+    /// set Rotation Randomize
+    void SetParticleRotationRandomize(float value);
+    /// set Size Randomize
+    void SetParticleSizeRandomize(float value);
+    /// set random rotation direction
+    void SetRandomRotDir(bool value);
+    /// set Precalculation time
+    void SetPrecalcTime(float value);
+    /// set random rotation direction
+    void SetStretchDetail(int value);
+    /// set random rotation direction
+    void SetViewAngleFade(bool value);
+    /// set start delay
+    void SetStartDelay(float value);
+   
 protected:
-    nDynamicMesh dynMesh;
-    nMesh2*  meshPtr;
-    int meshGroupIndex;
+    float* pStaticCurves;
+    nDynamicMesh particleMesh;
+    nRef<nMesh2> refEmitterMesh;
+    int emitterMeshGroupIndex;
+    matrix44 transform;
     bbox3 box;
     nFloat4 wind;
-
-    matrix44 matrix;                // the world space matrix
-
-    int  lastEmissionVertex;        // last vertex that emitted
-
-    nTime startTime;                // timestamp of creation
-    nTime lastEmission;             // timestamp of last emission in visual time frame
+    int lastEmissionVertex;
+    float startTime;
+    float lastEmission;
 
     // emitter settings
-    nTime           emissionDuration;         // how long shall be emitted ?
-    bool            loop;                     // loop emitter ?
-    float           activityDistance;         // distance between viewer and emitter on witch emitter is active
-    float           particleStretch;
-    float           precalcTime;             
-    int             tileTexture;
-    bool            renderOldestFirst;         // wether to render the oldest particles first or the youngest
-    bool            stretchToStart;
-    bool            randomRotDir;
-    bool            hasLooped;
-    bool            frameWasRendered;
-    float           invisibleTime;
-    bool            isSleeping;
-    int             stretchDetail;
-    bool            viewAngleFade;
-    float           startDelay;
+    float emissionDuration;
+    bool looping;
+    float activityDistance;
+    float particleStretch;
+    float precalcTime;             
+    int tileTexture;
+    bool renderOldestFirst;
+    bool stretchToStart;
+    bool randomRotDir;
+    bool hasLooped;
+    bool frameWasRendered;
+    float invisibleTime;
+    bool isSleeping;
+    int stretchDetail;
+    bool viewAngleFade;
+    float startDelay;
 
-    float*          pStaticCurve;
-    float           gravity;
-    float           startRotationMin;
-    float           startRotationMax;
-    float           particleVelocityRandomize;
-    float           particleRotationRandomize;
-    float           particleSizeRandomize;
+    float gravity;
+    float startRotationMin;
+    float startRotationMax;
+    float particleVelocityRandomize;
+    float particleRotationRandomize;
+    float particleSizeRandomize;
 
-    nParticle2*     particles;          // array of particles
-    int             particleCount;      // count of particles
-    int             maxParticleCount;   // maximum number of particles
+    nParticle2* particles;
+    int particleCount;
+    int maxParticleCount;
 
-    nTime           remainingTime;      // remaining time from last frame (for correct emitting)
+    float remainingTime;
 
-    bool            isOpen;
-    bool            isSetUp;
+    bool isValid;
+    bool isSetup;
 
 private:
     /// not implemented operator to prevent '=' - assignment
     nParticle2Emitter& operator=(const nParticle2Emitter &);
-
+    /// update particles
     void CalculateStep(float fdTime);
-    int RenderPure(float* dstVertices,int maxVertices);
-    int RenderStretched(float* dstVertices,int maxVertices);
-    int RenderStretchedSmooth(float* dstVertices,int maxVertices);
+    /// render as "normal" particles
+    int RenderPure(float* dstVertices, int maxVertices);
+    /// render as stretched particles
+    int RenderStretched(float* dstVertices, int maxVertices);
+    /// expensive-high-quality stretched rendering
+    int RenderStretchedSmooth(float* dstVertices, int maxVertices);
+    /// allocate particle pool
+    void AllocateParticles();
+    /// delete particles pool
+    void DeleteParticles();
+    /// check whether particle emitter is invisible and should go to sleep
+    bool CheckInvisible(float deltaTime);
 };
-
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void nParticle2Emitter::SetTransform(const matrix44& transform)
+bool
+nParticle2Emitter::IsValid() const
 {
-    this->matrix.set(transform);
+    return this->isValid;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void nParticle2Emitter::SetStartTime(nTime time)
+void 
+nParticle2Emitter::SetTransform(const matrix44& m)
+{
+    this->transform = m;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const matrix44&
+nParticle2Emitter::GetTransform() const
+{
+    return this->transform;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nParticle2Emitter::SetStartTime(float time)
 {
     this->startTime = time;
 }
@@ -242,80 +269,101 @@ void nParticle2Emitter::SetStartTime(nTime time)
 /**
 */
 inline
-void nParticle2Emitter::SetEmitterMesh(nMesh2* newMesh)
+void 
+nParticle2Emitter::SetEmitterMesh(nMesh2* mesh)
 {
-    this->meshPtr = newMesh;
+    this->refEmitterMesh = mesh;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nMesh2* nParticle2Emitter::GetEmitterMesh() const
+nMesh2* 
+nParticle2Emitter::GetEmitterMesh() const
 {
-//    return this->refEmitterMesh.get();
-    return this->meshPtr;
+    return this->refEmitterMesh.get();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nTime nParticle2Emitter::GetEmissionDuration() const
+void
+nParticle2Emitter::SetEmitterMeshGroupIndex(int index)
 {
-    return this->emissionDuration;
+    this->emitterMeshGroupIndex = index;
 }
-
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-bool nParticle2Emitter::GetLoop() const
+int
+nParticle2Emitter::GetEmitterMeshGroupIndex() const
 {
-    return this->loop;
+    return this->emitterMeshGroupIndex;
 }
-
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-float nParticle2Emitter::GetActivityDistance() const
-{
-    return this->activityDistance;
-}
-
-
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void nParticle2Emitter::SetEmissionDuration(nTime time)
+void 
+nParticle2Emitter::SetEmissionDuration(float time)
 {
     this->emissionDuration = time;
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void nParticle2Emitter::SetLoop(bool b)
+float 
+nParticle2Emitter::GetEmissionDuration() const
 {
-    this->loop = b;
+    return this->emissionDuration;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void nParticle2Emitter::SetActivityDistance(float f)
+void 
+nParticle2Emitter::SetLooping(bool b)
+{
+    this->looping = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool 
+nParticle2Emitter::GetLooping() const
+{
+    return this->looping;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void 
+nParticle2Emitter::SetActivityDistance(float f)
 {
     this->activityDistance = f;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float 
+nParticle2Emitter::GetActivityDistance() const
+{
+    return this->activityDistance;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -326,6 +374,7 @@ nParticle2Emitter::SetRenderOldestFirst(bool b)
 {
     this->renderOldestFirst = b;
 }
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -334,26 +383,6 @@ bool
 nParticle2Emitter::GetRenderOldestFirst() const
 {
     return this->renderOldestFirst;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nParticle2Emitter::SetMeshGroupIndex(int index)
-{
-    this->meshGroupIndex = index;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nParticle2Emitter::GetMeshGroupIndex() const
-{
-    return this->meshGroupIndex;
 }
 
 //------------------------------------------------------------------------------
@@ -401,20 +430,20 @@ nParticle2Emitter::GetWind() const
 */
 inline
 void 
-nParticle2Emitter::SetIsSetUp(bool isSetUp)
+nParticle2Emitter::SetIsSetup(bool b)
 {
-    this->isSetUp = isSetUp;
-};
+    this->isSetup = b;
+}
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
 bool
-nParticle2Emitter::IsSetUp() const
+nParticle2Emitter::IsSetup() const
 {
-    return this->isSetUp;
-};
+    return this->isSetup;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -423,8 +452,18 @@ inline
 void    
 nParticle2Emitter::SetStaticCurvePtr(float* ptr)
 {
-    this->pStaticCurve = ptr;
-};
+    this->pStaticCurves = ptr;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nParticle2Emitter::IsStaticCurvePtrValid() const
+{
+    return (0 != this->pStaticCurves);
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -434,8 +473,7 @@ void
 nParticle2Emitter::SetGravity(float gravity)
 {
     this->gravity = gravity;
-};
-
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -445,7 +483,7 @@ void
 nParticle2Emitter::SetStartRotationMin(float value)
 {
     this->startRotationMin = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -455,7 +493,7 @@ void
 nParticle2Emitter::SetStartRotationMax(float value)
 {
     this->startRotationMax = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -465,7 +503,7 @@ void
 nParticle2Emitter::SetParticleStretch(float value)
 {
     this->particleStretch = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -474,8 +512,9 @@ inline
 void    
 nParticle2Emitter::SetTileTexture(int value)
 {
-    this->tileTexture = value;
-};
+    if (value < 1) value = 1;
+    this->tileTexture = value; 
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -485,7 +524,7 @@ void
 nParticle2Emitter::SetStretchToStart(bool value)
 {
     this->stretchToStart = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -495,7 +534,7 @@ void
 nParticle2Emitter::SetParticleVelocityRandomize(float value)
 {
     this->particleVelocityRandomize = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -505,7 +544,7 @@ void
 nParticle2Emitter::SetParticleRotationRandomize(float value)
 {
     this->particleRotationRandomize = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -515,7 +554,8 @@ void
 nParticle2Emitter::SetParticleSizeRandomize(float value)
 {
     this->particleSizeRandomize = value;
-};
+}
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -524,7 +564,7 @@ void
 nParticle2Emitter::SetPrecalcTime(float value)
 {
     this->precalcTime = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -534,7 +574,7 @@ void
 nParticle2Emitter::SetRandomRotDir(bool value)
 {
     this->randomRotDir = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -544,7 +584,7 @@ void
 nParticle2Emitter::SetStretchDetail(int value)
 {
     this->stretchDetail = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -554,7 +594,7 @@ void
 nParticle2Emitter::SetViewAngleFade(bool value)
 {
     this->viewAngleFade = value;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -564,7 +604,7 @@ void
 nParticle2Emitter::SetStartDelay(float value)
 {
     this->startDelay = value;
-};
+}
 
 //------------------------------------------------------------------------------
 #endif

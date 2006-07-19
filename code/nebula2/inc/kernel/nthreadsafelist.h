@@ -25,7 +25,7 @@ public:
     /// wait for event to become signaled
     void WaitEvent();
     /// wait for event to become signaled with timeout
-    void TimedWaitEvent(int ms);
+    void TimedWaitEvent(float sec);
     /// gain access to list
     void Lock();
     /// give up access to list
@@ -54,16 +54,6 @@ void
 nThreadSafeList::WaitEvent()
 {
     this->event.Wait();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline 
-void 
-nThreadSafeList::TimedWaitEvent(int ms)
-{
-    this->event.TimedWait(ms);
 }
 
 //------------------------------------------------------------------------------

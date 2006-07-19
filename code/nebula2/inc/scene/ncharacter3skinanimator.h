@@ -34,29 +34,50 @@ public:
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
 
     /// Get names of loaded Animations
-    nArray<nString> GetNamesOfLoadedAnimations();
+    const nArray<nString>& GetNamesOfLoadedAnimations();
     /// Get names of loaded Variations
-    nArray<nString> GetNamesOfLoadedVariations();
-    /// set the index for the rendercontext
-    void SetCharacterSetIndexHandle(int handle);
+    const nArray<nString>& GetNamesOfLoadedVariations();
 
 private:
-        
-    nArray<nString> LoadAnimationsFromFolder(nString path,nArray<nRef<nMemoryAnimation> > &animArray);
-    nArray<nCharJoint> EvaluteVariation(nRef<nMemoryAnimation> variation);
+    /// character set factory function
+    virtual nCharacter2Set* CreateCharacterSet();
+    /// release character set
+    virtual void DeleteCharacterSet(nRenderContext* renderContext);
 
-    nCombinedAnimation* variations;
-    nCombinedAnimation* animations;
+    nArray<nString> LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation>>& outAnimArray);
+    nArray<nCharJoint> EvaluateVariation(nMemoryAnimation* variation);
+
+    nRef<nCombinedAnimation> animations;
     nArray<nRef<nMemoryAnimation> > variationAnims;
     nArray<nRef<nMemoryAnimation> > animationAnims;
     nArray<nString> animationNames;
     nArray<nString> variationNames;
     nArray<nArray<nCharJoint> > variationJoints;
 
-    int characterSetIndex;
     int characterVariationVarIndex;
     int currentVariation;
 };
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nArray<nString>&
+nCharacter3SkinAnimator::GetNamesOfLoadedAnimations()
+{
+    return this->animationNames;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nArray<nString>&
+nCharacter3SkinAnimator::GetNamesOfLoadedVariations()
+{
+    return this->variationNames;
+}
 
 //------------------------------------------------------------------------------
 #endif

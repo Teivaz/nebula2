@@ -16,6 +16,7 @@ uint nResource::uniqueIdCounter = 0;
 */
 nResource::nResource() :
     refResourceServer("/sys/servers/resource"),
+    refFileServer("/sys/servers/file2"),
     type(InvalidResourceType),
     asyncEnabled(false),
     state(Unloaded),

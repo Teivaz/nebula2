@@ -70,6 +70,8 @@ public:
     virtual nArray<nString> ListMatchingDirectories(const nString& dirName, const nString& pattern);
     /// check if file exists
     virtual bool FileExists(const nString& pathName) const;
+    /// get file size
+    virtual int GetFileSize(const nString& pathName) const;
     /// check if directory exists
     virtual bool DirectoryExists(const nString& pathName) const;
     /// return the time stamp when file was last written to

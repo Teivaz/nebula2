@@ -67,12 +67,14 @@
         int32 numKeys           // number of keys in group
         int32 keyStride         // key stride in key pool
         float keyTime           // key duration
+        float fadeInFrames      // number of fadein frames
         int32 loopType          // nAnimation::LoopType
     }
 
     FOR EACH CURVE {
         int16 ipolType          // nAnimation::Curve::IpolType
         int32 firstKeyIndex     // index of first curve key in key pool (-1 if collapsed!)
+        int32 isAnimated        // flag, if the curve's joint is animated
         float[4] collapsedKey   // the key value if this is a collapsed curve
     }
 
@@ -122,11 +124,26 @@ public:
         void SetFirstKeyIndex(int index);
         /// get first key index
         int GetFirstKeyIndex() const;
-
+        /// set curve as animated or not
+        void SetIsAnimated(int isAnim);
+        /// is curve animated?
+        int IsAnimated() const;
+        /// set the start value (at frame 0/ time 0) of the curve
+        void SetStartValue(vector4 val);
+        /// get the start value of the curve
+        vector4 GetStartValue() const;
+        /// set the anim value of the curve if it is animated
+        void SetCurAnimClipValue(vector4 value);
+        /// get the anim value of the curve 
+        vector4 GetCurAnimClipValue() const;
+ 
     private:
         IpolType ipolType;
         vector4 constValue;
         int firstKeyIndex;
+        int isAnimated;
+        vector4 startValue;
+        vector4 firstClipValue;
     };
 
     /// holds anim group information (a group of curves)
@@ -138,6 +155,8 @@ public:
         {
             Clamp = 0,
             Repeat,
+
+            InvalidLoopType,
         };
 
         /// constructor
@@ -166,6 +185,10 @@ public:
         void SetKeyTime(float t);
         /// get the key duration
         float GetKeyTime() const;
+        /// set the number of fadein frames
+        void SetFadeInFrames(float frames);
+        ///get the number of fadein frames
+        float GetFadeInFrames() const;
         /// set the loop type (identical for all curves)
         void SetLoopType(LoopType t);
         /// get the loop type
@@ -185,6 +208,7 @@ public:
         int keyStride;          ///< key stride in key array
         float keyTime;          ///< number of keys
         LoopType loopType;      ///< the loop type
+        float fadeInFrames;
         nArray<Curve> curveArray;
     };
 
@@ -218,7 +242,10 @@ protected:
 inline
 nAnimation::Curve::Curve() :
     ipolType(None),
-    firstKeyIndex(-1)
+    firstKeyIndex(-1),
+    isAnimated(1),
+    startValue(0.0f, 0.0f, 0.0f, 0.0f),
+    firstClipValue(0.0f, 0.0f, 0.0f, 0.0f)
 {
     // empty
 }
@@ -239,6 +266,7 @@ inline
 void
 nAnimation::Curve::SetIpolType(IpolType t)
 {
+    n_assert(t != None);
     this->ipolType = t;
 }
 
@@ -322,12 +350,73 @@ nAnimation::Curve::StringToIpolType(const char* str)
 /**
 */
 inline
+void
+nAnimation::Curve::SetIsAnimated(int isAnim)
+{
+    this->isAnimated = isAnim;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nAnimation::Curve::IsAnimated() const
+{
+    return this->isAnimated;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimation::Curve::SetStartValue(vector4 value)
+{
+    this->startValue = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector4
+nAnimation::Curve::GetStartValue() const
+{
+    return this->startValue;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimation::Curve::SetCurAnimClipValue(vector4 value)
+{
+    this->firstClipValue = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector4
+nAnimation::Curve::GetCurAnimClipValue() const
+{
+    return this->firstClipValue;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 nAnimation::Group::Group() :
     startKey(0),
     numKeys(0),
     keyStride(0),
     keyTime(0),
     loopType(Repeat),
+    fadeInFrames(0),
     curveArray(0, 0)
 {
     // empty
@@ -458,6 +547,26 @@ nAnimation::Group::GetKeyTime() const
 */
 inline
 void
+nAnimation::Group::SetFadeInFrames(float frames)
+{
+    this->fadeInFrames = frames;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nAnimation::Group::GetFadeInFrames() const
+{
+    return this->fadeInFrames;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nAnimation::Group::SetLoopType(LoopType t)
 {
     this->loopType = t;
@@ -537,7 +646,7 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
     int intFrame = int(frame);
     keyIndex0    = intFrame - this->startKey;
     keyIndex1    = keyIndex0 + 1;
-    inbetween    = frame - float(intFrame);
+    inbetween    = n_saturate(frame - float(intFrame));
     if (Clamp == this->loopType)
     {
         // 'clamp' loop type

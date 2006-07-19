@@ -89,6 +89,8 @@ public:
     virtual bool OnButtonDown(const vector2& mousePos);
     /// handle key down
     virtual bool OnKeyDown(nKey key);
+    /// snap to the end
+    virtual void ScrollToLastLine();
 
     /// rendering
     virtual bool Render();

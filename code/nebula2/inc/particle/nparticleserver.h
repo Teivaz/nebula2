@@ -16,7 +16,6 @@
 #include "particle/nparticleemitter.h"
 #include "util/narray.h"
 #include "util/nringbuffer.h"
-#include "misc/nwatched.h"
 
 //------------------------------------------------------------------------------
 class nParticle;
@@ -58,12 +57,10 @@ public:
     nParticle* GiveFreeParticle();
     /// a particle can go back to the free pool
     void TakeBackParticle(nParticle* particle);
-
     /// set global force attribute
     void SetGlobalAccel(const vector3& accel);
     /// get global force attribute
     const vector3& GetGlobalAccel() const;
-
     /// get a random int from the int random pool
     int PseudoRandomInt(int key);
     /// get a random float from the float random pool
@@ -81,15 +78,6 @@ private:
     FloatRandomPool    floatRandomPool;
     IntRandomPool      intRandomPool;
     vector3            globalAccel;
-
-    #ifdef __NEBULA_STATS__
-    friend class nParticleEmitter;
-    nWatched numEmitters;           ///< number of emitters known to the particle server
-    nWatched numActiveEmitters;     ///< number of particle emitters that are active
-    nWatched numParticles;          ///< number of particles managed by the particle server
-    nWatched numDrawnParticles;    ///< number of particles that are drawn
-    nWatched numDrawnPrimitives;   ///< number of primitives consumed by the praticle drawing
-    #endif
 };
 
 //------------------------------------------------------------------------------

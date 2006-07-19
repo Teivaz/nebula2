@@ -81,7 +81,7 @@ inline
 void 
 nPIDFeedbackLoop::SetValue(double value)
 { 
-	value = value;
+	this->value = value;
 	lastError = 0.0;
 	lastDelta = 0.0;
 }
@@ -127,7 +127,7 @@ inline
 double 
 nPIDFeedbackLoop::GetLastError() const
 {
-	return lastError;
+	return this->lastError;
 }
 
 //------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ inline
 const double& 
 nPIDFeedbackLoop::GetGoal() const
 {
-	return goal;
+	return this->goal;
 }
 
 //------------------------------------------------------------------------------
@@ -147,7 +147,7 @@ inline
 double 
 nPIDFeedbackLoop::GetLastDelta() const
 {
-	return lastDelta;
+	return this->lastDelta;
 }
 
 //------------------------------------------------------------------------------

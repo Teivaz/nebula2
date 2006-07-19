@@ -139,7 +139,7 @@ nGuiTextLabel::RenderText(bool pressed)
     else if (this->blinking)
     {
         nTime time = nGuiServer::Instance()->GetTime();
-        if (fmod(time, this->blinkRate) > this->blinkRate/3.0)
+        if (n_fmod(float(time), 0.6f) > 0.3)
         {
             nGuiServer::Instance()->DrawText(this->GetText(), this->blinkColor, screenSpaceRect, renderFlags);
         }

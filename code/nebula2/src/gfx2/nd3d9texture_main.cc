@@ -989,39 +989,44 @@ nD3D9Texture::GetByteSize()
 
 //------------------------------------------------------------------------------
 /**
-    Save texture to file
+    Convert fileformat to D3DX type.
 */
-bool
-nD3D9Texture::SaveTextureToFile(const nString &filename)
+D3DXIMAGE_FILEFORMAT
+nD3D9Texture::FileFormatToD3DX(FileFormat fileFormat)
 {
-    n_assert(baseTexture);
-    n_assert(filename.IsValid());
-    nString physicalFileName = nFileServer2::Instance()->ManglePath(filename.Get());
-    HRESULT hr = D3DXSaveTextureToFile(physicalFileName.Get(),D3DXIFF_JPG,baseTexture,NULL);
-    n_dxtrace(hr, "Failed to save Texture (D3D)");
-    return true;
-};
+    switch (fileFormat)
+    {
+        case BMP: return D3DXIFF_BMP;
+        case JPG: return D3DXIFF_JPG;
+        case TGA: return D3DXIFF_TGA;
+        case PNG: return D3DXIFF_PNG;
+        case DDS: return D3DXIFF_DDS;
+        case PPM: return D3DXIFF_PPM;
+        case DIB: return D3DXIFF_DIB;
+        case HDR: return D3DXIFF_HDR;
+        case PFM: return D3DXIFF_PFM;
+        default:  return D3DXIFF_JPG;
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
-    Generante mip maps for surface data.
-
-    - Feb-04 Kim, H.W. added to support ngameswf.
+    Save texture to file
 */
-void nD3D9Texture::GenerateMipMaps()
+bool
+nD3D9Texture::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
 {
-    n_assert(this->texture2D);
+    n_assert(baseTexture);
+    n_assert(filename.IsValid());
 
-    HRESULT hr;
+    nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
+    D3DXIMAGE_FILEFORMAT d3dxFormat = FileFormatToD3DX(fileFormat);
 
-    hr = D3DXFilterTexture(this->texture2D,    // pTexture
-                           NULL,               // pPalette
-                           D3DX_DEFAULT,       // SrcLevel(0)
-                           D3DX_FILTER_LINEAR);// MipFilter
+    HRESULT hr = D3DXSaveTextureToFile(mangledPath.Get(), d3dxFormat, baseTexture, NULL);
+    n_dxtrace(hr, "nD3D9Texture::SaveTextureToFile(): Failed to save texture!");
 
-    n_assert (SUCCEEDED(hr));
-}
-                
+    return true;
+};
 //------------------------------------------------------------------------------
 /**
     Convert nTexture2::Fromat to D3DFORMAT.

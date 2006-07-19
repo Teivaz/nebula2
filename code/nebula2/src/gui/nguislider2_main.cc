@@ -302,7 +302,7 @@ nGuiSlider2::OnFrame()
     when any of the range values or the widget's size changes.
 */
 void
-nGuiSlider2::UpdateKnobLayout(const rectangle& newSliderRect)
+nGuiSlider2::UpdateKnobLayout(const rectangle& newSliderRect, bool putEvent)
 {
     n_assert(this->shown);
 
@@ -347,8 +347,11 @@ nGuiSlider2::UpdateKnobLayout(const rectangle& newSliderRect)
     this->attachRules[this->posAreaEdgeLayoutIndex].offset = relPosOffset;
 
     // send a slider changed
-    nGuiEvent event(this, nGuiEvent::SliderChanged);
-    nGuiServer::Instance()->PutEvent(event);
+    if (putEvent)
+    {
+        nGuiEvent event(this, nGuiEvent::SliderChanged);
+        nGuiServer::Instance()->PutEvent(event);
+    }
 }
 
 //------------------------------------------------------------------------------

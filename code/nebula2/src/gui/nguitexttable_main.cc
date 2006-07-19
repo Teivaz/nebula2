@@ -52,6 +52,15 @@ nGuiTextTable::SetText(int colIndex, int rowIndex, const nString& text)
 
 //------------------------------------------------------------------------------
 /**
+*/
+const nString&
+nGuiTextTable::GetText(int colIndex, int rowIndex)
+{
+    return this->textArray.At(colIndex, rowIndex);
+}
+
+//------------------------------------------------------------------------------
+/**
     This validates the font resource if not happened yet.
 */
 void

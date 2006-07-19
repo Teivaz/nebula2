@@ -96,27 +96,27 @@ nAttachmentNode::UpdateFinalTransform()
 void
 nAttachmentNode::SetJointByName(const char *jointName)
 {
-    if (strcmp(this->parent->GetClass()->GetName(), "nskinshapenode"))
-    {
-        n_printf("Error: nAttachmentNode can only function if it is parented by an nSkinShapeNode\n");
-        return;
-    }
+    //if (strcmp(this->parent->GetClass()->GetName(), "nskinshapenode"))
+    //{
+    //    n_printf("Error: nAttachmentNode can only function if it is parented by an nSkinShapeNode\n");
+    //    return;
+    //}
 
-    kernelServer->PushCwd(this->parent);
-    nSkinAnimator *skinAnimator = (nSkinAnimator *)this->kernelServer->Lookup(((nSkinShapeNode*)this->parent)->GetSkinAnimator());
-    n_assert(skinAnimator);
-    kernelServer->PopCwd();
+    //kernelServer->PushCwd(this->parent);
+    //nSkinAnimator *skinAnimator = (nSkinAnimator *)this->kernelServer->Lookup(((nSkinShapeNode*)this->parent)->GetSkinAnimator());
+    //n_assert(skinAnimator);
+    //kernelServer->PopCwd();
 
-    int newIndex = skinAnimator->GetJointByName(jointName);
-    if (newIndex != -1)
-    {
-        this->jointIndex = newIndex;
-        this->isJointSet = true;
-    }
-    else
-    {
-        n_printf("Error: Unable to find joint of name '%s' on parent nSkinAnimator\n", jointName);
-    }
+    //int newIndex = skinAnimator->GetJointByName(jointName);
+    //if (newIndex != -1)
+    //{
+    //    this->jointIndex = newIndex;
+    //    this->isJointSet = true;
+    //}
+    //else
+    //{
+    //    n_printf("Error: Unable to find joint of name '%s' on parent nSkinAnimator\n", jointName);
+    //}
 }
 
 //------------------------------------------------------------------------------

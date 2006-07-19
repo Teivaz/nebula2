@@ -151,7 +151,7 @@ nPFeedbackLoop<TYPE>::Update(nTime curTime)
     }
     else if (dt > 0.5)
     {
-        this->time = curTime;
+        this->time = curTime - 0.5;
     }
 
     while (this->time < curTime)

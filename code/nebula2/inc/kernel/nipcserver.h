@@ -42,6 +42,7 @@ public:
     int uniqueMiniServerId;
     nThreadSafeList miniServerList;
     nThreadSafeList msgList;
+    nArray<int> ClientsReseted;
     SOCKET sock;
 };
 //--------------------------------------------------------------------

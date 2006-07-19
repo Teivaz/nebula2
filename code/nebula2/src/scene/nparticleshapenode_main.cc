@@ -6,7 +6,6 @@
 #include "variable/nvariableserver.h"
 #include "scene/nrendercontext.h"
 #include "scene/nsceneserver.h"
-#include "kernel/ntimeserver.h"
 #include "scene/nanimator.h"
 
 nNebulaScriptClass(nParticleShapeNode, "nshapenode");
@@ -87,7 +86,7 @@ nParticleShapeNode::RenderTransform(nSceneServer* sceneServer,
     emitter->SetWind(windVar->GetFloat4());
 
     // set emitter settings
-    emitter->SetEmissionDuration(this->emissionDuration);
+    emitter->SetEmissionDuration(float(this->emissionDuration));
     emitter->SetLoop(this->loop);
     emitter->SetActivityDistance(this->activityDistance);
     emitter->SetSpreadAngle(this->spreadAngle);
@@ -125,6 +124,17 @@ nParticleShapeNode::RenderContextCreated(nRenderContext* renderContext)
 
     // put emitter key in render context
     this->emitterVarIndex = renderContext->AddLocalVar(nVariable(0, emitter->GetKey()));
+}
+
+//------------------------------------------------------------------------------
+/**
+    - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
+    - 28-Jan-04     daniel  emitter setup moved to RenderTransform()
+*/
+void
+nParticleShapeNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
+{
+    nShapeNode::Attach(sceneServer, renderContext);
 }
 
 //------------------------------------------------------------------------------

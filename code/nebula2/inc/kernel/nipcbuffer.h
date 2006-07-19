@@ -189,7 +189,7 @@ inline
 void
 nIpcBuffer::SetSize(int s)
 {
-    n_assert((s >= 0) && (s < this->bufferSize));
+    n_assert((s >= 0) && (s <= this->bufferSize));
     this->contentSize = s;
 }
 

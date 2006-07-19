@@ -28,6 +28,7 @@ public:
         Read,
         Write,
         ReadWrite,
+        String,
     };
 
     /// default constructor
@@ -36,13 +37,20 @@ public:
     nStream(const nString& fname);
     /// destructor
     virtual ~nStream();
-    
+    ///returns the whole document as string
+    void GetDocumentAsString(nString& rsString);
+    /// turn automatic UTF8 de/encoding on/off (default is off)
+    void SetAutomaticUTF8Coding(bool b);
+    /// get automatic UTF8 coding flag
+    bool GetAutomaticUTF8Coding() const;
     /// set the filename of the stream
     void SetFilename(const nString& n);
     /// get the filename of the stream
     const nString& GetFilename() const;
     /// open the stream for reading or writing
     virtual bool Open(Mode mode);
+    /// open string for parsing
+    virtual bool OpenString(const nString& n);
     /// close the stream
     virtual bool Close();
     /// return true if stream is open
@@ -71,6 +79,8 @@ public:
     bool SetToNextChild(const nString& name = "");
     /// set current node to parent node, returns false if no parent exists
     bool SetToParent();
+    /// set current node to an node, that has the attribute and the value
+    void SetToNodeByAttribute(const nString& nodeName, const nString& attribute, const nString& value);
 
     /// return true if current node has embedded text
     bool HasText() const;
@@ -130,7 +140,11 @@ public:
 private:
     /// find a node by path, handles relativ paths as well
     TiXmlNode* FindNode(const nString& path) const;
+
+    ///  helper function , to generate a string
+    void AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndention = 0);
  
+    bool utf8Coding;
     nString filename;
     Mode mode;
     bool fileCreated;

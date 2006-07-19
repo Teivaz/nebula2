@@ -9,8 +9,6 @@
 #include "kernel/nfileserver2.h"
 #include "mathlib/polar.h"
 
-#include "misc/nwatched.h"
-
 nNebulaClass(nReflectionCameraNode, "nclippingcameranode");
 
 //------------------------------------------------------------------------------
@@ -90,13 +88,6 @@ nReflectionCameraNode::ComputeReflectionViewMatrix(const matrix44& viewMatrix, c
     matrix44 reflectionMatrix           = viewMatrix;
     reflectionMatrix.pos_component()    = vector3(0.0, 0.0, 0.0);
     polar2 angles;
-
-    nWatched watchRho("rho", nArg::Float);
-    nWatched watchTheta("theta", nArg::Float);
-    nWatched watchXcom("x_com", nArg::Float4);
-    nWatched watchYcom("y_com", nArg::Float4);
-    nWatched watchZcom("z_com", nArg::Float4);
-    nWatched watchPcom("p_com", nArg::Float4);
 
     // compute rotation
     reflectionMatrix.y_component().norm();

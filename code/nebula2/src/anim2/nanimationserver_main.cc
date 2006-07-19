@@ -44,7 +44,6 @@ nAnimationServer::~nAnimationServer()
 nAnimation*
 nAnimationServer::NewMemoryAnimation(const nString& rsrcName)
 {
-    n_assert(rsrcName.IsValid());
     return (nAnimation*) this->refResourceServer->NewResource("nmemoryanimation", rsrcName, nResource::Animation);
 }
 

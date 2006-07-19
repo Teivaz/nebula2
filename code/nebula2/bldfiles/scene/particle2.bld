@@ -17,7 +17,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nparticleserver2
     setdir particle
-    setfiles { nparticleserver2_main nparticleserver2_cmds }
+    setfiles { nparticleserver2_main }
     setheaders { nparticleserver2 }
 endmodule
 #-------------------------------------------------------------------------------

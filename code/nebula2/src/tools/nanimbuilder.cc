@@ -122,8 +122,9 @@ nAnimBuilder::SaveNanim2(nFileServer2* fileServer, const char* filename)
             const int numKeys   = group.GetNumKeys();
             const int keyStride = group.GetKeyStride();
             const float keyTime = group.GetKeyTime();
+            const float fadeInFrames = group.GetFadeInFrames();
             const char* loopTypeString = Group::LoopType2String(group.GetLoopType());
-            sprintf(line, "group %d %d %d %d %f %s\n", numCurves, startKey, numKeys, keyStride, keyTime, loopTypeString);
+            sprintf(line, "group %d %d %d %d %f %f %s\n", numCurves, startKey, numKeys, keyStride, keyTime, fadeInFrames, loopTypeString);
             file->PutS(line);
 
             // for each curve...
@@ -132,9 +133,10 @@ nAnimBuilder::SaveNanim2(nFileServer2* fileServer, const char* filename)
             {
                 const Curve& curve = group.GetCurveAt(curveIndex);
                 const char* ipolTypeString = Curve::IpolType2String(curve.GetIpolType());
-                const vector4& collapsedKey = curve.GetCollapsedKey();
+                const int isAnimated = curve.IsAnimated();
                 const int firstKeyIndex = curve.GetFirstKeyIndex();
-                sprintf(line, "curve %s %d %f %f %f %f\n", ipolTypeString, firstKeyIndex, collapsedKey.x, collapsedKey.y, collapsedKey.z, collapsedKey.w);
+                const vector4& collapsedKey = curve.GetCollapsedKey();
+                sprintf(line, "curve %s %d %d %f %f %f %f\n", ipolTypeString, firstKeyIndex, isAnimated, collapsedKey.x, collapsedKey.y, collapsedKey.z, collapsedKey.w);
                 file->PutS(line);
             }
 
@@ -187,6 +189,7 @@ nAnimBuilder::SaveNax2(nFile* file)
         const int numKeys   = group.GetNumKeys();
         const int keyStride = group.GetKeyStride();
         const float keyTime = group.GetKeyTime();
+        const float fadeInFrames = group.GetFadeInFrames();
         nAnimation::Group::LoopType loopType = nAnimation::Group::Clamp;
         if (nAnimation::Group::LoopType(group.GetLoopType()) == nAnimation::Group::Repeat)
         {
@@ -198,6 +201,7 @@ nAnimBuilder::SaveNax2(nFile* file)
         file->PutInt(numKeys);
         file->PutInt(keyStride);
         file->PutFloat(keyTime);
+        file->PutFloat(fadeInFrames);
         file->PutInt(int(loopType));
     }
 
@@ -218,11 +222,14 @@ nAnimBuilder::SaveNax2(nFile* file)
                 case Curve::QUAT:   ipolType = nAnimation::Curve::Quat; break;
                 default:            ipolType = nAnimation::Curve::None; break;
             }
+            
             const int firstKeyIndex = curve.GetFirstKeyIndex();
+            const int isAnim = curve.IsAnimated();
             const vector4& collapsedKey = curve.GetCollapsedKey();
-
-            file->PutShort(short(ipolType));
+            
+            file->PutInt(int(ipolType));
             file->PutInt(firstKeyIndex);
+            file->PutInt(isAnim);
             file->PutFloat(collapsedKey.x);
             file->PutFloat(collapsedKey.y);
             file->PutFloat(collapsedKey.z);

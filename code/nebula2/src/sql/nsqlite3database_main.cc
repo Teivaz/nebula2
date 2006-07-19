@@ -46,6 +46,7 @@ nSQLite3Database::LoadResource()
 
     // mangle path because SQLite doesn't use Nebula2 file routines
     nString mangledPath = fileServer->ManglePath(this->GetFilename());
+    mangledPath.ANSItoUTF8();
     int err = sqlite3_open(mangledPath.Get(), &this->sqliteHandle);
     if (SQLITE_OK != err)
     {
@@ -54,6 +55,15 @@ nSQLite3Database::LoadResource()
             sqlite3_errmsg(this->sqliteHandle));
         return false;
     }
+
+    // run a few pragmas to improve performance...
+    err = sqlite3_exec(this->sqliteHandle, "PRAGMA cache_size=10000;", 0, 0, 0);   // allow 15 Meg for cache
+    n_assert(SQLITE_OK == err);
+    err = sqlite3_exec(this->sqliteHandle, "PRAGMA synchronous=OFF;", 0, 0, 0);    // don't care about power failures...
+    n_assert(SQLITE_OK == err);
+    err = sqlite3_exec(this->sqliteHandle, "PRAGMA temp_store=MEMORY", 0, 0, 0);   // put temp stuff into memory
+    n_assert(SQLITE_OK == err);
+    
     this->SetState(Valid);
     return true;
 }
@@ -185,7 +195,7 @@ nSQLite3Database::DeleteTable(const nString& tableName)
     method fails.
 */
 bool
-nSQLite3Database::CreateTable(const nString& tableName, const nArray<nString>& columns)
+nSQLite3Database::CreateTable(const nString& tableName, const nArray<nString>& columns, const nString& primaryKey)
 {
     n_assert(this->IsLoaded());
     n_assert(0 != this->sqliteHandle);
@@ -212,6 +222,10 @@ nSQLite3Database::CreateTable(const nString& tableName, const nArray<nString>& c
         sql.Append("'");
         sql.Append(columns[i]);
         sql.Append("' TEXT");
+        if (primaryKey.IsValid() && (columns[i] == primaryKey))
+        {
+            sql.Append(" UNIQUE ON CONFLICT REPLACE");
+        }
     }
     sql.Append(" )");
 
@@ -306,8 +320,7 @@ nSQLite3Database::CreateIndex(const nString& tableName, const nArray<nString>& i
     n_assert(this->IsLoaded());
     n_assert(this->sqliteHandle);
     nString sql;
-    nString columns = nString::Concatenate(indexedColumns, ",");
-    sql.Format("CREATE INDEX %s_Index ON %s ( %s )", tableName.Get(), tableName.Get(), columns.Get());
+    sql.Format("CREATE INDEX %s_Index ON %s ( %s )", tableName.Get(), tableName.Get(), nString::Concatenate(indexedColumns, ","));
     nSqlQuery* query = this->CreateQuery(sql);
     query->Execute();
     query->Release();
@@ -431,12 +444,13 @@ nSQLite3Database::InsertRow(const nString& tableName, const nSqlRow& row)
     n_assert(this->sqliteHandle);
 
     // construct an SQL statement which does the insert operation
-    nString columnsString;
-    columnsString.Format("('%s')", nString::Concatenate(row.GetColumns(), "', '").Get());
-    nString valuesString;
-    valuesString.Format("('%s')", nString::Concatenate(row.GetValues(),  "', '").Get());
-    nString sql;
-    sql.Format("INSERT INTO %s %s VALUES %s", tableName.Get(), columnsString.Get(), valuesString.Get());
+    nString sql("INSERT INTO ");
+    sql.Append(tableName);
+    sql.Append(" ('");
+    sql.Append(nString::Concatenate(row.GetColumns(), "', '"));
+    sql.Append("') VALUES ('");
+    sql.Append(nString::Concatenate(row.GetValues(),  "', '"));
+    sql.Append("')");
     int err = sqlite3_exec(this->sqliteHandle, sql.Get(), 0, 0, 0);
     if (SQLITE_OK != err)
     {
@@ -455,12 +469,13 @@ nSQLite3Database::ReplaceRow(const nString& tableName, const nSqlRow& row)
     n_assert(this->sqliteHandle);
 
     // construct an SQL statement which does the insert operation
-    nString columnsString;
-    columnsString.Format("('%s')", nString::Concatenate(row.GetColumns(), "', '").Get());
-    nString valuesString;
-    valuesString.Format("('%s')", nString::Concatenate(row.GetValues(),  "', '").Get());
-    nString sql;
-    sql.Format("INSERT OR REPLACE INTO %s %s VALUES %s", tableName.Get(), columnsString.Get(), valuesString.Get());
+    nString sql("INSERT OR REPLACE INTO ");
+    sql.Append(tableName);
+    sql.Append(" ('");
+    sql.Append(nString::Concatenate(row.GetColumns(), "', '"));
+    sql.Append("') VALUES ('");
+    sql.Append(nString::Concatenate(row.GetValues(),  "', '"));
+    sql.Append("')");
     int err = sqlite3_exec(this->sqliteHandle, sql.Get(), 0, 0, 0);
     if (SQLITE_OK != err)
     {
@@ -528,9 +543,16 @@ nSQLite3Database::DeleteRow(const nString& tableName, const nString& whereClause
 {
     n_assert(this->IsLoaded());
     n_assert(this->sqliteHandle);
-
+    
     nString sql;
-    sql.Format("DELETE FROM %s WHERE %s", tableName.Get(), whereClause.Get());
+    sql.Format("DELETE FROM %s", tableName.Get());
+    
+    // add optional where condition
+    if (whereClause.IsValid())
+    {
+        sql.Append(nString(" WHERE ") + whereClause);
+    }
+    
     int err = sqlite3_exec(this->sqliteHandle, sql.Get(), 0, 0, 0);
     if (SQLITE_OK != err)
     {

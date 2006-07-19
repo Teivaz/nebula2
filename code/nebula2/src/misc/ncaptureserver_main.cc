@@ -129,7 +129,7 @@ nCaptureServer::CaptureFrame()
     filename.Format("%s/%05d.jpg", this->GetSessionDirectoryPath().Get(), ++this->frameIndex);
 
     // write screen shot
-    bool success = nGfxServer2::Instance()->SaveScreenshot(filename.Get());
+    bool success = nGfxServer2::Instance()->SaveScreenshot(filename.Get(), nTexture2::JPG);
     return success;
 }
 

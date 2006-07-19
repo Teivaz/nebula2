@@ -14,8 +14,7 @@ nNodeList::nNodeList(void):
     numElements(0),
     isOpen(false),
     lightStageEnabled(true),
-    hardpointObjectsCnt(0),
-    character3Set(0)
+    hardpointObjectsCnt(0)
 {
     n_assert(nNodeList::Singleton == 0);
     this->Singleton = this;
@@ -58,12 +57,6 @@ nNodeList::Close ()
     {
         this->refUsrScene->Release();
     }
-      
-    // if we have a character3set, we must delete it
-    if(this->character3Set)
-    {
-        delete this->character3Set;
-    };
 
     // verify if everything is clean
     n_assert(this->refUsrScene == 0);
@@ -117,20 +110,12 @@ nNodeList::AddDefaultEntry()
     this->AddEntry("default");
             
     // source the light stage...
+    // load the stage, normally this is "proj:stdlight.tcl", if not exists
+    // then try "home:stdlight.tcl"
     if (this->lightStageEnabled)
     {
-        if (!this->GetStageScript().IsEmpty())
-        {
-            nRoot* node = nKernelServer::Instance()->Lookup("/usr/scene/default");
-            if (node)
-            {
-                nKernelServer::Instance()->PushCwd(node);
-                nKernelServer::Instance()->Load(this->GetStageScript().Get());
-                nKernelServer::Instance()->PopCwd();
-            }
-        }
-        else
-            n_printf("WARNING: No light stage set.");
+        nString result = 0;
+        this->refScriptServer->RunScript("home:bin/stdlight.tcl", result);
     }
 }
 //------------------------------------------------------------------------------
@@ -189,7 +174,8 @@ nNodeList::LoadObject(const nString& objPath)
 /**
     Get Pointer to the first nCharacter2 Object from the current rendercontexts
 */
-nCharacter2*    nNodeList::getCharacter()
+nCharacter2*
+nNodeList::GetCharacter()
 {
     nVariable::Handle charHandle = nVariableServer::Instance()->GetVariableHandleByName("charPointer");
     const nVariable* charVar = 0;
@@ -248,17 +234,19 @@ nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex)
 void 
 nNodeList::Trigger(double time, uint frameId)
 {   
-    n_assert ( this->refUsrScene.isvalid() )
+    n_assert(this->refUsrScene.isvalid());
     
     // Update all Variables
     uint index;
-    for( index=0 ; index < numElements ; index++ )
-        TransferGlobalVars(renderContexts[index],time,frameId);
+    for (index=0 ; index < numElements ; index++)
+    {
+        this->TransferGlobalVars(renderContexts[index],time,frameId);
+    }
 
     // Apply animation on the Node that was attached to a Hardpoint
-    if(this->hardpointObjectsCnt > 0)
+    if (this->hardpointObjectsCnt > 0)
     {
-        nCharacter2* curChar = getCharacter();
+        nCharacter2* curChar = this->GetCharacter();
         if( 0 != curChar )
         {
             nCharSkeleton& skel = curChar->GetSkeleton();
@@ -271,10 +259,10 @@ nNodeList::Trigger(double time, uint frameId)
                 {
                     nTransformNode* transformNode = (nTransformNode*) currentNode;
                     transformNode->SetTransform(joint.GetMatrix());
-                };
-            };
-        };
-    };
+                }
+            }
+        }
+    }
 }
 //------------------------------------------------------------------------------
 /**

@@ -14,7 +14,7 @@ nIpcClient::nIpcClient() :
 {
 #if __WIN32__
     struct WSAData wsaData;
-    WSAStartup(0x101, &wsaData);
+    WSAStartup(MAKEWORD(2,2), &wsaData);
 #endif
 }
 
@@ -153,6 +153,7 @@ nIpcClient::Connect(nIpcAddress& addr)
         
         // all ok
         this->isConnected = true;
+        n_printf("\nConnected.");
     }
     return true;
 }
@@ -221,6 +222,15 @@ nIpcClient::Receive(nIpcBuffer& msg)
 {
     n_assert(INVALID_SOCKET != this->sock);
     int res = recv(this->sock, msg.GetPointer(), msg.GetMaxSize(), 0);
+
+
+    if (res == 0 || N_SOCKET_LAST_ERROR == N_ECONNRESET)
+    {
+        // the connection has been closed
+        n_printf("connection lost!\n");
+        this->DestroySocket();
+        this->isConnected = false;
+    }
     if (res > 0)
     {
         msg.SetSize(res);
@@ -228,6 +238,7 @@ nIpcClient::Receive(nIpcBuffer& msg)
     }
     else
     {
+        int a= WSAGetLastError();
         // either an error occured, or the method would block
         if (N_SOCKET_LAST_ERROR == N_EWOULDBLOCK)
         {

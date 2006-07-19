@@ -37,6 +37,20 @@ nIpcAddress::nIpcAddress(const char* hostName, const char* portName) :
 //------------------------------------------------------------------------------
 /**
 */
+nIpcAddress::nIpcAddress(const char* hostName, short portNum) :
+    addrStructValid(false),
+    ipAddrValid(false),
+    portNumValid(true)
+{
+    memset(&(this->addrStruct), 0, sizeof(this->addrStruct));
+    memset(&(this->ipAddr), 0, sizeof(this->ipAddr));
+    this->SetHostName(hostName);
+    this->SetPortNum(portNum);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
 nIpcAddress::~nIpcAddress()
 {
     // empty
@@ -315,6 +329,18 @@ nIpcAddress::GetIpAddrString()
     return this->ipAddrString.Get();
 }
 
+
+
+//------------------------------------------------------------------------------
+/**
+    Sets the port num in host byte order.
+*/
+void 
+nIpcAddress::SetPortNum(short portnum)
+{
+    this->portNum = portnum;
+    this->portNumValid = true;
+}
 //------------------------------------------------------------------------------
 /**
     Get the port num in host byte order.

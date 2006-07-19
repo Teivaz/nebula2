@@ -40,6 +40,8 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// render debug information
+    virtual void RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix);
     /// set the mesh usage flags required by this shape node
     void SetMeshUsage(int usage);
     /// get the mesh usage flags required by this shape node

@@ -6,7 +6,6 @@
 #include "gfx2/ngfxserver2.h"
 #include "gfx2/nshader2.h"
 #include "gfx2/ntexture2.h"
-#include "kernel/ntimeserver.h"
 #include "scene/nrendercontext.h"
 #include "scene/nsceneserver.h"
 #include "kernel/ndebug.h"
@@ -59,7 +58,7 @@ nMaterialNode::LoadShader()
         const nRenderPath2* renderPath = nSceneServer::Instance()->GetRenderPath();
         n_assert(renderPath);
         int shaderIndex = renderPath->FindShaderIndex(this->shaderName);
-        n_assert(-1 != shaderIndex);
+        n_assert2(-1 != shaderIndex, nString("Shader \"" + this->shaderName + "\" not found in  \"" + renderPath->GetFilename() + "\"").Get());
         const nRpShader& rpShader = renderPath->GetShader(shaderIndex);
         this->shaderIndex = rpShader.GetBucketIndex();
         this->refShader = rpShader.GetShader();
@@ -131,6 +130,13 @@ nMaterialNode::ApplyShader(nSceneServer* sceneServer)
         // and instance-set-variables
         shader->SetParams(this->shaderParams);
     */
+        
+        // if there are no animators on this node, we only 
+        // need to set shader params once for the whole instance batch
+        if (this->GetNumAnimators() == 0)
+        {
+            this->refShader->SetParams(this->shaderParams);
+        }
         nGfxServer2::Instance()->SetShader(this->refShader);
     }
     return true;
@@ -145,7 +151,7 @@ bool
 nMaterialNode::RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     nShader2* shader = this->refShader;
-    // nGfxServer2* gfxServer = nGfxServer2::Instance();
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // FIXME FIXME FIXME
     // THIS IS A LARGE PERFORMANCE BOTTLENECK!
@@ -155,22 +161,19 @@ nMaterialNode::RenderShader(nSceneServer* sceneServer, nRenderContext* renderCon
     n_assert(renderContext);
 
     // invoke shader manipulators
-    this->InvokeAnimators(nAnimator::Shader, renderContext);
+    if (this->GetNumAnimators() > 0)
+    {
+        this->InvokeAnimators(nAnimator::Shader, renderContext);
+        shader->SetParams(this->shaderParams);
+    }
 
     // set texture transforms
-/*
-    n_assert(nGfxServer2::MaxTextureStages >= 4);
-    static matrix44 m;
-    this->textureTransform[0].getmatrix44(m);
-    gfxServer->SetTransform(nGfxServer2::Texture0, m);
-    this->textureTransform[1].getmatrix44(m);
-    gfxServer->SetTransform(nGfxServer2::Texture1, m);
-*/
-
-    // transfer shader parameters en block
-    // FIXME: this MUST be split into instance-variables
-    // and instance-set-variables
-    shader->SetParams(this->shaderParams);
+//    n_assert(nGfxServer2::MaxTextureStages >= 4);
+//    static matrix44 m;
+//    this->textureTransform[0].getmatrix44(m);
+//    gfxServer->SetTransform(nGfxServer2::Texture0, m);
+//    this->textureTransform[1].getmatrix44(m);
+//    gfxServer->SetTransform(nGfxServer2::Texture1, m);
 
     // set shader override parameters from render context (set directly by application)
     shader->SetParams(renderContext->GetShaderOverrides());

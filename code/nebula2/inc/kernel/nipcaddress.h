@@ -58,6 +58,8 @@ public:
     nIpcAddress();
     /// constructor with address string
     nIpcAddress(const char* hostName, const char* portName);
+    /// constructor with address port
+    nIpcAddress(const char* hostName, short portNum);
     /// destructor
     ~nIpcAddress();
     /// set the host name
@@ -74,6 +76,8 @@ public:
     const sockaddr_in& GetAddrStruct();
     /// get the ip address defined by the host name as string
     const char* GetIpAddrString();
+    /// sets the port number directly
+    void SetPortNum(short portnum);
     /// get the port number defined by the port name
     short GetPortNum();
     /// update address struct from the address string

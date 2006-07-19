@@ -15,8 +15,8 @@
 #include "particle/nparticle2.h"
 #include "particle/nparticle2emitter.h"
 #include "util/narray.h"
+#include "util/nfixedarray.h"
 #include "util/nringbuffer.h"
-#include "misc/nwatched.h"
 
 //------------------------------------------------------------------------------
 class nParticle2Emitter;
@@ -24,13 +24,10 @@ class nParticle2Emitter;
 class nParticleServer2 : public nRoot
 {
 private:
-    typedef nArray<float> FloatRandomPool;
-    typedef nArray<int> IntRandomPool;
-
     enum 
     {
-        MaxParticles = 10000,       // maximum number of particles in the world
-        FloatRandomCount = 65536,   // number of floats in the float random pool
+        MaxParticles = 30000,       // maximum number of particles in the world
+        FloatRandomCount = 32768,   // number of floats in the float random pool
         IntRandomCount = 512,       // number of ints in the int random pool
     };
 public:
@@ -40,13 +37,13 @@ public:
     virtual ~nParticleServer2();
     /// get server instance
     static nParticleServer2* Instance();
-    /// enable/disable particle subsystem
-    void SetEnabled(bool b);
-    /// is currently enabled?
-    bool IsEnabled() const;
-    /// Update particles and emitters, delete unused emitters
+    /// update all active particle emitters
     void Trigger();
 
+    /// set current time
+    void SetTime(nTime t);
+    /// get current time
+    nTime GetTime() const;
     /// create a new particle emitter
     nParticle2Emitter* NewParticleEmitter();
     /// delete the given emitter
@@ -65,12 +62,11 @@ public:
 private:
     static nParticleServer2* Singleton;
 
-    bool enabled;
-    nArray<nParticle2Emitter*>   emitters;
-    FloatRandomPool    floatRandomPool;
-    IntRandomPool      intRandomPool;
-    vector3            globalAccel;
-
+    nArray<nParticle2Emitter*> emitters;
+    nFixedArray<float> floatRandomPool;
+    nFixedArray<int> intRandomPool;
+    vector3 globalAccel;
+    nTime time;
 };
 
 //------------------------------------------------------------------------------
@@ -89,19 +85,19 @@ nParticleServer2::Instance()
 */
 inline
 void
-nParticleServer2::SetEnabled(bool b)
+nParticleServer2::SetTime(nTime t)
 {
-    this->enabled = b;
+    this->time = t;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-bool
-nParticleServer2::IsEnabled() const
+nTime
+nParticleServer2::GetTime() const
 {
-    return this->enabled;
+    return this->time;
 }
 
 //------------------------------------------------------------------------------

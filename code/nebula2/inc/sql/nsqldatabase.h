@@ -22,7 +22,7 @@ public:
     /// destructor
     virtual ~nSqlDatabase();
     /// create a new table in the database
-    virtual bool CreateTable(const nString& tableName, const nArray<nString>& columns);
+    virtual bool CreateTable(const nString& tableName, const nArray<nString>& columns, const nString& primaryColumn);
     /// delete a table in the database
     virtual void DeleteTable(const nString& tableName);
     /// rename an existing table

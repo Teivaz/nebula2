@@ -78,6 +78,10 @@ enum Param
     DiffMap1,                       // texture: diffuse map layer 1
     DiffMap2,                       // texture: diffuse map layer 2
     DiffMap3,                       // texture: diffuse map layer 3
+    DiffMap4,
+    DiffMap5,
+    DiffMap6,
+    DiffMap7,
     SpecMap0,                       // texture: specular map layer 0
     SpecMap1,                       // texture: specular map layer 1
     SpecMap2,                       // texture: specular map layer 2
@@ -160,15 +164,20 @@ enum Param
     Color3,                         // color: general color
     HalfPixelSize,                  // half size of a pixel of the current display resolution
     MLPUVStretch,                   // parameters for MultiLayer - Shader (UV-stretches)
+    MLPSpecIntensity,               // parameters for DX9-MultiLayer - Shader (Specular Intensity)
     UVStretch0,                     // parameters for MultiLayer - Shader (UV-stretches)
     UVStretch1,                     // parameters for MultiLayer - Shader (UV-stretches)
     UVStretch2,                     // parameters for MultiLayer - Shader (UV-stretches)
     UVStretch3,                     // parameters for MultiLayer - Shader (UV-stretches)
     UVStretch4,                     // parameters for MultiLayer - Shader (UV-stretches)
     UVStretch5,                     // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch6,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
+    UVStretch7,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
     LeafCluster,                    // float4[]: leaf cluster table for gpu leaf placement
     LeafAngleMatrices,              // matrix44[]: leaf angle matrices for leaf rocking and billboarding
     WindMatrices,                   // matrix44[]: wind matrices for moving branches, leaves, etc. in wind
+	RendertargetOffSet,				// float4: Offset for the HighresScreenshots
+    RenderComplexity,               // int: sets the shader reflection for water (0 = complex, 1 = simple)
 
     SkyBottom,
     SunFlat,

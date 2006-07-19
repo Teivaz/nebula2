@@ -169,6 +169,7 @@ nIpcServer::Poll()
         {
             // this ipc mini server has a closed connection, delete it
             cur->Remove();
+            this->ClientsReseted.Append(cur->GetClientId());
             n_delete(cur);
             cur = 0;
         }

@@ -44,7 +44,15 @@
 #-------------------------------------------------------------------------------
 beginmodule nsceneserver
     setdir scene
-    setfiles { nsceneserver_main nsceneserver_cmds }
+    setfiles {
+        nsceneserver_main 
+        nsceneserver_cmds 
+        nsceneserver_debug
+        nsceneserver_lightshadow
+        nsceneserver_occlusion
+        nsceneserver_reflection
+        nsceneserver_render
+    }
     setheaders { nsceneserver }
 endmodule
 #-------------------------------------------------------------------------------
@@ -100,6 +108,12 @@ beginmodule nblendshapenode
     setdir scene
     setfiles { nblendshapenode_main nblendshapenode_cmds }
     setheaders { nblendshapenode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule ntextshapenode
+    setdir scene
+    setfiles { ntextshapenode_main}
+    setheaders { ntextshapenode }
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nattachmentnode

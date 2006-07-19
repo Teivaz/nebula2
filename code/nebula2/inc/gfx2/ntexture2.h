@@ -106,6 +106,20 @@ public:
         A8,
     };
 
+    // file formats
+    enum FileFormat
+    {
+        BMP,
+        JPG,
+        TGA,
+        PNG,
+        DDS,
+        PPM,
+        DIB,
+        HDR,
+        PFM,
+    };
+
     // the sides of a cube map
     enum CubeFace
     {
@@ -192,10 +206,12 @@ public:
     static Format StringToFormat(const char* str);
     /// convert pixel format to string
     static const char* FormatToString(Format fmt);
-    /// save Texture to file
-    virtual bool SaveTextureToFile(const nString& filename);
-
-    virtual void GenerateMipMaps();
+    /// convert string to type
+    static Type StringToType(const char* str);
+    /// convert type to string
+    static const char* TypeToString(Type t);
+    /// save data in texture into a file
+    virtual bool SaveTextureToFile(const nString& filename, FileFormat fileFormat);
 
 protected:
     /// set number of mipmaps
@@ -507,6 +523,42 @@ nTexture2::StringToFormat(const char* str)
     {
         n_error("nTexture2::StringToFormat(): invalid string '%s'", str);
         return NOFORMAT;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const char*
+nTexture2::TypeToString(Type t)
+{
+    switch (t)
+    {
+        case TEXTURE_NOTYPE:    return "NoType";
+        case TEXTURE_2D:        return "2D";
+        case TEXTURE_3D:        return "3D";
+        case TEXTURE_CUBE:      return "CUBE";
+    }
+    return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nTexture2::Type
+nTexture2::StringToType(const char* str)
+{
+    n_assert(str);
+    if (0 == strcmp(str, "NoType")) return TEXTURE_NOTYPE;
+    else if (0 == strcmp(str, "2D")) return TEXTURE_2D;
+    else if (0 == strcmp(str, "3D")) return TEXTURE_3D;
+    else if (0 == strcmp(str, "CUBE")) return TEXTURE_CUBE;
+    else
+    {
+        n_error("nTexture2::StringToType(): invalid string '%s'", str);
+        return TEXTURE_NOTYPE;
     }
 }
 

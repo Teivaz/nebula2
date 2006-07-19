@@ -33,13 +33,6 @@ nDI8Server::InitDirectInput()
     }
     n_assert(this->di8);
 
-    // init DirectInput devices
-    if (!this->InitDevices())
-    {
-        n_printf("nDI8Server: Failed to initialize DInput devices!\n");
-        return false;
-    }
-
     return true;
 }
 

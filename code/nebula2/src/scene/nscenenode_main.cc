@@ -244,6 +244,18 @@ nSceneNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*rend
 
 //------------------------------------------------------------------------------
 /**
+    Perform debug-rendering. This method will be called by nSceneServer
+    on each shape node right after RenderGeometry() if debug visualization 
+    is enabled.
+*/
+void
+nSceneNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix)
+{
+    // override in subclass
+}
+
+//------------------------------------------------------------------------------
+/**
     Perform pre-instance rendering of the shader. This method will be
     called once at the beginning of rendering different instances
     of the same scene node. Use this method to setup shader attributes

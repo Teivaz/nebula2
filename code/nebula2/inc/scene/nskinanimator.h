@@ -23,6 +23,7 @@
 
 class nAnimation;
 class nAnimationServer;
+class nCharacter2Set;
 
 //------------------------------------------------------------------------------
 class nSkinAnimator : public nAnimator
@@ -44,6 +45,7 @@ public:
     virtual void RenderContextDestroyed(nRenderContext* renderContext);
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
+
     /// begin adding joints
     void BeginJoints(int numJoints);
     /// add a joint to the skeleton
@@ -59,76 +61,85 @@ public:
     /// get name of an anim resource
     const nString& GetAnim() const;
 
-    /// set channel name which delivers the current anim state index
-    void SetStateChannel(const char* name);
-    /// get anim state channel name 
-    const char* GetStateChannel();
-
-    /// begin anim state definition
-    void BeginStates(int num);
-    /// add an animation state
-    void SetState(int stateIndex, int animGroupIndex, float fadeInTime);
-    /// set optional state name
-    void SetStateName(int stateIndex, const nString& name);
-    /// finish adding states
-    void EndStates();
-    /// get number of states
-    int GetNumStates() const;
-    /// get state attributes
-    const nAnimState& GetStateAt(int stateIndex);
-
-    /// begin adding clips to a state
-    void BeginClips(int stateIndex, int numClips);
-    /// add an animation clip to a state
-    void SetClip(int stateIndex, int clipIndex, const char* weightChannelName);
-    /// finish adding clips to a state
-    void EndClips(int stateIndex);
-    /// get number of animations in a state
-    int GetNumClips(int stateIndex) const;
-    /// get animation attributes
-    void GetClipAt(int stateIndex, int animIndex, const char*& weightChannelName);
+    /// begin adding clips
+    void BeginClips(int numClips);
+    /// add an animation clip
+    void SetClip(int clipIndex, int animGroupIndex, const nString& clipName);
+    /// finish adding clips
+    void EndClips();
+    /// get number of clips in the animation
+    int GetNumClips() const;
+    /// get clip at index
+    const nAnimClip& GetClipAt(int clipIndex) const;
+    /// get clip by name
+    int GetClipIndexByName(const nString& name) const;
+    /// get clip duration
+    nTime GetClipDuration(int index) const;
 
     /// begin adding anim event tracks to a clip
-    void BeginAnimEventTracks(int stateIndex, int clipIndex, int numTracks);
+    void BeginAnimEventTracks(int clipIndex, int numTracks);
     /// begin an event track to the current clip
-    void BeginAnimEventTrack(int stateIndex, int clipIndex, int trackIndex, const nString& name, int numEvents);
+    void BeginAnimEventTrack(int clipIndex, int trackIndex, const nString& name, int numEvents);
     /// set an anim event in a track
-    void SetAnimEvent(int stateIndex, int clipIndex, int trackIndex, int eventIndex, float time, const vector3& translate, const quaternion& rotate, const vector3& scale);
+    void SetAnimEvent(int clipIndex, int trackIndex, int eventIndex, float time, const vector3& translate, const quaternion& rotate, const vector3& scale);
     /// end the current event track
-    void EndAnimEventTrack(int stateIndex, int clipIndex, int trackIndex);
+    void EndAnimEventTrack(int clipIndex, int trackIndex);
     /// end adding animation event tracks to current clip
-    void EndAnimEventTracks(int stateIndex, int clipIndex);
-
+    void EndAnimEventTracks(int clipIndex);
+        
     /// enable/disable animation
     void SetAnimEnabled(bool b);
     /// get animation enabled state
     bool IsAnimEnabled() const;
 
-    /// get a joint index by name
-    int GetJointByName(const nString& jointName);
-
-    /// get the index of the nCharacter2 pointer used when accessing the render context in Animate()
-    int GetCharacterVarIndex();
+    /// set the index for the rendercontext
+    //void SetCharacterSetIndexHandle(int handle);
+    /// get index of character set variable in rendercontext
+    int GetCharacterSetIndexHandle() const;
 
 protected:
+    /// character set factory function
+    virtual nCharacter2Set* CreateCharacterSet();
+    /// release character set
+    virtual void DeleteCharacterSet(nRenderContext* renderContext);
+    
     /// load anim resource
     bool LoadAnim();
     /// unload anim resource
     void UnloadAnim();
 
-    nCharacter2 character;
-    nAnimStateArray animStateArray;
-    nAutoRef<nAnimationServer> refAnimServer;
-    nRef<nAnimation> refAnim;
-    nString animName;
+    nCharacter2 character;          ///< blue print, one copy per rendercontext will be created
+    nRef<nAnimation> refAnim;       ///< pointer to loaded animation
+    nString animName;               ///< name of the animation
+    nArray<nAnimClip> clips;        ///< array of animation clips
+    bool animEnabled;
     int characterVarIndex;
-    nVariable::Handle animStateVarHandle;
-    nVariable::Handle animRestartVarHandle;
+    int characterSetIndex;
     uint frameId;
     nClass* skinShapeNodeClass;
     nClass* shadowSkinShapeNodeClass;
-    bool animEnabled;
+    nAutoRef<nAnimationServer> refAnimServer;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nSkinAnimator::GetCharacterSetIndexHandle() const
+{
+    return this->characterSetIndex;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+//inline
+//void
+//nSkinAnimator::SetCharacterSetIndexHandle(int handle)
+//{
+//    this->characterSetIndex = handle;
+//}
 
 //------------------------------------------------------------------------------
 /**
@@ -234,17 +245,5 @@ nSkinAnimator::GetAnim() const
 }
 
 //------------------------------------------------------------------------------
-/**
-    Get a joint index by name.
 
-    @param jointName  the name of the joint index to retrieve.  Returns -1 if joint not found.
-*/
-inline
-int
-nSkinAnimator::GetJointByName(const nString& jointName)
-{
-    return this->character.GetSkeleton().GetJointIndexByName(jointName);
-}
-
-//------------------------------------------------------------------------------
 #endif
