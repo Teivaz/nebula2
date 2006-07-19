@@ -263,6 +263,8 @@ App::SetupDefaultInputMapping()
     inputServer->AddMapping("space", "keyb0:space");
     inputServer->AddMapping("tab", "keyb0:tab");
     inputServer->AddMapping("escape", "keyb0:esc");
+
+    inputServer->AddMapping("timeReset", "keyb0:t");
 }
 
 //------------------------------------------------------------------------------
