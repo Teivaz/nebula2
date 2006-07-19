@@ -46,7 +46,9 @@ public:
     void SetColAttrs(int colIndex, const vector4& textColor, Alignment align, float relWidth);
     /// set cell text
     void SetText(int colIndex, int rowIndex, const nString& text);
-    /// called when widget is becoming visible
+    /// get cell text
+    const nString& GetText(int colIndex, int rowIndex);
+	/// called when widget is becoming visible
     virtual void OnShow();
     /// called when widget is becoming invisible
     virtual void OnHide();

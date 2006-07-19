@@ -52,12 +52,6 @@ nGuiServer::nGuiServer() :
     Singleton = this;
     this->guiWindowClass = kernelServer->FindClass("nguiwindow");
     n_assert(this->guiWindowClass);
-
-    #if __NEBULA_STATS__
-    this->profGUIDrawBrush.Initialize("profGUI_DrawBush");
-    this->profGUIDrawText.Initialize("profGUI_DrawText");
-    this->profGUIDrawTexture.Initialize("profGUI_DrawTexture");
-    #endif
 }
 
 //-----------------------------------------------------------------------------
@@ -500,9 +494,6 @@ nGuiServer::Trigger()
 void
 nGuiServer::DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags)
 {
-#if __NEBULA_STATS__
-    this->profGUIDrawText.StartAccum();
-#endif
     rectangle cr, r;
     if (this->GetClipRect(cr))
     {
@@ -518,10 +509,6 @@ nGuiServer::DrawText(const char* text, const vector4& color, const rectangle& re
     static vector4 modColor;
     modColor.set(color.x, color.y, color.z, color.w * this->globalColor.w);
     nGfxServer2::Instance()->DrawText(text, modColor, r, flags);
-
-#if __NEBULA_STATS__
-    this->profGUIDrawText.StopAccum();
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -587,9 +574,6 @@ nGuiServer::FlushBrushes()
 void
 nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const vector4& color, nTexture2* tex)
 {
-#if __NEBULA_STATS__
-    this->profGUIDrawTexture.StartAccum();
-#endif
 
     n_assert(tex);
 
@@ -719,10 +703,6 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
     *ptr++ = r.v0.x;  *ptr++ = r.v1.y; *ptr++ = 0.0f;  // coord
     *ptr++ = 0.0f;    *ptr++ = 0.0f;   *ptr++ = 1.0f;  // norm
     *ptr++ = uv.v0.x; *ptr++ = uv.v1.y;
-
-#if __NEBULA_STATS__
-    this->profGUIDrawTexture.StopAccum();
-#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -732,11 +712,6 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
 void
 nGuiServer::Render()
 {
-#if __NEBULA_STATS__
-    this->profGUIDrawBrush.ResetAccum();
-    this->profGUIDrawTexture.ResetAccum();
-    this->profGUIDrawText.ResetAccum();
-#endif
     // set the current time for all following render calls
     if (this->refCurrentRootWindow.isvalid())
     {
@@ -847,7 +822,7 @@ nGuiServer::AddSystemFont(const char* fontName, const char* typeFace, int height
     }
     fontDesc.SetItalic(italic);
     fontDesc.SetUnderline(underline);
-    fontDesc.SetAntiAliased(true);
+    fontDesc.SetAntiAliased(false);
 
     // change the font's desc if it already exists
     // otherwise, create the font
@@ -976,15 +951,9 @@ nGuiServer::GetViewSpaceMatrix(const rectangle& r)
 void
 nGuiServer::DrawBrush(const rectangle& rect, nGuiBrush& brush)
 {
-#if __NEBULA_STATS__
-    this->profGUIDrawBrush.StartAccum();
-#endif
     // a null brush pointer is valid, in this case, nothing is rendered
     if (brush.GetName().IsEmpty())
     {
-        #if __NEBULA_STATS__
-        this->profGUIDrawBrush.StopAccum();
-        #endif
         return;
     }
     // get gui resource from brush
@@ -998,9 +967,6 @@ nGuiServer::DrawBrush(const rectangle& rect, nGuiBrush& brush)
     }
 
     this->DrawTexture(rect, guiResource->GetRelUvRect(), guiResource->GetColor(), guiResource->GetTexture());
-#if __NEBULA_STATS__
-this->profGUIDrawBrush.StopAccum();
-#endif
 }
 
 //-----------------------------------------------------------------------------

@@ -93,7 +93,6 @@
 //------------------------------------------------------------------------------
 class nFileServer2;
 class nFile;
-class nResourceServer;
 class nResource : public nRoot
 {
 public:
@@ -185,6 +184,7 @@ protected:
     /// called when contained resource may be restored
     virtual void OnRestored();
 
+    nAutoRef<nFileServer2> refFileServer;
     nDynAutoRef<nResourceLoader> refResourceLoader;
 
 private:

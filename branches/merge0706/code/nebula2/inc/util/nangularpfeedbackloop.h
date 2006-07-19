@@ -10,6 +10,7 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
+#include "mathlib/nmath.h"
 
 //------------------------------------------------------------------------------
 class nAngularPFeedbackLoop
@@ -35,9 +36,6 @@ public:
     void Update(nTime time);
 
 private:
-    /// compute shortest angular distance between 2 angles
-    float AngularDistance(float from, float to) const;
-
     nTime time;         // the time at which the simulation is
     float stepSize;
     float gain;
@@ -134,30 +132,6 @@ nAngularPFeedbackLoop::GetState() const
 
 //------------------------------------------------------------------------------
 /**
-    Compute the shortest angular distance between 2 angles. The angular distance
-    will be between rad(-180) and rad(180). Positive distance are in
-    counter-clockwise order, negative distances in clockwise order.
-*/
-inline
-float
-nAngularPFeedbackLoop::AngularDistance(float from, float to) const
-{
-    float nFrom = n_normangle(from);
-    float nTo   = n_normangle(to);
-    float dist = nTo - nFrom;
-    if (dist < n_deg2rad(-180.0f))
-    {
-        dist += n_deg2rad(360.0f);
-    }
-    else if (dist >= n_deg2rad(180.0f))
-    {
-        dist -= n_deg2rad(360.0f);
-    }
-    return dist;
-}
-
-//------------------------------------------------------------------------------
-/**
 */
 inline
 void
@@ -172,15 +146,24 @@ nAngularPFeedbackLoop::Update(nTime curTime)
     }
     else if (dt > 0.5)
     {
-        this->time = curTime;
+        this->time = curTime - 0.5;
     }
 
     while (this->time < curTime)
     {
         // get angular distance error
-        float error = this->AngularDistance(this->state, this->goal);
-        this->state = n_normangle(this->state + (error * this->gain * this->stepSize));
-        this->time += this->stepSize;
+        float error = n_angulardistance(this->state, this->goal);
+        if (n_abs(error) > N_TINY)
+        {
+            this->state = n_normangle(this->state - (error * this->gain * this->stepSize));
+            this->time += this->stepSize;
+        }
+        else
+        {
+            this->state = this->goal;
+            this->time = curTime;
+            break;
+        }
     }
 }
 

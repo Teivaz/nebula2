@@ -14,10 +14,12 @@ beginmodule ninputserver
     setdir input
     setfiles { 
         ninput_main ninput_events ninput_states ninput_log 
-        ninput_inpmap ninput_cmds 
+        ninput_cmds 
+        ninputmapping nkeycodes
         ninputdevice njoystickdevice nrelmousedevice nkeyboarddevice
     }
     setheaders { 
         ninputserver ninputdevice njoystickdevice nrelmousedevice nkeyboarddevice
+        ninputmapping nkeycodes
     }
 endmodule

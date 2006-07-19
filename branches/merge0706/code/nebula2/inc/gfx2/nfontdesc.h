@@ -24,6 +24,7 @@ public:
         Normal,
         Bold,
         ExtraBold,
+        InvalidWeight,
     };
 
     /// constructor
@@ -60,6 +61,11 @@ public:
     void SetFilename(const char* n);
     /// get optional font file name
     const char* GetFilename() const;
+
+    /// convert render flag string to enum
+    static Weight StringToWeight(const nString& str);
+    /// convert render flag enum to string
+    static nString WeightToString(Weight renderFlag);
 
 private:
     int height;
@@ -249,6 +255,63 @@ const char*
 nFontDesc::GetFilename() const
 {
     return this->filename.IsEmpty() ? 0 : this->filename.Get();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Convert the weight to its corresponded string.
+*/
+inline
+nString
+nFontDesc::WeightToString(nFontDesc::Weight renderFlag)
+{
+    switch (renderFlag)
+    {
+        case nFontDesc::Thin:          return nString("Thin"); break;
+        case nFontDesc::Light:         return nString("Light"); break;
+        case nFontDesc::Normal:        return nString("Normal"); break;
+        case nFontDesc::Bold:          return nString("Bold"); break;
+        case nFontDesc::ExtraBold:     return nString("ExtraBold"); break;
+        default:
+            n_error("nFontDesc::WeightToString(): invalid weight!");
+    } 
+}     
+
+
+//------------------------------------------------------------------------------
+/**
+    Convert the given string to its corresponded weight.
+*/
+inline
+nFontDesc::Weight
+nFontDesc::StringToWeight(const nString& str)
+{
+    n_assert(!str.IsEmpty());
+    if ("Thin" == str)
+    {
+        return Thin;
+    }
+    else if ("Light" == str)
+    {
+        return Light;
+    }
+    else if ("Normal" == str)
+    {
+        return Normal;
+    }
+    else if ("Bold" == str)
+    {
+        return Bold;
+    }
+    else if ("ExtraBold" == str)
+    {
+        return ExtraBold;
+    }
+    else 
+    {
+        n_error("nFontDesc::StringToWeight(): invalid weight!");
+        return InvalidWeight;
+    }
 }
 
 //------------------------------------------------------------------------------

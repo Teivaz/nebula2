@@ -10,6 +10,10 @@
 
     See the parent class nMemoryAnimation for more info.
 
+    FIXME FLOH: This should be rewritten to directly scatter-load animations 
+    from a complete directory. This would simplify the code in 
+    ncharacter3skinanimator a lot!
+
     (C) 2005 RadonLabs GmbH
 */
 #include "anim2/nmemoryanimation.h"
@@ -34,7 +38,7 @@ private:
     /// unload the resource (clears the valid flag)
     virtual void UnloadResource();
 
-    nArray<nMemoryAnimation*> animPtrs;
+    nArray<nRef<nMemoryAnimation>> animPtrs;
 };
 //------------------------------------------------------------------------------
 #endif

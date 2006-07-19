@@ -134,13 +134,11 @@ nViewerApp::Open()
     this->refVideoServer->Open();
 
     // define the input mapping
-    this->refInputServer->Open();
     this->DefineInputMapping();
 
     this->refAudioServer->Open();
 
     // Setup /usr/scene and add default entry + light
-    this->nodeList.SetStageScript(this->GetStageScript());
     this->nodeList.SetLightStageEnabled(this->lightStageEnabled);
     this->nodeList.Open();
 
@@ -292,7 +290,7 @@ nViewerApp::Run()
 
                 nTexture2* screenshotBuffer = (nTexture2*) nResourceServer::Instance()->FindResource("Screenshot",nResource::Texture);
                 n_assert(screenshotBuffer);
-                screenshotBuffer->SaveTextureToFile(filename);
+                screenshotBuffer->SaveTextureToFile(filename, nTexture2::JPG);
             };
             // update view and get the actual viewMatrix
             this->camControl.Update();

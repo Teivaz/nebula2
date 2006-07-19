@@ -1,83 +1,71 @@
-#ifndef N_ANIMSTATE_H
-#define N_ANIMSTATE_H
-//------------------------------------------------------------------------------
-/**
-    @class nAnimState
-    @ingroup Anim2
+#ifndef N_ANIMSTATEINFO_H
+#define N_ANIMSTATEINFO_H
 
-    @brief An animation state contains any number of nAnimClip objects of
-    identical size (number of anim curves contained in the clip) and can
-    sample a weight-blended result from them. Each anim clip is associated
-    with a weight value between 0 and 1 which defines how much that anim
-    clip influences the resulting animation.
-    
-    An nAnimation object connected to the nAnimState object delivers
-    the actual animation data.
-    
-    (C) 2003 RadonLabs GmbH
-*/
 #include "kernel/ntypes.h"
 #include "anim2/nanimclip.h"
-#include "variable/nvariablecontext.h"
-#include "mathlib/quaternion.h"
-#include "anim2/nanimeventhandler.h"
 
-//------------------------------------------------------------------------------
-class nAnimState
+/**
+    @class nAnimStateInfo
+    @ingroup Anim2
+
+    (C) 2006 RadonLabs GmbH
+
+    @brief An animation state info contains any number of nAnimClip objects of
+    identical size (number of anim curves contained in the clip) for
+    sampling a weight-blended result from them. Each anim clip is associated
+    with a weight value between 0 and 1 which defines how much that anim
+    clip influences the resulting animation.
+*/
+class nAnimStateInfo
 {
 public:
     /// constructor
-    nAnimState();
-    /// set state name
-    void SetName(const nString& n);
-    /// get state name
-    const nString& GetName() const;
-    /// set index of animation group in animation resource file
-    void SetAnimGroupIndex(int index);
-    /// get animation group index
-    int GetAnimGroupIndex() const;
+    nAnimStateInfo();
     /// set the fadein time
     void SetFadeInTime(float t);
     /// get the fadein time
     float GetFadeInTime() const;
+    /// set state started time
+    void SetStateStarted(float t);
+    /// get state started time
+    float GetStateStarted() const;
+    /// set state time offset
+    void SetStateOffset(float t);
+    /// get state time offset
+    float GetStateOffset() const;
+    /// is valid?
+    bool IsValid() const;
+
     /// begin defining animation clips
     void BeginClips(int num);
     /// set an animation clip
-    void SetClip(int index, const nAnimClip& clip);
+    void SetClip(int index, const nAnimClip& clip, float weight);
     /// finish defining animation clips
     void EndClips();
     /// get number of animation clips
     int GetNumClips() const;
     /// get anim clip at index
     nAnimClip& GetClipAt(int index) const;
-    /// sample weighted values at a given time from nAnimation object
-    bool Sample(float time, nAnimation* animSource, nVariableContext* varContext, vector4* keyArray, vector4* scratchKeyArray, int keyArraySize);
-    /// emit animation events for a given time range
-    void EmitAnimEvents(float fromTime, float toTime, nAnimation* animSource, nAnimEventHandler* handler);
+    /// get weight of clip at index
+    float GetClipWeightAt(int index) const;
 
-private:
-    /// begin defining blended animation events
-    void BeginEmitEvents();
-    /// add a blended animation event
-    void AddEmitEvent(const nAnimEventTrack& track, const nAnimEvent& event, float weight);
-    /// finish defining blended anim events, emit the events
-    void EndEmitEvents(nAnimEventHandler* handler);
-        
     nArray<nAnimClip> clipArray;
-    nString name;
-    int animGroupIndex;
-    float fadeInTime;
-    nArray<nAnimEventTrack> outAnimEventTracks;
+    nArray<float> clipWeights;
+    float fadeInTime;          
+    float stateStarted;
+    float stateOffset;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nAnimState::nAnimState() :
+nAnimStateInfo::nAnimStateInfo() :
     clipArray(0, 0),
-    animGroupIndex(0),
-    fadeInTime(0.0f)
+    clipWeights(0, 0),
+    fadeInTime(0.0f),
+    stateStarted(0.0f),
+    stateOffset(0.0f)
 {
     // empty
 }
@@ -87,47 +75,7 @@ nAnimState::nAnimState() :
 */
 inline
 void
-nAnimState::SetName(const nString& n)
-{
-    this->name = n;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-nAnimState::GetName() const
-{
-    return this->name;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nAnimState::SetAnimGroupIndex(int index)
-{
-    this->animGroupIndex = index;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nAnimState::GetAnimGroupIndex() const
-{
-    return this->animGroupIndex;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nAnimState::SetFadeInTime(float t)
+nAnimStateInfo::SetFadeInTime(float t)
 {
     this->fadeInTime = t;
 }
@@ -137,7 +85,7 @@ nAnimState::SetFadeInTime(float t)
 */
 inline
 float
-nAnimState::GetFadeInTime() const
+nAnimStateInfo::GetFadeInTime() const
 {
     return this->fadeInTime;
 }
@@ -147,9 +95,60 @@ nAnimState::GetFadeInTime() const
 */
 inline
 void
-nAnimState::BeginClips(int num)
+nAnimStateInfo::SetStateStarted(float t)
+{
+    this->stateStarted = t;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nAnimStateInfo::GetStateStarted() const
+{
+    return this->stateStarted;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimStateInfo::SetStateOffset(float t)
+{
+    this->stateOffset= t;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nAnimStateInfo::GetStateOffset() const
+{
+    return this->stateOffset;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nAnimStateInfo::IsValid() const
+{
+    return (!this->clipArray.Empty());
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimStateInfo::BeginClips(int num)
 {
     this->clipArray.SetFixedSize(num);
+    this->clipWeights.SetFixedSize(num);
 }
 
 //------------------------------------------------------------------------------
@@ -157,14 +156,22 @@ nAnimState::BeginClips(int num)
 */
 inline
 void
-nAnimState::SetClip(int index, const nAnimClip& clip)
+nAnimStateInfo::SetClip(int index, const nAnimClip& clip, float weight)
 {
+    n_assert(index >= 0);
+    n_assert(weight >= 0.0f && weight <= 1.0f);
+
     // ensure identical number of curves in clips
-    if (index > 0)
+    if (this->clipArray[0].GetNumCurves() > 0)
     {
-        n_assert(this->clipArray[0].GetNumCurves() == clip.GetNumCurves());
+        if (this->clipArray[0].GetNumCurves() != clip.GetNumCurves())
+        {
+            n_error("Only Clips with identical number of curves can be active at one time.");
+        }
     }
+
     this->clipArray[index] = clip;
+    this->clipWeights[index] = weight;
 }
 
 //------------------------------------------------------------------------------
@@ -172,7 +179,7 @@ nAnimState::SetClip(int index, const nAnimClip& clip)
 */
 inline
 void
-nAnimState::EndClips()
+nAnimStateInfo::EndClips()
 {
     // empty
 }
@@ -182,7 +189,7 @@ nAnimState::EndClips()
 */
 inline
 int
-nAnimState::GetNumClips() const
+nAnimStateInfo::GetNumClips() const
 {
     return this->clipArray.Size();
 }
@@ -192,9 +199,19 @@ nAnimState::GetNumClips() const
 */
 inline
 nAnimClip&
-nAnimState::GetClipAt(int index) const
+nAnimStateInfo::GetClipAt(int index) const
 {
     return this->clipArray[index];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline 
+float
+nAnimStateInfo::GetClipWeightAt(int index) const
+{
+    return this->clipWeights[index];
 }
 
 //------------------------------------------------------------------------------

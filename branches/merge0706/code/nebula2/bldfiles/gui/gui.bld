@@ -419,6 +419,30 @@ beginmodule nguihardpointslister
     setheaders { nguihardpointslister }
 endmodule
 #--------------------------------------------------------------------
+beginmodule nguicharactercontrolwindow
+    setdir gui
+    setfiles { nguicharactercontrolwindow_main }
+    setheaders { nguicharactercontrolwindow }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguiscrollbuttonlist
+    setdir gui
+    setfiles { nguiscrollbuttonlist_main }
+    setheaders { nguiscrollbuttonlist }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguisettingsfiledialog
+    setdir gui
+    setfiles { nguisettingsfiledialog_main }
+    setheaders { nguisettingsfiledialog }
+endmodule
+#--------------------------------------------------------------------
+beginmodule nguisettingsmanagementwindow
+    setdir gui
+    setfiles { nguisettingsmanagementwindow_main }
+    setheaders { nguisettingsmanagementwindow }
+endmodule
+#--------------------------------------------------------------------
 begintarget ngui
     annotate "The Nebula2 GUI modules"
     settype lib
@@ -438,6 +462,8 @@ begintarget ngui
         nguibar nguifadeouttextlabel nguislide nguislideshow
         nguieventhandler nguimousecursor nguihardpointsbrowserwindow
         nguihardpointslister nguiskyeditor
+        nguisettingsmanagementwindow nguisettingsfiledialog
+        nguiscrollbuttonlist nguicharactercontrolwindow
     }
     settargetdeps {
         ntoollib

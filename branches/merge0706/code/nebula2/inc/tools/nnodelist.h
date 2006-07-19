@@ -28,10 +28,6 @@ public:
     ~nNodeList(){};
     /// Returns the singleton of the instance
     static nNodeList* Instance();
-    /// set the light stage script
-    void SetStageScript(const nString& name);
-    /// get the light stage script
-    const nString& GetStageScript() const;
     /// enable/disable the standard light stage
     void SetLightStageEnabled(bool b);
     /// Initialize Class
@@ -64,13 +60,7 @@ public:
     /// get transform node at index
     nTransformNode* GetNodeAt(uint index) const;
 
-    /// give a character3 set; from now on owned by this class
-    void GiveCharacter3Set(nCharacter3Set* charSet);
-    /// get character3set
-    nCharacter3Set* GetCharacter3Set();
-
 private:
-
     // Created Structure
     //
     // -scene+-default-light1
@@ -79,8 +69,7 @@ private:
     //       +-loaded.obj.blu.3- ...
 
     /// Get Pointer to the first nCharacter2 Object from the current rendercontexts
-    nCharacter2*    getCharacter();
-    nCharacter3Set* character3Set;
+    nCharacter2* GetCharacter();
 
     static nNodeList* Singleton;
     uint numElements;
@@ -91,7 +80,7 @@ private:
     bool isOpen;
     nVariable::Handle timeHandle;    
     bool lightStageEnabled;
-    nString stageScript;
+
     // FIXME: Quick and dirty
     int                     hardpointObjectsCnt;
     nArray<int>             hardpointJointIndex;
@@ -165,48 +154,6 @@ nNodeList::SetLightStageEnabled(bool b)
     this->lightStageEnabled = b;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nNodeList::GiveCharacter3Set(nCharacter3Set* charSet)
-{
-    this->character3Set = charSet;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nCharacter3Set*
-nNodeList::GetCharacter3Set()
-{
-    return this->character3Set;
-}
-
-
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nNodeList::SetStageScript(const nString& script)
-{
-    this->stageScript = script;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-nNodeList::GetStageScript() const
-{
-    return this->stageScript;
-}
 
 //------------------------------------------------------------------------------
 

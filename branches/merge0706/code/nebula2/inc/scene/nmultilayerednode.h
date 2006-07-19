@@ -23,21 +23,17 @@ public:
     /// object persistency
     virtual bool SaveCmds(nPersistServer *ps);
     /// render geometry
-    virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    virtual bool ApplyShader(nSceneServer* sceneServer);
 
-    void SetUVStretch(int nr,float val);
-    void SetDX7UVStretch(int nr,float val);
-    void SetTexCount(int cnt);
-    /// sets the part Index of this node
-    void SetPartIndex(int partIndex);
-    /// gets the part Index of this node
-    int GetPartIndex() const;
+    /// set uv stretch factor 
+    void SetUVStretch(int i, float val);
+    /// set layer specular intensity
+    void SetSpecIntensity(int i, float val);
 
 protected:
-    float uvStretch[6];
-    float dx7uvStretch[6];
-    int texCount;
-    int partIndex;  // since multilayered nodes are splitted up, we need an index that identifies the part
+    static const int MaxLayers = 8;
+    float uvStretch[MaxLayers];
+    float specIntensity[MaxLayers];
 };
 
 //------------------------------------------------------------------------------
@@ -45,20 +41,10 @@ protected:
 */
 inline
 void
-nMultiLayeredNode::SetUVStretch(int nr, float value)
+nMultiLayeredNode::SetUVStretch(int i, float value)
 {
-    n_assert((nr>=0)&&(nr<6));
-    this->uvStretch[nr] = value;
-}
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMultiLayeredNode::SetDX7UVStretch(int nr, float value)
-{
-    n_assert((nr>=0)&&(nr<6));
-    this->dx7uvStretch[nr] = value;
+    n_assert((i >= 0) && (i < MaxLayers));
+    this->uvStretch[i] = value;
 }
 
 //------------------------------------------------------------------------------
@@ -66,29 +52,11 @@ nMultiLayeredNode::SetDX7UVStretch(int nr, float value)
 */
 inline
 void
-nMultiLayeredNode::SetTexCount(int cnt)
+nMultiLayeredNode::SetSpecIntensity(int i, float value)
 {
-    this->texCount = cnt;
+    n_assert((i >= 0) && (i < MaxLayers));
+    this->specIntensity[i] = value;
 }
 
 //------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nMultiLayeredNode::SetPartIndex(int partIndex)
-{
-    this->partIndex = partIndex;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nMultiLayeredNode::GetPartIndex() const
-{
-    return this->partIndex;
-}
-
 #endif

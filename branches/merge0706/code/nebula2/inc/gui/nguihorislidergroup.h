@@ -90,6 +90,8 @@ public:
     virtual void SetLeftTextAlignment(nGuiTextLabel::Alignment a);
     /// set alignment of text in right label
     virtual void SetRightTextAlignment(nGuiTextLabel::Alignment a);
+    /// set alignment of text in right label
+    virtual nGuiSlider2* GetSlider() const;
 
 protected:
     nString labelFont;

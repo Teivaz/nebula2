@@ -334,7 +334,7 @@ nGuiTextEntry::GetPwdText() const
     int i;
     for (i = 0; i < length; i++)
     {
-        pwdText.Append("#");
+        pwdText.Append("*");
     }
     return pwdText;
 }
@@ -444,6 +444,16 @@ nGuiTextEntry::Render()
                 {  
                     nString textToCursor = lineText.ExtractRange(0, cursorIndex);
                     vector2 textToCursorSize = nGfxServer2::Instance()->GetTextExtent(textToCursor.Get());
+					// check for whitespaces at end of text		
+					if (textToCursor.Length() > 0)
+					{
+						// make sure the cursor moves even if whitespaces are entered
+						while (cursorIndex > 0 && textToCursor[cursorIndex-1] == ' ')
+						{
+							textToCursorSize.x += 0.005f; 
+							cursorIndex--;
+						}
+					}
                     leftMargin += screenSpaceRect.v0.x + textToCursorSize.x;
                     break;
                 }
@@ -452,7 +462,19 @@ nGuiTextEntry::Render()
                     nString textAfterCursor = lineText.ExtractRange(cursorIndex, lineText.Length() - cursorIndex);
                     vector2 textAfterCursorSize = nGfxServer2::Instance()->GetTextExtent(textAfterCursor.Get());
                     leftMargin = screenSpaceRect.v1.x - textAfterCursorSize.x;
-                    break;
+					// check for whitespaces at end of text		
+					nString textToCursor = lineText.ExtractRange(0, cursorIndex);
+					if (textToCursor.Length() > 0)
+					{
+						// make sure the text moves left even if whitespaces are entered
+						while (cursorIndex > 0 && textToCursor[cursorIndex-1] == ' ')
+						{
+							screenSpaceRect.v0.x -= 0.005f;
+							screenSpaceRect.v1.x -= 0.005f;
+							cursorIndex--;
+						}
+					}					
+					break;
                 }
             }
 

@@ -5,74 +5,18 @@
 #include "gfx2/nd3d9server.h"
 #include "kernel/nenv.h"
 #include "kernel/nfileserver2.h"
+#include "gfx2/nd3d9texture.h"
 
 nNebulaClass(nD3D9Server, "ngfxserver2");
-
-//------------------------------------------------------------------------------
-// Nonmember helper function(s)
-//------------------------------------------------------------------------------
-/**
-    Returns the graphics format corresponding to the filename's extension.
-
-    If the extension is not recognized, the return value defaults to bitmap.
-    - 6-Dec-04  rafael added 
-*/
-D3DXIMAGE_FILEFORMAT
-GetFormatFromExtension(const nString& filename)
-{
-    D3DXIMAGE_FILEFORMAT format = D3DXIFF_BMP;
-    if (filename.CheckExtension("jpg"))
-    {
-        format = D3DXIFF_JPG;
-    }
-    else if (filename.CheckExtension("png"))
-    {
-        format = D3DXIFF_PNG;
-    }
-    else if (filename.CheckExtension("dib"))
-    {
-        format = D3DXIFF_DIB;
-    }
-    else if (filename.CheckExtension("hdr"))
-    {
-        format = D3DXIFF_HDR;
-    }
-    else if (filename.CheckExtension("pfm"))
-    {
-        format = D3DXIFF_PFM;
-    }
-    else if (filename.CheckExtension("tga"))
-    {
-        n_error("nD3D9Server::Screenshot(): D3DXSaveSurfaceToFile 9.0c doesn't support TGA.");
-    }
-    else if (!filename.CheckExtension("bmp"))
-    {
-        n_printf("nD3D9Server::Screenshot(): Unknown extension -- saving as bitmap.\n");
-    }
-    return format;
-}
+nD3D9Server* nD3D9Server::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
-    - 13-Nov-04   rafael removed OpenWindow call
 */
 nD3D9Server::nD3D9Server() :
     #ifdef __NEBULA_STATS__
     timeStamp(0.0),
     queryResourceManager(0),
-/*
-    dbgQueryTextureTrashing("gfxTexTrashing", nArg::Bool),
-    dbgQueryTextureApproxBytesDownloaded("gfxTexApproxBytesDownloaded", nArg::Int),
-    dbgQueryTextureNumEvicts("gfxTexNumEvicts", nArg::Int),
-    dbgQueryTextureNumVidCreates("gfxTexNumVidCreates", nArg::Int),
-    dbgQueryTextureLastPri("gfxTexLastPri", nArg::Int),
-    dbgQueryTextureNumUsed("gfxTexNumUsed", nArg::Int),
-    dbgQueryTextureNumUsedInVidMem("gfxTexNumUsedInVidMem", nArg::Int),
-    dbgQueryTextureWorkingSet("gfxTexWorkingSet", nArg::Int),
-    dbgQueryTextureWorkingSetBytes("gfxTexWorkingSetBytes", nArg::Int),
-    dbgQueryTextureTotalManaged("gfxTexTotalManaged", nArg::Int),
-    dbgQueryTextureTotalBytes("gfxTexTotalBytes", nArg::Int),
-*/
     dbgQueryNumPrimitives("gfxNumPrimitives", nArg::Int),
     dbgQueryFPS("gfxFPS", nArg::Float),
     dbgQueryNumDrawCalls("gfxNumDrawCalls", nArg::Int),
@@ -89,6 +33,7 @@ nD3D9Server::nD3D9Server() :
     captureSurface(0),
     effectPool(0),
     featureSet(InvalidFeatureSet),
+    textElements(64, 64),
 #if __NEBULA_STATS__
     statsFrameCount(0),
     statsNumTextureChanges(0),
@@ -98,6 +43,9 @@ nD3D9Server::nD3D9Server() :
 #endif
     d3dxLine(0)
 {
+    n_assert(0 == Singleton);
+    Singleton = this;
+
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
     memset(&(this->presentParams), 0, sizeof(this->presentParams));
     memset(&(this->shapeMeshes), 0, sizeof(this->shapeMeshes));
@@ -126,7 +74,9 @@ nD3D9Server::~nD3D9Server()
     }
     this->D3dClose();
     this->windowHandler.CloseWindow();
-    n_assert(this->textNodeList.IsEmpty());
+
+    n_assert(0 != Singleton);
+    Singleton = 0;
 }
 
 //------------------------------------------------------------------------------
@@ -238,7 +188,7 @@ nD3D9Server::Trigger()
     - 25-Apr-05 floh    rewritten for performance
 */
 bool
-nD3D9Server::SaveScreenshot(const char* fileName)
+nD3D9Server::SaveScreenshot(const char* fileName, nTexture2::FileFormat fileFormat)
 {
     n_assert(fileName);
     n_assert(this->d3d9Device);
@@ -252,7 +202,8 @@ nD3D9Server::SaveScreenshot(const char* fileName)
     n_assert(SUCCEEDED(hr));
 
     // save image
-    hr = D3DXSaveSurfaceToFile(mangledPath.Get(), D3DXIFF_JPG, this->captureSurface, NULL, NULL);
+    D3DXIMAGE_FILEFORMAT d3dxFormat = nD3D9Texture::FileFormatToD3DX(fileFormat);
+    hr = D3DXSaveSurfaceToFile(mangledPath.Get(), d3dxFormat, this->captureSurface, NULL, NULL);
     n_assert(SUCCEEDED(hr));
 
     // all ok
@@ -268,36 +219,20 @@ nD3D9Server::EnterDialogBoxMode()
 {
     n_assert(this->windowHandler.GetDisplayMode().GetDialogBoxMode());
     n_assert(this->d3d9Device);
+    HRESULT hr;
+    
     nGfxServer2::EnterDialogBoxMode();
-    HRESULT hr = this->d3d9Device->SetDialogBoxMode(TRUE);
-	n_dxtrace(hr, "nD3D9Server::EnterDialogBoxMode(): Failed to enter dialog box mode!");
 
-    // reset the device to fix a know issue for win98/ME where this dialogbox is sometimes hidden
-    nWin32Wrapper::WindowsVersion winVersion = nWin32Wrapper::Instance()->GetWindowsVersion();
-    if (nWin32Wrapper::Win32_Windows == winVersion) // windows 95 and family
-    {
-        // invoke the reanimation procedure...
-        this->OnDeviceCleanup(false);
-
-        // if we are in windowed mode, the cause for the reset may be a display
-        // mode change of the desktop, in this case we need to find new
-        // buffer pixel formats
-        D3DFORMAT dispFormat;
-        D3DFORMAT backFormat;
-        D3DFORMAT zbufFormat;
-        this->FindBufferFormats(this->GetDisplayMode().GetBpp(), dispFormat, backFormat, zbufFormat);
-        this->presentParams.BackBufferFormat       = backFormat;
-        this->presentParams.AutoDepthStencilFormat = zbufFormat;
-
-        hr = this->d3d9Device->Reset(&this->presentParams);
-        n_dxtrace(hr, "nD3D9Server::EnterDialogBoxMode(): Failed to reset d3d device!");
-
-        // initialize the device
-        this->InitDeviceState();
-
-        // reload the resource
-        this->OnDeviceInit(false);
-    }
+    // reset the device with lockable backbuffer flag
+    this->OnDeviceCleanup(false);
+    D3DPRESENT_PARAMETERS p = this->presentParams;
+    p.MultiSampleType = D3DMULTISAMPLE_NONE;
+    p.Flags |= D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+    hr = this->d3d9Device->Reset(&p);
+    this->InitDeviceState();
+    this->OnDeviceInit(false);
+    
+    hr = this->d3d9Device->SetDialogBoxMode(TRUE);
 }
 
 //-----------------------------------------------------------------------------
@@ -311,7 +246,16 @@ nD3D9Server::LeaveDialogBoxMode()
     n_assert(this->d3d9Device);
     nGfxServer2::LeaveDialogBoxMode();
     HRESULT hr = this->d3d9Device->SetDialogBoxMode(FALSE);
-    n_dxtrace(hr, "nD3D9Server::LeaveDialogBoxMode()");
+
+    // only reset the device if it is currently valid
+    hr = this->d3d9Device->TestCooperativeLevel();
+    if (SUCCEEDED(hr))
+    {
+        this->OnDeviceCleanup(false);
+        hr = this->d3d9Device->Reset(&this->presentParams);
+        this->InitDeviceState();
+        this->OnDeviceInit(false);
+    }
 }
 
 //-----------------------------------------------------------------------------

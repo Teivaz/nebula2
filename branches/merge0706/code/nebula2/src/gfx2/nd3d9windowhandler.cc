@@ -78,6 +78,7 @@ nD3D9WindowHandler::OnToggleFullscreenWindowed()
 {
     n_assert(this->d3d9Server);
 
+#ifdef N_TOGGLE_FULLSCREEN_ENABLED
     // toggle fullscreen/windowed
     nDisplayMode2 newMode = this->GetDisplayMode();
     if (newMode.GetType() == nDisplayMode2::Fullscreen)
@@ -91,6 +92,7 @@ nD3D9WindowHandler::OnToggleFullscreenWindowed()
     this->d3d9Server->CloseDisplay();
     this->d3d9Server->SetDisplayMode(newMode);
     this->d3d9Server->OpenDisplay();
+#endif
 }
 
 //------------------------------------------------------------------------------

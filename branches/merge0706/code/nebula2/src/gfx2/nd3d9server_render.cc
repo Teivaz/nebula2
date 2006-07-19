@@ -798,14 +798,20 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
         shader->EndPass();
 
         #ifdef __NEBULA_STATS__
-        this->statsNumDrawCalls++;
+        if (this->GetHint(CountStats))
+        {
+            this->statsNumDrawCalls++;
+        }
         #endif
     }
     shader->End();
 
     #ifdef __NEBULA_STATS__
-    // update num primitives rendered
-    this->statsNumPrimitives += d3dNumPrimitives;
+    if (this->GetHint(CountStats))
+    {
+        // update num primitives rendered
+        this->statsNumPrimitives += d3dNumPrimitives;
+    }
     #endif
 }
 
@@ -837,14 +843,20 @@ nD3D9Server::Draw(PrimitiveType primType)
         shader->EndPass();
             
         #ifdef __NEBULA_STATS__
-        this->statsNumDrawCalls++;
+        if (this->GetHint(CountStats))
+        {
+            this->statsNumDrawCalls++;
+        }
         #endif
     }
     shader->End();
 
     #ifdef __NEBULA_STATS__
-    // update num primitives rendered
-    this->statsNumPrimitives += d3dNumPrimitives;
+    if (this->GetHint(CountStats))
+    {
+        // update num primitives rendered
+        this->statsNumPrimitives += d3dNumPrimitives;
+    }
     #endif
 }
 
@@ -886,9 +898,12 @@ nD3D9Server::DrawIndexedNS(PrimitiveType primType)
         n_dxtrace(hr, "DrawIndexedPrimitive() failed!");
 
         #ifdef __NEBULA_STATS__
-        // update statistics
-        this->statsNumDrawCalls++;
-        this->statsNumPrimitives += d3dNumPrimitives;
+        if (this->GetHint(CountStats))
+        {
+            // update statistics
+            this->statsNumDrawCalls++;
+            this->statsNumPrimitives += d3dNumPrimitives;
+        }
         #endif
     }
 }
@@ -921,9 +936,12 @@ nD3D9Server::DrawNS(PrimitiveType primType)
         n_dxtrace(hr, "DrawPrimitive() failed!");
 
         #ifdef __NEBULA_STATS__
-        // update statistics
-        this->statsNumDrawCalls++;
-        this->statsNumPrimitives += d3dNumPrimitives;
+        if (this->GetHint(CountStats))
+        {
+            // update statistics
+            this->statsNumDrawCalls++;
+            this->statsNumPrimitives += d3dNumPrimitives;
+        }
         #endif
     }
 }
@@ -988,9 +1006,12 @@ nD3D9Server::DrawIndexedInstancedNS(PrimitiveType primType)
     instStream->Unlock();
 
     #ifdef __NEBULA_STATS__
-    // update statistics
-    this->statsNumDrawCalls++;
-    this->statsNumPrimitives += d3dNumPrimitives * numInstances;
+    if (this->GetHint(CountStats))
+    {
+        // update statistics
+        this->statsNumDrawCalls++;
+        this->statsNumPrimitives += d3dNumPrimitives * numInstances;
+    }
     #endif
 }
 
@@ -1054,9 +1075,12 @@ nD3D9Server::DrawInstancedNS(PrimitiveType primType)
     instStream->Unlock();
 
     #ifdef __NEBULA_STATS__
-    // update statistics
-    this->statsNumDrawCalls++;
-    this->statsNumPrimitives += d3dNumPrimitives * numInstances;
+    if (this->GetHint(CountStats))
+    {
+        // update statistics
+        this->statsNumDrawCalls++;
+        this->statsNumPrimitives += d3dNumPrimitives * numInstances;
+    }
     #endif
 }
 

@@ -136,8 +136,6 @@ nMesh2::LoadResource()
             // with HW T&L.
             if (0 == (this->vertexUsage & NeedsVertexShader))
             {
-                // FIXME: this should be replaced by a new nGfxServer2 method which indicates
-                // whether vertex shaders run in emulation, or not!!!
                 if (nGfxServer2::Instance()->AreVertexShadersEmulated())
                 {
                     // set valid DX7 vertex components before loading, all others will be removed from the loaded data

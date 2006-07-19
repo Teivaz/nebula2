@@ -396,6 +396,23 @@ nGuiTextView::ScrollDown(int numLines)
     this->UpdateSliderValues();
 }
 
+
+//------------------------------------------------------------------------------
+/**
+    Scroll down to last line 
+*/
+void 
+nGuiTextView::ScrollToLastLine()
+{
+    int linesToScroll = this->GetNumLines()-this->GetNumVisibleLines();
+    if (linesToScroll > 0)
+    {
+         this->ScrollUp(linesToScroll);
+    }
+
+    this->UpdateSliderValues();
+}
+
 //------------------------------------------------------------------------------
 /**
     Render the widget.

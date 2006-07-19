@@ -10,22 +10,19 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"
-#include "scene/ncharacter3node.h"
-#include "character/ncharacter3set.h"
 
 class nGuiHoriSliderGroup;
 class nGuiColorSliderGroup;
-class nGuiTextButton;
 class nTransformNode;
 class nLightNode;
-class nSkinAnimator;
-class nGuiTextLabel;
-class nGuiTextView;
-class nGuiSkyEditor;
+//class nGuiSkyEditor;
 
 //------------------------------------------------------------------------------
 class nGuiSceneControlWindow : public nGuiClientWindow
 {
+    // friend defined for access for reading and assigning sliders on load and safe throug nGuiSettingsManagment
+    friend class nGuiSettingsManagementWindow;
+
 public:
     /// constructor
     nGuiSceneControlWindow();
@@ -35,14 +32,12 @@ public:
     virtual void OnShow();
     /// called when widget is becoming invisible
     virtual void OnHide();
-    /// called per frame when parent widget is visible
-    virtual void OnFrame();
     /// notify widget of an event
     virtual void OnEvent(const nGuiEvent& event); 
     /// set the path to working light
-    void SetLightPath(const char* path);
+    void SetLightPath(const nString& path);
     /// get the path from working light
-    const char* GetLightPath() const;
+    const nString& GetLightPath() const;
     
     /// color type of light 
     enum ColorType
@@ -55,10 +50,6 @@ public:
 private:
     /// update Light Position
     void UpdateLightPosition();
-    /// update channel slider
-    void UpdateChnSlider();    
-    /// find Instance of nClass 
-    nRoot* FindFirstInstance(nRoot* node, nClass* classType);
 
     // Gui elements
     nRef<nGuiHoriSliderGroup> refLightDirection;
@@ -66,21 +57,10 @@ private:
     nRef<nGuiColorSliderGroup> refDiffuseSlider;
     nRef<nGuiColorSliderGroup> refSpecularSlider;
     nRef<nGuiColorSliderGroup> refAmbientSlider;
-    nArray<nGuiHoriSliderGroup*> refWeightChnListSlider;    
-    nRef<nGuiTextLabel> refStatesLabel;
-    nRef<nGuiTextLabel> refChnLabel;  
-    nRef<nGuiTextView> refAnimStates;  
-    nRef<nGuiTextView> refCharacter3Skins;  
-    nRef<nGuiTextView> refCharacter3Animations;  
-    nRef<nGuiTextView> refCharacter3Variations;  
+//  nRef<nGuiSkyEditor> refSkyEditor;
+
     nDynAutoRef<nTransformNode> refLightTransform;
     nDynAutoRef<nLightNode> refLight;
-
-//    nRef<nSkinAnimator> refSkinAnimator;
-    nRef<nSkinAnimator> refSkinAnimator;
-    nRef<nCharacter3Node> refCharacter3Node;
-    nRenderContext* character3RCPtr;
-    nCharacter3Set* character3SetPtr;
 
     vector4 diffuseColor;
     vector4 specularColor;
@@ -88,13 +68,6 @@ private:
     nString lightPath;
     nString lightTransformPath;
     vector3 lightAngles;
-    int numAnimStates;
-    bool skinAnimatorLoaded;
-    bool character3NodeLoaded;
-    bool sliderChanged;    
-    nArray<nVariable::Handle> chnHandles;
-
-    nRef<nGuiSkyEditor> refSkyEditor;
 };
 
 //------------------------------------------------------------------------------
@@ -103,11 +76,11 @@ private:
 */
 inline
 void
-nGuiSceneControlWindow::SetLightPath(const char* path)
+nGuiSceneControlWindow::SetLightPath(const nString& path)
 {
-    this->lightPath.Set(path);
+    this->lightPath = path;
     this->lightPath.StripTrailingSlash();
-    this->lightTransformPath.Set(this->lightPath.ExtractToLastSlash().Get());
+    this->lightTransformPath = this->lightPath.ExtractToLastSlash();
 }
 
 //------------------------------------------------------------------------------
@@ -115,10 +88,10 @@ nGuiSceneControlWindow::SetLightPath(const char* path)
     Get the path from working light
 */
 inline
-const char*
+const nString&
 nGuiSceneControlWindow::GetLightPath() const
 {
-    return this->lightPath.Get();
+    return this->lightPath;
 }
 
 #endif

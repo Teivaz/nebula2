@@ -40,6 +40,7 @@ nMayaCamControl::Initialize()
     viewerDirection.norm();
     this->viewerAngles.set(viewerDirection);
     this->viewerAngles.theta -= N_PI*0.5f;
+    if (viewerDirection.y < 0) this->viewerAngles.theta = - this->viewerAngles.theta;
     this->Update();
 }
 

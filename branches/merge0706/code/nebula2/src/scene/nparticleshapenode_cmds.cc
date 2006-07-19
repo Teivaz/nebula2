@@ -19,10 +19,6 @@ static void n_setstartrotation(void* slf, nCmd* cmd);
 static void n_getstartrotation(void* slf, nCmd* cmd);
 static void n_setrenderoldestfirst(void* slf, nCmd* cmd);
 static void n_getrenderoldestfirst(void* slf, nCmd* cmd);
-static void n_setglobalscale(void* slf, nCmd* cmd);
-static void n_getglobalscale(void* slf, nCmd* cmd);
-static void n_setparticlesfollownode(void* slf, nCmd* cmd);
-static void n_getparticlesfollownode(void* slf, nCmd* cmd);
 
 static void n_setemissionfrequency(void* slf, nCmd* cmd);
 static void n_getemissionfrequency(void* slf, nCmd* cmd);
@@ -81,10 +77,6 @@ n_initcmds(nClass* cl)
     cl->AddCmd("f_getstartrotation_v", 'GSTR', n_getstartrotation);
     cl->AddCmd("v_setrenderoldestfirst_b", 'SROF', n_setrenderoldestfirst);
     cl->AddCmd("b_getrenderoldestfirst_v", 'GROF', n_getrenderoldestfirst);
-    cl->AddCmd("v_setglobalscale_f", 'SGSC', n_setglobalscale);
-    cl->AddCmd("f_getglobalscale_v", 'GGSC', n_getglobalscale);
-    cl->AddCmd("v_setparticlesfollownode_b", 'SPFN', n_setparticlesfollownode);
-    cl->AddCmd("b_getparticlesfollownode_v", 'GPFN', n_getparticlesfollownode);
 
     cl->AddCmd("v_setemissionfrequency_ffffffffi", 'SEFQ', n_setemissionfrequency);
     cl->AddCmd("ffffffffi_getemissionfrequency_v", 'GEFQ', n_getemissionfrequency);
@@ -271,88 +263,6 @@ n_setrenderoldestfirst(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     self->SetRenderOldestFirst(cmd->In()->GetB());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getrenderoldestfirst
-    @input
-    v
-    @output
-    b
-    @info
-    Get whether to render oldest particles first.
-*/
-static void
-n_getrenderoldestfirst(void* slf, nCmd* cmd)
-{
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    cmd->Out()->SetB(self->GetRenderOldestFirst());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setglobalscale
-    @input
-    f
-    @output
-    v
-    @info
-    Set global scale value.
-*/
-static void n_setglobalscale(void* slf, nCmd* cmd) {
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    self->SetGlobalScale(cmd->In()->GetF());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getglobalscale
-    @input
-    f
-    @output
-    v
-    @info
-    Get global scale value.
-*/
-static void n_getglobalscale(void* slf, nCmd* cmd) {
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    cmd->Out()->SetF(self->GetGlobalScale());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setparticlesfollownode
-    @input
-    b
-    @output
-    v
-    @info
-    Set global scale value.
-*/
-static void n_setparticlesfollownode(void* slf, nCmd* cmd) {
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    self->SetParticlesFollowNode(cmd->In()->GetB());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getparticlesfollownode
-    @input
-    v
-    @output
-    b
-    @info
-    Get global scale value.
-*/
-static void n_getparticlesfollownode(void* slf, nCmd* cmd) {
-    nParticleShapeNode* self = (nParticleShapeNode*) slf;
-    cmd->Out()->SetB(self->GetParticlesFollowNode());
 }
 
 //------------------------------------------------------------------------------
@@ -743,6 +653,24 @@ n_getstartrotation(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     cmd->Out()->SetF(n_rad2deg(self->GetStartRotation()));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getrenderoldestfirst
+    @input
+    v
+    @output
+    b
+    @info
+    Get wether to render oldest particles first.
+*/
+static void
+n_getrenderoldestfirst(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode* self = (nParticleShapeNode*) slf;
+    cmd->Out()->SetB(self->GetRenderOldestFirst());
 }
 
 //------------------------------------------------------------------------------

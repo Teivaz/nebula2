@@ -87,17 +87,9 @@ nTexture2::UnlockCubeFace(CubeFace /*face*/, int /*level*/)
     Saves the texture to a file
 */
 bool
-nTexture2::SaveTextureToFile(const nString &filename)
+nTexture2::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
 {
     return false;
 };
 
-//------------------------------------------------------------------------------
-/**
-    - Feb-04 Kim, H.W. added to support ngameswf.
-*/
-void nTexture2::GenerateMipMaps()
-{
-    // reimplemented in derived class's member function.
-}
 

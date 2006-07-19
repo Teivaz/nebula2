@@ -66,7 +66,7 @@ typedef double nTime;
 
 //------------------------------------------------------------------------------
 #define N_MAXPATH (512)     // maximum length for complete path
-#define N_MAXNAMELEN (32)   // maximum length for single path component
+#define N_MAXNAMELEN (128)   // maximum length for single path component
 
 //------------------------------------------------------------------------------
 #define nID(a,b,c,d) ((a<<24)|(b<<16)|(c<<8)|(d))
@@ -142,6 +142,7 @@ struct nMemoryStats
     int totalSize;          // current allocated size
 };
 
+int n_dbgmemdumpleaks();
 void n_dbgmeminit();                // initialize memory debugging system
 nMemoryStats n_dbgmemgetstats();    // defined in ndbgalloc.cc
 

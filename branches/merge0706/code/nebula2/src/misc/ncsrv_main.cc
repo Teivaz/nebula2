@@ -181,7 +181,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     n_assert(fontHeight > 0);
     n_assert(displayHeight > 0);
 
-    const vector4 textColor(1.0f, 0.69f, 0.43f, 1.0f);
+    const vector4 textColor(1.0f, 0.9f, 0.5f, 1.0f);
 
     // get pointer to the kernel server's line buffer entries
     nLineBuffer* lineBuffer = kernelServer->GetLogHandler()->GetLineBuffer();
@@ -215,16 +215,15 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     char line[1024];
     int i;
-    float xPos = -1.0f;
-    float yPos = -1.0f;
-    float dy   = 2.0f / (maxLinesOnScreen + safeBottom);
+    rectangle rect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+    float dy = 1.0f / (maxLinesOnScreen + safeBottom);
     int curLine;
     for (curLine = firstLine; curLine >= lastLine; curLine--)
     {
         n_strncpy2(line, lineArray[curLine], sizeof(line) - 3);
         n_strcat(line, "\n", sizeof(line));
-        gfxServer->Text(line, textColor, xPos, yPos);
-        yPos += dy;
+        gfxServer->DrawText(line, textColor, rect, nFont2::Top|nFont2::Left, false);
+        rect.v0.y += dy;
     }
 
     // start final line with prompt from script server
@@ -246,7 +245,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     while ((*to++ = *from++));
 
     // and render it
-    gfxServer->Text(line, textColor, xPos, yPos);
+    gfxServer->DrawText(line, textColor, rect, nFont2::Top|nFont2::Left, false);
 }
 
 //------------------------------------------------------------------------------
@@ -272,9 +271,8 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
         // for each watcher variable
         nGfxServer2* gfxServer = nGfxServer2::Instance();
         char line[N_MAXPATH];
-        float xPos = -1.0f;
-        float yPos = -1.0f;
-        float dy   = 2.0f / float(maxLinesOnScreen);
+        rectangle rect(vector2(0.0, 0.0f), vector2(1.0f, 1.0f));
+        float dy = 1.0f / float(maxLinesOnScreen);
         nEnv* curVar;
         for (curVar = (nEnv*) watcherVars->GetHead(); curVar; curVar = (nEnv*) curVar->GetSucc())
         {
@@ -312,8 +310,8 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
                             sprintf(line,"%s: <unknown data type>\n", varName);
                             break;
                     }
-                    gfxServer->Text(line, textColor, xPos, yPos);
-                    yPos += dy;
+                    gfxServer->DrawText(line, textColor, rect, nFont2::Top|nFont2::Left, false);
+                    rect.v0.y += dy;
                 }
             }
         }
@@ -548,7 +546,7 @@ nConServer::ExecuteCommand()
         this->refScriptServer->SetFailOnError(false);
         this->refScriptServer->Run(this->inputBuffer, result);
         this->refScriptServer->SetFailOnError(failOnError);
-        if (false == result.IsEmpty())
+        if (result.IsValid())
         {
             n_printf("%s\n", result.Get());
         }

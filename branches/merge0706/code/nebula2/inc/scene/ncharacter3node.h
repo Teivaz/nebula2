@@ -19,16 +19,10 @@ public:
     nCharacter3Node();
     /// destructor
     virtual ~nCharacter3Node();
-    /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
     /// on render context created
-    virtual void RenderContextCreated(nRenderContext* renderContext);
-/*
-    /// render geometry
-    virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-*/
+    //virtual void RenderContextCreated(nRenderContext* renderContext);
     /// load resources for this object
     virtual bool LoadResources();
     /// unload resources
@@ -36,15 +30,15 @@ public:
 
     /// retreive names of loaded skins
     nArray<nString> GetNamesOfLoadedSkins() const;
-    /// retreive names of loaded animations
-    nArray<nString> GetNamesOfLoadedAnimations();
-    /// retreive names of loaded variations
-    nArray<nString> GetNamesOfLoadedVariations();
     /// retreive full names of loaded skins
     nArray<nString> GetFullNamesOfLoadedSkins() const;
+    /// retreive names of loaded animations
+    const nArray<nString>& GetNamesOfLoadedAnimations();
+    /// retreive names of loaded variations
+    const nArray<nString>& GetNamesOfLoadedVariations();
 
     /// get index of character set variable in rendercontext
-    int GetRenderContextCharacterSetIndex() const;
+    //int GetRenderContextCharacterSetIndex() const;
 
     /// read skinlist from a XML file
     static bool ReadCharacterStuffFromXML(nString fileName,nString &resultSkinList,nString &resultVariation);
@@ -61,11 +55,13 @@ protected:
 
     /// lookup first appearance of a specific class under @c node
     nRoot* FindFirstInstance(nRoot* node, nClass* classType);
+    /// update bounding box from loaded skins
+    void UpdateBoundingBox();
 
-
+    nClass* transformNodeClass;
     nArray<nRoot*> loadedSkins;
     nArray<nString> loadedSkinName;
-    int characterSetIndex;
+    //int characterSetIndex;
 };
 
 //------------------------------------------------------------------------------

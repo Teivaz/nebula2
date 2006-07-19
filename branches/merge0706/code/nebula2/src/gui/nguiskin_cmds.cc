@@ -30,6 +30,8 @@ static void n_beginbrushes(void* slf, nCmd* cmd);
 static void n_addbrush(void* slf, nCmd* cmd);
 static void n_adddynamicbrush(void* slf, nCmd* cmd);
 static void n_endbrushes(void* slf, nCmd* cmd);
+static void n_setbuttonsound(void* slf, nCmd* cmd);
+static void n_getbuttonsound(void* slf, nCmd* cmd);
 static void n_setsound(void* slf, nCmd* cmd);
 static void n_getsound(void* slf, nCmd* cmd);
 static void n_setsoundvolume(void* slf, nCmd* cmd);

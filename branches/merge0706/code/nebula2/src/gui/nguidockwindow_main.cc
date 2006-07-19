@@ -185,6 +185,36 @@ nGuiDockWindow::OnShow()
     btn->OnShow();
     this->refHideButton = btn;
 
+    // character control button
+    btn = (nGuiButton*) kernelServer->New("nguibutton", "CharacterControlButton");
+    n_assert(btn);
+    btn->SetDefaultBrush("charwindow_n");
+    btn->SetPressedBrush("charwindow_p");
+    btn->SetHighlightBrush("charwindow_h");
+    btn->SetMinSize(btnSize);
+    btn->SetMaxSize(btnSize);
+    btn->SetTooltip("Control Characters");
+    layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
+    layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
+    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refHideButton, 0.0f);
+    btn->OnShow();
+    this->refCharacterControlButton = btn;
+
+    // save and load button
+    btn = (nGuiButton*) kernelServer->New("nguibutton", "SaveLoadButton");
+    n_assert(btn);
+    btn->SetDefaultBrush("savewindow_n");
+    btn->SetPressedBrush("savewindow_p");
+    btn->SetHighlightBrush("savewindow_h");
+    btn->SetMinSize(btnSize);
+    btn->SetMaxSize(btnSize);
+    btn->SetTooltip("Load and save settings");
+    layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
+    layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
+    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refCharacterControlButton, 0.0f);
+    btn->OnShow();
+    this->refSettingsManagementButton = btn;
+
     // quit button
     btn = (nGuiButton*) kernelServer->New("nguibutton", "QuitButton");
     n_assert(btn);
@@ -196,7 +226,7 @@ nGuiDockWindow::OnShow()
     btn->SetTooltip("Quit Application");
     layout->AttachForm(btn, nGuiFormLayout::Top, 0.0f);
     layout->AttachForm(btn, nGuiFormLayout::Bottom, 0.0f);
-    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refHideButton, 0.0f);
+    layout->AttachWidget(btn, nGuiFormLayout::Left, this->refSettingsManagementButton, 0.0f);
     layout->AttachForm(btn, nGuiFormLayout::Right, 0.0f);
     btn->OnShow();
     this->refQuitButton = btn;
@@ -205,7 +235,7 @@ nGuiDockWindow::OnShow()
 
     // set window position and size
     rectangle rect;
-    const float width  = 10 * btnSize.x;
+    const float width  = 12 * btnSize.x;
     const float height = btnSize.y;
     rect.v0.set(0.5f - (width * 0.5f), 1.0f - height);
     rect.v1.set(0.5f + (width * 0.5f), 1.0f);
@@ -221,13 +251,15 @@ nGuiDockWindow::OnHide()
     this->refConsoleButton->Release();
     this->refTexBrowserButton->Release();
     this->refGfxBrowserButton->Release();
-    this->refHardpointButton->Release();
-  //  this->refSceneControlButton->Release();
+    this->refHardpointButton->Release();  
+    this->refSceneControlButton->Release();
     this->refWatcherButton->Release();
     this->refSysInfoButton->Release();
     this->refAdjustButton->Release();
     this->refHideButton->Release();
     this->refQuitButton->Release();
+    this->refCharacterControlButton->Release();
+    this->refSettingsManagementButton->Release();
 
     // call parent class
     nGuiClientWindow::OnHide();
@@ -280,6 +312,16 @@ nGuiDockWindow::OnEvent(const nGuiEvent& event)
         {
             // open system info window
             nGuiServer::Instance()->NewWindow("nguiadjustdisplaywindow", true);
+        }
+        else if (event.GetWidget() == this->refCharacterControlButton)
+        {
+            // open character controls window
+            nGuiServer::Instance()->NewWindow("nguicharactercontrolwindow", true);
+        }
+        else if (event.GetWidget() == this->refSettingsManagementButton)
+        {
+            // open settings management window for loading and saving values
+            nGuiServer::Instance()->NewWindow("nguisettingsmanagementwindow", true);
         }
         else if (event.GetWidget() == this->refHideButton)
         {

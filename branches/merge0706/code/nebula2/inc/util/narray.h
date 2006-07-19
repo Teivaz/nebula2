@@ -16,6 +16,7 @@
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
+#include <algorithm>
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nArray
@@ -86,6 +87,8 @@ public:
     iterator EraseQuick(iterator iter);
     /// insert element at index
     void Insert(int index, const TYPE& elm);
+    /// insert element into sorted array
+    void InsertSorted(const TYPE& elm);
     /// clear array (calls destructors)
     void Clear();
     /// reset array (does NOT call destructors)
@@ -104,6 +107,10 @@ public:
     void Reallocate(int initialSize, int grow);
     /// returns new array with elements which are not in rhs (slow!)
     nArray<TYPE> Difference(const nArray<TYPE>& rhs);
+    /// sort the array
+    void Sort();
+    /// do a binary search, requires a sorted array
+    int BinarySearchIndex(const TYPE& elm) const;
 
 private:
     /// check if index is in valid range, and grow array if necessary
@@ -936,6 +943,113 @@ nArray<TYPE>::Difference(const nArray<TYPE>& rhs)
         }
     }
     return diff;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Sorts the array. This just calls the STL sort algorithm.
+*/
+template<class TYPE>
+void
+nArray<TYPE>::Sort()
+{
+    std::sort(this->Begin(), this->End());
+}
+
+//------------------------------------------------------------------------------
+/**
+    Does a binary search on the array, returns the index of the identical
+    element, or -1 if not found
+*/
+template<class TYPE>
+int
+nArray<TYPE>::BinarySearchIndex(const TYPE& elm) const
+{
+    int num = this->Size();
+    if (num > 0)
+    {
+        int half;
+        int lo = 0;
+	    int hi = num - 1;
+	    int mid;
+        while (lo <= hi) 
+        {
+            if ((half = num/2)) 
+            {
+                mid = lo + ((num & 1) ? half : (half - 1));
+                if (elm < this->elements[mid])
+                {
+                    hi = mid - 1;
+                    num = num & 1 ? half : half - 1;
+                } 
+                else if (elm > this->elements[mid]) 
+                {
+                    lo = mid + 1;
+                    num = half;
+                } 
+                else
+                {
+                    return mid;
+                }
+            } 
+            else if (num) 
+            {
+                if (elm != this->elements[lo])
+                {
+                    return -1;
+                }
+                else      
+                {
+                    return lo;
+                }
+            } 
+            else 
+            {
+                break;
+            }
+        }
+    }
+    return -1;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This inserts the element into a sorted array. In the current
+    implementation this is a slow operation O(n). This should be
+    optimized to O(log n).
+*/
+template<class TYPE>
+void
+nArray<TYPE>::InsertSorted(const TYPE& elm)
+{
+    if (0 == this->Size())
+    {
+        // empty shortcut
+        this->Append(elm);
+    }
+    else if (elm < this->Front())
+    {
+        // front shortcut
+        this->Insert(0, elm);
+    }
+    else if (elm > this->Back())
+    {
+        // back shortcut
+        this->Append(elm);
+    }
+    else
+    {
+        // default case
+        int i;
+        for (i = 0; i < this->Size(); i++)
+        {
+            if (elm < (*this)[i])
+            {
+                this->Insert(i, elm);
+                break;
+            }
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

@@ -76,6 +76,9 @@ nMeshBuilder::BuildTriangleNormals()
         }
         b = (n * t) * h;
 
+        // FIXME: invert binormal for Nebula2 (also need to invert green channel in normalmaps)
+        b = -b;
+
         tri.SetTangent(t);
         tri.SetBinormal(b);
     }
@@ -83,6 +86,68 @@ nMeshBuilder::BuildTriangleNormals()
 
 //------------------------------------------------------------------------------
 /**
+    Fixes the existing tangent and binormal directions. If tangents and
+    binormals are delivered by Maya, Maya insist on consistent handedness
+    of the tangent space matrices, even if the resulting directions are
+    no longer conform with the original u/v directions. This method
+    checks the triangle tangents/binormals against the existing
+    vertex tangents/binormals, and if they are opposite, fixes the
+    direction of the vertex tangents and binormals.
+*/
+void
+nMeshBuilder::FixVertexTangentDirections()
+{
+    // inflate the mesh, this generates 3 (possibly redundant) vertices
+    // for each triangle
+    this->Inflate();
+    
+    // for each triangle...
+    int triIndex;
+    for (triIndex = 0; triIndex < this->GetNumTriangles(); triIndex++)
+    {
+        // get current triangle
+        Triangle& curTriangle = this->GetTriangleAt(triIndex);
+
+        // for each vertex in the triangle...
+        int triVertexIndex;
+        for (triVertexIndex = 0; triVertexIndex < 3; triVertexIndex++)
+        {
+            // get the vertex...
+            Vertex& curVertex = this->GetVertexAt(curTriangle.vertexIndex[triVertexIndex]);
+
+            // fix tangent
+            vector3 vtxTangent = curVertex.GetTangent();
+            const vector3& triTangent = curTriangle.GetTangent();
+            if (vtxTangent.dot(triTangent) < 0.0f)
+            {
+                vtxTangent = -vtxTangent;
+            }
+            curVertex.SetTangent(vtxTangent);
+
+            // fix binormal
+            vector3 vtxBinormal = curVertex.GetBinormal();
+            const vector3& triBinormal = curTriangle.GetBinormal();
+            if (vtxBinormal.dot(triBinormal) < 0.0f)
+            {
+                vtxBinormal = -vtxBinormal;
+            }
+            curVertex.SetBinormal(vtxBinormal);
+        }
+    }
+
+    // do a final cleanup, removing redundant vertices
+    this->Cleanup(0);
+}   
+
+//------------------------------------------------------------------------------
+/**
+    *** OBSOLETE OBSOLETE OBSOLETE ***
+
+    This method is used by the Maya plugin if the tangents are not
+    extracted from Maya. The tangent smoothing in here is very
+    crude, so this doesn't give very good results...
+
+
     Generates the per-vertex tangents by averaging the
     per-triangle tangents and binormals which must be computed
     beforehand. Note that the vertex normals will not be touched!

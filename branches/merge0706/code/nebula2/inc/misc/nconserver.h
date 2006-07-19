@@ -35,8 +35,6 @@ public:
     static nConServer* Instance();
     /// per-frame trigger method
     void Trigger();
-    /// render the console
-    void Render();
     /// open the console
     void Open();
     /// close the console
@@ -49,6 +47,10 @@ public:
     void Unwatch();
 
 private:
+    friend class nRpPass;
+
+    /// render the console
+    void Render();
     /// process input events
     bool EditLine(nInputEvent* inputEvent);
     /// add input buffer to command history

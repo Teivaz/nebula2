@@ -79,7 +79,7 @@ bool nIpcMiniServer::Listen()
 
             // set the connection status to false, this will only be set to true
             // when the actual handshake with the client has happened
-            this->isConnected = false;
+            //this->isConnected = false;
         }
         else 
         {
@@ -122,7 +122,7 @@ nIpcMiniServer::Poll()
     {
         // do a non-blocking recv
         int len = recv(this->rcvrSocket, this->msgBuffer.GetPointer(), this->msgBuffer.GetMaxSize(), 0);
-        if (len == 0)
+        if (len == 0 || N_SOCKET_LAST_ERROR == N_ECONNRESET)
         {
             // the connection has been closed
             n_printf("nIpcMiniServer: connection closed!\n");
@@ -155,14 +155,15 @@ nIpcMiniServer::Poll()
                     {
                         // handshake from client, one portname argument
                         const char* portName = tokenString.GetNextToken(" ");
-                        if (portName && (0 == strcmp(portName, this->ipcServer->selfAddr.GetPortName())))
+                        //if (portName && (0 == strcmp(portName, this->ipcServer->selfAddr.GetPortName())))
                         {
                             this->isConnected = true;
                         }
+                        /*
                         else
                         {
                             this->isConnected = false;
-                        }
+                        }*/
                         systemMessage = true;
                     }
                     else if (strcmp(cmd, "~close") == 0)

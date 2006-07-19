@@ -15,13 +15,6 @@ nParticleServer* nParticleServer::Singleton = 0;
 */
 nParticleServer::nParticleServer() :
     enabled(true),
-    #ifdef __NEBULA_STATS__
-    numEmitters("parNumEmitters", nArg::Int),
-    numActiveEmitters("parNumActiveEmitters", nArg::Int),   
-    numParticles("parNumParticles", nArg::Int),
-    numDrawnParticles("parNumDrawnParticles", nArg::Int),
-    numDrawnPrimitives("parNumDrawnPrimitives", nArg::Int),
-    #endif
     particlePool(MaxParticles, 0, nParticle()),
     freeParticlePool(0, MaxParticles, 0),
     emitterPool(0, 10),
@@ -134,15 +127,6 @@ nParticleServer::NewParticleEmitter()
 */
 void nParticleServer::Trigger()
 {
-    #ifdef __NEBULA_STATS__
-    int numEmitters  = 0;
-    int numParticles = 0;
-    //rest stats that are updated extern
-    this->numActiveEmitters->SetI(0);
-    this->numDrawnParticles->SetI(0);
-    this->numDrawnPrimitives->SetI(0);
-    #endif
-    
     // Trigger active emitters and delete unused
     if (!this->emitterPool.Empty())
     {
@@ -161,17 +145,8 @@ void nParticleServer::Trigger()
                 // FIXME: now in nParticleEmitter::Trigger()
                 emitter->SetAlive(false);
                 ++emitterIter;
-                #ifdef __NEBULA_STATS__
-                numEmitters++;
-                #endif
             }
         }
     }
-
-    #ifdef __NEBULA_STATS__
-    //update stats
-    this->numEmitters->SetI(numEmitters);
-    this->numParticles->SetI(numParticles);
-    #endif 
 }
 

@@ -88,6 +88,8 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// render debug information
+    virtual void RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix);
     /// perform pre-instancing rending of shader
     virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader

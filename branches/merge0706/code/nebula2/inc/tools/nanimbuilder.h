@@ -94,12 +94,17 @@ public:
         static const char* IpolType2String(IpolType t);
         /// convert string to ipol type
         static IpolType String2IpolType(const char* str);
+        ///flag  = true, if curve belongs to an animated joint
+        void SetIsAnimated(int isAnim);
+        ///returns isAnimated flag
+        int IsAnimated() const;
 
         nArray<Key> keyArray;
         IpolType ipolType;
         bool isCollapsed;
         int firstKeyIndex;
         vector4 collapsedKey;
+        int isAnimated;
     };
 
     /// an animation curve group
@@ -125,6 +130,10 @@ public:
         void SetLoopType(LoopType t);
         /// get loop type
         LoopType GetLoopType() const;
+        /// set fadein frames
+        void SetFadeInFrames(float frames);
+        /// get fadein frames
+        float GetFadeInFrames() const;
         /// set the start key
         void SetStartKey(int start);
         /// get the start key
@@ -147,6 +156,10 @@ public:
         static const char* LoopType2String(LoopType t);
         /// convert string to loop type
         static LoopType String2LoopType(const char* str);
+        /// set array of animated joints
+        void SetAnimJoints(nArray<nString> joints);
+        /// get array og animated joints
+        nArray<nString> GetAnimJoints() const;
 
         nArray<Curve> curveArray;
         LoopType loopType;
@@ -155,6 +168,8 @@ public:
         int numKeys;
         int keyStride;
         float keyTime;
+        nArray<nString> animJoints;
+        float fadeInFrames;
     };
 
     /// constructor
@@ -285,7 +300,8 @@ nAnimBuilder::Curve::Curve() :
     keyArray(128, 2048),
     ipolType(NONE),
     isCollapsed(false),
-    firstKeyIndex(-1)
+    firstKeyIndex(-1),
+    isAnimated(1)
 {
     // empty
 }
@@ -297,7 +313,8 @@ inline
 nAnimBuilder::Curve::Curve(int numKeys, const Key& initKey) :
     ipolType(NONE),
     isCollapsed(true),
-    firstKeyIndex(-1)
+    firstKeyIndex(-1),
+    isAnimated(1)
 {
     this->keyArray.SetFixedSize(numKeys);
     this->keyArray.Fill(0, this->keyArray.Size(), initKey);
@@ -488,7 +505,8 @@ nAnimBuilder::Group::Group() :
     startKey(0),
     numKeys(0),
     keyStride(0),
-    keyTime(0.0f)
+    keyTime(0.0f),
+    fadeInFrames(0)
 {
     // empty
 }
@@ -541,6 +559,26 @@ nAnimBuilder::Group::LoopType
 nAnimBuilder::Group::GetLoopType() const
 {
     return this->loopType;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimBuilder::Group::SetFadeInFrames(float frames)
+{
+    this->fadeInFrames = frames;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nAnimBuilder::Group::GetFadeInFrames() const
+{
+    return this->fadeInFrames;
 }
 
 //------------------------------------------------------------------------------
@@ -627,6 +665,26 @@ nAnimBuilder::Group::GetKeyTime() const
 /**
 */
 inline
+void
+nAnimBuilder::Group::SetAnimJoints(nArray<nString> joints)
+{
+    this->animJoints = joints;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nArray<nString>
+nAnimBuilder::Group::GetAnimJoints() const
+{
+    return this->animJoints;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 bool
 nAnimBuilder::Group::Validate() const
 {
@@ -699,6 +757,26 @@ nAnimBuilder::Group&
 nAnimBuilder::GetGroupAt(int index)
 {
     return this->groupArray[index];
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimBuilder::Curve::SetIsAnimated(int isAnim)
+{
+    this->isAnimated = isAnim;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nAnimBuilder::Curve::IsAnimated() const
+{
+    return this->isAnimated;
 }
 
 //------------------------------------------------------------------------------

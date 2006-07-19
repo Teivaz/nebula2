@@ -34,12 +34,7 @@ public:
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
     /// save texture to file
-    virtual bool SaveTextureToFile(const nString &filename);
-
-    /// filters mipmap levels of a texture.
-    virtual void GenerateMipMaps();
-    /// convert nTexture2 format to D3D9FORMAT.
-    static D3DFORMAT FormatToD3DFormat(nTexture2::Format format);
+    virtual bool SaveTextureToFile(const nString &filename, FileFormat fileFormat);
 
 protected:
     /// load texture resource (create rendertarget if render target resource)
@@ -54,7 +49,6 @@ protected:
 private:
     friend class nD3D9Server;
     friend class nD3D9Shader;
-    friend class nD3D9Surface;
     friend class nAllocatorPresenter;
 
     /// get d3d9 base texture interface
@@ -67,6 +61,9 @@ private:
     IDirect3DTexture9* GetTexture2D();
     /// verify pixelformat of rendertarget
     bool CheckRenderTargetFormat(IDirect3D9* d3d9, IDirect3DDevice9* d3d9Device, DWORD usage, D3DFORMAT pixelFormat);
+    /// convert file format to D3DX file format
+    static D3DXIMAGE_FILEFORMAT FileFormatToD3DX(FileFormat fileFormat);
+    static D3DFORMAT FormatToD3DFormat(nTexture2::Format format);
 
     /// create a render target texture
     bool CreateRenderTarget();

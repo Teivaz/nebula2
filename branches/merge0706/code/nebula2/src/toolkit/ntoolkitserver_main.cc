@@ -251,10 +251,7 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
             // now we need to recalculate the correct index
             int dx9pass = mapIndex / maxTexturesPerShader;
             int dx9offset = mapIndex % maxTexturesPerShader;
-            if (mlNode->GetPartIndex() == dx9pass)
-            {
-                mlNode->SetUVStretch(dx9offset, uv);
-            }
+            mlNode->SetUVStretch(dx9offset, uv);
         }
     }
 

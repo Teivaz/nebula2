@@ -68,7 +68,7 @@ public:
     /// destructor
     ~nDynamicMesh();
     /// initialize the dynamic mesh
-    bool Initialize(nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering, bool shared = true);
+    bool Initialize(nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering, const nString& rsrcBaseName="dyn_", bool shared = true);
     /// if this returns false, call Initialize()
     bool IsValid() const;
     /// begin indexed rendering
@@ -87,7 +87,7 @@ public:
 protected:
     enum
     {
-        IndexBufferSize = 16384,                    // number of vertices
+        IndexBufferSize = 4096,                     // number of vertices
         VertexBufferSize  = 3 * IndexBufferSize,    // number of indices
     };
     bool indexedRendering;

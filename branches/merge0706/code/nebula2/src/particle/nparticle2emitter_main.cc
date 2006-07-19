@@ -2,49 +2,49 @@
 //  nparticle_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "particle/nparticle2emitter.h"
+#include "particle/nParticle2Emitter.h"
 #include "particle/nparticle2.h"
 #include "mathlib/vector.h"
 
 //------------------------------------------------------------------------------
 /**
 */
-nParticle2Emitter::nParticle2Emitter():
-    loop(true),
-    activityDistance(100.0f),
-    emissionDuration(10.0),
-    startTime(-1.0),
-    lastEmission(0.0),
+nParticle2Emitter::nParticle2Emitter() :
+    pStaticCurves(0),
+    emitterMeshGroupIndex(0),
     lastEmissionVertex(0),
-    isOpen(false),
-    meshGroupIndex(0),
-    remainingTime(0),
-    isSetUp(false),
-    renderOldestFirst(false),
-    tileTexture(1),
-    stretchToStart(false),
-    particles(0),
-    particleVelocityRandomize(0),
-    particleRotationRandomize(0),
+    startTime(-1.0),
+    lastEmission(0),
+    emissionDuration(10.0),
+    looping(true),
+    activityDistance(100.0f),
     particleStretch(0),
-    particleSizeRandomize(0),
+    precalcTime(0),
+    tileTexture(1),
+    renderOldestFirst(false),
+    stretchToStart(false),
     randomRotDir(false),
-    frameWasRendered(true),
     hasLooped(false),
+    frameWasRendered(true),
     invisibleTime(0),
     isSleeping(false),
-    precalcTime(0),
-    viewAngleFade(false),
     stretchDetail(1),
-    dynMesh(),
-    meshPtr(0),
-    wind(),
-    pStaticCurve(0),
-    gravity(0),
-    startRotationMin(0),
-    startRotationMax(0),
-    startDelay(0)
+    viewAngleFade(false),
+    startDelay(0.0f),
+    gravity(0.0f),
+    startRotationMin(0.0f),
+    startRotationMax(0.0f),
+    particleVelocityRandomize(0.0f),
+    particleRotationRandomize(0.0f),
+    particleSizeRandomize(0.0f),
+    particles(0),
+    particleCount(0),
+    maxParticleCount(0),
+    remainingTime(0.0),
+    isSetup(false),
+    isValid(false)
 {
+    // empty
 }
 
 
@@ -53,284 +53,335 @@ nParticle2Emitter::nParticle2Emitter():
 */
 nParticle2Emitter::~nParticle2Emitter()
 {
-//    if(this->isOpen) delete [] this->particles;
-    if( 0 != this->particles) delete [] this->particles;
-    this->particles = 0;
+    this->DeleteParticles();
 }
-
 
 //------------------------------------------------------------------------------
 /**
+    Allocates the particle pool.
 */
 void
-nParticle2Emitter::CalculateStep(float fdTime)
+nParticle2Emitter::AllocateParticles()
 {
-    if(this->particleCount == 0) return;
+    n_assert(this->maxParticleCount > 0);
+    this->DeleteParticles();
+    this->particles = n_new_array(nParticle2, this->maxParticleCount);
+    this->particleCount = 0;
+}
 
-    // because the time can be negative, we need an absolute value to advance the lifetime of the particle
-    float fdAbsTime = fabsf(fdTime);
-
-    vector3 windVek = vector3(wind.x,wind.y,wind.z) * wind.w;
-    vector3 acc;
-    vector3 freeacc;
-    vector3 boundMin, boundMax;
-    boundMin = this->particles[0].position;
-    boundMax = this->particles[0].position;
-
-    nParticle2* partSrc = this->particles;
-    nParticle2* part = this->particles;
-    int p;
-    for( p = 0; p < this->particleCount ; p++)
+//------------------------------------------------------------------------------
+/**
+    Deletes the particle pool.
+*/
+void
+nParticle2Emitter::DeleteParticles()
+{
+    if (this->particles)
     {
-        *part = *partSrc;
-        part->lifeTime += (float)fdAbsTime;
-        float relParticleAge = part->lifeTime * part->oneDivMaxLifeTime;
-        int curveIndex = ((int)(relParticleAge * (float)PARTICLE_TIME_DETAIL));
-        float*  curCurves = &this->pStaticCurve[curveIndex*CurveTypeCount];
+        n_delete_array(this->particles);
+        this->particles = 0;
+        this->particleCount = 0;
+    }
+}
 
-        if((relParticleAge < 1.0f)&&(relParticleAge >= 0.0f))
+//------------------------------------------------------------------------------
+/**
+    Updates the existing particles.
+*/
+void
+nParticle2Emitter::CalculateStep(float stepTime)
+{
+    n_assert(stepTime >= 0.0f);
+    n_assert(0 != this->particles);
+    n_assert(0 != this->pStaticCurves);
+
+    // nothing to do?
+    if (0 == this->particleCount)
+    {
+        return;
+    }
+
+    vector3 windVector = vector3(this->wind.x, this->wind.y, this->wind.z) * wind.w;
+    vector3 acc, freeAcc, boundMin, boundMax;
+    this->box.begin_extend();
+
+    nParticle2* particleSource = this->particles;
+    nParticle2* particle = this->particles;
+    int particleIndex;
+    for (particleIndex = 0; particleIndex < this->particleCount; particleIndex++)
+    {
+        // FIXME: hmm, this removes dead particles from the array,
+        // the copy operation sucks though...
+        if (particle != particleSource)
         {
-            acc = windVek * curCurves[ParticleAirResistance];
+            *particle = *particleSource;
+        }
+
+        // update times
+        particle->lifeTime += stepTime;
+        float relParticleAge = particle->lifeTime * particle->oneDivMaxLifeTime;
+        if ((relParticleAge >= 0.0f) && (relParticleAge < 1.0f))
+        {
+            // get pointer to anim curves
+            int curveIndex = int(relParticleAge * float(ParticleTimeDetail));
+            curveIndex = n_iclamp(curveIndex, 0, ParticleTimeDetail - 1);
+            float* curCurves = &this->pStaticCurves[curveIndex * CurveTypeCount];
+
+            // compute acceleration vector
+            acc = windVector * curCurves[ParticleAirResistance];
             acc.y += this->gravity;
             acc *= curCurves[ParticleMass];
 
-            // calc new values
-            part->acc = acc;
-            part->position += part->velocity * ( fdTime * curCurves[ParticleVelocityFactor] );
-            part->velocity += acc * fdTime;
-            part->rotation += curCurves[ParticleRotationVelocity] * part->rotationVariation * fdTime;
+            // update particle
+            particle->acc = acc;
+            particle->position += particle->velocity * (stepTime * curCurves[ParticleVelocityFactor]);
+            particle->velocity += acc * stepTime;
+            particle->rotation += curCurves[ParticleRotationVelocity] * particle->rotationVariation * stepTime;
 
             // update boundary values
-            if(part->position.x < boundMin.x) boundMin.x = part->position.x;
-            if(part->position.x > boundMax.x) boundMax.x = part->position.x;
-            if(part->position.y < boundMin.y) boundMin.y = part->position.y;
-            if(part->position.y > boundMax.y) boundMax.y = part->position.y;
-            if(part->position.z < boundMin.z) boundMin.z = part->position.z;
-            if(part->position.z > boundMax.z) boundMax.z = part->position.z;
+            this->box.extend(particle->position);
 
-            part++;
-        } else {
+            // advance to next particle
+            particle++;
+        } 
+        else 
+        {
             // particle's lifetime is over
-            // part does not get advanced
+            // don't advance particle pointer 
             this->particleCount--;
-            p--;
-        };
-        partSrc++;
-    };
-
-    // apply boundary changes
-    this->box.extend(boundMin);
-    this->box.extend(boundMax);
-};
+            particleIndex--;
+        }
+        particleSource++;
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
+    Checks if the particle system should go to sleep because it is
+    too far away or was invisible for some time.
+*/
+bool
+nParticle2Emitter::CheckInvisible(float deltaTime)
+{
+    // check for activity distance
+    const matrix44& viewer = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
+    vector3 emitterViewer = viewer.pos_component() - this->transform.pos_component();
+
+    if ((emitterViewer.len() >= this->activityDistance) ||                 // viewer out of range
+        (!this->frameWasRendered && this->looping && this->hasLooped))     // skip if invisible, looping and has looped at least once
+    {
+        // adjust starttime by missed timedelta
+        this->startTime += deltaTime;
+        this->lastEmission += deltaTime;
+        if (!this->frameWasRendered)
+        {
+            this->invisibleTime += deltaTime;
+        }
+        else
+        {
+            this->invisibleTime = 0.0f;
+        }
+
+        // go to sleep after beeing invisible for too long
+        if (this->looping && this->hasLooped && !this->isSleeping && (this->invisibleTime > 3.0f))    
+        {
+            this->isSleeping = true;
+            this->DeleteParticles();
+        }
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Updates the particle system. This will create new particles.
 */
 void
-nParticle2Emitter::Trigger(nTime triggerTime)
+nParticle2Emitter::Update(float curTime)
 {
-    if(!this->isSetUp) return;
-   
-    nTime   curTime = triggerTime;
-    int     triggerSteps = 1;
-    float   triggerTimePitch = 0;
+    if (!this->IsSetup())
+    {
+        // not completely setup yet
+        return;
+    }
 
+    // need to initialize?
     bool firstRun = false;
-    if(!this->isOpen)
+    if (!this->IsValid())
     {
-        this->Open();
+        this->Initialize();
         firstRun = true;
-    };
+    }
 
-    if( firstRun || (curTime < lastEmission))
+    // check for time exception
+    int numSteps = 1;
+    float stepSize = 0.0f;
+    if (firstRun || (curTime < this->lastEmission))
     {
-        // Time reset
-
-        // ok, the emitter is run for the first time or there has been a time reset. 
-        // eventually, we need to calculate some steps in advance
-
-        if(this->precalcTime!=0.0f)
+        // a time exception has occured, or we are run for the first
+        // time, so reset the particle system
+        if (this->precalcTime > 0.0f)
         {
-            triggerTimePitch = 0.1f;    // calculate 1/10s steps
-            triggerSteps     = (int)(this->precalcTime / triggerTimePitch) + 1;
-            curTime -= (triggerSteps-1) * triggerTimePitch;
-        };
-
+            stepSize = 0.1f;    // calculate 1/10s steps
+            numSteps = int(this->precalcTime / stepSize) + 1;
+            curTime -= (numSteps - 1) * stepSize;
+        }
         this->particleCount = 0;
         this->startTime = curTime;
         this->lastEmission = curTime;
         this->remainingTime = 0;
-    };
+    }
 
-    int trigCnt;
-    for(trigCnt = 0; trigCnt < triggerSteps ; trigCnt ++)
+    // for each step...
+    int curStep;
+    for (curStep = 0; curStep < numSteps; curStep++)
     {
         // calculate timestep
-        nTime deltaTime = curTime - this->lastEmission;
-        
-        // fdTime is manipulated by TimeManipulator
-        float fdTime = (float) deltaTime;
-        // apply Time - Manipulator on deltaTime
-        float relAge = (float)((curTime - this->startTime - this->startDelay) / this->emissionDuration);
-        int curveIndex = (int)(relAge * PARTICLE_TIME_DETAIL);
-        if( curveIndex < 0 ) curveIndex = 0;
-        if( curveIndex >= PARTICLE_TIME_DETAIL ) curveIndex = PARTICLE_TIME_DETAIL-1;
-        fdTime *= this->pStaticCurve[curveIndex*CurveTypeCount+TimeManipulator];
+        float deltaTime = float(curTime - this->lastEmission);
+        n_assert(deltaTime >= 0.0f);
 
-        float fdAbsTime = fabsf(fdTime);
-
-        // check for activity distance
-        const matrix44& viewer = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
-	    vector3 emitterViewer = viewer.pos_component() - this->matrix.pos_component();
+        // compute stepTime, which is deltaTime manipulated by
+        // time manipulator curve
+        float relAge = float((curTime - this->startTime - this->startDelay) / this->emissionDuration);
+        int curveIndex = int(relAge * ParticleTimeDetail);
+        curveIndex = n_iclamp(curveIndex, 0, ParticleTimeDetail - 1);
+        float stepTime = n_abs(deltaTime * this->pStaticCurves[curveIndex * CurveTypeCount + TimeManipulator]);
+        n_assert(stepTime >= 0.0f);
 
         // invisibility- and out-of-range-check
-        if ( (triggerSteps==1) && (                                             // check only if this is not initial triggering
-            (emitterViewer.len() >= this->activityDistance) ||                  // viewer out of range
-            ((!this->frameWasRendered) && (this->loop) && (this->hasLooped))    // skip if invisible, looping and has looped at least once
-            ))
+        // (only if this is not an initial update)
+        if ((1 == numSteps) && this->CheckInvisible(deltaTime))
         {
-            // adjust starttime by missed timedelta
-            this->startTime += deltaTime;
-            this->lastEmission += deltaTime;
-            if(!this->frameWasRendered)
-                this->invisibleTime += (float)deltaTime;
-            else
-                this->invisibleTime = 0.0f;
-            // go to sleep after beeing invisible for too long
-            if((this->loop) && (this->hasLooped) && (!this->isSleeping) && (this->invisibleTime > 3.0f) )    
-            {
-                this->isSleeping = true;
-                if( 0 != this->particles) delete [] this->particles;
-                this->particles = 0;
-                this->particleCount = 0;
-            };
             return;
-        };
+        }
+
         this->frameWasRendered = false;
         this->invisibleTime = 0;
 
-        // calculation goes here...
-        CalculateStep(fdTime);
+        // update existing particle positions, remove dead ones
+        this->CalculateStep(stepTime);
 
         // emit new particles if we are inside the emissiontimeframe
-        if( (curTime >= this->startTime) && (lastEmission < this->startTime + this->startDelay + this->emissionDuration ) ) 
+        if ((curTime >= this->startTime) && (lastEmission < this->startTime + this->startDelay + this->emissionDuration)) 
         {
-            if( curTime >= this->startTime + this->startDelay )
+            if (curTime >= (this->startTime + this->startDelay))
             {
-                float relAge = (float)((curTime - this->startTime - this->startDelay) / this->emissionDuration);
-                int curveIndex = (int)(relAge * PARTICLE_TIME_DETAIL);
-                if( curveIndex < 0 ) curveIndex = 0;
-                if( curveIndex >= PARTICLE_TIME_DETAIL ) curveIndex = PARTICLE_TIME_DETAIL-1;
-                float* curCurves = &this->pStaticCurve[curveIndex*CurveTypeCount];
-
-                float *emitterVertices = this->meshPtr->LockVertices();
-                int vertexWidth = this->meshPtr->GetVertexWidth();
-                ushort* srcIndices = this->meshPtr->LockIndices();
-                const nMeshGroup& meshGroup = this->meshPtr->Group(this->meshGroupIndex);
+                // FIXME: it may happen that relAge becomes greater 1.0 here!
+                float relAge = float((curTime - this->startTime - this->startDelay) / this->emissionDuration);
+                int curveIndex = int(relAge * ParticleTimeDetail);
+                curveIndex = n_iclamp(curveIndex, 0, ParticleTimeDetail - 1);
+                float* curCurves = &this->pStaticCurves[curveIndex * CurveTypeCount];
+                float* vertices = this->refEmitterMesh->LockVertices();
+                int vertexWidth = this->refEmitterMesh->GetVertexWidth();
+                ushort* indices = this->refEmitterMesh->LockIndices();
+                const nMeshGroup& meshGroup = this->refEmitterMesh->Group(this->emitterMeshGroupIndex);
 		        int firstIndex  = meshGroup.GetFirstIndex();
-		        int meshIndexSize = meshGroup.GetNumIndices();
+		        int numIndices = meshGroup.GetNumIndices();
+                matrix33 transform33(this->transform.x_component(), this->transform.y_component(), this->transform.z_component());
+                vector3 emissionPos, emissionNormal;
 
                 float curEmissionFrequency = curCurves[EmissionFrequency];
 
                 // for correct emission we perform 1s/freq - steps
-                nTime   timeToDo = fdAbsTime + this->remainingTime;
-                if(0 < curEmissionFrequency)
+                float timeToDo = stepTime + this->remainingTime;
+                if (0.0f < curEmissionFrequency)
                 {
-                    nTime   emitTimePitch = 1.0 / curEmissionFrequency;
+                    float emitTimeStep = 1.0f / curEmissionFrequency;
 
-                    while(timeToDo >= emitTimePitch)
+                    while (timeToDo >= emitTimeStep)
                     {
-                        nTime   particleEmissionLifeTime = timeToDo;
-                        nTime   oneDivLifeTime = 1.0f;
-                        if(0 != curCurves[ParticleLifeTime]) 
-                            oneDivLifeTime = 1.0f / curCurves[ParticleLifeTime];
-
-                        if(this->particleCount < this->maxParticleCount)
+                        float particleEmissionLifeTime = timeToDo;
+                        float oneDivLifeTime = 1.0f;
+                        if (0 != curCurves[ParticleLifeTime])
                         {
-                            // creation goes here...
+                            oneDivLifeTime = 1.0f / curCurves[ParticleLifeTime];
+                        }
+
+                        if (this->particleCount < this->maxParticleCount)
+                        {
+                            // emit a new particle
                             nParticle2* newParticle = &this->particles[this->particleCount];
                             this->particleCount++;
 
-                            int verticeNr = firstIndex + (rand() * (meshIndexSize-1)) / RAND_MAX;
-                            int curIndex = srcIndices[verticeNr] * vertexWidth;
-                            vector3 position = this->matrix * vector3(emitterVertices[curIndex+0],
-                                emitterVertices[curIndex+1], emitterVertices[curIndex+2]);
+                            // get emission position
+                            int indexIndex = firstIndex + int(n_rand(0.0f, float(numIndices - 1)));
+                            float* vertexPtr = &(vertices[indices[indexIndex] * vertexWidth]);
+                            emissionPos.set(vertexPtr[0], vertexPtr[1], vertexPtr[2]);
+                            emissionPos = this->transform * emissionPos;
 
-                            matrix33 m33 = matrix33(this->matrix.M11, this->matrix.M12, this->matrix.M13, 
-                                this->matrix.M21, this->matrix.M22, this->matrix.M23, 
-                                this->matrix.M31, this->matrix.M32, this->matrix.M33);
-
-                            vector3 normal = m33 * vector3(emitterVertices[curIndex+3], 
-                                emitterVertices[curIndex+4], emitterVertices[curIndex+5]);
+                            // get emission normal
+                            emissionNormal.set(vertexPtr[3], vertexPtr[4], vertexPtr[5]);
+                            emissionNormal = transform33 * emissionNormal;
 
                             // find orthogonal vectors to spread normal vector
-                            vector3 ortho1, norm;
-                            ortho1 = normal.findortho();
+                            vector3 ortho1;
+                            ortho1 = emissionNormal.findortho();
                             ortho1.norm();
-                            norm = normal;
+                            vector3 normBackup = emissionNormal;
                             float spreadMin = curCurves[ParticleSpreadMin];
                             float spreadMax = curCurves[ParticleSpreadMax];
-                            if(spreadMin>spreadMax) spreadMin = spreadMax;
-                            float spread = (((float)rand())/((float)RAND_MAX))*(spreadMax-spreadMin) + spreadMin;
-                            float rotRandom = ((float)rand())/((float)RAND_MAX) * 360.0f;
-                            normal.rotate(ortho1, n_deg2rad(spread));
-                            normal.rotate(norm, n_deg2rad(rotRandom));
+                            spreadMin = n_min(spreadMin, spreadMax);
+                            float spread = n_lerp(spreadMin, spreadMax, n_rand());
+                            float rotRandom = n_rand() * 360.0f;
+                            emissionNormal.rotate(ortho1, n_deg2rad(spread));
+                            emissionNormal.rotate(normBackup, n_deg2rad(rotRandom));
 
-                            float velocityVariation = 1.0f - ((float)rand())/((float)RAND_MAX)*this->particleVelocityRandomize;
-                            float startVelocity = curCurves[ParticleStartVelocity]*velocityVariation;
+                            float velocityVariation = 1.0f - n_rand(0.0f, this->particleVelocityRandomize);
+                            float startVelocity = curCurves[ParticleStartVelocity] * velocityVariation;
                             
                             // apply texture tiling
                             // uvmax and uvmin are arranged a bit strange, because they need to be flipped 
                             // horizontally and be rotated
-                            if(this->tileTexture<1) this->tileTexture = 1;
-                            vector2 uvStep = vector2(0.0f,1.0f/(float)this->tileTexture);
-                            int tileNr = ( rand()* this->tileTexture/(RAND_MAX+1) );
-                            newParticle->uvmin = vector2(1.0f,0) + uvStep * (float) tileNr;
-                            newParticle->uvmax = vector2(0.0f,newParticle->uvmin.y) + uvStep;
-                        
-
-                            newParticle->lifeTime = (float)particleEmissionLifeTime;
-                            newParticle->oneDivMaxLifeTime = (float)oneDivLifeTime;
-                            newParticle->position = position;
-                            newParticle->rotation = ((float)rand())/((float)RAND_MAX) * (this->startRotationMax-this->startRotationMin) + this->startRotationMin;
-
-                            // calculate velocity variation
-                            newParticle->rotationVariation = 1.0f - ((float)rand())/((float)RAND_MAX)*this->particleRotationRandomize;
-                            if( this->randomRotDir && (((float)rand())/((float)RAND_MAX)<0.5f)) 
+                            float vStep = 1.0f / float(this->tileTexture);
+                            int tileNr = int(n_rand(0.0f, float(this->tileTexture)));
+                            
+                            newParticle->uvmin.set(1.0f, vStep * float(tileNr));
+                            newParticle->uvmax.set(0.0f, newParticle->uvmin.y + vStep);
+                            newParticle->lifeTime = particleEmissionLifeTime;
+                            newParticle->oneDivMaxLifeTime = oneDivLifeTime;
+                            newParticle->position = emissionPos;
+                            newParticle->rotation = n_lerp(this->startRotationMin, this->startRotationMax, n_rand());
+                            newParticle->rotationVariation = 1.0f - n_rand() * this->particleRotationRandomize;
+                            if (this->randomRotDir && (n_rand() < 0.5f))
+                            {
                                 newParticle->rotationVariation = -newParticle->rotationVariation;
-                            newParticle->velocity = normal * startVelocity;
+                            }
+                            newParticle->velocity = emissionNormal * startVelocity;
                             newParticle->startPos = newParticle->position;
-                            newParticle->sizeVariation = 1.0f - ((float)rand())/((float)RAND_MAX)*this->particleSizeRandomize;
+                            newParticle->sizeVariation = 1.0f - n_rand() * this->particleSizeRandomize;
 
                             // add velocity*lifetime
+                            // FIXME FLOH: why this??
                             newParticle->position += newParticle->velocity * newParticle->lifeTime;
-                        };
-
-                        timeToDo -= emitTimePitch;
-                    };
-                };
+                        }
+                        timeToDo -= emitTimeStep;
+                    }
+                }
                 this->remainingTime = timeToDo;
-  		        this->meshPtr->UnlockVertices();
-		        this->meshPtr->UnlockIndices();
-            };
-//            n_printf("now %d/%d particles\n",this->particleCount,this->maxParticleCount);
-        } else {
-            if(this->loop)
+  		        this->refEmitterMesh->UnlockVertices();
+		        this->refEmitterMesh->UnlockIndices();
+            }
+        } 
+        else 
+        {
+            if (this->looping)
             {
                 this->startTime = curTime;
                 this->remainingTime = 0;
                 this->hasLooped = true;
-            };
-        };
+            }
+        }
         this->lastEmission = curTime;
-        
-        curTime += triggerTimePitch;
-    };
+        curTime += stepSize;
+    }
 }
 
 //------------------------------------------------------------------------------
 /**
     Render as pure quad
+
+    FIXME: CLEANUP
 */
 int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
 {
@@ -359,8 +410,9 @@ int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
     for( p = 0; p < particleCount ; p++)
     {
         // life-time-check is not needed, it is assured that the relative age is >=0 and <1
-        curveIndex = (int)((particle->lifeTime * particle->oneDivMaxLifeTime) * (float)PARTICLE_TIME_DETAIL);
-        curCurves = &this->pStaticCurve[curveIndex*CurveTypeCount];
+        curveIndex = (int)((particle->lifeTime * particle->oneDivMaxLifeTime) * (float)ParticleTimeDetail);
+        curveIndex = n_iclamp(curveIndex, 0, ParticleTimeDetail - 1);
+        curCurves = &this->pStaticCurves[curveIndex*CurveTypeCount];
 
         myVertex.pos = particle->position;
         myVertex.scale = curCurves[ParticleScale]*particle->sizeVariation;
@@ -395,7 +447,7 @@ int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
         curVertex += 6;
         if (curVertex > maxVertices-6)
         {
-            this->dynMesh.Swap(curVertex, dstVertices);
+            this->particleMesh.Swap(curVertex, dstVertices);
             destPtr = (tParticleVertex*)dstVertices;
             curVertex = 0;
         }
@@ -409,6 +461,8 @@ int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
 //------------------------------------------------------------------------------
 /**
     Render stretched
+
+    FIXME: CLEANUP
 */
 int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
 {
@@ -436,8 +490,9 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
     {
         nParticle2* particle = &particles[particleOffset];
         float relParticleAge = particle->lifeTime * particle->oneDivMaxLifeTime;
-        int curveIndex = (int)(relParticleAge * (float)PARTICLE_TIME_DETAIL);
-        float* curCurves = &this->pStaticCurve[curveIndex*CurveTypeCount];
+        int curveIndex = (int)(relParticleAge * (float)ParticleTimeDetail);
+        curveIndex = n_iclamp(curveIndex, 0, ParticleTimeDetail - 1);
+        float* curCurves = &this->pStaticCurves[curveIndex*CurveTypeCount];
 
         // life-time-check is not needed, it is assured that the relative age is >=0 and <1
 
@@ -484,7 +539,7 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
 
         if (curVertex > maxVertices-6)
         {
-            this->dynMesh.Swap(curVertex, dstVertices);
+            this->particleMesh.Swap(curVertex, dstVertices);
             curVertex = 0;
             destPtr = (tParticleVertex*)dstVertices;
         }
@@ -497,6 +552,8 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
 //------------------------------------------------------------------------------
 /**
     Render stretched and smooth
+
+    FIXME: CLEANUP
 */
 int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
 {
@@ -530,8 +587,9 @@ int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
     {
         nParticle2* particle = &particles[particleOffset];
         float relParticleAge = particle->lifeTime * particle->oneDivMaxLifeTime;
-        int curveIndex = (int)(relParticleAge * (float)PARTICLE_TIME_DETAIL);
-        float* curCurves = &this->pStaticCurve[curveIndex*CurveTypeCount];
+        int curveIndex = (int)(relParticleAge * (float)ParticleTimeDetail);
+        curveIndex = n_iclamp(curveIndex, 0, ParticleTimeDetail - 1);
+        float* curCurves = &this->pStaticCurves[curveIndex*CurveTypeCount];
 
         // calculate stretch steps
         float stretchTime = this->particleStretch;
@@ -581,7 +639,7 @@ int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
             curVertex += 6;
             if (curVertex > maxVertices-6)
             {
-                this->dynMesh.Swap(curVertex, dstVertices);
+                this->particleMesh.Swap(curVertex, dstVertices);
                 destPtr = (tParticleVertex*)dstVertices;
                 curVertex = 0;
             }
@@ -596,12 +654,12 @@ int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
 //------------------------------------------------------------------------------
 /**
     Render the Particles
+
+    FIXME: CLEANUP
 */
-void nParticle2Emitter::Render(nTime curTime)
+void nParticle2Emitter::Render(float curTime)
 {
-    nParticleServer2* particleServer = nParticleServer2::Instance();
-    if (!particleServer->IsEnabled())return;
-    if ((!this->isSetUp)||(!this->isOpen)) return;
+    if ((!this->IsSetup())||(!this->IsValid())) return;
 
     if(this->isSleeping)    // do we have to wakeup ?
     {
@@ -611,23 +669,24 @@ void nParticle2Emitter::Render(nTime curTime)
         n_assert(0 != this->particles);
         
         this->frameWasRendered = true;
-        this->Trigger(curTime - 0.001f);    // trigger with a little difference, so that the emitter will reset
+        this->Update(curTime - 0.001f);    // trigger with a little difference, so that the emitter will reset
 
         // ok, we're up-to-date again
     };
 
-    if (!this->dynMesh.IsValid())
+    if (!this->particleMesh.IsValid())
     {
-        this->dynMesh.Initialize(nGfxServer2::TriangleList, 
-            nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 |
-            nMesh2::Color , nMesh2::WriteOnly | nMesh2::NeedsVertexShader, false);
-        n_assert(this->dynMesh.IsValid());
+        this->particleMesh.Initialize(nGfxServer2::TriangleList, 
+            nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 | nMesh2::Color , 
+            nMesh2::WriteOnly | nMesh2::NeedsVertexShader, 
+            false, "particle2_", true);
+        n_assert(this->particleMesh.IsValid());
     }
 
     float* dstVertices = 0;
     int maxVertices = 0;
     int remVertices = 0;
-    this->dynMesh.Begin(dstVertices, maxVertices);
+    this->particleMesh.Begin(dstVertices, maxVertices);
 
     if((this->particleStretch == 0.0f)&&(!this->stretchToStart))
         remVertices = RenderPure(dstVertices,maxVertices);
@@ -644,35 +703,28 @@ void nParticle2Emitter::Render(nTime curTime)
     };
 
     // Draw
-    this->dynMesh.End(remVertices);
+    this->particleMesh.End(remVertices);
     this->frameWasRendered = true;
 }
 
 //------------------------------------------------------------------------------
 /**
-*/
-bool
-nParticle2Emitter::AreResourcesValid()
-{
-//    return this->refEmitterMesh.isvalid();
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
+    FIXME: CLEANUP
 */
 void
-nParticle2Emitter::Open()
+nParticle2Emitter::Initialize()
 {
+    n_assert(0 != this->pStaticCurves);
+
     // calculate maximum number of particles
     float maxFreq = 0 , maxLife = 0;
     int i;
-    for( i = 0; i < PARTICLE_TIME_DETAIL ; i++)
+    for( i = 0; i < ParticleTimeDetail ; i++)
     {
-        if(this->pStaticCurve[i*CurveTypeCount+EmissionFrequency] > maxFreq)
-            maxFreq = this->pStaticCurve[i*CurveTypeCount+EmissionFrequency];
-        if(this->pStaticCurve[i*CurveTypeCount+ParticleLifeTime] > maxLife)
-            maxLife = this->pStaticCurve[i*CurveTypeCount+ParticleLifeTime];
+        if(this->pStaticCurves[i*CurveTypeCount+EmissionFrequency] > maxFreq)
+            maxFreq = this->pStaticCurves[i*CurveTypeCount+EmissionFrequency];
+        if(this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
+            maxLife = this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime];
     }
     this->maxParticleCount = (int)(maxFreq * maxLife);
     // allocate array
@@ -682,27 +734,30 @@ nParticle2Emitter::Open()
     this->particleCount = 0;
 
 
-    this->isOpen = true;
+    this->isValid = true;
 }
 
 //------------------------------------------------------------------------------
 /**
+    FIXME: CLEANUP
 */
 void    
-nParticle2Emitter::CurvesChanged()
+nParticle2Emitter::NotifyCurvesChanged()
 {
+    n_assert(0 != this->pStaticCurves);
+
     if(this->particles != 0)
     {
         // we need to rearrange the particlearray, because the curves have changed
 
         float maxFreq = 0 , maxLife = 0;
         int i;
-        for( i = 0; i < PARTICLE_TIME_DETAIL ; i++)
+        for( i = 0; i < ParticleTimeDetail; i++)
         {
-            if(this->pStaticCurve[i*CurveTypeCount+EmissionFrequency] > maxFreq)
-                maxFreq = this->pStaticCurve[i*CurveTypeCount+EmissionFrequency];
-            if(this->pStaticCurve[i*CurveTypeCount+ParticleLifeTime] > maxLife)
-                maxLife = this->pStaticCurve[i*CurveTypeCount+ParticleLifeTime];
+            if(this->pStaticCurves[i*CurveTypeCount+EmissionFrequency] > maxFreq)
+                maxFreq = this->pStaticCurves[i*CurveTypeCount+EmissionFrequency];
+            if(this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
+                maxLife = this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime];
         }
         int newMaxParticleCount = (int)(maxFreq * maxLife);
         // allocate array
@@ -723,5 +778,5 @@ nParticle2Emitter::CurvesChanged()
         this->particles = newPtr;
         this->maxParticleCount = newMaxParticleCount;
 
-    };
-};
+    }
+}

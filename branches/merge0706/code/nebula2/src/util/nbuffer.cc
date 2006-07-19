@@ -63,7 +63,10 @@ nBuffer::Resize(int newSize)
     if (newSize > capacity)
     {
         char* newData = MakeArea(newSize);
-        Copy(newData, this->data, this->count);
+        if (this->count >0)
+        {
+            Copy(newData, this->data, this->count);
+        }
         delete [] this->data;
         this->data = newData;
         this->capacity = newSize;

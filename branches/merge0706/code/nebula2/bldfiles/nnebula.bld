@@ -13,7 +13,7 @@ begintarget nnebula
     settype lib
     setmodules {
         nbinscriptserver ntclserver
-        nnpkfileserver nsharedmemory nramfileserver nvariableserver
+        nnpkfileserver nnpkbuilder nsharedmemory nramfileserver nvariableserver
         ninputserver nresourceloader nresourceserver nresource nresourcebundle
         nmesh2 ntexture2 nfont2 nshader2 ngfxserver2
         naudioserver3 nsound3 nlistener3 nsoundresource

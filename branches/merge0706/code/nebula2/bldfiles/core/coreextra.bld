@@ -106,6 +106,12 @@ beginmodule nresource
     setheaders { nresource }
 endmodule
 #-------------------------------------------------------------------------------
+beginmodule nmeshcopyresourceloader
+    setdir resource
+    setfiles { nmeshcopyresourceloader_main }
+    setheaders { nmeshcopyresourceloader }
+endmodule
+#-------------------------------------------------------------------------------
 beginmodule ncaptureserver
     setdir misc
     setfiles { ncaptureserver_main ncaptureserver_cmds }

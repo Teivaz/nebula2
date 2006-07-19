@@ -30,6 +30,7 @@ class nShader2;
 class nTexture2;
 class nRpPhase;
 class nOcclusionQuery;
+class nMaterialNode;
 
 //------------------------------------------------------------------------------
 class nSceneServer : public nRoot
@@ -87,7 +88,22 @@ public:
     void SetClipPlaneFencing(bool b);
     /// get clip plane fencing mode
     bool GetClipPlaneFencing() const;
-
+    /// enable/disable GUI rendering
+    void SetGuiEnabled(bool b);
+    /// get GUI rendering state
+    bool GetGuiEnabled() const;
+    /// enable/disable camera node rendering
+    void SetCamerasEnabled(bool b);
+    /// get camera enabled flag
+    bool GetCamerasEnabled() const;
+    /// enable/disable standard performance gui
+    void SetPerfGuiEnabled(bool b);
+    /// get performance gui status
+    bool GetPerfGuiEnabled() const;
+	/// set the projectionmatrix, that should be saved model matrix
+    void SaveProjectionMatrix(const matrix44& m);
+	/// get the projectionmatrix, that was saved
+	const matrix44& GetSavedProjectionMatrix() const;
 private:
 
     static nSceneServer* Singleton;
@@ -151,6 +167,10 @@ private:
     void ResetLightScissorsAndClipPlanes();
     /// render debug visualization of light scissors
     void DebugRenderLightScissors();
+    /// render debug visualization of shapes
+    void DebugRenderShapes();
+    /// render performance gui
+    void DebugRenderPerfGui();
     /// return true if a shape's light links contain the given light
     bool IsShapeLitByLight(const Group& shapeGroup, const Group& lightGroup);
     /// render the cameras
@@ -163,6 +183,14 @@ private:
     void DoOcclusionQuery();
     /// find the N most important shadow casting light sources
     void GatherShadowLights();
+    /// checks if this node is a water (with reflection, refraction cameras)
+    bool IsAReflectingShape(const nMaterialNode* shapeNode)  const;
+    /// calculates the distance from the bounding box of this element to viewer
+    float CalculateDistanceToBoundingBox(const Group& groupNode);
+    /// checks if the given shapes bounding box is visible
+    bool IsShapesBBVisible(const Group& groupNode);
+    /// parses the priority of this node (usually a reflection, refracting sea
+    bool ParsePriority(const Group& groupNode);
 
     enum
     {
@@ -184,12 +212,15 @@ private:
     bool ffpLightingApplied;
     bool renderDebug;
     bool occlusionQueryEnabled;
+    bool guiEnabled;
+    bool camerasEnabled;
+    bool perfGuiEnabled;
+
     nString renderPathFilename;
     uint stackDepth;
     nRenderPath2 renderPath;
 
     nFixedArray<int> groupStack;
-
     nArray<Group> groupArray;
     nArray<LightInfo> lightArray;               // all light sources
     nArray<LightInfo> shadowLightArray;         // shadow casting light sources
@@ -198,27 +229,35 @@ private:
     nArray<ushort> cameraArray;
     nBucket<ushort,NumBuckets> shapeBucket;     // contains indices of shape nodes, bucketsorted by shader
     
-    nWatched dbgNumInstanceGroups;
-    nWatched dbgNumInstances;
-    nWatched dbgNumOccluded;
-    nWatched dbgNumNotOccluded;
-    nWatched dbgOccludeViewerInBox;
+    float renderedReflectorDistance;
+    nRenderContext* renderContextPtr;
 
+    nClass* reqReflectClass;
+    nClass* reqRefractClass;
+        
     nOcclusionQuery* occlusionQuery;
+	matrix44 savedProjectionMatrix;
 
-#if __NEBULA_STATS__
-    nProfiler profFrame;
-    nProfiler profAttach;
-    nProfiler profValidateResources;
-    nProfiler profSplitNodes;
-    nProfiler profComputeScissors;
-    nProfiler profSortNodes;
-    nProfiler profRenderShadow;
-    nProfiler profOcclusion;
-    nProfiler profEndScene_TextBuffer;
-    nProfiler profEndScene_EndScene;
-    nProfiler profEndScene_PresentScene;
-#endif
+    PROFILER_DECLARE(profFrame);
+    PROFILER_DECLARE(profAttach);
+    PROFILER_DECLARE(profValidateResources);
+    PROFILER_DECLARE(profSplitNodes);
+    PROFILER_DECLARE(profComputeScissors);
+    PROFILER_DECLARE(profSortNodes);
+    PROFILER_DECLARE(profRenderShadow);
+    PROFILER_DECLARE(profOcclusion);
+    PROFILER_DECLARE(profRenderPath);
+    PROFILER_DECLARE(profRenderCameras);
+
+    WATCHER_DECLARE(watchNumInstanceGroups);
+    WATCHER_DECLARE(watchNumInstances);
+    WATCHER_DECLARE(watchNumOccluded);
+    WATCHER_DECLARE(watchNumNotOccluded);
+    
+    // "imported" from graphics server
+    WATCHER_DECLARE(watchNumPrimitives);
+    WATCHER_DECLARE(watchFPS);
+    WATCHER_DECLARE(watchNumDrawCalls);
 };
 
 //------------------------------------------------------------------------------
@@ -230,6 +269,46 @@ nSceneServer::Instance()
 {
     n_assert(Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneServer::SetPerfGuiEnabled(bool b)
+{
+    this->perfGuiEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneServer::GetPerfGuiEnabled() const
+{
+    return this->perfGuiEnabled;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneServer::SetGuiEnabled(bool b)
+{
+    this->guiEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneServer::GetGuiEnabled() const
+{
+    return this->guiEnabled;
 }
 
 //------------------------------------------------------------------------------
@@ -338,6 +417,31 @@ nSceneServer::GetModelTransform() const
 
 //------------------------------------------------------------------------------
 /**
+	set the projectionmatrix, that should be saved model matrix
+*/
+inline
+void
+nSceneServer::SaveProjectionMatrix(const matrix44& m)
+{
+	this->savedProjectionMatrix = m;
+	vector3 scaleVec = vector3(2,0.5,1);
+	this->savedProjectionMatrix.scale(scaleVec);
+}
+
+//------------------------------------------------------------------------------
+/**
+	get the projectionmatrix, that was saved
+*/
+inline
+const matrix44&
+nSceneServer::GetSavedProjectionMatrix() const
+{
+	return this->savedProjectionMatrix;
+}
+
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 void
@@ -374,6 +478,26 @@ bool
 nSceneServer::GetOcclusionQuery() const
 {
     return this->occlusionQueryEnabled;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nSceneServer::SetCamerasEnabled(bool b)
+{
+    this->camerasEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nSceneServer::GetCamerasEnabled() const
+{
+    return this->camerasEnabled;
 }
 
 //------------------------------------------------------------------------------

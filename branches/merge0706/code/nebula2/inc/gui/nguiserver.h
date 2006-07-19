@@ -154,6 +154,8 @@ public:
     void SetGuiMouseCursor(nGuiMouseCursor* cursor);
     /// get gui mouse cursor
     nGuiMouseCursor* GetGuiMouseCursor();
+    /// return true if tooltip window currently visible
+    bool IsToolTipShown() const;
 
 private:
     friend class nRpPass;
@@ -166,8 +168,6 @@ private:
     void ValidateShader();
     /// update the mesh geometry
     void UpdateMesh(const rectangle& uvs);
-    /// return true if tooltip window currently visible
-    bool IsToolTipShown() const;
     /// hide tooltip window
     void HideToolTip();
     /// flush brush rendering (before rendering text)
@@ -225,11 +225,6 @@ private:
 
     nArray<rectangle> clipRectStack;
 
-#if __NEBULA_STATS__
-    nProfiler profGUIDrawBrush;
-    nProfiler profGUIDrawTexture;
-    nProfiler profGUIDrawText;
-#endif
 };
 
 //-----------------------------------------------------------------------------

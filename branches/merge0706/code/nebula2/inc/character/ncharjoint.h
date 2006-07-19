@@ -53,6 +53,10 @@ public:
     void SetScale(const vector3& s);
     /// get scale
     const vector3& GetScale() const;
+    /// set optional variation scale
+    void SetVariationScale(const vector3& s);
+    /// get variation scale
+    const vector3& GetVariationScale() const;
     /// set name
     void SetName(const nString& name);
     /// get name
@@ -88,6 +92,7 @@ private:
     vector3 translate;
     quaternion rotate;
     vector3 scale;
+    vector3 variationScale;
 
     matrix44 poseMatrix;
     matrix44 invPoseMatrix;
@@ -116,6 +121,7 @@ nCharJoint::nCharJoint() :
     parentJointIndex(-1),
     poseScale(1.0f, 1.0f, 1.0f),
     scale(1.0f, 1.0f, 1.0f),
+    variationScale(1.0f, 1.0f, 1.0f),
     matrixDirty(false),
     lockMatrix(false),
     isUptodate(false)
@@ -297,6 +303,27 @@ nCharJoint::GetScale() const
 
 //------------------------------------------------------------------------------
 /**
+*/
+inline
+void
+nCharJoint::SetVariationScale(const vector3& s)
+{
+    this->variationScale = s;
+    this->matrixDirty = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const vector3& 
+nCharJoint::GetVariationScale() const
+{
+    return this->variationScale;
+}
+
+//------------------------------------------------------------------------------
+/**
     Clear the uptodate flag. This flag is used in Evaluate() to check
     whether a parent joint has already been evaluated.
 */
@@ -347,6 +374,7 @@ nCharJoint::Evaluate()
             this->localUnscaledMatrix.translate(this->translate);
 
             this->localScaledMatrix.scale(this->scale);
+            this->localScaledMatrix.scale(this->variationScale);
             this->localScaledMatrix.mult_simple(rotateMatrix);
             this->localScaledMatrix.translate(this->translate);
 
@@ -367,15 +395,15 @@ nCharJoint::Evaluate()
 
                 // joint translation is affected by parent scale while the actual axis are not
                 vector3 trans = this->worldUnscaledMatrix.pos_component();
-                trans.x *= this->parentJoint->scale.x;
-                trans.y *= this->parentJoint->scale.y;
-                trans.z *= this->parentJoint->scale.z;
+                trans.x *= this->parentJoint->scale.x * this->parentJoint->variationScale.x;
+                trans.y *= this->parentJoint->scale.y * this->parentJoint->variationScale.y;
+                trans.z *= this->parentJoint->scale.z * this->parentJoint->variationScale.z;
                 this->worldUnscaledMatrix.set_translation(trans);
 
                 trans = this->worldScaledMatrix.pos_component();
-                trans.x *= this->parentJoint->scale.x;
-                trans.y *= this->parentJoint->scale.y;
-                trans.z *= this->parentJoint->scale.z;
+                trans.x *= this->parentJoint->scale.x * this->parentJoint->variationScale.x;
+                trans.y *= this->parentJoint->scale.y * this->parentJoint->variationScale.y;
+                trans.z *= this->parentJoint->scale.z * this->parentJoint->variationScale.z;
                 this->worldScaledMatrix.set_translation(trans);
 
                 // we calculate 2 world matrices

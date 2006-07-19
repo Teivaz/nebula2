@@ -56,18 +56,19 @@ nDynamicMesh::IsValid() const
     same vertex components and usage flags.
     This method must be called whenever a call to IsValid() returns false.
 
+    @param  gfxServ             pointer to gfx server
     @param  primType            primitive type
     @param  vertexComponents    vertex component mask (see nMesh2)
     @param  usageFlags          usage flags (see nMesh2)
     @param  indexed             true if indexed primitive rendering is intended
-    @param  shared              true if it should use a resource name based on the vertex component mask and usage flags
     @return                     true if initialized successful
 */
 bool
 nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType, 
                          int vertexComponents, 
-                         int usageFlags, 
+                         int usageFlags,
                          bool indexed,
+                         const nString& rsrcBaseName,
                          bool shared)
 {
     this->primitiveType = primType;
@@ -79,8 +80,9 @@ nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
         // build resource sharing name
         if (shared)
         {
+            n_assert(rsrcBaseName.Length() < 64);
             char resName[128];
-            strcpy(resName, "dyn_");
+            strcpy(resName, rsrcBaseName.Get());
             int charIndex = (int) strlen(resName);
             if (vertexComponents & nMesh2::Coord)       resName[charIndex++] = 'a';
             if (vertexComponents & nMesh2::Normal)      resName[charIndex++] = 'b';

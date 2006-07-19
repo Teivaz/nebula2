@@ -165,6 +165,7 @@ public:
     enum Hint
     {
         MvpOnly = (1<<0),       // only update the ModelViewProjection matrix in shaders
+        CountStats = (1<<1),    // statistics counting currently active?
     };
 
     /// constructor
@@ -317,17 +318,14 @@ public:
     virtual void DrawIndexedNS(PrimitiveType primType);
     /// render non-indexed primitives without applying shader state (NS == No Shader)
     virtual void DrawNS(PrimitiveType primType);
-    /// draw text (immediately)
-    virtual void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
+    /// draw text (immediately, or "when the time is right")
+    virtual void DrawText(const nString& text, const vector4& color, const rectangle& rect, uint flags, bool immediate=true);
+    /// draw accumulated text buffer
+    virtual void DrawTextBuffer();
     /// get text extents
-    virtual vector2 GetTextExtent(const char* text);
+    virtual vector2 GetTextExtent(const nString& text);
     /// insert newline chars to break the text manual in lines - must be public because the ticker needs to break lines.
     void BreakLines(const nString& text, const rectangle& rect, nString& outString);
-
-    /// add text to the text buffer (OLD STYLE)
-    virtual void Text(const char* text, const vector4& color, float xPos, float yPos);
-    /// draw the text buffer (OLD STYLE)
-    virtual void DrawTextBuffer();
 
     /// set mouse cursor image and hotspot
     virtual void SetMouseCursor(const nMouseCursor& cursor);
@@ -346,7 +344,7 @@ public:
     bool InDialogBoxMode() const;
 
     /// save a screen shot
-    virtual bool SaveScreenshot(const char* filename);    
+    virtual bool SaveScreenshot(const char* filename, nTexture2::FileFormat fileFormat);    
 
     /// convert feature set string to enum
     static FeatureSet StringToFeatureSet(const char* str);
@@ -394,10 +392,8 @@ public:
     /// end shape rendering
     virtual void EndShapes();
 
-    /// begin rendering lines
+    /// begin rendering lines (note: use DrawShapePrimitives() to render 3d lines!)
     virtual void BeginLines();
-    /// draw 3d lines, using the current transforms
-    virtual void DrawLines3d(const vector3* vertexList, int numVertices, const vector4& color);
     /// draw 2d lines in screen space
     virtual void DrawLines2d(const vector2* vertexList, int numVertices, const vector4& color);
     /// finish line rendering

@@ -40,7 +40,7 @@ nGfxServer2::nGfxServer2() :
     refRenderTargets(MaxRenderTargets),
     lightingType(Off),
     scissorRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f)),
-    hints(0)
+    hints(CountStats)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -686,27 +686,7 @@ nGfxServer2::DrawNS(PrimitiveType /*primType*/)
 
 //------------------------------------------------------------------------------
 /**
-    Add text to the text buffer (OBSOLETE)
-*/
-void
-nGfxServer2::Text(const char* /*text*/, const vector4& /*color*/, float /*x*/, float /*y*/)
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-    Render the text in the text buffer (OBSOLETE)
-*/
-void
-nGfxServer2::DrawTextBuffer()
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-    Draw text.
+    Draw text (at the right time, or immediately).
 
     @param  text    the text to draw
     @param  color   the text color
@@ -714,7 +694,17 @@ nGfxServer2::DrawTextBuffer()
     @param  flags   combination of nFont2::RenderFlags
 */
 void
-nGfxServer2::DrawText(const char* /*text*/, const vector4& /*color*/, const rectangle& /*rect*/, uint /*flags*/)
+nGfxServer2::DrawText(const nString& /*text*/, const vector4& /*color*/, const rectangle& /*rect*/, uint /*flags*/, bool /*immediate*/)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+    Draws the accumulated non-immediate text.
+*/
+void
+nGfxServer2::DrawTextBuffer()
 {
     // empty
 }
@@ -725,7 +715,7 @@ nGfxServer2::DrawText(const char* /*text*/, const vector4& /*color*/, const rect
     screen space coordinates.
 */
 vector2
-nGfxServer2::GetTextExtent(const char* /*text*/)
+nGfxServer2::GetTextExtent(const nString& /*text*/)
 {
     return vector2(0.0f, 0.0f);
 }
@@ -745,7 +735,7 @@ nGfxServer2::GetFeatureSet()
     Save a screenshot.
 */
 bool
-nGfxServer2::SaveScreenshot(const char* /*filename*/)
+nGfxServer2::SaveScreenshot(const char* /*filename*/, nTexture2::FileFormat fileFormat)
 {
     // implement me in subclass
     return false;
@@ -835,42 +825,6 @@ nGfxServer2::BeginLines()
 {
     n_assert(!this->inBeginLines);
     this->inBeginLines = true;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Draw a 3d line strip using the current transforms. 
-
-    The following draws a unit cube with red lines.
-
-    @code
-    vector3 v[8];
-    v[0].set(0.5f, -0.5f, 0.5f);
-    v[1].set(0.5f, -0.5f, -0.5f);
-    v[2].set(-0.5f, -0.5f, -0.5f);
-    v[3].set(-0.5f, -0.5f, 0.5f);
-    v[4].set(0.5f, 0.5f, 0.5f);
-    v[5].set(0.5f, 0.5f, -0.5f);
-    v[6].set(-0.5f, 0.5f, -0.5f);
-    v[7].set(-0.5f, 0.5f, 0.5f);
-
-    vector3 cube[16] = {
-        v[1], v[0], v[4], v[5],
-        v[1], v[2], v[6], v[5],
-        v[3], v[2], v[6], v[7],
-        v[3], v[0], v[4], v[7]
-    };
-
-    nGfxServer2::Instance()->BeginLines();
-    nGfxServer2::Instance()->DrawLines3d(cube,   8, vector4(1.0f, 0.0f, 0.0f, 0.5f));
-    nGfxServer2::Instance()->DrawLines3d(cube+8, 8, vector4(1.0f, 0.0f, 0.0f, 0.5f));
-    nGfxServer2::Instance()->EndLines();
-    @endcode
-*/
-void
-nGfxServer2::DrawLines3d(const vector3* /*vertexList*/, int /*numVertices*/, const vector4& /*color*/)
-{
-    // empty    
 }
 
 //------------------------------------------------------------------------------
