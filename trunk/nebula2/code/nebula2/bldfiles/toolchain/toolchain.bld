@@ -125,7 +125,7 @@ begintarget ngfxtool
         nnebula
         microtcl
         ntoollib
-        ngui        
+        ngui
     }
 endtarget
 #-------------------------------------------------------------------------------
@@ -152,6 +152,8 @@ begintarget nnpktool
     setmodules { nnpktool nnpkfileserver}
     settargetdeps {
         nkernel
+        nnebula
+        ntoollib
     }
 endtarget
 #-------------------------------------------------------------------------------
