@@ -58,12 +58,15 @@ nBuffer::Reset()
 void
 nBuffer::Resize(int newSize)
 {
-    n_assert(newSize > 0);
+    n_assert(newSize >= 0);
 
-    if (newSize > capacity)
+    if (newSize > this->capacity)
     {
         char* newData = MakeArea(newSize);
-        Copy(newData, this->data, this->count);
+        if (this->count > 0)
+        {
+            Copy(newData, this->data, this->count);
+        }
         delete [] this->data;
         this->data = newData;
         this->capacity = newSize;
