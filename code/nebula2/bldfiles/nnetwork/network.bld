@@ -23,6 +23,10 @@ beginmodule network::nhttpserver
         nhttpserver_main
         nhttpserver_cmds
     }
+    setlibs_win32 {
+        wininet.lib
+        rpcrt4.lib
+    }
 endmodule
 
 beginmodule network::nnetclient

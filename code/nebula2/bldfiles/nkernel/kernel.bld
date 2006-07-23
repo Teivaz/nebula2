@@ -32,6 +32,7 @@ beginbundle nkernel::kernel
         kernel::nprofiler
         kernel::nref
         kernel::nrefcounted
+        kernel::nreferenced
         kernel::nremoteserver
         kernel::nroot
         kernel::nscriptserver
@@ -321,7 +322,6 @@ beginmodule kernel::nref
         nautoref
         ndynautoref
         nref
-        nreferenced
     }
 endmodule
 
@@ -335,6 +335,16 @@ beginmodule kernel::nrefcounted
     }
 endmodule
 
+beginmodule kernel::nreferenced
+    setdir kernel
+    setheaders {
+        nreferenced
+    }
+    setfiles {
+        nreferenced
+    }
+endmodule
+
 beginmodule kernel::nremoteserver
     setdir kernel
     setheaders {
@@ -342,6 +352,9 @@ beginmodule kernel::nremoteserver
     }
     setfiles {
         nremoteserver_main
+    }
+    setlibs_win32 {
+        wsock32.lib
     }
 endmodule
 
