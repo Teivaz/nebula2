@@ -5,7 +5,7 @@
 #include "scene/nlightnode.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nLightNode, "nabstractshadernode");
+nNebulaScriptClass(nLightNode, "scene::nabstractshadernode");
 
 //------------------------------------------------------------------------------
 /**
@@ -49,7 +49,7 @@ nLightNode::ApplyLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderCo
     nGfxServer2::Instance()->AddLight(this->light);
     return this->light;
 }
-   
+
 //------------------------------------------------------------------------------
 /**
     This sets the lighting states which differ between rendering shape

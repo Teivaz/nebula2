@@ -5,7 +5,7 @@
 #include "kernel/ncmdprotonative.h"
 #include "luatest/nluatest.h"
 
-nNebulaScriptClass(nLuaTest, "nroot")
+nNebulaScriptClass(nLuaTest, "kernel::nroot")
 
 //------------------------------------------------------------------------------
 /**
@@ -31,7 +31,7 @@ void nLuaTest::TestScriptCmds()
     n_assert(node);
     nCmdProto* sampleCmdProto = node->GetClass()->FindCmdByName("SampleCmd");
     nCmdProto* sampleCmd2Proto = node->GetClass()->FindCmdByName("SampleCmd2");
-  
+
     // test 1
     nCmd* cmd = sampleCmdProto->NewCmd();
     if (cmd)
@@ -46,10 +46,10 @@ void nLuaTest::TestScriptCmds()
         }
         else
             n_printf("nebula.tree.SampleCmd not implemented!\n");
-     
+
         sampleCmdProto->RelCmd(cmd);
     }
-  
+
     // test 2
     cmd = sampleCmd2Proto->NewCmd();
     if (cmd)
@@ -65,10 +65,10 @@ void nLuaTest::TestScriptCmds()
         }
         else
             n_printf("nebula.tree.SampleCmd2 not implemented!\n");
-        
+
         sampleCmd2Proto->RelCmd(cmd);
     }
-  
+
     // test 3
     node = this->kernelServer->Lookup("/tree/node0");
     n_assert(node);
@@ -85,10 +85,10 @@ void nLuaTest::TestScriptCmds()
         }
         else
             n_printf("nebula.tree.node0.SampleCmd not implemented!\n");
-        
+
         sampleCmdProto->RelCmd(cmd);
     }
-  
+
     // test 4
     cmd = sampleCmd2Proto->NewCmd();
     if (cmd)
@@ -104,7 +104,7 @@ void nLuaTest::TestScriptCmds()
         }
         else
             n_printf("nebula.tree.node0.SampleCmd2 not implemented!\n");
-    
+
         sampleCmd2Proto->RelCmd(cmd);
     }
 }
@@ -192,16 +192,16 @@ void nLuaTest::TestNativeCmds()
     // add the cmd protos to the nLuaTest class
     nClass* myClass = this->GetClass();
     myClass->BeginScriptCmds(2);
-    nCmdProtoNative* cmdProtoNative = new nCmdProtoNative("i_NativeRuntimeCmd1_fff", 
+    nCmdProtoNative* cmdProtoNative = new nCmdProtoNative("i_NativeRuntimeCmd1_fff",
                                                           0, // id isn't used
                                                           n_nativeruntimecmd1);
     myClass->AddScriptCmd((nCmdProto*)cmdProtoNative);
-    cmdProtoNative = new nCmdProtoNative("s_NativeRuntimeCmd2_s", 
+    cmdProtoNative = new nCmdProtoNative("s_NativeRuntimeCmd2_s",
                                          0, // id isn't used
                                          n_nativeruntimecmd2);
     myClass->AddScriptCmd((nCmdProto*)cmdProtoNative);
     myClass->EndScriptCmds();
-    
+
     // test NativeRuntimeCmd1
     nCmdProto* cmdProto = myClass->FindCmdByName("NativeRuntimeCmd1");
     nCmd* cmd = cmdProto->NewCmd();
@@ -216,7 +216,7 @@ void nLuaTest::TestNativeCmds()
             n_printf("NativeRuntimeCmd1 Test Failed\n");
     }
     cmdProto->RelCmd(cmd);
-    
+
     // test NativeRuntimeCmd2
     cmdProto = myClass->FindCmdByName("NativeRuntimeCmd2");
     cmd = cmdProto->NewCmd();
@@ -261,11 +261,11 @@ n_nativerootcmd(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     Tests a natively implemented cmd that was added at run-time to nRoot.
-    
+
     By the time this method gets called cmds.lua has already been executed,
     as such nRoot already has 2 script-side implemented cmds. Here we add
     a third cmd that's implemented in C++.
-    
+
     Note that script-side implemented cmds can have a unique implementation
     for every instance of an nRoot. However, cmds implemented in C++ will have
     a single implementation for all instances of nRoot. This limitation of C++
@@ -277,24 +277,24 @@ void nLuaTest::AddNativeCmdToRoot()
 {
     nRoot* node = this->kernelServer->Lookup("/tree");
     n_assert(node);
-    
+
     nCmdProtoNative* cmdProto = new nCmdProtoNative("i_NativeRootCmd_fff",
                                                     0, // id not used
                                                     n_nativerootcmd);
     /*
-        This is very naughty since EndScriptCmds() has already been called 
-        by the time we get here, fortunately for us EndScriptCmds() doesn't 
+        This is very naughty since EndScriptCmds() has already been called
+        by the time we get here, fortunately for us EndScriptCmds() doesn't
         actually do anything at the present time anyway :)
     */
     node->GetClass()->AddScriptCmd(cmdProto);
-    
+
     /*
-        Now every nRoot (and nRoot-derived) instance has the same 
+        Now every nRoot (and nRoot-derived) instance has the same
         NativeRootCmd cmd, that can be called from C++. It can also
         be called from script, but only using call(). Thunks aren't
         able to access the new cmd, in order to allow them to do so
         we'd have to update the Lua class cache. Alternatively it
-        may be possible to modify the thunk metatable to look 
+        may be possible to modify the thunk metatable to look
         for the cmd elsewhere when it fails to find it in the class
         cache.
     */

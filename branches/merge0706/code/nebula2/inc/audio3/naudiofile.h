@@ -6,9 +6,9 @@
     @ingroup Audio3
     @brief A generic base class for read access to audio files. Derive subclass
     for specific file formats/codecs.
-    
+
     (C) 2005 Radon Labs GmbH
-*/    
+*/
 #include "kernel/ntypes.h"
 #include "util/nstring.h"
 

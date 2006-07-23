@@ -1,0 +1,52 @@
+#-------------------------------------------------------------------------------
+#  nnebula/deformers.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::deformers
+    setmodules {
+        deformers::nblendshapedeformer
+        deformers::nblendshaperenderer
+        deformers::nmeshdeformer
+        deformers::nskinmeshdeformer
+    }
+endbundle
+
+beginmodule deformers::nblendshapedeformer
+    setdir deformers
+    setheaders {
+        nblendshapedeformer
+    }
+    setfiles {
+        nblendshapedeformer
+    }
+endmodule
+
+beginmodule deformers::nblendshaperenderer
+    setdir deformers
+    setheaders {
+        nblendshaperenderer
+    }
+    setfiles {
+        nblendshaperenderer
+    }
+endmodule
+
+beginmodule deformers::nmeshdeformer
+    setdir deformers
+    setheaders {
+        nmeshdeformer
+    }
+    setfiles {
+        nmeshdeformer
+    }
+endmodule
+
+beginmodule deformers::nskinmeshdeformer
+    setdir deformers
+    setheaders {
+        nskinmeshdeformer
+    }
+    setfiles {
+        nskinmeshdeformer
+    }
+endmodule

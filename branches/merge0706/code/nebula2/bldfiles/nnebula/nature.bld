@@ -1,0 +1,20 @@
+#-------------------------------------------------------------------------------
+#  nnebula/nature.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::nature
+    setmodules {
+        nature::nswingshapenode
+    }
+endbundle
+
+beginmodule nature::nswingshapenode
+    setdir nature
+    setheaders {
+        nswingshapenode
+    }
+    setfiles {
+        nswingshapenode_main
+        nswingshapenode_cmds
+    }
+endmodule

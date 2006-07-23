@@ -11,7 +11,7 @@
     several times simultaneously, the intended number of parallel
     "tracks" can be set by the user before opening the resource.
 
-    Sound resources are generally shared and are referenced by 
+    Sound resources are generally shared and are referenced by
     nSound3 objects (there should be one nSound3 object per "sound instance",
     but several nSound3 objects should reference the same nSoundResource object,
     if the nSound3 objects sound the same).
@@ -19,7 +19,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "resource/nresource.h"
-    
+
 //------------------------------------------------------------------------------
 class nSoundResource : public nResource
 {

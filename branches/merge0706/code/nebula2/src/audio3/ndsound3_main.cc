@@ -6,7 +6,7 @@
 #include "audio3/ndsoundserver3.h"
 #include "audio3/ndsoundresource.h"
 
-nNebulaClass(nDSound3, "nsound3");
+nNebulaClass(nDSound3, "audio3::nsound3");
 
 //------------------------------------------------------------------------------
 /**
@@ -85,7 +85,7 @@ nDSound3::UnloadResource()
 void
 nDSound3::Start()
 {
-    HRESULT hr; 
+    HRESULT hr;
     CSound* snd = this->GetCSoundPtr();
     n_assert(snd);
     LONG dsVolume = this->GetDSVolume();
@@ -125,7 +125,7 @@ nDSound3::Start()
         if (FAILED(hr))
         {
             n_printf("nDSoundServer3: failed to start 3D sound '%s'\n", this->GetFilename());
-        }        
+        }
     }
 }
 
@@ -185,7 +185,7 @@ nDSound3::Update()
 */
 bool
 nDSound3::IsPlaying()
-{   
+{
     if (this->soundIndex != -1)
     {
         if (this->GetStreaming())

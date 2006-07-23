@@ -10,7 +10,7 @@
 #include "file/nnpkdirectory.h"
 #include "tools/nnpkbuilder.h"
 
-nNebulaScriptClass(nNpkFileServer, "nfileserver2");
+nNebulaScriptClass(nNpkFileServer, "kernel::nfileserver2");
 
 //------------------------------------------------------------------------------
 /**
@@ -166,8 +166,8 @@ nNpkTocEntry*
 nNpkFileServer::FindTocEntry(const nString& absPath)
 {
     nNpkFileWrapper* curWrapper;
-    for (curWrapper = (nNpkFileWrapper*) this->npkFiles.GetHead(); 
-         curWrapper; 
+    for (curWrapper = (nNpkFileWrapper*) this->npkFiles.GetHead();
+         curWrapper;
          curWrapper = (nNpkFileWrapper*) curWrapper->GetSucc())
     {
         nNpkToc& toc = curWrapper->GetTocObject();

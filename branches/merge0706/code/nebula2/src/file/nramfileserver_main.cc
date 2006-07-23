@@ -7,7 +7,7 @@
 #include "file/nramfileserver.h"
 #include "file/nramfile.h"
 
-nNebulaScriptClass(nRamFileServer, "nfileserver2");
+nNebulaScriptClass(nRamFileServer, "kernel::nfileserver2");
 
 
 //------------------------------------------------------------------------------

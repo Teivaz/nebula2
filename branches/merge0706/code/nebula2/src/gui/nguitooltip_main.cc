@@ -9,7 +9,7 @@
 #include "kernel/ntimeserver.h"
 #include "gui/nguimousecursor.h"
 
-nNebulaClass(nGuiToolTip, "nguitextlabel");
+nNebulaClass(nGuiToolTip, "gui::nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**
@@ -64,7 +64,7 @@ nGuiToolTip::OnMouseMoved(const vector2& mousePos)
 */
 void
 nGuiToolTip::SetText(const char* text)
-{    
+{
     nGuiTextLabel::SetText(text);
     this->textSizeIsDirty = true;
     this->UpdateRect();
@@ -86,7 +86,7 @@ nGuiToolTip::SetFont(const char* fontName)
 */
 bool
 nGuiToolTip::Render()
-{     
+{
     if (this->IsShown())
     {
         nGuiServer* guiServer = nGuiServer::Instance();
@@ -122,7 +122,7 @@ nGuiToolTip::Render()
 */
 void
 nGuiToolTip::UpdateColor()
-{    
+{
     this->windowColor = vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
     // NOTE: the use on nTimeServer is intentional, as the current
@@ -170,10 +170,10 @@ nGuiToolTip::UpdateRect()
         this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
         if (!this->refFont.isvalid())
         {
-            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
+            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get());
         }
     }
-    
+
     if (this->textSizeIsDirty)
     {
         if (this->refFont.isvalid())
@@ -204,7 +204,7 @@ nGuiToolTip::UpdateRect()
     // update screen space rectangle
     rectangle r(mousePos + offset, mousePos + this->textSize + offset);
     nGuiServer::Instance()->MoveRectToVisibleArea(r);
-    
+
     this->SetRect(r);
 }
 

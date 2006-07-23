@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-nNebulaScriptClass(nParticleServer, "nroot");
+nNebulaScriptClass(nParticleServer, "kernel::nroot");
 nParticleServer* nParticleServer::Singleton = 0;
 
 //------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ nParticleServer::nParticleServer() :
         float f1 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
         float f2 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
         float f3 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
- 
+
         float l = n_sqrt(f0*f0 + f1*f1 + f2*f2);
         if (l > 0.0f)
         {

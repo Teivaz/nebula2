@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiwindow.h"
 
-nNebulaScriptClass(nGuiCheckButton, "nguitextlabel");
+nNebulaScriptClass(nGuiCheckButton, "gui::nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**
@@ -29,7 +29,7 @@ nGuiCheckButton::~nGuiCheckButton()
 
 //-----------------------------------------------------------------------------
 /**
-    If mouse is over sensitive area, set the mouse over flag.    
+    If mouse is over sensitive area, set the mouse over flag.
 */
 bool
 nGuiCheckButton::OnMouseMoved(const vector2& mousePos)

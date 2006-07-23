@@ -1,0 +1,140 @@
+#-------------------------------------------------------------------------------
+#  nnebula/audio3.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::audio3
+    setmodules {
+        audio3::naudiofile
+        audio3::naudioserver3
+        audio3::noggfile
+        audio3::nsound3
+        audio3::nsoundresource
+        audio3::nwavfile
+    }
+endbundle
+
+beginmodule audio3::naudiofile
+    setdir audio3
+    setheaders {
+        naudiofile
+    }
+    setfiles {
+        naudiofile
+    }
+endmodule
+
+beginmodule audio3::naudioserver3
+    setdir audio3
+    setheaders {
+        naudioserver3
+        nlistener3
+    }
+    setfiles {
+        naudioserver3_main
+        naudioserver3_cmds
+    }
+endmodule
+
+beginmodule audio3::noggfile
+    setdir audio3
+    setheaders {
+        noggfile
+    }
+    setfiles {
+        noggfile
+    }
+    setlibs_win32_release {
+        ogg.lib
+        vorbis.lib
+    }
+    setlibs_win32_debug {
+        ogg_d.lib
+        vorbis_d.lib
+    }
+endmodule
+
+beginmodule audio3::nsound3
+    setdir audio3
+    setheaders {
+        nsound3
+    }
+    setfiles {
+        nsound3_main
+    }
+endmodule
+
+beginmodule audio3::nsoundresource
+    setdir audio3
+    setheaders {
+        nsoundresource
+    }
+    setfiles {
+        nsoundresource_main
+    }
+endmodule
+
+beginmodule audio3::nwavfile
+    setdir audio3
+    setheaders {
+        nwavfile
+    }
+    setfiles {
+        nwavfile
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginbundle ndsound::audio3
+    setmodules {
+        audio3::dsutil
+        audio3::ndsound3
+        audio3::ndsoundresource
+        audio3::ndsoundserver3
+   }
+endbundle
+
+beginmodule audio3::dsutil
+    setdir audio3
+    setplatform win32
+    setheaders {
+        dsutil
+        dxutil
+    }
+    setfiles {
+        dsutil
+    }
+    setlibs_win32 {
+        dxguid.lib
+        dsound.lib
+        winmm.lib
+    }
+endmodule
+
+beginmodule audio3::ndsound3
+    setdir audio3
+    setheaders {
+        ndsound3
+    }
+    setfiles {
+        ndsound3_main
+    }
+endmodule
+
+beginmodule audio3::ndsoundresource
+    setdir audio3
+    setheaders {
+        ndsoundresource
+    }
+    setfiles {
+        ndsoundresource_main
+    }
+endmodule
+
+beginmodule audio3::ndsoundserver3
+    setdir audio3
+    setheaders {
+        ndsoundserver3
+    }
+    setfiles {
+        ndsoundserver3_main
+    }
+endmodule

@@ -5,7 +5,7 @@
 #include "gui/nguiicon.h"
 #include "gui/nguiiconcanvas.h"
 
-nNebulaClass(nGuiIcon, "nguilabel");
+nNebulaClass(nGuiIcon, "gui::nguilabel");
 
 //------------------------------------------------------------------------------
 /**

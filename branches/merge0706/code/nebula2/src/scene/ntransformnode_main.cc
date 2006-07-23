@@ -7,7 +7,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nTransformNode, "nscenenode");
+nNebulaScriptClass(nTransformNode, "scene::nscenenode");
 
 //------------------------------------------------------------------------------
 /**
@@ -58,13 +58,13 @@ nTransformNode::HasTransform() const
     server as current modelview matrix.
 */
 bool
-nTransformNode::RenderTransform(nSceneServer* sceneServer, 
-                                nRenderContext* renderContext, 
+nTransformNode::RenderTransform(nSceneServer* sceneServer,
+                                nRenderContext* renderContext,
                                 const matrix44& parentMatrix)
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-    
+
     this->InvokeAnimators(nAnimator::Transform, renderContext);
     if (this->GetLockViewer())
     {

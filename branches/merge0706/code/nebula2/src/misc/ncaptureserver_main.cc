@@ -7,7 +7,7 @@
 #include "kernel/ntimeserver.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nCaptureServer, "nroot");
+nNebulaScriptClass(nCaptureServer, "kernel::nroot");
 nCaptureServer* nCaptureServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

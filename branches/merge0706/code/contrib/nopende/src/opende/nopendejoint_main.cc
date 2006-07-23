@@ -3,25 +3,25 @@
 //----------------------------------------------------------------------------
 #include "opende/nopendejoint.h"
 
-nNebulaScriptClass(nOpendeJoint, "nroot");
+nNebulaScriptClass(nOpendeJoint, "kernel::nroot");
 
 #include "opende/nopendeworld.h"
 #include "opende/nopendebody.h"
 
 const int nOpendeJoint::NUM_JOINT_PARAMS = 11;
 
-const char* nOpendeJoint::JOINT_PARAM_NAMES[] = { 
+const char* nOpendeJoint::JOINT_PARAM_NAMES[] = {
             "lostop", "histop", "vel", "fmax",
             "fudgefactor", "bounce", "cfm",
-            "stoperp", "stopcfm", 
-            "suspensionerp", "suspensioncfm" 
+            "stoperp", "stopcfm",
+            "suspensionerp", "suspensioncfm"
         };
 
 //----------------------------------------------------------------------------
 /**
 */
 nOpendeJoint::nOpendeJoint() :
-    id(0), 
+    id(0),
     firstBodyName("none"), secondBodyName("none")
 {
     //
@@ -53,7 +53,7 @@ nOpendeJoint::~nOpendeJoint()
 //----------------------------------------------------------------------------
 /**
     @brief Attach the joint to the bodies.
-    
+
     Note that using this method the connection will not be persisted, if
     you want the connection to be persistent use the string based AttachTo().
 */
@@ -71,32 +71,32 @@ void nOpendeJoint::AttachTo( dBodyID body1, dBodyID body2 )
 void nOpendeJoint::AttachTo( const char* body1, const char* body2 )
 {
     n_assert( this->id && "nOpendeJoint::id not valid!" );
-    
+
     dBodyID id1 = 0, id2 = 0;
     nRoot* temp;
-    
+
     if ( strcmp( body1, "none" ) != 0 )
     {
         temp = this->kernelServer->Lookup( body1 );
-        n_assert( temp && 
+        n_assert( temp &&
                   temp->IsA( this->kernelServer->FindClass( "nopendebody" ) ) &&
                   "body1 in call to nOpendeJoint::Attach() is invalid!" );
         id1 = ((nOpendeBody*)temp)->id;
     }
-  
+
     this->firstBodyName = body1;
-  
+
     if ( strcmp( body2, "none" ) != 0 )
     {
         temp = this->kernelServer->Lookup( body2 );
-        n_assert( temp && 
+        n_assert( temp &&
                   temp->IsA( this->kernelServer->FindClass( "nopendebody" ) ) &&
                   "body2 in call to nOpendeJoint::Attach() is invalid!" );
         id2 = ((nOpendeBody*)temp)->id;
     }
-  
+
     this->secondBodyName = body2;
-  
+
     nOpende::JointAttach( this->id, id1, id2 );
 }
 
@@ -133,7 +133,7 @@ int nOpendeJoint::GetJointType()
 const char* nOpendeJoint::GetJointTypeName()
 {
     n_assert( this->id && "nOpendeJoint::id not valid!" );
-    
+
     switch ( nOpende::JointGetType( this->id ) )
     {
         case dJointTypeBall:
@@ -245,7 +245,7 @@ void nOpendeJoint::SetParam2( const char* param, int axis, float value )
     n_assert( this->id && "nOpendeJoint::id not valid!" );
     n_assert( (0 <= axis) && (axis < 3) );
     int offset = dParamGroup * axis;
-  
+
     if ( strcmp( param, "lostop" ) == 0 )
         this->SetParam( dParamLoStop + offset, value );
     else if ( strcmp( param, "histop" ) == 0 )
@@ -280,7 +280,7 @@ float nOpendeJoint::GetParam2( const char* param, int axis )
     n_assert( this->id && "nOpendeJoint::id not valid!" );
     n_assert( (0 <= axis) && (axis < 3) );
     int offset = dParamGroup * axis;
-  
+
     if ( strcmp( param, "lostop" ) == 0 )
         return this->GetParam( dParamLoStop + offset );
     else if ( strcmp( param, "histop" ) == 0 )
@@ -305,7 +305,7 @@ float nOpendeJoint::GetParam2( const char* param, int axis )
         return this->GetParam( dParamSuspensionCFM + offset );
     else
         n_error( "nOpendeJoint::GetParam(): Unknown param %s!", param );
-  
+
     return 0.0f;
 }
 

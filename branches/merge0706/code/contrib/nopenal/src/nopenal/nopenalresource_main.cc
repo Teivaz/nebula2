@@ -12,7 +12,7 @@
 
 //#include <sys/stat.h>
 
-nNebulaClass(nOpenALResource, "nsoundresource");
+nNebulaClass(nOpenALResource, "audio3::nsoundresource");
 
 
 //-----------------------------------------------------------
@@ -29,7 +29,7 @@ int SeekOgg(void *datasource, ogg_int64_t offset, int whence)
 {
     nFile* fp = reinterpret_cast<nFile*>(datasource);
     nFile::nSeekType dir;
-    switch (whence) 
+    switch (whence)
 	{
     case SEEK_SET:
         dir = nFile::nSeekType::START;
@@ -104,7 +104,7 @@ nOpenALResource::LoadResource()
    // load data into buffer
 #ifdef WINDOWS
     int error;
-    
+
     if( dstFileName.GetExtension() == nString("wav") )
     {
         ALsizei size, freq;
@@ -155,7 +155,7 @@ nOpenALResource::LoadResource()
 #if defined(MACOS) | defined(MAC_OS_X)
 #endif
 #ifdef LINUX
-#endif   
+#endif
 
     // set static source properties
     alSourcei(source, AL_BUFFER, buffer);
@@ -195,7 +195,7 @@ nOpenALResource::load_ogg_file(const nString& filename, const unsigned int& buff
     {
         n_error("nOpenALResource unable to load: %s\n", filename.Get());
     }
-    
+
     // OggVorbis specific structures
 	ov_callbacks  cb;
 	cb.close_func = CloseOgg;
@@ -205,7 +205,7 @@ nOpenALResource::load_ogg_file(const nString& filename, const unsigned int& buff
 
     OggVorbis_File vf;
     nOpenALServer::Instance()->check_ov_error("ov_open_callbacks() said", ov_open_callbacks(fp, &vf, 0, -1, cb));
-    
+
     read_ogg_block(buffer, vf);
 
     nOpenALServer::Instance()->check_ov_error("ov_clear() said", ov_clear(&vf));
@@ -217,7 +217,7 @@ nOpenALResource::read_ogg_block(const unsigned int& buffer, OggVorbis_File& vf)
     int blockSize = ov_pcm_total(&vf, -1);
     nOpenALServer::Instance()->check_ov_error("ov_pcm_total() said", blockSize);
     blockSize *= 2;
-    
+
     // vars
 	int	  current_section = 0;
 	long  TotalRet        = 0;
@@ -226,10 +226,10 @@ nOpenALResource::read_ogg_block(const unsigned int& buffer, OggVorbis_File& vf)
     const char* pbuf      = buf;
 
 	// Read loop
-	while (TotalRet < blockSize) 
+	while (TotalRet < blockSize)
 	{
 		ret = ov_read(&vf, buf + TotalRet, blockSize - TotalRet, 0, 2, 1, &current_section);
-        
+
 		// if end of file or read limit exceeded
 		if (ret == 0) break;
 		else if (ret < 0) 		// Error in bitstream
@@ -258,7 +258,7 @@ nOpenALResource::read_ogg_block(const unsigned int& buffer, OggVorbis_File& vf)
     ALsizei freq = pInfo->rate;
     alBufferData(buffer, format, (void*)pbuf, blockSize, freq);
     nOpenALServer::Instance()->check_al_error();
-    
+
     delete [] buf;
 }
 

@@ -7,7 +7,7 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 
-nNebulaScriptClass(nFileNode, "nroot");
+nNebulaScriptClass(nFileNode, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**

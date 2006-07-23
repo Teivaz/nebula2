@@ -7,7 +7,7 @@
 #include "octree/noctree.h"
 //#include "gfx2/nprimitiveserver.h"
 
-nNebulaScriptClass(nOctree, "nroot");
+nNebulaScriptClass(nOctree, "kernel::nroot");
 
 //-------------------------------------------------------------------
 /**
@@ -47,7 +47,7 @@ nOctree::nOctree() :
 //-------------------------------------------------------------------
 nOctree::~nOctree()
 {
-    
+
     // make sure that there are no more elements in the tree
     n_assert(0 == this->tree_root->all_num_elms);
 }
@@ -111,7 +111,7 @@ bool nOctree::GetVisualize(void)
 //-------------------------------------------------------------------
 /**
     Takes a new nOctNode from the free_pool and initializes
-    its parent pointer and bounding box 
+    its parent pointer and bounding box
 
     - 31-May-99   floh    created
 */
@@ -242,7 +242,7 @@ void nOctree::collapse(nOctNode *n)
     // n_printf("# collapsing octnode %d\n",n);
 
     // Abort recursion if no childs found
-    if (n->c[0]) {   
+    if (n->c[0]) {
         // for each child...
         int i;
         for (i=0; i<8; i++) {
@@ -255,7 +255,7 @@ void nOctree::collapse(nOctNode *n)
                 n->c[i]->RemoveElement(oe);
                 n->AddElm(oe);
             }
-            
+
             // destroy child
             this->freenode(n->c[i]);
             n->c[i] = NULL;
@@ -266,7 +266,7 @@ void nOctree::collapse(nOctNode *n)
 //-------------------------------------------------------------------
 /**
     Starting at the specified nOctNode, searches the first node
-    towards the root which is able to entirely contain the 
+    towards the root which is able to entirely contain the
     nOctElement.
 
     Will return NULL if the element doesn't even fit in the
@@ -305,7 +305,7 @@ nOctNode *nOctree::find_node_downward(nOctNode *n, nOctElement *oe)
                 break;
             }
         }
-        
+
         // If we reach this point, then, althought there
         // are children, none of them is big enough to contain
         // the nOctElement
@@ -348,7 +348,7 @@ void nOctree::insert_element(nOctElement *oe)
 void nOctree::move_element(nOctElement *oe)
 {
     n_assert(oe->octnode);
-    
+
     nOctNode *on = oe->octnode;
 
     // Search for the first node towards root which
@@ -434,7 +434,7 @@ void nOctree::RemoveElement(nOctElement *oe)
 //-------------------------------------------------------------------
 /**
     @brief Update position and/or radius of an item.
-    
+
     The item is sorted into the tree, however the tree should
     be balanced again prior to executing another CollectX(), so that
     the collection process to some extent brings optimal results.
@@ -454,7 +454,7 @@ void nOctree::UpdateElement(nOctElement *oe, const vector3& p, float r)
 //-------------------------------------------------------------------
 /**
     @brief Update position and the bounding-box of an item.
-    
+
     Sets the boundingbox of an object directly rather than using the
     radius. Overlapping of objects is minimized to a certain amount.
     Since we have a fast sphere-vs-sphere test in the sphere culler
@@ -482,7 +482,7 @@ void nOctree::UpdateElement(nOctElement *oe, const vector3& p, const bbox3& box)
 
     This should always be run directly before a collection is made,
     so that the collection process runs in optimal time and the
-    smallest possible set is returned. 
+    smallest possible set is returned.
 
     - 31-May-99   floh    created
 */
@@ -512,7 +512,7 @@ void nOctree::visualize_node(nOctNode *on)
     m.scale( on->maxCorner - on->minCorner );
     m.set_translation( nodeCenter );
     nGfxServer2::Instance()->DrawShape( nGfxServer2::Box, m, vector4( 0, 1.0f, 0, 0.2f ) );
- 
+
     // Draw each element...
     const vector4 red( 1.0f, 0, 0, 0.4f );
     //const vector4 orange( 0.7f, 0.7f, 0, 1.0f );
@@ -525,7 +525,7 @@ void nOctree::visualize_node(nOctNode *on)
         m.ident();
         m.scale( oe->maxCorner - oe->minCorner );
         m.set_translation( elementCenter );
-        nGfxServer2::Instance()->DrawShape( nGfxServer2::Box, m, red );      
+        nGfxServer2::Instance()->DrawShape( nGfxServer2::Box, m, red );
 
         // Line to the node's center
         //vector3 lineToCenter[] = { elementCenter, nodeCenter };
@@ -543,7 +543,7 @@ void nOctree::visualize_node(nOctNode *on)
 //-------------------------------------------------------------------
 /**
     @brief Render a visualization of the nOctree.
-    
+
     The nOctNodes are drawn in green, with their nOctElements as red
     squares, which point with oranges lines to the center of the nOctNode,
     in which they're situated.
@@ -555,7 +555,7 @@ void nOctree::visualize_node(nOctNode *on)
 
 void nOctree::Visualize()
 {
-    if (this->visualize) 
+    if (this->visualize)
     {
         n_assert(this->tree_root);
         nGfxServer2::Instance()->SetTransform(nGfxServer2::Model, matrix44());

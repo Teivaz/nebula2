@@ -5,7 +5,7 @@
 #include "scene/nanimator.h"
 #include "variable/nvariableserver.h"
 
-nNebulaScriptClass(nAnimator, "nscenenode");
+nNebulaScriptClass(nAnimator, "scene::nscenenode");
 
 //------------------------------------------------------------------------------
 /**
@@ -39,7 +39,7 @@ nAnimator::GetAnimatorType() const
 //------------------------------------------------------------------------------
 /**
     This method is called back by scene node objects which wish to be
-    animated. 
+    animated.
 */
 void
 nAnimator::Animate(nSceneNode* /*sceneNode*/, nRenderContext* /*renderContext*/)

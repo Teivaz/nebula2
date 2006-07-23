@@ -5,7 +5,7 @@
 #include "gui/nguiconsolewindow.h"
 #include "gui/nguicmdentry.h"
 
-nNebulaClass(nGuiConsoleWindow, "nguiclientwindow");
+nNebulaClass(nGuiConsoleWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

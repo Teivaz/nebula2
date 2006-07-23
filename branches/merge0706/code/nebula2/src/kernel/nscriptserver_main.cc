@@ -5,7 +5,7 @@
 #include "kernel/nscriptserver.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nScriptServer, "nroot");
+nNebulaClass(nScriptServer, "kernel::nroot");
 
 nObject* nScriptServer::currentTargetObject = 0;
 
@@ -36,7 +36,7 @@ nScriptServer::~nScriptServer()
     @param  result      [out] will be filled with the result
     @return             false if an error occured during execution
 */
-bool 
+bool
 nScriptServer::Run(const char* /* cmdStr */, nString& /* result */)
 {
     // overwrite in subclass
@@ -98,7 +98,7 @@ nScriptServer::BeginWrite(const char* /* filename */, nObject* /* obj */)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nScriptServer::WriteBeginNewObject(nFile*, nRoot *, nRoot *)
 {
     // overwrite in subclass
@@ -108,7 +108,7 @@ nScriptServer::WriteBeginNewObject(nFile*, nRoot *, nRoot *)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nScriptServer::WriteBeginNewObjectCmd(nFile*, nRoot *, nRoot *, nCmd *)
 {
     // overwrite in subclass
@@ -118,7 +118,7 @@ nScriptServer::WriteBeginNewObjectCmd(nFile*, nRoot *, nRoot *, nCmd *)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nScriptServer::WriteBeginSelObject(nFile*, nRoot *, nRoot *)
 {
    // overwrite in subclass
@@ -128,7 +128,7 @@ nScriptServer::WriteBeginSelObject(nFile*, nRoot *, nRoot *)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nScriptServer::WriteCmd(nFile*, nCmd *)
 {
     // overwrite in subclass
@@ -138,7 +138,7 @@ nScriptServer::WriteCmd(nFile*, nCmd *)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nScriptServer::WriteEndObject(nFile*, nRoot *, nRoot *)
 {
     // overwrite in subclass
@@ -164,7 +164,7 @@ nScriptServer::EndWrite(nFile* /* file */)
      - 31-Aug-99   floh    'quit_requested' wird zurueckgesetzt, wenn
                            es einmal true war
 */
-bool 
+bool
 nScriptServer::Trigger()
 {
     bool retval = !(this->quitRequested);

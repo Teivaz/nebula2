@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-nNebulaScriptClass(nRoot, "nobject");
+nNebulaScriptClass(nRoot, "kernel::nobject");
 
 //------------------------------------------------------------------------------
 /**
@@ -32,22 +32,22 @@ nRoot::~nRoot()
     n_assert(this->refCount == 0);
 
     // prevent an invalid cwd in the kernel
-    if (this == kernelServer->GetCwd()) 
+    if (this == kernelServer->GetCwd())
     {
         kernelServer->SetCwd(0);
     }
 
     // release child objects
     nRoot *child;
-    while ((child = this->GetHead())) 
+    while ((child = this->GetHead()))
     {
         while (!child->Release());
     }
 
     // if I am a child, remove from parent
-    if (this->parent) 
+    if (this->parent)
     {
-        this->Remove();   
+        this->Remove();
     }
 }
 
@@ -58,8 +58,8 @@ nRoot::~nRoot()
 
      - 13-Nov-00   floh    created
 */
-void 
-nRoot::Initialize() 
+void
+nRoot::Initialize()
 {
     // empty
 }
@@ -67,13 +67,13 @@ nRoot::Initialize()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nRoot::Release()
 {
     n_assert(this->refCount > 0);
     bool retval = false;
     this->refCount--;
-    if (this->refCount == 0) 
+    if (this->refCount == 0)
     {
         // do not delete as long as mutex is set
         this->LockMutex();
@@ -97,22 +97,22 @@ nRoot::GetFullName() const
     const nRoot* stack[maxDepth];
     const nRoot* cur = this;
     int i = 0;
-    do 
+    do
     {
         stack[i++] = cur;
-    } 
+    }
     while ((cur = cur->GetParent()) && (i < maxDepth));
 
-    // traverse stack in reverse order and build filename    
+    // traverse stack in reverse order and build filename
     nString str;
     i--;
-    for (; i >= 0; i--) 
+    for (; i >= 0; i--)
     {
         const char *curName = stack[i]->GetName();
         str.Append(curName);
-        
+
         // add slash if not hierarchy root, and not last element in path
-        if ((curName[0] != '/') && (i > 0)) 
+        if ((curName[0] != '/') && (i > 0))
         {
             str.Append("/");
         }
@@ -125,7 +125,7 @@ nRoot::GetFullName() const
     Return shortest relative path leading from 'this' to 'other' object.
     This is a slow operation, unless one object is the parent of
     the other (this is a special case optimization).
-    
+
      - 06-Mar-00    floh    created
      - 21-Feb-04    floh    now accepts "other == this" (returns a dot)
      - 24-May-04    floh    rewritten to nString
@@ -140,37 +140,37 @@ nRoot::GetRelPath(const nRoot *other) const
     {
         str = ".";
     }
-    else if (other == this->GetParent()) 
+    else if (other == this->GetParent())
     {
         str = "..";
-    } 
-    else if (other->GetParent() == this) 
+    }
+    else if (other->GetParent() == this)
     {
         str = other->GetName();
-    } 
-    else 
+    }
+    else
     {
         // normal case
         nArray<const nRoot*> thisHierarchy;
         nArray<const nRoot*> otherHierarchy;
 
-        // for both objects, create lists of all parents up to root 
+        // for both objects, create lists of all parents up to root
         const nRoot *o = this;
-        do 
+        do
         {
             thisHierarchy.Insert(0, o);
-        } 
+        }
         while ((o = o->GetParent()));
         o = other;
-        do 
+        do
         {
             otherHierarchy.Insert(0, o);
-        } 
+        }
         while ((o = o->GetParent()));
 
         // remove identical parents
         bool running = true;
-        do 
+        do
         {
             if ((thisHierarchy.Size() > 0) && (otherHierarchy.Size() > 0))
             {
@@ -180,11 +180,11 @@ nRoot::GetRelPath(const nRoot *other) const
                 {
                     thisHierarchy.Erase(0);
                     otherHierarchy.Erase(0);
-                } 
+                }
                 else running = false;
-            } 
+            }
             else running = false;
-        } 
+        }
         while (running);
 
         // create path leading upward from this to the identical parent
@@ -228,7 +228,7 @@ child_cmp(const void *e0, const void *e1)
 
      - 18-May-99   floh    created
 */
-void 
+void
 nRoot::Sort()
 {
     int num,i;
@@ -237,17 +237,17 @@ nRoot::Sort()
     // count child objects
     for (num=0, c=this->GetHead(); c; c=c->GetSucc(), num++);
 
-    if (num > 0) 
+    if (num > 0)
     {
         nRoot **c_array = (nRoot **) n_malloc(num * sizeof(nRoot *));
         n_assert(c_array);
-        for (i = 0, c = this->GetHead(); c; c = c->GetSucc(), i++) 
+        for (i = 0, c = this->GetHead(); c; c = c->GetSucc(), i++)
         {
             c_array[i] = c;
         }
         qsort(c_array, num, sizeof(nRoot *), child_cmp);
 
-        for (i = 0; i < num; i++) 
+        for (i = 0; i < num; i++)
         {
             c_array[i]->Remove();
             this->AddHead(c_array[i]);
@@ -260,7 +260,7 @@ nRoot::Sort()
 /**
      - 04-Nov-98   floh    created
 */
-bool 
+bool
 nRoot::Save()
 {
     return this->SaveAs(this->GetName());
@@ -269,7 +269,7 @@ nRoot::Save()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nRoot::SaveAs(const char *name)
 {
     n_assert(name);
@@ -277,37 +277,37 @@ nRoot::SaveAs(const char *name)
     n_assert(ps);
 
     bool retval = false;
-    if (ps->BeginObject(this, name, true)) 
+    if (ps->BeginObject(this, name, true))
     {
         // ...the usual behaviour...
         nRoot *c;
-        if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN) 
+        if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {
             // upsidedown: save children first, then own status
-            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW)) 
+            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW))
             {
-                for (c = this->GetHead(); c; c = c->GetSucc()) 
+                for (c = this->GetHead(); c; c = c->GetSucc())
                 {
                     c->Save();
                 }
             }
             retval = this->SaveCmds(ps);
-        } 
-        else 
+        }
+        else
         {
             // normal: save own status first, then children
             retval = this->SaveCmds(ps);
-            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW)) 
+            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW))
             {
-                for (c = this->GetHead(); c; c = c->GetSucc()) 
+                for (c = this->GetHead(); c; c = c->GetSucc())
                 {
                     c->Save();
                 }
             }
         }
         ps->EndObject(true);
-    } 
-    else 
+    }
+    else
     {
         n_error("nRoot::SaveAs(): BeginObject() failed!");
     }
@@ -328,29 +328,29 @@ nRoot::Clone(const char *name)
 
     nPersistServer::nSaveMode oldMode = ps->GetSaveMode();
     ps->SetSaveMode(nPersistServer::SAVEMODE_CLONE);
-    if (ps->BeginObject(this, name, true)) 
+    if (ps->BeginObject(this, name, true))
     {
         // ...the usual behaviour...
         nRoot *c;
-        if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN) 
+        if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {
             // upsidedown: save children first, then own status
-            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW)) 
+            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW))
             {
-                for (c = this->GetHead(); c; c = c->GetSucc()) 
+                for (c = this->GetHead(); c; c = c->GetSucc())
                 {
                     c->Clone(c->GetName());
                 }
             }
             this->SaveCmds(ps);
-        } 
-        else 
+        }
+        else
         {
             // normal: save own status first, then children
             this->SaveCmds(ps);
-            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW)) 
+            if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW))
             {
-                for (c = this->GetHead(); c; c = c->GetSucc()) 
+                for (c = this->GetHead(); c; c = c->GetSucc())
                 {
                     c->Clone(c->GetName());
                 }
@@ -359,8 +359,8 @@ nRoot::Clone(const char *name)
         ps->EndObject(true);
         clone = ps->GetClone();
 
-    } 
-    else 
+    }
+    else
     {
         n_error("nRoot::Clone(): BeginObject() failed!");
     }
@@ -371,7 +371,7 @@ nRoot::Clone(const char *name)
 
 //------------------------------------------------------------------------------
 /**
-    Recursive version of GetInstanceSize(). Returns the summed the size of 
+    Recursive version of GetInstanceSize(). Returns the summed the size of
     all children.
 */
 int
@@ -394,7 +394,7 @@ nRoot::GetTreeSize() const
 /**
     Lock the object's main mutex.
 */
-void 
+void
 nRoot::LockMutex()
 {
     this->mutex.Lock();

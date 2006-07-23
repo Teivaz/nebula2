@@ -1,0 +1,10 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/microtcl.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget microtcl
+    settype lib
+    setbundles {
+        microtcl::microtcl
+    }
+endtarget

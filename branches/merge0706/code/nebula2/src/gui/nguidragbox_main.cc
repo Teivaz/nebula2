@@ -6,12 +6,12 @@
 #include "gui/nguievent.h"
 #include "gui/nguiserver.h"
 
-nNebulaScriptClass(nGuiDragBox, "nguiwidget");
+nNebulaScriptClass(nGuiDragBox, "gui::nguiwidget");
 
 //------------------------------------------------------------------------------
 /**
 */
-nGuiDragBox::nGuiDragBox() :    
+nGuiDragBox::nGuiDragBox() :
     dragThreshold(30.0f / 1024.0f),
     dragging(false),
     dragBoxValid(false),

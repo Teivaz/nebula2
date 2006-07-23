@@ -20,7 +20,7 @@
 #include "util/npriorityarray.h"
 #include "scene/nshapenode.h"
 
-nNebulaScriptClass(nSceneServer, "nroot");
+nNebulaScriptClass(nSceneServer, "kernel::nroot");
 nSceneServer* nSceneServer::Singleton = 0;
 
 // global data for qsort() compare function
@@ -81,7 +81,7 @@ nSceneServer::nSceneServer() :
 
     // dummy far far away value^^
     this->renderedReflectorDistance = 99999999.9f;
-    
+
     // default there is no rendered reflector
     this->renderContextPtr = 0;
 
@@ -90,7 +90,7 @@ nSceneServer::nSceneServer() :
     reqRefractClass = nKernelServer::Instance()->FindClass("nclippingcameranode");
     n_assert(reqReflectClass);
     n_assert(reqRefractClass);
-    
+
     self = this;
 }
 
@@ -113,8 +113,8 @@ nSceneServer::~nSceneServer()
 bool
 nSceneServer::Open()
 {
-    n_assert(!this->isOpen);   
-    
+    n_assert(!this->isOpen);
+
     // parse renderpath XML file
     if (this->renderPath.OpenXml())
     {
@@ -172,7 +172,7 @@ nSceneServer::Close()
 
 //------------------------------------------------------------------------------
 /**
-    Begin building the scene. Must be called once before attaching 
+    Begin building the scene. Must be called once before attaching
     nSceneNode hierarchies using nSceneServer::Attach().
 
     @param  viewer      the viewer position and orientation
@@ -206,7 +206,7 @@ nSceneServer::BeginScene(const matrix44& invView)
 
 //------------------------------------------------------------------------------
 /**
-    Attach a scene node to the scene. This will simply invoke 
+    Attach a scene node to the scene. This will simply invoke
     nSceneNode::Attach() on the scene node hierarchie's root object.
 */
 void
@@ -252,7 +252,7 @@ nSceneServer::BeginGroup(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(this->stackDepth < MaxHierarchyDepth);
 
     // initialize new group node
-    // FIXME: could be optimized to have no temporary 
+    // FIXME: could be optimized to have no temporary
     // object which must be copied onto array
     Group group;
     group.sceneNode = sceneNode;
@@ -403,20 +403,20 @@ nSceneServer::SplitNodes()
         {
             if (group.renderContext->GetFlag(nRenderContext::ShapeVisible))
             {
-                nMaterialNode* shapeNode = (nMaterialNode*) group.sceneNode;                
+                nMaterialNode* shapeNode = (nMaterialNode*) group.sceneNode;
 
                 // if this is a reflecting shape, parse for render priority
                 if(this->IsAReflectingShape(shapeNode))
                 {
                     // reset complex flag (we think this one is not the one to be rendered complex)
-                    group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 0);  
+                    group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 0);
 
                     // check if this one is the new (or old) node to be rendered complex
                     if(true == this->ParsePriority(group))
                     {
                         this->cameraArray.Reset();
                         group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 1);
-                    }                    
+                    }
                 }
 
                 int shaderIndex = shapeNode->GetShaderIndex();
@@ -441,11 +441,11 @@ nSceneServer::SplitNodes()
                 this->shadowArray.Append(i);
             }
         }
-        
+
         if (group.sceneNode->HasCamera())
         {
             nAbstractCameraNode* newCamera = (nAbstractCameraNode*) group.sceneNode;
-            
+
             // do the following stuff only if this camera is a child of the nearest seanode
             const nRenderContext* renderCandidate = (nRenderContext*) group.renderContext;
 
@@ -455,27 +455,27 @@ nSceneServer::SplitNodes()
 
                 // if this is the chosen one to be rendered
                 if(renderCandidate == this->renderContextPtr)
-                {  
+                {
                     // HACK!!!: at the moment the cameras are only used for water, and all use
                     // the same render target (because this is defined in the section, not by the
                     // camera. Therefor it is useless to render more than one camera per section.
                     // If later other cameras are used this must be fixed. A way must be found
                     // to decide if 2 cameras are the same, or creating different rendertarget results.
-                    
+
                     // check if we alread have a camera using the same renderpath section
                     int c;
                     bool uniqueCamera = true;
                     for (c = 0; c < this->cameraArray.Size(); c++)
                     {
                         Group& group = this->groupArray[this->cameraArray[c]];
-                        nAbstractCameraNode* existingCamera = (nAbstractCameraNode*) group.sceneNode;   
+                        nAbstractCameraNode* existingCamera = (nAbstractCameraNode*) group.sceneNode;
                         if (existingCamera->GetRenderPathSection() == newCamera->GetRenderPathSection())
                         {
                             uniqueCamera = false;
                             break;
                         }
                     }
-                    
+
                     if (uniqueCamera)
                     {
                         this->cameraArray.Append(i);
@@ -497,7 +497,7 @@ void
 nSceneServer::ValidateNodeResources()
 {
     PROFILER_START(this->profValidateResources);
-    
+
     // need to evaluate camera nodes first, because they create
     // textures used by other nodes
     ushort i;
@@ -510,9 +510,9 @@ nSceneServer::ValidateNodeResources()
             group.sceneNode->LoadResources();
         }
     }
-    
+
     // then evaluate the rest
-    num = this->groupArray.Size();   
+    num = this->groupArray.Size();
     for (i = 0; i < num; i++)
     {
         const Group& group = this->groupArray[i];
@@ -564,13 +564,13 @@ nSceneServer::CompareNodes(const ushort* i1, const ushort* i2)
     float diff = dist1.lensquared() - dist2.lensquared();
 
     if (sortingOrder == nRpPhase::FrontToBack)
-	{	
+	{
 		// (closest first)
         if (diff < 0.001f)      return -1;
 		else if (diff > 0.001f) return +1;
     }
 	else if (sortingOrder == nRpPhase::BackToFront)
-    {		
+    {
         if (diff > 0.001f)      return -1;
         else if (diff < 0.001f) return +1;
     }
@@ -621,7 +621,7 @@ nSceneServer::SortNodes()
     PROFILER_START(this->profSortNodes);
 
     // initialize the static viewer pos vector
-    viewerPos = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView).pos_component();    
+    viewerPos = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView).pos_component();
 
     // for each bucket: call the sorter hook
     int i;

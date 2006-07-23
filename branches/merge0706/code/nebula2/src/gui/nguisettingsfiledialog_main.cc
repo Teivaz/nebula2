@@ -5,7 +5,7 @@
 #include "gui/nguisettingsfiledialog.h"
 #include "gui/nguisettingsmanagementwindow.h"
 
-nNebulaClass(nGuiSettingsFileDialog, "nguifiledialog");
+nNebulaClass(nGuiSettingsFileDialog, "gui::nguifiledialog");
 
 //------------------------------------------------------------------------------
 /**
@@ -15,7 +15,7 @@ nGuiSettingsFileDialog::nGuiSettingsFileDialog()
 {
     this->SetSaveMode(false);
     this->SetDirectory("user:options");
-    this->SetTitle("Please select a file");    
+    this->SetTitle("Please select a file");
 }
 
 //------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ nGuiSettingsFileDialog::OnOk()
 
     // call parent
     this->settingsWindow->SetSelectedFilename(fileName);
-    
+
     return true;
 }
 

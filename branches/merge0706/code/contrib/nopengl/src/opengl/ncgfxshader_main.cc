@@ -12,7 +12,7 @@
 
 #include "util/nstrlist.h"
 
-nNebulaClass(nCgFXShader, "nshader2");
+nNebulaClass(nCgFXShader, "gfx2::nshader2");
 
 const char* cgFX_modes[] = {"","OpenGL","DirectX8","DirectX9"};
 
@@ -26,7 +26,7 @@ CgFXMode nCgFXShader::mode = CgFX_Unknown;
 
      - 19-Oct-2004   Haron    created
 */
-void 
+void
 __cdecl
 n_cgfxerror(HRESULT hr, const char *msg)
 {
@@ -55,7 +55,7 @@ n_cgfxerror(HRESULT hr, const char *msg)
 
      - 19-Oct-2004   Haron    created
 */
-bool 
+bool
 __cdecl
 n_cgfxwarning(HRESULT hr, const char *msg)
 {
@@ -120,7 +120,7 @@ nCgFXShader::CreateDevice()
 
     // Set device
     hr = CgFXSetDevice(cgFX_modes[mode], device);
-    n_cgfxerror(hr, "nCgFXShader::CreateDevice(): failed to set device in CgFXSetDevice.");    
+    n_cgfxerror(hr, "nCgFXShader::CreateDevice(): failed to set device in CgFXSetDevice.");
 
     deviceInit = true;
     n_gltrace("nCgFXShader::CreateDevice(2).");
@@ -675,7 +675,7 @@ nCgFXShader::ValidateEffect()
         CGFXHANDLE tchq = this->effect->GetTechnique(t);
 
         this->effect->GetTechniqueDesc(tchq,&tDesc);
-        
+
         hr = this->effect->SetTechnique(tchq);
         errStr = "Failed to set technique <";
         errStr += this->GetFilename() + ">:<" + tDesc.Name + ">";
@@ -683,7 +683,7 @@ nCgFXShader::ValidateEffect()
         {
             return;
         }
-        
+
         hr = this->effect->ValidateTechnique(tchq);
         errStr = "Failed to validate technique <";
         errStr += this->GetFilename() + ">:<" + tDesc.Name + ">";

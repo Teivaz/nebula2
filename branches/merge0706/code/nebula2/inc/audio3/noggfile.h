@@ -5,7 +5,7 @@
     @class nOggFile
     @ingroup Audio3
     @brief Provide read-access to a ogg file.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "audio3/naudiofile.h"
@@ -40,8 +40,8 @@ public:
 private:
     static const int    INPUTBUFFER = 4096;
 
-    bool                InitOGG();    
-    bool                ReleaseOGG();    
+    bool                InitOGG();
+    bool                ReleaseOGG();
 
     bool                m_bFileEndReached;
     int                 size;               /* ogg filesize in bytes */
@@ -61,11 +61,11 @@ private:
     vorbis_comment      vComments;          /* struct that stores all the bitstream user comments */
     vorbis_dsp_state    vDecoderState;      /* central working state for the packet->PCM decoder */
     vorbis_block        vDecoderWorkSpace;  /* local working space for packet->PCM decode */
-    
+
     bool                readEarlyLoopExit;  /* read:important to continue read-loop correctly */
     bool                endOfStream;        /* read:remember end of the stream */
     int                 keepAlive;
 };
 //------------------------------------------------------------------------------
 #endif
-    
+

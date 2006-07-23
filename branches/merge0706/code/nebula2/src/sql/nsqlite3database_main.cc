@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "sql/nsqlite3query.h"
 
-nNebulaClass(nSQLite3Database, "nsqldatabase");
+nNebulaClass(nSQLite3Database, "sql::nsqldatabase");
 
 //------------------------------------------------------------------------------
 /**
@@ -50,8 +50,8 @@ nSQLite3Database::LoadResource()
     int err = sqlite3_open(mangledPath.Get(), &this->sqliteHandle);
     if (SQLITE_OK != err)
     {
-        n_error("nSQLite3Database::LoadResource(): sqlite3_open(%s) failed with '%s'", 
-            mangledPath.Get(), 
+        n_error("nSQLite3Database::LoadResource(): sqlite3_open(%s) failed with '%s'",
+            mangledPath.Get(),
             sqlite3_errmsg(this->sqliteHandle));
         return false;
     }
@@ -63,7 +63,7 @@ nSQLite3Database::LoadResource()
     n_assert(SQLITE_OK == err);
     err = sqlite3_exec(this->sqliteHandle, "PRAGMA temp_store=MEMORY", 0, 0, 0);   // put temp stuff into memory
     n_assert(SQLITE_OK == err);
-    
+
     this->SetState(Valid);
     return true;
 }
@@ -362,7 +362,7 @@ nSQLite3Database::DeleteIndex(const nString& tableName)
 
 //------------------------------------------------------------------------------
 /**
-    Return true if at least one row identified by a WHERE clause 
+    Return true if at least one row identified by a WHERE clause
     exists in the database.
 */
 bool
@@ -435,7 +435,7 @@ nSQLite3Database::GetRow(const nString& tableName, const nString& keyColumn, con
 
 //------------------------------------------------------------------------------
 /**
-    Inserts a complete new row of data into the database. 
+    Inserts a complete new row of data into the database.
 */
 void
 nSQLite3Database::InsertRow(const nString& tableName, const nSqlRow& row)
@@ -460,7 +460,7 @@ nSQLite3Database::InsertRow(const nString& tableName, const nSqlRow& row)
 
 //------------------------------------------------------------------------------
 /**
-    Inserts a complete new row of data into the database. 
+    Inserts a complete new row of data into the database.
 */
 void
 nSQLite3Database::ReplaceRow(const nString& tableName, const nSqlRow& row)
@@ -485,7 +485,7 @@ nSQLite3Database::ReplaceRow(const nString& tableName, const nSqlRow& row)
 
 //------------------------------------------------------------------------------
 /**
-    Update a complete row, or part of a row in the database, the row is 
+    Update a complete row, or part of a row in the database, the row is
     identified by a WHERE clause.
 */
 void
@@ -494,7 +494,7 @@ nSQLite3Database::UpdateRow(const nString& tableName, const nString& whereClause
     n_assert(this->IsLoaded());
     n_assert(this->sqliteHandle);
     n_assert(row.GetColumns().Size() == row.GetValues().Size());
-        
+
     // construct an SQL statement which performs the update
     nString sql;
     sql.Format("UPDATE %s SET ", tableName.Get());
@@ -543,16 +543,16 @@ nSQLite3Database::DeleteRow(const nString& tableName, const nString& whereClause
 {
     n_assert(this->IsLoaded());
     n_assert(this->sqliteHandle);
-    
+
     nString sql;
     sql.Format("DELETE FROM %s", tableName.Get());
-    
+
     // add optional where condition
     if (whereClause.IsValid())
     {
         sql.Append(nString(" WHERE ") + whereClause);
     }
-    
+
     int err = sqlite3_exec(this->sqliteHandle, sql.Get(), 0, 0, 0);
     if (SQLITE_OK != err)
     {

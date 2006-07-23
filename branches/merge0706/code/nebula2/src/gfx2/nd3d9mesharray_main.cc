@@ -7,7 +7,7 @@
 #include "gfx2/nd3d9server.h"
 #include "gfx2/nd3d9mesh.h"
 
-nNebulaClass(nD3D9MeshArray, "nmesharray");
+nNebulaClass(nD3D9MeshArray, "gfx2::nmesharray");
 
 //------------------------------------------------------------------------------
 /**
@@ -70,7 +70,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
 
     nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
     n_assert(gfxServer && gfxServer->d3d9Device);
-    
+
     const int maxElements = 11; //the maximum number of vertex compontents
     D3DVERTEXELEMENT9 decl[maxElements * nGfxServer2::MaxVertexStreams];
 
@@ -90,7 +90,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
         {
             int curOffset  = 0;
             int vertexComponentMask = ((nD3D9Mesh*) mesh)->GetVertexComponents();
-            int index;            
+            int index;
             for (index = 0; index < maxElements; index++)
             {
                 int mask = (1<<index);
@@ -110,34 +110,34 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             decl[curElement].UsageIndex = postionUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
-                                      
+
                         case nMesh2::Normal:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_NORMAL;
                             decl[curElement].UsageIndex = normalUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
-                                                           
+
                         case nMesh2::Tangent:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_TANGENT;
                             decl[curElement].UsageIndex = tangentUsageIndex++;
                             curOffset += 3 * sizeof(float);
-                            break;                           
-                                                         
+                            break;
+
                         case nMesh2::Binormal:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
                             decl[curElement].Usage      = D3DDECLUSAGE_BINORMAL;
                             decl[curElement].UsageIndex = binormalUsageIndex++;
                             curOffset += 3 * sizeof(float);
                             break;
-                                                           
+
                         case nMesh2::Color:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
                             decl[curElement].Usage      = D3DDECLUSAGE_COLOR;
                             decl[curElement].UsageIndex = colorUsageIndex++;
                             curOffset += 4 * sizeof(float);
-                            break;  
+                            break;
 
                         case nMesh2::Uv0:
                             if (meshIndex == 0)
@@ -152,7 +152,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
                                 ignoreElement = true;
                             }
                             break;
-                                      
+
                         case nMesh2::Uv1:
                             if (meshIndex == 0)
                             {
@@ -193,8 +193,8 @@ nD3D9MeshArray::CreateVertexDeclaration()
                             {
                                 ignoreElement = true;
                             }
-                            break;  
-                        
+                            break;
+
                         case nMesh2::Weights:
                             decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
                             decl[curElement].Usage      = D3DDECLUSAGE_BLENDWEIGHT;

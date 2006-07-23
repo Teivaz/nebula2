@@ -3,12 +3,12 @@
 #  ==================
 #  nopenal demo application package definition
 #
-#  (C)2005 Kim, Hyoun Woo  
+#  (C)2005 Kim, Hyoun Woo
 #-----------------------------------------------------------------------------
 beginmodule nappopenalstate
     setdir nopenaldemo
-    setfiles { 
-        nappopenalstate_main 
+    setfiles {
+        nappopenalstate_main
         nappopenalstate_cmds
     }
     setheaders { nappopenalstate }
@@ -16,8 +16,8 @@ endmodule
 #-----------------------------------------------------------------------------
 beginmodule nappopenaldemo
     setdir nopenaldemo
-    setfiles { 
-        nappopenaldemo_main 
+    setfiles {
+        nappopenaldemo_main
         nappopenaldemo_cmds
     }
     setheaders { nappopenaldemo }
@@ -32,11 +32,11 @@ endmodule
 beginmodule demo
     setdir nopenaldemo
     setfiles { demo }
-    setlibs_win32 { 
-        ALut.lib 
-        OpenAL32.lib  
-        ogg_static.lib 
-        vorbisfile_static.lib 
+    setlibs_win32 {
+        ALut.lib
+        OpenAL32.lib
+        ogg_static.lib
+        vorbisfile_static.lib
     }
 endmodule
 #-----------------------------------------------------------------------------
@@ -62,7 +62,7 @@ begintarget nopenaldemo
         napplication
         nopenal
     }
-endtarget 
+endtarget
 #-----------------------------------------------------------------------------
 beginworkspace nopenaldemo
     settargets {

@@ -1,0 +1,10 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/ndshow.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget ndshow
+    settype lib
+    setbundles {
+        ndshow::video
+    }
+endbundle

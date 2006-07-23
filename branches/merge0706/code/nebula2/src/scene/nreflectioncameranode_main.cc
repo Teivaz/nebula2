@@ -9,7 +9,7 @@
 #include "kernel/nfileserver2.h"
 #include "mathlib/polar.h"
 
-nNebulaClass(nReflectionCameraNode, "nclippingcameranode");
+nNebulaClass(nReflectionCameraNode, "scene::nclippingcameranode");
 
 //------------------------------------------------------------------------------
 /**
@@ -40,12 +40,12 @@ nReflectionCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matr
 
     // check on witch side the position of the camera is
     vector3 camPosWorldSpace;
-    
+
     matrix44 _modelWorldMatrix = modelWorldMatrix;
 
     matrix44 _viewMatrix         = viewMatrix;
     _viewMatrix.pos_component()  = vector3(0.0, 0.0, 0.0);
-    
+
     _viewMatrix.invert();
     _viewMatrix.mult(viewMatrix.pos_component(), camPosWorldSpace);
 
@@ -72,7 +72,7 @@ nReflectionCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matr
 
     //viewMatrix
     this->viewMatrix = this->ComputeReflectionViewMatrix(viewMatrix, modelWorldMatrix, isOnFrontSideOfPlane, distance);
- 
+
     //
     this->projMatrix = this->ComputeProjectionMatrix(this->viewMatrix, projectionMatrix, clipPlaneNormal, clipPlanePoint);
 
@@ -84,7 +84,7 @@ nReflectionCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matr
 */
 matrix44
 nReflectionCameraNode::ComputeReflectionViewMatrix(const matrix44& viewMatrix, const matrix44& modelMatrix, const bool& isOnFrontSideOfPlane, const float& dist)
-{   
+{
     matrix44 reflectionMatrix           = viewMatrix;
     reflectionMatrix.pos_component()    = vector3(0.0, 0.0, 0.0);
     polar2 angles;
@@ -95,23 +95,23 @@ nReflectionCameraNode::ComputeReflectionViewMatrix(const matrix44& viewMatrix, c
 
     //if(reflectionMatrix.z_component().y < 0)
     float test = polar2(reflectionMatrix.z_component()).rho;
-    
+
     if( viewMatrix.y_component().z > 0)
     {
-        reflectionMatrix.rotate_x(-2*(angles.theta));   
+        reflectionMatrix.rotate_x(-2*(angles.theta));
     }
     else
     {
-        reflectionMatrix.rotate_x( 2*(angles.theta));   
+        reflectionMatrix.rotate_x( 2*(angles.theta));
     }
 
     // compute position
-    vector3 posVec = vector3(0.0, -modelMatrix.pos_component().y, 0.0);    
+    vector3 posVec = vector3(0.0, -modelMatrix.pos_component().y, 0.0);
 
     posVec.rotate(vector3(1.0, 0.0, 0.0), angles.theta);
     posVec.rotate(vector3(0.0, 1.0, 0.0), angles.rho);
     reflectionMatrix.pos_component() = viewMatrix.pos_component() - vector3(2 * posVec.x, 2 * posVec.y, 2 * posVec.z);
-    reflectionMatrix.pos_component() = vector3(reflectionMatrix.pos_component().x, -reflectionMatrix.pos_component().y, reflectionMatrix.pos_component().z); 
+    reflectionMatrix.pos_component() = vector3(reflectionMatrix.pos_component().x, -reflectionMatrix.pos_component().y, reflectionMatrix.pos_component().z);
 
     return reflectionMatrix;
 }

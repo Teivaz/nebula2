@@ -103,7 +103,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
     int samplesOut = 0;
     int samplesWritten = 0;
     int samplesLeft = convSize;
-    
+
     ogg_int16_t* bufferOut=(ogg_int16_t*)buffer;
 
     /* The rest is just a straight decode loop until end of stream */
@@ -112,7 +112,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
         while (!this->endOfStream)
         {
             int result=1;
-            
+
             if (!this->readEarlyLoopExit)
             {
                 result= ogg_sync_pageout(&oSyncState, &oBitStreamPage);
@@ -133,13 +133,13 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                 if (!this->readEarlyLoopExit)
                 {
                     /* can safely ignore errors at this point */
-                    ogg_stream_pagein(&oStreamState, &oBitStreamPage); 
+                    ogg_stream_pagein(&oStreamState, &oBitStreamPage);
                 }
-                
+
                 while (1)
                 {
                     int result=1;
-                    
+
                     if (!this->readEarlyLoopExit)
                     {
                         result = ogg_stream_packetout(&oStreamState, &oRawPacket);
@@ -181,7 +181,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                             int clipFlag = 0;
                             samplesOut = (samples < samplesLeft ? samples : samplesLeft);
 
-                            /* convert floats to 16 bit signed ints (host order) 
+                            /* convert floats to 16 bit signed ints (host order)
                             and interleave */
                             for (i = 0; i < vBitStreamInfo.channels; i++)
                             {
@@ -211,12 +211,12 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                             {
                                 n_printf("Clipping in frame %ld\n", (long)(vDecoderState.sequence));
                             }
-                            
+
                             samplesWritten+= samplesOut ;
                             samplesLeft   -= samplesOut ;
-                            
+
                             /* tell libvorbis how many samples we actually consumed */
-                            vorbis_synthesis_read(&vDecoderState, samplesOut); 
+                            vorbis_synthesis_read(&vDecoderState, samplesOut);
 
                             if(samplesLeft <= 0)
                             {
@@ -242,7 +242,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
             bytesIn = this->file->Read(bufferIn, INPUTBUFFER);
             ogg_sync_wrote(&oSyncState, bytesIn);
 
-            
+
             if (bytesIn == 0)
             {
                 endOfStream = true;
@@ -250,14 +250,14 @@ nOggFile::Read(void* buffer, uint bytesToRead)
 
         }
     }
-    
+
     m_bFileEndReached = true;
 
     // maybe there is still some data left which doesnt fill a block
     if(samplesWritten != 0)
     {
         return bytesToRead;
-    } 
+    }
 
     if(this->keepAlive > 0)
     {
@@ -283,21 +283,21 @@ nOggFile::InitOGG()
     this->keepAlive = 1;
 
     this->size=0;
-    
+
     /********** Decode setup ************/
-    
+
     memset (&oSyncState,0,sizeof(ogg_sync_state));
     memset (&oStreamState,0,sizeof(ogg_stream_state));
     memset (&oBitStreamPage,0,sizeof(ogg_page));
     memset (&oRawPacket,0,sizeof(ogg_packet));
-    
+
     memset (&vBitStreamInfo,0,sizeof(vorbis_info));
     memset (&vComments,0,sizeof(vorbis_comment));
     memset (&vDecoderState,0,sizeof(vorbis_dsp_state));
     memset (&vDecoderWorkSpace,0,sizeof(vorbis_block));
 
-    ogg_sync_init(&oSyncState); /* Now we can read pages */  
-    
+    ogg_sync_init(&oSyncState); /* Now we can read pages */
+
     /* grab some data at the head of the stream.  We want the first page
     (which is guaranteed to be small and only contain the Vorbis
     stream initial header) We need the first page to get the stream
@@ -316,7 +316,7 @@ nOggFile::InitOGG()
         {
             /* OK, clean up the framer */
             ogg_sync_clear(&oSyncState);
-                
+
             this->file->Close();
 
             n_printf("COggFile::Open:Done.\n");
@@ -384,14 +384,14 @@ nOggFile::InitOGG()
         {
             break;
         }
-        
+
         /* Need more data */
         /* Don't complain about missing or corrupt data yet.  We'll
         catch it at the packet output phase */
         if (result == 1)
         {
             /* we can ignore any errors here as they'll also become apparent at packetout */
-            ogg_stream_pagein(&oStreamState, &oBitStreamPage); 
+            ogg_stream_pagein(&oStreamState, &oBitStreamPage);
             while (i < 2)
             {
                 result = ogg_stream_packetout(&oStreamState, &oRawPacket);
@@ -434,25 +434,25 @@ nOggFile::InitOGG()
         n_printf("COggFile::Open:\nBitstream is %d channel, %ldHz\n", vBitStreamInfo.channels,
             vBitStreamInfo.rate);
         n_printf("COggFile::Open:Encoded by: %s\n\n", vComments.vendor);
-        
-        ZeroMemory( &this->wfx, sizeof(WAVEFORMATEX) ); 
+
+        ZeroMemory( &this->wfx, sizeof(WAVEFORMATEX) );
         this->wfx.nChannels         = vBitStreamInfo.channels;
         this->wfx.nSamplesPerSec    = vBitStreamInfo.rate;
         this->wfx.wBitsPerSample    = 16;
         this->wfx.nBlockAlign       = this->wfx.nChannels*this->wfx.wBitsPerSample/8;
         this->wfx.nAvgBytesPerSec   = vBitStreamInfo.rate*this->wfx.nBlockAlign;
-        this->wfx.wFormatTag        = (WORD) WAVE_FORMAT_PCM; 
+        this->wfx.wFormatTag        = (WORD) WAVE_FORMAT_PCM;
         this->wfx.cbSize            = 0;//???
     }
 
     /* OK, got and parsed all three headers.Initialize the Vorbis packet->PCM decoder. */
     vorbis_synthesis_init(&vDecoderState, &vBitStreamInfo); /* central decode state */
-    vorbis_block_init(&vDecoderState, &vDecoderWorkSpace); 
+    vorbis_block_init(&vDecoderState, &vDecoderWorkSpace);
     /* local state for most of the decode so multiple block decodes can
     proceed in parallel.  We could init multiple vorbis_block structures
     for vDecoderState here */
 
-    
+
     return true;
 }
 
@@ -477,6 +477,6 @@ nOggFile::ReleaseOGG()
 
     /* OK, clean up the framer */
     ogg_sync_clear(&oSyncState);
-    
+
     return true;
 }

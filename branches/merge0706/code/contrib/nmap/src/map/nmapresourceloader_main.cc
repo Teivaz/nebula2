@@ -7,7 +7,7 @@
 #include "map/mapblock.h"
 #include "map/nmap.h"
 
-nNebulaScriptClass(nMapResourceLoader, "nresourceloader");
+nNebulaScriptClass(nMapResourceLoader, "resource::nresourceloader");
 
 //------------------------------------------------------------------------------
 const char* const nMapResourceLoader::SEPARATOR = "!";
@@ -40,7 +40,7 @@ Base Load() function for the nMapResourceLoader
 @param callingResource  ptr to the nResource calling nMapResourceLoader::Load()
 @return                 success/failure
 */
-bool 
+bool
 nMapResourceLoader::Load(const char *cmdString, nResource *callingResource)
 {
     nMesh2* meshTriStrip = static_cast<nMesh2*>(callingResource);

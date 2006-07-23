@@ -3,7 +3,7 @@
 #   ============
 #   nopenal .bld file
 #
-#   by Bang, Chang Kyu. 
+#   by Bang, Chang Kyu.
 #-----------------------------------------------------------------------------
 beginmodule nopenalserver
     setdir nopenal
@@ -30,7 +30,7 @@ begintarget nopenal
     setrtti true
     setmodules    { nopenalserver nopenalresource nopenalobj }
     settargetdeps { nkernel nnebula microtcl }
-endtarget 
+endtarget
 #-----------------------------------------------------------------------------
 # EOF
 #-----------------------------------------------------------------------------

@@ -6,7 +6,7 @@
 #include "gui/nguislide.h"
 #include "gui/nguiresource.h"
 
-nNebulaClass(nGuiSlide, "nguilabel");
+nNebulaClass(nGuiSlide, "gui::nguilabel");
 
 //------------------------------------------------------------------------------
 /**

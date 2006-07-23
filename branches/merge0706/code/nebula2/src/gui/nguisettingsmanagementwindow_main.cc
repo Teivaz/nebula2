@@ -16,7 +16,7 @@
 #include "misc/nprefserver.h"
 #include "kernel/nfileserver2.h"
 
-nNebulaClass(nGuiSettingsManagementWindow, "nguiclientwindow");
+nNebulaClass(nGuiSettingsManagementWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 // constant strings
@@ -130,7 +130,7 @@ nGuiSettingsManagementWindow::OnShow()
 
     // create text view field for widget selection
     nGuiTextView* textView = (nGuiTextView*) kernelServer->New("nguitextview", "WindowSettingsSelectionTextView");
-    n_assert(textView);        
+    n_assert(textView);
     textView->SetSelectionEnabled(true);
     textView->SetHighlightBrush("textentry_h");
     textView->SetDefaultBrush("list_background");
@@ -186,7 +186,7 @@ nGuiSettingsManagementWindow::OnShow()
     textEntry->SetMinSize(buttonSize);
     buttonSize.x = 1.0f;
     textEntry->SetMaxSize(buttonSize);
-    textEntry->SetFileMode(true); 
+    textEntry->SetFileMode(true);
     textEntry->SetInitialCursorPos(nGuiTextLabel::Right);
     layout->AttachWidget(textEntry, nGuiFormLayout::Top, this->refFileLabel, border);
     layout->AttachForm(textEntry, nGuiFormLayout::Left, border );
@@ -209,7 +209,7 @@ nGuiSettingsManagementWindow::OnShow()
     layout->AttachWidget(btn, nGuiFormLayout::Top, this->refFilenameEntry, border);
     btn->OnShow();
     this->refLoadButton = btn;
-   
+
     // save button
     btn = (nGuiTextButton*) kernelServer->New("nguitextbutton", "SaveButton");
     btn->SetText("Save as");
@@ -285,7 +285,7 @@ nGuiSettingsManagementWindow::OnShow()
     this->refInfoLabel = textLabel;
 
     kernelServer->PopCwd();
-    
+
     // try to create default directory "home:work/save"
     if(!this->CheckDirAndCreate())
     {
@@ -385,7 +385,7 @@ nGuiSettingsManagementWindow::OnEvent(const nGuiEvent& event)
         {
             this->SetInfoText("Please specify a filename");
         }
-    }        
+    }
     else if ((event.GetType() == nGuiEvent::ButtonUp) &&
             (event.GetWidget() == this->refSaveButton))
     {
@@ -411,7 +411,7 @@ nGuiSettingsManagementWindow::OnEvent(const nGuiEvent& event)
 /**
     Reset display adjustment values.
 
-    Opens the preferences server and calls methods to readvalues from server 
+    Opens the preferences server and calls methods to readvalues from server
     and assing values to window
 */
 void
@@ -647,7 +647,7 @@ nGuiSettingsManagementWindow::CreateFileDialog()
 
     nGuiSettingsFileDialog* dialog = (nGuiSettingsFileDialog*) nGuiServer::Instance()->NewWindow("nguisettingsfiledialog", true);
     n_assert(dialog);
-    dialog->SetSettingWindowRef(this); 
+    dialog->SetSettingWindowRef(this);
 }
 
 //------------------------------------------------------------------------------
@@ -680,7 +680,7 @@ nGuiSettingsManagementWindow::LoadValuesFromFile(nString filename)
         this->SetInfoText("The specified file is no xml file!", true);
         return;
     }
-   
+
     // create stream and write stuff
     nStream stream;
     stream.SetFilename(filename);
@@ -712,7 +712,7 @@ nGuiSettingsManagementWindow::LoadValuesFromFile(nString filename)
         }
     }
     else if(strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
-    {        
+    {
         if(false == (this->LoadDisplayAdjustmentsFromStream(&stream)))
         {
             stream.Close();
@@ -735,7 +735,7 @@ nGuiSettingsManagementWindow::LoadValuesFromFile(nString filename)
     Reads the scene control contet from given stream
     Assigns the read values to the scene control window
 */
-bool 
+bool
 nGuiSettingsManagementWindow::LoadSceneControlsFromStream(nStream* stream)
 {
     // temp variables
@@ -848,7 +848,7 @@ nGuiSettingsManagementWindow::LoadDisplayAdjustmentsFromStream(nStream* stream)
     // try to get childs
     if(stream->SetToFirstChild())
     {
-        // repeat for each 
+        // repeat for each
         for(int iCount = 0; iCount < 13; iCount++)
         {
             if(stream->GetCurrentNodeName() == daXMLSaturate && stream->GetAttrs()[0] == sliderString)
@@ -1070,7 +1070,7 @@ nGuiSettingsManagementWindow::WriteXMLfromDisplayAdjustments(nStream* stream, nG
 /**
     Writes the <Scene_Control> note to given stream
 */
-void 
+void
 nGuiSettingsManagementWindow::WriteXMLfromSceneControls(nStream* stream, nGuiSceneControlWindow* sceneWindow)
 {
     stream->BeginNode(scXMLRoot);
@@ -1098,7 +1098,7 @@ nGuiSettingsManagementWindow::WriteXMLfromSceneControls(nStream* stream, nGuiSce
 */
 void
 nGuiSettingsManagementWindow::SaveValuesAsDefault()
-{  
+{
     // get pref server, and check if open, if not open
     nPrefServer* prefServer = nPrefServer::Instance();
 
@@ -1123,7 +1123,7 @@ nGuiSettingsManagementWindow::SaveValuesAsDefault()
                 prefServer->WriteFloat(scLightHeightSlider,          sceneWindow->refLightHeight->GetValue());
             }
             else if(strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
-            {              
+            {
                 nGuiAdjustDisplayWindow* adjustWindow = (nGuiAdjustDisplayWindow*)nGuiServer::Instance()->FindWindowByClass("nguiadjustdisplaywindow", 0);
                 if(0 == adjustWindow)
                 {
@@ -1186,7 +1186,7 @@ nGuiSettingsManagementWindow::SetInfoText(const nString filename, bool criticalE
     // set color to red if this is an critical error
     if(true == criticalError)
     {
-        refInfoLabel->SetColor(vector4(0.8f, 0.0f, 0.0f, 1.0f)); 
+        refInfoLabel->SetColor(vector4(0.8f, 0.0f, 0.0f, 1.0f));
     }
     else
     {

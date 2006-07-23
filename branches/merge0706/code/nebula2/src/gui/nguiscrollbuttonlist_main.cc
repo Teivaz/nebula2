@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaClass(nGuiScrollButtonList, "nguicheckbuttongroup2");
+nNebulaClass(nGuiScrollButtonList, "gui::nguicheckbuttongroup2");
 
 //------------------------------------------------------------------------------
 /**
@@ -41,7 +41,7 @@ void
 nGuiScrollButtonList::OnShow()
 {
     n_assert(this->options.Size() > 0);
-    
+
     if(this->refCheckButtons.Size() > 0) this->refCheckButtons.Clear();
 
     nGuiFormLayout::OnShow();
@@ -60,7 +60,7 @@ nGuiScrollButtonList::OnShow()
     else
     {
         btnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
-    } 
+    }
 
     btnSize.x *= this->buttonScale.x;
     btnSize.y *= this->buttonScale.y;
@@ -88,7 +88,7 @@ nGuiScrollButtonList::OnShow()
     }
     this->SetMinSize(layoutSize);
     this->SetMaxSize(layoutSize);
-    nGuiFormLayout::Edge edge = this->horizontal ? nGuiFormLayout::Left : nGuiFormLayout::Top;   
+    nGuiFormLayout::Edge edge = this->horizontal ? nGuiFormLayout::Left : nGuiFormLayout::Top;
 
     kernelServer->PushCwd(this);
 
@@ -126,7 +126,7 @@ nGuiScrollButtonList::OnShow()
         this->AttachForm(scrollBtn, nGuiFormLayout::Left, 0.0f);
         this->AttachForm(scrollBtn, nGuiFormLayout::Top, 0.0f);
         scrollBtn->OnShow();
-        this->forwardbutton = scrollBtn; 
+        this->forwardbutton = scrollBtn;
     }
 
     kernelServer->PopCwd();
@@ -163,7 +163,7 @@ nGuiScrollButtonList::OnShow()
 
         scrollBtn->SetMinSize(fwdBtnSize);
         scrollBtn->SetMaxSize(fwdBtnSize);
-        this->AttachForm(scrollBtn, nGuiFormLayout::Right, 0.0f);       
+        this->AttachForm(scrollBtn, nGuiFormLayout::Right, 0.0f);
         this->AttachWidget(scrollBtn, edge, this->refCheckButtons.Back(), this->GetButtonSpacing());
         scrollBtn->OnShow();
         this->backwardbutton = scrollBtn;
@@ -202,7 +202,7 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
 
     nGuiFormLayout::Edge edge = this->horizontal ? nGuiFormLayout::Left : nGuiFormLayout::Top;
     nGuiFormLayout::Edge sideEdge = this->horizontal ? nGuiFormLayout::Top : nGuiFormLayout::Left;
-     
+
     nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
     n_assert(skin);
     // compute check button size
@@ -214,7 +214,7 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
     else
     {
         btnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
-    }  
+    }
 
     btnSize.x *= this->buttonScale.x;
     btnSize.y *= this->buttonScale.y;
@@ -223,7 +223,7 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
     nGuiCheckButton* prevBtn = 0;
     int numVisBtns = this->btnIndex + n_min(this->visibleButtons, this->options.Size());
     for (i = this->btnIndex; i < numVisBtns; i++)
-    {        
+    {
         nString name = "Button";
         name.AppendInt(i);
         nGuiCheckButton* btn = (nGuiCheckButton*) kernelServer->New("nguicheckbutton", name.Get());
@@ -251,12 +251,12 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
         {
             btn->SetHighlightBrush("button_h");
         }
-        
+
         if (this->tooltips.Size() > 0)
         {
             btn->SetTooltip(this->tooltips[i].Get());
         }
-        
+
          if (this->btnTexts.Size() > 0)
         {
             btn->SetText(this->btnTexts[i].Get());
@@ -267,10 +267,10 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
         //btn->SetText(this->options[i].Get());
         btn->SetFont(this->font.Get());
         btn->SetAlignment(nGuiTextLabel::Center);
-        btn->SetColor(skin->GetButtonTextColor()); 
+        btn->SetColor(skin->GetButtonTextColor());
         float offset = this->btnOffsets.Size() > i ? this->btnOffsets[i] : 0;
-        this->AttachForm(btn, sideEdge, offset); 
-        
+        this->AttachForm(btn, sideEdge, offset);
+
         if (prevBtn)
         {
             this->AttachWidget(btn, edge, prevBtn, this->GetButtonSpacing());
@@ -285,7 +285,7 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
             {
                 this->AttachForm(btn, edge, this->GetButtonSpacing());
             }
-        }        
+        }
         btn->OnShow();
         this->refCheckButtons.Append(nRef<nGuiCheckButton>(btn));
 
@@ -308,8 +308,8 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
         }
         else
         {
-            emptyBtn->SetDefaultBrush("button_n");        
-            emptyBtn->SetPressedBrush("button_p");        
+            emptyBtn->SetDefaultBrush("button_n");
+            emptyBtn->SetPressedBrush("button_p");
             emptyBtn->SetHighlightBrush("button_h");
         }
 
@@ -317,7 +317,7 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
         emptyBtn->SetMaxSize(btnSize);
 
         float offset = this->btnOffsets.Size() > i ? this->btnOffsets[i] : 0;
-        this->AttachForm(emptyBtn, sideEdge, offset); 
+        this->AttachForm(emptyBtn, sideEdge, offset);
         if (prevEmptyBtn)
         {
             this->AttachWidget(emptyBtn, edge, prevBtn, this->GetButtonSpacing());
@@ -325,7 +325,7 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
         else
         {
             this->AttachWidget(emptyBtn, edge, this->refCheckButtons.Back(), this->GetButtonSpacing());
-        }        
+        }
         emptyBtn->OnShow();
         this->emptyBtns.Append(emptyBtn);
 
@@ -353,8 +353,8 @@ void
 nGuiScrollButtonList::OnEvent(const nGuiEvent& event)
 {
     if (event.GetType() == nGuiEvent::Action  && this->scrollButtonsEnabled)
-    { 
-        bool replicateEvent = false;  
+    {
+        bool replicateEvent = false;
         if (event.GetWidget() == this->forwardbutton)
         {
             replicateEvent = true;
@@ -366,7 +366,7 @@ nGuiScrollButtonList::OnEvent(const nGuiEvent& event)
         {
             replicateEvent = true;
             this->btnIndex = this->btnIndex - this->scrollSize;
-            if (this->btnIndex < 0 ) 
+            if (this->btnIndex < 0 )
             {
                 if (this->visibleButtons < this->options.Size())
                 {
@@ -400,7 +400,7 @@ nGuiScrollButtonList::OnEvent(const nGuiEvent& event)
 //------------------------------------------------------------------------------
 /**
 */
-nGuiCheckButton* 
+nGuiCheckButton*
 nGuiScrollButtonList::GetSelectedListButton() const
 {
     if(this->allButtonsDeselected)

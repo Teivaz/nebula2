@@ -1,0 +1,65 @@
+#-------------------------------------------------------------------------------
+#  nnebula/particle.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::particle
+    setmodules {
+        particle::nparticle2emitter
+        particle::nparticle
+        particle::nparticleemitter
+        particle::nparticleserver2
+        particle::nparticleserver
+    }
+endbundle
+
+beginmodule particle::nparticle2emitter
+    setdir particle
+    setheaders {
+        nparticle2emitter
+    }
+    setfiles {
+        nparticle2emitter_main
+    }
+endmodule
+
+beginmodule particle::nparticle
+    setdir particle
+    setheaders {
+        nparticle
+    }
+    setfiles {
+        nparticle_main
+    }
+endmodule
+
+beginmodule particle::nparticleemitter
+    setdir particle
+    setheaders {
+        nparticleemitter
+    }
+    setfiles {
+        nparticleemitter_main
+    }
+endmodule
+
+beginmodule particle::nparticleserver2
+    setdir particle
+    setheaders {
+        nparticle2
+        nparticleserver2
+    }
+    setfiles {
+        nparticleserver2_main
+    }
+endmodule
+
+beginmodule particle::nparticleserver
+    setdir particle
+    setheaders {
+        nparticleserver
+    }
+    setfiles {
+        nparticleserver_main
+        nparticleserver_cmds
+    }
+endmodule

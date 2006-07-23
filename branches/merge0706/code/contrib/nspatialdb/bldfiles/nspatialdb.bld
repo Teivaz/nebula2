@@ -6,7 +6,7 @@
 beginmodule nspatialsector
     setdir spatialdb
     setfiles {
-        nspatialsector_main nspatialsector_cmds 
+        nspatialsector_main nspatialsector_cmds
         nspatialelements nvisitorbase
         nspatiallisthierarchy nspatialaabbtree
         nvisiblefrustumvisitor nvisiblespherevisitor
@@ -14,7 +14,7 @@ beginmodule nspatialsector
     }
     setheaders {
         nspatialsector nspatialelements nvisitorbase
-        nplaneclipper nfrustumclipper nsphereclipper 
+        nplaneclipper nfrustumclipper nsphereclipper
         nspatiallisthierarchy nspatialaabbtree
         nvisiblefrustumvisitor nvisiblespherevisitor
         ngeometryocclusionvisitor noccludedfrustumvisitor

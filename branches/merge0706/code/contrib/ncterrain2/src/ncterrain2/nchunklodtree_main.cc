@@ -10,7 +10,7 @@
 #include "ncterrain2/nchunklodrenderparams.h"
 #include "ncterrain2/nclodeventhandler.h"
 
-nNebulaClass(nChunkLodTree, "nresource");
+nNebulaClass(nChunkLodTree, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -130,7 +130,7 @@ nChunkLodTree::UpdateParams()
 	// at the maximum LOD.  It's used in compute_lod(), which is
 	// called by the chunks during update().
     this->distanceLodMax = (this->errorLodMax / this->maxPixelError) * K;
-        
+
 	// m_texture_distance_LODmax is the distance below which we
 	// need to be at the leaf texture resolution.  It's used in
 	// compute_texture_lod(), which is called by the chunks during
@@ -271,7 +271,7 @@ nChunkLodTree::UpdateBoundingBox()
 {
     this->chunks[0].ComputeBoundingBox(this, this->boundingBox);
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Given an AABB and the viewpoint, this function computes a desired
@@ -285,7 +285,7 @@ nChunkLodTree::ComputeLod(const bbox3& box, const vector3& viewPoint) const
     static vector3 disp;
     static vector3 center;
     static vector3 extent;
-    
+
     center = box.center();
     extent = box.extents();
 
@@ -316,7 +316,7 @@ nChunkLodTree::ComputeTextureLod(const bbox3& box, const vector3& viewPoint) con
 
     center = box.center();
     extent = box.extents();
-    
+
     disp = viewPoint - center;
 	disp.x = n_max(0, fabsf(disp.x) - extent.x);
 	disp.y = n_max(0, fabsf(disp.y) - extent.y);
@@ -328,7 +328,7 @@ nChunkLodTree::ComputeTextureLod(const bbox3& box, const vector3& viewPoint) con
 
 //------------------------------------------------------------------------------
 /**
-    Updates the quad tree, must be called when the view matrix changes 
+    Updates the quad tree, must be called when the view matrix changes
     before rendering.
 */
 void
@@ -423,7 +423,7 @@ nChunkLodTree::EndRender()
 
 //------------------------------------------------------------------------------
 /**
-    Returns the texture which is responsible for rendering a given 
+    Returns the texture which is responsible for rendering a given
     chunk coordinate. May return a higher level texture, or even a null
     pointer if the right texture is not available yet.
 */

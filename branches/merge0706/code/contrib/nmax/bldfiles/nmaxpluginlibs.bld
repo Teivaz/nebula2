@@ -44,7 +44,7 @@ beginmodule nmaxvieweroptions
         nmaxvieweroptions
     }
     setheaders {
-        nmaxvieweroptions 
+        nmaxvieweroptions
     }
 endmodule
 #-------------------------------------------------------------------------------

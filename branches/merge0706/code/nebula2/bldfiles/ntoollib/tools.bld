@@ -1,0 +1,287 @@
+#-------------------------------------------------------------------------------
+#  ntoollib/tools.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle ntoollib::tools
+    setmodules {
+        tools::nanimbuilder
+        tools::napplauncher
+        tools::nbspbuilder
+        tools::ncmdlineargs
+        tools::nexportanalyzer
+        tools::nmayacamcontrol
+        tools::nmeshbuilder
+        tools::nmeshbundle
+        tools::nnodelist
+        tools::nnpkbuilder
+        tools::nresourcecompiler
+        tools::nscriptableanimbuilder
+        tools::nscriptablemeshbuilder
+        tools::nskinpartitioner
+        tools::nviewerapp
+        tools::nwinmaincmdlineargs
+    }
+endbundle
+
+beginmodule tools::nanimbuilder
+    setdir tools
+    setheaders {
+        nanimbuilder
+    }
+    setfiles {
+        nanimbuilder
+    }
+endmodule
+
+beginmodule tools::napplauncher
+    setdir tools
+    setheaders {
+        napplauncher
+    }
+    setfiles {
+        napplauncher
+    }
+endmodule
+
+beginmodule tools::nbspbuilder
+    setdir tools
+    setheaders {
+        nbspbuilder
+    }
+    setfiles {
+        nbspbuilder
+    }
+endmodule
+
+beginmodule tools::ncmdlineargs
+    setdir tools
+    setheaders {
+        ncmdlineargs
+    }
+endmodule
+
+beginmodule tools::nexportanalyzer
+    setdir tools
+    setheaders {
+        nexportanalyzer
+    }
+    setfiles {
+        nexportanalyzer
+    }
+endmodule
+
+beginmodule tools::nmayacamcontrol
+    setdir tools
+    setheaders {
+        nmayacamcontrol
+    }
+    setfiles {
+        nmayacamcontrol
+    }
+endmodule
+
+beginmodule tools::nmeshbuilder
+    setdir tools
+    setheaders {
+        nmeshbuilder
+    }
+    setfiles {
+        nmeshbuilder
+        nmeshbuilder_loadsave
+        nmeshbuilder_tangent
+    }
+endmodule
+
+beginmodule tools::nmeshbundle
+    setdir tools
+    setheaders {
+        nmeshbundle
+    }
+    setfiles {
+        nmeshbundle
+    }
+endmodule
+
+beginmodule tools::nnodelist
+    setdir tools
+    setheaders {
+        nnodelist
+    }
+    setfiles {
+        nnodelist
+    }
+endmodule
+
+beginmodule tools::nnpkbuilder
+    setdir tools
+    setheaders {
+        nnpkbuilder
+    }
+    setfiles {
+        nnpkbuilder
+    }
+endmodule
+
+beginmodule tools::nresourcecompiler
+    setdir tools
+    setheaders {
+        nresourcecompiler
+    }
+    setfiles {
+        nresourcecompiler
+    }
+endmodule
+
+beginmodule tools::nscriptableanimbuilder
+    setdir tools
+    setheaders {
+        nscriptableanimbuilder
+    }
+    setfiles {
+        nscriptableanimbuilder_main
+        nscriptableanimbuilder_cmds
+    }
+endmodule
+
+beginmodule tools::nscriptablemeshbuilder
+    setdir tools
+    setheaders {
+        nscriptablemeshbuilder
+    }
+    setfiles {
+        nscriptablemeshbuilder_main
+        nscriptablemeshbuilder_cmds
+    }
+endmodule
+
+beginmodule tools::nskinpartitioner
+    setdir tools
+    setheaders {
+        nskinpartitioner
+    }
+    setfiles {
+        nskinpartitioner
+    }
+endmodule
+
+beginmodule tools::nviewerapp
+    setdir tools
+    setheaders {
+        nviewerapp
+    }
+    setfiles {
+        nviewerapp
+    }
+endmodule
+
+beginmodule tools::nwinmaincmdlineargs
+    setdir tools
+    setheaders {
+        nwinmaincmdlineargs
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule tools::nanalyzeexport
+    setdir tools
+    setfiles {
+        nanalyzeexport
+    }
+endmodule
+
+beginmodule tools::nanimtool
+    setdir tools
+    setfiles {
+        nanimtool
+    }
+endmodule
+
+beginmodule tools::nbumprev
+    setdir tools
+    setfiles {
+        nbumprev
+    }
+endmodule
+
+beginmodule tools::nbundler
+    setdir tools
+    setfiles {
+        nbundler
+    }
+endmodule
+
+beginmodule tools::ngetcrc
+    setdir tools
+    setfiles {
+        ngetcrc
+    }
+endmodule
+
+beginmodule tools::ngfxtool
+    setdir tools
+    setfiles {
+        ngfxtool
+    }
+endmodule
+
+beginmodule tools::nimagetool
+    setdir tools
+    setfiles {
+        nimagetool
+    }
+endmodule
+
+beginmodule tools::nmakepatch
+    setdir tools
+    setfiles {
+        nmakepatch
+    }
+endmodule
+
+beginmodule tools::nmeshtool
+    setdir tools
+    setfiles {
+        nmeshtool
+    }
+endmodule
+
+beginmodule tools::nnpktool
+    setdir tools
+    setfiles {
+        nnpktool
+    }
+endmodule
+
+beginmodule tools::nremoteshell
+    setdir tools
+    setfiles {
+        nremoteshell
+    }
+endmodule
+
+beginmodule tools::nsetpath
+    setdir tools
+    setfiles {
+        nsetpath
+    }
+endmodule
+
+beginmodule tools::nsh
+    setdir tools
+    setfiles {
+        nsh
+    }
+endmodule
+
+beginmodule tools::nstub
+    setdir tools
+    setfiles {
+        nstub
+    }
+endmodule
+
+beginmodule tools::nviewer
+    setdir tools
+    setfiles {
+        nviewer
+    }
+endmodule

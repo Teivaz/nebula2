@@ -6,7 +6,7 @@
     @ingroup Audio3
 
     Define listener properties for audio subsystem 3.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -146,4 +146,4 @@ nListener3::GetDopplerFactor() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

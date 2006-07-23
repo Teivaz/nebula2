@@ -6,7 +6,7 @@
 #include "audio3/ndsoundserver3.h"
 #include "kernel/nfileserver2.h"
 
-nNebulaClass(nDSoundResource, "nsoundresource");
+nNebulaClass(nDSoundResource, "audio3::nsoundresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -80,7 +80,7 @@ nDSoundResource::LoadResource()
             hr = soundManager->CreateStreaming(&(this->dsStreamingSound), (LPTSTR) this->GetFilename().Get(), creationFlags,
                 DS3DALG_DEFAULT, numNotifications, blockSize);
 //        }
-            
+
         if (FAILED(hr))
         {
             n_error("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!", this->GetFilename().Get());

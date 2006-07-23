@@ -8,7 +8,7 @@
 #include "gfx2/nn3d2loader.h"
 #include "gfx2/nnvx2loader.h"
 
-nNebulaClass(nStaticShadowCaster2, "nshadowcaster2");
+nNebulaClass(nStaticShadowCaster2, "shadow2::nshadowcaster2");
 
 //------------------------------------------------------------------------------
 /**

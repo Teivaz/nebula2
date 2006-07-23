@@ -5,7 +5,7 @@
 #include "gfx2/ntexture2.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass(nTexture2, "nresource");
+nNebulaScriptClass(nTexture2, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -64,7 +64,7 @@ nTexture2::Unlock(int /*level*/)
 /**
     Locks a single surface of a cube texture.
 */
-bool 
+bool
 nTexture2::LockCubeFace(LockType /*lockType*/, CubeFace /*face*/, int /*level*/, LockInfo& /*lockInfo*/)
 {
     return false;

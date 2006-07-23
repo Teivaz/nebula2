@@ -49,8 +49,8 @@ extern PyObject* pythoncmd_Exists(PyObject *self, PyObject *args);
 extern PyObject* pythoncmd_Nprint(PyObject *self, PyObject *args);
 extern PyObject* pythoncmd_SetTrigger(PyObject *self, PyObject *args);
 extern PyObject* pythoncmd_RemoteGetAttr(PyObject *self, PyObject *args);
-extern PyObject* pythoncmd_BeginCmds(PyObject *self, PyObject *args); 
-extern PyObject* pythoncmd_AddCmd(PyObject *self, PyObject *args); 
+extern PyObject* pythoncmd_BeginCmds(PyObject *self, PyObject *args);
+extern PyObject* pythoncmd_AddCmd(PyObject *self, PyObject *args);
 extern PyObject* pythoncmd_EndCmds(PyObject *self, PyObject *args);
 extern PyObject* CreatedObjectsList_weakref_callback(PyObject * /*self*/, PyObject *args);
 
@@ -80,7 +80,7 @@ static PyMethodDef NebulaMethods[] = {
     {"endcmds",       pythoncmd_EndCmds, METH_VARARGS, NULL},
     {"setTrigger",    pythoncmd_SetTrigger, METH_VARARGS},   // Trigger callback
 
-    {"__CreatedObjectsList_weakref_callback__",  CreatedObjectsList_weakref_callback, METH_VARARGS}, 
+    {"__CreatedObjectsList_weakref_callback__",  CreatedObjectsList_weakref_callback, METH_VARARGS},
     {NULL, NULL, 0, NULL}    /* Sentinel */
 };
 #ifdef __cplusplus
@@ -119,10 +119,10 @@ nPythonInitialize(const char* moduleName)
 
     CreatedObjectsList_weak_refs_ = PyDict_New();
     PyModule_AddObject(m, "__created_objects_weak_refs__", CreatedObjectsList_weak_refs_);
-    
+
 
     // If Python is calling this function as part of an import
-    if (!nPythonServer::Instance) 
+    if (!nPythonServer::Instance)
     {
         nPythonServer::kernelServer = n_new(nKernelServer());
         n_assert(nPythonServer::kernelServer);
@@ -133,7 +133,7 @@ nPythonInitialize(const char* moduleName)
         nPythonRegisterPackages(nPythonServer::kernelServer);
 
         nPythonServer *ps = (nPythonServer *) nPythonServer::kernelServer->Lookup("/sys/servers/script");
-        if (!ps) 
+        if (!ps)
         {
             ps = (nPythonServer *) nPythonServer::kernelServer->New("npythonserver", "/sys/servers/script");
             n_assert(ps);
@@ -147,14 +147,14 @@ nPythonInitialize(const char* moduleName)
     }
 }
 
-nNebulaClass(nPythonServer, "nscriptserver");
+nNebulaClass(nPythonServer, "kernel::nscriptserver");
 
 //--------------------------------------------------------------------
 /**
     Constructor.
     Initialize Python interpreter
 */
-nPythonServer::nPythonServer() 
+nPythonServer::nPythonServer()
 {
     this->indent_level         = 0;
     this->indent_buf[0]        = 0;
@@ -225,7 +225,7 @@ nPythonServer::~nPythonServer()
 /**
     Begin writing a persistent object.
 */
-nFile* 
+nFile*
 nPythonServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
@@ -258,7 +258,7 @@ nPythonServer::BeginWrite(const char* filename, nObject* obj)
 /**
     Finish writing a persistent object.
 */
-bool 
+bool
 nPythonServer::EndWrite(nFile* file)
 {
     n_assert(file);
@@ -341,7 +341,7 @@ nPythonServer::WriteBeginNewObject(nFile* file, nRoot* o, nRoot* /*owner*/)
     char buf[N_MAXPATH];
     sprintf(buf, "\n%s__NDobj = new('%s', '%s')\nsel(__NDobj)\n", this->indent_buf, o_class, o_name);
     file->PutS(buf);
-    
+
     return true;
 }
 
@@ -414,7 +414,7 @@ nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
     char buf[N_MAXPATH];
     sprintf(buf, "%s__NDobj.%s(", this->indent_buf, name);
     file->PutS(buf);
-    
+
     cmd->Rewind();
     int numArgs = cmd->GetNumInArgs();
     for (int i = 0; i < numArgs; i++)
@@ -442,16 +442,16 @@ nPythonServer::WriteCmd(nFile *file, nCmd *cmd)
                 }
 
                 ushort bufLen = sizeof(buf) - 1;
-            
+
                 file->PutS("r'");
-                if (strLen > bufLen - 1) 
+                if (strLen > bufLen - 1)
                 {
                     buf[bufLen] = 0; // Null terminator
                     for (int j = 0; j < strLen - 2; j += bufLen)
                     {
                         memcpy((void*)&buf[0], strPtr, bufLen);
                         file->PutS(buf);
-                        strPtr += bufLen;     
+                        strPtr += bufLen;
                     }
                     strPtr += bufLen;
                 }

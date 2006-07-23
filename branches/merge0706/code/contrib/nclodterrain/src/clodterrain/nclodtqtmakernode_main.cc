@@ -16,7 +16,7 @@
 #include "il/il.h"
 #include "il/ilu.h"
 
-nNebulaScriptClass(nCLODTQTMakerNode, "nroot");
+nNebulaScriptClass(nCLODTQTMakerNode, "kernel::nroot");
 
 #define TQTTILE_HEADER_BYTES (8)
 #define TQT_TOCENTRYSIZE (3 * sizeof(int))
@@ -280,7 +280,7 @@ tqt_tile_layer * nCLODTQTMakerNode::generateTQTNodes(nFile &destfile, int level,
         // hold all the data...
         ilBindImage(destimage);
         ilTexImage(m_tilesize*2, m_tilesize*2, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, NULL);
-    
+
         // get the four sub-images needed to composite together for this image
         for (int xoffset=0; xoffset < 2; xoffset++)
         for (int yoffset=0; yoffset < 2; yoffset++)
@@ -360,6 +360,6 @@ void nCLODTQTMakerNode::pushImage(nFile &tqtfile, ILuint imagehandle, int tile_i
     tqtfile.PutInt(1);
     tqtfile.PutInt(texture_pos);
     tqtfile.PutInt(image_size);
-    
+
     delete [] imgdata;
 }

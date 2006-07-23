@@ -1,0 +1,10 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/nnetwork.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget nnetwork
+    settype lib
+    setbundles {
+        nnetwork::network
+    }
+endtarget

@@ -10,7 +10,7 @@
 #include "gfx2/nfont2.h"
 #include "gfx2/nmesharray.h"
 
-nNebulaScriptClass(nGfxServer2, "nroot");
+nNebulaScriptClass(nGfxServer2, "kernel::nroot");
 nGfxServer2* nGfxServer2::Singleton = 0;
 
 //------------------------------------------------------------------------------
@@ -424,8 +424,8 @@ nGfxServer2::Clear(int /*bufferTypes*/, float /*red*/, float /*green*/, float /*
 
 //------------------------------------------------------------------------------
 /**
-    Set the current render target at a given index (for simultaneous render targets). 
-    This method must be called outside BeginScene()/EndScene(). The method will 
+    Set the current render target at a given index (for simultaneous render targets).
+    This method must be called outside BeginScene()/EndScene(). The method will
     increment the refcount of the render target object and decrement the refcount of the
     previous render target.
 
@@ -567,7 +567,7 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
 
         case Projection:
             this->transform[Projection] = matrix;
-            updViewProjection = true;            
+            updViewProjection = true;
             break;
 
         case ShadowProjection:
@@ -663,7 +663,7 @@ nGfxServer2::Draw(PrimitiveType /*primType*/)
 //------------------------------------------------------------------------------
 /**
     Render indexed primitives without applying shader state. You have
-    to call nShader2::Begin(), nShader2::Pass() and nShader2::End() 
+    to call nShader2::Begin(), nShader2::Pass() and nShader2::End()
     yourself as needed.
 */
 void
@@ -675,7 +675,7 @@ nGfxServer2::DrawIndexedNS(PrimitiveType /*primType*/)
 //------------------------------------------------------------------------------
 /**
     Render non-indexed primitives without applying shader state. You have
-    to call nShader2::Begin(), nShader2::Pass() and nShader2::End() 
+    to call nShader2::Begin(), nShader2::Pass() and nShader2::End()
     yourself as needed.
 */
 void
@@ -796,7 +796,7 @@ nGfxServer2::InDialogBoxMode() const
 
 //------------------------------------------------------------------------------
 /**
-    This method should return the number of currently available stencil bits 
+    This method should return the number of currently available stencil bits
     (override in subclass).
 */
 int
@@ -883,7 +883,7 @@ nGfxServer2::DrawShapeNS(ShapeType /*type*/, const matrix44& /*model*/)
 /**
     Draw prmitives with the given model matrix with given color.
 */
-void 
+void
 nGfxServer2::DrawShapePrimitives(PrimitiveType /*type*/, int /*numPrimitives*/, const vector3* /*vertexList*/, int /*vertexWidth*/, const matrix44& /*model*/, const vector4& /*color*/)
 {
     // empty
@@ -946,12 +946,12 @@ nGfxServer2::RestoreGamma()
 /**
     Break a string into lines by replacing spaces with newlines.
     Word break in D3DX doesn't work for umlauts, that's why this fix is
-    needed. 
+    needed.
 
     FIXME: this should be removed once D3DX has been fixed!
 
     - 20-Sep-04     floh    fixed the implementation to use nString instead of
-                            insecure char* 
+                            insecure char*
 */
 void
 nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& outString)
@@ -962,11 +962,11 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
 
     n_assert(!inText.IsEmpty());
     n_assert(this->refFont->IsValid());
-    
+
     // text lenght
     const int textLength = inText.Length();
     n_assert(textLength > 0);
-    
+
     // allocate memory
     outString = inText;
 
@@ -975,7 +975,7 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
     int lastLineBegin = 0;
     int previousLineEndTestMark = -1;
     int lineEndTestMark = 0;
-    
+
     while (!finished)
     {
         while (outString[lineEndTestMark] == ' ' && outString[lineEndTestMark] != '\0')
@@ -1027,7 +1027,7 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
                     lastLineBegin = lineEndTestMark;
                     previousLineEndTestMark = lastLineBegin;
                     outString[lastLineBegin-1] = '\n';
-                    
+
                     // debug
                     n_printf("nGfxServer2::BreakLines(): found a part in the text that don't fit into one line. Please insert a new line manual!\n\
                              Text: '%s'\n", outString.Get());

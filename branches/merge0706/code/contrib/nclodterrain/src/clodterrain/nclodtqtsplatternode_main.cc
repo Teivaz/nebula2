@@ -17,7 +17,7 @@
 #include "il/il.h"
 #include "il/ilu.h"
 
-nNebulaScriptClass(nCLODTQTSplatterNode, "nroot");
+nNebulaScriptClass(nCLODTQTSplatterNode, "kernel::nroot");
 
 #define TQTTILE_HEADER_BYTES (8)
 #define TQT_TOCENTRYSIZE (3 * sizeof(int))
@@ -93,7 +93,7 @@ struct tqt_tile_layer {
 // constructor
 nCLODTQTSplatterNode::nCLODTQTSplatterNode() : nRoot(),
     m_splatdepth(5), m_chunktexsize(256), m_outputfilename(NULL),
-    m_ref_fs("/sys/servers/file2"), m_validate(false), m_ref_tiletextures(256,32), 
+    m_ref_fs("/sys/servers/file2"), m_validate(false), m_ref_tiletextures(256,32),
     m_tocpos(-1), refGfxServer("/sys/servers/gfx")
 {
     ilInit();
@@ -136,7 +136,7 @@ void nCLODTQTSplatterNode::setTQTParameters(unsigned int splatdepth, unsigned in
 
 void nCLODTQTSplatterNode::setDetailTexture(unsigned int tileindex, const char *tiletexturename)
 {
-    nString bigsrcpath = m_ref_fs->ManglePath(tiletexturename);  
+    nString bigsrcpath = m_ref_fs->ManglePath(tiletexturename);
 
     // prepare and load the texture
     n_assert(this->refGfxServer.isvalid());
@@ -150,7 +150,7 @@ void nCLODTQTSplatterNode::setDetailTexture(unsigned int tileindex, const char *
             n_printf("nCLODSplatterNode: Error loading texture '%s'\n", bigsrcpath);
             return;
         }
-        
+
         this->m_ref_tiletextures.Set(tileindex, nRef<nTexture2>(tex));
     }
 }
@@ -335,7 +335,7 @@ tqt_tile_layer * nCLODTQTSplatterNode::generateTQTNodes(nFile &destfile, int lev
         // hold all the data...
         ilBindImage(destimage);
         ilTexImage(m_chunktexsize*2, m_chunktexsize*2, 1, 3, IL_RGB, IL_UNSIGNED_BYTE, NULL);
-    
+
         // get the four sub-images needed to composite together for this image
         for (int xoffset=0; xoffset < 2; xoffset++)
         for (int yoffset=0; yoffset < 2; yoffset++)
@@ -390,13 +390,13 @@ void nCLODTQTSplatterNode::generateTQTBlendTextures(nFile &destfile, int level, 
     n_assert(blendtex_size <= m_chunktexsize);
     n_assert(blendtex_stride*2 == m_chunktexsize);
     n_assert( (blendtex_stride * blendtex_dim + 1) == tilemap->getXSize() );
-    
+
     bool *blendmarks = new bool[blendtex_size * blendtex_size];
 
     ILuint *destImages = new ILuint[m_maxtexindex];
     bool *useempty = new bool[m_maxtexindex];
     ilGenImages(m_maxtexindex, destImages);
-        
+
     for (unsigned int x=0; x < blendtex_dim; x++)
     for (unsigned int y=0; y < blendtex_dim; y++)
     {
@@ -404,7 +404,7 @@ void nCLODTQTSplatterNode::generateTQTBlendTextures(nFile &destfile, int level, 
         unsigned int y1 = y0 + blendtex_size;
         unsigned int x0 = x * blendtex_stride;
         unsigned int x1 = x0 + blendtex_size;
-        
+
         n_printf("generating blend textures for chunk %d\n", y + x*blendtex_dim);
 
         // dump index data into this array
@@ -455,7 +455,7 @@ void nCLODTQTSplatterNode::generateTQTBlendTextures(nFile &destfile, int level, 
         unsigned int node_index = tqt_node_index(level, x, y);
         pushBlendImages(destfile, m_maxtexindex, destImages, useempty, node_index);
     }
-    
+
     ilDeleteImages(m_maxtexindex, destImages);
     delete [] destImages;
     delete [] useempty;
@@ -497,7 +497,7 @@ void nCLODTQTSplatterNode::pushImage(nFile &tqtfile, ILuint imagehandle, int til
     tqtfile.PutInt(1);
     tqtfile.PutInt(texture_pos);
     tqtfile.PutInt(image_size);
-    
+
     delete [] imgdata;
 }
 
@@ -508,7 +508,7 @@ void nCLODTQTSplatterNode::pushImages(nFile &tqtfile, unsigned int numimages, IL
 
     int image_size = 4 * m_chunktexsize * m_chunktexsize;
     unsigned char *imgdata = new unsigned char [image_size];
-    
+
 //  ilSave(IL_BMP, "testimg.bmp");
 
     tqtfile.Seek(0, nFile::END);
@@ -543,7 +543,7 @@ void nCLODTQTSplatterNode::pushImages(nFile &tqtfile, unsigned int numimages, IL
     tqtfile.PutInt(texture_pos);
     tqtfile.PutInt(image_size*numimages);
 
-    
+
     delete [] imgdata;
 }
 
@@ -555,7 +555,7 @@ void nCLODTQTSplatterNode::pushBlendImages(nFile &tqtfile, unsigned int numimage
 
     int image_size = (m_chunktexsize * m_chunktexsize);
     unsigned char *imgdata = new unsigned char [image_size];
-    
+
 //  ilSave(IL_BMP, "testimg.bmp");
 
     tqtfile.Seek(0, nFile::END);
@@ -617,6 +617,6 @@ void nCLODTQTSplatterNode::pushBlendImages(nFile &tqtfile, unsigned int numimage
     tqtfile.PutInt(texture_pos);
     tqtfile.PutInt(image_size*numimages);
 
-    
+
     delete [] imgdata;
 }

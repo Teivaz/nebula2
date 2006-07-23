@@ -27,7 +27,7 @@ beginmodule noctbbox
     setheaders    { noctbbox }
 endmodule
 #-----------------------------------------------------------------------------
-beginmodule noctsphere 
+beginmodule noctsphere
     setdir octree
     setfiles      { noctsphere noctsphere_cmds }
     setheaders    { noctsphere }

@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaClass(nGuiCheckButtonGroup2, "nguiformlayout");
+nNebulaClass(nGuiCheckButtonGroup2, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
@@ -19,7 +19,7 @@ nGuiCheckButtonGroup2::nGuiCheckButtonGroup2() :
 {
     // empty
 }
-    
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -35,7 +35,7 @@ void
 nGuiCheckButtonGroup2::OnShow()
 {
     n_assert(this->options.Size() > 0);
-    
+
     if(this->refCheckButtons.Size() > 0) this->refCheckButtons.Clear();
 
     nGuiFormLayout::OnShow();
@@ -52,7 +52,7 @@ nGuiCheckButtonGroup2::OnShow()
     {
         btnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
     }
-    
+
     // compute form layout size
     vector2 layoutSize;
     int numBtns = this->options.Size();
@@ -95,7 +95,7 @@ nGuiCheckButtonGroup2::OnShow()
         {
             btn->SetHighlightBrush("button_h");
         }
-        
+
         if (this->tooltips.Size() > 0)
         {
             btn->SetTooltip(this->tooltips[i].Get());
@@ -229,6 +229,6 @@ nGuiCheckButtonGroup2::OnMouseMoved(const vector2& mousePos)
     }
 
     nGuiFormLayout::OnMouseMoved(mousePos);
-    
+
     return true;
 }

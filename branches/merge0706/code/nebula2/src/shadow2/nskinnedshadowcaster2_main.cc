@@ -5,7 +5,7 @@
 #include "shadow2/nskinnedshadowcaster2.h"
 #include "shadow2/nshadowserver2.h"
 
-nNebulaClass(nSkinnedShadowCaster2, "nshadowcaster2");
+nNebulaClass(nSkinnedShadowCaster2, "shadow2::nshadowcaster2");
 
 //------------------------------------------------------------------------------
 /**
@@ -241,8 +241,8 @@ nSkinnedShadowCaster2::RenderShadowVolume()
 //------------------------------------------------------------------------------
 /**
     This method performs the actual skinning on the cpu and writes the
-    skinned vertices into the refSkinnedMesh. A valid and uptodate character 
-    skeleton must be set through 
+    skinned vertices into the refSkinnedMesh. A valid and uptodate character
+    skeleton must be set through
 
     FIXME: performance optimization: convert float joint indices to integer
     during load time?
@@ -250,7 +250,7 @@ nSkinnedShadowCaster2::RenderShadowVolume()
 void
 nSkinnedShadowCaster2::UpdateSkinning()
 {
-    n_assert(this->charSkeleton);    
+    n_assert(this->charSkeleton);
 
     nMesh2* srcMesh = this->refBindPoseMesh;
     nMesh2* dstMesh = this->refSkinnedMesh;

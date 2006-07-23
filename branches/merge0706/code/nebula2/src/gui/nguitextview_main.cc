@@ -11,7 +11,7 @@
 #include "gui/nguiserver.h"
 #include "input/ninputserver.h"
 
-nNebulaScriptClass(nGuiTextView, "nguiwidget");
+nNebulaScriptClass(nGuiTextView, "gui::nguiwidget");
 
 //------------------------------------------------------------------------------
 /**
@@ -108,7 +108,7 @@ nGuiTextView::ValidateFont()
         this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
         if (!this->refFont.isvalid())
         {
-            n_error("nGuiTextView %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
+            n_error("nGuiTextView %s: Unknown font '%s'!", this->GetName(), this->fontName.Get());
         }
         else
         {
@@ -183,7 +183,7 @@ nGuiTextView::OnFrame()
 
 //------------------------------------------------------------------------------
 /**
-    Listen to events from our slider.     
+    Listen to events from our slider.
 */
 void
 nGuiTextView::OnEvent(const nGuiEvent& event)
@@ -206,7 +206,7 @@ nGuiTextView::OnEvent(const nGuiEvent& event)
         {
             int relLineIndex = int((nGuiServer::Instance()->GetMousePos().y - this->GetScreenSpaceRect().v0.y) / this->lineHeight);
             int absLineIndex = this->lineOffset + relLineIndex;
-            
+
             if (this->selectionIndex == absLineIndex)
             {
                 // only react on double clicks that do not mean the slider.
@@ -234,7 +234,7 @@ nGuiTextView::OnKeyDown(nKey key)
         if (this->GetSelectionEnabled())
         {
             // if slider is visible we ignore any clicks in the slider area
-            
+
             if (this->refSlider->IsShown())
             {
                 if (this->refSlider->Inside(mousePos))
@@ -243,16 +243,16 @@ nGuiTextView::OnKeyDown(nKey key)
                     return true;
                 }
             }
-            
+
             // Scroll Up and Down
-            
+
             if (key == N_KEY_UP)
             {
                 if ( this->selectionIndex < 1 )
                 {
                     return true;
                 }
-                
+
                 ScrollDown(1);
                 this->selectionIndex--;
                 // throw a SelectionChanged message
@@ -274,16 +274,16 @@ nGuiTextView::OnKeyDown(nKey key)
                 nGuiServer::Instance()->PutEvent(event);
                 return true;
             }
-            
+
             // LookUp starts here
-            
+
             if ( ! this->GetLookUpEnabled() ) return true;
             if (key > N_KEY_Z) return true;
             if (key < N_KEY_1) return true;
-                
+
             int index=0;
-            
-            if (key >= N_KEY_A) 
+
+            if (key >= N_KEY_A)
             {
                 for ( index=0; index<this->GetNumLines() ;index++)
                 {
@@ -293,12 +293,12 @@ nGuiTextView::OnKeyDown(nKey key)
                     }
                 }
             }
-            
+
             int absLineIndex = index;
             if (absLineIndex < this->GetNumLines())
             {
                 int delta = absLineIndex - this->selectionIndex ;
-            
+
                 if (delta > 0)
                 {
                     ScrollUp(delta);
@@ -307,7 +307,7 @@ nGuiTextView::OnKeyDown(nKey key)
                 {
                     ScrollDown(-delta);
                 }
-            
+
                 this->selectionIndex = absLineIndex;
 
                 // throw a SelectionChanged message
@@ -399,9 +399,9 @@ nGuiTextView::ScrollDown(int numLines)
 
 //------------------------------------------------------------------------------
 /**
-    Scroll down to last line 
+    Scroll down to last line
 */
-void 
+void
 nGuiTextView::ScrollToLastLine()
 {
     int linesToScroll = this->GetNumLines()-this->GetNumVisibleLines();
@@ -440,7 +440,7 @@ nGuiTextView::Render()
 
             // add some border tolerance
             rectangle screenSpaceRect = this->GetScreenSpaceRect();
-            rectangle curRect = screenSpaceRect;            
+            rectangle curRect = screenSpaceRect;
             curRect.v1.y = curRect.v0.y + this->lineHeight;
 
             // add border for text
@@ -475,7 +475,7 @@ nGuiTextView::Render()
 void
 nGuiTextView::ActivateFont()
 {
-    n_assert(this->refFont.isvalid()); 
+    n_assert(this->refFont.isvalid());
     nGfxServer2::Instance()->SetFont(this->refFont.get());
 }
 
@@ -491,7 +491,7 @@ nGuiTextView::AppendColoredText(const nString& text, const vector4& color)
         this->AppendEmptyLine();
         return;
     }
-    
+
     // get clipping rect
     rectangle rect = this->GetRect();
     float border = this->GetBorder();
@@ -514,7 +514,7 @@ nGuiTextView::AppendColoredText(const nString& text, const vector4& color)
             this->OnRectChange(this->GetRect());
 
             const rectangle& sliderRect = this->refSlider->GetRect();
-            
+
             rect.v1.x = sliderRect.v0.x - border;
             if (rect.v1.x < rect.v0.x)
             {
@@ -539,11 +539,11 @@ nGuiTextView::AppendColoredText(const nString& text, const vector4& color)
     this->ActivateFont();
     nString newText;
     gfxServer->BreakLines(text, rect, newText);
-    
+
     // extract lines
     nArray<nString> lines;
     newText.Tokenize("\n", lines);
-    
+
     // append lines
     int i;
     for (i = 0; i < lines.Size(); i++)

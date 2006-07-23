@@ -1,0 +1,71 @@
+#-------------------------------------------------------------------------------
+#  nnebula/video.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::video
+    setmodules {
+        video::noggtheoraplayer
+        video::nvideoplayer
+        video::nvideoserver
+    }
+endbundle
+
+beginmodule video::noggtheoraplayer
+    setdir video
+    setheaders {
+        noggtheoraplayer
+    }
+    setfiles {
+        noggtheoraplayer_main
+    }
+    setlibs_win32_release {
+        ogg.lib
+        theora.lib
+    }
+    setlibs_win32_debug {
+        ogg_d.lib
+        theora_d.lib
+    }
+endmodule
+
+beginmodule video::nvideoplayer
+    setdir video
+    setheaders {
+        nvideoplayer
+    }
+    setfiles {
+        nvideoplayer_main
+    }
+endmodule
+
+beginmodule video::nvideoserver
+    setdir video
+    setheaders {
+        nvideoserver
+    }
+    setfiles {
+        nvideoserver_main
+        nvideoserver_cmds
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginbundle ndshow::video
+    setmodules {
+        video::ndshowserver
+    }
+endbundle
+
+beginmodule video::ndshowserver
+    setdir video
+    setplatform win32
+    setheaders {
+        ndshowserver
+    }
+    setfiles {
+        ndshowserver_main
+    }
+    setlibs_win32 {
+        ole32.lib
+        strmiids.lib
+    }
+endmodule

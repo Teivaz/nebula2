@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiwindow.h"
 
-nNebulaScriptClass(nGuiTextButton, "nguitextlabel");
+nNebulaScriptClass(nGuiTextButton, "gui::nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**
@@ -63,16 +63,16 @@ nGuiTextButton::OnButtonUp(const vector2& mousePos)
 
 //-----------------------------------------------------------------------------
 /**
-    
+
 */
 void
 nGuiTextButton::OnFrame()
 {
     nGuiServer* guiServer = nGuiServer::Instance();
-    
+
     // check if there exist a top most modal window
     nGuiWindow* topMostWindow = 0;
-    if (guiServer->GetRootWindowPointer()) 
+    if (guiServer->GetRootWindowPointer())
     {
         topMostWindow = guiServer->GetRootWindowPointer()->GetTopMostWindow();
     }

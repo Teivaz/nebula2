@@ -1,0 +1,18 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/nebula2.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginworkspace nebula2
+    settargets {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ndshow
+        ngui
+        nnetwork
+        ntoollib
+    }
+endworkspace

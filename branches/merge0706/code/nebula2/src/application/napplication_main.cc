@@ -25,7 +25,7 @@
 #include "locale/nlocaleserver.h"
 #include "shadow2/nshadowserver2.h"
 
-nNebulaScriptClass(nApplication, "nroot");
+nNebulaScriptClass(nApplication, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**
@@ -89,7 +89,7 @@ nApplication::Open()
     this->refPrefServer      = this->CreatePrefServer();
     this->refLocaleServer    = this->CreateLocaleServer();
     this->refInputServer     = this->CreateInputServer();
-    
+
     // initialize preferences server
     this->refPrefServer->SetCompanyName(this->GetCompanyName());
     this->refPrefServer->SetApplicationName(this->GetAppName());
@@ -133,7 +133,7 @@ nApplication::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->gfxCamera);
     this->refScriptServer->RunFunction("OnGraphicsStartup", scriptResult);
-    
+
     if (!this->renderPath.IsEmpty())
     {
         this->refSceneServer->SetRenderPathFilename(this->renderPath);

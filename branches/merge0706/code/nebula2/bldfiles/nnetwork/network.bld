@@ -1,0 +1,93 @@
+#-------------------------------------------------------------------------------
+#  nnetwork/network.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnetwork::network
+    setmodules {
+        network::nhttpserver
+        network::nnetclient
+        network::nnetserver
+        network::nsessionclient
+        network::nsessionclientcontext
+        network::nsessionserver
+        network::nsessionservercontext
+    }
+endbundle
+
+beginmodule network::nhttpserver
+    setdir network
+    setheaders {
+        nhttpserver
+    }
+    setfiles {
+        nhttpserver_main
+        nhttpserver_cmds
+    }
+endmodule
+
+beginmodule network::nnetclient
+    setdir network
+    setheaders {
+        nnetclient
+    }
+    setfiles {
+        nnetclient_main
+        nnetclient_cmds
+    }
+endmodule
+
+beginmodule network::nnetserver
+    setdir network
+    setheaders {
+        nnetserver
+    }
+    setfiles {
+        nnetserver_main
+        nnetserver_cmds
+    }
+endmodule
+
+beginmodule network::nsessionclient
+    setdir network
+    setheaders {
+        nsessionattrpool
+        nsessionclient
+    }
+    setfiles {
+        nsessionclient_main
+        nsessionclient_cmds
+    }
+endmodule
+
+beginmodule network::nsessionclientcontext
+    setdir network
+    setheaders {
+        nsessionclientcontext
+    }
+    setfiles {
+        nsessionclientcontext_main
+        nsessionclientcontext_cmds
+    }
+endmodule
+
+beginmodule network::nsessionserver
+    setdir network
+    setheaders {
+        nsessionserver
+    }
+    setfiles {
+        nsessionserver_main
+        nsessionserver_cmds
+    }
+endmodule
+
+beginmodule network::nsessionservercontext
+    setdir network
+    setheaders {
+        nsessionservercontext
+    }
+    setfiles {
+        nsessionservercontext_main
+        nsessionservercontext_cmds
+    }
+endmodule

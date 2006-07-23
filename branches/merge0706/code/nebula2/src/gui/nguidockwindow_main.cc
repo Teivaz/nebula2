@@ -7,7 +7,7 @@
 #include "gui/nguievent.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiDockWindow, "nguiclientwindow");
+nNebulaClass(nGuiDockWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**
@@ -251,7 +251,7 @@ nGuiDockWindow::OnHide()
     this->refConsoleButton->Release();
     this->refTexBrowserButton->Release();
     this->refGfxBrowserButton->Release();
-    this->refHardpointButton->Release();  
+    this->refHardpointButton->Release();
     this->refSceneControlButton->Release();
     this->refWatcherButton->Release();
     this->refSysInfoButton->Release();
@@ -268,7 +268,7 @@ nGuiDockWindow::OnHide()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiDockWindow::OnEvent(const nGuiEvent& event)
 {
     if (event.GetType() == nGuiEvent::ButtonUp)

@@ -15,7 +15,7 @@
 
 beginmodule nglserver2
     setdir opengl
-    setfiles { 
+    setfiles {
         nglserver2_main
         nglserver2_resource
         nglserver2_render
@@ -36,7 +36,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nglextensionserver
     setdir opengl
-    setfiles { 
+    setfiles {
         nglextensionserver_main
     }
     setheaders { nglextensionserver }
@@ -100,7 +100,7 @@ begintarget noglviewer
     settype exe
     setmodules {
         noglviewer
-        nviewerapp
+        tools::nviewerapp
     }
     settargetdeps {
         nkernel

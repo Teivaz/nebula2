@@ -10,7 +10,7 @@
 #include "anim2/nanimation.h"
 #include "anim2/nanimationserver.h"
 
-nNebulaClass(nResourceBundle, "nresource");
+nNebulaClass(nResourceBundle, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -71,7 +71,7 @@ nResourceBundle::LoadResource()
         {
             const int nameFieldLen = 32;
             char name[nameFieldLen + 1] = { 0 };
-            
+
             int type = hdrFile->GetInt();
             hdrFile->Read(name, nameFieldLen);
             int dataOffset = hdrFile->GetInt();
@@ -128,10 +128,10 @@ nResourceBundle::UnloadResource()
     @return                 true if successful
 */
 bool
-nResourceBundle::LoadResource(int type, 
-                              const char* resId, 
-                              int dataOffset, 
-                              int dataSize, 
+nResourceBundle::LoadResource(int type,
+                              const char* resId,
+                              int dataOffset,
+                              int dataSize,
                               int flags,
                               nFile* dataFile)
 {
@@ -142,7 +142,7 @@ nResourceBundle::LoadResource(int type,
 
         case 'MANI':
             return this->LoadAnimation(resId, dataOffset, dataSize, flags, dataFile);
-            
+
         case 'TXTR':
             return this->LoadTexture(resId, dataOffset, dataSize, flags, dataFile);
     }
@@ -154,10 +154,10 @@ nResourceBundle::LoadResource(int type,
     Load a mesh resource, called by the generic LoadResource method.
 */
 bool
-nResourceBundle::LoadMesh(const char* resId, 
-                          int dataOffset, 
-                          int dataSize, 
-                          int flags, 
+nResourceBundle::LoadMesh(const char* resId,
+                          int dataOffset,
+                          int dataSize,
+                          int flags,
                           nFile* dataFile)
 {
     n_assert(resId && dataFile);
@@ -186,10 +186,10 @@ nResourceBundle::LoadMesh(const char* resId,
     Load a animation resource, called by the generic LoadResource method.
 */
 bool
-nResourceBundle::LoadAnimation(const char* resId, 
-                               int dataOffset, 
-                               int dataSize, 
-                               int /*flags*/, 
+nResourceBundle::LoadAnimation(const char* resId,
+                               int dataOffset,
+                               int dataSize,
+                               int /*flags*/,
                                nFile* dataFile)
 {
     n_assert(resId && dataFile);
@@ -217,10 +217,10 @@ nResourceBundle::LoadAnimation(const char* resId,
     Load a texture resource, called by the generic LoadResource method.
 */
 bool
-nResourceBundle::LoadTexture(const char* resId, 
-                             int dataOffset, 
-                             int dataSize, 
-                             int /*flags*/, 
+nResourceBundle::LoadTexture(const char* resId,
+                             int dataOffset,
+                             int dataSize,
+                             int /*flags*/,
                              nFile* dataFile)
 {
     n_assert(resId && dataFile);

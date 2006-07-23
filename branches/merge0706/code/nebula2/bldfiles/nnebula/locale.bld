@@ -1,0 +1,19 @@
+#-------------------------------------------------------------------------------
+#  nnebula/locale.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::locale
+    setmodules {
+        locale::nlocaleserver
+    }
+endbundle
+
+beginmodule locale::nlocaleserver
+    setdir locale
+    setheaders {
+        nlocaleserver
+    }
+    setfiles {
+        nlocaleserver_main
+    }
+endmodule

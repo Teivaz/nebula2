@@ -6,7 +6,7 @@
 #include "scene/ncameranode.h"
 #include "mathlib/polar.h"
 
-nNebulaClass(nCameraNode, "nabstractcameranode");
+nNebulaClass(nCameraNode, "scene::nabstractcameranode");
 
 //------------------------------------------------------------------------------
 /**
@@ -27,17 +27,17 @@ nCameraNode::~nCameraNode()
 //------------------------------------------------------------------------------
 /**
 */
-matrix44 
+matrix44
 nCameraNode::ComputeViewMatrix(const vector3& cameraPosition, const vector3& cameraDirection)
-{      
+{
     matrix44 viewMatrix;
-    
+
     // initialize theta and rho
     polar2 viewerAngles;
-    
+
     vector3 _cameraDirection = cameraDirection;
     _cameraDirection.norm();
-    
+
     viewerAngles.set(_cameraDirection);
     viewerAngles.theta -= N_PI*0.5f;
 

@@ -6,7 +6,7 @@
 #include "opengl/nglextensionserver.h"
 #include "opengl/ngltexture.h"
 
-nNebulaClass(nGLMesh, "nmesh2");
+nNebulaClass(nGLMesh, "gfx2::nmesh2");
 
 const ushort nGLMesh::componentSize[] = {3,3,2,2,2,2,4,3,3,4,4};
 
@@ -86,7 +86,7 @@ nGLMesh::LoadResource()
     n_assert(0 == this->indexBuffer  && 0 == this->privIndexBuffer );
 
     bool success = nMesh2::LoadResource();
-    
+
     if (success)
     {
         // create the vertex declaration from the vertex component mask
@@ -114,7 +114,7 @@ nGLMesh::UnloadResource()
 
     // release the resources
     if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
-    {    
+    {
         if (this->vertexBuffer)
         {
             glDeleteBuffersARB(1,&this->vertexBuffer);
@@ -226,7 +226,7 @@ nGLMesh::CreateIndexBuffer()
 
         // create the index buffer
         glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, this->indexBufferByteSize, NULL, bufferUsage);
-        
+
         int glIBufSize;
         glGetBufferParameterivARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_BUFFER_SIZE_ARB, &glIBufSize);
         n_assert(glIBufSize == this->indexBufferByteSize);
@@ -276,7 +276,7 @@ nGLMesh::LockVertices()
         glBindBufferARB(GL_ARRAY_BUFFER_ARB,this->vertexBuffer);
         void* ptr = glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
         n_gltrace("nGLMesh::LockVertices().");
-        n_assert(ptr);    
+        n_assert(ptr);
         retval = (float*) ptr;
     }
     else
@@ -395,7 +395,7 @@ nGLMesh::BeginRender(int vertexStart, bool useIndex, int indexStart)
         {
             nGLTexture* tex = (nGLTexture*)nGfxServer2::Instance()->GetTexture(stage);
             if (tex)
-            {                
+            {
                 int res = tex->ApplyCoords(
                     stage, this->componentSize[firstSetBitPos(Uv0 << stage)],
                     vstride, this->VertexOffset(vertexStart,this->texCoordFirst + stage));

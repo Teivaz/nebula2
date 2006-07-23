@@ -7,7 +7,7 @@
 #include "resource/nresourceserver.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nResource, "nroot");
+nNebulaClass(nResource, "kernel::nroot");
 
 uint nResource::uniqueIdCounter = 0;
 
@@ -32,7 +32,7 @@ nResource::~nResource()
 {
     n_assert(this->GetState() == Unloaded);
 
-    // if we are pending for an async load, we must remove ourselves 
+    // if we are pending for an async load, we must remove ourselves
     // from the loader job list.
     if (this->refResourceServer.isvalid())
     {
@@ -84,10 +84,10 @@ nResource::CanLoadAsync() const
     support asynchronous loading or not.
 
     NOTE: in asynchronous mode, the method will return true although the
-    resource data is not available yet. Use the IsValid() method to 
+    resource data is not available yet. Use the IsValid() method to
     check when the resource data is available.
 
-    @return     true if all ok, 
+    @return     true if all ok,
 */
 bool
 nResource::Load()

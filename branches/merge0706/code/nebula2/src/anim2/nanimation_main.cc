@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "anim2/nanimation.h"
 
-nNebulaClass(nAnimation, "nresource");
+nNebulaClass(nAnimation, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -39,7 +39,7 @@ nAnimation::UnloadResource()
 /**
     This method should be overwritten by subclasses.
 */
-void 
+void
 nAnimation::SampleCurves(float /*time*/, int /*groupIndex*/, int /*firstCurveIndex*/, int /*numCurves*/, vector4* /*keyArray*/)
 {
     // empty

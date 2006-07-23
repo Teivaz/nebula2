@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "video/nvideoserver.h"
 
-nNebulaScriptClass(nVideoServer, "nroot");
+nNebulaScriptClass(nVideoServer, "kernel::nroot");
 
 nVideoServer* nVideoServer::Singleton = 0;
 
@@ -98,7 +98,7 @@ nVideoServer::NewVideoPlayer(nString name)
 /**
    delete video player
 */
-void   
+void
 nVideoServer::DeleteVideoPlayer(nVideoPlayer* player)
 {
 };

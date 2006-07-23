@@ -12,7 +12,7 @@
 #include "gui/nguimessagebox.h"
 #include "kernel/nfileserver2.h"
 
-nNebulaClass(nGuiFileDialog, "nguiclientwindow");
+nNebulaClass(nGuiFileDialog, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**
@@ -255,7 +255,7 @@ nGuiFileDialog::OnHide()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiFileDialog::OnEvent(const nGuiEvent& event)
 {
     // handle deletion warning message box events

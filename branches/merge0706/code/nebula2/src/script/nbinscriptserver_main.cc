@@ -7,7 +7,7 @@
 #include "util/nstring.h"
 #include "script/nbinscriptserver.h"
 
-nNebulaClass(nBinScriptServer, "nscriptserver");
+nNebulaClass(nBinScriptServer, "kernel::nscriptserver");
 
 //------------------------------------------------------------------------------
 /**
@@ -29,7 +29,7 @@ nBinScriptServer::~nBinScriptServer()
 /**
     Begin writing a persistent object.
 
-    27-Feb-04   Johannes    added for nMax: check for already existing file and 
+    27-Feb-04   Johannes    added for nMax: check for already existing file and
                             delete before creating the new
 */
 nFile*
@@ -513,7 +513,7 @@ nBinScriptServer::GetObj(nFile* file, nRoot*& val)
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
     Verify that this is a NOB0 file, and skip the header. Return false
     if EOF reached for some reason.
 */
@@ -543,9 +543,9 @@ nBinScriptServer::GetHeader(nFile* file)
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
     Read input args from file and write to nCmd object
-    
+
     @param  file    file to read from
     @param  cmd     nCmd object to initialize
     @return         false if eof reached
@@ -573,7 +573,7 @@ nBinScriptServer::GetInArgs(nFile* file, nCmd* cmd)
 
         switch(arg->GetType())
         {
-        
+
             case nArg::Int:
                 notEof = this->GetInt(file, iArg);
                 arg->SetI(iArg);
@@ -617,7 +617,7 @@ nBinScriptServer::GetInArgs(nFile* file, nCmd* cmd)
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
     Read and execute a cmd block. This may create new objects and change
     Nebula's currently selected object.
 
@@ -707,14 +707,14 @@ nBinScriptServer::ReadBlock(nFile* file)
             {
                 if (obj->IsA("nroot"))
                 {
-                    n_printf("nBinScriptServer::ReadBlock(): obj '%s' of class '%s' doesn't accept cmd '%s'\n", 
-                             ((nRoot *)obj)->GetFullName().Get(), 
-                             obj->GetClass()->GetName(), 
+                    n_printf("nBinScriptServer::ReadBlock(): obj '%s' of class '%s' doesn't accept cmd '%s'\n",
+                             ((nRoot *)obj)->GetFullName().Get(),
+                             obj->GetClass()->GetName(),
                              cmdProto->GetName());
                 }
                 else
                 {
-                    n_printf("nBinScriptServer::ReadBlock(): obj of class '%s' doesn't accept cmd '%s'\n", 
+                    n_printf("nBinScriptServer::ReadBlock(): obj of class '%s' doesn't accept cmd '%s'\n",
                              obj->GetClass()->GetName(),
                              cmdProto->GetName());
                 }
@@ -736,7 +736,7 @@ nBinScriptServer::ReadBlock(nFile* file)
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
     Evaluate a NOB0 file.
 */
 bool

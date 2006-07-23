@@ -1,0 +1,10 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/ndirect3d9.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget ndirect3d9
+    settype lib
+    setbundles {
+        ndirect3d9::gfx2
+    }
+endtarget

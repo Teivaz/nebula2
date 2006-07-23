@@ -84,7 +84,7 @@ begintarget nmapviewer
     settype exe
     setmodules {
         mapviewer
-        nviewerapp
+        tools::nviewerapp
     }
     settargetdeps {
         nkernel

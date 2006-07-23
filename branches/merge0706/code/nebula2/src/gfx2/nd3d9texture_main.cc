@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 
-nNebulaClass(nD3D9Texture, "ntexture2");
+nNebulaClass(nD3D9Texture, "gfx2::ntexture2");
 
 //------------------------------------------------------------------------------
 /**
@@ -18,7 +18,7 @@ nD3D9Texture::nD3D9Texture() :
     textureCube(0),
     renderTargetSurface(0),
     depthStencilSurface(0)
-{   
+{
     // empty
 }
 
@@ -142,12 +142,12 @@ nD3D9Texture::LoadResource()
     }
     else if (filename.CheckExtension("ogg"))
     {
-        // load file through D3DX, assume file has mip maps 
+        // load file through D3DX, assume file has mip maps
         success = this->LoadOGGFile();
     }
     else if (filename.CheckExtension("dds"))
     {
-        // load file through D3DX, assume file has mip maps 
+        // load file through D3DX, assume file has mip maps
         success = this->LoadD3DXFile(false);
     }
     else
@@ -209,13 +209,13 @@ nD3D9Texture::OnRestored()
 
     @param  d3d9            pointer to Direct3D9 inteface
     @param  d3d9Device      pointer to Direct3D9 device
-    @param  usage           D3DUSAGE_DEPTHSTENCIL or D3DUSAGE_RENDERTARGET 
+    @param  usage           D3DUSAGE_DEPTHSTENCIL or D3DUSAGE_RENDERTARGET
     @param  pixelFormat     D3DFORMAT member
 */
 bool
-nD3D9Texture::CheckRenderTargetFormat(IDirect3D9* d3d9, 
+nD3D9Texture::CheckRenderTargetFormat(IDirect3D9* d3d9,
                                       IDirect3DDevice9* d3d9Device,
-                                      DWORD usage, 
+                                      DWORD usage,
                                       D3DFORMAT pixelFormat)
 {
     n_assert(d3d9);
@@ -453,7 +453,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     HRESULT hr;
     IDirect3DDevice9* d3d9Dev = this->refGfxServer->d3d9Device;
     n_assert(d3d9Dev);
- 
+
     // read file into temp mem buffer
     nFile* file = nFileServer2::Instance()->NewFileObject();
     if (!file->Open(this->GetFilename().Get(), "rb"))
@@ -578,7 +578,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     n_free(fileBuffer);
     fileBuffer = 0;
 
-    // query texture attributes 
+    // query texture attributes
     this->QueryD3DTextureAttributes();
     return true;
 }
@@ -656,7 +656,7 @@ nD3D9Texture::CreateEmptyTexture()
         return false;
     }
 
-    // query texture attributes 
+    // query texture attributes
     this->QueryD3DTextureAttributes();
     return true;
 }
@@ -709,7 +709,7 @@ nD3D9Texture::LoadFromRawCompoundFile()
 
             this->Unlock(0);
             return true;
-        }        
+        }
     }
     return false;
 }
@@ -775,7 +775,7 @@ nD3D9Texture::LoadFromDDSCompoundFile()
     n_free(buffer);
     buffer = 0;
 
-    // query texture attributes 
+    // query texture attributes
     this->QueryD3DTextureAttributes();
 
     return true;
@@ -1058,7 +1058,7 @@ D3DFORMAT nD3D9Texture::FormatToD3DFormat(nTexture2::Format format)
         case G32R32F:           d3dFormat = D3DFMT_G32R32F;       break;
         case A32B32G32R32F:     d3dFormat = D3DFMT_A32B32G32R32F; break;
         case A8:                d3dFormat = D3DFMT_A8;            break;
-        default:            
+        default:
             // can't happen
             n_assert(false);
     }

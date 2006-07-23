@@ -7,25 +7,25 @@
 #-------------------------------------------------------------------------------
 beginmodule nrmgeomloader
     setdir rmgeomloader
-    setfiles { 
-        nrmgeomloader_main 
-        nrmgeomloader_pch.cpp 
+    setfiles {
+        nrmgeomloader_main
+        nrmgeomloader_pch.cpp
         nrmn3d2loader
         nrmmeshbuilder
     }
     setheaders {
-        nrmgeomloader_main 
-        nrmgeomloader_pch 
+        nrmgeomloader_main
+        nrmgeomloader_pch
         nrmn3d2loader
         nrmmeshbuilder
     }
-    setlibs_win32 { 
-        RmCore.lib 
-        RmUtilities.lib 
-        RmMFCUtilities.lib 
-        winmm.lib 
-        dxguid.lib 
-        shlwapi.lib 
+    setlibs_win32 {
+        RmCore.lib
+        RmUtilities.lib
+        RmMFCUtilities.lib
+        winmm.lib
+        dxguid.lib
+        shlwapi.lib
     }
 endmodule
 #-------------------------------------------------------------------------------

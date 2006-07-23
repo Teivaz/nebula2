@@ -7,7 +7,7 @@
 #include "audio3/nsound3.h"
 #include "audio3/naudioserver3.h"
 
-nNebulaScriptClass(nGuiSkin, "nroot");
+nNebulaScriptClass(nGuiSkin, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**
@@ -69,7 +69,7 @@ nGuiSkin::EndBrushes()
 //------------------------------------------------------------------------------
 /**
     Add a new skin brush. The brush is defined by its name, the filename
-    of a texture, and a rectangle within the texture in absolute texel 
+    of a texture, and a rectangle within the texture in absolute texel
     coordinates. Adding 2 brushes with identical name is a fatal error.
 
     @param  name    the brush name
@@ -89,7 +89,7 @@ nGuiSkin::AddBrush(const char* name, const char* tex, const vector2& uvPos, cons
     this->brushes.Append(newRes);
     nGuiResource& res = this->brushes.Back();
     res.SetName(name);
-    
+
     // set texture name
     nString texPath = this->texPrefix;
     texPath.Append(tex);
@@ -122,7 +122,7 @@ nGuiSkin::AddDynamicBrush(const char* name, int width, int height)
     this->brushes.Append(newRes);
     nGuiResource& res = this->brushes.Back();
     res.SetName(name);
-    
+
     rectangle uvRect(vector2(0.0f, 0.0f), vector2(float(width), float(height)));
     res.SetAbsUvRect(uvRect);
     res.SetColor(vector4(1.0f, 1.0f, 1.0f, 1.0f));

@@ -2,7 +2,7 @@
    @file netclientdemo.cc
    @author Luis Jose Cabellos Gomez <luis.cabellos@tragnarion.com>
    @brief Declaration of NetworkDemoApp class.
-   @brief $Id$ 
+   @brief $Id$
 
    This file is licensed under the terms of the Nebula License.
 */
@@ -10,7 +10,7 @@
 #include "networkdemo/netclientdemo.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass( NetClientDemo, "nnetclient" );
+nNebulaClass( NetClientDemo, "network::nnetclient" );
 
 //------------------------------------------------------------------------------
 /**
@@ -34,5 +34,5 @@ NetClientDemo::HandleMessage(const char* msg)
     n_printf("NetClientDemo::HandleMessage(%s)\n", msg);
 }
 //------------------------------------------------------------------------------
-//   EOF 
+//   EOF
 //------------------------------------------------------------------------------

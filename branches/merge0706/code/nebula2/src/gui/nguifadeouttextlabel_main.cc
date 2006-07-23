@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "kernel/ntimeserver.h"
 
-nNebulaClass(nGuiFadeOutTextLabel, "nguitextlabel");
+nNebulaClass(nGuiFadeOutTextLabel, "gui::nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**
@@ -55,7 +55,7 @@ void
 nGuiFadeOutTextLabel::RenderText(bool pressed)
 {
     nTime curTime = nTimeServer::Instance()->GetTime();
-    
+
     // update color
     if (curTime > this->startTime + this->fadeOutTime)
     {

@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // File: DSUtil.h
 //
-// Desc: 
+// Desc:
 //
 // Copyright (c) 1999-2001 Microsoft Corp. All rights reserved.
 //-----------------------------------------------------------------------------
@@ -29,7 +29,7 @@ class CSound;
 class CStreamingSound;
 
 //-----------------------------------------------------------------------------
-// Typing macros 
+// Typing macros
 //-----------------------------------------------------------------------------
 //#define WAVEFILE_READ   1
 //#define WAVEFILE_WRITE  2
@@ -40,7 +40,7 @@ class CStreamingSound;
 
 //-----------------------------------------------------------------------------
 // Name: class CSoundManager
-// Desc: 
+// Desc:
 //-----------------------------------------------------------------------------
 class CSoundManager
 {
@@ -101,15 +101,15 @@ public:
 
 //-----------------------------------------------------------------------------
 // Name: class CStreamingSound
-// Desc: Encapsulates functionality to play a wave file with DirectSound.  
-//       The Create() method loads a chunk of wave file into the buffer, 
-//       and as sound plays more is written to the buffer by calling 
+// Desc: Encapsulates functionality to play a wave file with DirectSound.
+//       The Create() method loads a chunk of wave file into the buffer,
+//       and as sound plays more is written to the buffer by calling
 //       HandleWaveStreamNotification() whenever hNotifyEvent is signaled.
 //-----------------------------------------------------------------------------
 class CStreamingSound : public CSound
 {
 protected:
-  
+
     DWORD m_dwLastPlayPos;
     DWORD m_dwPlayProgress;
     DWORD m_dwNotifySize;

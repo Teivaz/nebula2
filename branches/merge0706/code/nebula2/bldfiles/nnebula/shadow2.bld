@@ -1,0 +1,53 @@
+#-------------------------------------------------------------------------------
+#  nnebula/shadow2.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::shadow2
+    setmodules {
+        shadow2::nshadowcaster2
+        shadow2::nshadowserver2
+        shadow2::nskinnedshadowcaster2
+        shadow2::nstaticshadowcaster2
+    }
+endbundle
+
+beginmodule shadow2::nshadowcaster2
+    setdir shadow2
+    setheaders {
+        nshadowcaster2
+    }
+    setfiles {
+        nshadowcaster2_main
+    }
+endmodule
+
+beginmodule shadow2::nshadowserver2
+    setdir shadow2
+    setheaders {
+        nshadowserver2
+    }
+    setfiles {
+        nshadowserver2_main
+        nshadowserver2_cmds
+    }
+endmodule
+
+beginmodule shadow2::nskinnedshadowcaster2
+    setdir shadow2
+    setheaders {
+        nskinnedshadowcaster2
+    }
+    setfiles {
+        nskinnedshadowcaster2_main
+    }
+endmodule
+
+beginmodule shadow2::nstaticshadowcaster2
+    setdir shadow2
+    setheaders {
+        nstaticshadowcaster2
+    }
+    setfiles {
+        nstaticshadowcaster2_main
+    }
+endmodule

@@ -5,7 +5,7 @@
 #include "gui/nguicolorslidergroup.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiColorSliderGroup, "nguiformlayout");
+nNebulaClass(nGuiColorSliderGroup, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

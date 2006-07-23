@@ -13,7 +13,7 @@
 
     When opened, a nSound3 object will create a shared static or streaming
     sound resource, based on the settings of nSound3.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "resource/nresource.h"

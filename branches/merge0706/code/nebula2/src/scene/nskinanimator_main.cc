@@ -11,7 +11,7 @@
 #include "variable/nvariableserver.h"
 #include "character/ncharacter2set.h"
 
-nNebulaScriptClass(nSkinAnimator, "nanimator");
+nNebulaScriptClass(nSkinAnimator, "scene::nanimator");
 
 //------------------------------------------------------------------------------
 /**
@@ -122,7 +122,7 @@ nSkinAnimator::RenderContextCreated(nRenderContext* renderContext)
     nCharacter2* curCharacter = n_new (nCharacter2(this->character));
     n_assert(0 != curCharacter);
     curCharacter->SetSkinAnimator(this);
-    
+
     // add default clip
     if (!this->clips.Empty())
     {
@@ -154,7 +154,7 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::InvalidHandle != this->channelVarHandle);    
+    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
     const nVariable& characterVar = renderContext->GetLocalVar(this->characterVarIndex);
     nCharacter2* curCharacter = (nCharacter2*) characterVar.GetObj();
@@ -177,15 +177,15 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         // get the time offset from the render context
         var = renderContext->GetVariable(this->channelOffsetVarHandle);
         const float curOffset = 0 != var ? var->GetFloat() : 0.0f;
-    
+
         const nVariable& character2SetVar = renderContext->GetLocalVar(this->characterSetIndex);
         nCharacter2Set* characterSet = (nCharacter2Set*) character2SetVar.GetObj();
         n_assert(characterSet);
-        
+
         // get character 2 set from render context and check if animation state needs to be updated
         if (characterSet->IsDirty())
         {
-            nAnimStateInfo newState;            
+            nAnimStateInfo newState;
             int numClips = characterSet->GetNumClips();
             int i;
 

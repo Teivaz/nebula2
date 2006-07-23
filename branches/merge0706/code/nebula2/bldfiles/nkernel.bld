@@ -1,0 +1,13 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/nkernel.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget nkernel
+    settype lib
+    setbundles {
+        nkernel::kernel
+        nkernel::mathlib
+        nkernel::signals
+        nkernel::util
+    }
+endtarget

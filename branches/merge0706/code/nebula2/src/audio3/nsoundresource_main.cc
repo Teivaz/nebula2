@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "audio3/nsoundresource.h"
 
-nNebulaClass(nSoundResource, "nresource");
+nNebulaClass(nSoundResource, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**

@@ -1,12 +1,12 @@
 //------------------------------------------------------------------------------
 //  nscriptablemeshbuilder_main.cc
 //
-//  (C)2005 James Mastro / Kim, Hyoun Woo 
+//  (C)2005 James Mastro / Kim, Hyoun Woo
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
 #include "tools/nscriptablemeshbuilder.h"
 
-nNebulaScriptClass(nScriptableMeshBuilder, "nroot");
+nNebulaScriptClass(nScriptableMeshBuilder, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**
@@ -35,7 +35,7 @@ int nScriptableMeshBuilder::BeginAddVertex()
     nMeshBuilder::AddVertex(vertex);
 
     this->begin_vadd = true;
-    
+
     return (nMeshBuilder::GetNumVertices() - 1);
 }
 
@@ -65,7 +65,7 @@ void nScriptableMeshBuilder::AddNormal(int index, float x, float y, float z)
 /**
 */
 void nScriptableMeshBuilder::AddColor(int index, float r, float g, float b, float a)
-{ 
+{
     n_assert (this->begin_vadd);
 
     nMeshBuilder::Vertex& vertex = nMeshBuilder::GetVertexAt(index);

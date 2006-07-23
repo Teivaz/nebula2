@@ -5,7 +5,7 @@
 #include "gui/nguicoloradjustwindow.h"
 #include "gui/nguicoloradjust.h"
 
-nNebulaClass(nGuiColorAdjustWindow, "nguiclientwindow");
+nNebulaClass(nGuiColorAdjustWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

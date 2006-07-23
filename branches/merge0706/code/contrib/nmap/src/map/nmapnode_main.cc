@@ -10,7 +10,7 @@
 #include "map/nmap.h"
 #include "map/mapquadtree.h"
 
-nNebulaScriptClass(nMapNode, "nmaterialnode");
+nNebulaScriptClass(nMapNode, "scene::nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**
@@ -34,14 +34,14 @@ nMapNode::nMapNode() :
 /**
 */
 nMapNode::~nMapNode()
-{   
+{
     DeleteBlocks();
     n_delete(mapQuadtree);
 }
 
 /**
 */
-bool 
+bool
 nMapNode::LoadResources()
 {
     nMaterialNode::LoadResources();
@@ -52,13 +52,13 @@ nMapNode::LoadResources()
     return true;
 }
 
-void 
+void
 nMapNode::SetResourceLoader( const char* resourceLoader )
 {
     this->resourceLoader = resourceLoader;
 }
 
-const char* 
+const char*
 nMapNode::GetResourceLoader() const
 {
     return this->resourceLoader;
@@ -68,7 +68,7 @@ nMapNode::GetResourceLoader() const
     If this replaces an existing heightmap,
     it forces a reload immediately to ensure sim runs without a hitch.
 */
-void 
+void
 nMapNode::SetMapPath(const char* name)
 {
     refMap = name;
@@ -78,7 +78,7 @@ nMapNode::SetMapPath(const char* name)
 /**
     @return The filename for the heightmap data.
 */
-const char* 
+const char*
 nMapNode::GetMapPath()
 {
     return refMap.getname();
@@ -87,7 +87,7 @@ nMapNode::GetMapPath()
 /**
     @brief Set the terrain block size in vertices.
     This is used to divide into the heightmap where:
-    
+
         dimensions = block_size * num_blocks - (num_blocks - 1)
 
     Or:
@@ -95,10 +95,10 @@ nMapNode::GetMapPath()
         num_blocks = (dimensions - 1) / (block_size - 1)
 
     It is far easier to keep blockSize as 2^n+1.
-        
+
     @param size A value of 2^n+1
 */
-void 
+void
 nMapNode::SetBlockSize(int size)
 {
     n_assert(0 < size);
@@ -107,14 +107,14 @@ nMapNode::SetBlockSize(int size)
     isDirty = true;
 }
 
-void 
+void
 nMapNode::SetError(int error)
 {
     pixelError = error;
     isDirty = true;
 }
 
-int 
+int
 nMapNode::GetError() const
 {
     return pixelError;
@@ -123,7 +123,7 @@ nMapNode::GetError() const
 /**
     @param size Size of the texture detail in metres.
 */
-void 
+void
 nMapNode::SetDetailSize(float size)
 {
     n_assert(0.0f < size);
@@ -134,7 +134,7 @@ nMapNode::SetDetailSize(float size)
 /**
     @return Size of a single detail texture.
 */
-float 
+float
 nMapNode::GetDetailSize()
 {
     return detailSize;
