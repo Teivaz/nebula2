@@ -241,6 +241,15 @@ beginmodule gfx2::nd3d9server
         nd3d9server_shapes
         nd3d9server_text
     }
+    setlibs_win32 {
+        advapi32.lib
+        d3d9.lib
+        d3dx9.lib
+        dxerr9.lib
+        dxguid.lib        
+        gdi32.lib
+        user32.lib        
+    }
 endmodule
 
 beginmodule gfx2::nd3d9shader
