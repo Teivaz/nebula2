@@ -155,8 +155,8 @@ endmodule
 #-----------------------------------------------------------------------------
 begintarget nopende
     settype lib
-    setmodules  { 
-        nopende nopendeworld nopendebody 
+    setmodules  {
+        nopende nopendeworld nopendebody
         nopendejoint nopendeballjoint nopendehingejoint
         nopendesliderjoint nopendeuniversaljoint nopendehinge2joint
         nopendefixedjoint nopendeamotorjoint nopendespace

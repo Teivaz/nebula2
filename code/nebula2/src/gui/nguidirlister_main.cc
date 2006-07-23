@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/ndirectory.h"
 
-nNebulaScriptClass(nGuiDirLister, "nguitextview");
+nNebulaScriptClass(nGuiDirLister, "gui::nguitextview");
 
 //------------------------------------------------------------------------------
 /**
@@ -82,14 +82,14 @@ nGuiDirLister::UpdateContent()
             {
                 continue;
             }
-            if ((0 == strcmp(entryName.Get(), ".")) || 
+            if ((0 == strcmp(entryName.Get(), ".")) ||
                 (0 == strcmp(entryName.Get(), "..")) ||
                 (0 == strcmp(entryName.Get(), "CVS")) ||
                 (0 == strcmp(entryName.Get(), ".svn")))
             {
                 continue;
             }
-            
+
             // if in strip extension mode, strip the extension from the file
             if (this->stripExtension)
             {

@@ -7,7 +7,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiTextTable, "nguiformlayout");
+nNebulaClass(nGuiTextTable, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
@@ -71,7 +71,7 @@ nGuiTextTable::ValidateFont()
         this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
         if (!this->refFont.isvalid())
         {
-            n_error("nGuiTextView %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
+            n_error("nGuiTextView %s: Unknown font '%s'!", this->GetName(), this->fontName.Get());
         }
         else
         {
@@ -158,17 +158,17 @@ nGuiTextTable::Render()
                 case Right: renderFlags |= nFont2::Right; break;
                 default:    renderFlags |= nFont2::Center; break;
             }
-                
+
             // for each row in column...
             int rowIndex;
             int numRows = this->textArray.GetHeight();
             for (rowIndex = 0; rowIndex < numRows; rowIndex++)
             {
-                nGuiServer::Instance()->DrawText(this->textArray.At(colIndex, rowIndex).Get(), 
-                                                 this->columnAttributes[colIndex].textColor, 
-                                                 curTextRect, 
+                nGuiServer::Instance()->DrawText(this->textArray.At(colIndex, rowIndex).Get(),
+                                                 this->columnAttributes[colIndex].textColor,
+                                                 curTextRect,
                                                  renderFlags);
-                
+
                 // update text rectangle
                 curTextRect.v0.y = curTextRect.v1.y;
                 curTextRect.v1.y += this->lineHeight;

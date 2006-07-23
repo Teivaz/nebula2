@@ -8,7 +8,7 @@
 #include "nopenaldemo/nappopenaldemo.h"
 #include "nopenaldemo/nappopenalstate.h"
 
-nNebulaScriptClass(nAppOpenALDemo, "napplication")
+nNebulaScriptClass(nAppOpenALDemo, "application::napplication")
 
 //----------------------------------------------------------------------------
 /**
@@ -67,7 +67,7 @@ nAppOpenALDemo::CreateScriptServer()
 /**
     Create nOpenAL audio server.
 */
-nAudioServer3* 
+nAudioServer3*
 nAppOpenALDemo::CreateAudioServer()
 {
     return (nAudioServer3*) kernelServer->New("nopenalserver", "/sys/servers/audio");

@@ -1,0 +1,74 @@
+#-------------------------------------------------------------------------------
+#  microtcl/microtcl.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle microtcl::microtcl
+    setmodules {
+        microtcl::tcl
+        microtcl::tclnebula
+    }
+endbundle
+
+beginmodule microtcl::tcl
+    setdir microtcl
+    settype c
+    setheaders {
+        regcustom
+        regerrs
+        regex
+        regguts
+        tclCompile
+        tclInitScript
+        tclInt
+        tclIntDecls
+        tclIntPlatDecls
+        tclMath
+        tclPlatDecls
+        tclPort
+        tclRegexp
+        tclUnixPort
+        tclWinPort
+    }
+    setfiles {
+        tclAlloc
+        tclBasic
+        tclBinary
+        tclCkalloc
+        tclCmdAH
+        tclCmdIL
+        tclCmdMZ
+        tclCompCmds
+        tclCompExpr
+        tclCompile
+        tclExecute
+        tclGet
+        tclHash
+        tclHistory
+        tclIndexObj
+        tclInterp
+        tclLink
+        tclListObj
+        tclLiteral
+        tclNamesp
+        tclObj
+        tclPanic
+        tclParse
+        tclParseExpr
+        tclPreserve
+        tclProc
+        tclResult
+        tclStringObj
+        tclUniData
+        tclUtf
+        tclUtil
+        tclVar
+    }
+endmodule
+
+beginmodule microtcl::tclnebula
+    setdir microtcl
+    settype cpp
+    setfiles {
+        tclNebula
+    }
+endmodule

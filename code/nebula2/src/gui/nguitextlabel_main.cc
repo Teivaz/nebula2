@@ -6,7 +6,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "gui/nguiserver.h"
 
-nNebulaScriptClass(nGuiTextLabel, "nguilabel");
+nNebulaScriptClass(nGuiTextLabel, "gui::nguilabel");
 
 //------------------------------------------------------------------------------
 /**
@@ -79,7 +79,7 @@ nGuiTextLabel::ValidateFont()
         this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
         if (!this->refFont.isvalid())
         {
-            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
+            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get());
         }
     }
 }
@@ -156,7 +156,7 @@ nGuiTextLabel::RenderText(bool pressed)
 
 //------------------------------------------------------------------------------
 /**
-    Renders the text label. This will first invoke the parent class 
+    Renders the text label. This will first invoke the parent class
     nGuiLabel to render the labels background bitmap (if one exists).
     Afterwards the actual text will be rendered through the text server.
 */

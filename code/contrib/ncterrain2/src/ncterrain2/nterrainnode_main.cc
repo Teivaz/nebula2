@@ -7,7 +7,7 @@
 #include "resource/nresourceserver.h"
 #include "misc/nwatched.h"
 
-nNebulaScriptClass(nTerrainNode, "nmaterialnode");
+nNebulaScriptClass(nTerrainNode, "scene::nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**
@@ -114,7 +114,7 @@ nTerrainNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderCo
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
-    // only render if resource is available (may not be 
+    // only render if resource is available (may not be
     // available yet if async resource loading enabled)
     if (!this->refChunkLodTree->IsValid())
     {

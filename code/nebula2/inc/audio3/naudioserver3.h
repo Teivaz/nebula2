@@ -6,7 +6,7 @@
     @ingroup Audio3
 
     Audio subsystem 3 server.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -73,7 +73,7 @@ public:
     /// create a shared sound resource object
     virtual nSoundResource* NewSoundResource(const char* rsrcName);
 
-    /// mute all category volumes 
+    /// mute all category volumes
     void Mute();
     /// restore all muted category volumes
     void Unmute();
@@ -151,5 +151,5 @@ nAudioServer3::IsInBeginScene() const
 
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

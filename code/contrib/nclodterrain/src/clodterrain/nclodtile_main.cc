@@ -7,7 +7,7 @@
 #include "kernel/nfile.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaClass(nCLODTile, "nresource");
+nNebulaClass(nCLODTile, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**

@@ -43,7 +43,7 @@ public:
     static LONG AsDirectSoundVolume(float vol);
 
 protected:
-    /// load the resource 
+    /// load the resource
     virtual bool LoadResource();
     /// unload the resource
     virtual void UnloadResource();
@@ -121,7 +121,7 @@ nDSound3::GetDS3DProps()
 /**
 */
 inline
-nDSoundResource* 
+nDSoundResource*
 nDSound3::GetDSoundResource()
 {
     return this->refSoundResource.get();
@@ -138,4 +138,4 @@ nDSound3::GetCSoundPtr()
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

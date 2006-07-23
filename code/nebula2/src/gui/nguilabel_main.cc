@@ -5,7 +5,7 @@
 #include "gui/nguilabel.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiLabel, "nguiwidget");
+nNebulaClass(nGuiLabel, "gui::nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

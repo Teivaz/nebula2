@@ -7,7 +7,7 @@
 #include "kernel/nfile.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaClass(nCLODSplat, "nresource");
+nNebulaClass(nCLODSplat, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -300,12 +300,12 @@ bool nCLODSplat::LoadResource()
     n_assert(realiix == realindexcount);
 
     nOpende::GeomTriMeshDataBuildSingle(this->collisionmesh,
-        this->collidevertices, 3 * sizeof(dReal), vertexcount, 
+        this->collidevertices, 3 * sizeof(dReal), vertexcount,
         this->collideindices,  realindexcount, 3 * sizeof(int));
 
     delete [] vertexdatabuffer;
     delete [] indexdatabuffer;
-    n_printf("loaded clod chunk %s at offset %d.  %d vertices, %d indices, %d collision triangles\n", 
+    n_printf("loaded clod chunk %s at offset %d.  %d vertices, %d indices, %d collision triangles\n",
         this->GetName(),
         this->dataOffset,
         vertexcount,

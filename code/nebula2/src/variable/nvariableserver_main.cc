@@ -6,7 +6,7 @@
 #include "variable/nvariableserver.h"
 #include "variable/nvariablecontext.h"
 
-nNebulaScriptClass(nVariableServer, "nroot");
+nNebulaScriptClass(nVariableServer, "kernel::nroot");
 nVariableServer* nVariableServer::Singleton = 0;
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ nVariableServer::DeclareVariable(const char* varName, nFourCC varFourCC)
         {
             char buf[5];
             n_error("Inconsistent variable declaration: '%s'/'%s'!\n"
-                    "Either the name or the fourcc code is already used", 
+                    "Either the name or the fourcc code is already used",
                     varName, this->FourCCToString(varFourCC, buf, sizeof(buf)));
             return nVariable::InvalidHandle;
         }

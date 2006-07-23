@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "resource/nmeshcopyresourceloader.h"
 
-nNebulaClass(nMeshCopyResourceLoader, "nresourceloader");
+nNebulaClass(nMeshCopyResourceLoader, "resource::nresourceloader");
 
 //------------------------------------------------------------------------------
 /**
@@ -29,7 +29,7 @@ bool nMeshCopyResourceLoader::InitResource(const char* sFilename, nResource* cal
     n_assert(this->srcMesh.isvalid());
     n_assert(callingResource);
     n_assert(callingResource->IsA(nKernelServer::Instance()->FindClass("nmesh2")));
-    
+
     nMesh2* dstMesh = (nMesh2*) callingResource;
     nMesh2* srcMesh = this->srcMesh.get();
 

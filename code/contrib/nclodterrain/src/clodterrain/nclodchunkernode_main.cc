@@ -12,7 +12,7 @@
 #include "kernel/nfileserver2.h"
 #include "clodterrain/nclodchunkernode.h"
 
-nNebulaScriptClass(nCLODChunkerNode, "nroot");
+nNebulaScriptClass(nCLODChunkerNode, "kernel::nroot");
 
 // Manually synced!!!  (@@ should use a fixed-size struct, to be
 // safer, although that ruins endian safety.)  If you change the chunk
@@ -26,7 +26,7 @@ const int   CHUNK_HEADER_BYTES = 4 + 4*4 + 1 + /*2 + 2*/ + 2*2 + 4 + 4;
 //
 // constructor
 nCLODChunkerNode::nCLODChunkerNode() : nRoot(), m_validate(true),
-    m_splatthickness(4), 
+    m_splatthickness(4),
     m_xspacing(1.0), m_yspacing(1.0), m_zscale(1.0),
     m_targetdepth(6), m_maxerror(2.5),
     m_outputfilename(NULL), m_tileindexfilename(NULL),
@@ -114,16 +114,16 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
         destfile->Release();
         return;
     }
-    // generate activation levels 
+    // generate activation levels
     //n_printf("updating...\n");
 
     // Run a view-independent L-K style BTT update on the heightfield, to generate
     // error and activation_level values for each element.
-    updateActivationLevel(0, m_heightfield->m_bitmapysize - 1, 
-        m_heightfield->m_bitmapxsize - 1, m_heightfield->m_bitmapysize - 1, 
+    updateActivationLevel(0, m_heightfield->m_bitmapysize - 1,
+        m_heightfield->m_bitmapxsize - 1, m_heightfield->m_bitmapysize - 1,
         0, 0);  // sw half of the square
-    updateActivationLevel(m_heightfield->m_bitmapxsize - 1, 0, 
-        0, 0, 
+    updateActivationLevel(m_heightfield->m_bitmapxsize - 1, 0,
+        0, 0,
         m_heightfield->m_bitmapxsize - 1, m_heightfield->m_bitmapysize - 1);    // ne half of the square
 
     // Propagate the activation_level values of verts to their
@@ -178,12 +178,12 @@ void nCLODChunkerNode::compileChunksFromHeightField(HeightFieldData *heightmap)
             debugfile->Close();
         }
     }
-    debugfile->Release();  
+    debugfile->Release();
     */
 
     // now generate the triangle meshes
     if (m_tileindexfilename)
-    {   
+    {
         nString bigsrcpath = m_ref_fs->ManglePath(m_tileindexfilename);
         m_tileindexfield = new TileIndexData();
         m_tileindexfield->readBitmap(bigsrcpath);
@@ -340,7 +340,7 @@ unsigned int nCLODChunkerNode::validateActivationLevels(unsigned int cx, unsigne
     int en = m_heightfield->getActivation(cx, cy - half_size);
     int ew = m_heightfield->getActivation(cx - half_size, cy);
     int es = m_heightfield->getActivation(cx, cy + half_size);
-    
+
     if (level > 0) {
         // Check child verts against edge verts.
         if (cne > ee || cse > ee) {
@@ -354,7 +354,7 @@ unsigned int nCLODChunkerNode::validateActivationLevels(unsigned int cx, unsigne
         if (cnw > ew || csw > ew) {
             n_printf("cp error! ew! lev = %d, cx = %d, cy = %d, alev = %d\n", level, cx, cy, ew);   //xxxxx
         }
-        
+
         if (csw > es || cse > es) {
             n_printf("cp error! es! lev = %d, cx = %d, cy = %d, alev = %d\n", level, cx, cy, es);   //xxxxx
         }
@@ -480,7 +480,7 @@ trianglestats nCLODChunkerNode::generateAllMeshData(nFile &destfile, int x0, int
         debugfile->Close();
         debugfile->Release();
     }
-  */  
+  */
     // add in the triangle stats to our current ones
     overallstats += t;
 
@@ -634,7 +634,7 @@ void nCLODChunkerNode::generateEdgeMeshData(nFile &destfile, int direction, int 
     //
     // Vertices.
     //
-    
+
     // Scan the edge, looking for the minimum height at each vert,
     // taking into account the full LOD mesh, plus all meshes up to
     // two levels above our own.
@@ -716,7 +716,7 @@ void nCLODChunkerNode::generateEdgeMeshData(nFile &destfile, int direction, int 
 
             // Remember the minimum height of the edge for this
             // segment.
-            
+
             if (current_min > -32768) {
                 current_min -= 1;   // be slightly conservative here.
                 }

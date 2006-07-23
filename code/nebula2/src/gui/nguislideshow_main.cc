@@ -11,7 +11,7 @@
 #include "kernel/ntimeserver.h"
 #include "gui/nguiresource.h"
 
-nNebulaScriptClass(nGuiSlideShow, "nguiwidget");
+nNebulaScriptClass(nGuiSlideShow, "gui::nguiwidget");
 
 //------------------------------------------------------------------------------
 /** Constructor
@@ -147,7 +147,7 @@ void nGuiSlideShow::OnFrame()
             {
                 this->nextPicIndex += 1;
             }
-            
+
             this->UpdatePictureColor();
 
             // Flip the brushes, if needed

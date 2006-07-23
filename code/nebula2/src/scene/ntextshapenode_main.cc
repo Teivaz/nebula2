@@ -5,7 +5,7 @@
 #include "scene/ntextshapenode.h"
 #include "gfx2/nfontdesc.h"
 
-nNebulaClass(nTextShapeNode, "nshapenode");
+nNebulaClass(nTextShapeNode, "scene::nshapenode");
 
 //------------------------------------------------------------------------------
 /**
@@ -54,7 +54,7 @@ nTextShapeNode::UnloadResources()
     Load font resource
     Resource name:  TypeFace_Height_Weight_ItalicUnderlineAntiAliased
                     i.E.:   Arial_10_3_001
-                            Arial, Height = 10, Weight = Normal, 
+                            Arial, Height = 10, Weight = Normal,
                             Italic = false, Underline = false, AntiAliased = true
 */
 bool
@@ -68,7 +68,7 @@ nTextShapeNode::LoadFont()
 
         // append mesh usage to mesh resource name
         nString resourceName;
-        
+
         nFontDesc fontDesc;
         fontDesc.SetItalic(this->GetBoolAttr("rlGuiItalic"));
         fontDesc.SetAntiAliased(this->GetBoolAttr("rlGuiAntiAliased"));
@@ -77,17 +77,17 @@ nTextShapeNode::LoadFont()
         fontDesc.SetTypeFace(this->GetStringAttr("rlGuiTypeFace").Get());
         fontDesc.SetWeight(nFontDesc::StringToWeight(this->GetStringAttr("rlGuiWeight")));
         fontDesc.SetFilename(this->GetStringAttr("rlGuiFilePath").Get());
-        
+
         // FIXME:
         // Filename is not included in the resource name
-        resourceName.Format("%s_%u_%u_%u%u%u", 
-                            fontDesc.GetTypeFace(), 
+        resourceName.Format("%s_%u_%u_%u%u%u",
+                            fontDesc.GetTypeFace(),
                             fontDesc.GetHeight(),
                             fontDesc.GetWeight(),
                             fontDesc.GetItalic(),
                             fontDesc.GetUnderline(),
                             fontDesc.GetAntiAliased());
-        
+
         // get a new or shared font
         nFont2* font = nGfxServer2::Instance()->NewFont(resourceName.Get(), fontDesc);
         n_assert(font);
@@ -162,7 +162,7 @@ nTextShapeNode::UpdateScreenSpaceRect()
                                     0.0f, 0.0f,   -0.5f, 0.0f,
                                     0.0f, 0.0f,    0.5f, 1.0f);
     m = m * orthoProj;
-    
+
     // get local bounding box and transform to screen space
     bbox3 box = this->GetLocalBox();
     box.transform_divw(m);
@@ -184,15 +184,15 @@ nTextShapeNode::UpdateScreenSpaceRect()
 */
 bool
 nTextShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
-{   
+{
     // update text element rectangle
     this->UpdateScreenSpaceRect();
-    
+
     nString text = this->GetStringAttr("rlGuiText");
     vector4 color = this->GetVector4Attr("rlGuiColor");
     // FIXME: Alpha value not exported
     color.w = 1.0f;
-    
+
     nGfxServer2::Instance()->DrawText(text, color, this->screenSpaceRect, this->fontFlags, true);
 
     return nShapeNode::RenderGeometry(sceneServer, renderContext);

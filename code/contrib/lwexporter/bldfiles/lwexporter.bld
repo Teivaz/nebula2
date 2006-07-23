@@ -262,7 +262,7 @@ endtarget
 #begintarget charskeletonviewer
 #   settype exe
 #   setmodules {
-#       charskeletonviewer  
+#       charskeletonviewer
 #   }
 #   settargetdeps {
 #       nkernel

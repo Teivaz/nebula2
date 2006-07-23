@@ -8,7 +8,7 @@
 #include "gui/nguicolorlabel.h"
 #include "gui/nguicolorpicker.h"
 
-nNebulaClass(nGuiColorAdjust, "nguiformlayout");
+nNebulaClass(nGuiColorAdjust, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
@@ -52,7 +52,7 @@ nGuiColorAdjust::OnShow()
     float yFactor = 480 / displaySize.y;
     // Because the fontsize varies in different resolutions, a factor is needed to adjust the needed space
     float xFactorText = (((displaySize.x/640)-1.0f)/4)+1.0f;
-    
+
     const float xBorder = 0.01f * xFactor;
     const float yBorder = 0.01f * yFactor;
     const float leftWidth = 0.25f * xFactorText;
@@ -63,7 +63,7 @@ nGuiColorAdjust::OnShow()
     static const vector2 currentColorSize(0.06f * xFactor , 0.292f * yFactor);
     static const vector4 white(1.0f, 1.0f, 1.0f, 1.0f);
     nGuiHoriSliderGroup* slider;
-      
+
     nGuiColorPicker* colorpicker = (nGuiColorPicker*) kernelServer->New("nguicolorpicker", "ColorPicker");
     colorpicker->SetIntensity(this->brightness);
     this->AttachForm(colorpicker, nGuiFormLayout::Top, 2 * yBorder);
@@ -190,7 +190,7 @@ nGuiColorAdjust::OnHide()
     this->refGreenValueSlider->Release();
     this->refRedValueSlider->Release();
     this->refColorPicker->Release();
-   
+
     nGuiFormLayout::OnHide();
 }
 
@@ -207,7 +207,7 @@ nGuiColorAdjust::UpdateBrightness()
 
     // set dirtyflags
     this->noManualBrightnessChange = true;
-    this->noManualRedChange = false; 
+    this->noManualRedChange = false;
     this->noManualGreenChange = false;
     this->noManualBlueChange = false;
 }
@@ -244,13 +244,13 @@ nGuiColorAdjust::UpdateColor()
     }
     else normFactor = 1.0f/biggestColor;
     // the color values have to be normed when beeing multiplied with the brightness
-    this->color.set(this->color.x * (this->brightness) * normFactor, 
-                    this->color.y * (this->brightness) * normFactor, 
-                    this->color.z * (this->brightness) * normFactor, 
+    this->color.set(this->color.x * (this->brightness) * normFactor,
+                    this->color.y * (this->brightness) * normFactor,
+                    this->color.z * (this->brightness) * normFactor,
                     this->color.w );
-    
+
     // set dirtyflags
-    this->noManualRedChange = true; 
+    this->noManualRedChange = true;
     this->noManualGreenChange = true;
     this->noManualBlueChange = true;
     this->noManualBrightnessChange = false;
@@ -331,7 +331,7 @@ nGuiColorAdjust::OnEvent(const nGuiEvent& event)
         }
         else if ((this->refBrightnessSlider.isvalid()) && (event.GetWidget() == this->refBrightnessSlider))
         {
-            if (this->noManualBrightnessChange) 
+            if (this->noManualBrightnessChange)
             {
                 this->noManualBrightnessChange = false;
             }
@@ -349,7 +349,7 @@ nGuiColorAdjust::OnEvent(const nGuiEvent& event)
         }
         else if ((this->refRedValueSlider.isvalid()) && (event.GetWidget() == this->refRedValueSlider))
         {
-            if (this->noManualRedChange) 
+            if (this->noManualRedChange)
             {
                 this->noManualRedChange = false;
             }
@@ -367,7 +367,7 @@ nGuiColorAdjust::OnEvent(const nGuiEvent& event)
         }
         else if ((this->refGreenValueSlider.isvalid()) && (event.GetWidget() == this->refGreenValueSlider))
         {
-            if (this->noManualGreenChange) 
+            if (this->noManualGreenChange)
             {
                 this->noManualGreenChange = false;
             }
@@ -385,7 +385,7 @@ nGuiColorAdjust::OnEvent(const nGuiEvent& event)
         }
         else if ((this->refBlueValueSlider.isvalid()) && (event.GetWidget() == this->refBlueValueSlider))
         {
-            if (this->noManualBlueChange) 
+            if (this->noManualBlueChange)
             {
                 this->noManualBlueChange = false;
             }

@@ -5,7 +5,7 @@
 #include "gfx2/nmesharray.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nMeshArray, "nresource");
+nNebulaClass(nMeshArray, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -40,20 +40,20 @@ nMeshArray::LoadResource()
         Element& curElm = this->elements[i];
         if ((!curElm.filename.IsEmpty()))
         {
-            if (curElm.refMesh.isvalid() && 
-                ((curElm.refMesh->GetFilename() != curElm.filename) || 
+            if (curElm.refMesh.isvalid() &&
+                ((curElm.refMesh->GetFilename() != curElm.filename) ||
                  (curElm.refMesh->GetUsage() != curElm.usage)))
             {
                 //discharge previous set mesh - filename or usage is not equal
                 curElm.refMesh->Release();
                 curElm.refMesh.invalidate();
             }
-            
+
             if (!curElm.refMesh.isvalid())
             {
-                curElm.refMesh = nGfxServer2::Instance()->NewMesh(curElm.filename.Get());    
+                curElm.refMesh = nGfxServer2::Instance()->NewMesh(curElm.filename.Get());
             }
-            
+
             curElm.refMesh->SetFilename(curElm.filename);
             curElm.refMesh->SetUsage(curElm.usage);
             success &= curElm.refMesh->Load();

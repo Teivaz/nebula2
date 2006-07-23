@@ -7,7 +7,7 @@
 #include "gui/nguievent.h"
 #include "gui/nguiserver.h"
 
-nNebulaScriptClass(nGuiTabbedLayout, "nguiformlayout");
+nNebulaScriptClass(nGuiTabbedLayout, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
@@ -53,7 +53,7 @@ nGuiTabbedLayout::ClearTabs()
 
 //------------------------------------------------------------------------------
 /**
-    Defines the number of tabs. This will immediately create the required 
+    Defines the number of tabs. This will immediately create the required
     child form layouts and child buttons.
 */
 void
@@ -86,7 +86,7 @@ void
 nGuiTabbedLayout::OnShow()
 {
     n_assert(this->GetNumTabs() > 0);
-    
+
     nGuiFormLayout::OnShow();
 
     // compute size of tab buttons

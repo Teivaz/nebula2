@@ -1,0 +1,93 @@
+#-------------------------------------------------------------------------------
+#  nnebula/anim2.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::anim2
+    setmodules {
+        anim2::nanimation
+        anim2::nanimationserver
+        anim2::nanimeventhandler
+        anim2::nanimstate
+        anim2::nanimstatearray
+        anim2::ncombinedanimation
+        anim2::nmemoryanimation
+        anim2::nstreaminganimation
+    }
+endbundle
+
+beginmodule anim2::nanimation
+    setdir anim2
+    setheaders {
+        nanimation
+    }
+    setfiles {
+        nanimation_main
+    }
+endmodule
+
+beginmodule anim2::nanimationserver
+    setdir anim2
+    setheaders {
+        nanimationserver
+    }
+    setfiles {
+        nanimationserver_main
+    }
+endmodule
+
+beginmodule anim2::nanimeventhandler
+    setdir anim2
+    setheaders {
+        nanimevent
+        nanimventhandler
+        nanimeventtrack
+    }
+    setfiles {
+        nanimeventhandler
+    }
+endmodule
+
+beginmodule anim2::nanimstate
+    setdir anim2
+    setheaders {
+        nanimclip
+        nanimstate
+    }
+    setfiles {
+        nanimstate
+    }
+endmodule
+
+beginmodule anim2::nanimstatearray
+    setdir anim2
+    setheaders {
+        nanimstatearray
+    }
+endmodule
+
+beginmodule anim2::ncombinedanimation
+    setdir anim2
+    setheaders {
+        ncombinedanimation
+    }
+    setfiles {
+        ncombinedanimation_main
+    }
+endmodule
+
+beginmodule anim2::nmemoryanimation
+    setdir anim2
+    setheaders {
+        nmemoryanimation
+    }
+    setfiles {
+        nmemoryanimation_main
+    }
+endmodule
+
+beginmodule anim2::nstreaminganimation
+    setdir anim2
+    setheaders {
+        nstreaminganimation
+    }
+endmodule

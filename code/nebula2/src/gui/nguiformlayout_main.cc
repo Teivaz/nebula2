@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguiformlayout.h"
 
-nNebulaScriptClass(nGuiFormLayout, "nguiwidget");
+nNebulaScriptClass(nGuiFormLayout, "gui::nguiwidget");
 
 //------------------------------------------------------------------------------
 /**
@@ -79,7 +79,7 @@ nGuiFormLayout::AttachPos(nGuiWidget* widget, Edge where, float pos)
 
 //------------------------------------------------------------------------------
 /**
-    Fix the rectangle inplace so that it honors the widget's minimum and 
+    Fix the rectangle inplace so that it honors the widget's minimum and
     maximum size.
 */
 void
@@ -188,7 +188,7 @@ nGuiFormLayout::FixMinMaxSize(nGuiWidget* widget, Edge anchor, rectangle& rect)
 
 //------------------------------------------------------------------------------
 /**
-    Update the layout of child widgets. Will be called from 
+    Update the layout of child widgets. Will be called from
     and OnRectChange().
 */
 void

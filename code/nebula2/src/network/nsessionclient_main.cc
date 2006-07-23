@@ -5,7 +5,7 @@
 #include "network/nsessionclient.h"
 #include "network/nsessionservercontext.h"
 
-nNebulaScriptClass(nSessionClient, "nroot");
+nNebulaScriptClass(nSessionClient, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**
@@ -35,7 +35,7 @@ nSessionClient::~nSessionClient()
 //------------------------------------------------------------------------------
 /**
     Set a client attribute, a new attribute will be created if it does
-    not exist yet. Client attributes are distributed to the connected server, 
+    not exist yet. Client attributes are distributed to the connected server,
     which in turn distributes them to all other joined clients.
 
     @param  name        an attribute name
@@ -50,7 +50,7 @@ nSessionClient::SetClientAttr(const char* name, const char* val)
 
 //------------------------------------------------------------------------------
 /**
-    Get a client attribute by name. Returns 0 if client attribute doesn't 
+    Get a client attribute by name. Returns 0 if client attribute doesn't
     exist.
 
     @param  name    an attribute name
@@ -194,7 +194,7 @@ nSessionClient::Trigger()
 */
 void
 nSessionClient::SendClientAttrs()
-{   
+{
     n_assert(this->IsJoined());
     n_assert(this->clientAttrsDirty);
 
@@ -262,7 +262,7 @@ nSessionClient::DiscoverSessions()
                 }
 
                 // check app name and app version
-                if (!(strcmp(appName, this->GetAppName()) == 0) && 
+                if (!(strcmp(appName, this->GetAppName()) == 0) &&
                     (strcmp(appVersion, this->GetAppVersion()) == 0))
                 {
                     // app name or version don't match
@@ -328,7 +328,7 @@ nSessionClient::CleanupExpiredSessions()
 
 //------------------------------------------------------------------------------
 /**
-    This registers a new session. A server context object is created, 
+    This registers a new session. A server context object is created,
     and a reliable connection is established to the session server.
 */
 bool
@@ -445,8 +445,8 @@ nSessionClient::GetJoinedServer() const
 
 //------------------------------------------------------------------------------
 /**
-    Join a session. This will simply send a join request to the 
-    server defined by the server index and return immediately. 
+    Join a session. This will simply send a join request to the
+    server defined by the server index and return immediately.
 */
 bool
 nSessionClient::JoinSession(const char* sessionGuid)
@@ -481,7 +481,7 @@ nSessionClient::JoinSession(const char* sessionGuid)
 */
 bool
 nSessionClient::LeaveSession()
-{   
+{
     bool retval = false;
     if (this->refJoinServer.isvalid())
     {

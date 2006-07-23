@@ -8,7 +8,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaScriptClass(nGuiClientWindow, "nguiwindow");
+nNebulaScriptClass(nGuiClientWindow, "gui::nguiwindow");
 
 //------------------------------------------------------------------------------
 /**
@@ -117,7 +117,7 @@ nGuiClientWindow::OnShow()
     vector2 titleSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("titlebar");
     this->titleHeight = titleSize.y;
     this->SetMinSize(vector2(5.0f * this->titleHeight, 2.0f * this->titleHeight));
-    
+
     // create child widgets
     kernelServer->PushCwd(this);
 

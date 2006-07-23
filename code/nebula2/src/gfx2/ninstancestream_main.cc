@@ -5,7 +5,7 @@
 #include "gfx2/ninstancestream.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaClass(nInstanceStream, "nresource");
+nNebulaClass(nInstanceStream, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -44,7 +44,7 @@ nInstanceStream::LoadResource()
     n_assert(this->streamArray.Empty());
 
     // update the stream stride and component offsets from the stream declaration
-    int i; 
+    int i;
     this->streamStride = 0;
     for (i = 0; i < this->streamDecl.Size(); i++)
     {

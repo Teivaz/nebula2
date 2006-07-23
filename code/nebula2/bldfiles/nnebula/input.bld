@@ -1,0 +1,165 @@
+#-------------------------------------------------------------------------------
+#  nnebula/input.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::input
+    setmodules {
+        input::ninputdevice
+        input::ninputevent
+        input::ninputmapping
+        input::ninputserver
+        input::ninputstates
+        input::njoymousedevice
+        input::njoystickdevice
+        input::nkeyboarddevice
+        input::nkeycodes
+        input::npadmousedevice
+        input::nrelmousedevice
+    }
+endbundle
+
+beginmodule input::ninputdevice
+    setdir input
+    setheaders {
+        ninputdevice
+    }
+    setfiles {
+        ninputdevice
+    }
+endmodule
+
+beginmodule input::ninputevent
+    setdir input
+    setheaders {
+        ninputevent
+    }
+    setfiles {
+        ninput_events
+    }
+endmodule
+
+beginmodule input::ninputmapping
+    setdir input
+    setheaders {
+        ninputmapping
+    }
+    setfiles {
+        ninputmapping
+    }
+endmodule
+
+beginmodule input::ninputserver
+    setdir input
+    setheaders {
+        ninputserver
+    }
+    setfiles {
+        ninput_main
+        ninput_cmds
+        ninput_log
+    }
+endmodule
+
+beginmodule input::ninputstates
+    setdir input
+    setheaders {
+        ninputstates
+    }
+    setfiles {
+        ninput_states
+    }
+endmodule
+
+beginmodule input::njoymousedevice
+    setdir input
+    setheaders {
+        njoymousedevice
+    }
+    setfiles {
+        njoymousedevice
+    }
+endmodule
+
+beginmodule input::njoystickdevice
+    setdir input
+    setheaders {
+        njoystickdevice
+    }
+    setfiles {
+        njoystickdevice
+    }
+endmodule
+
+beginmodule input::nkeyboarddevice
+    setdir input
+    setheaders {
+        nkeyboarddevice
+    }
+    setfiles {
+        nkeyboarddevice
+    }
+endmodule
+
+beginmodule input::nkeycodes
+    setdir input
+    setheaders {
+        nkeycodes
+    }
+    setfiles {
+        nkeycodes
+    }
+endmodule
+
+beginmodule input::npadmousedevice
+    setdir input
+    setheaders {
+        npadmousedevice
+    }
+    setfiles {
+        npadmousedevice
+    }
+endmodule
+
+beginmodule input::nrelmousedevice
+    setdir input
+    setheaders {
+        naxisfilter
+        nrelmousedevice
+    }
+    setfiles {
+        nrelmousedevice
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginbundle ndinput8::input
+    setmodules {
+        input::ndi8server
+        input::ndinputerror
+    }
+endbundle
+
+beginmodule input::ndi8server
+    setdir input
+    setplatform win32
+    setheaders {
+        ndi8device
+        ndi8server
+    }
+    setfiles {
+        ndi8server_main
+        ndi8server_dinput
+        ndi8server_error
+        ndi8server_trigger
+    }
+    setlibs_win32 {
+        dxguid.lib
+        dinput8.lib
+    }
+endmodule
+
+beginmodule input::ndinputerror
+    setdir input
+    setfiles {
+    ndinputerror
+    }
+endmodule

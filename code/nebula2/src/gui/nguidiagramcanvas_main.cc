@@ -7,7 +7,7 @@
 #include "gui/nguicanvas.h"
 #include "gui/nguitextlabel.h"
 
-nNebulaClass(nGuiDiagramCanvas, "nguiformlayout");
+nNebulaClass(nGuiDiagramCanvas, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
@@ -64,7 +64,7 @@ nGuiDiagramCanvas::OnShow()
     // create Y-Axis label
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "yaxislabel");
     n_assert(label);
-    
+
     if ( this->HasAxisLabels() )
     {
         label->SetText(this->yLabel.Get());
@@ -84,15 +84,15 @@ nGuiDiagramCanvas::OnShow()
     // create X-Axis label
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "xaxislabel");
     n_assert(label);
-    
+
     if ( this->HasAxisLabels() )
     {
         label->SetText(this->xLabel.Get());
     }
-    
+
     label->SetFont(this->axisFont.Get());
-    size = label->GetTextExtent(); 
-    label->SetMinSize(size); 
+    size = label->GetTextExtent();
+    label->SetMinSize(size);
     label->SetMaxSize(size);
     label->SetBorder(vector2(0.0f, 0.0f));
     label->SetColor(this->axisTextColor);
@@ -100,7 +100,7 @@ nGuiDiagramCanvas::OnShow()
     this->AttachForm(label, nGuiFormLayout::Right, 0.005f);
     label->OnShow();
     this->refTextLabel[XLabel] = label;
-    
+
 
     // create Y-Axis value-labels
     label = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "yminlabel");
@@ -113,7 +113,7 @@ nGuiDiagramCanvas::OnShow()
     }
 
     if (this->HasYAxisLabels())
-    {    
+    {
         label->SetText(line.Get());
     }
     else
@@ -143,7 +143,7 @@ nGuiDiagramCanvas::OnShow()
     }
 
     if (this->HasYAxisLabels() && !(line == this->refTextLabel[Ymin]->GetText()))
-    {    
+    {
         label->SetText(line.Get());
     }
     else
@@ -172,9 +172,9 @@ nGuiDiagramCanvas::OnShow()
         // fallback to value
         line.AppendInt( this->GetMaxYAxisValue() );
     }
-    
+
     if (this->HasYAxisLabels())
-    {    
+    {
         label->SetText(line.Get());
     }
     else
@@ -202,9 +202,9 @@ nGuiDiagramCanvas::OnShow()
         // fallback to value
         line.AppendInt( this->GetMinXAxisValue() );
     }
-    
+
     if (this->HasXAxisLabels())
-    {    
+    {
         label->SetText(line.Get());
     }
     else
@@ -231,9 +231,9 @@ nGuiDiagramCanvas::OnShow()
         // fallback to value
         line.AppendInt( this->GetMinXAxisValue() + ( (this->GetMaxXAxisValue() - this->GetMinXAxisValue()) / 2));
     }
-    
+
     if (this->HasXAxisLabels() && !(line == this->refTextLabel[Xmin]->GetText()))
-    {    
+    {
         label->SetText(line.Get());
     }
     else
@@ -262,16 +262,16 @@ nGuiDiagramCanvas::OnShow()
         // fallback to value
         line.AppendInt( this->GetMaxXAxisValue() );
     }
-    
+
     if (this->HasXAxisLabels())
-    {    
+    {
         label->SetText(line.Get());
     }
     else
     {
         label->SetText(" ");
     }
-    
+
     label->SetColor(this->axisTextColor);
     label->SetFont(this->axisFont.Get());
     size = label->GetTextExtent();
@@ -282,13 +282,13 @@ nGuiDiagramCanvas::OnShow()
     this->AttachWidget(label, nGuiFormLayout::Right, this->refTextLabel[XLabel].get(), 0.005f);
     label->OnShow();
     this->refTextLabel[Xmax] = label;
-    
+
 
     if ( this->HasHeader() )
     {
         // FIXME: create an optional headerlabel
     }
-    
+
     // create Canvas
     nGuiCanvas* canvas = (nGuiCanvas*) kernelServer->New("nguicanvas", "diagramcanvas");
     n_assert(canvas);

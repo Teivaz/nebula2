@@ -1,4 +1,4 @@
 #include "kernel/nkernelserver.h"
 #include "signals_tutorial/nsignaltestreceiver.h"
 
-nNebulaClass(nSignalTestReceiver, "nroot");
+nNebulaClass(nSignalTestReceiver, "kernel::nroot");

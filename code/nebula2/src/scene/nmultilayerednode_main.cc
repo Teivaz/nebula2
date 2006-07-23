@@ -5,7 +5,7 @@
 #include "scene/nmultilayerednode.h"
 #include "scene/nsceneserver.h"
 
-nNebulaScriptClass(nMultiLayeredNode, "nshapenode");
+nNebulaScriptClass(nMultiLayeredNode, "scene::nshapenode");
 
 //------------------------------------------------------------------------------
 /**
@@ -31,7 +31,7 @@ nMultiLayeredNode::~nMultiLayeredNode()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nMultiLayeredNode::ApplyShader(nSceneServer* sceneServer)
 {
     nShader2* shd = this->GetShaderObject();

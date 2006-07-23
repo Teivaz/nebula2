@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "network/nhttpserver.h"
 
-nNebulaScriptClass(nHttpServer, "nroot");
+nNebulaScriptClass(nHttpServer, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**

@@ -14,7 +14,7 @@
 #include "character/ncharacter3set.h"
 #include "resource/nresourceserver.h"
 
-nNebulaClass(nCharacter3SkinAnimator, "nskinanimator");
+nNebulaClass(nCharacter3SkinAnimator, "scene::nskinanimator");
 
 //------------------------------------------------------------------------------
 /**
@@ -39,7 +39,7 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::InvalidHandle != this->channelVarHandle);    
+    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
 
     const nVariable& charVar = renderContext->GetLocalVar(this->characterVarIndex);
@@ -70,10 +70,10 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
         // get character 2 set from render context and check if animation state needs to be updated
         if (characterSet->IsDirty())
         {
-            nAnimStateInfo newState;            
+            nAnimStateInfo newState;
             int numClips = characterSet->GetNumClips();
             int i;
-            
+
             float weightSum = 0.0f;
             for (i = 0; i < numClips; i++)
             {
@@ -154,7 +154,7 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 //------------------------------------------------------------------------------
 /**
 */
-nArray<nCharJoint> 
+nArray<nCharJoint>
 nCharacter3SkinAnimator::EvaluateVariation(nMemoryAnimation* variation)
 {
     nArray<nCharJoint> result;
@@ -184,11 +184,11 @@ nCharacter3SkinAnimator::EvaluateVariation(nMemoryAnimation* variation)
 /**
     -20-Apr-06  floh    cleaned up a bit
 */
-bool 
+bool
 nCharacter3SkinAnimator::LoadResources()
 {
     bool result = true;
-    
+
     if (!this->AreResourcesValid())
     {
         // NOTE: don't call nSkinAnimator::LoadResources cause anim file is only dummy
@@ -212,7 +212,7 @@ nCharacter3SkinAnimator::LoadResources()
             {
                 this->animations->AddAnim(this->animationAnims[i]);
             }
-            this->animations->EndAnims();            
+            this->animations->EndAnims();
             for (i = 0; i < numAnimations; i++)
             {
                 this->animationAnims[i]->Release();
@@ -230,7 +230,7 @@ nCharacter3SkinAnimator::LoadResources()
             }
             this->EndClips();
 
-            // evaluate variations, throw away original variation animation, so they don't 
+            // evaluate variations, throw away original variation animation, so they don't
             // use up memory
             for (i = 0; i < this->variationAnims.Size(); i++)
             {
@@ -251,14 +251,14 @@ nCharacter3SkinAnimator::LoadResources()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nCharacter3SkinAnimator::UnloadResources()
 {
     if (this->AreResourcesValid())
     {
         nSkinAnimator::UnloadResources();
 
-        // NOTE Floh: this should already have happened 
+        // NOTE Floh: this should already have happened
         // in LoadResources when variations have been
         // evaluated
         int i;
@@ -271,7 +271,7 @@ nCharacter3SkinAnimator::UnloadResources()
             }
         }
 
-        // NOTE Floh: this should already have happened 
+        // NOTE Floh: this should already have happened
         // in LoadResources when the source anims have been
         // combined
         for(i = 0; i < this->animationAnims.Size(); i++)
@@ -294,7 +294,7 @@ nCharacter3SkinAnimator::UnloadResources()
 /**
     - 20-Apr-06 floh    cleaned up
 */
-nArray<nString> 
+nArray<nString>
 nCharacter3SkinAnimator::LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation>>& outAnimArray)
 {
     nArray<nString> result;

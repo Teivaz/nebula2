@@ -7,7 +7,7 @@
 #include "scene/nrendercontext.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nSwingShapeNode, "nshapenode");
+nNebulaScriptClass(nSwingShapeNode, "scene::nshapenode");
 
 //------------------------------------------------------------------------------
 /**

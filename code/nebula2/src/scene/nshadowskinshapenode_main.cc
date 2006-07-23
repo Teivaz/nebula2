@@ -6,7 +6,7 @@
 #include "scene/nskinanimator.h"
 #include "shadow2/nshadowserver2.h"
 
-nNebulaScriptClass(nShadowSkinShapeNode, "ntransformnode");
+nNebulaScriptClass(nShadowSkinShapeNode, "scene::ntransformnode");
 
 // HACK!
 const float nShadowSkinShapeNode::maxDistance = 30.0f;
@@ -99,7 +99,7 @@ nShadowSkinShapeNode::RenderShadow(nSceneServer* sceneServer, nRenderContext* re
         {
             this->refSkinAnimator->Animate(this, renderContext);
         }
-        kernelServer->PopCwd();    
+        kernelServer->PopCwd();
         nShadowServer2::Instance()->RenderShadowCaster(this->refShadowCaster, modelMatrix);
     }
     return true;

@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gfx2/ntexture2.h"
 
-nNebulaClass(nGuiColorLabel, "nguiwidget");
+nNebulaClass(nGuiColorLabel, "gui::nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

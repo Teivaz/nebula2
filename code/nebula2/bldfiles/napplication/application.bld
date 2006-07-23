@@ -1,0 +1,83 @@
+#-------------------------------------------------------------------------------
+#  napplication/application.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle napplication::application
+    setmodules {
+        application::nappcamera
+        application::napplication
+        application::naudioobject
+        application::nappstate
+        application::ncutsceneappstate
+        application::nexitappstate
+        application::ngfxobject
+    }
+endbundle
+
+beginmodule application::nappcamera
+    setdir application
+    setheaders {
+        nappcamera
+    }
+    setfiles {
+        nappcamera
+    }
+endmodule
+
+beginmodule application::napplication
+    setdir application
+    setheaders {
+        napplication
+    }
+    setfiles {
+        napplication_main
+        napplication_cmds
+    }
+endmodule
+
+beginmodule application::nappstate
+    setdir application
+    setheaders {
+        nappstate
+    }
+    setfiles {
+        nappstate_main
+    }
+endmodule
+
+beginmodule application::naudioobject
+    setdir application
+    setheaders {
+        naudioobject
+    }
+endmodule
+
+beginmodule application::ncutsceneappstate
+    setdir application
+    setheaders {
+        ncutsceneappstate
+    }
+    setfiles {
+        ncutsceneappstate_main
+    }
+endmodule
+
+beginmodule application::nexitappstate
+    setdir application
+    setheaders {
+        nexitappstate
+    }
+    setfiles {
+        nexitappstate_main
+    }
+endmodule
+
+beginmodule application::ngfxobject
+    setdir application
+    setheaders {
+        ngfxobject
+    }
+    setfiles {
+        ngfxobject
+    }
+endmodule

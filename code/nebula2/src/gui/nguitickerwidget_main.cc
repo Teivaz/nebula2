@@ -6,7 +6,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "gui/nguiserver.h"
 
-nNebulaScriptClass(nGuiTickerWidget, "nguitextlabel");
+nNebulaScriptClass(nGuiTickerWidget, "gui::nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**
@@ -48,7 +48,7 @@ nGuiTickerWidget::RenderText()
         this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
         if (!this->refFont.isvalid())
         {
-            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
+            n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get());
         }
         else
         {
@@ -62,7 +62,7 @@ nGuiTickerWidget::RenderText()
 
     // get screen rect
     rectangle screenSpaceRect = this->GetScreenSpaceRect();
-    
+
     if (this->timeIsInvalid)
     {
         this->startTime = this->refTimeServer->GetTime();
@@ -75,17 +75,17 @@ nGuiTickerWidget::RenderText()
         this->textIsInvalid = false;
     }
 
-    float deltaTime = (float)(this->refTimeServer->GetTime() - this->startTime);   
+    float deltaTime = (float)(this->refTimeServer->GetTime() - this->startTime);
     //compute current drawRect
     if (deltaTime > 0.0f && this->scrollSpeed > 0.0f)
     {
         rectangle drawRect = screenSpaceRect;
         float unitsPerSecond = this->scrollSpeed;//1.0f / this->scrollSpeed;
-        
+
         float endPositon = -this->textExtend.x;//screenSpaceRect.v0.x - this->textExtend.x;
         float startPosition = screenSpaceRect.v1.x;
         float distance = startPosition - endPositon;
-        
+
         float deltaDistance = unitsPerSecond * deltaTime;
 
         if (startPosition - deltaDistance < endPositon)

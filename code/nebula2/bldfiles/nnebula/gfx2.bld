@@ -1,0 +1,284 @@
+#-------------------------------------------------------------------------------
+#  nnebula/gfx2.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::gfx2
+    setmodules {
+        gfx2::ndynamicmesh
+        gfx2::ndynamicshadermesh
+        gfx2::nfont2
+        gfx2::ngfxserver2
+        gfx2::ninstancestream
+        gfx2::nmesh2
+        gfx2::nmesharray
+        gfx2::nmousecursor
+        gfx2::nocclusionquery
+        gfx2::nshader2
+        gfx2::nshaderstate
+        gfx2::ntexture2
+        gfx2::nwin32windowhandler
+        gfx2::nwindowhandler
+    }
+endbundle
+
+beginmodule gfx2::ndynamicmesh
+    setdir gfx2
+    setheaders {
+        ndynamicmesh
+    }
+    setfiles {
+        ndynamicmesh
+    }
+endmodule
+
+beginmodule gfx2::ndynamicshadermesh
+    setdir gfx2
+    setheaders {
+        ndynamicshadermesh
+    }
+    setfiles {
+        ndynamicshadermesh
+    }
+endmodule
+
+beginmodule gfx2::nfont2
+    setdir gfx2
+    setheaders {
+        nfont2
+        nfontdesc
+    }
+    setfiles {
+        nfont2_main
+    }
+endmodule
+
+beginmodule gfx2::ngfxserver2
+    setdir gfx2
+    setheaders {
+        ncamera2
+        ndisplaymode2
+        ngfxserver2
+        nlight
+    }
+    setfiles {
+        ngfxserver2_main
+        ngfxserver2_cmds
+    }
+endmodule
+
+beginmodule gfx2::ninstancestream
+    setdir gfx2
+    setheaders {
+        ninstancestream
+    }
+    setfiles {
+        ninstancestream_main
+    }
+endmodule
+
+beginmodule gfx2::nmesh2
+    setdir gfx2
+    setheaders {
+        nmesh2
+        nmeshgroup
+        nmeshloader
+        nn3d2loader
+        nnvx2loader
+    }
+    setfiles {
+        nmesh2_main
+    }
+endmodule
+
+beginmodule gfx2::nmesharray
+    setdir gfx2
+    setheaders {
+        nmesharray
+    }
+    setfiles {
+        nmesharray_main
+    }
+endmodule
+
+beginmodule gfx2::nmousecursor
+    setdir gfx2
+    setheaders {
+        nmousecursor
+    }
+    setfiles {
+        nmousecursor
+    }
+endmodule
+
+beginmodule gfx2::nocclusionquery
+    setdir gfx2
+    setheaders {
+        nocclusionquery
+    }
+    setfiles {
+        nocclusionquery
+    }
+endmodule
+
+beginmodule gfx2::nshader2
+    setdir gfx2
+    setheaders {
+        nshader2
+        nshaderarg
+        nshaderparams
+    }
+    setfiles {
+        nshader2_main
+    }
+endmodule
+
+beginmodule gfx2::nshaderstate
+    setdir gfx2
+    setheaders {
+        nshaderstate
+    }
+    setfiles {
+        nshaderstate
+    }
+endmodule
+
+beginmodule gfx2::ntexture2
+    setdir gfx2
+    setheaders {
+        ntexture2
+    }
+    setfiles {
+        ntexture2_main
+        ntexture2_cmds
+    }
+endmodule
+
+beginmodule gfx2::nwin32windowhandler
+    setdir gfx2
+    setheaders {
+        nwin32windowhandler
+    }
+    setfiles {
+        nwin32windowhandler
+    }
+endmodule
+
+beginmodule gfx2::nwindowhandler
+    setdir gfx2
+    setheaders {
+        nwindowhandler
+    }
+    setfiles {
+        nwindowhandler
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginbundle ndirect3d9::gfx2
+    setmodules {
+        gfx2::nd3d9font
+        gfx2::nd3d9mesh
+        gfx2::nd3d9mesharray
+        gfx2::nd3d9occlusionquery
+        gfx2::nd3d9server
+        gfx2::nd3d9shader
+        gfx2::nd3d9shaderinclude
+        gfx2::nd3d9texture
+        gfx2::nd3d9windowhandler
+    }
+endbundle
+
+beginmodule gfx2::nd3d9font
+    setdir gfx2
+    setheaders {
+        nd3d9font
+    }
+    setfiles {
+        nd3d9font_main
+    }
+endmodule
+
+beginmodule gfx2::nd3d9mesh
+    setdir gfx2
+    setheaders {
+        nd3d9mesh
+    }
+    setfiles {
+        nd3d9mesh_main
+    }
+endmodule
+
+beginmodule gfx2::nd3d9mesharray
+    setdir gfx2
+    setheaders {
+        nd3d9mesharray
+    }
+    setfiles {
+        nd3d9mesharray_main
+    }
+endmodule
+
+beginmodule gfx2::nd3d9occlusionquery
+    setdir gfx2
+    setheaders {
+        nd3d9occlusionquery
+    }
+    setfiles {
+        nd3d9occlusionquery
+    }
+endmodule
+
+beginmodule gfx2::nd3d9server
+    setdir gfx2
+    setheaders {
+        nd3d9server
+    }
+    setfiles {
+        nd3d9server_main
+        nd3d9server_device
+        nd3d9server_lines
+        nd3d9server_render
+        nd3d9server_resource
+        nd3d9server_shapes
+        nd3d9server_text
+    }
+endmodule
+
+beginmodule gfx2::nd3d9shader
+    setdir gfx2
+    setheaders {
+        nd3d9shader
+    }
+    setfiles {
+        nd3d9shader_main
+    }
+endmodule
+
+beginmodule gfx2::nd3d9shaderinclude
+    setdir gfx2
+    setheaders {
+        nd3d9shaderinclude
+    }
+    setfiles {
+        nd3d9shaderinclude
+    }
+endmodule
+
+beginmodule gfx2::nd3d9texture
+    setdir gfx2
+    setheaders {
+        nd3d9texture
+    }
+    setfiles {
+        nd3d9texture_main
+    }
+endmodule
+
+beginmodule gfx2::nd3d9windowhandler
+    setdir gfx2
+    setheaders {
+        nd3d9windowhandler
+    }
+    setfiles {
+        nd3d9windowhandler
+    }
+endmodule

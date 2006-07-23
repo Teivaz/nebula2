@@ -7,7 +7,7 @@
 #include "gui/nguicolorslidergroup.h"
 #include "variable/nvariableserver.h"
 
-nNebulaClass(nGuiAdjustDisplayWindow, "nguiclientwindow");
+nNebulaClass(nGuiAdjustDisplayWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**
@@ -451,7 +451,7 @@ nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
             {
                 this->LoadValuesFromFile(refFilenameEntry->GetText());
             }
-        }        
+        }
         else if ((event.GetType() == nGuiEvent::ButtonUp) &&
                 (event.GetWidget() == this->refSaveButton))
         {

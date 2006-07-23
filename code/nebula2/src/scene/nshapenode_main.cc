@@ -6,7 +6,7 @@
 #include "gfx2/nmesh2.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nShapeNode, "nmaterialnode");
+nNebulaScriptClass(nShapeNode, "scene::nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**
@@ -67,7 +67,7 @@ nShapeNode::LoadMesh()
         // append mesh usage to mesh resource name
         nString resourceName;
         resourceName.Format("%s_%d", this->meshName.Get(), this->GetMeshUsage());
-        
+
         // get a new or shared mesh
         nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resourceName.Get());
         n_assert(mesh);
@@ -200,7 +200,7 @@ nShapeNode::SetMeshResourceLoader(const char* resourceLoaderPath)
 //------------------------------------------------------------------------------
 /**
     Get the mesh resource loader.
-    
+
     @return resource loader name or null when there is no resource loader
 */
 const char *
@@ -238,7 +238,7 @@ nShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext
     // draw normals
     if (this->refMesh->HasAllVertexComponents(nMesh2::Normal))
     {
-        nFixedArray<vector3> lines(numVertices * 2);     
+        nFixedArray<vector3> lines(numVertices * 2);
         const vector4 color(1.0f, 0.0f, 0.0f, 1.0f);
         vector3 v0, v1;
         int vOffset = this->refMesh->GetVertexComponentOffset(nMesh2::Normal);
@@ -253,12 +253,12 @@ nShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext
             lines[vIndex * 2 + 1] = v1;
         }
         gfxServer->DrawShapePrimitives(nGfxServer2::LineList, numVertices, &(lines[0]), 3, modelMatrix, color);
-    }    
+    }
 
     // draw tangents
     if (this->refMesh->HasAllVertexComponents(nMesh2::Tangent))
     {
-        nFixedArray<vector3> lines(numVertices * 2);     
+        nFixedArray<vector3> lines(numVertices * 2);
         const vector4 color(1.0f, 1.0f, 0.0f, 1.0f);
         vector3 v0, v1;
         int vOffset = this->refMesh->GetVertexComponentOffset(nMesh2::Tangent);
@@ -273,12 +273,12 @@ nShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext
             lines[vIndex * 2 + 1] = v1;
         }
         gfxServer->DrawShapePrimitives(nGfxServer2::LineList, numVertices, &(lines[0]), 3, modelMatrix, color);
-    }    
+    }
 
     // draw binormals
     if (this->refMesh->HasAllVertexComponents(nMesh2::Binormal))
     {
-        nFixedArray<vector3> lines(numVertices * 2);     
+        nFixedArray<vector3> lines(numVertices * 2);
         const vector4 color(0.0f, 0.0f, 1.0f, 1.0f);
         vector3 v0, v1;
         int vOffset = this->refMesh->GetVertexComponentOffset(nMesh2::Binormal);
@@ -293,7 +293,7 @@ nShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext
             lines[vIndex * 2 + 1] = v1;
         }
         gfxServer->DrawShapePrimitives(nGfxServer2::LineList, numVertices, &(lines[0]), 3, modelMatrix, color);
-    }    
+    }
 
     gfxServer->EndShapes();
     this->refMesh->UnlockVertices();

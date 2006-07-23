@@ -1,0 +1,78 @@
+#-------------------------------------------------------------------------------
+#  nkernel/signals.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nkernel::signals
+    setmodules {
+        signals::nsignal
+        signals::nsignalbindingcmdproto
+        signals::nsignalbindingset
+        signals::nsignalemitter
+        signals::nsignalregistry
+        signals::nsignalserver
+    }
+endbundle
+
+beginmodule signals::nsignal
+    setdir signals
+    setheaders {
+        nsignal
+        nsignalnative
+    }
+    setfiles {
+        nsignal
+    }
+endmodule
+
+beginmodule signals::nsignalbindingcmdproto
+    setdir signals
+    setheaders {
+        nsignalbindingcmdproto
+    }
+    setfiles {
+        nsignalbindingcmdproto
+    }
+endmodule
+
+beginmodule signals::nsignalbindingset
+    setdir signals
+    setheaders {
+        nsignalbinding
+        nsignalbindingnative
+        nsignalbindingset
+    }
+    setfiles {
+        nsignalbindingset
+    }
+endmodule
+
+beginmodule signals::nsignalemitter
+    setdir signals
+    setheaders {
+        nsignalemitter
+    }
+    setfiles {
+        nsignalemitter
+        nsignalemitter_cmds
+    }
+endmodule
+
+beginmodule signals::nsignalregistry
+    setdir signals
+    setheaders {
+        nsignalregistry
+    }
+    setfiles {
+        nsignalregistry
+    }
+endmodule
+
+beginmodule signals::nsignalserver
+    setdir signals
+    setheaders {
+        nsignalserver
+    }
+    setfiles {
+        nsignalserver
+    }
+endmodule

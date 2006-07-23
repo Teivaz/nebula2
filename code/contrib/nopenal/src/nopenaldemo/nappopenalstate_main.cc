@@ -9,7 +9,7 @@
 
 #include "nopenal/nopenalserver.h"
 
-nNebulaScriptClass(nAppOpenALState, "nappstate")
+nNebulaScriptClass(nAppOpenALState, "application::nappstate")
 
 //----------------------------------------------------------------------------
 /**
@@ -17,7 +17,7 @@ nNebulaScriptClass(nAppOpenALState, "nappstate")
 nAppOpenALState::nAppOpenALState() :
     audioHelper(0)
 {
-    
+
 }
 
 //----------------------------------------------------------------------------

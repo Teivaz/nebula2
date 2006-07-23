@@ -12,7 +12,7 @@
 
 #include "kernel/ntimeserver.h"
 
-nNebulaClass(nGLServer2, "ngfxserver2");
+nNebulaClass(nGLServer2, "gfx2::ngfxserver2");
 
 //-----------------------------------------------------------------------------
 /**

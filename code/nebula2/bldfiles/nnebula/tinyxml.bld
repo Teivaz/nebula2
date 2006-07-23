@@ -1,0 +1,46 @@
+#-------------------------------------------------------------------------------
+#  nnebula/tinyxml.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::tinyxml
+    setmodules {
+        tinyxml::tinystr
+        tinyxml::tinyxml
+        tinyxml::tinyxmlerror
+        tinyxml::tinyxmlparser
+    }
+endbundle
+
+beginmodule tinyxml::tinystr
+    setdir tinyxml
+    setheaders {
+        tinystr
+    }
+    setfiles {
+        tinystr
+    }
+endmodule
+
+beginmodule tinyxml::tinyxml
+    setdir tinyxml
+    setheaders {
+        tinyxml
+    }
+    setfiles {
+        tinyxml
+    }
+endmodule
+
+beginmodule tinyxml::tinyxmlerror
+    setdir tinyxml
+    setfiles {
+        tinyxmlerror
+    }
+endmodule
+
+beginmodule tinyxml::tinyxmlparser
+    setdir tinyxml
+    setfiles {
+        tinyxmlparser
+    }
+endmodule

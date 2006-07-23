@@ -7,7 +7,7 @@
 #include "kernel/nfile.h"
 #include "mathlib/quaternion.h"
 
-nNebulaClass(nMemoryAnimation, "nanimation");
+nNebulaClass(nMemoryAnimation, "anim2::nanimation");
 
 //------------------------------------------------------------------------------
 /**
@@ -121,7 +121,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
         {
             const char* numGroupsString = strtok(0, N_WHITESPACE);
             n_assert(numGroupsString);
-            
+
             int numGroups = atoi(numGroupsString);
             if (0 == numGroups)
             {
@@ -362,7 +362,7 @@ nMemoryAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, 
        if (curve.GetFirstKeyIndex() == -1)
        {
            // a collapsed curve
-           dstKeyArray[i] = curve.GetConstValue();      
+           dstKeyArray[i] = curve.GetConstValue();
            curve.SetStartValue(curve.GetConstValue());
        }
        else
@@ -415,7 +415,7 @@ nMemoryAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, 
                    curve.SetStartValue(v2 + ((v3 - v2) * startInbetween));
                }
                break;
-            
+
                default:
                    n_error("nMemoryAnimation::SampleCurves(): invalid curveIpolType %d!", curve.GetIpolType());
                    break;

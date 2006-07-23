@@ -20,7 +20,7 @@
 #include "variable/nvariableserver.h"
 #include "tools/nnodelist.h"
 
-nNebulaClass(nGuiCharacterControlWindow, "nguiclientwindow");
+nNebulaClass(nGuiCharacterControlWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**
@@ -408,7 +408,7 @@ nGuiCharacterControlWindow::OnHide()
 */
 void
 nGuiCharacterControlWindow::OnEvent(const nGuiEvent& event)
-{   
+{
     if (event.GetType() == nGuiEvent::SelectionChanged)
     {
         if (event.GetWidget() == this->refFileLister.get())
@@ -606,7 +606,7 @@ nGuiCharacterControlWindow::OnFrame()
     // if nskinanimator is released because of loading a new non-animation scene,
     // open a new scenecontrolwindow and close the old one
     if (!this->HasCharacter2())
-    {   
+    {
         if (this->ExistsCharacter3() || this->ExistsCharacter2())
         {
             this->Reopen();
@@ -730,7 +730,7 @@ nGuiCharacterControlWindow::FindCharacter3()
 */
 nCharacter2Set*
 nGuiCharacterControlWindow::GetCharacterSet()
-{ 
+{
     n_assert(0 != this->characterRenderContext);
 
     nVariable::Handle characterSetHandle = nVariableServer::Instance()->GetVariableHandleByName("charSetPointer");
@@ -762,7 +762,7 @@ void
 nGuiCharacterControlWindow::LoadSelectedCharacter() const
 {
     n_assert(this->refFileLister.isvalid());
-    
+
     nString path;
 
     const char* rootDir = this->refFileLister->GetDirectory();
@@ -780,11 +780,11 @@ nGuiCharacterControlWindow::LoadSelectedCharacter() const
 
         nNodeList* nodeList = nNodeList::Instance();
         n_assert( nodeList != 0 );
-        
+
         nodeList->Clear();
         nodeList->AddDefaultEntry();
         nodeList->LoadObject(path);
-        
+
         // reset time
         nTimeServer::Instance()->ResetTime();
     }

@@ -9,7 +9,7 @@
 #include "gui/nguievent.h"
 #include "gui/nguiresource.h"
 
-nNebulaScriptClass(nGuiWidget, "nroot");
+nNebulaScriptClass(nGuiWidget, "kernel::nroot");
 
 nClass* nGuiWidget::widgetClass=0;
 nClass* nGuiWidget::windowClass=0;
@@ -73,7 +73,7 @@ nGuiWidget::GetOwnerWindow()
             // no parent window found
             return 0;
         }
-        
+
         // return owner-window of this widget
         return parent;
     }
@@ -407,7 +407,7 @@ nGuiWidget::OnFrame()
     if (this->IsShown())
     {
         // activate tooltip after mouse was over widget for a while
-        if (this->Inside(nGuiServer::Instance()->GetMousePos())/* && this->HasFocus()*/ && !this->tooltip.IsEmpty())            
+        if (this->Inside(nGuiServer::Instance()->GetMousePos())/* && this->HasFocus()*/ && !this->tooltip.IsEmpty())
         {
             nTime time = nTimeServer::Instance()->GetTime();
             if(!this->mouseWithin)

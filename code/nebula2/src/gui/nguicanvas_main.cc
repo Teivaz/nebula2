@@ -8,7 +8,7 @@
 #include "resource/nresourceserver.h"
 #include "gui/nguiwindow.h"
 
-nNebulaClass(nGuiCanvas, "nguiwidget");
+nNebulaClass(nGuiCanvas, "gui::nguiwidget");
 
 //------------------------------------------------------------------------------
 /**
@@ -25,7 +25,7 @@ nGuiCanvas::AddLabel(const char* text, vector2 pos, vector4 col, const char* fon
 
     pos.x = pos.x * (widgetRect.v1.x - widgetRect.v0.x);
     pos.y = pos.y * (widgetRect.v1.y - widgetRect.v0.y);
-    
+
     nGuiCanvas::Text thetext(txt, pos, col, id, font);
     this->textarray.Append(thetext);
 }
@@ -37,7 +37,7 @@ void
 nGuiCanvas::BeginCurve(vector4 col)
 {
     this->inCurve = true;
-    
+
     // FIXME: Consistency
     int id;
     for (id = 0; id < this->curvearray.Size(); id++);
@@ -73,7 +73,7 @@ nGuiCanvas::GetLabelRect(int id)
 
         nFont2* textfont = (nFont2*) nResourceServer::Instance()->FindResource(label.GetFont().Get(), nResource::Font);
         nFont2* oldfont = nGfxServer2::Instance()->GetFont();
-        nGfxServer2::Instance()->SetFont(textfont);   
+        nGfxServer2::Instance()->SetFont(textfont);
         vector2 extent = nGfxServer2::Instance()->GetTextExtent(label.GetContent().Get());
         nGfxServer2::Instance()->SetFont(oldfont);
 
@@ -130,13 +130,13 @@ nGuiCanvas::Render()
             nFont2* textfont = (nFont2*) nResourceServer::Instance()->FindResource(this->textarray.At(i).GetFont().Get(), nResource::Font);
             n_assert(textfont);
             nGfxServer2::Instance()->SetFont(textfont);
-            
-            
+
+
             // Determine how much screenspace the textlabel needs
             textextent = nGfxServer2::Instance()->GetTextExtent(this->textarray.At(i).GetContent().Get());
-            
+
             textRect = rectangle( vector2(
-                                        screenSpaceRect.v0.x + textarray.At(i).GetPosition().x, 
+                                        screenSpaceRect.v0.x + textarray.At(i).GetPosition().x,
                                         screenSpaceRect.v0.y + textarray.At(i).GetPosition().y),
                                   vector2(
                                         screenSpaceRect.v0.x + textarray.At(i).GetPosition().x + textextent.x,
@@ -168,7 +168,7 @@ nGuiCanvas::Render()
             nGfxServer2::Instance()->DrawLines2d( vertexPtr + cd.first, cd.num, cd.color);
         }
         nGfxServer2::Instance()->EndLines();
-                
+
         return true;
     }
     return false;
@@ -219,15 +219,15 @@ nGuiCanvas::Update()
             cd.first = numVertices;
             cd.color = this->curvearray.At(i).GetColor();
             cd.num = this->curvearray.At(i).GetCurve().Size() + 1;
-            
+
             // store pointer to first vertex, number of vertices and color of each curve
-            this->curveDescArray.PushBack(cd);            
+            this->curveDescArray.PushBack(cd);
 
             int j;
 
             for (j = 0; j < this->curvearray.At(i).GetCurve().Size(); j++)
             {
-                line2 theline = this->curvearray.At(i).GetCurve().At(j);                
+                line2 theline = this->curvearray.At(i).GetCurve().At(j);
 
                 vertexPtr[ numVertices ].x = topLeftX + scale.x * theline.b.x * dispWidth;
                 vertexPtr[ numVertices ].y = topLeftY + scale.y * theline.b.y * dispHeight;
@@ -256,7 +256,7 @@ nGuiCanvas::Update()
 */
 void
 nGuiCanvas::OnRectChange(const rectangle& newRect)
-{   
+{
     nGuiWidget::OnRectChange(newRect);
     this->isDirty = true;
 }

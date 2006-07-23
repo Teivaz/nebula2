@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "scene/nshaderanimator.h"
 
-nNebulaScriptClass(nShaderAnimator, "nanimator");
+nNebulaScriptClass(nShaderAnimator, "scene::nanimator");
 
 //------------------------------------------------------------------------------
 /**

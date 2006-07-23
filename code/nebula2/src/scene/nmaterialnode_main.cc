@@ -11,7 +11,7 @@
 #include "kernel/ndebug.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nMaterialNode, "nabstractshadernode");
+nNebulaScriptClass(nMaterialNode, "scene::nabstractshadernode");
 
 //------------------------------------------------------------------------------
 /**
@@ -130,8 +130,8 @@ nMaterialNode::ApplyShader(nSceneServer* sceneServer)
         // and instance-set-variables
         shader->SetParams(this->shaderParams);
     */
-        
-        // if there are no animators on this node, we only 
+
+        // if there are no animators on this node, we only
         // need to set shader params once for the whole instance batch
         if (this->GetNumAnimators() == 0)
         {

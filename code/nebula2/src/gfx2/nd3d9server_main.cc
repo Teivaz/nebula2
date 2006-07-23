@@ -7,7 +7,7 @@
 #include "kernel/nfileserver2.h"
 #include "gfx2/nd3d9texture.h"
 
-nNebulaClass(nD3D9Server, "ngfxserver2");
+nNebulaClass(nD3D9Server, "gfx2::ngfxserver2");
 nD3D9Server* nD3D9Server::Singleton = 0;
 
 //------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ nD3D9Server::nD3D9Server() :
 
     // HACK:
     // we used to open the window here, but we now do it lazily in OpenDisplay()
-    // to give the calling app the chance to set (e.g.) the window's name and 
+    // to give the calling app the chance to set (e.g.) the window's name and
     // icon before it is opened.
 
     // initialize Direct3D
@@ -61,7 +61,7 @@ nD3D9Server::nD3D9Server() :
     // initialize the device identifier
     this->InitDeviceIdentifier();
 }
-  
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -111,7 +111,7 @@ nD3D9Server::D3dClose()
 
     // release the d3d object
     int refCount = this->d3d9->Release();
-    if (0 < refCount) 
+    if (0 < refCount)
     {
         n_printf("WARNING: Direct3D9 interface was still referenced (count = %d)\n", refCount);
     }
@@ -220,7 +220,7 @@ nD3D9Server::EnterDialogBoxMode()
     n_assert(this->windowHandler.GetDisplayMode().GetDialogBoxMode());
     n_assert(this->d3d9Device);
     HRESULT hr;
-    
+
     nGfxServer2::EnterDialogBoxMode();
 
     // reset the device with lockable backbuffer flag
@@ -231,7 +231,7 @@ nD3D9Server::EnterDialogBoxMode()
     hr = this->d3d9Device->Reset(&p);
     this->InitDeviceState();
     this->OnDeviceInit(false);
-    
+
     hr = this->d3d9Device->SetDialogBoxMode(TRUE);
 }
 
@@ -312,7 +312,7 @@ nD3D9Server::AreVertexShadersEmulated()
 
 //------------------------------------------------------------------------------
 /**
-    - 24-Nov-04  kims added 
+    - 24-Nov-04  kims added
 */
 void
 nD3D9Server::SetSkipMsgLoop(bool skip)

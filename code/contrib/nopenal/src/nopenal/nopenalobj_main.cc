@@ -6,7 +6,7 @@
 #include "nopenal/nopenalserver.h"
 #include "nopenal/nopenalresource.h"
 
-nNebulaClass(nOpenALObj, "nsound3");
+nNebulaClass(nOpenALObj, "audio3::nsound3");
 
 //------------------------------------------------------------------------------
 /**

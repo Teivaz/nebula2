@@ -6,7 +6,7 @@
 #include "audio3/nsound3.h"
 #include "resource/nresourceserver.h"
 
-nNebulaScriptClass(nAudioServer3, "nroot");
+nNebulaScriptClass(nAudioServer3, "kernel::nroot");
 nAudioServer3* nAudioServer3::Singleton = 0;
 
 //------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ nAudioServer3::NewSound()
 //------------------------------------------------------------------------------
 /**
 */
-nString 
+nString
 nAudioServer3::CategoryToString(Category cat)
 {
     switch(cat)
@@ -181,7 +181,7 @@ nAudioServer3::CategoryToString(Category cat)
 //------------------------------------------------------------------------------
 /**
 */
-nAudioServer3::Category 
+nAudioServer3::Category
 nAudioServer3::StringToCategory(const nString& s)
 {
     if ("effect" == s)          return Effect;
@@ -212,7 +212,7 @@ nAudioServer3::UpdateAllSounds()
         {
             snd->Update();
         }
-    }    
+    }
 }
 
 //------------------------------------------------------------------------------

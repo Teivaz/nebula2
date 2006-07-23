@@ -1,0 +1,91 @@
+#-------------------------------------------------------------------------------
+#  nkernel/mathlib.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nkernel::mathlib
+    setmodules {
+        mathlib::matrix
+        mathlib::nmath
+        mathlib::noise
+        mathlib::quaternion
+        mathlib::vector
+    }
+endbundle
+
+beginmodule mathlib::matrix
+    setdir mathlib
+    setheaders {
+        _matrix33
+        _matrix33_sse
+        _matrix44
+        _matrix44_sse
+        matrix
+        matrixdefs
+    }
+    setfiles {
+        _matrix33
+        _matrix33_sse
+        _matrix44
+        _matrix44_sse
+    }
+endmodule
+
+beginmodule mathlib::nmath
+    setdir mathlib
+    setheaders {
+        bbox
+        envelopecurve
+        euler
+        eulerangles
+        line
+        nmath
+        pknorm
+        plane
+        polar
+        rectangle
+        sphere
+        transform33
+        transform44
+        triangle
+        vector3envelopecurve
+    }
+endmodule
+
+beginmodule mathlib::noise
+    setdir mathlib
+    setheaders {
+        noise
+    }
+    setfiles {
+        noise
+    }
+endmodule
+
+beginmodule mathlib::quaternion
+    setdir mathlib
+    setheaders {
+        quaternion
+    }
+    setfiles {
+        quaternion
+    }
+endmodule
+
+beginmodule mathlib::vector
+    setdir mathlib
+    setheaders {
+        _vector2
+        _vector3
+        _vector3_sse
+        _vector4
+        _vector4_sse
+        vector
+    }
+    setfiles {
+        _vector2
+        _vector3
+        _vector3_sse
+        _vector4
+        _vector4_sse
+    }
+endmodule

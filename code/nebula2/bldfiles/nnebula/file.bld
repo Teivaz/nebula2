@@ -1,0 +1,89 @@
+#-------------------------------------------------------------------------------
+#  nnebula/file.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::file
+    setmodules {
+        file::nnpkdirectory
+        file::nnpkfile
+        file::nnpkfileserver
+        file::nnpkfilewrapper
+        file::nramfile
+        file::nramfileserver
+        file::nsharedmemory
+    }
+endbundle
+
+beginmodule file::nnpkdirectory
+    setdir file
+    setheaders {
+        nnpkdirectory
+    }
+    setfiles {
+        nnpkdirectory
+    }
+endmodule
+
+beginmodule file::nnpkfile
+    setdir file
+    setheaders {
+        nnpkfile
+    }
+    setfiles {
+        nnpkfile
+    }
+endmodule
+
+beginmodule file::nnpkfileserver
+    setdir file
+    setheaders {
+        nnpkfileserver
+    }
+    setfiles {
+        nnpkfileserver_main
+        nnpkfileserver_cmds
+    }
+endmodule
+
+beginmodule file::nnpkfilewrapper
+    setdir file
+    setheaders {
+        nnpkfilewrapper
+        nnpktoc
+        nnpktocentry
+    }
+    setfiles {
+        nnpkfilewrapper
+    }
+endmodule
+
+beginmodule file::nramfile
+    setdir file
+    setheaders {
+        nramfile
+    }
+    setfiles {
+        nramfile
+    }
+endmodule
+
+beginmodule file::nramfileserver
+    setdir file
+    setheaders {
+        nramfileserver
+    }
+    setfiles {
+        nramfileserver_main
+        nramfileserver_cmds
+    }
+endmodule
+
+beginmodule file::nsharedmemory
+    setdir file
+    setheaders {
+        nsharedmemory
+    }
+    setfiles {
+        nsharedmemory
+    }
+endmodule

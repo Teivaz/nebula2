@@ -12,10 +12,10 @@ static void n_getmastervolume(void* slf, nCmd* cmd);
 /**
     @scriptclass
     naudioserver3
-    
+
     @cppclass
     nAudioServer3
-    
+
     @superclass
     nroot
 

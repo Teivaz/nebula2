@@ -9,7 +9,7 @@
 
 #include <vorbis/codec.h>
 
-nNebulaScriptClass(nOpenALServer, "naudioserver3");
+nNebulaScriptClass(nOpenALServer, "audio3::naudioserver3");
 
 nOpenALServer * nOpenALServer::m_pSelf = 0;
 
@@ -38,7 +38,7 @@ nOpenALServer::nOpenALServer() :
 
 //-----------------------------------------------------------------------------
 /**
-    Destructor.  
+    Destructor.
 */
 nOpenALServer::~nOpenALServer()
 {
@@ -61,7 +61,7 @@ nOpenALServer::Open()
 
     //alutInit (NULL, 0); // init OpenAL
     ALCcontext * pContext = 0;
-	
+
     m_pDevice = alcOpenDevice(0); // this is supposed to select the "preferred device"
     n_assert(m_pDevice && "Default sound device not present");
 
@@ -71,7 +71,7 @@ nOpenALServer::Open()
 
 	alcMakeContextCurrent(pContext);
 	check_alc_error();
-	
+
     //
 
     alDopplerFactor(1.0); // don't exaggerate doppler shift

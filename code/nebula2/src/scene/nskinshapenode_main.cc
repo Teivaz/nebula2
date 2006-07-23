@@ -5,7 +5,7 @@
 #include "scene/nskinshapenode.h"
 #include "scene/nskinanimator.h"
 
-nNebulaScriptClass(nSkinShapeNode, "nshapenode");
+nNebulaScriptClass(nSkinShapeNode, "scene::nshapenode");
 
 //------------------------------------------------------------------------------
 /**
@@ -107,7 +107,7 @@ nSkinShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderCon
 {
     n_assert(sceneServer);
     n_assert(renderContext);
-    
+
     // call my skin animator (updates the char skeleton pointer)
     kernelServer->PushCwd(this);
     if (this->refSkinAnimator.isvalid())
@@ -123,7 +123,7 @@ nSkinShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderCon
     nArray<vector3> lines;
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->BeginShapes();
-    
+
     for (i = 0; i < numJoints; i++)
     {
         // add a joint
@@ -147,7 +147,7 @@ nSkinShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderCon
             gfxServer->DrawShapePrimitives(nGfxServer2::LineList, lines.Size(), &(lines[0]), 3, modelMatrix, color);
         }
     }
-    
+
     gfxServer->EndShapes();
 
     // call parrent

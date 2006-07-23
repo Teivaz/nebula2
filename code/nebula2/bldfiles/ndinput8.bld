@@ -1,0 +1,10 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/ndinput8.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget ndinput8
+    settype lib
+    setbundles {
+       ndinput8::input
+    }
+endbundle

@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "shadow2/nshadowcaster2.h"
 
-nNebulaClass(nShadowCaster2, "nresource");
+nNebulaClass(nShadowCaster2, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -72,7 +72,7 @@ nShadowCaster2::AllocateBuffers(nMesh2* mesh)
 
 //------------------------------------------------------------------------------
 /**
-    Release internal buffers. This method is usually called from 
+    Release internal buffers. This method is usually called from
     UnloadResource() of a derived class.
 */
 void
@@ -237,7 +237,7 @@ nShadowCaster2::BeginWriteIndices(nMesh2* mesh)
 
 //------------------------------------------------------------------------------
 /**
-    This writes the indices to render the dark or light cap into the shadow 
+    This writes the indices to render the dark or light cap into the shadow
     index buffer. If the 'lit' argument is true, the light cap will be
     rendered, otherwise the dark cap.
 */
@@ -321,7 +321,7 @@ nShadowCaster2::WriteSideIndices()
     n_assert(this->indexBufferCurrent);
     n_assert(this->srcMesh);
     n_assert(this->srcEdges);
-    
+
     // for each edge...
     const nMeshGroup& meshGroup = this->srcMesh->Group(this->meshGroupIndex);
     ushort startEdge = meshGroup.GetFirstEdge();

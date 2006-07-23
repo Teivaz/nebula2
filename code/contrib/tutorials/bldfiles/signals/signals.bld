@@ -70,7 +70,7 @@ begintarget signals02
         emitter
         receiver
         receiverscript
-        signals02        
+        signals02
         npythonhooks
     }
     settargetdeps {
@@ -82,4 +82,4 @@ begintarget signals02
         nnetwork
         ngui
     }
-endtarget    
+endtarget

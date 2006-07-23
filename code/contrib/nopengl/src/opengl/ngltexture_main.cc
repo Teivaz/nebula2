@@ -10,7 +10,7 @@
 #include "il/il.h"
 #include "il/ilu.h"
 
-nNebulaClass(nGLTexture, "ntexture2");
+nNebulaClass(nGLTexture, "gfx2::ntexture2");
 
 //------------------------------------------------------------------------------
 /**
@@ -211,7 +211,7 @@ nGLTexture::LoadResource()
             break;
         }
     }
-    
+
     n_gltrace("nGLTexture::LoadResource().");
     return success;
 }
@@ -1101,24 +1101,24 @@ nGLTexture::LoadFromDDSCompoundFile()
         pfa[pfa_free_pos++] = WGL_RED_BITS_ARB;    pfa[pfa_free_pos++] = 8;
         //pfa[pfa_free_pos++] = WGL_RED_BITS_ARB;    pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.RBitMask);
         //pfa[pfa_free_pos++] = WGL_RED_SHIFT_ARB;   pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.RBitMask);
-                                                                   
+
         pfa[pfa_free_pos++] = WGL_GREEN_BITS_ARB;    pfa[pfa_free_pos++] = 8;
         //pfa[pfa_free_pos++] = WGL_GREEN_BITS_ARB;  pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.GBitMask);
         //pfa[pfa_free_pos++] = WGL_GREEN_SHIFT_ARB; pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.GBitMask);
-                                                                   
+
         pfa[pfa_free_pos++] = WGL_BLUE_BITS_ARB;    pfa[pfa_free_pos++] = 8;
         //pfa[pfa_free_pos++] = WGL_BLUE_BITS_ARB;   pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.BBitMask);
         //pfa[pfa_free_pos++] = WGL_BLUE_SHIFT_ARB;  pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.BBitMask);
-        
+
         bytesPerPixel = ddsh.PixelFormat.RGBBitCount >> 3;
         if (ddsh.PixelFormat.Flags & DDS_ALPHAPIXELS)
         {
             pba[1] = WGL_TEXTURE_RGBA_ARB;
-            
+
             pfa[pfa_free_pos++] = WGL_ALPHA_BITS_ARB;   pfa[pfa_free_pos++] = 8;
             //pfa[pfa_free_pos++] = WGL_ALPHA_BITS_ARB;   pfa[pfa_free_pos++] = bitsCount(ddsh.PixelFormat.RGBAlphaBitMask);
             //pfa[pfa_free_pos++] = WGL_ALPHA_SHIFT_ARB;  pfa[pfa_free_pos++] = firstSetBitPos(ddsh.PixelFormat.RGBAlphaBitMask);
-            
+
             iformat = GL_RGBA;
             tformat = firstSetBitPos(ddsh.PixelFormat.BBitMask) > firstSetBitPos(ddsh.PixelFormat.RBitMask) ? GL_BGRA_EXT : GL_RGBA;
 
@@ -1171,10 +1171,10 @@ nGLTexture::LoadFromDDSCompoundFile()
         else // no alfa
         {
             pba[1] = WGL_TEXTURE_RGB_ARB;
-            
+
             iformat = GL_RGB;
             tformat = firstSetBitPos(ddsh.PixelFormat.BBitMask) > firstSetBitPos(ddsh.PixelFormat.RBitMask) ? GL_BGR_EXT : GL_RGB;
-            
+
             if (ddsh.PixelFormat.RGBBitCount == 24)
             {
                 this->format = X8R8G8B8;

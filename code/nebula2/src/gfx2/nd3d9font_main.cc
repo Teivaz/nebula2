@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "gfx2/nd3d9server.h"
 
-nNebulaClass(nD3D9Font, "nfont2");
+nNebulaClass(nD3D9Font, "gfx2::nfont2");
 
 //------------------------------------------------------------------------------
 /**
@@ -48,7 +48,7 @@ nD3D9Font::LoadResource()
     }
 
     int fontFlags = 0;
-    switch(this->fontDesc.GetWeight()) 
+    switch(this->fontDesc.GetWeight())
     {
         case nFontDesc::Thin:
             fontFlags |= FW_THIN;
@@ -154,6 +154,6 @@ nD3D9Font::OnRestored()
 
 
 
-            
+
 
 

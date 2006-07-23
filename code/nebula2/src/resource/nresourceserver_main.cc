@@ -5,7 +5,7 @@
 #include "resource/nresourceserver.h"
 #include "resource/nresource.h"
 
-nNebulaClass(nResourceServer, "nroot");
+nNebulaClass(nResourceServer, "kernel::nroot");
 nResourceServer* nResourceServer::Singleton = 0;
 
 //------------------------------------------------------------------------------
@@ -135,8 +135,8 @@ nResourceServer::FindResource(const nString& rsrcName, nResource::Type rsrcType)
 
 //------------------------------------------------------------------------------
 /**
-    Create a new possible shared resource object. Bumps refcount on an 
-    existing resource object. Pass a zero rsrcName if a (non-shared) resource 
+    Create a new possible shared resource object. Bumps refcount on an
+    existing resource object. Pass a zero rsrcName if a (non-shared) resource
     should be created.
 
     @param  className   the Nebula class name
@@ -208,7 +208,7 @@ nResourceServer::UnloadResources(int rsrcTypeMask)
 
     IMPLEMENTATION NOTE: since the Bundle resource type is defined
     before all other resource types, it is guaranteed that bundled
-    resources are loaded before all others. 
+    resources are loaded before all others.
 
     @param  rsrcTypeMask  a resource type
     @return               true if all resources loaded correctly
@@ -346,7 +346,7 @@ nResourceServer::LoaderThreadFunc(nThread* thread)
                 self->jobList.Lock();
                 nNode* jobNode = self->jobList.RemHead();
                 nResource* res = (nResource*) jobNode->GetPtr();
-   
+
                 // take the resource's mutex and lock the resource,
                 // this prevents the resource to be deleted
                 res->LockMutex();
@@ -376,7 +376,7 @@ nResourceServer::StartLoaderThread()
     n_assert(0 == this->loaderThread);
 
     // give the thread sufficient stack size (2.5 MB) and a below
-    // normal priority (the purpose of the thread is to guarantee 
+    // normal priority (the purpose of the thread is to guarantee
     // a smooth framerate despite dynamic resource loading after all)
     this->loaderThread = n_new(nThread(LoaderThreadFunc, nThread::Normal, 2500000, ThreadWakeupFunc, 0, this));
 }

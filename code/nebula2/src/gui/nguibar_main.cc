@@ -7,12 +7,12 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiwindow.h"
 
-nNebulaClass(nGuiBar, "nguiwidget");
+nNebulaClass(nGuiBar, "gui::nguiwidget");
 
 //-----------------------------------------------------------------------------
 /**
 */
-nGuiBar::nGuiBar() : 
+nGuiBar::nGuiBar() :
     fillMode(LeftToRight),
     fillState(0.0f),
     fillStateSegments(0)

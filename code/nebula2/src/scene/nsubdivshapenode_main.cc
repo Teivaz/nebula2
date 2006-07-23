@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "scene/nsubdivshapenode.h"
 
-nNebulaScriptClass(nSubdivShapeNode, "nshapenode");
+nNebulaScriptClass(nSubdivShapeNode, "scene::nshapenode");
 
 //------------------------------------------------------------------------------
 /**
@@ -90,7 +90,7 @@ nSubdivShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rend
 	{
 		// TODO call geometry manipulators!
 
-        // only render if mesh resource is available (may not be 
+        // only render if mesh resource is available (may not be
         // available yet if async resource loading enabled)
         if (!this->refMesh->IsLoaded())
         {
@@ -185,7 +185,7 @@ nSubdivShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rend
 			float oneDivSegments0 = 1.0f / numSegments0;
 			float oneDivSegments1 = 1.0f / numSegments1;
 			float d1OverD0 = d1Len / d0Len;
-	        
+
 			d0 *= oneDivSegments0;
 			d1 *= oneDivSegments1;
 			nd0 = (n1 - n0) * oneDivSegments0;

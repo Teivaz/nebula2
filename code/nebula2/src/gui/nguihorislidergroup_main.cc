@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaScriptClass(nGuiHoriSliderGroup, "nguiformlayout");
+nNebulaScriptClass(nGuiHoriSliderGroup, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
@@ -157,7 +157,7 @@ nGuiHoriSliderGroup::OnFrame()
             this->refLeftLabel->SetText(buf);
             snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
             this->refRightLabel->SetText(buf);
-        }            
+        }
     }
     nGuiFormLayout::OnFrame();
 }
@@ -181,7 +181,7 @@ nGuiHoriSliderGroup::OnEvent(const nGuiEvent& event)
 
 //------------------------------------------------------------------------------
 /**
-    
+
 */
 nGuiSlider2*
 nGuiHoriSliderGroup::GetSlider() const

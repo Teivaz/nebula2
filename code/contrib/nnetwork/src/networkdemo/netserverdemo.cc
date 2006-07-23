@@ -2,7 +2,7 @@
    @file netserverdemo.cc
    @author Luis Jose Cabellos Gomez <luis.cabellos@tragnarion.com>
    @brief Definition of NetServerDemo class.
-   @brief $Id$ 
+   @brief $Id$
 
    This file is licensed under the terms of the Nebula License.
 */
@@ -10,7 +10,7 @@
 #include "networkdemo/netserverdemo.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass( NetServerDemo, "nnetserver" );
+nNebulaClass( NetServerDemo, "network::nnetserver" );
 
 //------------------------------------------------------------------------------
 /**
@@ -35,5 +35,5 @@ NetServerDemo::HandleMessage(int fromClientId, const char* msg)
     return true;
 }
 //------------------------------------------------------------------------------
-//   EOF 
+//   EOF
 //------------------------------------------------------------------------------

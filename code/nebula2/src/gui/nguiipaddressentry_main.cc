@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguiipaddressentry.h"
 
-nNebulaClass(nGuiIpAddressEntry, "nguitextentry");
+nNebulaClass(nGuiIpAddressEntry, "gui::nguitextentry");
 
 //------------------------------------------------------------------------------
 /**

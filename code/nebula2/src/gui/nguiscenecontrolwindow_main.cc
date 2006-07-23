@@ -8,7 +8,7 @@
 #include "scene/ntransformnode.h"
 #include "scene/nlightnode.h"
 
-nNebulaClass(nGuiSceneControlWindow, "nguiclientwindow");
+nNebulaClass(nGuiSceneControlWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**
@@ -31,7 +31,7 @@ nGuiSceneControlWindow::nGuiSceneControlWindow():
 */
 nGuiSceneControlWindow::~nGuiSceneControlWindow()
 {
-    // make sure everything gets cleared    
+    // make sure everything gets cleared
 }
 
 //------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ nGuiSceneControlWindow::OnShow()
     {
         this->lightAngles = this->refLightTransform->GetEuler();
     }
-    
+
     // sliders and color labels ...
     const float leftWidth = 0.3f;
     const float rightWidth = 0.15f;
@@ -84,8 +84,8 @@ nGuiSceneControlWindow::OnShow()
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
-    this->refLightDirection = slider;         
-    
+    this->refLightDirection = slider;
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LightVert");
     slider->SetLeftText("Light Vert");
     slider->SetRightText("%d");
@@ -150,7 +150,7 @@ nGuiSceneControlWindow::OnShow()
 
     this->kernelServer->PopCwd();
 
-    // set new window rect   
+    // set new window rect
     this->SetTitle("Scene Control");
     rectangle windowRect(vector2(0.0f, 0.0f), vector2(0.4f, 0.3f));
     this->SetRect(windowRect);
@@ -184,20 +184,20 @@ nGuiSceneControlWindow::OnHide()
 */
 void
 nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
-{   
+{
     if (event.GetType() == nGuiEvent::SliderChanged)
     {
         // scene light menu
-        if (this->refLightDirection.isvalid() && 
+        if (this->refLightDirection.isvalid() &&
             this->refLightHeight.isvalid() &&
-            this->refDiffuseSlider.isvalid() && 
+            this->refDiffuseSlider.isvalid() &&
             this->refSpecularSlider.isvalid() &&
             this->refAmbientSlider.isvalid())
-        {                
+        {
             if (event.GetWidget() == this->refLightDirection || event.GetWidget() == this->refLightHeight)
             {
-                this->UpdateLightPosition();               
-            }    
+                this->UpdateLightPosition();
+            }
             else if (event.GetWidget() == this->refDiffuseSlider)
             {
                 this->diffuseColor = this->refDiffuseSlider->GetColor();

@@ -20,7 +20,7 @@
 #include "gui/nguidragbox.h"
 #include "gui/nguimousecursor.h"
 
-nNebulaScriptClass(nGuiServer, "nroot");
+nNebulaScriptClass(nGuiServer, "kernel::nroot");
 nGuiServer* nGuiServer::Singleton = 0;
 
 //-----------------------------------------------------------------------------

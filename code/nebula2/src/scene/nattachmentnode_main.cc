@@ -6,7 +6,7 @@
 #include "scene/nsceneserver.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nAttachmentNode, "ntransformnode");
+nNebulaScriptClass(nAttachmentNode, "scene::ntransformnode");
 
 //------------------------------------------------------------------------------
 /**
@@ -32,8 +32,8 @@ nAttachmentNode::~nAttachmentNode()
     server as current modelview matrix.
 */
 bool
-nAttachmentNode::RenderTransform(nSceneServer* sceneServer, 
-                                nRenderContext* renderContext, 
+nAttachmentNode::RenderTransform(nSceneServer* sceneServer,
+                                nRenderContext* renderContext,
                                 const matrix44& parentMatrix)
 {
     n_assert(sceneServer);

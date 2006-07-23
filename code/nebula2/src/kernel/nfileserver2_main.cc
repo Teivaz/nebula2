@@ -20,7 +20,7 @@
 #include <Carbon/carbon.h>
 #endif
 
-nNebulaScriptClass(nFileServer2, "nroot");
+nNebulaScriptClass(nFileServer2, "kernel::nroot");
 
 nFileServer2* nFileServer2::Singleton = 0;
 

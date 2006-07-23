@@ -4,7 +4,7 @@
 #include "shdtuner/nshdtunerapp.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass(nShdTunerApp, "nroot")
+nNebulaScriptClass(nShdTunerApp, "kernel::nroot")
 
 //----------------------------------------------------------------------------
 /**

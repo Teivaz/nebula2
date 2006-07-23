@@ -11,7 +11,7 @@
 #include "gui/nguicheckbuttongroup2.h"
 #include "misc/nprefserver.h"
 
-nNebulaClass(nGuiSettingsForm, "nguiformlayout");
+nNebulaClass(nGuiSettingsForm, "gui::nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**
@@ -176,7 +176,7 @@ nGuiSettingsForm::OnShow()
         slider->OnShow();
         sliderOption.refSlider = slider;
     }
-    
+
     vector2 buttonSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
 
     // create Ok text button
@@ -231,7 +231,7 @@ nGuiSettingsForm::OnHide()
 {
     nGuiServer::Instance()->UnregisterEventListener(this);
     this->ClearAttachRules();
-    
+
     int i;
     int num = this->choiceOptions.Size();
     for (i = 0; i < num; i++)
@@ -257,7 +257,7 @@ nGuiSettingsForm::OnHide()
 void
 nGuiSettingsForm::OnEvent(const nGuiEvent& event)
 {
-    if (event.GetType() == nGuiEvent::Action) 
+    if (event.GetType() == nGuiEvent::Action)
     {
         if (this->refOkButton == event.GetWidget())
         {
@@ -345,7 +345,7 @@ nGuiSettingsForm::UpdateSettingsFromUi()
     if (prefServer->Open())
     {
         this->optionValuesValid = true;
-            
+
         // handle choice options
         int i;
         int num = this->choiceOptions.Size();

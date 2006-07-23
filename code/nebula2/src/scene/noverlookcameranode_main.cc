@@ -5,7 +5,7 @@
 #include "scene/noverlookcameranode.h"
 #include "mathlib/polar.h"
 
-nNebulaClass(nOverlookCameraNode, "nabstractcameranode");
+nNebulaClass(nOverlookCameraNode, "scene::nabstractcameranode");
 
 //------------------------------------------------------------------------------
 /**

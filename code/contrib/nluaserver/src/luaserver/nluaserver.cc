@@ -17,7 +17,7 @@
 #endif
 
 #include "luaserver/nluaserver.h"
-nNebulaClass(nLuaServer, "nscriptserver");
+nNebulaClass(nLuaServer, "kernel::nscriptserver");
 
 // Initialize static members to NULL
 nLuaServer *nLuaServer::Instance = NULL;
@@ -78,31 +78,31 @@ nLuaServer::nLuaServer() :
 {
     this->indent_level = 0;
     this->indent_buf[0] = 0;
-    
+
     // Store a handy reference to this instance
     if (!nLuaServer::Instance)
         nLuaServer::Instance = this;
-    
+
     // Get a default Lua interpreter up and running then
     this->L = lua_open();
-    
-    if (0 == this->L) 
+
+    if (0 == this->L)
       n_error("Could not create the Lua 5 interpreter");
 
     // Set up a panic handler
     lua_atpanic(this->L, luacmd_Panic);
-    
+
     // Load some standard libraries
     luaL_reg lualibs[] = {
         {"baselib", lua_baselibopen},
-        {"tablib", lua_tablibopen},  
+        {"tablib", lua_tablibopen},
         {"iolib", lua_iolibopen},
         {"strlib", lua_strlibopen},
         {"mathlib", lua_mathlibopen},
         {NULL, NULL}
     };
     luaL_reg* lreg = lualibs;
-    for (; lreg->name; lreg++) 
+    for (; lreg->name; lreg++)
     {
         lreg->func(this->L);
         lua_settop(this->L, 0);  /* discard any results */
@@ -134,21 +134,21 @@ nLuaServer::nLuaServer() :
     reg_globalfunc(luacmd_EndCmds,          "endcmds");
     reg_globalfunc(luacmd_IsZombieThunk,    "IsZombieThunk");
     reg_globalfunc(luacmd_DeleteNRef,       "_delnref");
-  
+
     // setup environment
-    
+
     // create the class cache
     this->classCacheName = "nebclasses";
     lua_pushstring(this->L, this->classCacheName.Get());
     lua_newtable(this->L);
     lua_settable(this->L, LUA_GLOBALSINDEX);
-    
+
     // create the thunk store (pinned thunks are stored here)
     this->thunkStoreName = "_nebthunks";
     lua_pushstring(this->L, this->thunkStoreName.Get());
     lua_newtable(this->L);
     lua_settable(this->L, LUA_GLOBALSINDEX);
-    
+
     // create the nRef metatable
     lua_dostring(this->L, "_nrefmetatable = { __gc = function(nref) _delnref(nref) end }");
 
@@ -171,9 +171,9 @@ nLuaServer::~nLuaServer()
 /**
     @brief Generates a stack trace.
     @return A pointer to the string containing the stack trace.
-    
+
     @warning The pointer points to an internal buffer that is likely to change,
-             therefore you should copy the string before any further Lua 
+             therefore you should copy the string before any further Lua
              server methods are called.
 */
 const char* nLuaServer::GenerateStackTrace()
@@ -181,11 +181,11 @@ const char* nLuaServer::GenerateStackTrace()
     n_assert(this->L);
     n_assert2(1 == lua_gettop(this->L),
               "Only error message should be on stack!");
-    
+
     this->outputStr.Set("nLuaServer encountered a problem...\n");
     this->outputStr.Append(lua_tostring(this->L, -1));
     this->outputStr.Append("\n\n-- Stack Trace --\n");
-    
+
     lua_Debug debugInfo;
     int level = 0;
     char buffer[1024];
@@ -200,14 +200,14 @@ const char* nLuaServer::GenerateStackTrace()
                 namewhat = "???";
             else
                 namewhat = debugInfo.namewhat;
-                
+
             if (0 == debugInfo.name)
                 funcname = "???";
             else
                 funcname = debugInfo.name;
-                    
-            snprintf(buffer, sizeof(buffer), 
-                     "%s - #%d: %s (%s/%s)\n", 
+
+            snprintf(buffer, sizeof(buffer),
+                     "%s - #%d: %s (%s/%s)\n",
                      debugInfo.short_src,
                      debugInfo.currentline,
                      funcname,
@@ -226,7 +226,7 @@ const char* nLuaServer::GenerateStackTrace()
 //------------------------------------------------------------------------------
 //  BeginWrite()
 //------------------------------------------------------------------------------
-nFile* 
+nFile*
 nLuaServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
@@ -249,7 +249,7 @@ nLuaServer::BeginWrite(const char* filename, nObject* obj)
     }
     else
     {
-        n_printf("nLuaServer::WriteBegin(): failed to open file '%s' for writing!\n", 
+        n_printf("nLuaServer::WriteBegin(): failed to open file '%s' for writing!\n",
                  filename);
         file->Release();
         return 0;
@@ -259,7 +259,7 @@ nLuaServer::BeginWrite(const char* filename, nObject* obj)
 //--------------------------------------------------------------------
 //  EndWrite()
 //--------------------------------------------------------------------
-bool 
+bool
 nLuaServer::EndWrite(nFile* file)
 {
     n_assert(file);
@@ -305,7 +305,7 @@ void nLuaServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
     // get relative path from owner to o and write select statement
     _indent(++this->indent_level, this->indent_buf);
     nString relpath = owner->GetRelPath(o);
-    
+
     file->PutS(this->indent_buf);
     file->PutS("sel('");
     file->PutS(relpath.Get());
@@ -332,8 +332,8 @@ bool nLuaServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
     file->PutS("','");
     file->PutS(o_name);
     file->PutS("')\n");
-    
-    
+
+
     // write select object statement
     this->write_select_statement(file, o, owner);
     return true;
@@ -384,7 +384,7 @@ bool nLuaServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
     // get relative path from owner to o and write select statement
     _indent(--this->indent_level, this->indent_buf);
     nString relpath = o->GetRelPath(owner);
-    
+
     file->PutS(this->indent_buf);
     file->PutS("sel('");
     file->PutS(relpath.Get());
@@ -403,14 +403,14 @@ bool nLuaServer::WriteCmd(nFile *file, nCmd *cmd)
 
     const char *name = cmd->GetProto()->GetName();
     n_assert(name);
-    
+
     //Write the command line
     char buf[N_MAXPATH];
     file->PutS(this->indent_buf);
     file->PutS("call('");
     file->PutS(name);
     file->PutS("'");
-    
+
     //write the command arguments
     int num_args = cmd->GetNumInArgs();
     cmd->Rewind();
@@ -478,7 +478,7 @@ lua_State* nLuaServer::GetContext()
 //--------------------------------------------------------------------
 /**
     Add a class to the class cache.
-    
+
     @warning The global class cache table is expected to be on top of
     the stack when this method is called.
 */
@@ -486,7 +486,7 @@ void nLuaServer::AddClassToCache(lua_State* L, nClass* clazz)
 {
     nHashList* protoList = 0;
     nCmdProto* cmdProto;
-    
+
     // Create the table that will store cmd protos for this class
     // each element will have a key that corresponds to the cmd
     // name and a value which corresponds to a luacmd_CmdDispatch
@@ -494,14 +494,14 @@ void nLuaServer::AddClassToCache(lua_State* L, nClass* clazz)
     // call that value the command is going to be called.
     lua_pushstring(L, clazz->GetName());
     lua_newtable(L);
-      
+
     do
     {
         protoList = clazz->GetCmdList();
         if (protoList)
         {
             cmdProto = (nCmdProto*)protoList->GetHead();
-            for (; cmdProto; cmdProto = (nCmdProto*)cmdProto->GetSucc()) 
+            for (; cmdProto; cmdProto = (nCmdProto*)cmdProto->GetSucc())
             {
                 lua_pushstring(L, cmdProto->GetName());
                 lua_pushlightuserdata(L, cmdProto);
@@ -510,20 +510,20 @@ void nLuaServer::AddClassToCache(lua_State* L, nClass* clazz)
             }
         }
     } while ((clazz = clazz->GetSuperClass()));
-        
+
     // store table in the global class cache
     lua_settable(L, -3);
 }
 
 //--------------------------------------------------------------------
 /**
-    Builds a Lua table for a more natural syntax for getting 
+    Builds a Lua table for a more natural syntax for getting
     at the NOH and calling cmds.
 */
 bool nLuaServer::ThunkNebObject(lua_State* L, nRoot* root)
 {
     n_assert(root);
-        
+
     // create the thunk table
     lua_newtable(L); // 1
     lua_pushstring(L, "_"); // 2
@@ -590,7 +590,7 @@ void nLuaServer::FindThunk(lua_State* L, void* key)
 /**
     Adds a thunk (assumed to be at the top of the lua stack) to
     the _nebthunks table. The thunk will remain on the stack.
-    
+
     @param key The key with which the thunk should be associated.
 */
 void nLuaServer::AddThunk(lua_State* L, void* key)
@@ -606,7 +606,7 @@ void nLuaServer::AddThunk(lua_State* L, void* key)
 //--------------------------------------------------------------------
 /**
     Removes a thunk from the _nebthunks table.
-    
+
     @param key The key that is associated with the thunk.
 */
 void nLuaServer::RemoveThunk(lua_State* L, void* key)
@@ -628,11 +628,11 @@ void nLuaServer::RemoveThunk(lua_State* L, void* key)
 nRoot* nLuaServer::UnpackThunkRoot(lua_State* L, int tableidx)
 {
     n_assert(tableidx > 0);
-    
+
     // push the key on and see what we get back
     // make sure this doesn't chump with the metatables
     nRoot* root;
-    
+
     lua_pushliteral(L, "_");
     lua_rawget(L, tableidx);
     if (lua_isuserdata(L, -1))
@@ -653,7 +653,7 @@ nRoot* nLuaServer::UnpackThunkRoot(lua_State* L, int tableidx)
 
 //--------------------------------------------------------------------
 /**
-  @brief Pull a cmd's in-args from the stack and pack them into 
+  @brief Pull a cmd's in-args from the stack and pack them into
          the cmd.
 */
 //--------------------------------------------------------------------
@@ -687,12 +687,12 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
 {
     nArg* listArg;
     int listLen = narg->GetL(listArg);
-    
+
     lua_newtable(L); // create a table
-    
+
     if (print)
         n_printf("{");
-    
+
     for (int j = 0; j < listLen; j++)
     {
         // farq - these are built as a lua table
@@ -786,14 +786,14 @@ void nLuaServer::ListArgToTable(lua_State* L, nArg* narg, bool print)
         lua_settable(L, -3);
         listArg++;
     }
-    
+
     if (print)
         n_printf("}");
 }
 
 //--------------------------------------------------------------------
 /**
-  @brief Pushes the output args of a cmd onto the LUA stack, and 
+  @brief Pushes the output args of a cmd onto the LUA stack, and
          optionally prints the output.
 */
 void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
@@ -895,7 +895,7 @@ void nLuaServer::OutArgsToStack(lua_State* L, nCmd* cmd, bool print)
             }
         }
     }
-    
+
     if (print && (n > 0))
         n_printf("\n");
 }
@@ -908,7 +908,7 @@ void nLuaServer::InArgsToStack(lua_State* L, nCmd* cmd)
 {
     cmd->Rewind();
     for (int i = 0; i < cmd->GetNumInArgs(); i++)
-        nLuaServer::ArgToStack(L, cmd->In()); 
+        nLuaServer::ArgToStack(L, cmd->In());
 }
 
 //--------------------------------------------------------------------
@@ -934,7 +934,7 @@ bool nLuaServer::StackToOutArgs(lua_State* L, nCmd* cmd)
 
 //--------------------------------------------------------------------
 /**
-  @brief Convert an nArg to a Lua compatible value and push it on the 
+  @brief Convert an nArg to a Lua compatible value and push it on the
          LUA stack.
 */
 void nLuaServer::ArgToStack(lua_State* L, nArg* arg)
@@ -944,27 +944,27 @@ void nLuaServer::ArgToStack(lua_State* L, nArg* arg)
         case nArg::Void:
             lua_pushnil(L);
             break;
-    
+
         case nArg::Int:
             lua_pushnumber(L, arg->GetI());
             break;
-    
+
         case nArg::Float:
             lua_pushnumber(L, arg->GetF());
             break;
-    
+
         case nArg::String:
             lua_pushstring(L, arg->GetS());
             break;
-        
+
         case nArg::Bool:
             lua_pushboolean(L, arg->GetB());
             break;
-      
+
         case nArg::Object:
             nLuaServer::ThunkNebObject(L, (nRoot*)arg->GetO());
             break;
-      
+
         case nArg::List:
             nLuaServer::ListArgToTable(L, arg, false);
             break;
@@ -973,7 +973,7 @@ void nLuaServer::ArgToStack(lua_State* L, nArg* arg)
 
 //--------------------------------------------------------------------
 /**
-  @brief Convert a value from the LUA stack to an nArg of the 
+  @brief Convert a value from the LUA stack to an nArg of the
   specified type.
   @param index The absolute stack index of the value to convert.
   @return True if arg was successfuly retrieved and converted.
@@ -985,28 +985,28 @@ bool nLuaServer::StackToArg(lua_State* L, nArg* arg, int index)
     {
         case nArg::Int:
         {
-            if (!lua_isnumber(L, index)) 
+            if (!lua_isnumber(L, index))
                 return false;
             arg->SetI(static_cast<int>(lua_tonumber(L, index)));
             break;
         }
         case nArg::Float:
         {
-            if (!lua_isnumber(L, index)) 
+            if (!lua_isnumber(L, index))
                 return false;
             arg->SetF(static_cast<float>(lua_tonumber(L, index)));
             break;
         }
         case nArg::String:
         {
-            if (!lua_isstring(L, index)) 
+            if (!lua_isstring(L, index))
                 return false;
             arg->SetS(lua_tostring(L, index));
             break;
         }
         case nArg::Bool:
         {
-            if (!lua_isboolean(L, index)) 
+            if (!lua_isboolean(L, index))
                 return false;
             arg->SetB(lua_toboolean(L, index) == 1);
             break;
@@ -1020,7 +1020,7 @@ bool nLuaServer::StackToArg(lua_State* L, nArg* arg, int index)
             else if (lua_istable(L, index))
             {
                 nRoot* root = nLuaServer::UnpackThunkRoot(L, index);
-                if (!root) 
+                if (!root)
                     return false;
                 arg->SetO(root);
             }

@@ -8,7 +8,7 @@
 #include "scene/nsceneserver.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nParticleShapeNode2, "nshapenode");
+nNebulaScriptClass(nParticleShapeNode2, "scene::nshapenode");
 
 //------------------------------------------------------------------------------
 /**
@@ -74,7 +74,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
                                                     (((uint)(col.z*255.0f)) )) ;
         };
 
-        // encode alpha values from [0,1] to [0,255] 
+        // encode alpha values from [0,1] to [0,255]
         for( s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
             staticCurve[s][nParticle2Emitter::ParticleAlpha] = (float)(((int)(staticCurve[s][nParticle2Emitter::ParticleAlpha] * 255.0f)));
 
@@ -86,7 +86,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
         emitter->SetStaticCurvePtr((float*)&this->staticCurve);
         emitter->NotifyCurvesChanged();
     }
-    
+
     nVariable* windVar = renderContext->GetVariable(this->windHandle);
     n_assert2(windVar, "No 'wind' variable provided by application!");
     emitter->SetTransform(this->tform.getmatrix() * parentMatrix);

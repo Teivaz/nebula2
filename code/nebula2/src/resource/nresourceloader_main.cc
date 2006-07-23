@@ -4,7 +4,7 @@
 #include "kernel/nkernelserver.h"
 #include "resource/nresourceloader.h"
 
-nNebulaClass(nResourceLoader, "nroot");
+nNebulaClass(nResourceLoader, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**

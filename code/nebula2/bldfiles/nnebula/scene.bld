@@ -1,0 +1,464 @@
+#-------------------------------------------------------------------------------
+#  nnebula/scene.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::scene
+    setmodules {
+        scene::nabstractcameranode
+        scene::nabstractshadernode
+        scene::nanimator
+        scene::nattachmentnode
+        scene::nblendshapeanimator
+        scene::nblendshapenode
+        scene::ncameranode
+        scene::ncharacter3node
+        scene::ncharacter3skinanimator
+        scene::nclippingcameranode
+        scene::nfloatanimator
+        scene::nintanimator
+        scene::nlightnode
+        scene::nlodnode
+        scene::nmaterialnode
+        scene::nmultilayerednode
+        scene::noverlookcameranode
+        scene::nparticleshapenode2
+        scene::nparticleshapenode
+        scene::nreflectioncameranode
+        scene::nscenenode
+        scene::nsceneserver
+        scene::nshaderanimator
+        scene::nshadownode
+        scene::nshadowskinshapenode
+        scene::nshapenode
+        scene::nskinanimator
+        scene::nskinshapenode
+        scene::nskynode
+        scene::nskystate
+        scene::nsubdivshapenode
+        scene::ntextshapenode
+        scene::ntextureanimator
+        scene::ntransformanimator
+        scene::ntransformcurveanimator
+        scene::ntransformnode
+        scene::nuvanimator
+        scene::nvectoranimator
+    }
+endbundle
+
+beginmodule scene::nabstractcameranode
+    setdir scene
+    setheaders {
+        nabstractcameranode
+    }
+    setfiles {
+        nabstractcameranode_main
+        nabstractcameranode_cmds
+    }
+endmodule
+
+beginmodule scene::nabstractshadernode
+    setdir scene
+    setheaders {
+        nabstractshadernode
+    }
+    setfiles {
+        nabstractshadernode_main
+        nabstractshadernode_cmds
+    }
+endmodule
+
+beginmodule scene::nanimator
+    setdir scene
+    setheaders {
+        nanimator
+    }
+    setfiles {
+        nanimator_main
+        nanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nattachmentnode
+    setdir scene
+    setheaders {
+        nattachmentnode
+    }
+    setfiles {
+        nattachmentnode_main
+        nattachmentnode_cmds
+    }
+endmodule
+
+beginmodule scene::nblendshapeanimator
+    setdir scene
+    setheaders {
+        nblendshapeanimator
+    }
+    setfiles {
+        nblendshapeanimator_main
+        nblendshapeanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nblendshapenode
+    setdir scene
+    setheaders {
+        nblendshapenode
+    }
+    setfiles {
+        nblendshapenode_main
+        nblendshapenode_cmds
+    }
+endmodule
+
+beginmodule scene::ncameranode
+    setdir scene
+    setheaders {
+        ncameranode
+    }
+    setfiles {
+        ncameranode_main
+    }
+endmodule
+
+beginmodule scene::ncharacter3node
+    setdir scene
+    setheaders {
+        ncharacter3node
+    }
+    setfiles {
+        ncharacter3node_main
+        ncharacter3node_cmds
+    }
+endmodule
+
+beginmodule scene::ncharacter3skinanimator
+    setdir scene
+    setheaders {
+        ncharacter3skinanimator
+    }
+    setfiles {
+        ncharacter3skinanimator_main
+        ncharacter3skinanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nclippingcameranode
+    setdir scene
+    setheaders {
+        nclippingcameranode
+    }
+    setfiles {
+        nclippingcameranode_main
+    }
+endmodule
+
+beginmodule scene::nfloatanimator
+    setdir scene
+    setheaders {
+        nfloatanimator
+    }
+    setfiles {
+        nfloatanimator_main
+        nfloatanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nintanimator
+    setdir scene
+    setheaders {
+        nintanimator
+    }
+    setfiles {
+        nintanimator_main
+        nintanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nlightnode
+    setdir scene
+    setheaders {
+        nlightnode
+    }
+    setfiles {
+        nlightnode_main
+        nlightnode_cmds
+    }
+endmodule
+
+beginmodule scene::nlodnode
+    setdir scene
+    setheaders {
+        nlodnode
+    }
+    setfiles {
+        nlodnode_main
+        nlodnode_cmds
+    }
+endmodule
+
+beginmodule scene::nmaterialnode
+    setdir scene
+    setheaders {
+        nmaterialnode
+    }
+    setfiles {
+        nmaterialnode_main
+        nmaterialnode_cmds
+    }
+endmodule
+
+beginmodule scene::nmultilayerednode
+    setdir scene
+    setheaders {
+        nmultilayerednode
+    }
+    setfiles {
+        nmultilayerednode_main
+        nmultilayerednode_cmds
+    }
+endmodule
+
+beginmodule scene::noverlookcameranode
+    setdir scene
+    setheaders {
+        noverlookcameranode
+    }
+    setfiles {
+        noverlookcameranode_main
+    }
+endmodule
+
+beginmodule scene::nparticleshapenode2
+    setdir scene
+    setheaders {
+        nparticleshapenode2
+    }
+    setfiles {
+        nparticleshapenode2_main
+        nparticleshapenode2_cmds
+    }
+endmodule
+
+beginmodule scene::nparticleshapenode
+    setdir scene
+    setheaders {
+        nparticleshapenode
+    }
+    setfiles {
+        nparticleshapenode_main
+        nparticleshapenode_cmds
+    }
+endmodule
+
+beginmodule scene::nreflectioncameranode
+    setdir scene
+    setheaders {
+        nreflectioncameranode
+    }
+    setfiles {
+        nreflectioncameranode_main
+    }
+endmodule
+
+beginmodule scene::nscenenode
+    setdir scene
+    setheaders {
+        nscenenode
+    }
+    setfiles {
+        nscenenode_main
+        nscenenode_cmds
+    }
+endmodule
+
+beginmodule scene::nsceneserver
+    setdir scene
+    setheaders {
+        nrendercontext
+        nsceneserver
+    }
+    setfiles {
+        nsceneserver_main
+        nsceneserver_cmds
+        nsceneserver_debug
+        nsceneserver_lightshadow
+        nsceneserver_occlusion
+        nsceneserver_reflection
+        nsceneserver_render
+    }
+endmodule
+
+beginmodule scene::nshaderanimator
+    setdir scene
+    setheaders {
+        nshaderanimator
+    }
+    setfiles {
+        nshaderanimator_main
+        nshaderanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nshadownode
+    setdir scene
+    setheaders {
+        nshadownode
+    }
+    setfiles {
+        nshadownode_main
+        nshadownode_cmds
+    }
+endmodule
+
+beginmodule scene::nshadowskinshapenode
+    setdir scene
+    setheaders {
+        nshadowskinshapenode
+    }
+    setfiles {
+        nshadowskinshapenode_main
+        nshadowskinshapenode_cmds
+    }
+endmodule
+
+beginmodule scene::nshapenode
+    setdir scene
+    setheaders {
+        nshapenode
+    }
+    setfiles {
+        nshapenode_main
+        nshapenode_cmds
+    }
+endmodule
+
+beginmodule scene::nskinanimator
+    setdir scene
+    setheaders {
+        nskinanimator
+    }
+    setfiles {
+        nskinanimator_main
+        nskinanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nskinshapenode
+    setdir scene
+    setheaders {
+        nskinshapenode
+    }
+    setfiles {
+        nskinshapenode_main
+        nskinshapenode_cmds
+    }
+endmodule
+
+beginmodule scene::nskynode
+    setdir scene
+    setheaders {
+        nskynode
+    }
+    setfiles {
+        nskynode_main
+        nskynode_cmds
+    }
+endmodule
+
+beginmodule scene::nskystate
+    setdir scene
+    setheaders {
+        nskystate
+    }
+    setfiles {
+        nskystate_main
+    }
+endmodule
+
+beginmodule scene::nsubdivshapenode
+    setdir scene
+    setheaders {
+        nsubdivshapenode
+    }
+    setfiles {
+        nsubdivshapenode_main
+        nsubdivshapenode_cmds
+    }
+endmodule
+
+beginmodule scene::ntextshapenode
+    setdir scene
+    setheaders {
+        ntextshapenode
+    }
+    setfiles {
+        ntextshapenode_main
+    }
+endmodule
+
+beginmodule scene::ntextureanimator
+    setdir scene
+    setheaders {
+        ntextureanimator
+    }
+    setfiles {
+        ntextureanimator_main
+        ntextureanimator_cmds
+    }
+endmodule
+
+beginmodule scene::ntransformanimator
+    setdir scene
+    setheaders {
+        ntransformanimator
+    }
+    setfiles {
+        ntransformanimator_main
+        ntransformanimator_cmds
+    }
+endmodule
+
+beginmodule scene::ntransformcurveanimator
+    setdir scene
+    setheaders {
+        ntransformcurveanimator
+    }
+    setfiles {
+        ntransformcurveanimator_main
+        ntransformcurveanimator_cmds
+    }
+endmodule
+
+beginmodule scene::ntransformnode
+    setdir scene
+    setheaders {
+        ntransformnode
+    }
+    setfiles {
+        ntransformnode_main
+        ntransformnode_cmds
+    }
+endmodule
+
+beginmodule scene::nuvanimator
+    setdir scene
+    setheaders {
+        nuvanimator
+    }
+    setfiles {
+        nuvanimator_main
+        nuvanimator_cmds
+    }
+endmodule
+
+beginmodule scene::nvectoranimator
+    setdir scene
+    setheaders {
+        nvectoranimator
+    }
+    setfiles {
+        nvectoranimator_main
+        nvectoranimator_cmds
+    }
+endmodule

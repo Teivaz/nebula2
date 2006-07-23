@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------------
 #include "opende/nopendebody.h"
 
-nNebulaScriptClass(nOpendeBody, "nroot");
+nNebulaScriptClass(nOpendeBody, "kernel::nroot");
 
 #include "opende/nopendeworld.h"
 
@@ -44,7 +44,7 @@ nOpendeBody::~nOpendeBody()
 void nOpendeBody::SetPosition( const vector3& p )
 {
     n_assert( this->id && "nOpendeBody::id not valid!" );
-    nOpende::BodySetPosition( this->id, p );    
+    nOpende::BodySetPosition( this->id, p );
 }
 
 //----------------------------------------------------------------------------
@@ -484,7 +484,7 @@ void nOpendeBody::SetCapsuleMass( float density, int direction,
 {
     n_assert( this->id && "nOpendeBody::id not valid!" );
     dMass mass;
-    nOpende::MassSetCappedCylinder( &mass, density, direction, radius, 
+    nOpende::MassSetCappedCylinder( &mass, density, direction, radius,
                                     length );
     nOpende::BodySetMass( this->id, &mass );
 }
@@ -497,7 +497,7 @@ void nOpendeBody::SetCapsuleMassTotal( float totalMass, int direction,
 {
     n_assert( this->id && "nOpendeBody::id not valid!" );
     dMass mass;
-    nOpende::MassSetCappedCylinderTotal( &mass, totalMass, direction, radius, 
+    nOpende::MassSetCappedCylinderTotal( &mass, totalMass, direction, radius,
                                          length );
     nOpende::BodySetMass( this->id, &mass );
 }
@@ -505,7 +505,7 @@ void nOpendeBody::SetCapsuleMassTotal( float totalMass, int direction,
 //----------------------------------------------------------------------------
 /**
 */
-void nOpendeBody::SetCylinderMass( float density, int direction, float radius, 
+void nOpendeBody::SetCylinderMass( float density, int direction, float radius,
                                    float length )
 {
     n_assert( this->id && "nOpendeBody::id not valid!" );
@@ -522,7 +522,7 @@ void nOpendeBody::SetCylinderMassTotal( float totalMass, int direction,
 {
     n_assert( this->id && "nOpendeBody::id not valid!" );
     dMass mass;
-    nOpende::MassSetCylinderTotal( &mass, totalMass, direction, radius, 
+    nOpende::MassSetCylinderTotal( &mass, totalMass, direction, radius,
                                    length );
     nOpende::BodySetMass( this->id, &mass );
 }
@@ -541,7 +541,7 @@ void nOpendeBody::SetBoxMass( float density, float lx, float ly, float lz )
 //----------------------------------------------------------------------------
 /**
 */
-void nOpendeBody::SetBoxMassTotal( float totalMass, 
+void nOpendeBody::SetBoxMassTotal( float totalMass,
                                    float lx, float ly, float lz )
 {
     n_assert( this->id && "nOpendeBody::id not valid!" );

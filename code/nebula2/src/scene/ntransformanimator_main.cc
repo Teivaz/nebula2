@@ -6,7 +6,7 @@
 #include "scene/nrendercontext.h"
 #include "scene/ntransformnode.h"
 
-nNebulaScriptClass(nTransformAnimator, "nanimator");
+nNebulaScriptClass(nTransformAnimator, "scene::nanimator");
 
 //------------------------------------------------------------------------------
 /**

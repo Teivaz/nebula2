@@ -13,7 +13,7 @@
 #include "util/nstring.h"
 #include "ruby.h"
 
-nNebulaClass(nRubyServer, "nscriptserver");
+nNebulaClass(nRubyServer, "kernel::nscriptserver");
 
 extern VALUE rubycmd_New;
 extern VALUE rubycmd_Sel;
@@ -52,7 +52,7 @@ nRubyServer::nRubyServer()
     register_manglepath("home:bin/ruby/ruby1.8/lib/ruby/1.8");
     register_manglepath("home:bin/ruby/ruby1.8/lib/ruby/1.8/i386-mswin32");
     register_manglepath("home:bin/ruby/ruby1.8/ext");
-        
+
     // restrict ruby in its access to the system a little bit
     rb_set_safe_level(1);
     ruby_script("nRubyServer");
@@ -65,7 +65,7 @@ nRubyServer::nRubyServer()
 //--------------------------------------------------------------------
 /**
     register_manglepath()
-    resolve assign and register the resulting path with ruby as a library 
+    resolve assign and register the resulting path with ruby as a library
     search path. Like "home:bin/ruby/ruby1.8/lib"
 
     -TODO
@@ -113,7 +113,7 @@ nRubyServer::~nRubyServer()
     -18-Dec-03  Tom created
 */
 //--------------------------------------------------------------------
-nFile* 
+nFile*
 nRubyServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
@@ -152,14 +152,14 @@ nRubyServer::BeginWrite(const char* filename, nObject* obj)
     -18-Dec-03  Tom created
 */
 //--------------------------------------------------------------------
-bool 
+bool
 nRubyServer::EndWrite(nFile* file)
 {
     n_assert(file);
- 
+
     file->PutS("# ---\n");
     file->PutS("# Eof\n");
-    
+
     file->Close();
     file->Release();
     return (this->indent_level == 0);
@@ -218,7 +218,7 @@ void nRubyServer::write_select_statement(nFile* file, nRoot *o, nRoot *owner)
         case SELCOMMAND:
             // get relative path from owner to o and write select statement
             _indent(++this->indent_level, this->indent_buf);
-            
+
             file->PutS(this->indent_buf);
             file->PutS("sel \"");
             file->PutS(owner->GetRelPath(o).Get());
@@ -234,7 +234,7 @@ void nRubyServer::write_select_statement(nFile* file, nRoot *o, nRoot *owner)
 /**
     WriteBeginNewObject()
     Write start of persistent object with default constructor.
-    
+
     -TODO
         TEST it.
 
@@ -269,7 +269,7 @@ bool nRubyServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
     WriteBeginNewObjectCmd()
     Write start of persistent object with custom constructor
     defined by command.
-    
+
     -TODO
         TEST it.
 
@@ -317,7 +317,7 @@ bool nRubyServer::WriteBeginSelObject(nFile* file, nRoot *o, nRoot *owner)
 //--------------------------------------------------------------------
 /**
     WriteEndObject()
-    
+
     -TODO
         TEST it.
 
@@ -343,7 +343,7 @@ bool nRubyServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
 //--------------------------------------------------------------------
 /**
     WriteCmd()
-    
+
     -TODO
         TEST it.
 
@@ -373,7 +373,7 @@ bool nRubyServer::WriteCmd(nFile* file, nCmd *cmd)
     ushort bufLen;
 
     int i;
-    for (i=0; i<num_args; i++) 
+    for (i=0; i<num_args; i++)
     {
         char buf[N_MAXPATH];
         arg=cmd->In();
@@ -392,16 +392,16 @@ bool nRubyServer::WriteCmd(nFile* file, nCmd *cmd)
                 strPtr = arg->GetS();
                 strLen = strlen(strPtr);
                 bufLen = sizeof(buf)-1;
-            
+
                 file->PutS("\"");
-                if (strLen > bufLen-1) 
+                if (strLen > bufLen-1)
                 {
                     buf[bufLen] = 0; // Null terminator
                     for (int j=0; j<strLen-2; j+=bufLen)
                     {
                         memcpy((void*)&buf[0], strPtr, bufLen);
                         file->PutS(buf);
-                        strPtr += bufLen;     
+                        strPtr += bufLen;
                     }
                 strPtr += bufLen;
                 }
@@ -422,8 +422,8 @@ bool nRubyServer::WriteCmd(nFile* file, nCmd *cmd)
                     if (o) {
                         char buf[N_MAXPATH];
                         sprintf(buf, "\"%s\"", o->GetFullName().Get() );
-                    } 
-                    else 
+                    }
+                    else
                     {
                         sprintf(buf, "null");
                     }

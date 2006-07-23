@@ -6,7 +6,7 @@
 #include "gfx2/nmesh2.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nBlendShapeNode, "nmaterialnode");
+nNebulaScriptClass(nBlendShapeNode, "scene::nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**
@@ -72,7 +72,7 @@ nBlendShapeNode::LoadResources()
         this->refMeshArray->SetUsageAt(i, this->GetMeshUsage());
     }
     this->resourcesValid &= this->refMeshArray->Load();
-            
+
     // update shape bounding boxes
     if (true == this->resourcesValid)
     {
@@ -108,8 +108,8 @@ nBlendShapeNode::UnloadResources()
 /**
     Set the mesh resource name at index.
     Updates the number of current valid shapes.
-    
-    @param  index   
+
+    @param  index
     @param  name    name of the resource to set, 0 to unset a resource
 */
 void
@@ -120,7 +120,7 @@ nBlendShapeNode::SetMeshAt(int index, const char* name)
     {
         this->resourcesValid = false;
         this->shapeArray[index].meshName = name;
-        
+
         if (0 != name)
         {
             // increase shapes count
@@ -133,7 +133,7 @@ nBlendShapeNode::SetMeshAt(int index, const char* name)
             {
                 this->numShapes--;
             }
-        }   
+        }
     }
 }
 
@@ -195,7 +195,7 @@ nBlendShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
     call nGfxServer2::DrawIndexed().
 
     - 15-Jan-04 floh    AreResourcesValid()/LoadResource() moved to scene server
-    - 01-Feb-05 floh    use nBlendShapeDeformer on CPU    
+    - 01-Feb-05 floh    use nBlendShapeDeformer on CPU
 */
 bool
 nBlendShapeNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* renderContext)

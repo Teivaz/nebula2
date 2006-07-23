@@ -8,7 +8,7 @@
 #include "map/nmap.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass(nMap, "nroot");
+nNebulaScriptClass(nMap, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**
@@ -23,7 +23,7 @@ nMap::nMap() :
     heightScale(1.0f),
     // Derived variables
     mapDimension(0),
-    pointData(NULL)   
+    pointData(NULL)
 {
     //empty
 }
@@ -43,7 +43,7 @@ nMap::~nMap()
     then (n-1) / (blockSize-1) should have zero remainder
     (blockSize is from nMapNode).
 */
-void 
+void
 nMap::SetHeightMap(const char *name)
 {
     imagePath.Set(name);
@@ -54,7 +54,7 @@ nMap::SetHeightMap(const char *name)
     @brief Get heightmap file terrain was loaded from
     @return The filename for the heightmap data.
 */
-const char* 
+const char*
 nMap::GetHeightMap()
 {
     return imagePath.Get();
@@ -64,7 +64,7 @@ nMap::GetHeightMap()
     @brief Set the spacing between grid points in metres
     @param spacing The grid spacing in metres.
 */
-void 
+void
 nMap::SetGridInterval(float spacing)
 {
     n_assert(0.0f < spacing);
@@ -76,7 +76,7 @@ nMap::SetGridInterval(float spacing)
     @brief Get the spacing between grid points in metres
     @return The grid spacing in metres.
 */
-float 
+float
 nMap::GetGridInterval() const
 {
     return gridInterval;
@@ -85,7 +85,7 @@ nMap::GetGridInterval() const
 /**
     @brief Set the range of heights
 */
-void 
+void
 nMap::SetHeightRange(float min, float max)
 {
     n_assert(min < max);
@@ -98,7 +98,7 @@ nMap::SetHeightRange(float min, float max)
 /**
     @brief Get the minimum height of the terrain
 */
-float 
+float
 nMap::GetHeightRangeMin() const
 {
     return heightMin;
@@ -107,7 +107,7 @@ nMap::GetHeightRangeMin() const
 /**
     @brief Set the maximum height of the terrain
 */
-float 
+float
 nMap::GetHeightRangeMax() const
 {
     return heightMax;

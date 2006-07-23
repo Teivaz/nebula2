@@ -8,7 +8,7 @@
 #include "gfx2/nmesh2.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaClass(nChunkLodMesh, "nresource");
+nNebulaClass(nChunkLodMesh, "resource::nresource");
 
 //------------------------------------------------------------------------------
 /**
@@ -56,8 +56,8 @@ nChunkLodMesh::CanLoadAsync() const
 
 //------------------------------------------------------------------------------
 /**
-    FIXME: this method is NOT multithreading safe at the moment, because 
-    a nRoot object is created! 
+    FIXME: this method is NOT multithreading safe at the moment, because
+    a nRoot object is created!
     Need to implement a "kernel lock" which protects the Nebula kernel
     and the object hierarchy!
 

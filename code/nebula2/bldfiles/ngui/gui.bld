@@ -1,0 +1,733 @@
+#-------------------------------------------------------------------------------
+#  ngui/gui.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle ngui::gui
+    setmodules {
+        gui::nguiadjustdisplaywindow
+        gui::nguibar
+        gui::nguibrush
+        gui::nguibutton
+        gui::nguicanvas
+        gui::nguicategorybrowser
+        gui::nguicharactercontrolwindow
+        gui::nguicheckbutton
+        gui::nguicheckbuttongroup2
+        gui::nguicheckbuttongroup
+        gui::nguiclientwindow
+        gui::nguicmdentry
+        gui::nguicoloradjust
+        gui::nguicoloradjustwindow
+        gui::nguicolorlabel
+        gui::nguicolorpicker
+        gui::nguicolorslidergroup
+        gui::nguiconsolewindow
+        gui::nguicontextmenu
+        gui::nguidiagramcanvas
+        gui::nguidirlister
+        gui::nguidockwindow
+        gui::nguidragbox
+        gui::nguieventhandler
+        gui::nguifadeouttextlabel
+        gui::nguifiledialog
+        gui::nguiformlayout
+        gui::nguigraphicsbrowserwindow
+        gui::nguihardpointsbrowserwindow
+        gui::nguihardpointslister
+        gui::nguihorislidergroup
+        gui::nguiicon
+        gui::nguiiconcanvas
+        gui::nguiipaddressentry
+        gui::nguilabel
+        gui::nguimessagebox
+        gui::nguimousecursor
+        gui::nguiresource
+        gui::nguiscenecontrolwindow
+        gui::nguiscrollbuttonlist
+        gui::nguiserver
+        gui::nguisettingsfiledialog
+        gui::nguisettingsform
+        gui::nguisettingsmanagementwindow
+        gui::nguiskin
+        gui::nguiskyeditor
+        gui::nguislide
+        gui::nguislider2
+        gui::nguislideshow
+        gui::nguisysteminfowindow
+        gui::nguitabbedlayout
+        gui::nguitexbrowserwindow
+        gui::nguitextbutton
+        gui::nguitextentry
+        gui::nguitextlabel
+        gui::nguitexttable
+        gui::nguitextureview
+        gui::nguitextview
+        gui::nguitextwindow
+        gui::nguitickerwidget
+        gui::nguitooltip
+        gui::nguiwatcherwindow
+        gui::nguiwidget
+        gui::nguiwindow
+    }
+endbundle
+
+beginmodule gui::nguiadjustdisplaywindow
+    setdir gui
+    setheaders {
+        nguiadjustdisplaywindow
+    }
+    setfiles {
+        nguiadjustdisplaywindow_main
+    }
+endmodule
+
+beginmodule gui::nguibar
+    setdir gui
+    setheaders {
+        nguibar
+    }
+    setfiles {
+        nguibar_main
+    }
+endmodule
+
+beginmodule gui::nguibrush
+    setdir gui
+    setheaders {
+        nguibrush
+    }
+    setfiles {
+        nguibrush
+    }
+endmodule
+
+beginmodule gui::nguibutton
+    setdir gui
+    setheaders {
+        nguibutton
+    }
+    setfiles {
+        nguibutton_main
+        nguibutton_cmds
+    }
+endmodule
+
+beginmodule gui::nguicanvas
+    setdir gui
+    setheaders {
+        nguicanvas
+    }
+    setfiles {
+        nguicanvas_main
+    }
+endmodule
+
+beginmodule gui::nguicategorybrowser
+    setdir gui
+    setheaders {
+        nguicategorybrowser
+    }
+    setfiles {
+        nguicategorybrowser_main
+    }
+endmodule
+
+beginmodule gui::nguicharactercontrolwindow
+    setdir gui
+    setheaders {
+        nguicharactercontrolwindow
+    }
+    setfiles {
+        nguicharactercontrolwindow_main
+    }
+endmodule
+
+beginmodule gui::nguicheckbutton
+    setdir gui
+    setheaders {
+        nguicheckbutton
+    }
+    setfiles {
+        nguicheckbutton_main
+        nguicheckbutton_cmds
+    }
+endmodule
+
+beginmodule gui::nguicheckbuttongroup2
+    setdir gui
+    setheaders {
+        nguicheckbuttongroup2
+    }
+    setfiles {
+        nguicheckbuttongroup2_main
+    }
+endmodule
+
+beginmodule gui::nguicheckbuttongroup
+    setdir gui
+    setheaders {
+        nguicheckbuttongroup
+    }
+    setfiles {
+        nguicheckbuttongroup_main
+        nguicheckbuttongroup_cmds
+    }
+endmodule
+
+beginmodule gui::nguiclientwindow
+    setdir gui
+    setheaders {
+        nguiclientwindow
+    }
+    setfiles {
+        nguiclientwindow_main
+        nguiclientwindow_cmds
+    }
+endmodule
+
+beginmodule gui::nguicmdentry
+    setdir gui
+    setheaders {
+        nguicmdentry
+    }
+    setfiles {
+        nguicmdentry_main
+    }
+endmodule
+
+beginmodule gui::nguicoloradjust
+    setdir gui
+    setheaders {
+        nguicoloradjust
+    }
+    setfiles {
+        nguicoloradjust_main
+    }
+endmodule
+
+beginmodule gui::nguicoloradjustwindow
+    setdir gui
+    setheaders {
+        nguicoloradjustwindow
+    }
+    setfiles {
+        nguicoloradjustwindow_main
+    }
+endmodule
+
+beginmodule gui::nguicolorlabel
+    setdir gui
+    setheaders {
+        nguicolorlabel
+    }
+    setfiles {
+        nguicolorlabel_main
+    }
+endmodule
+
+beginmodule gui::nguicolorpicker
+    setdir gui
+    setheaders {
+        nguicolorpicker
+    }
+    setfiles {
+        nguicolorpicker_main
+    }
+endmodule
+
+beginmodule gui::nguicolorslidergroup
+    setdir gui
+    setheaders {
+        nguicolorslidergroup
+    }
+    setfiles {
+        nguicolorslidergroup_main
+    }
+endmodule
+
+beginmodule gui::nguiconsolewindow
+    setdir gui
+    setheaders {
+        nguiconsolewindow
+    }
+    setfiles {
+        nguiconsolewindow_main
+    }
+endmodule
+
+beginmodule gui::nguicontextmenu
+    setdir gui
+    setheaders {
+        nguicontextmenu
+    }
+    setfiles {
+        nguicontextmenu_main
+        nguicontextmenu_cmds
+    }
+endmodule
+
+beginmodule gui::nguidiagramcanvas
+    setdir gui
+    setheaders {
+        nguidiagramcanvas
+    }
+    setfiles {
+        nguidiagramcanvas_main
+    }
+endmodule
+
+beginmodule gui::nguidirlister
+    setdir gui
+    setheaders {
+        nguidirlister
+    }
+    setfiles {
+        nguidirlister_main
+        nguidirlister_cmds
+    }
+endmodule
+
+beginmodule gui::nguidockwindow
+    setdir gui
+    setheaders {
+        nguidockwindow
+    }
+    setfiles {
+        nguidockwindow_main
+    }
+endmodule
+
+beginmodule gui::nguidragbox
+    setdir gui
+    setheaders {
+        nguidragbox
+    }
+    setfiles {
+        nguidragbox_main
+        nguidragbox_cmds
+    }
+endmodule
+
+beginmodule gui::nguieventhandler
+    setdir gui
+    setheaders {
+        nguievent
+        nguieventhandler
+    }
+    setfiles {
+        nguieventhandler
+    }
+endmodule
+
+beginmodule gui::nguifadeouttextlabel
+    setdir gui
+    setheaders {
+        nguifadeouttextlabel
+    }
+    setfiles {
+        nguifadeouttextlabel_main
+    }
+endmodule
+
+beginmodule gui::nguifiledialog
+    setdir gui
+    setheaders {
+        nguifiledialog
+    }
+    setfiles {
+        nguifiledialog_main
+    }
+endmodule
+
+beginmodule gui::nguiformlayout
+    setdir gui
+    setheaders {
+        nguiformlayout
+    }
+    setfiles {
+        nguiformlayout_main
+        nguiformlayout_cmds
+    }
+endmodule
+
+beginmodule gui::nguigraphicsbrowserwindow
+    setdir gui
+    setheaders {
+        nguigraphicsbrowserwindow
+    }
+    setfiles {
+        nguigraphicsbrowserwindow_main
+    }
+endmodule
+
+beginmodule gui::nguihardpointsbrowserwindow
+    setdir gui
+    setheaders {
+        nguihardpointsbrowserwindow
+    }
+    setfiles {
+        nguihardpointsbrowserwindow_main
+    }
+endmodule
+
+beginmodule gui::nguihardpointslister
+    setdir gui
+    setheaders {
+        nguihardpointslister
+    }
+    setfiles {
+        nguihardpointslister_main
+    }
+endmodule
+
+beginmodule gui::nguihorislidergroup
+    setdir gui
+    setheaders {
+        nguihorislidergroup
+    }
+    setfiles {
+        nguihorislidergroup_main
+        nguihorislidergroup_cmds
+    }
+endmodule
+
+beginmodule gui::nguiicon
+    setdir gui
+    setheaders {
+        nguiicon
+    }
+    setfiles {
+        nguiicon_main
+    }
+endmodule
+
+beginmodule gui::nguiiconcanvas
+    setdir gui
+    setheaders {
+        nguiiconcanvas
+    }
+    setfiles {
+        nguiiconcanvas_main
+    }
+endmodule
+
+beginmodule gui::nguiipaddressentry
+    setdir gui
+    setheaders {
+        nguiipaddressentry
+    }
+    setfiles {
+        nguiipaddressentry_main
+    }
+endmodule
+
+beginmodule gui::nguilabel
+    setdir gui
+    setheaders {
+        nguilabel
+    }
+    setfiles {
+        nguilabel_main
+    }
+endmodule
+
+beginmodule gui::nguimessagebox
+    setdir gui
+    setheaders {
+        nguimessagebox
+    }
+    setfiles {
+        nguimessagebox_main
+    }
+endmodule
+
+beginmodule gui::nguimousecursor
+    setdir gui
+    setheaders {
+        nguimousecursor
+    }
+    setfiles {
+        nguimousecursor_main
+    }
+endmodule
+
+beginmodule gui::nguiresource
+    setdir gui
+    setheaders {
+        nguiresource
+    }
+    setfiles {
+        nguiresource
+    }
+endmodule
+
+beginmodule gui::nguiscenecontrolwindow
+    setdir gui
+    setheaders {
+        nguiscenecontrolwindow
+    }
+    setfiles {
+        nguiscenecontrolwindow_main
+    }
+endmodule
+
+beginmodule gui::nguiscrollbuttonlist
+    setdir gui
+    setheaders {
+        nguiscrollbuttonlist
+    }
+    setfiles {
+        nguiscrollbuttonlist_main
+    }
+endmodule
+
+beginmodule gui::nguiserver
+    setdir gui
+    setheaders {
+        nguiserver
+    }
+    setfiles {
+        nguiserver_main
+        nguiserver_cmds
+    }
+endmodule
+
+beginmodule gui::nguisettingsfiledialog
+    setdir gui
+    setheaders {
+        nguisettingsfiledialog
+    }
+    setfiles {
+        nguisettingsfiledialog_main
+    }
+endmodule
+
+beginmodule gui::nguisettingsform
+    setdir gui
+    setheaders {
+        nguisettingsform
+    }
+    setfiles {
+        nguisettingsform_main
+    }
+endmodule
+
+beginmodule gui::nguisettingsmanagementwindow
+    setdir gui
+    setheaders {
+        nguisettingsmanagementwindow
+    }
+    setfiles {
+        nguisettingsmanagementwindow_main
+    }
+endmodule
+
+beginmodule gui::nguiskin
+    setdir gui
+    setheaders {
+        nguiskin
+    }
+    setfiles {
+        nguiskin_main
+        nguiskin_cmds
+    }
+endmodule
+
+beginmodule gui::nguiskyeditor
+    setdir gui
+    setheaders {
+        nguiskyeditor
+    }
+    setfiles {
+        nguiskyeditor_main
+    }
+endmodule
+
+beginmodule gui::nguislide
+    setdir gui
+    setheaders {
+        nguislide
+    }
+    setfiles {
+        nguislide_main
+    }
+endmodule
+
+beginmodule gui::nguislider2
+    setdir gui
+    setheaders {
+        nguislider2
+    }
+    setfiles {
+        nguislider2_main
+    }
+endmodule
+
+beginmodule gui::nguislideshow
+    setdir gui
+    setheaders {
+        nguislideshow
+    }
+    setfiles {
+        nguislideshow_main
+        nguislideshow_cmds
+    }
+endmodule
+
+beginmodule gui::nguisysteminfowindow
+    setdir gui
+    setheaders {
+        nguisysteminfowindow
+    }
+    setfiles {
+        nguisysteminfowindow_main
+    }
+endmodule
+
+beginmodule gui::nguitabbedlayout
+    setdir gui
+    setheaders {
+        nguitabbedlayout
+    }
+    setfiles {
+        nguitabbedlayout_main
+        nguitabbedlayout_cmds
+    }
+endmodule
+
+beginmodule gui::nguitexbrowserwindow
+    setdir gui
+    setheaders {
+        nguitexbrowserwindow
+    }
+    setfiles {
+        nguitexbrowserwindow_main
+    }
+endmodule
+
+beginmodule gui::nguitextbutton
+    setdir gui
+    setheaders {
+        nguitextbutton
+    }
+    setfiles {
+        nguitextbutton_main
+        nguitextbutton_cmds
+    }
+endmodule
+
+beginmodule gui::nguitextentry
+    setdir gui
+    setheaders {
+        nguitextentry
+    }
+    setfiles {
+        nguitextentry_main
+        nguitextentry_cmds
+    }
+endmodule
+
+beginmodule gui::nguitextlabel
+    setdir gui
+    setheaders {
+        nguitextlabel
+    }
+    setfiles {
+        nguitextlabel_main
+        nguitextlabel_cmds
+    }
+endmodule
+
+beginmodule gui::nguitexttable
+    setdir gui
+    setheaders {
+        nguitexttable
+    }
+    setfiles {
+        nguitexttable_main
+    }
+endmodule
+
+beginmodule gui::nguitextureview
+    setdir gui
+    setheaders {
+        nguitextureview
+    }
+    setfiles {
+        nguitextureview_main
+    }
+endmodule
+
+beginmodule gui::nguitextview
+    setdir gui
+    setheaders {
+        nguitextview
+    }
+    setfiles {
+        nguitextview_main
+        nguitextview_cmds
+    }
+endmodule
+
+beginmodule gui::nguitextwindow
+    setdir gui
+    setheaders {
+        nguitextwindow
+    }
+    setfiles {
+        nguitextwindow_main
+    }
+endmodule
+
+beginmodule gui::nguitickerwidget
+    setdir gui
+    setheaders {
+        nguitickerwidget
+    }
+    setfiles {
+        nguitickerwidget_main
+        nguitickerwidget_cmds
+    }
+endmodule
+
+beginmodule gui::nguitooltip
+    setdir gui
+    setheaders {
+        nguitooltip
+    }
+    setfiles {
+        nguitooltip_main
+    }
+endmodule
+
+beginmodule gui::nguiwatcherwindow
+    setdir gui
+    setheaders {
+        nguiwatcherwindow
+    }
+    setfiles {
+        nguiwatcherwindow_main
+    }
+endmodule
+
+beginmodule gui::nguiwidget
+    setdir gui
+    setheaders {
+        nguiwidget
+    }
+    setfiles {
+        nguiwidget_main
+        nguiwidget_cmds
+    }
+endmodule
+
+beginmodule gui::nguiwindow
+    setdir gui
+    setheaders {
+        nguiwindow
+    }
+    setfiles {
+        nguiwindow_main
+        nguiwindow_cmds
+    }
+endmodule

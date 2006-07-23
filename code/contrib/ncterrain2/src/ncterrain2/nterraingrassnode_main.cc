@@ -8,7 +8,7 @@
 #include "scene/nrendercontext.h"
 #include "variable/nvariableserver.h"
 
-nNebulaScriptClass(nTerrainGrassNode, "nmaterialnode");
+nNebulaScriptClass(nTerrainGrassNode, "scene::nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**
@@ -39,7 +39,7 @@ nTerrainGrassNode::HasGeometry() const
 
 //------------------------------------------------------------------------------
 /**
-    Do the actual rendering. 
+    Do the actual rendering.
 */
 bool
 nTerrainGrassNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
@@ -53,7 +53,7 @@ nTerrainGrassNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* ren
     {
         return false;
     }
-    
+
     // get rendering attributes from application
     nVariable* attrsVar = renderContext->GetVariable(this->attrsVarHandle);
     if (!attrsVar)

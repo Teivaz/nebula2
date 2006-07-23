@@ -3,5 +3,5 @@
 #include "signals/nsignalbinding.h"
 #include "signals_tutorial/nsignaltestemitter.h"
 
-nNebulaScriptClass(nSignalTestEmitter, "nroot");
+nNebulaScriptClass(nSignalTestEmitter, "kernel::nroot");
 

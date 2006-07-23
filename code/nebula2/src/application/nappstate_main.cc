@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "application/nappstate.h"
 
-nNebulaClass(nAppState, "nroot");
+nNebulaClass(nAppState, "kernel::nroot");
 
 //------------------------------------------------------------------------------
 /**
@@ -92,7 +92,7 @@ nAppState::OnFrameBefore()
 {
     // empty
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Callback method which is called in the render loop after

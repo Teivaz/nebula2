@@ -1,0 +1,96 @@
+#-------------------------------------------------------------------------------
+#  nnebula/renderpath.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::renderpath
+    setmodules {
+        renderpath::nrenderpath2
+        renderpath::nrppass
+        renderpath::nrpphase
+        renderpath::nrprendertarget
+        renderpath::nrpsection
+        renderpath::nrpsequence
+        renderpath::nrpshader
+        renderpath::nrpxmlparser
+    }
+endbundle
+
+beginmodule renderpath::nrenderpath2
+    setdir renderpath
+    setheaders {
+        nrenderpath2
+    }
+    setfiles {
+        nrenderpath2
+    }
+endmodule
+
+beginmodule renderpath::nrppass
+    setdir renderpath
+    setheaders {
+        nrppass
+    }
+    setfiles {
+        nrppass
+    }
+endmodule
+
+beginmodule renderpath::nrpphase
+    setdir renderpath
+    setheaders {
+        nrpphase
+    }
+    setfiles {
+        nrpphase
+    }
+endmodule
+
+beginmodule renderpath::nrprendertarget
+    setdir renderpath
+    setheaders {
+        nrprendertarget
+    }
+    setfiles {
+        nrprendertarget
+    }
+endmodule
+
+beginmodule renderpath::nrpsection
+    setdir renderpath
+    setheaders {
+        nrpsection
+    }
+    setfiles {
+        nrpsection
+    }
+endmodule
+
+beginmodule renderpath::nrpsequence
+    setdir renderpath
+    setheaders {
+        nrpsequence
+    }
+    setfiles {
+        nrpsequence
+    }
+endmodule
+
+beginmodule renderpath::nrpshader
+    setdir renderpath
+    setheaders {
+        nrpshader
+    }
+    setfiles {
+        nrpshader
+    }
+endmodule
+
+beginmodule renderpath::nrpxmlparser
+    setdir renderpath
+    setheaders {
+        nrpxmlparser
+    }
+    setfiles {
+        nrpxmlparser
+    }
+endmodule

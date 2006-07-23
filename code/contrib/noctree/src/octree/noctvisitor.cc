@@ -1,12 +1,12 @@
 #include "octree/noctvisitor.h"
 
-nNebulaClass(nOctVisitor, "nroot");
+nNebulaClass(nOctVisitor, "kernel::nroot");
 
 //-----------------------------------------------------------------------------
 /**
 */
-void nOctVisitor::DoCulling(nOctree* oct) 
-{ 
+void nOctVisitor::DoCulling(nOctree* oct)
+{
     this->SetOctree(oct);
 }
 
@@ -14,7 +14,7 @@ void nOctVisitor::DoCulling(nOctree* oct)
 /**
     Specify octree to visit for culling.
 */
-void nOctVisitor::SetOctree(nOctree* oct) 
+void nOctVisitor::SetOctree(nOctree* oct)
 {
     octree = oct;
 }
@@ -23,7 +23,7 @@ void nOctVisitor::SetOctree(nOctree* oct)
 /**
     Retrieves octree.
 */
-nOctree* nOctVisitor::GetOctree() const 
+nOctree* nOctVisitor::GetOctree() const
 {
     return octree;
 }
@@ -31,13 +31,13 @@ nOctree* nOctVisitor::GetOctree() const
 //-----------------------------------------------------------------------------
 /**
 */
-void nOctVisitor::Collect(nOctElement *oe) 
+void nOctVisitor::Collect(nOctElement *oe)
 {
-    if (octree->num_collected < octree->ext_array_size) 
+    if (octree->num_collected < octree->ext_array_size)
     {
         octree->ext_collect_array[octree->num_collected++] = oe;
-    } 
-    else 
+    }
+    else
     {
         n_printf("nOctVisitor::collect(): Overflow in collect array!\n");
     }

@@ -10,7 +10,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguitextentry.h"
 
-nNebulaClass(nGuiTexBrowserWindow, "nguiclientwindow");
+nNebulaClass(nGuiTexBrowserWindow, "gui::nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**
@@ -78,7 +78,7 @@ nGuiTexBrowserWindow::OnShow()
     nGuiTextEntry* entry = (nGuiTextEntry*) kernelServer->New("nguitextentry", "textureindexentry");
     n_assert(entry);
     entry->SetText("0");
-    vector2 size = entry->GetTextExtent(); 
+    vector2 size = entry->GetTextExtent();
     size.x *= 5;
     entry->SetMinSize(size);
     entry->SetMaxSize(size);
@@ -182,7 +182,7 @@ nGuiTexBrowserWindow::OnKeyUp(nKey key)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiTexBrowserWindow::OnEvent(const nGuiEvent& event)
 {
     if (event.GetType() == nGuiEvent::ButtonUp)

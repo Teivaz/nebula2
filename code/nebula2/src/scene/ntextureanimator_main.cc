@@ -7,7 +7,7 @@
 #include "scene/nabstractshadernode.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nTextureAnimator, "nanimator");
+nNebulaScriptClass(nTextureAnimator, "scene::nanimator");
 
 //------------------------------------------------------------------------------
 /**
@@ -63,7 +63,7 @@ nTextureAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 
 void
 nTextureAnimator::AddTexture(const char* path)
-{ 
+{
     nRef<nTexture2> refTexture(this->refGfxServer->NewTexture(path));
     refTexture->SetFilename(path);
     refTexture->Load();

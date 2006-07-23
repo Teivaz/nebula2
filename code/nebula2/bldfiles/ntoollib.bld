@@ -1,0 +1,10 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/ntoollib.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget ntoollib
+    settype lib
+    setbundles {
+        ntoollib::tools
+    }
+endtarget

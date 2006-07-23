@@ -8,7 +8,7 @@
 
 #include "kernel/nkernelserver.h"
 #include "opende/nopendepickserver.h"
-nNebulaClass(nOpendePickServer, "nroot");
+nNebulaClass(nOpendePickServer, "kernel::nroot");
 
 #include "opende/nopendetrimesh.h"
 #include "gfx2/ngfxserver2.h"
@@ -40,9 +40,9 @@ nOpendePickServer::~nOpendePickServer()
     @param mouseX   [in] Absolute x coordinate of cursor in pixels.
     @param mouseY   [in] Absolute y coordinate of cursor in pixels.
     @param pickRay  [out] The generated pick ray.
-    
+
     You'd typically obtain the mouseX/mouseY from the input server like so:
-    
+
     @code
     int mouseX = 0;
     int mouseY = 0;
@@ -54,7 +54,7 @@ nOpendePickServer::~nOpendePickServer()
                 mouseX = event->GetAbsXPos();
                 mouseY = event->GetAbsYPos();
         }
-        
+
         event = inputServer->NextEvent(event);
     }
     @endcode
@@ -62,12 +62,12 @@ nOpendePickServer::~nOpendePickServer()
 void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
 {
     n_assert( this->ref_GfxServer.isvalid() );
-    
+
     vector3 start, end;
-        
+
     const nDisplayMode2& displayMode = this->ref_GfxServer->GetDisplayMode();
     nCamera2& camera = this->ref_GfxServer->GetCamera();
-    
+
     if ( nCamera2::Perspective == camera.GetType() )
     {
         float nearp, farp, minx, maxx, miny, maxy;
@@ -80,7 +80,7 @@ void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
         start.y *= maxy;
         start.z = -nearp;
         // the ratio of the far plane to the near plane is the same as
-        // the ratio of the x/y coord on the far plane to the x/y coord 
+        // the ratio of the x/y coord on the far plane to the x/y coord
         // on the near plane
         float planeRatio = farp / nearp;
         // map the coords from the near plane to the far plane
@@ -92,15 +92,15 @@ void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
         pickRay.set( mat * start, mat * end );
     }
 }
-  
+
 //----------------------------------------------------------------------------
 /**
     @param mouseX  [in] x coordinate of cursor (0.0 to 1.0)
     @param mouseY  [in] y coordinate of cursor (0.0 to 1.0)
     @param pickRay [out] The generated pick ray.
-    
+
     You'd typically obtain the mouseX/mouseY from the input server like so:
-    
+
     @code
     int mouseX = 0;
     int mouseY = 0;
@@ -112,21 +112,21 @@ void nOpendePickServer::CreatePickRay( int mouseX, int mouseY, line3& pickRay )
                 mouseX = event->GetRelXPos();
                 mouseY = event->GetRelYPos();
         }
-        
+
         event = inputServer->NextEvent(event);
     }
     @endcode
-*/      
-void nOpendePickServer::CreatePickRay( float mouseX, float mouseY, 
+*/
+void nOpendePickServer::CreatePickRay( float mouseX, float mouseY,
                                        line3& pickRay )
 {
     n_assert( this->ref_GfxServer.isvalid() );
-    
+
     vector3 start, end;
-        
+
     const nDisplayMode2& displayMode = this->ref_GfxServer->GetDisplayMode();
     nCamera2& camera = this->ref_GfxServer->GetCamera();
-    
+
     if ( nCamera2::Perspective == camera.GetType() )
     {
         float nearp, farp, minx, maxx, miny, maxy;
@@ -139,7 +139,7 @@ void nOpendePickServer::CreatePickRay( float mouseX, float mouseY,
         start.y *= maxy;
         start.z = -nearp;
         // the ratio of the far plane to the near plane is the same as
-        // the ratio of the x/y coord on the far plane to the x/y coord 
+        // the ratio of the x/y coord on the far plane to the x/y coord
         // on the near plane
         float planeRatio = farp / nearp;
         // map the coords from the near plane to the far plane
@@ -164,11 +164,11 @@ void nOpendePickServer::CreatePickRay( float mouseX, float mouseY,
     @param flags Can be any combination (OR'ed together) of the FirstContact,
                  BackfaceCull or ClosestHit members of the RayPickFlag enum,
                  though ClosestHit only works if FirstContact is not specified.
-    
-    You should use this method only when RayPickSimple() can't achieve what 
+
+    You should use this method only when RayPickSimple() can't achieve what
     you want.
 */
-void nOpendePickServer::RayPick( dSpaceID space, void* data, 
+void nOpendePickServer::RayPick( dSpaceID space, void* data,
                                  dNearCallback* callback,
                                  const line3& line, int flags )
 {
@@ -180,7 +180,7 @@ void nOpendePickServer::RayPick( dSpaceID space, void* data,
     int backfaceCull = (flags & BackfaceCull) ? 1:0;
     nOpende::GeomRaySetParams( this->rayGeom, firstContact, backfaceCull );
     nOpende::GeomRaySetClosestHit( this->rayGeom, (flags & ClosestHit) != 0 );
-        
+
     // do instersection testing
     nOpende::SpaceCollide2( this->rayGeom, (dGeomID)space, data, callback );
 }
@@ -195,7 +195,7 @@ void nOpendePickServer::RayPick( dSpaceID space, void* data,
                        array.
     @param contacts Array of dContactGeoms.
     @param skip Typically should be sizeof(dContactGeom), see documentation
-                for dCollide for further info (section 10.5.2 in the OpenDE 
+                for dCollide for further info (section 10.5.2 in the OpenDE
                 manual).
     @param flags A valid combination (OR'ed together) of the the members of
                  the RayPickFlag enum. A valid combination must consist of:
@@ -211,11 +211,11 @@ void nOpendePickServer::RayPick( dSpaceID space, void* data,
     @return Number of contacts found.
 */
 int nOpendePickServer::RayPickSimple( dSpaceID space, const line3& line,
-                                      int maxContacts, dContactGeom* contacts, 
+                                      int maxContacts, dContactGeom* contacts,
                                       int skip, int flags )
 {
     n_assert( (maxContacts > 0) && contacts );
-    
+
     // setup ray geom from line
     nOpende::GeomRaySet( this->rayGeom, line.b.x, line.b.y, line.b.z,
                          line.m.x, line.m.y, line.m.z );
@@ -224,11 +224,11 @@ int nOpendePickServer::RayPickSimple( dSpaceID space, const line3& line,
     int backfaceCull = (flags & BackfaceCull) ? 1:0;
     nOpende::GeomRaySetParams( this->rayGeom, firstContact, backfaceCull );
     nOpende::GeomRaySetClosestHit( this->rayGeom, (flags & ClosestHit) != 0 );
-    
+
     // do instersection testing
     if ( flags & PickAll )
     {
-        return nOpende::Collide( this->rayGeom, (dGeomID)space, 
+        return nOpende::Collide( this->rayGeom, (dGeomID)space,
                                  maxContacts, contacts, skip );
     }
     else if ( flags & PickClosest )
@@ -238,13 +238,13 @@ int nOpendePickServer::RayPickSimple( dSpaceID space, const line3& line,
         this->contactArray[0].g2 = 0;
         // We don't want to be limited by maxContacts when looking
         // for the closest geom (or we may not find the closest one!)
-        nOpende::SpaceCollide2( this->rayGeom, (dGeomID)space, this, 
+        nOpende::SpaceCollide2( this->rayGeom, (dGeomID)space, this,
                                 &PickClosestCallback );
         int retVal = (0 == this->contactArray[0].g2) ? 0:1;
         this->contactArray = 0;
         return retVal;
     }
-    
+
     return 0;
 }
 
@@ -265,12 +265,12 @@ void nOpendePickServer::PickClosestCallback( void* p, dGeomID g1, dGeomID g2 )
 void nOpendePickServer::PickClosestIntersect( dGeomID ray, dGeomID geom )
 {
     dContactGeom contactGeom;
-  
+
     // generate at most 1 contact
-    int numContacts = nOpende::Collide( ray, geom, 1, 
-                                        &contactGeom, 
+    int numContacts = nOpende::Collide( ray, geom, 1,
+                                        &contactGeom,
                                         sizeof(dContactGeom) );
-  
+
     // store contact only if it's closer than the last one
     if ( numContacts > 0 )
     {
@@ -279,7 +279,7 @@ void nOpendePickServer::PickClosestIntersect( dGeomID ray, dGeomID geom )
             // only store new contact if it's closer to the ray origin
             if ( contactGeom.depth < this->contactArray[0].depth )
             {
-                memcpy( this->contactArray, &contactGeom, 
+                memcpy( this->contactArray, &contactGeom,
                         sizeof(dContactGeom) );
             }
         }

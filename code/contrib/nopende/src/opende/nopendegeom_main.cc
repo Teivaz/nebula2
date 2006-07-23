@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------------
 #include "opende/nopendegeom.h"
 
-nNebulaScriptClass(nOpendeGeom, "nroot");
+nNebulaScriptClass(nOpendeGeom, "kernel::nroot");
 
 #include "opende/nopendespace.h"
 #include "opende/nopendebody.h"
@@ -12,7 +12,7 @@ nNebulaScriptClass(nOpendeGeom, "nroot");
 /**
 */
 nOpendeGeom::nOpendeGeom() :
-    geomId(0), 
+    geomId(0),
     bodyName("none")
 {
     //
@@ -60,7 +60,7 @@ dSpaceID nOpendeGeom::getSpace()
 //----------------------------------------------------------------------------
 /**
     @brief Attach the geom to a body.
-    
+
     Note that using this method the connection will not be persisted, if
     you want the connection to be persistent use the string based AttachTo().
 */
@@ -74,7 +74,7 @@ void nOpendeGeom::SetBody( dBodyID body )
 //----------------------------------------------------------------------------
 /**
     @brief Attach the geom to a body.
-    
+
     @param body NOH path to an nOpendeBody instance, can be "none" to indicate
                 the geom should be independent from any body (or to detach it
                 from a body if it is currently attached).
@@ -82,16 +82,16 @@ void nOpendeGeom::SetBody( dBodyID body )
 void nOpendeGeom::SetBody( const char* body )
 {
     n_assert( this->id() && "nOpendeGeom::id not valid!" );
-    
+
     if ( strcmp( body, "none" ) != 0 )
     {
         nRoot* temp = this->kernelServer->Lookup( body );
-        n_assert( temp && 
+        n_assert( temp &&
                   temp->IsA( this->kernelServer->FindClass( "nopendebody" ) ) &&
                   "body in call to nOpendeGeom::SetBody() is invalid!" );
         nOpende::GeomSetBody( this->id(), ((nOpendeBody*)temp)->id );
     }
-  
+
     this->bodyName = body;
 }
 
@@ -148,7 +148,7 @@ int nOpendeGeom::GetGeomClass()
         - sphere
         - box
         - capsule / corresponds to dCCylinderClass.
-        - cylinder 
+        - cylinder
         - plane
         - transform / corresponds to dGeomTransformClass.
         - ray
@@ -157,7 +157,7 @@ int nOpendeGeom::GetGeomClass()
 const char* nOpendeGeom::GetGeomClassName()
 {
     n_assert( this->id() && "nOpendeGeom::id not valid!" );
-    
+
     switch ( nOpende::GeomGetClass( this->id() ) )
     {
         case dSphereClass:
@@ -290,8 +290,8 @@ void nOpendeGeom::GetQuaternion( quaternion& q )
 /**
     @brief Generate contact information between two potentially intersecting
            geoms.
-    
-    This is really nothing more than a "shortcut" for calling 
+
+    This is really nothing more than a "shortcut" for calling
     dSpaceCollide2( this->id, other, data, callback );
 */
 void nOpendeGeom::Collide2( dGeomID other, void* data, dNearCallback* callback )

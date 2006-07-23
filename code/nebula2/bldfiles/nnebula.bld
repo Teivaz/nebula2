@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/nnebula.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget nnebula
+    settype lib
+    setbundles {
+        nnebula::anim2
+        nnebula::audio3
+        nnebula::character
+        nnebula::deformers
+        nnebula::file
+        nnebula::gfx2
+        nnebula::input
+        nnebula::locale
+        nnebula::misc
+        nnebula::nature
+        nnebula::particle
+        nnebula::renderpath
+        nnebula::resource
+        nnebula::scene
+        nnebula::script
+        nnebula::shadow2
+        nnebula::sql
+        nnebula::tinyxml
+        nnebula::toolkit
+        nnebula::variable
+        nnebula::video
+        nnebula::xml
+    }
+endtarget
