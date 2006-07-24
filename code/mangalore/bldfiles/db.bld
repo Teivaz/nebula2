@@ -1,27 +1,24 @@
 #-------------------------------------------------------------------------------
-# db.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/db.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::db
     setdir db
-    settype cpp
-    setfiles { 
-        attributecontainer
-        entity
-        query
-        server
-        reader
-        writer
-    }
-    setheaders { 
+    setheaders {
         attribute
         attributecontainer
         entity
         query
-        server
         reader
+        server
+        writer
+    }
+    setfiles {
+        attributecontainer
+        entity
+        query
+        reader
+        server
         writer
     }
 endmodule
-#-------------------------------------------------------------------------------

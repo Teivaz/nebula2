@@ -1,19 +1,17 @@
 #-------------------------------------------------------------------------------
-# game.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/game.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::game
     setdir game
-    settype cpp
-    setfiles { 
+    setheaders {
         attrset
         entity
         manager
         property
         server
     }
-    setheaders { 
+    setfiles {
         attrset
         entity
         manager
@@ -21,18 +19,17 @@ beginmodule mangalore::game
         server
     }
 endmodule
-#-------------------------------------------------------------------------------
+
 beginmodule mangalore::game::time
     setdir game/time
-    settype cpp
-    setfiles { 
+    setheaders {
         gametimesource
         guitimesource
         inputtimesource
         systemtimesource
         timesource
     }
-    setheaders { 
+    setfiles {
         gametimesource
         guitimesource
         inputtimesource
@@ -40,11 +37,3 @@ beginmodule mangalore::game::time
         timesource
     }
 endmodule
-#-------------------------------------------------------------------------------
-beginbundle mangalore::game
-    setmodules {
-        mangalore::game
-        mangalore::game::time        
-    }
-endbundle
-#-------------------------------------------------------------------------------

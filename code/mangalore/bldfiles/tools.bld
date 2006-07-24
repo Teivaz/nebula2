@@ -1,15 +1,10 @@
 #-------------------------------------------------------------------------------
-#  bldfiles/script.bld
+#  bldfiles/tools.bld
 #  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::script
-    setdir script
-    setheaders {
-        command
-        server
-    }
+beginmodule mangalore
+    setdir tools
     setfiles {
-        command
-        server
+        mangalore
     }
 endmodule

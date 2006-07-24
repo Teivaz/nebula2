@@ -1,12 +1,10 @@
 #-------------------------------------------------------------------------------
-# managers.bld
-#
-# (C) 2006 James Mastro
+#  bldfiles/managers.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::managers
     setdir managers
-    settype cpp
-    setfiles { 
+    setheaders {
         entitymanager
         envquerymanager
         factorymanager
@@ -15,7 +13,7 @@ beginmodule mangalore::managers
         setupmanager
         timemanager
     }
-    setheaders { 
+    setfiles {
         entitymanager
         envquerymanager
         factorymanager
@@ -25,4 +23,3 @@ beginmodule mangalore::managers
         timemanager
     }
 endmodule
-#-------------------------------------------------------------------------------
