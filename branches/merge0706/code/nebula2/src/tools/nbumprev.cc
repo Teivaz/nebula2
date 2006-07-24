@@ -19,7 +19,7 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 
     // parse args
-    const char* filename = args.GetStringArg("-file", "rev.cc");
+    nString filename = args.GetStringArg("-file", "rev.cc");
 
     // create file if it doesn't exist yet
     if (!fileServer->FileExists(filename))

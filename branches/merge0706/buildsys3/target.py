@@ -8,12 +8,12 @@ import os, string
 from module import Module
 
 class Target:
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, targetName, bldFilename):
         self.buildSys = None
         # these more or less directly correspond to stuff in bld files
-        self.name = targetName 
+        self.name = targetName
         self.annotation = ''
         self.type = 'lib'
         self.rtti = False
@@ -39,22 +39,22 @@ class Target:
         self.platforms = {'win32'  : False,
                           'linux'  : False,
                           'macosx' : False,
-                          'all'    : False} 
+                          'all'    : False}
         # filled out and used by generators
         self.uuid = '' # only used by Visual Studio generators atm
-    
+
     #--------------------------------------------------------------------------
     # Get the fully qualified name of the target, but replace all :: with _
     # so the string can be safely used as part of a filename or as part of
     # a C++ identifier.
     def GetFullNameNoColons(self):
         return self.name.replace('::', '_')
-    
+
     #--------------------------------------------------------------------------
     def Clean(self):
         self.win32Resource = self.buildSys.CleanRelPath(self.win32Resource)
         self.modDefFile = self.buildSys.CleanRelPath(self.modDefFile)
-            
+
     #--------------------------------------------------------------------------
     def GetExtension(self, platform):
         if '' != self.extension:
@@ -71,10 +71,10 @@ class Target:
                     return 'so'
             else:
                 self.buildSys.logger.error('Unrecognized target type %s' \
-                                           ' for target %s in %s', 
+                                           ' for target %s in %s',
                                            self.type, self.name, self.bldFile)
         return 'exe' # should never get here, normally :)
-        
+
     #--------------------------------------------------------------------------
     def Validate(self):
         dataValid = True
@@ -82,14 +82,14 @@ class Target:
         for moduleName in self.modules:
             if moduleName not in self.buildSys.modules:
                 self.buildSys.logger.error('Undefined module %s referenced' \
-                                           ' in target %s from %s', 
+                                           ' in target %s from %s',
                                            moduleName, self.name, self.bldFile)
                 dataValid = False
         # check target bundles are defined
         for bundleName in self.bundles:
             if bundleName not in self.buildSys.bundles:
                 self.buildSys.logger.error('Undefined bundle %s referenced' \
-                                           ' in target %s from %s', 
+                                           ' in target %s from %s',
                                            bundleName, self.name, self.bldFile)
                 dataValid = False
         # check target dependencies are defined
@@ -97,11 +97,11 @@ class Target:
             if targetDepName not in self.buildSys.targets:
                 self.buildSys.logger.error('Undefined target dependency %s' \
                                            ' referenced in target %s from %s',
-                                           targetDepName, self.name, 
+                                           targetDepName, self.name,
                                            self.bldFile)
                 dataValid = False
         return dataValid
-    
+
     #--------------------------------------------------------------------------
     # Merge the bundled targets and modules.
     def MergeBundles(self):
@@ -113,7 +113,7 @@ class Target:
             for targetName in curBundle.targets:
                 if targetName not in self.depends:
                     self.depends.append(targetName)
-            
+
     #--------------------------------------------------------------------------
     # Simply figures out what platforms this target can be built on based on
     # what platforms the modules it contains can be built on.
@@ -125,13 +125,13 @@ class Target:
             for platform in self.platforms.keys():
                 self.platforms[platform] = True
         #print 'Platform Support for ' + self.name + ': ' + str(self.platforms)
-            
+
     #--------------------------------------------------------------------------
     # Returns True if the target can be built on the specified platform,
     # false otherwise.
     def SupportsPlatform(self, platform):
         return self.platforms[platform]
-            
+
     #--------------------------------------------------------------------------
     # Find the .def file if any.
     def FindModuleDefFile(self):
@@ -143,15 +143,15 @@ class Target:
                 # no extension? add the default .def extension
                 if '' == ext:
                     modDefFile = modDefFile + '.def'
-                self.modDefFile = os.path.join('code', curModule.codeDir, 
-                                               'src', curModule.dir, 
+                self.modDefFile = os.path.join('code', curModule.codeDir,
+                                               'src', curModule.dir,
                                                modDefFile)
                 if not os.path.exists(os.path.join(self.buildSys.homeDir,
                                                    self.modDefFile)):
                     self.buildSys.logger.warning("%s referenced in module %s "\
-                                                 "doesn't exist!", 
+                                                 "doesn't exist!",
                                                  self.modDefFile, moduleName)
-    
+
     #--------------------------------------------------------------------------
     # Collect libraries to be linked against from this target's modules.
     def CollectLibsFromMods(self):
@@ -184,7 +184,7 @@ class Target:
                 self.libsWin32DebugAll.append(libName)
             if libName not in self.libsWin32Release:
                 self.libsWin32ReleaseAll.append(libName)
-    
+
     #--------------------------------------------------------------------------
     # Collect libraries to be linked against from this target's dependecies.
     def CollectLibsFromDepends(self):
@@ -210,10 +210,10 @@ class Target:
     # Sort modules
     def Finalize(self):
         self.modules.sort()
-    
+
     #--------------------------------------------------------------------------
     # Generate a pkg file for this target.
-    def GeneratePkgFile(self):        
+    def GeneratePkgFile(self):
         pkgDirectory = os.path.join(self.buildSys.homeDir, 'build', 'pkg')
         pkgMods = []
         # collect the modules that will need to be in the pkg
@@ -280,8 +280,10 @@ class Target:
                     platformDef = self.buildSys.platformTagDefMap[platformTag]
             if platformDef != '':
                 pkgFile.write('#ifdef ' + platformDef + '\n')
+            superClassNameGroup = module.name.split('::')
+            superClassName = superClassNameGroup[len(superClassNameGroup)-1]
             pkgFile.write('    nKernelServer::ks->AddModule("' \
-                          + module.name + '",\n')
+                          + superClassName + '",\n')
             safeModName = module.GetFullNameNoColons()
             pkgFile.write((' ' * 33) + 'n_init_%s,\n' % safeModName)
             pkgFile.write((' ' * 33) + 'n_new_%s);\n' % safeModName)
@@ -307,19 +309,19 @@ class Target:
     def GenerateResFile(self):
         if self.type != 'exe':
             return
-            
-        relPath = self.buildSys.FindRelPath(os.path.join('build', 'pkg'), 
+
+        relPath = self.buildSys.FindRelPath(os.path.join('build', 'pkg'),
                                             os.path.join('code', 'nebula2',
                                                          'res'))
         safeTarName = self.GetFullNameNoColons()
-        absPath = os.path.join(self.buildSys.homeDir, 'build', 'pkg', 
-                               'res_' + safeTarName + '.rc')            
+        absPath = os.path.join(self.buildSys.homeDir, 'build', 'pkg',
+                               'res_' + safeTarName + '.rc')
         resFile = file(absPath, 'w')
         relPath = os.path.join(relPath, self.icon)
         relPath = string.replace(relPath, os.sep, '\\\\')
         resFile.write('NebulaIcon ICON "' + relPath + '"')
         resFile.close()
-    
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

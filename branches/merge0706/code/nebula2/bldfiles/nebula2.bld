@@ -4,6 +4,20 @@
 #-------------------------------------------------------------------------------
 beginworkspace nebula2
     settargets {
+        nviewer
+        nanalyzeexport
+        nanimtool
+        nbumprev
+        nbundler
+        ngetcrc
+        ngfxtool
+        nmakepatch
+        nmeshtool
+        nnpktool
+        nremoteshell
+        nsetpath
+        nsh
+        nstub        
         nkernel
         nnebula
         microtcl
@@ -16,3 +30,5 @@ beginworkspace nebula2
         ntoollib
     }
 endworkspace
+
+#       nimagetool
