@@ -19,7 +19,7 @@ static void n_setstringvariable(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nvariableserver    
+    nvariableserver
 
     @cppclass
     nVariableServer

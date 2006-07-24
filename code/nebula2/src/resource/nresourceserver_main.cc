@@ -5,7 +5,7 @@
 #include "resource/nresourceserver.h"
 #include "resource/nresource.h"
 
-nNebulaClass(nResourceServer, "kernel::nroot");
+nNebulaClass(nResourceServer, "nroot");
 nResourceServer* nResourceServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 #include "gui/nguievent.h"
 #include "gui/nguiresource.h"
 
-nNebulaScriptClass(nGuiWidget, "kernel::nroot");
+nNebulaScriptClass(nGuiWidget, "nroot");
 
 nClass* nGuiWidget::widgetClass=0;
 nClass* nGuiWidget::windowClass=0;

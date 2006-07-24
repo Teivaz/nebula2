@@ -230,7 +230,7 @@ n_setinitialcursorpos(void* slf, nCmd* cmd)
     nGuiTextLabel::Alignment pos;
     if (strcmp("left", str) == 0)        pos = nGuiTextLabel::Left;
     else if (strcmp("right", str) == 0)  pos = nGuiTextLabel::Right;
-    else 
+    else
     {
         n_error("nguitextentry.setinitialcursorpos: Invalid string '%s'", str);
         return;

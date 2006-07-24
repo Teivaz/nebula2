@@ -210,7 +210,7 @@ n_isenabled(void* slf, nCmd* cmd)
     @info
     Set command to be executed as the widget's action.
 */
-static void 
+static void
 n_setcommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -228,7 +228,7 @@ n_setcommand(void* slf, nCmd* cmd)
     @info
     Get command to be executed as the widget's action.
 */
-static void 
+static void
 n_getcommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -246,7 +246,7 @@ n_getcommand(void* slf, nCmd* cmd)
     @info
     Set command to be executed when widget is shown.
 */
-static void 
+static void
 n_setshowcommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -264,7 +264,7 @@ n_setshowcommand(void* slf, nCmd* cmd)
     @info
     Get command to be executed when widget is shown.
 */
-static void 
+static void
 n_getshowcommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -282,7 +282,7 @@ n_getshowcommand(void* slf, nCmd* cmd)
     @info
     Set command to be executed when widget is hidden.
 */
-static void 
+static void
 n_sethidecommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -300,7 +300,7 @@ n_sethidecommand(void* slf, nCmd* cmd)
     @info
     Get command to be executed when widget is hidden.
 */
-static void 
+static void
 n_gethidecommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -318,7 +318,7 @@ n_gethidecommand(void* slf, nCmd* cmd)
     @info
     Set command to be executed per frame while widget is visible.
 */
-static void 
+static void
 n_setframecommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -336,7 +336,7 @@ n_setframecommand(void* slf, nCmd* cmd)
     @info
     Get command to be executed per frame while widget is visible.
 */
-static void 
+static void
 n_getframecommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -354,7 +354,7 @@ n_getframecommand(void* slf, nCmd* cmd)
     @info
     Set optional command to be executed on button down.
 */
-static void 
+static void
 n_setbuttondowncommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -372,7 +372,7 @@ n_setbuttondowncommand(void* slf, nCmd* cmd)
     @info
     Get optional command to be executed on button down.
 */
-static void 
+static void
 n_getbuttondowncommand(void* slf, nCmd* cmd)
 {
     nGuiWidget* self = (nGuiWidget*) slf;
@@ -812,7 +812,7 @@ nGuiWidget::SaveCmds(nPersistServer* ps)
         cmd->In()->SetF(rc.v0.y);
         cmd->In()->SetF(rc.v1.y);
         ps->PutCmd(cmd);
- 
+
         return true;
     }
 

@@ -11,7 +11,7 @@
 #include "kernel/nscriptserver.h"
 #include "kernel/nloghandler.h"
 
-nNebulaScriptClass(nConServer, "kernel::nroot");
+nNebulaScriptClass(nConServer, "nroot");
 
 // all keys which may not be routed to the application if the console is open
 static int keyKillSet[] = {

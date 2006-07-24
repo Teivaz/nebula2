@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaClass(nGuiCheckButtonGroup2, "gui::nguiformlayout");
+nNebulaClass(nGuiCheckButtonGroup2, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

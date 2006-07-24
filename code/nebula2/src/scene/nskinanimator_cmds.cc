@@ -32,7 +32,7 @@ static void n_isanimenabled(void* slf, nCmd* cmd);
 
     @cppclass
     nSkinAnimator
-    
+
     @superclass
     nanimator
 
@@ -124,7 +124,7 @@ n_beginjoints(void* slf, nCmd* cmd)
     @cmd
     setjoint
     @input
-    i(jointIndex), 
+    i(jointIndex),
     i(parentJointIndex),
     fff(poseTranslate)
     ffff(poseRotate)
@@ -141,10 +141,10 @@ n_setjoint(void* slf, nCmd* cmd)
     nSkinAnimator* self = (nSkinAnimator*) slf;
     vector3 poseTranslate, poseScale;
     quaternion poseRotate;
-    
+
     int jointIndex = cmd->In()->GetI();
     int parentJointIndex = cmd->In()->GetI();
-    
+
     poseTranslate.x = cmd->In()->GetF();
     poseTranslate.y = cmd->In()->GetF();
     poseTranslate.z = cmd->In()->GetF();
@@ -238,7 +238,7 @@ n_getjoint(void* slf, nCmd* cmd)
     cmd->Out()->SetF(poseScale.x);
     cmd->Out()->SetF(poseScale.y);
     cmd->Out()->SetF(poseScale.z);
-    
+
     cmd->Out()->SetS(name.Get());
 }
 
@@ -251,7 +251,7 @@ n_getjoint(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Begin adding animation clips to a state.    
+    Begin adding animation clips to a state.
 */
 static void
 n_beginclips(void* slf, nCmd* cmd)
@@ -280,7 +280,7 @@ n_setclip(void* slf, nCmd* cmd)
     const char* s0;
     nString s1;
     i0 = cmd->In()->GetI();
-    i1 = cmd->In()->GetI(); 
+    i1 = cmd->In()->GetI();
     s0 = cmd->In()->GetS();
     self->SetClip(i0, i1, s0);
 }
@@ -539,12 +539,12 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             cmd->In()->SetF(poseScale.x);
             cmd->In()->SetF(poseScale.y);
             cmd->In()->SetF(poseScale.z);
-            
+
             cmd->In()->SetS(name.Get());
 
             ps->PutCmd(cmd);
         }
-        
+
         //--- endjoints ---
         cmd = ps->GetCmd(this, 'EJNT');
         ps->PutCmd(cmd);
@@ -576,7 +576,7 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             cmd = ps->GetCmd(this, 'EDCL');
             ps->PutCmd(cmd);
         }
- 
+
         int clipIndex;
         for (clipIndex = 0; clipIndex < numClips; clipIndex++)
         {

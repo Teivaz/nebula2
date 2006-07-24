@@ -6,7 +6,7 @@
 #include "audio3/nsound3.h"
 #include "resource/nresourceserver.h"
 
-nNebulaScriptClass(nAudioServer3, "kernel::nroot");
+nNebulaScriptClass(nAudioServer3, "nroot");
 nAudioServer3* nAudioServer3::Singleton = 0;
 
 //------------------------------------------------------------------------------

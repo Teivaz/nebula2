@@ -46,9 +46,9 @@ nParticle::Trigger(nParticleEmitter* emitter, float curTime, float frameTime, co
 {
     static vector3 windVelocity;
     static vector3 finalVelocity;
-    static const vector3 zVector(0.0, 0.0, 1.0); 
+    static const vector3 zVector(0.0, 0.0, 1.0);
     nTime curAge = curTime - this->birthTime;
-    float relAge = (float) (curAge / lifeTime); 
+    float relAge = (float) (curAge / lifeTime);
 
     switch (this->state)
     {
@@ -58,7 +58,7 @@ nParticle::Trigger(nParticleEmitter* emitter, float curTime, float frameTime, co
                 this->state = Living;
             }
             break;
-        
+
         case Living:
             if (relAge >= 1.0)
             {

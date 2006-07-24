@@ -20,7 +20,7 @@
 #include "util/npriorityarray.h"
 #include "scene/nshapenode.h"
 
-nNebulaScriptClass(nSceneServer, "kernel::nroot");
+nNebulaScriptClass(nSceneServer, "nroot");
 nSceneServer* nSceneServer::Singleton = 0;
 
 // global data for qsort() compare function

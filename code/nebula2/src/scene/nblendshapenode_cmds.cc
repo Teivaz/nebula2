@@ -22,7 +22,7 @@ static void n_getweightat(void* slf, nCmd* cmd);
 
     @cppclass
     nBlendShapeNode
-    
+
     @superclass
     nshapenode
 

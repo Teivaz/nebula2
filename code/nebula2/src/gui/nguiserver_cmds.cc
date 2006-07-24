@@ -115,7 +115,7 @@ n_getrootpath(void* slf, nCmd* cmd)
     Set a new root window.
     An empty window identifier implies the null window.
 */
-static void 
+static void
 n_setrootwindow(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
@@ -357,8 +357,8 @@ n_togglesystemgui(void* slf, nCmd* /*cmd*/)
 static void
 n_computescreenspacebrushsize(void* slf, nCmd* cmd)
 {
-    nGuiServer* self = (nGuiServer*) slf;    
-    const vector2& brushSize = 
+    nGuiServer* self = (nGuiServer*) slf;
+    const vector2& brushSize =
         self->ComputeScreenSpaceBrushSize( cmd->In()->GetS() );
     cmd->Out()->SetF( brushSize.x );
     cmd->Out()->SetF( brushSize.y );
@@ -371,13 +371,13 @@ n_computescreenspacebrushsize(void* slf, nCmd* cmd)
     @input
     os (widget object, command string)
     @output
-    b 
+    b
     @info
     Run given script to nGuiWidget.
 
     27-Aug-04   kims   created.
 */
-static void 
+static void
 n_runcommand(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
@@ -394,7 +394,7 @@ n_runcommand(void* slf, nCmd* cmd)
     @input
     os (widget object, event type)
     @output
-    v 
+    v
     @info
     put an event to given widget object.
 
@@ -404,7 +404,7 @@ static void n_putevent(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
 
-    nGuiWidget* widget   = (nGuiWidget*) cmd->In()->GetO();    
+    nGuiWidget* widget   = (nGuiWidget*) cmd->In()->GetO();
     nGuiEvent::Type type = nGuiEvent::StringToType(cmd->In()->GetS());
 
     self->PutEvent(nGuiEvent(widget, type));
@@ -451,7 +451,7 @@ n_getdragbox(void* slf, nCmd* cmd)
     @input
     i (x size), i (y size)
     @output
-    v 
+    v
     @info
     Set the gui server's display size to the given dimensions.
 
@@ -461,6 +461,6 @@ static void n_setdisplaysize(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
     int xDim = cmd->In()->GetI();
-    int yDim = cmd->In()->GetI();    
+    int yDim = cmd->In()->GetI();
     self->SetDisplaySize(vector2((float)xDim, (float)yDim));
 }

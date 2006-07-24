@@ -5,7 +5,7 @@
 #include "anim2/nanimationserver.h"
 #include "resource/nresourceserver.h"
 
-nNebulaClass(nAnimationServer, "kernel::nroot");
+nNebulaClass(nAnimationServer, "nroot");
 
 nAnimationServer* nAnimationServer::Singleton = 0;
 

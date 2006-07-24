@@ -203,7 +203,7 @@ n_dbgmeminit()
 
 //------------------------------------------------------------------------------
 /**
-    Dumps all the memory blocks in the debug heap when a memory leak has occurred 
+    Dumps all the memory blocks in the debug heap when a memory leak has occurred
     (debug version only).
 
     returns TRUE if a memory leak is found. Otherwise, the function returns FALSE

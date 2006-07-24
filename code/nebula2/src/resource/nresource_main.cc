@@ -7,7 +7,7 @@
 #include "resource/nresourceserver.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nResource, "kernel::nroot");
+nNebulaClass(nResource, "nroot");
 
 uint nResource::uniqueIdCounter = 0;
 

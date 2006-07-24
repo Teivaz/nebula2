@@ -45,7 +45,7 @@ nWin32WindowHandler::OpenWindow()
     // add for parent HWND handling
     // check if an environment variable named "/sys/env/parent_hwnd" exists
     nAutoRef<nEnv> parent_hwnd("/sys/env/parent_hwnd");
-    if (parent_hwnd.isvalid()) 
+    if (parent_hwnd.isvalid())
     {
         // parent window exist and set window height and width
         this->parentHwnd = (HWND) parent_hwnd->GetI();
@@ -56,11 +56,11 @@ nWin32WindowHandler::OpenWindow()
         this->displayMode.SetWidth(r.right - r.left);
         this->displayMode.SetHeight(r.bottom - r.top);
         this->displayMode.SetType(nDisplayMode2::ChildWindow);
-    } 
+    }
     else
     {
         // parent window doesn't exist
-        this->parentHwnd = NULL;       
+        this->parentHwnd = NULL;
     }
 
     // initialize accelerator keys
@@ -112,7 +112,7 @@ nWin32WindowHandler::OpenWindow()
 
     // publish the window handle under a well defined name
     nEnv *env;
-    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv","/sys/env/hwnd"))) 
+    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv","/sys/env/hwnd")))
     {
         env->SetI((int)this->hWnd);
     }
@@ -144,7 +144,7 @@ nWin32WindowHandler::CloseWindow()
     }
 
     // release accelerator table
-    if (this->hAccel) 
+    if (this->hAccel)
     {
         DestroyAcceleratorTable(this->hAccel);
         this->hAccel = 0;
@@ -171,7 +171,7 @@ nWin32WindowHandler::SetWindowTitle(const char* title)
 /**
     Adjust window attributes to prepare for a new display mode.
 */
-void 
+void
 nWin32WindowHandler::AdjustWindowForChange()
 {
     n_assert(this->hWnd);
@@ -225,7 +225,7 @@ nWin32WindowHandler::RestoreWindow()
 
     // switch from minimized to fullscreen mode
     ShowWindow(this->hWnd, SW_RESTORE);
-    
+
     int x, y, w, h;
     if (this->displayMode.GetType() == nDisplayMode2::Fullscreen)
     {
@@ -239,7 +239,7 @@ nWin32WindowHandler::RestoreWindow()
         RECT parentRect;
         // We are child window, so get dimesion from parent
         GetClientRect(this->parentHwnd, &parentRect);
-        
+
         //calculate the desired window size
         RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()};
         AdjustWindowRect(&r, this->childStyle, 0);
@@ -250,11 +250,11 @@ nWin32WindowHandler::RestoreWindow()
         {
             w = (parentRect.right - parentRect.left) - x; //scale to max size inside the parrent window
         }
-        else 
+        else
         {
             w = (r.right - r.left);
         }
-        
+
         if (y + (r.bottom - r.top) > (parentRect.bottom - parentRect.top))
         {
             h = parentRect.bottom - parentRect.top - y; //scale to max size inside the parrent window
@@ -271,9 +271,9 @@ nWin32WindowHandler::RestoreWindow()
     else
     {
         // Need to adjust w & h so that the *client* area
-        // is equal to renderWidth/Height.  
-        RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()}; 
-        AdjustWindowRect(&r, this->windowedStyle, 0); 
+        // is equal to renderWidth/Height.
+        RECT r = {0, 0, this->displayMode.GetWidth(), this->displayMode.GetHeight()};
+        AdjustWindowRect(&r, this->windowedStyle, 0);
         x = this->displayMode.GetXPos();
         y = this->displayMode.GetYPos();
         w = r.right - r.left;
@@ -321,7 +321,7 @@ nWin32WindowHandler::RestoreWindow()
 
     Sets windowMinimized to true.
 */
-void 
+void
 nWin32WindowHandler::MinimizeWindow()
 {
     n_assert(this->hWnd);
@@ -329,7 +329,7 @@ nWin32WindowHandler::MinimizeWindow()
     if (!this->windowMinimized)
     {
         // minimize window for all mode except child
-        if (this->displayMode.GetType() != nDisplayMode2::ChildWindow) 
+        if (this->displayMode.GetType() != nDisplayMode2::ChildWindow)
         {
             ShowWindow(this->hWnd, SW_MINIMIZE);
         }
@@ -366,16 +366,16 @@ nWin32WindowHandler::Trigger()
             ///FIXME: whats to do with this w,h vars?
         }
     }
-    while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE)) 
+    while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
     {
-        if (GetMessage(&msg, NULL, 0, 0)) 
+        if (GetMessage(&msg, NULL, 0, 0))
         {
             int msgHandled = false;
-            if (this->hWnd && this->hAccel) 
+            if (this->hWnd && this->hAccel)
             {
                 msgHandled = TranslateAccelerator(this->hWnd, this->hAccel, &msg);
             }
-            if (!msgHandled) 
+            if (!msgHandled)
             {
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
@@ -455,8 +455,8 @@ nWin32WindowHandler::OnClose()
     The winproc, does the usual housekeeping, and also generates mouse and keyboard
     input events.
 */
-LONG 
-WINAPI 
+LONG
+WINAPI
 nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     LONG retval = 1;
@@ -464,7 +464,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     // user data of windows contains 'this' pointer
     nWin32WindowHandler* self = (nWin32WindowHandler*) GetWindowLong(hWnd, 0);
 
-    switch(uMsg) 
+    switch(uMsg)
     {
         case WM_SYSCOMMAND:
             // prevent moving/sizing and power loss in fullscreen mode
@@ -484,7 +484,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_ERASEBKGND:
-            // prevent windows from erasing 
+            // prevent windows from erasing
             return 1;
 
         case WM_SIZE:
@@ -495,7 +495,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                 {
                     // let window handler react on size change
                     self->OnSize(true);
-                    
+
                 }
                 else
                 {
@@ -556,9 +556,9 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_COMMAND:
-            if (self) 
+            if (self)
             {
-                switch (LOWORD(wParam)) 
+                switch (LOWORD(wParam))
                 {
                     case nWin32WindowHandler::ACCEL_TOGGLEFULLSCREEN:
                     {
@@ -570,11 +570,11 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_KEYDOWN:
-            if (self && self->refInputServer.isvalid()) 
+            if (self && self->refInputServer.isvalid())
             {
                 nKey key = self->TranslateKey((int)wParam);
                 nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie) 
+                if (ie)
                 {
                     ie->SetType(N_INPUT_KEY_DOWN);
                     ie->SetDeviceId(N_INPUT_KEYBOARD(0));
@@ -586,11 +586,11 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case WM_SYSKEYDOWN:
             /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
-            if (self && self->refInputServer.isvalid()) 
+            if (self && self->refInputServer.isvalid())
             {
                 nKey key = self->TranslateKey((int)wParam);
                 nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie) 
+                if (ie)
                 {
                     ie->SetType(N_INPUT_KEY_DOWN);
                     ie->SetDeviceId(N_INPUT_KEYBOARD(0));
@@ -604,11 +604,11 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_KEYUP:
-            if (self && self->refInputServer.isvalid()) 
+            if (self && self->refInputServer.isvalid())
             {
                 nKey key = self->TranslateKey((int)wParam);
                 nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie) 
+                if (ie)
                 {
                     ie->SetType(N_INPUT_KEY_UP);
                     ie->SetDeviceId(N_INPUT_KEYBOARD(0));
@@ -620,11 +620,11 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         case WM_SYSKEYUP:
             /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
-            if (self && self->refInputServer.isvalid()) 
+            if (self && self->refInputServer.isvalid())
             {
                 nKey key = self->TranslateKey((int)wParam);
                 nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie) 
+                if (ie)
                 {
                     ie->SetType(N_INPUT_KEY_UP);
                     ie->SetDeviceId(N_INPUT_KEYBOARD(0));
@@ -638,16 +638,16 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_CHAR:
-            if (self && self->refInputServer.isvalid()) 
+            if (self && self->refInputServer.isvalid())
             {
                 nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie) 
+                if (ie)
                 {
                     ie->SetType(N_INPUT_KEY_CHAR);
                     ie->SetDeviceId(N_INPUT_KEYBOARD(0));
                     ie->SetChar((int) wParam);
                     self->refInputServer->LinkEvent(ie);
-                }    
+                }
             }
             break;
 
@@ -660,32 +660,32 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MBUTTONUP:
-            if (self->GetParentHwnd()) 
+            if (self->GetParentHwnd())
             {
                 SetFocus(hWnd);
             }
-            if (self && self->refInputServer.isvalid()) 
+            if (self && self->refInputServer.isvalid())
             {
                 nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie) 
+                if (ie)
                 {
                     short x = LOWORD(lParam);
                     short y = HIWORD(lParam);
-                    switch (uMsg) 
+                    switch (uMsg)
                     {
                         case WM_LBUTTONDBLCLK:
                         case WM_RBUTTONDBLCLK:
                         case WM_MBUTTONDBLCLK:
                             ie->SetType(N_INPUT_BUTTON_DBLCLCK);
                             break;
-                    
+
                         case WM_LBUTTONDOWN:
                         case WM_RBUTTONDOWN:
                         case WM_MBUTTONDOWN:
                             SetCapture(hWnd);
                             ie->SetType(N_INPUT_BUTTON_DOWN);
                             break;
-                        
+
                         case WM_LBUTTONUP:
                         case WM_RBUTTONUP:
                         case WM_MBUTTONUP:
@@ -693,7 +693,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
                             ie->SetType(N_INPUT_BUTTON_UP);
                             break;
                     }
-                    switch (uMsg) 
+                    switch (uMsg)
                     {
                         case WM_LBUTTONDBLCLK:
                         case WM_LBUTTONDOWN:
@@ -724,12 +724,12 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             break;
 
         case WM_MOUSEMOVE:
-            if (self && self->refInputServer.isvalid()) 
+            if (self && self->refInputServer.isvalid())
             {
                 short x = LOWORD(lParam);
                 short y = HIWORD(lParam);
                 nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie) 
+                if (ie)
                 {
                     ie->SetType(N_INPUT_MOUSE_MOVE);
                     ie->SetDeviceId(N_INPUT_MOUSE(0));
@@ -753,11 +753,11 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping.
                           Thanks Magon Fox and Chris Tencati for the pointing out this.
 */
-nKey 
+nKey
 nWin32WindowHandler::TranslateKey(int vkey)
 {
     nKey nk;
-    switch(vkey) 
+    switch(vkey)
     {
         case VK_LBUTTON:    nk=N_KEY_LBUTTON; break;
         case VK_RBUTTON:    nk=N_KEY_RBUTTON; break;

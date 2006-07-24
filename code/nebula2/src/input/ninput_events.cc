@@ -19,7 +19,7 @@ nInputEvent *nInputServer::NewEvent(void)
 */
 void nInputServer::ReleaseEvent(nInputEvent *e)
 {
-    if (e->IsLinked()) 
+    if (e->IsLinked())
     {
         this->UnlinkEvent(e);
     }
@@ -29,7 +29,7 @@ void nInputServer::ReleaseEvent(nInputEvent *e)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::LinkEvent(nInputEvent *e)
 {
     n_assert(!e->IsLinked());
@@ -39,7 +39,7 @@ nInputServer::LinkEvent(nInputEvent *e)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::UnlinkEvent(nInputEvent *e)
 {
     n_assert(e->IsLinked());
@@ -49,7 +49,7 @@ nInputServer::UnlinkEvent(nInputEvent *e)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::FlushEvents(void)
 {
     nInputEvent *e;
@@ -68,7 +68,7 @@ nInputServer::FlushInput()
 
     // flush mappings
     nInputMapping* curMapping;
-    for (curMapping = (nInputMapping*) this->im_list.GetHead(); 
+    for (curMapping = (nInputMapping*) this->im_list.GetHead();
          curMapping;
          curMapping = (nInputMapping*) curMapping->GetSucc())
     {
@@ -109,7 +109,7 @@ nInputServer::NextEvent(nInputEvent *e)
 bool nInputServer::IsIdenticalEvent(nInputEvent *e0, nInputEvent *e1)
 {
     bool eq = false;
-    if (e0->GetDeviceId() == e1->GetDeviceId()) 
+    if (e0->GetDeviceId() == e1->GetDeviceId())
     {
         switch(e0->GetType()) {
             case N_INPUT_KEY_DOWN:
@@ -163,9 +163,9 @@ nInputServer::FirstIdenticalEvent(nInputEvent *pattern)
 {
     nInputEvent *e = (nInputEvent *) this->events.GetHead();
     nInputEvent *eq = NULL;
-    if (e) do 
+    if (e) do
     {
-        if (this->IsIdenticalEvent(pattern,e)) 
+        if (this->IsIdenticalEvent(pattern,e))
         {
             eq = e;
         }
@@ -180,9 +180,9 @@ nInputEvent*
 nInputServer::NextIdenticalEvent(nInputEvent *pattern, nInputEvent *e)
 {
     nInputEvent *eq = NULL;
-    while ((e = (nInputEvent *) e->GetSucc()) && (!eq)) 
+    while ((e = (nInputEvent *) e->GetSucc()) && (!eq))
     {
-        if (this->IsIdenticalEvent(pattern,e)) 
+        if (this->IsIdenticalEvent(pattern,e))
         {
             eq = e;
         }
@@ -215,7 +215,7 @@ static int getInt(const char *str, const char *attr)
     determine if the device exists and the channel is supported.
     If not, the nInputEvent is invalid and the function returns false.
 */
-bool 
+bool
 nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
 {
     char *dev_str, *chnl_str;
@@ -228,11 +228,11 @@ nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
     n_strncpy2(buf,str,sizeof(buf));
     dev_str  = buf;
     chnl_str = strchr(buf,':');
-    if (chnl_str) 
+    if (chnl_str)
     {
         *chnl_str++ = 0;
     }
-    else 
+    else
     {
         n_printf("':' expected in input event '%s'\n",str);
         return false;
@@ -241,19 +241,19 @@ nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
     // search for device
     sprintf(fname,"/sys/share/input/devs/%s",dev_str);
     dev = kernelServer->Lookup(fname);
-    if (dev) 
+    if (dev)
     {
         nEnv *channel;
         kernelServer->PushCwd(dev);
         // search for channel
         sprintf(fname,"channels/%s",chnl_str);
         channel = (nEnv *) kernelServer->Lookup(fname);
-        if (channel) 
+        if (channel)
         {
             const char *attr = channel->GetS();
             ie->SetDeviceId(getInt(attr, "devid"));
             ie->SetType((nInputType) getInt(attr, "type"));
-            switch (ie->GetType()) 
+            switch (ie->GetType())
             {
                 case N_INPUT_KEY_DOWN:
                 case N_INPUT_KEY_UP:
@@ -269,8 +269,8 @@ nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
                 default: break;
             }
             retval = true;
-        } 
-        else 
+        }
+        else
         {
 //            n_printf("Unknown channel '%s' for input device '%s'.\n",chnl_str,dev_str);
         }

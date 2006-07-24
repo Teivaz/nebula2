@@ -46,7 +46,7 @@ nWin32StackTrace::Print(const char* str, ...)
     _vsnprintf(tmpLine, sizeof(tmpLine), str, argList);
     va_end(argList);
 
-    // append 
+    // append
     int len = strlen(CharBuffer) + strlen(tmpLine);
     if (len < (sizeof(CharBuffer) - 1))
     {
@@ -93,17 +93,17 @@ nWin32StackTrace::WalkStack(HANDLE thread, CONTEXT& context)
 
     // dump stack frames
     int frameNum;
-	for (frameNum = 0; 
+	for (frameNum = 0;
         StackWalk64(
 		    IMAGE_FILE_MACHINE_I386,
-		    this->process, 
-		    thread, 
-		    &stackFrame, 
+		    this->process,
+		    thread,
+		    &stackFrame,
 		    &context,
 		    0 /* ReadMemoryRoutine */,
 		    SymFunctionTableAccess64,
 		    SymGetModuleBase64,
-		    NULL /* TranslateAddress */); 
+		    NULL /* TranslateAddress */);
         frameNum++)
 	{
         this->ShowFrame(stackFrame);
@@ -202,7 +202,7 @@ nWin32StackTrace::ShowLocals(STACKFRAME64& frame)
 //------------------------------------------------------------------------------
 /*
 */
-BOOL CALLBACK 
+BOOL CALLBACK
 nWin32StackTrace::EnumSymbolsCallback(PSYMBOL_INFO symbol, ULONG symbolSize, PVOID userContext)
 {
 	Params* params = (Params*)userContext;
@@ -215,7 +215,7 @@ nWin32StackTrace::EnumSymbolsCallback(PSYMBOL_INFO symbol, ULONG symbolSize, PVO
     }
 
 /*
-	params->self->Print("\t%c %-20s = %08x\n", 
+	params->self->Print("\t%c %-20s = %08x\n",
 		(symbol->Flags & IMAGEHLP_SYMBOL_INFO_PARAMETER) ? 'P' : ' ',
 		symbol->Name,
 		data);

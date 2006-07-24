@@ -132,14 +132,14 @@ nSQLite3Query::Execute(bool failOnError)
     // count the db accesses per frame
     this->dbAccessCount++;
     #endif
-    
+
     // clear the previous result (if exists)
     this->Clear();
 
     // execute the query
-    int err = sqlite3_get_table(this->refDatabase->GetDatabaseHandle(), 
-                                this->sqlStatement.Get(), 
-                                &this->sqlite3Result, 
+    int err = sqlite3_get_table(this->refDatabase->GetDatabaseHandle(),
+                                this->sqlStatement.Get(),
+                                &this->sqlite3Result,
                                 &this->sqlite3ResNumRows,
                                 &this->sqlite3ResNumCols,
                                 0);

@@ -10,14 +10,14 @@
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::StartLogging(void)
 {
-    if (this->log_events) 
+    if (this->log_events)
     {
         n_printf("already logging\n");
-    } 
-    else 
+    }
+    else
     {
         this->log_events = true;
     }
@@ -26,14 +26,14 @@ nInputServer::StartLogging(void)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::StopLogging(void)
 {
-    if (this->log_events) 
+    if (this->log_events)
     {
         this->log_events = false;
-    } 
-    else 
+    }
+    else
     {
         n_printf("not logging!\n");
     }
@@ -61,7 +61,7 @@ void nInputServer::LogSingleEvent(nInputEvent *ie)
     else if (ie->GetDeviceId() & N_IDEV_JOYMOUSE) dev_type = "joymouse";
     else if (ie->GetDeviceId() & N_IDEV_PADMOUSE) dev_type = "padmouse";
     else dev_type = "unknown";
-    switch (ie->GetType()) 
+    switch (ie->GetType())
     {
         case N_INPUT_KEY_DOWN:          e_type = "key_down"; break;
         case N_INPUT_KEY_UP:            e_type = "key_up"; break;
@@ -72,8 +72,8 @@ void nInputServer::LogSingleEvent(nInputEvent *ie)
         case N_INPUT_BUTTON_UP:         e_type = "button_up"; break;
         default: e_type = "unknown"; break;
     }
-    
-    switch (ie->GetType()) 
+
+    switch (ie->GetType())
     {
         case N_INPUT_KEY_DOWN:
         case N_INPUT_KEY_UP:
@@ -88,7 +88,7 @@ void nInputServer::LogSingleEvent(nInputEvent *ie)
             break;
         case N_INPUT_MOUSE_MOVE:
             n_printf("dev=%s%d type=%s abs=[%d,%d] rel=[%f,%f]\n",
-                dev_type, dev_num, e_type, 
+                dev_type, dev_num, e_type,
                 ie->GetAbsXPos(), ie->GetAbsYPos(),
                 ie->GetRelXPos(), ie->GetRelYPos());
             break;

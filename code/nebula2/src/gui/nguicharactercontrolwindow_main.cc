@@ -20,7 +20,7 @@
 #include "variable/nvariableserver.h"
 #include "tools/nnodelist.h"
 
-nNebulaClass(nGuiCharacterControlWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiCharacterControlWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

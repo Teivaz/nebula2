@@ -6,7 +6,7 @@
 #include "scene/nsceneserver.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nAttachmentNode, "scene::ntransformnode");
+nNebulaScriptClass(nAttachmentNode, "ntransformnode");
 
 //------------------------------------------------------------------------------
 /**

@@ -11,7 +11,7 @@
 #include "variable/nvariableserver.h"
 #include "character/ncharacter2set.h"
 
-nNebulaScriptClass(nSkinAnimator, "scene::nanimator");
+nNebulaScriptClass(nSkinAnimator, "nanimator");
 
 //------------------------------------------------------------------------------
 /**

@@ -15,7 +15,7 @@ static void n_setjointbyindex(void* slf, nCmd* cmd);
 
     @cppclass
     nAttachmentNode
-    
+
     @superclass
     ntransformnode
 
@@ -50,7 +50,7 @@ n_setjointbyname(void* slf, nCmd* cmd)
 {
     nAttachmentNode* self = (nAttachmentNode*) slf;
     const char *nameStr = cmd->In()->GetS();
-    
+
     self->SetJointByName(nameStr);
 }
 
@@ -70,7 +70,7 @@ n_setjointbyindex(void* slf, nCmd* cmd)
 {
     nAttachmentNode* self = (nAttachmentNode*) slf;
     unsigned int jointIndex = cmd->In()->GetI();
-    
+
     self->SetJointByIndex(jointIndex);
 }
 

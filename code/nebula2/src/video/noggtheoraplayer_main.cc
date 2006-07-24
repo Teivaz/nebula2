@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "video/noggtheoraplayer.h"
 
-nNebulaClass(nOggTheoraPlayer, "video::nvideoplayer")
+nNebulaClass(nOggTheoraPlayer, "nvideoplayer")
 
 //------------------------------------------------------------------------------
 /**

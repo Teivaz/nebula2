@@ -6,7 +6,7 @@
 #include "application/nexitappstate.h"
 #include "application/napplication.h"
 
-nNebulaClass(nExitAppState, "application::nappstate");
+nNebulaClass(nExitAppState, "nappstate");
 
 //------------------------------------------------------------------------------
 /**

@@ -6,7 +6,7 @@
 #include "audio3/ndsoundserver3.h"
 #include "audio3/ndsoundresource.h"
 
-nNebulaClass(nDSound3, "audio3::nsound3");
+nNebulaClass(nDSound3, "nsound3");
 
 //------------------------------------------------------------------------------
 /**

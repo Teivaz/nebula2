@@ -76,8 +76,8 @@ di8SetDWordProp(IDirectInputDevice8* dev, REFGUID prop, DWORD val)
 /**
     Get a range property from a DirectInput device.
 */
-static 
-void 
+static
+void
 di8GetRangeProp(IDirectInputDevice8* dev,
                 REFGUID prop,
                 DWORD obj,
@@ -156,7 +156,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
     hr = di8->CreateDevice(lpddi->guidInstance, &diDev, 0);
     if (FAILED(hr))
     {
-        n_printf("nDI8Server: failed to create device '%s' with '%d'\n", 
+        n_printf("nDI8Server: failed to create device '%s' with '%d'\n",
                  lpddi->tszInstanceName, diServer->Error(hr));
         return DIENUM_CONTINUE;
     }
@@ -204,7 +204,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
             di8SetDWordProp(diDev, DIPROP_AXISMODE,   DIPROPAXISMODE_ABS);
             di8SetDWordProp(diDev, DIPROP_DEADZONE,   250);
             di8SetDWordProp(diDev, DIPROP_SATURATION, 9999);
-            
+
             // get the range and store in the device object
             di8GetRangeProp(diDev, DIPROP_RANGE, DIJOFS_X, minRange, maxRange);
             dev->SetRange(minRange, maxRange);
@@ -217,7 +217,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
         case nDI8Device::MOUSE:
             // set data format and axis properties
             diDev->SetDataFormat(&c_dfDIMouse2);
-            di8SetDWordProp(diDev, DIPROP_BUFFERSIZE, nDI8Server::INPUT_BUFFER_SIZE); 
+            di8SetDWordProp(diDev, DIPROP_BUFFERSIZE, nDI8Server::INPUT_BUFFER_SIZE);
             di8SetDWordProp(diDev, DIPROP_AXISMODE, DIPROPAXISMODE_REL);
             dev->SetRange(-50, +50);
             break;
@@ -253,8 +253,8 @@ nDI8Server::HwndChanged()
         hr = diDev->SetCooperativeLevel(this->hwnd, (DISCL_FOREGROUND|DISCL_NOWINKEY|DISCL_NONEXCLUSIVE));
         if (FAILED(hr))
         {
-            n_printf("SetCooperativeLevel() failed on '%s' with '%s'\n", 
-                dev->GetInstanceName(), 
+            n_printf("SetCooperativeLevel() failed on '%s' with '%s'\n",
+                dev->GetInstanceName(),
                 this->Error(hr));
         }
     }
@@ -278,7 +278,7 @@ nDI8Server::InitDevices()
         n_printf("nDI8Server: EnumDevices() failed with '%s'\n", this->Error(hr));
         return false;
     }
-    
+
     // export devices into Nebula's input device database
     this->ExportDevices();
     return true;
@@ -286,7 +286,7 @@ nDI8Server::InitDevices()
 
 //------------------------------------------------------------------------------
 /**
-    Kill the devices in the internal device lists   
+    Kill the devices in the internal device lists
 */
 void
 nDI8Server::KillDevices()
@@ -354,8 +354,8 @@ nDI8Server::ExportDevices()
             case nDI8Device::JOYSTICK:
                 {
                     nInputDevice* joystick = n_new(nJoystickDevice(
-                        kernelServer, 
-                        this, 
+                        kernelServer,
+                        this,
                         this->curJoystick++,
                         numAxes,
                         numButtons,

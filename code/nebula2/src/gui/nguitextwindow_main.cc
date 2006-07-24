@@ -7,7 +7,7 @@
 #include "gui/nguitextbutton.h"
 #include "kernel/nfileserver2.h"
 
-nNebulaClass(nGuiTextWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiTextWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

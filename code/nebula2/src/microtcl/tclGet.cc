@@ -1,4 +1,4 @@
-/* 
+/*
  * tclGet.c --
  *
  *	This file contains procedures to convert strings into
@@ -116,7 +116,7 @@ Tcl_GetInt(interp, string, intPtr)
  *	will be set to the long integer value equivalent to string. If
  *	string is improperly formed then TCL_ERROR is returned and
  *	an error message will be left in the interp's result if interp
- *	is non-NULL. 
+ *	is non-NULL.
  *
  * Side effects:
  *	None.
@@ -225,7 +225,7 @@ Tcl_GetDouble(interp, string, doublePtr)
     }
     if (errno != 0 && (d == HUGE_VAL || d == -HUGE_VAL || d == 0)) {
         if (interp != (Tcl_Interp *) NULL) {
-            TclExprFloatError(interp, d); 
+            TclExprFloatError(interp, d);
         }
 	return TCL_ERROR;
     }
@@ -273,7 +273,7 @@ Tcl_GetBoolean(interp, string, boolPtr)
     size_t length;
 
     /*
-     * Convert the input string to all lower-case. 
+     * Convert the input string to all lower-case.
      * INTL: This code will work on UTF strings.
      */
 

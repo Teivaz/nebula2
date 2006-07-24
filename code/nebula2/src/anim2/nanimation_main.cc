@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "anim2/nanimation.h"
 
-nNebulaClass(nAnimation, "resource::nresource");
+nNebulaClass(nAnimation, "nresource");
 
 //------------------------------------------------------------------------------
 /**

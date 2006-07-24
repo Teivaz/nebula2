@@ -8,7 +8,7 @@
 #include "gui/nguiserver.h"
 #include "kernel/ntimeserver.h"
 
-nNebulaClass(nGuiMouseCursor, "gui::nguilabel");
+nNebulaClass(nGuiMouseCursor, "nguilabel");
 
 
 //------------------------------------------------------------------------------

@@ -325,7 +325,7 @@ n_p2setparticlergb(void* slf, nCmd* cmd)
 {
     nParticleShapeNode2* self = (nParticleShapeNode2*) slf;
     float values[14];
-    for(int i = 0; i < 14; i++) values[i] = cmd->In()->GetF();   
+    for(int i = 0; i < 14; i++) values[i] = cmd->In()->GetF();
     self->SetRGBCurve(nVector3EnvelopeCurve(
         vector3(values[0], values[1], values[2]),
         vector3(values[3], values[4], values[5]),

@@ -6,7 +6,7 @@
 #include "gui/nguievent.h"
 #include "gui/nguiserver.h"
 
-nNebulaScriptClass(nGuiDragBox, "gui::nguiwidget");
+nNebulaScriptClass(nGuiDragBox, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

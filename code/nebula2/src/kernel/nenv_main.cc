@@ -5,7 +5,7 @@
 #include "kernel/nenv.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass(nEnv, "kernel::nroot");
+nNebulaScriptClass(nEnv, "nroot");
 
 //--------------------------------------------------------------------
 //  EOF

@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "gui/nguiformlayout.h"
 
-nNebulaScriptClass(nGuiFormLayout, "gui::nguiwidget");
+nNebulaScriptClass(nGuiFormLayout, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

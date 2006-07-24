@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaClass(nGuiScrollButtonList, "gui::nguicheckbuttongroup2");
+nNebulaClass(nGuiScrollButtonList, "nguicheckbuttongroup2");
 
 //------------------------------------------------------------------------------
 /**

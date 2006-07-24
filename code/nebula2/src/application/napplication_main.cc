@@ -25,7 +25,7 @@
 #include "locale/nlocaleserver.h"
 #include "shadow2/nshadowserver2.h"
 
-nNebulaScriptClass(nApplication, "kernel::nroot");
+nNebulaScriptClass(nApplication, "nroot");
 
 //------------------------------------------------------------------------------
 /**

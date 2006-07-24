@@ -17,7 +17,7 @@ main(int argc, const char** argv)
     bool helpArg    = args.GetBoolArg("-help");
     nString fileArg = args.GetStringArg("-file", 0);
     nString cmpArg  = args.GetStringArg("-cmp", 0);
-    
+
     if (helpArg)
     {
         printf("(C) 2004 RadonLabs GmbH\n"
@@ -63,7 +63,7 @@ main(int argc, const char** argv)
         {
             printf("Error: Failed to open file '%s'!\n", fileArg.Get());
             return 10;
-        } 
+        }
         if (crc0 == crc1)
         {
             printf("Files are identical\n");

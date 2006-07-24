@@ -5,7 +5,7 @@
 #include "network/nsessionclient.h"
 #include "network/nsessionservercontext.h"
 
-nNebulaScriptClass(nSessionClient, "kernel::nroot");
+nNebulaScriptClass(nSessionClient, "nroot");
 
 //------------------------------------------------------------------------------
 /**

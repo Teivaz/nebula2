@@ -22,7 +22,7 @@ static void n_setchar3variationflag(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nskinshapenode    
+    nskinshapenode
 
     @cppclass
     nSkinShapeNode
@@ -380,7 +380,7 @@ nSkinShapeNode::SaveCmds(nPersistServer* ps)
                     ps->PutCmd(cmd);
                 }
             }
-            
+
             //--- endfragments ---
             cmd = ps->GetCmd(this, 'EDFR');
             ps->PutCmd(cmd);

@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "application/nappstate.h"
 
-nNebulaClass(nAppState, "kernel::nroot");
+nNebulaClass(nAppState, "nroot");
 
 //------------------------------------------------------------------------------
 /**

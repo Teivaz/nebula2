@@ -6,7 +6,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "scene/nanimator.h"
 
-nNebulaClass(nSkyState, "scene::nabstractshadernode");
+nNebulaClass(nSkyState, "nabstractshadernode");
 
 //------------------------------------------------------------------------------
 /**

@@ -8,7 +8,7 @@
 #include "resource/nresourceserver.h"
 #include "kernel/ntimeserver.h"
 
-nNebulaClass(nGuiSystemInfoWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiSystemInfoWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

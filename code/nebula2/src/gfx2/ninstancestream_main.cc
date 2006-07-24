@@ -5,7 +5,7 @@
 #include "gfx2/ninstancestream.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaClass(nInstanceStream, "resource::nresource");
+nNebulaClass(nInstanceStream, "nresource");
 
 //------------------------------------------------------------------------------
 /**

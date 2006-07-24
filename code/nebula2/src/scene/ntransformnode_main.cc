@@ -7,7 +7,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nTransformNode, "scene::nscenenode");
+nNebulaScriptClass(nTransformNode, "nscenenode");
 
 //------------------------------------------------------------------------------
 /**

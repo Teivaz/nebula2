@@ -72,7 +72,7 @@ nJoyMouseDevice::Export(nRoot* dir)
             case 6: axisName = "u"; break;
             case 7: axisName = "v"; break;
             case 8: axisName = "w"; break;
-            default: 
+            default:
                 continue;
         }
 
@@ -103,9 +103,9 @@ nJoyMouseDevice::Export(nRoot* dir)
         char chnName[N_MAXNAMELEN];
         sprintf(chnName, "btn%d", curBtn);
         this->ExportButton(devId, chnName, curBtn);
-    } 
+    }
 
-    kernelServer->PopCwd();        
+    kernelServer->PopCwd();
     kernelServer->PopCwd();
     kernelServer->PopCwd();
 }
@@ -174,7 +174,7 @@ nJoyMouseDevice::EmitAxisMovedEvents(int axisNum, int value)
 
     float oldNegAxisVal = this->GetStoreValue(negAxisIndex);
     float oldPosAxisVal = this->GetStoreValue(posAxisIndex);
-    
+
     // generate positive/negative axis move events
     this->PutAxisEvent(devId, negAxisIndex, negAxisVal);
     this->PutAxisEvent(devId, posAxisIndex, posAxisVal);
@@ -190,7 +190,7 @@ nJoyMouseDevice::EmitAxisMovedEvents(int axisNum, int value)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nJoyMouseDevice::EmitButtonEvents(int btnNum, bool pressed)
 {
     n_assert((btnNum >= 0) && (btnNum < this->numButtons));
@@ -213,7 +213,7 @@ void
 nJoyMouseDevice::RecenterAxis(int axisNum)
 {
     int devId = N_INPUT_JOYMOUSE(this->deviceNum);
-    
+
     // get current axis value
     int storeIndex = (this->numAxes * 2) + axisNum;
     float val = this->GetStoreValue(storeIndex);
@@ -252,7 +252,7 @@ nJoyMouseDevice::RecenterAxis(int axisNum)
 
     float oldNegAxisVal = this->GetStoreValue(negAxisIndex);
     float oldPosAxisVal = this->GetStoreValue(posAxisIndex);
-    
+
     // generate positive/negative axis move events
     this->PutAxisEvent(devId, negAxisIndex, negAxisVal);
     this->PutAxisEvent(devId, posAxisIndex, posAxisVal);

@@ -55,7 +55,7 @@ nWin32Wrapper::nWin32Wrapper() :
                 this->windowsVersion = Win32_NT;
                 break;
             case VER_PLATFORM_WIN32_WINDOWS:
-                this->windowsVersion = Win32_Windows;   
+                this->windowsVersion = Win32_Windows;
                 break;
         }
     }
@@ -84,10 +84,10 @@ nWin32Wrapper::~nWin32Wrapper()
 
 //------------------------------------------------------------------------------
 /**
-    Implements the Win32 SHGetFolderPath() which on Win98 is only 
+    Implements the Win32 SHGetFolderPath() which on Win98 is only
     available through client-installed shfolder.dll.
 */
-HRESULT 
+HRESULT
 nWin32Wrapper::SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, LPTSTR pszPath)
 {
     n_assert(this->shGetFolderPathFunc);

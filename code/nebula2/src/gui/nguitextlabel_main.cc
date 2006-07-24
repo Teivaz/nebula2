@@ -6,7 +6,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "gui/nguiserver.h"
 
-nNebulaScriptClass(nGuiTextLabel, "gui::nguilabel");
+nNebulaScriptClass(nGuiTextLabel, "nguilabel");
 
 //------------------------------------------------------------------------------
 /**

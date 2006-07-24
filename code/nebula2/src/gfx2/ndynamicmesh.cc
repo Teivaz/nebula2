@@ -64,8 +64,8 @@ nDynamicMesh::IsValid() const
     @return                     true if initialized successful
 */
 bool
-nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType, 
-                         int vertexComponents, 
+nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
+                         int vertexComponents,
                          int usageFlags,
                          bool indexed,
                          const nString& rsrcBaseName,
@@ -107,7 +107,7 @@ nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
         {
             mesh = nGfxServer2::Instance()->NewMesh(0);
         }
-        
+
         n_assert(mesh);
         this->refMesh = mesh;
     }
@@ -148,9 +148,9 @@ nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
     @param  maxNumIndices   [out] max number of indices before calling Swap() or End()
 */
 void
-nDynamicMesh::BeginIndexed(float*& vertexPointer, 
-                           ushort*& indexPointer, 
-                           int& maxNumVertices, 
+nDynamicMesh::BeginIndexed(float*& vertexPointer,
+                           ushort*& indexPointer,
+                           int& maxNumVertices,
                            int& maxNumIndices)
 {
     n_assert(this->indexedRendering);
@@ -168,7 +168,7 @@ nDynamicMesh::BeginIndexed(float*& vertexPointer,
 /**
     Do an intermediate swap. Call this method when the max number of
     vertices or the max number of indices returned by Begin() have
-    been written into the vertex and index buffers. The internal 
+    been written into the vertex and index buffers. The internal
     dynamic mesh will be rendered, and render attributes will be returned.
     Note that the contents of the vertex and index buffer will be discarded,
     so everything must be overwritten!
@@ -186,7 +186,7 @@ nDynamicMesh::SwapIndexed(int numVertices, int numIndices, float*& vertexPointer
 {
     n_assert(this->indexedRendering);
     nGfxServer2* gfxServer = nGfxServer2::Instance();
-    
+
     nMesh2* mesh = this->refMesh.get();
     mesh->UnlockVertices();
     mesh->UnlockIndices();
@@ -199,7 +199,7 @@ nDynamicMesh::SwapIndexed(int numVertices, int numIndices, float*& vertexPointer
 
 //------------------------------------------------------------------------------
 /**
-    Finish indexed rendering. Call this method when no more dynamic geometry 
+    Finish indexed rendering. Call this method when no more dynamic geometry
     needs to be rendered. This method will do a final DrawIndexed() call to
     the gfx server with the remaining valid vertices and indices.
 
@@ -223,7 +223,7 @@ nDynamicMesh::EndIndexed(int numVertices, int numIndices)
 
 //------------------------------------------------------------------------------
 /**
-    Begin non-indexed rendering to the dynamic mesh. 
+    Begin non-indexed rendering to the dynamic mesh.
 
     @param  vertexPointer   [out] will be filled with a pointer to the vertex buffer
     @param  maxNumVertices  [out] max number of vertices before calling Swap() or End()
@@ -262,7 +262,7 @@ nDynamicMesh::Swap(int numVertices, float*& vertexPointer)
 
 //------------------------------------------------------------------------------
 /**
-    Finish non-indexed rendering. 
+    Finish non-indexed rendering.
 
     @param  numVertices     number of valid vertices in the vertex buffer
 */

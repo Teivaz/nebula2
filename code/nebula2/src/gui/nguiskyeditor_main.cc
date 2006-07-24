@@ -21,7 +21,7 @@
 #include "gui/nguicheckbutton.h"
 #include "kernel/ntimeserver.h"
 
-nNebulaClass(nGuiSkyEditor, "gui::nguiformlayout");
+nNebulaClass(nGuiSkyEditor, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

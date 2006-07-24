@@ -8,7 +8,7 @@
 #include "gui/nguiskin.h"
 #include "gui/nguicontextmenu.h"
 
-nNebulaScriptClass(nGuiContextMenu, "gui::nguiclientwindow");
+nNebulaScriptClass(nGuiContextMenu, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

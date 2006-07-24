@@ -6,7 +6,7 @@
 #include "scene/nclippingcameranode.h"
 #include "mathlib/polar.h"
 
-nNebulaClass(nClippingCameraNode, "scene::nabstractcameranode");
+nNebulaClass(nClippingCameraNode, "nabstractcameranode");
 
 //------------------------------------------------------------------------------
 /**

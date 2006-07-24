@@ -1,4 +1,4 @@
-/* 
+/*
  * tclParse.c --
  *
  *      This file contains procedures that parse Tcl scripts.  They
@@ -222,7 +222,7 @@ Tcl_ParseCommand(interp, string, numBytes, nested, parsePtr)
                                  * temporarily store a 0 sentinel
                                  * character. */
     int numBytes;               /* Total number of bytes in string.  If < 0,
-                                 * the script consists of all bytes up to 
+                                 * the script consists of all bytes up to
                                  * the first null character. */
     int nested;                 /* Non-zero means this is a nested command:
                                  * close bracket should be considered
@@ -408,7 +408,7 @@ Tcl_ParseCommand(interp, string, numBytes, nested, parsePtr)
              * all of the work.
              */
 
-            if (ParseTokens(src, TYPE_SPACE|terminators, 
+            if (ParseTokens(src, TYPE_SPACE|terminators,
                     parsePtr) != TCL_OK) {
                 goto error;
             }
@@ -464,7 +464,7 @@ Tcl_ParseCommand(interp, string, numBytes, nested, parsePtr)
         if (src == parsePtr->end) {
             break;
         }
-        if (src[-1] == '"') { 
+        if (src[-1] == '"') {
             if (interp != NULL) {
                 Tcl_SetResult(interp, "extra characters after close-quote",
                         TCL_STATIC);
@@ -812,7 +812,7 @@ EvalObjv(interp, objc, objv, command, length, flags)
     /*
      * If the interpreter was deleted, return an error.
      */
-    
+
     if (iPtr->flags & DELETED) {
         Tcl_AppendToObj(Tcl_GetObjResult(interp),
                 "attempt to call eval in deleted interpreter", -1);
@@ -839,14 +839,14 @@ EvalObjv(interp, objc, objv, command, length, flags)
      */
 
 // FIXME FLOH
-/* 
+/*
     if (TclpCheckStackSpace() == 0) {
         iPtr->numLevels--;
         iPtr->result =  "too many nested calls to Tcl_Eval (infinite loop?)";
         return TCL_ERROR;
     }
 */
-    
+
     /*
      * Find the procedure to execute this command. If there isn't one,
      * then see if there is a command "unknown".  If so, create a new
@@ -854,7 +854,7 @@ EvalObjv(interp, objc, objv, command, length, flags)
      * command words as arguments.  Then call ourselves recursively
      * to execute it.
      */
-    
+
     cmdPtr = (Command *) Tcl_GetCommandFromObj(interp, objv[0]);
     if (cmdPtr == NULL) {
         newObjv = (Tcl_Obj **) ckalloc((unsigned)
@@ -877,7 +877,7 @@ EvalObjv(interp, objc, objv, command, length, flags)
         ckfree((char *) newObjv);
         goto done;
     }
-    
+
     /*
      * Call trace procedures if needed.
      */
@@ -921,11 +921,11 @@ EvalObjv(interp, objc, objv, command, length, flags)
     if (commandCopy != command) {
         ckfree((char *) commandCopy);
     }
-    
+
     /*
      * Finally, invoke the command's Tcl_ObjCmdProc.
      */
-    
+
     iPtr->cmdCount++;
     savedVarFramePtr = iPtr->varFramePtr;
     if (flags & TCL_EVAL_GLOBAL) {
@@ -947,7 +947,7 @@ EvalObjv(interp, objc, objv, command, length, flags)
      * interp->result directly. If so, move the string result to the
      * result object, then reset the string result.
      */
-    
+
     if (*(iPtr->result) != 0) {
         (void) Tcl_GetObjResult(interp);
     }
@@ -1369,12 +1369,12 @@ Tcl_EvalEx(interp, script, numBytes, flags)
             code = TCL_ERROR;
             goto error;
         }
-        gotParse = 1; 
+        gotParse = 1;
         if (parse.numWords > 0) {
             /*
              * Generate an array of objects for the words of the command.
              */
-    
+
             if (parse.numWords <= NUM_STATIC_OBJS) {
                 objv = staticObjArray;
             } else {
@@ -1391,11 +1391,11 @@ Tcl_EvalEx(interp, script, numBytes, flags)
                     goto error;
                 }
             }
-    
+
             /*
              * Execute the command and free the objects for its words.
              */
-    
+
             code = EvalObjv(interp, objectsUsed, objv, p, bytesLeft, 0);
             if (code != TCL_OK) {
                 goto error;
@@ -1443,7 +1443,7 @@ Tcl_EvalEx(interp, script, numBytes, flags)
      * to the command.
      */
 
-    if ((code == TCL_ERROR) && !(iPtr->flags & ERR_ALREADY_LOGGED)) { 
+    if ((code == TCL_ERROR) && !(iPtr->flags & ERR_ALREADY_LOGGED)) {
         commandLength = parse.commandSize;
         if ((parse.commandStart + commandLength) != (script + numBytes)) {
             /*
@@ -1452,12 +1452,12 @@ Tcl_EvalEx(interp, script, numBytes, flags)
              * as ";".  Reduce the length by one so that the error message
              * doesn't include the terminator character.
              */
-            
+
             commandLength -= 1;
         }
         Tcl_LogCommandInfo(interp, script, parse.commandStart, commandLength);
     }
-    
+
     for (i = 0; i < objectsUsed; i++) {
         Tcl_DecrRefCount(objv[i]);
     }
@@ -1510,7 +1510,7 @@ Tcl_EvalEx(interp, script, numBytes, flags)
             iPtr->termOffset = (p - 1) - script;
         } else {
             iPtr->termOffset = p - script;
-        }    
+        }
     }
     if (objv != staticObjArray) {
         ckfree((char *) objv);
@@ -1610,7 +1610,7 @@ Tcl_GlobalEvalObj(interp, objPtr)
  * Results:
  *      The return value is TCL_OK if the command was parsed
  *      successfully and TCL_ERROR otherwise.  If an error occurs and
- *      interp isn't NULL then an error message is left in its result. 
+ *      interp isn't NULL then an error message is left in its result.
  *      On a successful return, tokenPtr and numTokens fields of
  *      parsePtr are filled in with information about the variable name
  *      that was parsed.  The "size" field of the first new token gives
@@ -1695,7 +1695,7 @@ Tcl_ParseVarName(interp, string, numBytes, parsePtr, append)
 
     /*
      * The name of the variable can have three forms:
-     * 1. The $ sign is followed by an open curly brace.  Then 
+     * 1. The $ sign is followed by an open curly brace.  Then
      *    the variable name is everything up to the next close
      *    curly brace, and the variable is a scalar variable.
      * 2. The $ sign is not followed by an open curly brace.  Then
@@ -1777,7 +1777,7 @@ Tcl_ParseVarName(interp, string, numBytes, parsePtr, append)
                     != TCL_OK) {
                 goto error;
             }
-            if ((parsePtr->term == end) || (*parsePtr->term != ')')) { 
+            if ((parsePtr->term == end) || (*parsePtr->term != ')')) {
                 if (parsePtr->interp != NULL) {
                     Tcl_SetResult(parsePtr->interp, "missing )",
                             TCL_STATIC);
@@ -1877,7 +1877,7 @@ Tcl_ParseVar(interp, string, termPtr)
     if (objPtr->refCount < 2) {
         panic("Tcl_ParseVar got temporary object from Tcl_EvalTokens");
     }
-#endif /*TCL_COMPILE_DEBUG*/    
+#endif /*TCL_COMPILE_DEBUG*/
     TclDecrRefCount(objPtr);
     return TclGetString(objPtr);
 }
@@ -1943,7 +1943,7 @@ Tcl_ParseBraces(interp, string, numBytes, parsePtr, append, termPtr)
     } else {
         end = string + strlen(string);
     }
-    
+
     if (!append) {
         parsePtr->numWords = 0;
         parsePtr->tokenPtr = parsePtr->staticTokens;
@@ -1988,7 +1988,7 @@ Tcl_ParseBraces(interp, string, numBytes, parsePtr, append, termPtr)
                  * multiple tokens so that the backslash-newline can be
                  * represented explicitly.
                  */
-                
+
                 if ((src + 2) == end) {
                     parsePtr->incomplete = 1;
                 }
@@ -2005,7 +2005,7 @@ Tcl_ParseBraces(interp, string, numBytes, parsePtr, append, termPtr)
                 tokenPtr->size = length;
                 tokenPtr->numComponents = 0;
                 parsePtr->numTokens++;
-                
+
                 src += length;
                 tokenPtr++;
                 tokenPtr->type = TCL_TOKEN_TEXT;
@@ -2024,17 +2024,17 @@ Tcl_ParseBraces(interp, string, numBytes, parsePtr, append, termPtr)
              *  Search the source string for a possible open
              *  brace within the context of a comment.  Since we
              *  aren't performing a full Tcl parse, just look for
-             *  an open brace preceeded by a '<whitspace>#' on 
+             *  an open brace preceeded by a '<whitspace>#' on
              *  the same line.
              */
             openBrace = 0;
             while (src > string ) {
                 switch (*src) {
-                    case '{': 
-                        openBrace = 1; 
+                    case '{':
+                        openBrace = 1;
                         break;
                     case '\n':
-                        openBrace = 0; 
+                        openBrace = 0;
                         break;
                     case '#':
                         if ((openBrace == 1) && (isspace(UCHAR(src[-1])))) {
@@ -2071,7 +2071,7 @@ Tcl_ParseBraces(interp, string, numBytes, parsePtr, append, termPtr)
      * The last case ensures that there is a token (even if empty) that
      * describes the braced string.
      */
-    
+
     if ((src != tokenPtr->start)
             || (parsePtr->numTokens == startIndex)) {
         tokenPtr->size = (src - tokenPtr->start);
@@ -2120,7 +2120,7 @@ Tcl_ParseQuotedString(interp, string, numBytes, parsePtr, append, termPtr)
     Tcl_Interp *interp;         /* Interpreter to use for error reporting;
                                  * if NULL, then no error message is
                                  * provided. */
-    char *string;               /* String containing the quoted string. 
+    char *string;               /* String containing the quoted string.
                                  * The first character must be '"'. */
     int numBytes;               /* Total number of bytes in string. If < 0,
                                  * the string consists of all bytes up to
@@ -2138,13 +2138,13 @@ Tcl_ParseQuotedString(interp, string, numBytes, parsePtr, append, termPtr)
                                  * close-quote if the parse succeeds. */
 {
     char *end;
-    
+
     if ((numBytes >= 0) || (string == NULL)) {
         end = string + numBytes;
     } else {
         end = string + strlen(string);
     }
-    
+
     if (!append) {
         parsePtr->numWords = 0;
         parsePtr->tokenPtr = parsePtr->staticTokens;
@@ -2155,7 +2155,7 @@ Tcl_ParseQuotedString(interp, string, numBytes, parsePtr, append, termPtr)
         parsePtr->interp = interp;
         parsePtr->errorType = TCL_PARSE_SUCCESS;
     }
-    
+
     if (ParseTokens(string+1, TYPE_QUOTE, parsePtr) != TCL_OK) {
         goto error;
     }
@@ -2329,6 +2329,6 @@ TclIsLocalScalar(src, len)
             }
         }
     }
-        
+
     return 1;
 }

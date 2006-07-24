@@ -23,10 +23,10 @@ static void n_getsaverclass(void*, nCmd*);
     nroot
 
     @classinfo
-    The nPersistServer object can be found under /sys/servers/persist 
-    and offers some commands to influence the way how objects 
-    are saved. All load/save operations of objects run finally through 
-    the persis server. That's all you need to know about it... 
+    The nPersistServer object can be found under /sys/servers/persist
+    and offers some commands to influence the way how objects
+    are saved. All load/save operations of objects run finally through
+    the persis server. That's all you need to know about it...
 */
 void n_initcmds(nClass *cl)
 {
@@ -53,7 +53,7 @@ void n_initcmds(nClass *cl)
     Set the save level which filters commands to be saved.
     The default save level of 0 will let all commands through,
     a save level of 1 will only let commands with a level of
-    1 or greater through. 
+    1 or greater through.
 
     This is useful for selectively saving a set of object attributes
     without having to write several save routines (savegames are

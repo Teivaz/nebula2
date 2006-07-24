@@ -7,7 +7,7 @@
 #include "kernel/nfile.h"
 #include "mathlib/quaternion.h"
 
-nNebulaClass(nCombinedAnimation, "anim2::nmemoryanimation");
+nNebulaClass(nCombinedAnimation, "nmemoryanimation");
 
 //------------------------------------------------------------------------------
 /**

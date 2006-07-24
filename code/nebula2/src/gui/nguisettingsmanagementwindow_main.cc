@@ -16,7 +16,7 @@
 #include "misc/nprefserver.h"
 #include "kernel/nfileserver2.h"
 
-nNebulaClass(nGuiSettingsManagementWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiSettingsManagementWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 // constant strings

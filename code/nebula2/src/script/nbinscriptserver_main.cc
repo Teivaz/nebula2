@@ -7,7 +7,7 @@
 #include "util/nstring.h"
 #include "script/nbinscriptserver.h"
 
-nNebulaClass(nBinScriptServer, "kernel::nscriptserver");
+nNebulaClass(nBinScriptServer, "nscriptserver");
 
 //------------------------------------------------------------------------------
 /**

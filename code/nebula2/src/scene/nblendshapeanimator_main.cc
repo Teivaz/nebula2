@@ -6,7 +6,7 @@
 #include "scene/nrendercontext.h"
 #include "scene/nblendshapenode.h"
 
-nNebulaScriptClass(nBlendShapeAnimator, "scene::nanimator");
+nNebulaScriptClass(nBlendShapeAnimator, "nanimator");
 
 //------------------------------------------------------------------------------
 /**

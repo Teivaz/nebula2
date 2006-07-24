@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gfx2/ntexture2.h"
 
-nNebulaClass(nGuiTextureView, "gui::nguiwidget");
+nNebulaClass(nGuiTextureView, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

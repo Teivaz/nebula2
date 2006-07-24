@@ -41,7 +41,7 @@ nIpcMiniServer::~nIpcMiniServer()
 void
 nIpcMiniServer::CloseRcvrSocket()
 {
-    if (INVALID_SOCKET != this->rcvrSocket) 
+    if (INVALID_SOCKET != this->rcvrSocket)
     {
         shutdown(this->rcvrSocket, 2);
         closesocket(this->rcvrSocket);
@@ -56,9 +56,9 @@ nIpcMiniServer::CloseRcvrSocket()
 bool nIpcMiniServer::Listen()
 {
     bool retval = false;
-    
+
     // wait for a client...
-    if (listen(this->ipcServer->sock, 5) != -1) 
+    if (listen(this->ipcServer->sock, 5) != -1)
     {
         this->rcvrSocket = accept(this->ipcServer->sock, 0, 0);
         if (INVALID_SOCKET != this->rcvrSocket)
@@ -81,24 +81,24 @@ bool nIpcMiniServer::Listen()
             // when the actual handshake with the client has happened
             //this->isConnected = false;
         }
-        else 
+        else
         {
             n_printf("nIpcMiniServer::Listen(): accept() failed!");
         }
-    } 
-    else 
+    }
+    else
     {
         n_printf("nIpcMiniServer::Listen(): listen() failed!");
     }
     return retval;
-}          
+}
 
 //------------------------------------------------------------------------------
 /**
     This method should be called after Listen() if the connection should
     be ignored for any reason.
 */
-void 
+void
 nIpcMiniServer::Ignore()
 {
     this->CloseRcvrSocket();
@@ -198,7 +198,7 @@ nIpcMiniServer::Poll()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nIpcMiniServer::Send(const nIpcBuffer& msg)
 {
     if ((INVALID_SOCKET != this->rcvrSocket) && (this->isConnected))

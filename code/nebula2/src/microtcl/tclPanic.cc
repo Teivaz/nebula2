@@ -1,4 +1,4 @@
-/* 
+/*
  * tclPanic.c --
  *
  *	Source code for the "Tcl_Panic" library procedure for Tcl;
@@ -81,7 +81,7 @@ Tcl_PanicVA (format, argList)
     arg6 = va_arg(argList, char *);
     arg7 = va_arg(argList, char *);
     arg8 = va_arg(argList, char *);
-    
+
     if (panicProc != NULL) {
 	(void) (*panicProc)(format, arg1, arg2, arg3, arg4,
 		arg5, arg6, arg7, arg8);

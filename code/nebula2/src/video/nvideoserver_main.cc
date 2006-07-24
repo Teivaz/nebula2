@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "video/nvideoserver.h"
 
-nNebulaScriptClass(nVideoServer, "kernel::nroot");
+nNebulaScriptClass(nVideoServer, "nroot");
 
 nVideoServer* nVideoServer::Singleton = 0;
 

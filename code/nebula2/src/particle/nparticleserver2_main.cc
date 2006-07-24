@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-nNebulaClass(nParticleServer2, "kernel::nroot");
+nNebulaClass(nParticleServer2, "nroot");
 nParticleServer2* nParticleServer2::Singleton = 0;
 
 //------------------------------------------------------------------------------

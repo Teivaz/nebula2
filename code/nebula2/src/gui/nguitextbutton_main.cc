@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiwindow.h"
 
-nNebulaScriptClass(nGuiTextButton, "gui::nguitextlabel");
+nNebulaScriptClass(nGuiTextButton, "nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**

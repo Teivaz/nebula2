@@ -14,10 +14,10 @@ static void n_getskinanimator(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nshadownode
-    
+
     @cppclass
     nShadowSkinShapeNode
-    
+
     @superclass
     ntransformnode
 

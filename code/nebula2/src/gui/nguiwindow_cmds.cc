@@ -31,7 +31,7 @@ static void n_getclosecommand(void* slf, nCmd* cmd);
     A button widget.
 
     - 07-Jun-05    kims    Added 'close', 'setclosecommand' and 'getclosecommand'
-                           to provide fading and prevent crashes when a custom 
+                           to provide fading and prevent crashes when a custom
                            nguibutton tries to close parent window.
 */
 void
@@ -134,8 +134,8 @@ n_ismodal(void* slf, nCmd* cmd)
     v
     @info
     Set the dismissed flag. Dismissed windows will be removed by the
-    gui server after windows have been triggered. 
-    
+    gui server after windows have been triggered.
+
     FIXME: For now, this works only for toplevel windows.
 */
 static void

@@ -57,13 +57,13 @@ class FileEntry : public nNode
 public:
 
     enum { IDENTICAL, NOT_FOUND, DIFFERENT, SIZE_CHANGED };
-    
+
     FileEntry()
     {
         this->reason   = IDENTICAL;
         this->testFlag = false;
     }
-    
+
     int             reason;
     nString         name;
     bool            testFlag;
@@ -107,7 +107,7 @@ void nCleanupPathName(char* path)
     Return path to current working dir.
 
     @param buf      buffer to store absolute path in
-    @param buflen   length of buffer 
+    @param buflen   length of buffer
 
     @return     path to current working dir
 */
@@ -115,7 +115,7 @@ const char* nGetCwd(char* buf, int buflen)
 {
     if (getcwd(buf, buflen))
     {
-        nCleanupPathName(buf);        
+        nCleanupPathName(buf);
     }
     else
     {
@@ -131,15 +131,15 @@ const char* nGetCwd(char* buf, int buflen)
 
     @param path     the relative path (may already be absolute)
     @param buf      buffer to store absolute path in
-    @param buflen   length of buffer 
+    @param buflen   length of buffer
 */
 void nMakeAbsolute(const char* path, char* buf, int buflen)
 {
     if ((path[0]=='/')||(path[0]=='\\')||(path[1]==':'))
     {
         n_strncpy2(buf, path, buflen);
-    } 
-    else 
+    }
+    else
     {
         char buf2[N_MAXPATH];
         n_strncpy2(buf, nGetCwd(buf2, N_MAXPATH), buflen);
@@ -216,7 +216,7 @@ convertToLower(const char* path, char* buf, int bufSize)
     n_assert((strlen(path) + 1) < (unsigned int) bufSize);
 
     const char* from = path;
-    char* to = buf;     
+    char* to = buf;
     char c;
     while ((c = *from++))
     {
@@ -237,11 +237,11 @@ convertToLower(const char* path, char* buf, int bufSize)
     @param  curFileOffset   [in/out] file offset tracker
 */
 bool
-generateToc(nFileServer2* fs, 
-            nDirectory* dir, 
-            const char* dirName, 
-            nNpkToc& tocObject, 
-            int& curFileOffset, 
+generateToc(nFileServer2* fs,
+            nDirectory* dir,
+            const char* dirName,
+            nNpkToc& tocObject,
+            int& curFileOffset,
             bool includeCVS,
             const nArray<nString>& excludePatterns)
 {
@@ -385,7 +385,7 @@ writeTocEntry(nFile* file, nNpkTocEntry* tocEntry)
 {
     n_assert(file);
     n_assert(tocEntry);
-    
+
     nNpkTocEntry::Type entryType = tocEntry->GetType();
     const char* entryName = tocEntry->GetName();
     int entryNameLen = strlen(entryName);
@@ -582,7 +582,7 @@ packIt(nFileServer2* fs, const char* dirName, const char* outName, bool includeC
     nNpkToc tocObject;
     char cwdbuf[N_MAXPATH];
     tocObject.SetRootPath(nGetCwd(cwdbuf, N_MAXPATH));
-    
+
     bool retval = true;
     n_printf("-> building table of contents...\n");
     int fileOffset = 0;
@@ -686,7 +686,7 @@ BuildInternalPath(nNpkTocEntry* entry, char* buffer, int bufSize)
         traceStack[depth++] = curEntry;
         curEntry = curEntry->GetParent();
     }
-    
+
     // fill path string while stepping down
     int curBufIndex = 0;
     depth--;    // because incrementing in loop above
@@ -728,7 +728,7 @@ IsFileInList(nList* list, const char* internalName)
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -740,7 +740,7 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
 {
     nDirectory* dir = fs->NewDirectoryObject();
     n_assert(0 != dir);
-    
+
     if (dir->Open(base))
     {
         // if this one is empty, return immediatly and let kill
@@ -750,9 +750,9 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
             dir->Close();
             return true;
         }
-        
+
         // step through all elements
-        bool doLoop = dir->SetToFirstEntry(); 
+        bool doLoop = dir->SetToFirstEntry();
         while (doLoop)
         {
             nDirectory::EntryType t = dir->GetEntryType();
@@ -764,17 +764,17 @@ KillEmptyDirectories(nFileServer2* fs, const char* base)
                     rmdir(dir->GetEntryName().Get());
                 }
             }
-    
+
             doLoop = dir->SetToNextEntry();
         }
-    
+
         dir->Close();
     }
     else
     {
         n_printf("Cannot open directory %s for reading...\n", base);
     }
-    
+
     return false;
 }
 
@@ -788,17 +788,17 @@ RemoveDir(nFileServer2* fs, const char* dirName)
     // kill the empty directory
     nDirectory* dir = fs->NewDirectoryObject();
     n_assert(0 != dir);
-    
+
     char curDir[N_MAXPATH];
     nGetCwd(curDir, N_MAXPATH);
-    
+
     if (dir->Open(dirName))
     {
         nChangeDir(dirName);
-        
-        // seems to be no problem deleting files while stepping 
+
+        // seems to be no problem deleting files while stepping
         // through subdir...
-        bool doLoop = dir->SetToFirstEntry(); 
+        bool doLoop = dir->SetToFirstEntry();
         while (doLoop)
         {
             nDirectory::EntryType t = dir->GetEntryType();
@@ -806,20 +806,20 @@ RemoveDir(nFileServer2* fs, const char* dirName)
             {
                 RemoveDir(fs, dir->GetEntryName().Get());
             }
-    
+
             if (nDirectory::FILE == t)
             {
                 remove(dir->GetEntryName().Get());
             }
-    
+
             doLoop = dir->SetToNextEntry();
         }
-    
+
         dir->Close();
-        
+
         nChangeDir(curDir);
     }
-    
+
     rmdir(dirName);
 }
 
@@ -827,40 +827,40 @@ RemoveDir(nFileServer2* fs, const char* dirName)
 /**
 */
 bool
-AreFilesIdentical(FileEntry* oldEntry, FileEntry* newEntry, 
+AreFilesIdentical(FileEntry* oldEntry, FileEntry* newEntry,
                   int& reason, int& numDiff, int& firstDiff)
 {
     nNpkTocEntry* oldNpkEntry = oldEntry->entry;
     nNpkTocEntry* newNpkEntry = newEntry->entry;
-    
+
     if (oldNpkEntry->GetFileLength() != newNpkEntry->GetFileLength())
     {
         // different size --> must be different
         reason = FileEntry::SIZE_CHANGED;
         return false;
     }
-    
+
     nNpkFileWrapper* oldWrapper = oldNpkEntry->GetFileWrapper();
     nNpkFileWrapper* newWrapper = newNpkEntry->GetFileWrapper();
     n_assert(0 != oldWrapper);
     n_assert(0 != newWrapper);
-    
+
     nFile* oldFile = oldWrapper->GetBinaryFile();
     nFile* newFile = newWrapper->GetBinaryFile();
     n_assert(0 != oldFile);
     n_assert(0 != newFile);
-    
+
     int size = oldNpkEntry->GetFileLength();
     char* oldArray = n_new_array(char, size);
     char* newArray = n_new_array(char, size);
     oldFile->Seek(oldNpkEntry->GetFileOffset(), nFile::START);
     newFile->Seek(newNpkEntry->GetFileOffset(), nFile::START);
-    
+
     oldFile->Read(oldArray, size);
     newFile->Read(newArray, size);
-    
+
     int retValue = memcmp(oldArray, newArray, size);
-    
+
     numDiff = 0;
     firstDiff = -1;
     if (retValue != 0)
@@ -871,7 +871,7 @@ AreFilesIdentical(FileEntry* oldEntry, FileEntry* newEntry,
             if ( ((char)(oldArray[i])) != ((char)(newArray[i])))
             {
                 numDiff++;
-                
+
                 if (firstDiff == -1)
                 {
                     firstDiff = i;
@@ -891,7 +891,7 @@ AreFilesIdentical(FileEntry* oldEntry, FileEntry* newEntry,
     {
         reason = FileEntry::IDENTICAL;
     }
-    
+
     return (0 == retValue) ? true : false;
 }
 
@@ -932,19 +932,19 @@ BuildDifferenceList(nList& oldList, nList& newList, nList& diffList)
                 {
                     // the old one was found in the newlist, but
                     // is it different?
-                    if (AreFilesIdentical(oldEntry, newEntry, 
+                    if (AreFilesIdentical(oldEntry, newEntry,
                                           reason, numDiff, firstDiff))
                     {
                         found = true;
                     }
-                    
+
                     // testet. ignore it for next steps
                     oldEntry->testFlag = true;
                     break;
                 }
             }
         }
-        
+
         if (!found)
         {
             // not in old list??? put a new entry into diff list
@@ -953,7 +953,7 @@ BuildDifferenceList(nList& oldList, nList& newList, nList& diffList)
 
             diffEntry->name      = newEntry->name;
             diffEntry->entry     = newEntry->entry;
-            diffEntry->reason    = reason; 
+            diffEntry->reason    = reason;
             diffEntry->numDiff   = numDiff;
             diffEntry->firstDiff = firstDiff;
             diffEntry->fileSize  = newEntry->entry->GetFileLength();
@@ -973,7 +973,7 @@ FillList(nNpkTocEntry* entry, nList& list)
     char name[N_MAXPATH];
     BuildInternalPath(entry, name, N_MAXPATH);
     nNpkTocEntry::Type type = entry->GetType();
-    
+
     // store data in list
     FileEntry* fileEntry = n_new(FileEntry);
     fileEntry->name  = name;
@@ -995,7 +995,7 @@ FillList(nNpkTocEntry* entry, nList& list)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 listIt(nFileServer2* fs, const char* listName)
 {
     char absFileName[N_MAXPATH];
@@ -1018,7 +1018,7 @@ listIt(nFileServer2* fs, const char* listName)
         int recursionDepth = 0;
         n_printf("TYPE\tNAME\tLENGTH\n");
         printTocEntry(toc.GetRootEntry(), recursionDepth);
-        
+
         wrapper.Close();
         return true;
     }
@@ -1032,8 +1032,8 @@ listIt(nFileServer2* fs, const char* listName)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
-GenerateDifferenceList(nFileServer2* fs, 
+bool
+GenerateDifferenceList(nFileServer2* fs,
                        const char* oldName,
                        const char* newName,
                        nList& diffList)
@@ -1065,13 +1065,13 @@ GenerateDifferenceList(nFileServer2* fs,
             nList oldList, newList;
             FillList(oldToc.GetRootEntry(), oldList);
             FillList(newToc.GetRootEntry(), newList);
-            
+
             // print out file contents
             BuildDifferenceList(oldList, newList, diffList);
-        
+
             oldWrapper.Close();
             newWrapper.Close();
-            
+
             FileEntry* fEntry = 0;
             while (0 != (fEntry = (FileEntry*) oldList.RemHead()))
             {
@@ -1100,9 +1100,9 @@ GenerateDifferenceList(nFileServer2* fs,
 /**
 */
 void
-unPackFile(nFileServer2* fs, 
-           nFile* npkFile, 
-           nNpkTocEntry* entry, 
+unPackFile(nFileServer2* fs,
+           nFile* npkFile,
+           nNpkTocEntry* entry,
            const char* outName,
            nList* dList)
 {
@@ -1122,7 +1122,7 @@ unPackFile(nFileServer2* fs,
                 reallyExtract = false;
             }
         }
-        
+
         if (reallyExtract)
         {
             nFile* file = fs->NewFileObject();
@@ -1142,14 +1142,14 @@ unPackFile(nFileServer2* fs,
                 n_assert(0 != buf);
                 npkFile->Read(buf, length);
                 file->Write(buf, length);
-            
+
                 file->Close();
             }
             else
             {
                 n_printf("Cannot open %s\n", absName);
             }
-        
+
             file->Release();
         }
     }
@@ -1170,7 +1170,7 @@ unPackFile(nFileServer2* fs,
             dName = outName;
         }
         else
-        {   
+        {
             dName = entry->GetName();
         }
         n_assert(0 != dName);
@@ -1184,7 +1184,7 @@ unPackFile(nFileServer2* fs,
         if (dir->Open(absDir))
         {
             nChangeDir(dName);
-        
+
             nNpkTocEntry* childEntry = 0;
             for (childEntry = entry->GetFirstEntry();
                  childEntry != 0;
@@ -1194,11 +1194,11 @@ unPackFile(nFileServer2* fs,
                 // that we use correct name from npk file
                 unPackFile(fs, npkFile, childEntry, 0, dList);
             }
-        
+
             dir->Close();
             nChangeDir(currentDir);
         }
-        else 
+        else
         {
             n_printf("Cannot open dir %s\n", entry->GetName());
         }
@@ -1215,18 +1215,18 @@ unPack(nFileServer2* fs, const char* fileName, const char* outName, nList* dList
     char absFileName[N_MAXPATH];
     char rootPath[N_MAXPATH];
     nNpkFileWrapper fileWrapper;
-    
+
     nMakeAbsolute(fileName, absFileName, sizeof(absFileName));
     getDirectoryName(absFileName, rootPath, sizeof(rootPath));
-    
+
     if (fileWrapper.Open(fs, rootPath, absFileName))
     {
         // get table of contents object
         nNpkTocEntry* tocEntry = fileWrapper.GetTocObject().GetRootEntry();
-        
+
         nFile* npkFile = fileWrapper.GetBinaryFile();
-        unPackFile(fs, npkFile, tocEntry, outName, dList);       
-        
+        unPackFile(fs, npkFile, tocEntry, outName, dList);
+
         fileWrapper.Close();
     }
 }
@@ -1234,8 +1234,8 @@ unPack(nFileServer2* fs, const char* fileName, const char* outName, nList* dList
 //------------------------------------------------------------------------------
 /**
 */
-void 
-listDiff(nFileServer2* fs, 
+void
+listDiff(nFileServer2* fs,
          const char* oldName,
          const char* newName)
 {
@@ -1263,7 +1263,7 @@ listDiff(nFileServer2* fs,
                 wieso = "identisch";
                 break;
         }
-        n_printf("- %s - %s\n", fEntry->name.Get(), wieso);            
+        n_printf("- %s - %s\n", fEntry->name.Get(), wieso);
     }
 
     fEntry = 0;
@@ -1276,8 +1276,8 @@ listDiff(nFileServer2* fs,
 //------------------------------------------------------------------------------
 /**
 */
-void 
-makeDiff(nFileServer2* fs, 
+void
+makeDiff(nFileServer2* fs,
          const char* oldName,
          const char* newName,
          const char* outName,
@@ -1285,11 +1285,11 @@ makeDiff(nFileServer2* fs,
 {
     nList diffList;
     GenerateDifferenceList(fs, oldName, newName, diffList);
-    
+
     // simple way: extract all files from diffList into a directory
     // and let pack the whole new directory with flohs routines
     unPack(fs, newName, "temp.n", &diffList);
-    
+
     // kill all empty directories
     KillEmptyDirectories(fs, "temp.n");
 
@@ -1303,7 +1303,7 @@ makeDiff(nFileServer2* fs,
 
     // delete old temp-dir
     RemoveDir(fs, "temp.n");
-    
+
     FileEntry* fEntry = 0;
     while (0 != (fEntry = (FileEntry*) diffList.RemHead()))
     {
@@ -1375,13 +1375,13 @@ main(int argc, const char** argv)
             remove(absOutName);
         }
     }
-    else 
+    else
     {
         // do not pack. hm. any other action?
         if (diff)
         {
             n_assert(oldName.IsValid() && newName.IsValid());
-            
+
             // compare two files and build a new file with the difference
             makeDiff(fs, oldName.Get(), newName.Get(), outName.Get(), includeCVS);
         }
@@ -1399,7 +1399,7 @@ main(int argc, const char** argv)
                 if (showDiff)
                 {
                     n_assert(oldName.IsValid() && newName.IsValid());
-                    
+
                     listDiff(fs, oldName.Get(), newName.Get());
                 }
                 else

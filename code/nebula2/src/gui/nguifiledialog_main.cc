@@ -12,7 +12,7 @@
 #include "gui/nguimessagebox.h"
 #include "kernel/nfileserver2.h"
 
-nNebulaClass(nGuiFileDialog, "gui::nguiclientwindow");
+nNebulaClass(nGuiFileDialog, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

@@ -10,10 +10,10 @@ static void n_changeshaderparameter(void*, nCmd*);
 /**
     @scriptclass
     ntoolkitserver
-    
+
     @cppclass
     nToolkitServer
-    
+
     @superclass
     nroot
 
@@ -43,7 +43,7 @@ n_initcmds(nClass* cl)
     @info
     Change a toolkit shader parameter (called by remoteControl)
 */
-static void 
+static void
 n_changeshaderparameter(void *o, nCmd *cmd)
 {
     nToolkitServer *self = (nToolkitServer*) o;

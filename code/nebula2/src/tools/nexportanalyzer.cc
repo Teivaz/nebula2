@@ -340,7 +340,7 @@ nExportAnalyzer::ParseTextures()
     this->textures.Clear();
     nArray<nString> files = this->ListFiles("proj:export/textures", "*.dds");
     n_printf("Parse %i textures...", files.Size());
-    
+
     int i;
     for (i = 0; i < files.Size(); i++)
     {
@@ -352,7 +352,7 @@ nExportAnalyzer::ParseTextures()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nExportAnalyzer::ParseMeshes()
 {
     bool retval = true;
@@ -371,7 +371,7 @@ nExportAnalyzer::ParseMeshes()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nExportAnalyzer::ParseAnims()
 {
     bool retval = true;
@@ -390,7 +390,7 @@ nExportAnalyzer::ParseAnims()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nExportAnalyzer::ParseObjects()
 {
     bool retval = true;
@@ -415,7 +415,7 @@ nExportAnalyzer::ParseLevels()
     bool retval = true;
     this->levels.Clear();
 
-    // open the world database 
+    // open the world database
     nSqlServer* sqlServer = (nSqlServer*) nKernelServer::Instance()->New("nsqlite3server", "/sys/servers/sql");
     nSqlDatabase* db = nSqlServer::Instance()->NewDatabase("proj:export/db/world.db3");
     if (db)
@@ -452,7 +452,7 @@ nExportAnalyzer::ReadTextureInfo(const nString& path)
 {
     n_assert(path.IsValid());
     nString name = this->ExtractCategoryFilename(path);
-    
+
     // create a texture object
     nTexture2* tex = nGfxServer2::Instance()->NewTexture(path.Get());
     tex->SetFilename(path);
@@ -510,7 +510,7 @@ nExportAnalyzer::ReadMeshInfo(const nString& path)
         meshInfo.vertexComponents = mesh->GetVertexComponents();
         meshInfo.useCount = 0;
         this->meshes.Append(meshInfo);
-            
+
         mesh->Unload();
         mesh->Release();
         return true;
@@ -530,7 +530,7 @@ nExportAnalyzer::ReadAnimInfo(const nString& path)
 {
     n_assert(path.IsValid());
     nString name = this->ExtractCategoryFilename(path);
-    
+
 
     // create an animation object
     nAnimation* anim = nAnimationServer::Instance()->NewMemoryAnimation(path.Get());
@@ -674,7 +674,7 @@ nExportAnalyzer::ReadObjectInfo(const nString& path)
                     this->anims[animIndex].useCount++;
                 }
             }
-        }    
+        }
         this->objects.Append(objectInfo);
 
         // release object
@@ -741,7 +741,7 @@ nExportAnalyzer::ReadGameObjectInfo(const nString& levelName, const nString& gra
             if (-1 == levelInfo.textureIndices.FindIndex(textureIndex))
             {
                 levelInfo.textureIndices.Append(textureIndex);
-                levelInfo.textureSize += this->textures[textureIndex].ramSize;                
+                levelInfo.textureSize += this->textures[textureIndex].ramSize;
             }
         }
         for (i = 0; i < this->objects[objIndex].meshIndices.Size(); i++)
@@ -768,8 +768,8 @@ nExportAnalyzer::ReadGameObjectInfo(const nString& levelName, const nString& gra
     {
         // the object was either already added, or wasn't found at all
         // just do a check whether the object doesn't exist, if the graphics
-        // resource is made of 3 components then it's a character3 object 
-        // and must be limited to the first 2 
+        // resource is made of 3 components then it's a character3 object
+        // and must be limited to the first 2
         bool exists = false;
         nArray<nString> tokens;
         graphicsResource.Tokenize("/", tokens);
@@ -854,7 +854,7 @@ nExportAnalyzer::WriteMeshInfo()
         for (i = 0; i < num; i++)
         {
             const MeshInfo& meshInfo = this->meshes[i];
-            
+
             nString compStr;
             int c = meshInfo.vertexComponents;
             if (c & nMesh2::Coord) compStr += "Coord ";
@@ -1068,5 +1068,5 @@ nExportAnalyzer::WriteSummary()
         animSize,
         numErrors);
     fputs(line.Get(), fp);
-    fclose(fp);    
+    fclose(fp);
 }

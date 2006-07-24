@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "kernel/ntimeserver.h"
 
-nNebulaClass(nGuiFadeOutTextLabel, "gui::nguitextlabel");
+nNebulaClass(nGuiFadeOutTextLabel, "nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**

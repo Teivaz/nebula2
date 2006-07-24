@@ -9,7 +9,7 @@
 #include "kernel/nfileserver2.h"
 #include "mathlib/polar.h"
 
-nNebulaClass(nReflectionCameraNode, "scene::nclippingcameranode");
+nNebulaClass(nReflectionCameraNode, "nclippingcameranode");
 
 //------------------------------------------------------------------------------
 /**

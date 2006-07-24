@@ -9,7 +9,7 @@
 #include "audio3/ndsound3.h"
 #include "audio3/nlistener3.h"
 
-nNebulaClass(nDSoundServer3, "audio3::naudioserver3");
+nNebulaClass(nDSoundServer3, "naudioserver3");
 
 //------------------------------------------------------------------------------
 /**

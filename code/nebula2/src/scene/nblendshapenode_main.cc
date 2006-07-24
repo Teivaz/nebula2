@@ -6,7 +6,7 @@
 #include "gfx2/nmesh2.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nBlendShapeNode, "scene::nmaterialnode");
+nNebulaScriptClass(nBlendShapeNode, "nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**

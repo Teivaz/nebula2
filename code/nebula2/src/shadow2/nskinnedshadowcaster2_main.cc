@@ -5,7 +5,7 @@
 #include "shadow2/nskinnedshadowcaster2.h"
 #include "shadow2/nshadowserver2.h"
 
-nNebulaClass(nSkinnedShadowCaster2, "shadow2::nshadowcaster2");
+nNebulaClass(nSkinnedShadowCaster2, "nshadowcaster2");
 
 //------------------------------------------------------------------------------
 /**

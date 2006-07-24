@@ -78,7 +78,7 @@ int nScriptableAnimBuilder::AddCurve(int index)
 
     nAnimBuilder::Curve curve;
     group.AddCurve(curve);
- 
+
     // return index of the added curve.
     return (group.GetNumCurves() - 1);
 }
@@ -86,7 +86,7 @@ int nScriptableAnimBuilder::AddCurve(int index)
 //-----------------------------------------------------------------------------
 /**
 */
-void nScriptableAnimBuilder::AddKey(int groupIndex, int curveIndex, int keyIndex, 
+void nScriptableAnimBuilder::AddKey(int groupIndex, int curveIndex, int keyIndex,
                                    float x, float y, float z, float w)
 {
     n_assert (this->begin_group);

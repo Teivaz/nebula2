@@ -14,7 +14,7 @@
 #include "misc/nconserver.h"
 #endif
 
-nNebulaScriptClass(nInputServer, "kernel::nroot");
+nNebulaScriptClass(nInputServer, "nroot");
 nInputServer* nInputServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

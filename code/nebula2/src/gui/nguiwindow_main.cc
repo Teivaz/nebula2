@@ -7,7 +7,7 @@
 #include "gui/nguiskin.h"
 #include "kernel/ntimeserver.h"
 
-nNebulaScriptClass(nGuiWindow, "gui::nguiwidget");
+nNebulaScriptClass(nGuiWindow, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

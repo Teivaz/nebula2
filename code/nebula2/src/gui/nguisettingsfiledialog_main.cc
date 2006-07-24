@@ -5,7 +5,7 @@
 #include "gui/nguisettingsfiledialog.h"
 #include "gui/nguisettingsmanagementwindow.h"
 
-nNebulaClass(nGuiSettingsFileDialog, "gui::nguifiledialog");
+nNebulaClass(nGuiSettingsFileDialog, "nguifiledialog");
 
 //------------------------------------------------------------------------------
 /**

@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/ndirectory.h"
 
-nNebulaScriptClass(nGuiDirLister, "gui::nguitextview");
+nNebulaScriptClass(nGuiDirLister, "nguitextview");
 
 //------------------------------------------------------------------------------
 /**

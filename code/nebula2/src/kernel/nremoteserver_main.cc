@@ -6,7 +6,7 @@
 #include "kernel/nremoteserver.h"
 #include "kernel/nscriptserver.h"
 
-nNebulaClass(nRemoteServer, "kernel::nroot");
+nNebulaClass(nRemoteServer, "nroot");
 nRemoteServer* nRemoteServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

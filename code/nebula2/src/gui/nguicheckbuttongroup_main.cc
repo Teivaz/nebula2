@@ -5,7 +5,7 @@
 #include "gui/nguicheckbuttongroup.h"
 #include "gui/nguicheckbutton.h"
 
-nNebulaScriptClass(nGuiCheckButtonGroup, "gui::nguicheckbutton");
+nNebulaScriptClass(nGuiCheckButtonGroup, "nguicheckbutton");
 
 //------------------------------------------------------------------------------
 /**

@@ -10,7 +10,7 @@
 #include "anim2/nanimation.h"
 #include "anim2/nanimationserver.h"
 
-nNebulaClass(nResourceBundle, "resource::nresource");
+nNebulaClass(nResourceBundle, "nresource");
 
 //------------------------------------------------------------------------------
 /**

@@ -5,7 +5,7 @@
 #include "scene/nlightnode.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nLightNode, "scene::nabstractshadernode");
+nNebulaScriptClass(nLightNode, "nabstractshadernode");
 
 //------------------------------------------------------------------------------
 /**

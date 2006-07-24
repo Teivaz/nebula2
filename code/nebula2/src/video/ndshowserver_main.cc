@@ -9,7 +9,7 @@
 
 #include "gfx2/nd3d9server.h"
 
-nNebulaClass(nDShowServer, "video::nvideoserver");
+nNebulaClass(nDShowServer, "nvideoserver");
 
 //------------------------------------------------------------------------------
 /**

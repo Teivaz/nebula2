@@ -11,10 +11,10 @@ static void n_savetexturetofile(void* slf, nCmd* cmd);
 /**
     @scriptclass
     ntexture2
-    
+
     @cppclass
     ntexture2
-    
+
     @superclass
     nresource
 

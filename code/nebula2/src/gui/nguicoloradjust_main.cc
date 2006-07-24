@@ -8,7 +8,7 @@
 #include "gui/nguicolorlabel.h"
 #include "gui/nguicolorpicker.h"
 
-nNebulaClass(nGuiColorAdjust, "gui::nguiformlayout");
+nNebulaClass(nGuiColorAdjust, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

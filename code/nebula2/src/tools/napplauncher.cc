@@ -72,7 +72,7 @@ nAppLauncher::LaunchWait() const
 
     // wait until process exits
     WaitForSingleObject(processInfo.hProcess, INFINITE);
-    
+
     // cleanup
     CloseHandle(processInfo.hProcess);
     CloseHandle(processInfo.hThread);
@@ -89,11 +89,11 @@ nAppLauncher::LaunchWait() const
 /**
     The path of executable file and directory are should be specified
     before launching the application by calling nAppLauncher::SetExecutable() and
-    nAppLauncher::SetWorkingDirectory().  
-    And aguments can be specified by calling nAppLauncher::SetArguments() if 
+    nAppLauncher::SetWorkingDirectory().
+    And aguments can be specified by calling nAppLauncher::SetArguments() if
     those are needed.
 
-    - 15-Oct-04 kims fixed a string invalidation bug on 'execmangled' and 
+    - 15-Oct-04 kims fixed a string invalidation bug on 'execmangled' and
                    'dirMangled' variables.
 */
 bool
@@ -174,7 +174,7 @@ nAppLauncher::LaunchHelper(bool waitForChild) const
             if (chdir(dirMangled.Get()))
                 exit(-1);
         }
- 
+
         // +2 -> 1 for the command name, 1 for the NULL
         char  *argv[ARG_MAX + 2];
         argv[0] = strdup(execMangled.Get());

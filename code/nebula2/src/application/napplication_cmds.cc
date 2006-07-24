@@ -124,7 +124,7 @@ n_getappname(void* slf, nCmd* cmd)
 
     04-Oct-04    kims    created
 */
-static 
+static
 void n_getcurrentstate(void* slf, nCmd* cmd)
 {
     nApplication* self = (nApplication*) slf;
@@ -144,7 +144,7 @@ void n_getcurrentstate(void* slf, nCmd* cmd)
 
     04-Oct-04    kims    created
 */
-static 
+static
 void n_setstate(void* slf, nCmd* cmd)
 {
     nApplication* self = (nApplication*) slf;

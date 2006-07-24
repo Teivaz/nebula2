@@ -11,7 +11,7 @@
 #include "character/ncharacter3set.h"
 #include "util/nstream.h"
 
-nNebulaClass(nCharacter3Node, "scene::ntransformnode");
+nNebulaClass(nCharacter3Node, "ntransformnode");
 
 //------------------------------------------------------------------------------
 /**

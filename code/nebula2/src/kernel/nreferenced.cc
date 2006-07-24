@@ -20,7 +20,7 @@ nReferenced::nReferenced() :
 nReferenced::~nReferenced()
 {
     n_assert(this->refCount == 0);
-    
+
     // invalidate all refs to me
     this->InvalidateAllRefs();
 }
@@ -28,13 +28,13 @@ nReferenced::~nReferenced()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nReferenced::Release()
 {
     n_assert(this->refCount > 0);
     bool retval = false;
     this->refCount--;
-    if (this->refCount == 0) 
+    if (this->refCount == 0)
     {
         n_delete(this);
         retval = true;
@@ -45,11 +45,11 @@ nReferenced::Release()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nReferenced::InvalidateAllRefs()
 {
     nRef<nReferenced> *r;
-    while ((r = (nRef<nReferenced> *) this->refList.GetHead())) 
+    while ((r = (nRef<nReferenced> *) this->refList.GetHead()))
     {
         r->invalidate();
     }

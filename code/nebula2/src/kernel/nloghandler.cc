@@ -73,7 +73,7 @@ nLogHandler::Error(const char* /* str */, va_list /* argList */)
 /**
     - 26-Mar-05    kims    created
 */
-void 
+void
 nLogHandler::OutputDebug(const char* /* str */, va_list /* argList */)
 {
     // empty

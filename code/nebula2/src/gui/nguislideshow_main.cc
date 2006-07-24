@@ -11,7 +11,7 @@
 #include "kernel/ntimeserver.h"
 #include "gui/nguiresource.h"
 
-nNebulaScriptClass(nGuiSlideShow, "gui::nguiwidget");
+nNebulaScriptClass(nGuiSlideShow, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /** Constructor

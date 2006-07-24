@@ -102,8 +102,8 @@ nStream::FileCreated() const
 /**
     Generates a string from the document
 */
-void 
-nStream::GetDocumentAsString(nString& rsString) 
+void
+nStream::GetDocumentAsString(nString& rsString)
 {
     rsString = "";
     AddNode2String(rsString,this->xmlDocument->FirstChild());
@@ -115,114 +115,114 @@ nStream::GetDocumentAsString(nString& rsString)
     helper function , to generate a string
 */
 
-void 
-nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndention) 
- { 
-      const char* pcValue = pNode->Value(); 
-  
+void
+nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndention)
+ {
+      const char* pcValue = pNode->Value();
+
       /*
-      for(int i=0; i<iIndention; ++i) 
-      { 
-           rsString += "\t"; 
+      for(int i=0; i<iIndention; ++i)
+      {
+           rsString += "\t";
       } */
-  
-      switch(pNode->Type()) 
-      { 
-      case TiXmlNode::COMMENT: 
-           //assert(pNode->NoChildren()  &&  "Node Type COMMENT should not have children"); 
-           rsString += "<!-- "; 
-           rsString += pcValue; 
-           rsString += " -->"; 
-           break; 
-  
-      case TiXmlNode::DECLARATION: 
-           //assert(pNode->NoChildren()  &&  "Node Type DECLARATION should not have children"); 
-           rsString += "<?"; 
-           rsString += pcValue; 
-           rsString += "?>"; 
-           break; 
-  
-      case TiXmlNode::DOCUMENT: 
-          // assert (false && "No Documents should be passed into this function; pass the root element instead"); 
-           return; 
-  
-      case TiXmlNode::ELEMENT: 
-           rsString += "<"; 
-           rsString += pcValue; 
-  
-           for(const TiXmlAttribute* pAttr = pNode->ToElement()->FirstAttribute(); pAttr!= 0; pAttr = pAttr->Next()) 
-           { 
-                rsString += " "; 
-                rsString += pAttr->Name(); 
-                rsString += "=\""; 
-                rsString += pAttr->Value(); 
-                rsString += "\""; 
-           } 
-  
-           if(pNode->FirstChild()  &&  pNode->FirstChild()->NextSibling() == 0  && 
-              pNode->FirstChild()->Type() == TiXmlNode::TEXT) 
-           { 
-                rsString += ">"; 
-                rsString += pNode->FirstChild()->ToText()->Value(); 
-                rsString += "</"; 
-                rsString += pcValue; 
-                rsString += ">"; 
-  
-                return; 
-           } 
-  
-           if(pNode->NoChildren()) 
-           { 
-                rsString += "/>"; 
-           } 
-           else 
-           { 
-                rsString += ">"; 
-           } 
-           break; 
-  
-      case TiXmlNode::TEXT: 
-           //assert(pNode->NoChildren()  &&  "Node Type TEXT should not have children"); 
-           rsString += pcValue; 
-           break; 
-  
-      case TiXmlNode::UNKNOWN: 
-           //assert(pNode->NoChildren()  &&  "Node Type UNKNOWN should not have children"); 
-           rsString += "<"; 
-           rsString += pcValue; 
-           rsString += ">"; 
-           break; 
-  
-      default: 
-           //assert (false && "Unknown Node type"); 
-           return; 
-      } 
-  
-      if(pNode->Type() == TiXmlNode::ELEMENT  &&  !pNode->NoChildren()) 
-      { 
-           for(const TiXmlNode* pChild = pNode->FirstChild(); pChild != 0; pChild = pChild->NextSibling()) 
-           { 
-                AddNode2String(rsString, pChild, iIndention + 1); 
-           } 
-  
-  
+
+      switch(pNode->Type())
+      {
+      case TiXmlNode::COMMENT:
+           //assert(pNode->NoChildren()  &&  "Node Type COMMENT should not have children");
+           rsString += "<!-- ";
+           rsString += pcValue;
+           rsString += " -->";
+           break;
+
+      case TiXmlNode::DECLARATION:
+           //assert(pNode->NoChildren()  &&  "Node Type DECLARATION should not have children");
+           rsString += "<?";
+           rsString += pcValue;
+           rsString += "?>";
+           break;
+
+      case TiXmlNode::DOCUMENT:
+          // assert (false && "No Documents should be passed into this function; pass the root element instead");
+           return;
+
+      case TiXmlNode::ELEMENT:
+           rsString += "<";
+           rsString += pcValue;
+
+           for(const TiXmlAttribute* pAttr = pNode->ToElement()->FirstAttribute(); pAttr!= 0; pAttr = pAttr->Next())
+           {
+                rsString += " ";
+                rsString += pAttr->Name();
+                rsString += "=\"";
+                rsString += pAttr->Value();
+                rsString += "\"";
+           }
+
+           if(pNode->FirstChild()  &&  pNode->FirstChild()->NextSibling() == 0  &&
+              pNode->FirstChild()->Type() == TiXmlNode::TEXT)
+           {
+                rsString += ">";
+                rsString += pNode->FirstChild()->ToText()->Value();
+                rsString += "</";
+                rsString += pcValue;
+                rsString += ">";
+
+                return;
+           }
+
+           if(pNode->NoChildren())
+           {
+                rsString += "/>";
+           }
+           else
+           {
+                rsString += ">";
+           }
+           break;
+
+      case TiXmlNode::TEXT:
+           //assert(pNode->NoChildren()  &&  "Node Type TEXT should not have children");
+           rsString += pcValue;
+           break;
+
+      case TiXmlNode::UNKNOWN:
+           //assert(pNode->NoChildren()  &&  "Node Type UNKNOWN should not have children");
+           rsString += "<";
+           rsString += pcValue;
+           rsString += ">";
+           break;
+
+      default:
+           //assert (false && "Unknown Node type");
+           return;
+      }
+
+      if(pNode->Type() == TiXmlNode::ELEMENT  &&  !pNode->NoChildren())
+      {
+           for(const TiXmlNode* pChild = pNode->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
+           {
+                AddNode2String(rsString, pChild, iIndention + 1);
+           }
+
+
            /*
-           for(int i=0; i<iIndention; ++i) 
-           { 
-                rsString += "\t"; 
+           for(int i=0; i<iIndention; ++i)
+           {
+                rsString += "\t";
            } */
 
-           rsString += "</"; 
-           rsString += pcValue; 
-           rsString += ">"; 
-      } 
- } 
+           rsString += "</";
+           rsString += pcValue;
+           rsString += ">";
+      }
+ }
 
 //------------------------------------------------------------------------------
 /**
     Opens a string for parsing
 */
-bool 
+bool
 nStream::OpenString(const nString& n)
 {
     n_assert(!this->IsOpen());
@@ -233,7 +233,7 @@ nStream::OpenString(const nString& n)
 
     // create xml document object
     this->xmlDocument = n_new(TiXmlDocument(this->filename.Get()));
-  
+
     if (!n.IsEmpty())
     {
         // parse the string
@@ -637,14 +637,14 @@ nStream::SetToParent()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nStream::SetToNodeByAttribute(const nString& nodeName, const nString& attribute, const nString& value)
 {
     n_assert(this->IsOpen());
     n_assert(nodeName.IsValid());
     n_assert(attribute.IsValid());
     n_assert(value.IsValid());
-    
+
     this->SetToNode(nodeName);
     while(this->GetString(attribute) != value)
     {

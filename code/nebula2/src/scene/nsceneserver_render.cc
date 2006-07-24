@@ -67,7 +67,7 @@ nSceneServer::RenderPhaseLightModeOff(nRpPhase& curPhase)
                             WATCHER_ADD_INT(watchNumInstanceGroups, 1);
                         }
                         prevShapeNode = shapeNode;
-                    
+
                         // set modelview matrix for the shape
                         gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
 
@@ -89,7 +89,7 @@ nSceneServer::RenderPhaseLightModeOff(nRpPhase& curPhase)
 
 //------------------------------------------------------------------------------
 /**
-    Render a single shape with light mode FFP (Fixed Function Pipeline). 
+    Render a single shape with light mode FFP (Fixed Function Pipeline).
     Called by generic RenderShape() method.
 
     FIXME: obey light OCCLUSION status!!!
@@ -99,7 +99,7 @@ nSceneServer::RenderShapeLightModeFFP(const Group& shapeGroup)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     vector4 dummyShadowLightMask;
-        
+
     // Render with vertex-lighting and multiple light sources
     if (this->obeyLightLinks)
     {
@@ -126,7 +126,7 @@ nSceneServer::RenderShapeLightModeFFP(const Group& shapeGroup)
     else
     {
         // ignore light links, each shape is influenced by each light
-        // Optimization: if lighting has been applied for this 
+        // Optimization: if lighting has been applied for this
         // frame already, we don't need to do it again. This will only
         // work if rendering doesn't go through light links though
         if (!this->ffpLightingApplied)
@@ -163,7 +163,7 @@ nSceneServer::RenderPhaseLightModeFFP(nRpPhase& curPhase)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->SetLightingType(nGfxServer2::FFP);
-    
+
     uint numSeqs = curPhase.Begin();
     uint seqIndex;
     for (seqIndex = 0; seqIndex < numSeqs; seqIndex++)
@@ -201,7 +201,7 @@ nSceneServer::RenderPhaseLightModeFFP(nRpPhase& curPhase)
                             WATCHER_ADD_INT(watchNumInstanceGroups, 1);
                         }
                         prevShapeNode = shapeNode;
-                    
+
                         // set modelview matrix for the shape
                         gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
 
@@ -235,7 +235,7 @@ nSceneServer::RenderShapeLightModeShader(Group& shapeGroup, const nRpSequence& s
     {
         shd->SetBool(nShaderState::AlphaBlendEnable, firstLightAlpha);
     }
-    else                             
+    else
     {
         shd->SetBool(nShaderState::AlphaBlendEnable, true);
     }
@@ -326,7 +326,7 @@ nSceneServer::RenderPhaseLightModeShader(nRpPhase& curPhase)
                                         WATCHER_ADD_INT(watchNumInstanceGroups, 1);
                                     }
                                     prevShapeNode = shapeNode;
-                                
+
                                     // set modelview matrix for the shape
                                     gfxServer->SetTransform(nGfxServer2::Model, shapeGroup.modelTransform);
 
@@ -372,7 +372,7 @@ nSceneServer::DoRenderPath(nRpSection& rpSection)
     {
         // for each phase...
         nRpPass& curPass = rpSection.GetPass(passIndex);
-        
+
         // check if this is the GUI pass, and gui is disabled...
         if (curPass.GetDrawGui() && (!this->GetGuiEnabled()))
         {
@@ -381,7 +381,7 @@ nSceneServer::DoRenderPath(nRpSection& rpSection)
         }
 
         if (curPass.GetDrawShadows() != nRpPass::NoShadows)
-        { 
+        {
             PROFILER_START(this->profRenderShadow);
             this->GatherShadowLights();
             this->RenderShadow(curPass);

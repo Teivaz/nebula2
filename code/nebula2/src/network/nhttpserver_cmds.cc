@@ -13,7 +13,7 @@ static void n_post(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nhttpserver    
+    nhttpserver
     @cppclass
     nHttpServer
     @superclass

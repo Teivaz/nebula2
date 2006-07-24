@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "resource/nmeshcopyresourceloader.h"
 
-nNebulaClass(nMeshCopyResourceLoader, "resource::nresourceloader");
+nNebulaClass(nMeshCopyResourceLoader, "nresourceloader");
 
 //------------------------------------------------------------------------------
 /**

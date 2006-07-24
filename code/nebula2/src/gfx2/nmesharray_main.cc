@@ -5,7 +5,7 @@
 #include "gfx2/nmesharray.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nMeshArray, "resource::nresource");
+nNebulaClass(nMeshArray, "nresource");
 
 //------------------------------------------------------------------------------
 /**

@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "sql/nsqlite3query.h"
 
-nNebulaClass(nSQLite3Database, "sql::nsqldatabase");
+nNebulaClass(nSQLite3Database, "nsqldatabase");
 
 //------------------------------------------------------------------------------
 /**

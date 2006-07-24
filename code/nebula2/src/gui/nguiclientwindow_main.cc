@@ -8,7 +8,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaScriptClass(nGuiClientWindow, "gui::nguiwindow");
+nNebulaScriptClass(nGuiClientWindow, "nguiwindow");
 
 //------------------------------------------------------------------------------
 /**

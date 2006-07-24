@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 /**
 */
-nDirectory::nDirectory() : 
+nDirectory::nDirectory() :
 #if __WIN32__
     handle(0),
 #endif
@@ -85,7 +85,7 @@ nDirectory::Close()
     n_assert(this->IsOpen());
 
 #ifdef __WIN32__
-    if (this->handle) 
+    if (this->handle)
     {
         FindClose(this->handle);
         this->handle = NULL;
@@ -100,13 +100,13 @@ nDirectory::Close()
 //------------------------------------------------------------------------------
 /**
     asks if directory is empty
-  
+
     @return          true if empty
 
     history:
      - 30-Jan-2002   peter    created
 */
-bool 
+bool
 nDirectory::IsEmpty()
 {
     n_assert(this->IsOpen());
@@ -116,13 +116,13 @@ nDirectory::IsEmpty()
 //------------------------------------------------------------------------------
 /**
     sets search index to first entry in directory
-  
+
     @return          success
 
     history:
      - 30-Jan-2002   peter    created
 */
-bool 
+bool
 nDirectory::SetToFirstEntry()
 {
     n_assert(this->IsOpen());
@@ -159,13 +159,13 @@ nDirectory::SetToFirstEntry()
 //------------------------------------------------------------------------------
 /**
     selects next directory entry
-  
+
     @return          success
 
     history:
      - 30-Jan-2002   peter    created
 */
-bool 
+bool
 nDirectory::SetToNextEntry()
 {
     n_assert(this->IsOpen());
@@ -186,13 +186,13 @@ nDirectory::SetToNextEntry()
 //------------------------------------------------------------------------------
 /**
     gets name of actual directory entry
-  
+
     @return          the name
 
     history:
      - 30-Jan-2002   peter    created
 */
-nString 
+nString
 nDirectory::GetEntryName()
 {
     n_assert(this->IsOpen());
@@ -214,13 +214,13 @@ nDirectory::GetEntryName()
 //------------------------------------------------------------------------------
 /**
     gets type of actual directory entry
-  
+
     @return          FILE or DIRECTORY
 
     history:
      - 30-Jan-2002   peter    created
 */
-nDirectory::EntryType 
+nDirectory::EntryType
 nDirectory::GetEntryType()
 {
     n_assert(this->IsOpen());

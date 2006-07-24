@@ -107,7 +107,7 @@ nD3D9Server::DrawTextImmediate(nFont2* font, const nString& text, const vector4&
         // nothing to do.
         return;
     }
-    
+
     n_assert(0 != font);
     if (!font->IsLoaded())
     {
@@ -119,7 +119,7 @@ nD3D9Server::DrawTextImmediate(nFont2* font, const nString& text, const vector4&
     r.left   = (LONG) (rect.v0.x * dispWidth);
     r.top    = (LONG) (rect.v0.y * dispHeight);
     r.right  = (LONG) (rect.v1.x * dispWidth);
-    r.bottom = (LONG) (rect.v1.y * dispHeight);     
+    r.bottom = (LONG) (rect.v1.y * dispHeight);
 
     DWORD d3dFlags = 0;
     nString wordBreakString;

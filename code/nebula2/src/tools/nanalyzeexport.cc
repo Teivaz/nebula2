@@ -18,7 +18,7 @@ nNebulaUsePackage(ndsound);
 //------------------------------------------------------------------------------
 /*
     Win32 specific method which checks the registry for the Nebula2
-    Toolkit's project path. If the reg keys are not found, the 
+    Toolkit's project path. If the reg keys are not found, the
     routine just returns 0.
 */
 nString

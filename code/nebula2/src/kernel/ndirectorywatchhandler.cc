@@ -35,7 +35,7 @@ nDirectoryWatchHandler::Watch(nString& directory)
 
 #ifdef __WIN32__
     // Get the handle of the directory itself.
-    this->directoryHandle = CreateFile(this->path.Get(), FILE_LIST_DIRECTORY | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | 
+    this->directoryHandle = CreateFile(this->path.Get(), FILE_LIST_DIRECTORY | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE |
                                         FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED, NULL);
 
     if (this->directoryHandle)
@@ -57,7 +57,7 @@ nDirectoryWatchHandler::Unwatch()
     this->watchThread = 0;
 
 #ifdef __WIN32__
-    if (this->directoryHandle) 
+    if (this->directoryHandle)
     {
         CloseHandle(this->directoryHandle);
         this->directoryHandle = NULL;
@@ -111,7 +111,7 @@ nDirectoryWatchHandler::WatchThreadFunc(nThread* thread)
                     char pathName[MAX_PATH];
                     int nameLength = notification->FileNameLength / 2;
 
-                    // This is a necessary evil. ReadDirectoryChangesW does not have an ascii equivalent. So we're going to convert the path 
+                    // This is a necessary evil. ReadDirectoryChangesW does not have an ascii equivalent. So we're going to convert the path
                     // to ascii, and then we have to convert the ascii path to it's long path name, since it could be an 8.3 short filename.
                     if (WideCharToMultiByte(CP_ACP, 0, notification->FileName, nameLength, pathName, sizeof(pathName), NULL, NULL))
                     {

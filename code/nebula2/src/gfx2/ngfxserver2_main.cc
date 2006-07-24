@@ -10,7 +10,7 @@
 #include "gfx2/nfont2.h"
 #include "gfx2/nmesharray.h"
 
-nNebulaScriptClass(nGfxServer2, "kernel::nroot");
+nNebulaScriptClass(nGfxServer2, "nroot");
 nGfxServer2* nGfxServer2::Singleton = 0;
 
 //------------------------------------------------------------------------------

@@ -157,8 +157,8 @@ nRpXmlParser::ParseShaders()
 		if(newXmlStream.HasAttr("name") && newXmlStream.HasAttr("file"))
 		{
 			nRpShader newShader;
-			nString name = newXmlStream.GetString("name");		
-			nString file = newXmlStream.GetString("file");		
+			nString name = newXmlStream.GetString("name");
+			nString file = newXmlStream.GetString("file");
 
 			newShader.SetName(name);
 			newShader.SetFilename(file);
@@ -301,14 +301,14 @@ nRpXmlParser::ParsePass(TiXmlElement* elm, nRpSection* section)
     newPass.SetName(elm->Attribute("name"));
     newPass.SetShaderAlias(elm->Attribute("shader"));
     nString renderTargetName("renderTarget");
-    int i = 0;     
+    int i = 0;
     while (this->HasAttr(elm, renderTargetName.Get()))
-    { 
+    {
         newPass.SetRenderTargetName(i, elm->Attribute(renderTargetName.Get()));
         renderTargetName.Set("renderTarget");
-        renderTargetName.AppendInt(++i);        
+        renderTargetName.AppendInt(++i);
     }
-    
+
     if (this->HasAttr(elm, "stats"))
     {
         newPass.SetStatsEnabled(this->GetBoolAttr(elm, "stats", true));
@@ -582,8 +582,8 @@ nRpXmlParser::ParseSequence(TiXmlElement* elm, nRpPhase* phase)
 
 
 
-    
 
 
 
-    
+
+

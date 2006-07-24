@@ -143,11 +143,11 @@ nParticle2Emitter::CalculateStep(float stepTime)
 
             // advance to next particle
             particle++;
-        } 
-        else 
+        }
+        else
         {
             // particle's lifetime is over
-            // don't advance particle pointer 
+            // don't advance particle pointer
             this->particleCount--;
             particleIndex--;
         }
@@ -183,7 +183,7 @@ nParticle2Emitter::CheckInvisible(float deltaTime)
         }
 
         // go to sleep after beeing invisible for too long
-        if (this->looping && this->hasLooped && !this->isSleeping && (this->invisibleTime > 3.0f))    
+        if (this->looping && this->hasLooped && !this->isSleeping && (this->invisibleTime > 3.0f))
         {
             this->isSleeping = true;
             this->DeleteParticles();
@@ -263,7 +263,7 @@ nParticle2Emitter::Update(float curTime)
         this->CalculateStep(stepTime);
 
         // emit new particles if we are inside the emissiontimeframe
-        if ((curTime >= this->startTime) && (lastEmission < this->startTime + this->startDelay + this->emissionDuration)) 
+        if ((curTime >= this->startTime) && (lastEmission < this->startTime + this->startDelay + this->emissionDuration))
         {
             if (curTime >= (this->startTime + this->startDelay))
             {
@@ -329,13 +329,13 @@ nParticle2Emitter::Update(float curTime)
 
                             float velocityVariation = 1.0f - n_rand(0.0f, this->particleVelocityRandomize);
                             float startVelocity = curCurves[ParticleStartVelocity] * velocityVariation;
-                            
+
                             // apply texture tiling
-                            // uvmax and uvmin are arranged a bit strange, because they need to be flipped 
+                            // uvmax and uvmin are arranged a bit strange, because they need to be flipped
                             // horizontally and be rotated
                             float vStep = 1.0f / float(this->tileTexture);
                             int tileNr = int(n_rand(0.0f, float(this->tileTexture)));
-                            
+
                             newParticle->uvmin.set(1.0f, vStep * float(tileNr));
                             newParticle->uvmax.set(0.0f, newParticle->uvmin.y + vStep);
                             newParticle->lifeTime = particleEmissionLifeTime;
@@ -362,8 +362,8 @@ nParticle2Emitter::Update(float curTime)
   		        this->refEmitterMesh->UnlockVertices();
 		        this->refEmitterMesh->UnlockIndices();
             }
-        } 
-        else 
+        }
+        else
         {
             if (this->looping)
             {
@@ -440,7 +440,7 @@ int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
         myVertex.v = particle->uvmin.y;
         myVertex.rotation += PI/2.0;
         destPtr[5] = myVertex;
-        
+
         destPtr += 6;
 
 
@@ -533,7 +533,7 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
         myVertex.rotation += PI/2.0f;
         myVertex.pos = particle->position;
         destPtr[5] = myVertex;
-        
+
         curVertex += 6;
         destPtr += 6;
 
@@ -667,7 +667,7 @@ void nParticle2Emitter::Render(float curTime)
         // reallocate particles
         this->particles = new nParticle2[this->maxParticleCount];
         n_assert(0 != this->particles);
-        
+
         this->frameWasRendered = true;
         this->Update(curTime - 0.001f);    // trigger with a little difference, so that the emitter will reset
 
@@ -676,9 +676,9 @@ void nParticle2Emitter::Render(float curTime)
 
     if (!this->particleMesh.IsValid())
     {
-        this->particleMesh.Initialize(nGfxServer2::TriangleList, 
-            nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 | nMesh2::Color , 
-            nMesh2::WriteOnly | nMesh2::NeedsVertexShader, 
+        this->particleMesh.Initialize(nGfxServer2::TriangleList,
+            nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 | nMesh2::Color ,
+            nMesh2::WriteOnly | nMesh2::NeedsVertexShader,
             false, "particle2_", true);
         n_assert(this->particleMesh.IsValid());
     }
@@ -690,7 +690,7 @@ void nParticle2Emitter::Render(float curTime)
 
     if((this->particleStretch == 0.0f)&&(!this->stretchToStart))
         remVertices = RenderPure(dstVertices,maxVertices);
-    else 
+    else
     {
 
         if(this->stretchToStart || (this->stretchDetail == 1) )
@@ -741,7 +741,7 @@ nParticle2Emitter::Initialize()
 /**
     FIXME: CLEANUP
 */
-void    
+void
 nParticle2Emitter::NotifyCurvesChanged()
 {
     n_assert(0 != this->pStaticCurves);

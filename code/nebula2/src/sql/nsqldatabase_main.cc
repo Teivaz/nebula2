@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "sql/nsqldatabase.h"
 
-nNebulaScriptClass(nSqlDatabase, "resource::nresource");
+nNebulaScriptClass(nSqlDatabase, "nresource");
 
 //------------------------------------------------------------------------------
 /**

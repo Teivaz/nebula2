@@ -5,7 +5,7 @@
 #include "scene/nmultilayerednode.h"
 #include "scene/nsceneserver.h"
 
-nNebulaScriptClass(nMultiLayeredNode, "scene::nshapenode");
+nNebulaScriptClass(nMultiLayeredNode, "nshapenode");
 
 //------------------------------------------------------------------------------
 /**

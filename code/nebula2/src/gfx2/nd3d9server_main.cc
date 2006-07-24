@@ -7,7 +7,7 @@
 #include "kernel/nfileserver2.h"
 #include "gfx2/nd3d9texture.h"
 
-nNebulaClass(nD3D9Server, "gfx2::ngfxserver2");
+nNebulaClass(nD3D9Server, "ngfxserver2");
 nD3D9Server* nD3D9Server::Singleton = 0;
 
 //------------------------------------------------------------------------------

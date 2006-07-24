@@ -8,7 +8,7 @@
 #include "gui/nguiskin.h"
 #include "gui/nguibutton.h"
 
-nNebulaClass(nGuiMessageBox, "gui::nguiclientwindow");
+nNebulaClass(nGuiMessageBox, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

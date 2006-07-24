@@ -5,7 +5,7 @@
 #include "scene/nanimator.h"
 #include "variable/nvariableserver.h"
 
-nNebulaScriptClass(nAnimator, "scene::nscenenode");
+nNebulaScriptClass(nAnimator, "nscenenode");
 
 //------------------------------------------------------------------------------
 /**

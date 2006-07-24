@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "misc/niniprefserver.h"
 
-nNebulaClass(nIniPrefServer, "misc::nprefserver");
+nNebulaClass(nIniPrefServer, "nprefserver");
 
 //------------------------------------------------------------------------------
 /**
