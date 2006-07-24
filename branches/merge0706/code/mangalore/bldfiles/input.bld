@@ -1,24 +1,10 @@
 #-------------------------------------------------------------------------------
-# input.bld
-#
-# (C) 2005 Vadim Macagon
+#  bldfiles/input.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::input
     setdir input
-    settype cpp
-    setfiles { 
-        server
-        axissource
-        buttonsource
-        chain
-        event
-        keysource
-        mapping
-        mousesource
-        source
-    }
     setheaders {
-        server
         axissource
         buttonsource
         chain
@@ -27,7 +13,18 @@ beginmodule mangalore::input
         mapping
         mousesource
         priority
-        source 
+        server
+        source
+    }
+    setfiles {
+        axissource
+        buttonsource
+        chain
+        event
+        keysource
+        mapping
+        mousesource
+        server
+        source
     }
 endmodule
-#-------------------------------------------------------------------------------

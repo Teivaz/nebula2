@@ -1,20 +1,10 @@
 #-------------------------------------------------------------------------------
-# navigation.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/navigation.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::navigation
     setdir navigation
-    settype cpp
-    setfiles {
-        coverpoint
-        map
-        path3d
-        pathfinder
-        server
-        waypointlist
-    }
-    setheaders { 
+    setheaders {
         coverpoint
         map
         path3d
@@ -23,5 +13,12 @@ beginmodule mangalore::navigation
         waypoint
         waypointlist
     }
+    setfiles {
+        coverpoint
+        map
+        path3d
+        pathfinder
+        server
+        waypointlist
+    }
 endmodule
-#-------------------------------------------------------------------------------

@@ -1,23 +1,20 @@
 #-------------------------------------------------------------------------------
-# message.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/message.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::message
     setdir message
-    settype cpp
-    setfiles { 
-        dispatcher
-        msg
-        port
-        server
-    }
-    setheaders { 
+    setheaders {
         dispatcher
         id
         msg
         port
         server
     }
+    setfiles {
+        dispatcher
+        msg
+        port
+        server
+    }
 endmodule
-#-------------------------------------------------------------------------------

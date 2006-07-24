@@ -1,24 +1,30 @@
 #-------------------------------------------------------------------------------
-# ceui.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/ceui.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::ceui
     setdir ceui
-    settype cpp
-    setfiles {
-        server
-        renderer
-        texture
-        resourceprovider
-        logger
-    }
     setheaders {
-        server
-        renderer
-        texture
-        resourceprovider
         logger
+        renderer
+        resourceprovider
+        server
+        texture
+    }
+    setfiles {
+        logger
+        renderer
+        resourceprovider
+        server
+        texture
+
+    }
+    setlibs_win32_release {
+        CEGUIBase.lib
+        CEGUIFalagardWRBase.lib
+        CEGUITinyXMLParser.lib
+        freetype.lib
+        pcre.lib
     }
     setlibs_win32_debug {
         CEGUIBase_d.lib
@@ -27,12 +33,4 @@ beginmodule mangalore::ceui
         freetype_d.lib
         pcre_d.lib
     }
-    setlibs_win32_release {
-        CEGUIBase.lib
-        CEGUIFalagardWRBase.lib
-        CEGUITinyXMLParser.lib
-        freetype.lib
-        pcre.lib
-    }    
 endmodule
-#-------------------------------------------------------------------------------

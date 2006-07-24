@@ -1,48 +1,45 @@
 #-------------------------------------------------------------------------------
-# ui.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/ui.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::ui
     setdir ui
-    settype cpp
-    setfiles {
-        button
-        canvas
-        control
-        element
-        event
-        eventhandler
-        factorymanager
-        label
-        server
-        window
-        windoweventhandler
-        dragbox
-        dragboxdisplay
-        dynamiclabel
-        frame
-        progressbarwindow
-        textbutton
-    }
     setheaders {
         button
         canvas
         control
+        dragbox
+        dragboxdisplay
+        dynamiclabel
         element
         event
         eventhandler
         factorymanager
+        frame
         label
+        progressbarwindow
         server
+        textbutton
         window
         windoweventhandler
+    }
+    setfiles {
+        button
+        canvas
+        control
         dragbox
         dragboxdisplay
         dynamiclabel
+        element
+        event
+        eventhandler
+        factorymanager
         frame
+        label
         progressbarwindow
+        server
         textbutton
+        window
+        windoweventhandler
     }
 endmodule
-#-------------------------------------------------------------------------------

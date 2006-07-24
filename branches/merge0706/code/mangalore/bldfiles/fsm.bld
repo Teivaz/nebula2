@@ -1,12 +1,10 @@
 #-------------------------------------------------------------------------------
-# fsm.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/fsm.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule mangalore::fsm
     setdir fsm
-    settype cpp
-    setfiles { 
+    setheaders {
         action
         condition
         finitestatemachine
@@ -14,7 +12,7 @@ beginmodule mangalore::fsm
         state
         timeoutcondition
     }
-    setheaders { 
+    setfiles {
         action
         condition
         finitestatemachine
@@ -23,4 +21,3 @@ beginmodule mangalore::fsm
         timeoutcondition
     }
 endmodule
-#-------------------------------------------------------------------------------

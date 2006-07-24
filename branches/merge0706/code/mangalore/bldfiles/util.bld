@@ -1,50 +1,21 @@
 #-------------------------------------------------------------------------------
-# util.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/util.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::util::celltreebuilder
+beginmodule mangalore::util
     setdir util
-    settype cpp
-    setfiles { celltreebuilder }
-    setheaders { celltreebuilder }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule mangalore::util::cmdlineargs
-    setdir util
-    settype cpp
-    setfiles { cmdlineargs }
-    setheaders { cmdlineargs }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule mangalore::util::physicsgfxutil
-    setdir util
-    settype cpp
-    setfiles { physicsgfxutil }
-    setheaders { physicsgfxutil }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule mangalore::util::segmentedgfxutil
-    setdir util
-    settype cpp
-    setfiles { segmentedgfxutil }
-    setheaders { segmentedgfxutil }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule mangalore::util::skinraycheckutil
-    setdir util
-    settype cpp
-    setfiles { skinraycheckutil }
-    setheaders { skinraycheckutil }
-endmodule
-#-------------------------------------------------------------------------------
-beginbundle mangalore::util
-    setmodules {
-        mangalore::util::celltreebuilder
-        mangalore::util::cmdlineargs
-        mangalore::util::physicsgfxutil
-        mangalore::util::segmentedgfxutil
-        mangalore::util::skinraycheckutil
+    setheaders {
+        celltreebuilder
+        cmdlineargs
+        physicsgfxutil
+        segmentedgfxutil
+        skinraycheckutil
     }
-endbundle
-#-------------------------------------------------------------------------------
+    setfiles {
+        celltreebuilder
+        cmdlineargs
+        physicsgfxutil
+        segmentedgfxutil
+        skinraycheckutil
+    }
+endmodule
