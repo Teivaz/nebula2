@@ -25,7 +25,7 @@
 /**
     This function is called by n_assert() when the assertion fails.
 */
-void 
+void
 n_barf(const char* exp, const char* file, int line)
 {
     n_error("*** NEBULA ASSERTION ***\nexpression: %s\nfile: %s\nline: %d\n", exp, file, line);
@@ -67,7 +67,7 @@ n_error(const char* msg, ...)
         fflush(stdout);
     #endif
     abort();
-};        
+};
 
 //------------------------------------------------------------------------------
 /**
@@ -92,7 +92,7 @@ n_message(const char* msg, ...)
     #else
         vprintf(msg, argList);
     #endif
-};        
+};
 
 //------------------------------------------------------------------------------
 /**
@@ -101,7 +101,7 @@ n_message(const char* msg, ...)
 
      - 27-Nov-98   floh    created
 */
-void 
+void
 __cdecl
 n_printf(const char *msg, ...)
 {
@@ -155,7 +155,7 @@ n_dbgout(const char *msg, ...)
 
      - 21-Dec-98   floh    created
 */
-void 
+void
 n_sleep(double sec)
 {
 #   ifdef __WIN32__
@@ -177,7 +177,7 @@ n_sleep(double sec)
 //------------------------------------------------------------------------------
 /**
     A strdup() implementation using Nebula's malloc() override.
-    
+
      - 17-Jan-99   floh    created
 */
 char*
@@ -185,7 +185,7 @@ n_strdup(const char* from)
 {
     n_assert(from);
     char *to = (char *) n_malloc(strlen(from) + 1);
-    if (to) 
+    if (to)
     {
         strcpy(to, from);
     }
@@ -212,7 +212,7 @@ n_strncpy2(char *dest, const char *src, size_t size)
 
      - 06-Mar-00   floh    created
 */
-void 
+void
 n_strcat(char *dest, const char *src, size_t dest_size)
 {
     unsigned int l = strlen(dest) + strlen(src) + 1;
@@ -226,7 +226,7 @@ n_strcat(char *dest, const char *src, size_t dest_size)
 
      - 10-May-99   floh    created
      - 02-Aug-01   leaf    + error description in win32
-     - 03-Aug-01   leaf    + error description in linux, 
+     - 03-Aug-01   leaf    + error description in linux,
                              thanks to Warren Baird
 */
 #ifdef N_STATIC
@@ -240,12 +240,12 @@ n_dllopen(const char* name)
     strcat(dll_name, name);
     strcat(dll_name, ".so");
     void *dll = dlopen(dll_name, RTLD_NOW|RTLD_GLOBAL);
-    if (!dll) 
+    if (!dll)
     {
         n_printf("Could not load dll '%s'\n", dll_name);
         // Find out why we failed
         char *err = dlerror();
-        if (err) 
+        if (err)
         {
               n_printf("Error was:\n%s\n",err);
         }
@@ -259,20 +259,20 @@ n_dllopen(const char* name)
     {
         HINSTANCE dll;
         dll = LoadLibrary((LPCSTR) name);
-        if (!dll) 
+        if (!dll)
         {
             // Find out why we failed
             LPVOID lpMsgBuf;
-            FormatMessage( 
-                FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-                FORMAT_MESSAGE_FROM_SYSTEM | 
+            FormatMessage(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER |
+                FORMAT_MESSAGE_FROM_SYSTEM |
                 FORMAT_MESSAGE_IGNORE_INSERTS,
                 NULL,
                 GetLastError(),
                 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                 (LPTSTR) &lpMsgBuf,
                 0,
-                NULL 
+                NULL
                 );
 
             // Display the string.
@@ -294,17 +294,17 @@ n_dllopen(const char* name)
      - 10-May-99   floh    created
 */
 #ifdef N_STATIC
-    
+
     // NOTHING!
 
 #elif __LINUX__
-void 
+void
 n_dllclose(void* dll)
 {
     dlclose(dll);
 }
 #elif __WIN32__
-    void 
+    void
     n_dllclose(void* dll)
     {
         FreeLibrary((HMODULE) dll);
@@ -326,7 +326,7 @@ n_dllclose(void* dll)
     n_dllsymbol(void* dll, const char* sym)
     {
         void *h = dlsym(dll, sym);
-        if (!h) n_error("n_dllsymbol(%s) failed!\n", sym);    
+        if (!h) n_error("n_dllsymbol(%s) failed!\n", sym);
         return h;
     }
 #elif __WIN32__
@@ -345,24 +345,24 @@ n_dllclose(void* dll)
 /**
     A string matching function using Tcl's matching rules.
 */
-bool 
+bool
 n_strmatch(const char* str, const char* pat)
 {
     char c2;
 
-    while (true) 
+    while (true)
     {
-        if (*pat == 0) 
+        if (*pat == 0)
         {
             if (*str == 0) return true;
             else           return false;
         }
         if ((*str == 0) && (*pat != '*')) return false;
-        if (*pat=='*') 
+        if (*pat=='*')
         {
             pat++;
             if (*pat==0) return true;
-            while (true) 
+            while (true)
             {
                 if (n_strmatch(str, pat)) return true;
                 if (*str==0) return false;
@@ -370,14 +370,14 @@ n_strmatch(const char* str, const char* pat)
             }
         }
         if (*pat=='?') goto match;
-        if (*pat=='[') 
+        if (*pat=='[')
         {
             pat++;
-            while (true) 
+            while (true)
             {
                 if ((*pat==']') || (*pat==0)) return false;
                 if (*pat==*str) break;
-                if (pat[1] == '-') 
+                if (pat[1] == '-')
                 {
                     c2 = pat[2];
                     if (c2==0) return false;
@@ -387,9 +387,9 @@ n_strmatch(const char* str, const char* pat)
                 }
                 pat++;
             }
-            while (*pat!=']') 
+            while (*pat!=']')
             {
-                if (*pat==0) 
+                if (*pat==0)
                 {
                     pat--;
                     break;
@@ -398,8 +398,8 @@ n_strmatch(const char* str, const char* pat)
             }
             goto match;
         }
-    
-        if (*pat=='\\') 
+
+        if (*pat=='\\')
         {
             pat++;
             if (*pat==0) return false;

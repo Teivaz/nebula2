@@ -6,7 +6,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiskin.h"
 
-nNebulaScriptClass(nGuiHoriSliderGroup, "gui::nguiformlayout");
+nNebulaScriptClass(nGuiHoriSliderGroup, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

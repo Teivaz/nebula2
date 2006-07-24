@@ -255,7 +255,7 @@ nInputDevice::BeginEmitEvents(double time)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputDevice::EmitAxisMovedEvents(int /*axisNum*/, int /*value*/)
 {
     // empty

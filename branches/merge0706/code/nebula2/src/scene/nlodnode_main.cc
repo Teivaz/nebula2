@@ -7,7 +7,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nLodNode, "scene::ntransformnode");
+nNebulaScriptClass(nLodNode, "ntransformnode");
 
 //------------------------------------------------------------------------------
 /**

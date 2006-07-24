@@ -11,7 +11,7 @@
 #include "gui/nguiserver.h"
 #include "input/ninputserver.h"
 
-nNebulaScriptClass(nGuiTextView, "gui::nguiwidget");
+nNebulaScriptClass(nGuiTextView, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

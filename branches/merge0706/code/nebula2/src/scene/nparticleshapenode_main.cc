@@ -8,7 +8,7 @@
 #include "scene/nsceneserver.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nParticleShapeNode, "scene::nshapenode");
+nNebulaScriptClass(nParticleShapeNode, "nshapenode");
 
 //------------------------------------------------------------------------------
 /**

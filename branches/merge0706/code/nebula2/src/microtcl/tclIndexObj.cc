@@ -1,4 +1,4 @@
-/* 
+/*
  * tclIndexObj.c --
  *
  *	This file implements objects of type "index".  This object type
@@ -127,7 +127,7 @@ Tcl_GetIndexFromObj(interp, objPtr, tablePtr, msg, flags, indexPtr)
  */
 
 int
-Tcl_GetIndexFromObjStruct(interp, objPtr, tablePtr, offset, msg, flags, 
+Tcl_GetIndexFromObjStruct(interp, objPtr, tablePtr, offset, msg, flags,
 	indexPtr)
     Tcl_Interp *interp; 	/* Used for error reporting if not NULL. */
     Tcl_Obj *objPtr;		/* Object containing the string to lookup. */
@@ -177,12 +177,12 @@ Tcl_GetIndexFromObjStruct(interp, objPtr, tablePtr, offset, msg, flags,
     /*
      * The key should not be empty, otherwise it's not a match.
      */
-    
+
     if (key[0] == '\0') {
 	goto error;
     }
-    
-    for (entryPtr = tablePtr, i = 0; *entryPtr != NULL; 
+
+    for (entryPtr = tablePtr, i = 0; *entryPtr != NULL;
 	    entryPtr = (char **) ((size_t) entryPtr + offset), i++) {
 	for (p1 = key, p2 = *entryPtr; *p1 == *p2; p1++, p2++) {
 	    if (*p1 == 0) {
@@ -257,7 +257,7 @@ Tcl_GetIndexFromObjStruct(interp, objPtr, tablePtr, offset, msg, flags,
  *
  * Results:
  *	The return value is always TCL_ERROR, and an error message is
- *	left in interp's result if interp isn't NULL. 
+ *	left in interp's result if interp isn't NULL.
  *
  * Side effects:
  *	None.
@@ -324,7 +324,7 @@ Tcl_WrongNumArgs(interp, objc, objv, message)
 	 * for the correct error message even if the subcommand was
 	 * abbreviated.  Otherwise, just use the string rep.
 	 */
-	
+
 	if (objv[i]->typePtr == &tclIndexType) {
 	    tablePtr = ((char **) objv[i]->internalRep.twoPtrValue.ptr1);
 	    Tcl_AppendStringsToObj(objPtr,

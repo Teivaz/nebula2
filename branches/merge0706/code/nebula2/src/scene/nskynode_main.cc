@@ -9,7 +9,7 @@
 #include "variable/nvariableserver.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nSkyNode, "scene::ntransformnode");
+nNebulaScriptClass(nSkyNode, "ntransformnode");
 
 const float nSkyNode::CloudSpeedFactor = 0.0005f;
 

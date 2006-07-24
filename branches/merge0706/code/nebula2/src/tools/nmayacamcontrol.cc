@@ -33,8 +33,8 @@ void
 nMayaCamControl::Initialize()
 {
     this->centerOfInterest = this->defCenterOfInterest;
-    // calculate distance between camera and center of interest 
-    this->viewerDistance = vector3::distance(this->defCenterOfInterest, this->defEyePos);    
+    // calculate distance between camera and center of interest
+    this->viewerDistance = vector3::distance(this->defCenterOfInterest, this->defEyePos);
     // initialize theta and rho
     vector3 viewerDirection = this->defEyePos - this->defCenterOfInterest;
     viewerDirection.norm();
@@ -48,7 +48,7 @@ nMayaCamControl::Initialize()
 /**
     Resets the view to initial value
 */
-void 
+void
 nMayaCamControl::Reset()
 {
     this->resetButton = false;
@@ -72,7 +72,7 @@ nMayaCamControl::Update()
 
     float lookVelocity = defLookVelocity;
     // multiply with viewerDistance to get a camera-movement-speed corresponding to the actual distance.
-    float panVelocity  = defPanVelocity  *  viewerDistance; 
+    float panVelocity  = defPanVelocity  *  viewerDistance;
     panVelocity = (minPanVelocity > panVelocity)? minPanVelocity : panVelocity;
     // multiply with viewerDistance to get a camera-movement-speed corresponding to the actual distance with a minimum of defZoomVelocity
     // float zoomVelocity = (1.0f <= viewerDistance)? (defZoomVelocity * viewerDistance): defZoomVelocity;
@@ -125,11 +125,11 @@ nMayaCamControl::Update()
     float horiZoomMoveVector(       zoomHori * zoomVelocity);
     float vertZoomMoveVector((-1) * zoomVert * zoomVelocity);
     this->viewerDistance += horiZoomMoveVector + vertZoomMoveVector ;
- 
+
     // handle viewer rotation
     this->viewerAngles.theta -= lookVert * lookVelocity;
     this->viewerAngles.rho   += lookHori * lookVelocity;
- 
+
     // apply changes
     this->viewMatrix.ident();
     this->viewMatrix.translate(vector3(0.0f, 0.0f, viewerDistance));

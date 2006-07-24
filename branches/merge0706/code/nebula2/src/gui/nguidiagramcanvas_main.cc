@@ -7,7 +7,7 @@
 #include "gui/nguicanvas.h"
 #include "gui/nguitextlabel.h"
 
-nNebulaClass(nGuiDiagramCanvas, "gui::nguiformlayout");
+nNebulaClass(nGuiDiagramCanvas, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

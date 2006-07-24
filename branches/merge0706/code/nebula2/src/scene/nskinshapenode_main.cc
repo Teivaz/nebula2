@@ -5,7 +5,7 @@
 #include "scene/nskinshapenode.h"
 #include "scene/nskinanimator.h"
 
-nNebulaScriptClass(nSkinShapeNode, "scene::nshapenode");
+nNebulaScriptClass(nSkinShapeNode, "nshapenode");
 
 //------------------------------------------------------------------------------
 /**

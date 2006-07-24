@@ -6,7 +6,7 @@
 #include "kernel/ntimeserver.h"
 #include "tools/nnodelist.h"
 
-nNebulaClass(nGuiGraphicsBrowserWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiGraphicsBrowserWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

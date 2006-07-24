@@ -17,7 +17,7 @@ main(int argc, const char** argv)
     nKernelServer kernelServer;
     nFileServer2* fileServer = kernelServer.GetFileServer();
     nCmdLineArgs args(argc, argv);
-    
+
     // parse args
     const char* filename = args.GetStringArg("-file", "rev.cc");
 

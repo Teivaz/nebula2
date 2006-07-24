@@ -6,7 +6,7 @@
 #include "gui/nguitextbutton.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiCategoryBrowser, "gui::nguiformlayout");
+nNebulaClass(nGuiCategoryBrowser, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

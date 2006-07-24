@@ -6,7 +6,7 @@
 
 //------------------------------------------------------------------------------
 /**
-    Build triangle normals and tangents. The tangents require a valid 
+    Build triangle normals and tangents. The tangents require a valid
     uv-mapping in texcoord layer 0.
 
     02-Sep-03   floh    no longer generates Binormals
@@ -50,7 +50,7 @@ nMeshBuilder::BuildTriangleNormals()
         float t1 = vertex1.GetUv(0).y - vertex0.GetUv(0).y;
         float t2 = vertex2.GetUv(0).y - vertex0.GetUv(0).y;
 
-        float l = (s1 * t2 - s2 * t1);        
+        float l = (s1 * t2 - s2 * t1);
         // catch singularity
         if (l == 0.0f)
         {
@@ -100,7 +100,7 @@ nMeshBuilder::FixVertexTangentDirections()
     // inflate the mesh, this generates 3 (possibly redundant) vertices
     // for each triangle
     this->Inflate();
-    
+
     // for each triangle...
     int triIndex;
     for (triIndex = 0; triIndex < this->GetNumTriangles(); triIndex++)
@@ -137,7 +137,7 @@ nMeshBuilder::FixVertexTangentDirections()
 
     // do a final cleanup, removing redundant vertices
     this->Cleanup(0);
-}   
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -153,7 +153,7 @@ nMeshBuilder::FixVertexTangentDirections()
     beforehand. Note that the vertex normals will not be touched!
     Internally, the method will create a clean mesh which contains
     only vertex coordinates and normals, and computes connectivity
-    information from the resulting mesh. The result is that 
+    information from the resulting mesh. The result is that
     tangents and binormals are averaged for smooth edges, as defined
     by the existing normal set.
 
@@ -177,7 +177,7 @@ nMeshBuilder::BuildVertexTangents(bool allowVertexSplits)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nMeshBuilder::BuildVertexTangentsWithSplits()
 {
     // inflate the mesh, this generates 3 (possibly redundant) vertices
@@ -226,7 +226,7 @@ nMeshBuilder::BuildVertexTangentsWithSplits()
         }
     }
 
-    // fill tangents by deciding for each vertex whether to 
+    // fill tangents by deciding for each vertex whether to
     // use the triangle tangent or the averaged tangent this is
     // done by comparing the averaged and the triangle vertex,
     // if they are close enough to each other, the averaged tangent

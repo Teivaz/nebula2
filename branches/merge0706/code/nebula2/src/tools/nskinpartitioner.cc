@@ -38,8 +38,8 @@ nSkinPartitioner::~nSkinPartitioner()
     @param  maxJointPaletteSize     max number of joints in a joint palette
 */
 bool
-nSkinPartitioner::PartitionMesh(nMeshBuilder& srcMesh, 
-                                nMeshBuilder& dstMesh, 
+nSkinPartitioner::PartitionMesh(nMeshBuilder& srcMesh,
+                                nMeshBuilder& dstMesh,
                                 int maxJointPaletteSize)
 {
     this->partitionArray.Clear();
@@ -98,7 +98,7 @@ nSkinPartitioner::BuildDestMesh(nMeshBuilder& srcMesh, nMeshBuilder& dstMesh)
     for (partitionIndex = 0; partitionIndex < numPartitions; partitionIndex++)
     {
         const Partition& partition = this->partitionArray[partitionIndex];
-        
+
         // record the original group id in the groupMapArray
         this->groupMappingArray.Append(partition.GetGroupId());
 

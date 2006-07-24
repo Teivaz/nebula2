@@ -7,7 +7,7 @@
 #include "kernel/nloghandler.h"
 #include "util/nstring.h"
 
-nNebulaClass(nGuiCmdEntry, "gui::nguitextview");
+nNebulaClass(nGuiCmdEntry, "nguitextview");
 
 //------------------------------------------------------------------------------
 /**

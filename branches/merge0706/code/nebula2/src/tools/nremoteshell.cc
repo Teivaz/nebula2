@@ -4,9 +4,9 @@
 
     nremoteshell
 
-    The Nebula2 Remote Shell (nremoteshell.exe) allows to remote-control active 
+    The Nebula2 Remote Shell (nremoteshell.exe) allows to remote-control active
     Nebula2 applications much like Telnet allows to remote-control a Unix machine.
-    Most Nebula2 applications open a remote port which nremoteshell can connect 
+    Most Nebula2 applications open a remote port which nremoteshell can connect
     to and issue commands.
 
     <dl>
@@ -25,13 +25,13 @@
     nremoteshell -host localhost -port nviewer
     @endverbatim
 
-    To connect to a running nviewer instance on a remote machine with TCP/IP 
+    To connect to a running nviewer instance on a remote machine with TCP/IP
     number 192.168.0.1
     @verbatim
     nremoteshell -host 192.168.0.1 -port nviewer
     @endverbatim
 
-    To connect to a running nviewer instance on a remote machine with the DNS or 
+    To connect to a running nviewer instance on a remote machine with the DNS or
     SMB name @e zeus :
     @verbatim
     nremoteshell -host zeus -port nviewer
@@ -78,7 +78,7 @@ main(int argc, const char** argv)
     printf("*** Nebula2 remote shell *** \n");
     printf("(C) 2003 RadonLabs GmbH\n");
     printf("Trying host %s port %s...\n", hostArg.Get(), portArg.Get());
-    
+
     nIpcAddress ipcAddress(hostArg.Get(), portArg.Get());
     nIpcClient ipcClient;
     ipcClient.SetBlocking(true);
@@ -117,7 +117,7 @@ main(int argc, const char** argv)
 
                 // get command from user
                 lineOk = (gets(line) > 0);
-		
+
                 if (strcmp("exit", line) == 0)
                 {
                     running = false;

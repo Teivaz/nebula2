@@ -52,7 +52,7 @@ nSkinMeshDeformer::Compute()
     for (vertexIndex = 0; vertexIndex < this->numVertices; vertexIndex++)
     {
         int i;
-    
+
         // get joint indices and weights
         float* weights = &srcPtr[weightOffset];
         float* indices = &srcPtr[jindexOffset];
@@ -146,7 +146,7 @@ nSkinMeshDeformer::Compute()
             srcPtr += 3;
             dstPtr += 3;
         }
-        
+
         // skip source weights and joint indices
         srcPtr += 8;
     }

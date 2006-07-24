@@ -7,7 +7,7 @@
 #include "gui/nguievent.h"
 #include "gui/nguiserver.h"
 
-nNebulaScriptClass(nGuiTabbedLayout, "gui::nguiformlayout");
+nNebulaScriptClass(nGuiTabbedLayout, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

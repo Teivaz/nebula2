@@ -13,10 +13,10 @@ static void n_removeallpictures(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nguislideshow
-    
+
     @cppclass
     nGuiSlideShow
-    
+
     @superclass
     nGuiWidget
 

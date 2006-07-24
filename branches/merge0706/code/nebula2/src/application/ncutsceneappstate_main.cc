@@ -7,7 +7,7 @@
 #include "application/napplication.h"
 #include "input/ninputserver.h"
 
-nNebulaClass(nCutSceneAppState, "application::nappstate");
+nNebulaClass(nCutSceneAppState, "nappstate");
 
 //------------------------------------------------------------------------------
 /**

@@ -87,7 +87,7 @@ nSceneServer::ComputeLightClipPlanes(LightInfo& lightInfo)
         nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
 
         n_assert(0 != lightNode && lightNode->IsA(this->lightNodeClass));
-        
+
         lightInfo.clipPlanes.Reset();
 
         nLight::Type lightType = lightNode->GetType();
@@ -182,8 +182,8 @@ nSceneServer::CopyStencilBufferToTexture(nRpPass& rpPass, const vector4& shadowL
     nShader2* shd = rpPass.GetShader();
     if (shd)
     {
-        shd->SetVector4(nShaderState::ShadowIndex, shadowLightMask);   
-        gfxServer->SetShader(shd);    
+        shd->SetVector4(nShaderState::ShadowIndex, shadowLightMask);
+        gfxServer->SetShader(shd);
         shd->Begin(true);
         shd->BeginPass(0);
         rpPass.DrawFullScreenQuad();
@@ -194,9 +194,9 @@ nSceneServer::CopyStencilBufferToTexture(nRpPass& rpPass, const vector4& shadowL
 
 //------------------------------------------------------------------------------
 /**
-    This method goes through all attached light sources and decides which 
+    This method goes through all attached light sources and decides which
     4 of them should cast shadows. This takes the occlusion status, distance and
-    range and intensity into account. The method should be called after 
+    range and intensity into account. The method should be called after
     occlusion culling. The result is that the shadowLightArray will be filled.
 */
 void
@@ -289,7 +289,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
     // z-fighting
     matrix44 shadowProj = gfxServer->GetTransform(nGfxServer2::ShadowProjection);
     gfxServer->PushTransform(nGfxServer2::Projection, shadowProj);
-    
+
     if (gfxServer->BeginScene())
     {
         if (curPass.GetDrawShadows() == nRpPass::MultiLight)
@@ -299,7 +299,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
 
         // for each shadow casting light...
         int numShadowLights = this->shadowLightArray.Size();
-        if (maxShadowLights > numShadowLights) 
+        if (maxShadowLights > numShadowLights)
         {
             maxShadowLights = numShadowLights;
         }
@@ -307,11 +307,11 @@ nSceneServer::RenderShadow(nRpPass& curPass)
         if ((numShadowLights > 0) && (this->shadowArray.Size() > 0))
         {
             // begin shadow scene
-            if (shadowServer->BeginScene()) 
-            {    
+            if (shadowServer->BeginScene())
+            {
                 int shadowLightIndex;
                 for (shadowLightIndex = 0; shadowLightIndex < maxShadowLights; shadowLightIndex++)
-                {                    
+                {
                     // only process non-occluded lights
                     const LightInfo& lightInfo = this->shadowLightArray[shadowLightIndex];
                     Group& lightGroup = this->groupArray[lightInfo.groupIndex];
@@ -364,7 +364,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
                             this->CopyStencilBufferToTexture(curPass, lightInfo.shadowLightMask);
                         }
                     }
-                }    
+                }
                 shadowServer->EndScene();
             }
         }
@@ -373,7 +373,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
     if (curPass.GetDrawShadows() == nRpPass::MultiLight)
     {
         gfxServer->SetRenderTarget(0, 0);
-    }        
+    }
     gfxServer->PopTransform(nGfxServer2::Projection);
     gfxServer->SetHint(nGfxServer2::MvpOnly, false);
 }

@@ -8,7 +8,7 @@
 #include "resource/nresourceserver.h"
 #include "gui/nguiwindow.h"
 
-nNebulaClass(nGuiCanvas, "gui::nguiwidget");
+nNebulaClass(nGuiCanvas, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

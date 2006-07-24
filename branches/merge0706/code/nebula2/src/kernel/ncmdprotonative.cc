@@ -8,7 +8,7 @@
   @param _id        [in] 4cc code
   @param _cmd_proc  [in] Pointer to C style command handler.
 */
-nCmdProtoNative::nCmdProtoNative(const char *_proto_def, nFourCC _id, 
+nCmdProtoNative::nCmdProtoNative(const char *_proto_def, nFourCC _id,
                                  void (*_cmd_proc)(void *, nCmd *))
   : nCmdProto(_proto_def, _id)
 {

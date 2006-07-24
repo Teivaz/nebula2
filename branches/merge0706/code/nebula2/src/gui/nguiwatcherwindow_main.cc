@@ -9,7 +9,7 @@
 #include "gui/nguiserver.h"
 #include "kernel/nenv.h"
 
-nNebulaClass(nGuiWatcherWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiWatcherWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

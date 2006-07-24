@@ -17,7 +17,7 @@ nJoystickDevice::nJoystickDevice(nKernelServer* ks, nInputServer* is, int devNum
         this->SetStoreSize((this->numAxes * 2) + (this->numPovs * 4));
     }
 
-    // initialize axis filter 
+    // initialize axis filter
     int i;
     for (i = 0; i < NUMFILTEREDAXIS; i++)
     {
@@ -76,7 +76,7 @@ nJoystickDevice::Export(nRoot* dir)
             case 6: axisName = "u"; break;
             case 7: axisName = "v"; break;
             case 8: axisName = "w"; break;
-            default: 
+            default:
                 continue;
         }
 
@@ -171,7 +171,7 @@ nJoystickDevice::Export(nRoot* dir)
         sprintf(chnName, "+%sbtn", yName);
         this->ExportButton(devId, chnName, btnOffset + 3);
     }
-    kernelServer->PopCwd();        
+    kernelServer->PopCwd();
     kernelServer->PopCwd();
     kernelServer->PopCwd();
 }
@@ -192,7 +192,7 @@ nJoystickDevice::BeginEmitEvents(double time)
 
 //------------------------------------------------------------------------------
 /**
-    Split an axis index and axis value into positive and negative 
+    Split an axis index and axis value into positive and negative
     indices/values and emit input events.
 */
 void
@@ -212,10 +212,10 @@ nJoystickDevice::ProcessAnalogAxis(int axisNum, float val)
 
     n_assert(negAxisIndex < this->numValues);
     n_assert(posAxisIndex < this->numValues);
-    
+
     float oldNegAxisVal = this->GetStoreValue(negAxisIndex);
     float oldPosAxisVal = this->GetStoreValue(posAxisIndex);
-    
+
     // generate positive/negative axis move events
     this->PutAxisEvent(devId, negAxisIndex, negAxisVal);
     this->PutAxisEvent(devId, posAxisIndex, posAxisVal);
@@ -352,7 +352,7 @@ nJoystickDevice::EmitPovMovedEvents(int povNum, int povVal)
             horiVal = -1.0f;
             vertVal = 0.0f;
         }
-        else 
+        else
         {
             // northwest
             horiVal = -1.0f;
@@ -384,12 +384,12 @@ nJoystickDevice::EmitPovMovedEvents(int povNum, int povVal)
     float oldHoriPosAxisVal = this->GetStoreValue(horiPosAxisIndex);
     float oldVertNegAxisVal = this->GetStoreValue(vertNegAxisIndex);
     float oldVertPosAxisVal = this->GetStoreValue(vertPosAxisIndex);
-    
+
     this->PutAxisButtonEvents(devId, this->numButtons + horiNegAxisIndex, oldHoriNegAxisVal, horiNegAxisVal);
     this->PutAxisButtonEvents(devId, this->numButtons + horiPosAxisIndex, oldHoriPosAxisVal, horiPosAxisVal);
     this->PutAxisButtonEvents(devId, this->numButtons + vertNegAxisIndex, oldVertNegAxisVal, vertNegAxisVal);
     this->PutAxisButtonEvents(devId, this->numButtons + vertPosAxisIndex, oldVertPosAxisVal, vertPosAxisVal);
-    
+
     this->SetStoreValue(horiNegAxisIndex, horiNegAxisVal);
     this->SetStoreValue(horiPosAxisIndex, horiPosAxisVal);
     this->SetStoreValue(vertNegAxisIndex, vertNegAxisVal);
@@ -398,7 +398,7 @@ nJoystickDevice::EmitPovMovedEvents(int povNum, int povVal)
 
 //------------------------------------------------------------------------------
 /**
-    Fill the axis filter with the current axis value 
+    Fill the axis filter with the current axis value
 */
 void
 nJoystickDevice::EndEmitEvents()

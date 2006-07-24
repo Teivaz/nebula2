@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-nNebulaScriptClass(nRoot, "kernel::nobject");
+nNebulaScriptClass(nRoot, "nobject");
 
 //------------------------------------------------------------------------------
 /**

@@ -105,7 +105,7 @@ nCharacter2::EvaluateSkeleton(float time)
 
         // check if a state transition is necessary
         float curRelTime = time - this->curStateInfo.GetStateStarted();
-        
+
         // handle time exception (this happens when time is reset to a smaller value
         // since the last anim state switch)
         if (curRelTime < 0.0f)
@@ -168,7 +168,7 @@ nCharacter2::EvaluateSkeleton(float time)
                                rotate.slerp(prevRotate, rotate, lerp);
                                scale.lerp(prevScale, lerp);
                            }
-                
+
                            nCharJoint& joint = this->charSkeleton.GetJointAt(jointIndex);
                            joint.SetTranslate(translate);
                            joint.SetRotate(rotate);
@@ -192,7 +192,7 @@ nCharacter2::EmitAnimEvents(float fromTime, float toTime)
     {
         n_assert(this->animation);
         float relFromTime = (fromTime - this->curStateInfo.GetStateStarted()) + this->curStateInfo.GetStateOffset();
-        float relToTime   = (toTime - this->curStateInfo.GetStateStarted()) + this->curStateInfo.GetStateOffset(); 
+        float relToTime   = (toTime - this->curStateInfo.GetStateStarted()) + this->curStateInfo.GetStateOffset();
         this->EmitAnimEvents(this->curStateInfo, relFromTime, relToTime);
     }
 }
@@ -205,9 +205,9 @@ nCharacter2::EmitAnimEvents(float fromTime, float toTime)
     must have the same number of curves).
 
     @param  time            the time at which to sample
-    @param  keyArray        pointer to a float4 array which will be filled with 
+    @param  keyArray        pointer to a float4 array which will be filled with
                             the sampled values (one per curve)
-    @param  keyArraySize    number of elements in the key array, must be identical 
+    @param  keyArraySize    number of elements in the key array, must be identical
                             to the number of curves in any anim clip
     @return                 true, if the returned keys are valid (false if all
                             clip weights are zero)
@@ -245,14 +245,14 @@ nCharacter2::Sample(const nAnimStateInfo& stateInfo, float time, vector4* keyArr
         {
             vector4& curMixedKey = keyArray[curveIndex];
             const vector4& curSampleKey = scratchKeyArray[curveIndex];
-       
+
             // perform weighted blending
             nAnimation::Curve& animCurve = this->animation->GetGroupAt(animGroupIndex).GetCurveAt(curveIndex);
             if (animCurve.IsAnimated() && clipWeight > 0.0f)
             {
                 // FIXME: (for cases with more than two clips) maybe all weights of animated curves
                 // have to be summed up (for every frame)
-                
+
                 // check all curves from previous clips at current curve index if they are animated
                 bool animFlag = false;
                 int i;
@@ -269,10 +269,10 @@ nCharacter2::Sample(const nAnimStateInfo& stateInfo, float time, vector4* keyArr
                 }
 
                 if (!animFlag)
-                {   
+                {
                     // no previous curves are animated; take my current sample key
                     if (animCurve.GetIpolType() == nAnimation::Curve::Quat)
-                    {    
+                    {
                         curMixedKey = curSampleKey;
                     }
                     else
@@ -282,9 +282,9 @@ nCharacter2::Sample(const nAnimStateInfo& stateInfo, float time, vector4* keyArr
                 }
                 else
                 {
-                    // lerp my current sample key with previous curves 
+                    // lerp my current sample key with previous curves
                    if (animCurve.GetIpolType() == nAnimation::Curve::Quat)
-                   {    
+                   {
                         quatCurrent.set(curSampleKey.x, curSampleKey.y, curSampleKey.z, curSampleKey.w);
                         quatAccum.set(curMixedKey.x, curMixedKey.y, curMixedKey.z, curMixedKey.w);
                         quatSlerp.slerp(quatAccum, quatCurrent, scaledWeight);
@@ -299,10 +299,10 @@ nCharacter2::Sample(const nAnimStateInfo& stateInfo, float time, vector4* keyArr
                 animCurve.SetCurAnimClipValue(curSampleKey);
              }
              else // curve is not animated
-             {     
+             {
                  // FIXME: (for cases with more than two clips) maybe all weights of animated curves
                  // have to be summed up (for every frame)
-                 
+
                  // check all curves from previous clips at current curve index if they are animated
                  vector4 startVal;
                  bool animFlag = false;
@@ -334,13 +334,13 @@ nCharacter2::Sample(const nAnimStateInfo& stateInfo, float time, vector4* keyArr
                  }
                  else
                  {
-                     // lerp my start value key with previous curves 
+                     // lerp my start value key with previous curves
                      if (animCurve.GetIpolType() == nAnimation::Curve::Quat)
                      {
                         quatCurrent.set(startVal.x, startVal.y, startVal.z, startVal.w);
                         quatAccum.set(curMixedKey.x, curMixedKey.y, curMixedKey.z, curMixedKey.w);
                         quatSlerp.slerp(quatAccum, quatCurrent, scaledWeight);
-                        curMixedKey.set(quatSlerp.x, quatSlerp.y, quatSlerp.z, quatSlerp.w);                         
+                        curMixedKey.set(quatSlerp.x, quatSlerp.y, quatSlerp.z, quatSlerp.w);
                      }
                      else
                      {
@@ -479,7 +479,7 @@ nCharacter2::EmitAnimEvents(const nAnimStateInfo& stateInfo, float fromTime, flo
 
     // for each clip with a weight > 0.0...
     this->BeginEmitEvents();
-    
+
     int clipIndex;
     int numClips = stateInfo.GetNumClips();
     for (clipIndex = 0; clipIndex < numClips; clipIndex++)

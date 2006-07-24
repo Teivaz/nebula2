@@ -7,7 +7,7 @@
 #include "resource/nresourceserver.h"
 #include "input/ninputserver.h"
 
-nNebulaScriptClass(nGuiTextEntry, "gui::nguitextlabel");
+nNebulaScriptClass(nGuiTextEntry, "nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**

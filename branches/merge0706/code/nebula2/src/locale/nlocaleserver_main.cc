@@ -6,7 +6,7 @@
 #include "locale/nlocaleserver.h"
 #include "xml/nxmlspreadsheet.h"
 
-nNebulaClass(nLocaleServer, "kernel::nroot");
+nNebulaClass(nLocaleServer, "nroot");
 nLocaleServer* nLocaleServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "video/nvideoplayer.h"
 
-nNebulaClass(nVideoPlayer, "kernel::nroot");
+nNebulaClass(nVideoPlayer, "nroot");
 
 //------------------------------------------------------------------------------
 /**

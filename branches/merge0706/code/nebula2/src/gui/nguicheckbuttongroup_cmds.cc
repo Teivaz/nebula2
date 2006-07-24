@@ -57,7 +57,7 @@ n_setonbuttonindex(void* slf, nCmd* cmd)
     @output
     i(OnButtonIndex)
     @info
-    Manually get the "on" button by index.    
+    Manually get the "on" button by index.
 */
 static void
 n_getonbuttonindex(void* slf, nCmd* cmd)

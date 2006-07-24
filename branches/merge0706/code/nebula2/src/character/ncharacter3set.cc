@@ -28,12 +28,12 @@ nCharacter3Set::Init(nCharacter3Node* characterNode)
 {
     n_assert(characterNode);
     n_assert(characterNode->AreResourcesValid());
-    
+
     this->selectedSkins.Clear();
     this->skinNames.Clear();
 
     this->skinNames = characterNode->GetNamesOfLoadedSkins();
-    this->variationNames = characterNode->GetNamesOfLoadedVariations(); 
+    this->variationNames = characterNode->GetNamesOfLoadedVariations();
     this->numAvailableSkins = this->skinNames.Size();
     this->numAvailableVariations = this->variationNames.Size();
 
@@ -50,7 +50,7 @@ nCharacter3Set::Init(nCharacter3Node* characterNode)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nString& fileName)
 {
     n_assert(this->IsValid());
@@ -81,7 +81,7 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
             if(numTokens == 3)
             {
                 for(k = 0; k < skin.Size(); k += 3)
-                {   
+                {
                     if( (skin[k] == nameTokens[0]) &&
                         (skin[k+1] == nameTokens[1]) &&
                         (skin[k+2] == nameTokens[2]) )

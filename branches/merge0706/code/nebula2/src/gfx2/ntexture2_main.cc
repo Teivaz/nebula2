@@ -5,7 +5,7 @@
 #include "gfx2/ntexture2.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass(nTexture2, "resource::nresource");
+nNebulaScriptClass(nTexture2, "nresource");
 
 //------------------------------------------------------------------------------
 /**

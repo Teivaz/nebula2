@@ -7,7 +7,7 @@
 #include "scene/nabstractshadernode.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaScriptClass(nTextureAnimator, "scene::nanimator");
+nNebulaScriptClass(nTextureAnimator, "nanimator");
 
 //------------------------------------------------------------------------------
 /**

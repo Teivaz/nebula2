@@ -14,7 +14,7 @@ static void n_getrenderpathsection(void* slf, nCmd* cmd);
 /**
     @scriptclass
     ncameranode
-    
+
     @superclass
     ntransformnode
 
@@ -69,7 +69,7 @@ n_getrenderpathsection(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nAbstractCameraNode::SaveCmds(nPersistServer* ps)
 {
     if (nTransformNode::SaveCmds(ps))

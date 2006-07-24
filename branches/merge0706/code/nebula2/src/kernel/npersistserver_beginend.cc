@@ -40,53 +40,53 @@ nPersistServer::PutFoldedObjectHeader(nScriptServer *saver, const char *fname, n
      - 16-Feb-04    floh    + no longer appends an ".n2" to path
      - 09-Nov-04    enlight + nObject support
 */
-bool 
+bool
 nPersistServer::BeginFoldedObject(nObject *obj, nCmd *cmd, const char *name, bool selOnly,
                                   bool isObjNamed)
 {
     n_assert(obj);
     n_assert(name);
-    
+
     bool fileOk = false;
-    
+
     if (isObjNamed)
     {
-        n_assert2(obj->IsA("nroot"), 
+        n_assert2(obj->IsA("nroot"),
                   "Set isObjNamed to false to save a non-nRoot object!");
-                  
+
         // if no objects on stack, create a new file...
-        if (this->objectStack.IsEmpty()) 
+        if (this->objectStack.IsEmpty())
         {
             n_assert(0 == this->file);
             this->file = this->PutFoldedObjectHeader(this->refSaver.get(), name, obj);
-            if (this->file) 
+            if (this->file)
             {
                 fileOk = true;
             }
-            else 
+            else
             {
                 n_printf("nPersistServer: could not open file '%s' for writing!\n", name);
             }
-        } 
-        else 
+        }
+        else
         {
             // there are objects on stack, reuse existing file
             n_assert(this->file);
             n_assert(this->objectStack.Top()->IsA("nroot"));
-            if (selOnly) 
+            if (selOnly)
             {
-                this->refSaver->WriteBeginSelObject(this->file, (nRoot *)obj, 
+                this->refSaver->WriteBeginSelObject(this->file, (nRoot *)obj,
                                                     (nRoot *)this->objectStack.Top());
-            } 
-            else if (cmd) 
+            }
+            else if (cmd)
             {
-                this->refSaver->WriteBeginNewObjectCmd(this->file, (nRoot *)obj, 
-                                                       (nRoot *)this->objectStack.Top(), 
+                this->refSaver->WriteBeginNewObjectCmd(this->file, (nRoot *)obj,
+                                                       (nRoot *)this->objectStack.Top(),
                                                        cmd);
-            } 
-            else 
+            }
+            else
             {
-                this->refSaver->WriteBeginNewObject(this->file, (nRoot *)obj, 
+                this->refSaver->WriteBeginNewObject(this->file, (nRoot *)obj,
                                                     (nRoot *)this->objectStack.Top());
             }
             fileOk = true;
@@ -94,10 +94,10 @@ nPersistServer::BeginFoldedObject(nObject *obj, nCmd *cmd, const char *name, boo
     }
     else
     {
-        n_assert2(!obj->IsA("nroot"), 
+        n_assert2(!obj->IsA("nroot"),
                   "Set isObjNamed to true to save an nRoot object!");
         n_assert(0 == this->file);
-    
+
         this->file = this->PutFoldedObjectHeader(this->refSaver.get(), name, obj);
         if (this->file)
         {
@@ -108,18 +108,18 @@ nPersistServer::BeginFoldedObject(nObject *obj, nCmd *cmd, const char *name, boo
             n_printf("nPersistServer: could not open file '%s' for writing!\n", name);
         }
     }
-    
+
     // push object onto stack
     if (fileOk)
     {
         this->objectStack.Push(obj);
     }
-    
+
     return fileOk;
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Finish writing persistent object.
 
      - 04-Nov-98   floh    created
@@ -128,28 +128,28 @@ nPersistServer::BeginFoldedObject(nObject *obj, nCmd *cmd, const char *name, boo
                            + owner object handling
      - 09-Nov-04   enlight + nObject support
 */
-bool 
+bool
 nPersistServer::EndFoldedObject(bool isObjNamed)
 {
     n_assert(!this->objectStack.IsEmpty());
     // get object from stack
     nObject *obj = this->objectStack.Pop();
     n_assert(obj);
-    
+
     if (isObjNamed)
     {
         n_assert2(obj->IsA("nroot"),
                   "Set isObjNamed to false to save a non-nRoot object!");
-                
-        if (this->objectStack.IsEmpty()) 
+
+        if (this->objectStack.IsEmpty())
         {
             n_assert(this->file);
 
             // top object reached, close file
             this->refSaver->EndWrite(this->file);
             this->file = 0;
-        } 
-        else 
+        }
+        else
         {
             // ...a sub object
             n_assert(this->objectStack.Top()->IsA("nroot"));
@@ -158,45 +158,45 @@ nPersistServer::EndFoldedObject(bool isObjNamed)
     }
     else
     {
-        n_assert2(!obj->IsA("nroot"), 
+        n_assert2(!obj->IsA("nroot"),
                   "Set isObjNamed to true to save an nRoot object!");
-        n_assert2(this->objectStack.IsEmpty(), 
+        n_assert2(this->objectStack.IsEmpty(),
                   "Object stack should be empty, what the hell have you been up to?");
         n_assert(this->file);
 
         this->refSaver->EndWrite(this->file);
         this->file = 0;
     }
-    
+
     return true;
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Begin an object clone operation.
- 
+
      - 18-Dec-98   floh    created
      - 09-Nov-04   enlight nObject support
 */
-bool 
+bool
 nPersistServer::BeginCloneObject(nObject *obj, const char *name, bool isObjNamed)
 {
     n_assert(obj);
-    
+
     bool retval = false;
     const char *cl = obj->GetClass()->GetName();
-    
+
     if (isObjNamed)
     {
         n_assert(name);
         n_assert2(obj->IsA("nroot"), "Set isObjNamed to false to clone non-nRoot object!");
-            
+
         this->cloneTarget = kernelServer->New(cl, name);
-        if (this->cloneTarget) 
+        if (this->cloneTarget)
         {
             n_assert(this->cloneTarget->GetRefCount() == 1);
             nRoot *actCwd = kernelServer->GetCwd();
-            if (this->objectStack.IsEmpty()) 
+            if (this->objectStack.IsEmpty())
             {
                 this->origCwd = actCwd;
             }
@@ -210,35 +210,35 @@ nPersistServer::BeginCloneObject(nObject *obj, const char *name, bool isObjNamed
     else
     {
         n_assert2(!obj->IsA("nroot"), "Set isObjNamed to true to clone nRoot object!");
-        
+
         this->cloneTarget = nKernelServer::Instance()->New(cl);
-        if (this->cloneTarget) 
+        if (this->cloneTarget)
         {
             n_assert(this->cloneTarget->GetRefCount() == 1);
             retval = true;
         }
     }
-    
+
     return retval;
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Finish an object clone operation.
-  
+
      - 18-Dec-98   floh    created
      - 08-Nov-04   enlight + nObject support
 */
-bool 
+bool
 nPersistServer::EndCloneObject(bool isObjNamed)
 {
     if (isObjNamed)
     {
         n_assert(!this->objectStack.IsEmpty())
-        n_assert2(this->objectStack.Top()->IsA("nroot"), 
+        n_assert2(this->objectStack.Top()->IsA("nroot"),
                   "Set isObjNamed to false to clone non-nRoot object!");
         nRoot *cwd = (nRoot *) this->objectStack.Pop();
-        if (cwd != this->origCwd) 
+        if (cwd != this->origCwd)
         {
             this->cloneTarget = cwd;
         }
@@ -246,14 +246,14 @@ nPersistServer::EndCloneObject(bool isObjNamed)
     }
     else
     {
-        n_assert2(!this->cloneTarget->IsA("nroot"), 
+        n_assert2(!this->cloneTarget->IsA("nroot"),
                   "Set isObjNamed to true to clone nRoot object!");
     }
     return true;
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Get the pointer to the cloned object.
 
      - 18-Dec-98   floh    created

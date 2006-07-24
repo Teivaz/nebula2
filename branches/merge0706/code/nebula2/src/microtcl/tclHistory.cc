@@ -1,4 +1,4 @@
-/* 
+/*
  * tclHistory.c --
  *
  *	This module and the Tcl library file history.tcl together implement
@@ -62,7 +62,7 @@ Tcl_RecordAndEval(interp, cmd, flags)
 	result = Tcl_RecordAndEvalObj(interp, cmdPtr, flags);
 
 	/*
-	 * Move the interpreter's object result to the string result, 
+	 * Move the interpreter's object result to the string result,
 	 * then reset the object result.
 	 */
 
@@ -72,8 +72,8 @@ Tcl_RecordAndEval(interp, cmd, flags)
 	/*
 	 * Discard the Tcl object created to hold the command.
 	 */
-	
-	Tcl_DecrRefCount(cmdPtr);	
+
+	Tcl_DecrRefCount(cmdPtr);
     } else {
 	/*
 	 * An empty string. Just reset the interpreter's result.
@@ -127,7 +127,7 @@ Tcl_RecordAndEvalObj(interp, cmdPtr, flags)
     list[0] = Tcl_NewStringObj("history", -1);
     list[1] = Tcl_NewStringObj("add", -1);
     list[2] = cmdPtr;
-    
+
     objPtr = Tcl_NewListObj(3, list);
     Tcl_IncrRefCount(objPtr);
     (void) Tcl_EvalObjEx(interp, objPtr, TCL_EVAL_GLOBAL);

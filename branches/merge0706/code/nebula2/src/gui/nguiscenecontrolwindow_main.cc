@@ -8,7 +8,7 @@
 #include "scene/ntransformnode.h"
 #include "scene/nlightnode.h"
 
-nNebulaClass(nGuiSceneControlWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiSceneControlWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

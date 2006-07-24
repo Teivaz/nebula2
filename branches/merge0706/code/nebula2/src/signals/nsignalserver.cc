@@ -11,7 +11,7 @@
 #include "kernel/ntimeserver.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass( nSignalServer, "kernel::nroot" );
+nNebulaClass( nSignalServer, "nroot" );
 
 //------------------------------------------------------------------------------
 nSignalServer* nSignalServer::Singleton = 0;

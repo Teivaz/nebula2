@@ -19,29 +19,29 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
                  nThreadSafeList *_ext_msglist,
                  void *_user_data)
 {
-#ifndef __NEBULA_NO_THREADS__    
+#ifndef __NEBULA_NO_THREADS__
     n_assert(_thread_func);
     if (!stack_size)
     {
         stack_size = N_DEFAULT_STACKSIZE;
     }
-    if (_ext_msglist) 
+    if (_ext_msglist)
     {
         this->msgList = _ext_msglist;
         this->isExtMsgList = true;
-    } 
-    else 
+    }
+    else
     {
         this->msgList = n_new(nThreadSafeList);
         this->isExtMsgList = false;
     }
 
     this->threadFunc = _thread_func;
-    this->wakeupFunc = _wakeup_func; 
+    this->wakeupFunc = _wakeup_func;
     this->userData   = _user_data;
     this->stopThread = false;
     this->shutdownSignalReceived = false;
-    
+
     // launch thread
 #   ifdef __WIN32__
     // we are using _beginthreadx() instead of CreateThread(),
@@ -101,13 +101,13 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
      - 31-Oct-98   floh    das shutdown_event konnte signalisiert werden,
                            bevor der Thread in ThreadHarakiri() darauf
                            warten konnte... deshalb setzt der Destruktor
-                           jetzt das Signal in einer ausgebremsten Schleife 
+                           jetzt das Signal in einer ausgebremsten Schleife
                            sooft, bis ThreadHarakiri() das Signal wirklich
-                           empfangen konnte.   
+                           empfangen konnte.
      - 26-Dec-98   floh    auf das shutdown-Signal vom Thread wird jetzt
                            nicht mehr in einer Schleife gewartet, weil
                            nEvent unter Linux jetzt auf Posix-Semaphoren
-                           umgeschrieben wurde (welche hoffentlich 
+                           umgeschrieben wurde (welche hoffentlich
                            funktionieren).
      - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
      - 03-Feb-00   floh    + changed WaitForSingleObject() from
@@ -125,14 +125,14 @@ nThread::~nThread()
     // call it, so that the thread can be signaled to wake up
     // in order to know that it should terminate
     this->stopThread = true;
-    if (this->wakeupFunc) 
+    if (this->wakeupFunc)
     {
         this->wakeupFunc(this);
     }
-    
+
     // signal the thread that it may terminate now
     this->shutdownEvent.Signal();
-    
+
     // wait until the thread has indeed terminated
     // (do nothing under Win32, because _endthreadex()
     // will be called at the end of the thread, which
@@ -145,13 +145,13 @@ nThread::~nThread()
     pthread_join(this->thread, NULL);
     this->thread = 0;
 #   endif
-    
+
     // flush msg list (all remaining messages will be lost)
-    if (!(this->isExtMsgList)) 
+    if (!(this->isExtMsgList))
     {
         nMsgNode *nd;
         this->msgList->Lock();
-        while ((nd = (nMsgNode *) this->msgList->RemHead())) 
+        while ((nd = (nMsgNode *) this->msgList->RemHead()))
         {
             n_delete(nd);
         }
@@ -168,7 +168,7 @@ nThread::~nThread()
      - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
      - 20-Feb-00   floh    + rewritten to _endthreadex()
 */
-void 
+void
 nThread::ThreadHarakiri()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -188,7 +188,7 @@ nThread::ThreadHarakiri()
      - 20-Oct-98   floh    created
      - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
 */
-void 
+void
 nThread::ThreadStarted()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -201,7 +201,7 @@ nThread::ThreadStarted()
      - 20-Oct-98   floh    created
      - 27-Apr-99   floh    + Support fuer __NEBULA_NO_THREADS__
 */
-bool 
+bool
 nThread::ThreadStopRequested()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -215,7 +215,7 @@ nThread::ThreadStopRequested()
 /**
      - 20-Oct-98   floh    created
 */
-void 
+void
 nThread::ThreadSleep(float sec)
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -245,7 +245,7 @@ nThread::GetMsg()
 /**
      - 20-Oct-98   floh    created
 */
-void 
+void
 nThread::ReplyMsg(nMsgNode *nd)
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -257,7 +257,7 @@ nThread::ReplyMsg(nMsgNode *nd)
 /**
      - 20-Oct-98   floh    created
 */
-void 
+void
 nThread::WaitMsg()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -269,7 +269,7 @@ nThread::WaitMsg()
 /**
      - 20-Oct-98   floh    created
 */
-void 
+void
 nThread::PutMsg(void* buf, int size)
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -282,7 +282,7 @@ nThread::PutMsg(void* buf, int size)
     this->msgList->SignalEvent();
 #endif
 }
- 
+
 //------------------------------------------------------------------------------
 /**
      - 20-Oct-98   floh    created
@@ -291,7 +291,7 @@ void*
 nThread::LockUserData()
 {
 #ifndef __NEBULA_NO_THREADS__
-    if (this->userData) 
+    if (this->userData)
     {
         this->userDataMutex.Lock();
     }
@@ -305,7 +305,7 @@ nThread::LockUserData()
 /**
      - 20-Oct-98   floh    created
 */
-void 
+void
 nThread::UnlockUserData()
 {
 #ifndef __NEBULA_NO_THREADS__

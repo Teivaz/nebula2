@@ -6,7 +6,7 @@
 #include "scene/nabstractcameranode.h"
 #include "kernel/nfileserver2.h"
 
-nNebulaScriptClass(nAbstractCameraNode, "scene::ntransformnode");
+nNebulaScriptClass(nAbstractCameraNode, "ntransformnode");
 
 //------------------------------------------------------------------------------
 /**

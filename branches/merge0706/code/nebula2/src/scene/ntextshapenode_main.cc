@@ -5,7 +5,7 @@
 #include "scene/ntextshapenode.h"
 #include "gfx2/nfontdesc.h"
 
-nNebulaClass(nTextShapeNode, "scene::nshapenode");
+nNebulaClass(nTextShapeNode, "nshapenode");
 
 //------------------------------------------------------------------------------
 /**

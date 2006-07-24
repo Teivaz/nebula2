@@ -7,7 +7,7 @@
 #include "audio3/nsound3.h"
 #include "audio3/naudioserver3.h"
 
-nNebulaScriptClass(nGuiSkin, "kernel::nroot");
+nNebulaScriptClass(nGuiSkin, "nroot");
 
 //------------------------------------------------------------------------------
 /**

@@ -11,7 +11,7 @@ static void n_getparamname(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nshaderanimator    
+    nshaderanimator
     @cppclass
     nShaderAnimator
     @superclass

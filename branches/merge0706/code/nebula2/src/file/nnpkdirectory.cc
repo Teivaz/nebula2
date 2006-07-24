@@ -164,7 +164,7 @@ nNpkDirectory::GetEntryName()
 //------------------------------------------------------------------------------
 /**
 */
-nDirectory::EntryType 
+nDirectory::EntryType
 nNpkDirectory::GetEntryType()
 {
     if (this->isNpkDir || this->npkEntryOverride)
@@ -172,7 +172,7 @@ nNpkDirectory::GetEntryType()
         n_assert(this->curSearchEntry);
         switch (curSearchEntry->GetType())
         {
-            case nNpkTocEntry::DIR: 
+            case nNpkTocEntry::DIR:
                 return nDirectory::DIRECTORY;
 
             case nNpkTocEntry::FILE:
@@ -223,7 +223,7 @@ nNpkDirectory::SetToNextNpkEntry()
     is actually known to the fileserver of course, otherwise it will simply
     show up as an npk file.
 */
-void 
+void
 nNpkDirectory::CheckNpkEntryOverride()
 {
     n_assert(!this->isNpkDir);

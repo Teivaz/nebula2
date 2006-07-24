@@ -23,7 +23,7 @@
  * The following macros are used for fast character category tests.  The
  * x_BITS values are shifted right by the category value to determine whether
  * the given category is included in the set.
- */ 
+ */
 
 #define ALPHA_BITS ((1 << UPPERCASE_LETTER) | (1 << LOWERCASE_LETTER) \
     | (1 << TITLECASE_LETTER) | (1 << MODIFIER_LETTER) | (1 << OTHER_LETTER))
@@ -51,8 +51,8 @@
 	    (1 << FINAL_QUOTE_PUNCTUATION) | (1 << OTHER_PUNCTUATION))
 
 /*
- * Unicode characters less than this value are represented by themselves 
- * in UTF-8 strings. 
+ * Unicode characters less than this value are represented by themselves
+ * in UTF-8 strings.
  */
 
 #define UNICODE_SELF	0x80
@@ -61,7 +61,7 @@
  * The following structures are used when mapping between Unicode (UCS-2)
  * and UTF-8.
  */
- 
+
 CONST unsigned char totalBytes[256] = {
     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
     1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -110,7 +110,7 @@ static int UtfCount _ANSI_ARGS_((int ch));
  *
  *---------------------------------------------------------------------------
  */
- 
+
 static int
 UtfCount(ch)
     int ch;			/* The Tcl_UniChar whose size is returned. */
@@ -148,14 +148,14 @@ UtfCount(ch)
  *
  * Results:
  *	The return values is the number of bytes in the buffer that
- *	were consumed.  
+ *	were consumed.
  *
  * Side effects:
  *	None.
  *
  *---------------------------------------------------------------------------
  */
- 
+
 INLINE int
 Tcl_UniCharToUtf(ch, str)
     int ch;			/* The Tcl_UniChar to be stored in the
@@ -230,7 +230,7 @@ Tcl_UniCharToUtf(ch, str)
  *
  *---------------------------------------------------------------------------
  */
- 
+
 char *
 Tcl_UniCharToUtfDString(wString, numChars, dsPtr)
     CONST Tcl_UniChar *wString;	/* Unicode string to convert to UTF-8. */
@@ -289,7 +289,7 @@ Tcl_UniCharToUtfDString(wString, numChars, dsPtr)
  *
  *---------------------------------------------------------------------------
  */
- 
+
 int
 Tcl_UtfToUniChar(str, chPtr)
     register CONST char *str;	 /* The UTF-8 string. */
@@ -297,7 +297,7 @@ Tcl_UtfToUniChar(str, chPtr)
 				  * by the UTF-8 string. */
 {
     register int byte;
-    
+
     /*
      * Unroll 1 to 3 byte UTF-8 sequences, use loop to handle longer ones.
      */
@@ -309,7 +309,7 @@ Tcl_UtfToUniChar(str, chPtr)
 	 * Also treats \0 and naked trail bytes 0x80 to 0xBF as valid
 	 * characters representing themselves.
 	 */
-	 
+
 	*chPtr = (Tcl_UniChar) byte;
 	return 1;
     } else if (byte < 0xE0) {
@@ -317,7 +317,7 @@ Tcl_UtfToUniChar(str, chPtr)
 	    /*
 	     * Two-byte-character lead-byte followed by a trail-byte.
 	     */
-	     
+
 	    *chPtr = (Tcl_UniChar) (((byte & 0x1F) << 6) | (str[1] & 0x3F));
 	    return 2;
 	}
@@ -325,7 +325,7 @@ Tcl_UtfToUniChar(str, chPtr)
 	 * A two-byte-character lead-byte not followed by trail-byte
 	 * represents itself.
 	 */
-	 
+
 	*chPtr = (Tcl_UniChar) byte;
 	return 1;
     } else if (byte < 0xF0) {
@@ -334,7 +334,7 @@ Tcl_UtfToUniChar(str, chPtr)
 	     * Three-byte-character lead byte followed by two trail bytes.
 	     */
 
-	    *chPtr = (Tcl_UniChar) (((byte & 0x0F) << 12) 
+	    *chPtr = (Tcl_UniChar) (((byte & 0x0F) << 12)
 		    | ((str[1] & 0x3F) << 6) | (str[2] & 0x3F));
 	    return 3;
 	}
@@ -474,15 +474,15 @@ Tcl_UtfCharComplete(str, len)
  *	Plan 9 utflen() and utfnlen().
  *
  * Results:
- *	As above.  
+ *	As above.
  *
  * Side effects:
  *	None.
  *
  *---------------------------------------------------------------------------
  */
- 
-int 
+
+int
 Tcl_NumUtfChars(str, len)
     register CONST char *str;	/* The UTF-8 string to measure. */
     int len;			/* The length of the string in bytes, or -1
@@ -496,7 +496,7 @@ Tcl_NumUtfChars(str, len)
     /*
      * The separate implementations are faster.
      */
-     
+
     i = 0;
     if (len < 0) {
 	while (1) {
@@ -543,7 +543,7 @@ Tcl_UtfFindFirst(string, ch)
 {
     int len;
     Tcl_UniChar find;
-    
+
     while (1) {
 	len = Tcl_UtfToUniChar(string, &find);
 	if (find == ch) {
@@ -584,7 +584,7 @@ Tcl_UtfFindLast(string, ch)
     int len;
     Tcl_UniChar find;
     CONST char *last;
-	
+
     last = NULL;
     while (1) {
 	len = Tcl_UtfToUniChar(string, &find);
@@ -618,9 +618,9 @@ Tcl_UtfFindLast(string, ch)
  *
  *---------------------------------------------------------------------------
  */
- 
+
 char *
-Tcl_UtfNext(str) 
+Tcl_UtfNext(str)
     CONST char *str;		    /* The current location in the string. */
 {
     Tcl_UniChar ch;
@@ -657,7 +657,7 @@ Tcl_UtfPrev(str, start)
 {
     CONST char *look;
     int i, byte;
-    
+
     str--;
     look = str;
     for (i = 0; i < TCL_UTF_MAX; i++) {
@@ -670,7 +670,7 @@ Tcl_UtfPrev(str, start)
 	byte = *((unsigned char *) look);
 	if (byte < 0x80) {
 	    break;
-	} 
+	}
 	if (byte >= 0xC0) {
 	    if (totalBytes[byte] != i + 1) {
 		break;
@@ -681,7 +681,7 @@ Tcl_UtfPrev(str, start)
     }
     return (char *) str;
 }
-	
+
 /*
  *---------------------------------------------------------------------------
  *
@@ -698,7 +698,7 @@ Tcl_UtfPrev(str, start)
  *
  *---------------------------------------------------------------------------
  */
- 
+
 Tcl_UniChar
 Tcl_UniCharAtIndex(src, index)
     register CONST char *src;	/* The UTF-8 string to dereference. */
@@ -736,7 +736,7 @@ Tcl_UtfAtIndex(src, index)
     register int index;		/* The position of the desired character. */
 {
     Tcl_UniChar ch;
-    
+
     while (index > 0) {
 	index--;
 	src += Tcl_UtfToUniChar(src, &ch);
@@ -756,7 +756,7 @@ Tcl_UtfAtIndex(src, index)
  *	returns the number of bytes written to dst.  At most TCL_UTF_MAX
  *	bytes are written to dst; dst must have been large enough to accept
  *	those bytes.  If readPtr isn't NULL then it is filled in with a
- *	count of the number of bytes in the backslash sequence.  
+ *	count of the number of bytes in the backslash sequence.
  *
  * Side effects:
  *	The maximum number of bytes it takes to represent a Unicode
@@ -851,7 +851,7 @@ Tcl_UtfBackslash(src, readPtr, dst)
 	    }
 	    count += 2;
 	    break;
-		    
+
         case '\n':
             do {
                 p++;
@@ -934,7 +934,7 @@ Tcl_UtfToUpper(str)
 	 * the conversion (thereby causing a segfault), only copy the
 	 * upper case char to dst if its size is <= the original char.
 	 */
-	
+
 	if (bytes < UtfCount(upChar)) {
 	    memcpy(dst, src, (size_t) bytes);
 	    dst += bytes;
@@ -972,7 +972,7 @@ Tcl_UtfToLower(str)
     Tcl_UniChar ch, lowChar;
     char *src, *dst;
     int bytes;
-    
+
     /*
      * Iterate over the string until we hit the terminating null.
      */
@@ -987,7 +987,7 @@ Tcl_UtfToLower(str)
 	 * the conversion (thereby causing a segfault), only copy the
 	 * lower case char to dst if its size is <= the original char.
 	 */
-	
+
 	if (bytes < UtfCount(lowChar)) {
 	    memcpy(dst, src, (size_t) bytes);
 	    dst += bytes;
@@ -1026,7 +1026,7 @@ Tcl_UtfToTitle(str)
     Tcl_UniChar ch, titleChar, lowChar;
     char *src, *dst;
     int bytes;
-    
+
     /*
      * Capitalize the first character and then lowercase the rest of the
      * characters until we get to a null.
@@ -1268,7 +1268,7 @@ Tcl_UniCharLen(str)
     Tcl_UniChar *str;		/* Unicode string to find length of. */
 {
     int len = 0;
-    
+
     while (*str != '\0') {
 	len++;
 	str++;
@@ -1650,16 +1650,16 @@ Tcl_UniCharCaseMatch(string, pattern, nocase)
     int nocase;			/* 0 for case sensitive, 1 for insensitive */
 {
     Tcl_UniChar ch1, p;
-    
+
     while (1) {
 	p = *pattern;
-	
+
 	/*
 	 * See if we're at the end of both the pattern and the string.  If
 	 * so, we succeeded.  If we're at the end of the pattern but not at
 	 * the end of the string, we failed.
 	 */
-	
+
 	if (p == 0) {
 	    return (*string == 0);
 	}
@@ -1674,7 +1674,7 @@ Tcl_UniCharCaseMatch(string, pattern, nocase)
 	 * recursively for each postfix of string, until either we match or we
 	 * reach the end of the string.
 	 */
-	
+
 	if (p == '*') {
 	    /*
 	     * Skip all successive *'s in the pattern
@@ -1726,7 +1726,7 @@ Tcl_UniCharCaseMatch(string, pattern, nocase)
 	 * by a list of characters that are acceptable, or by a range
 	 * (two characters separated by "-").
 	 */
-	
+
 	if (p == '[') {
 	    Tcl_UniChar startChar, endChar;
 

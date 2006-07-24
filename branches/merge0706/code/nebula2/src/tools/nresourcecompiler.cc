@@ -56,7 +56,7 @@ nResourceCompiler::Open(nKernelServer* ks)
 
     // initialize Nebula runtime
     this->kernelServer = ks;
-    
+
     // initialize proj assign
     nFileServer2* fileServer = kernelServer->GetFileServer();
     fileServer->SetAssign("proj", this->GetPath(ProjectDirectory));
@@ -154,7 +154,7 @@ nResourceCompiler::Compile(const nArray<nString>& objs)
     {
         return false;
     }
-    
+
     // close temporary data file
     this->dataFile->Close();
 
@@ -326,7 +326,7 @@ nResourceCompiler::SaveObjectHierarchy()
 
 //------------------------------------------------------------------------------
 /**
-    Load each mesh, append it as binary nvx2 file to the temporary 
+    Load each mesh, append it as binary nvx2 file to the temporary
     data file, and record its start offset and length.
     FIXME: small meshes should be combined into optimally sized
     meshes.
@@ -357,7 +357,7 @@ nResourceCompiler::ProcessMeshes()
 
         // record start offset in temp data file
         resEntry.SetDataOffset(this->dataFile->GetSize());
-        
+
         // append mesh data to temp data file
         if (!meshBuilder.SaveNvx2(this->dataFile))
         {
@@ -456,7 +456,7 @@ nResourceCompiler::ProcessTextures()
 
         // record length of data
         resEntry.SetDataLength(this->dataFile->GetSize() - resEntry.GetDataOffset());
-    }        
+    }
     return true;
 }
 
@@ -551,7 +551,7 @@ nResourceCompiler::SaveResourceBundle()
     n_assert(success);
     dstFile->AppendFile(this->dataFile);
     this->dataFile->Close();
-    
+
     // cleanup
     dstFile->Close();
     dstFile->Release();

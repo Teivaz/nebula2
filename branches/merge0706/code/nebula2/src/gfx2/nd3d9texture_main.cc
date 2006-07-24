@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 
-nNebulaClass(nD3D9Texture, "gfx2::ntexture2");
+nNebulaClass(nD3D9Texture, "ntexture2");
 
 //------------------------------------------------------------------------------
 /**

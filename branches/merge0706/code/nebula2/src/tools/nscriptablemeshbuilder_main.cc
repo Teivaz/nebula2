@@ -6,7 +6,7 @@
 #include "kernel/nkernelserver.h"
 #include "tools/nscriptablemeshbuilder.h"
 
-nNebulaScriptClass(nScriptableMeshBuilder, "kernel::nroot");
+nNebulaScriptClass(nScriptableMeshBuilder, "nroot");
 
 //------------------------------------------------------------------------------
 /**

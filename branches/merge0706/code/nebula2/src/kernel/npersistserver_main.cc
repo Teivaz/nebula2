@@ -6,7 +6,7 @@
 #include "kernel/nscriptserver.h"
 #include "kernel/npersistserver.h"
 
-nNebulaScriptClass(nPersistServer, "kernel::nroot");
+nNebulaScriptClass(nPersistServer, "nroot");
 
 //------------------------------------------------------------------------------
 /**

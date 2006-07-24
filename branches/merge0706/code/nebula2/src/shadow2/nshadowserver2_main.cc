@@ -8,7 +8,7 @@
 #include "gfx2/nshader2.h"
 #include "shadow2/nshadowcaster2.h"
 
-nNebulaScriptClass(nShadowServer2, "kernel::nroot");
+nNebulaScriptClass(nShadowServer2, "nroot");
 nShadowServer2* nShadowServer2::Singleton = 0;
 
 //------------------------------------------------------------------------------

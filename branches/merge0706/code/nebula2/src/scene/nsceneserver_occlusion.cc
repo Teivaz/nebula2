@@ -36,7 +36,7 @@ nSceneServer::IssueOcclusionQuery(Group& group, const vector3& viewerPos)
     // occludes itself, the second checks if the viewer is in the bounding
     // box, and if yes, no occlusion check is done
     const bbox3& globalBox = group.renderContext->GetGlobalBox();
-    
+
     // check whether the bounding box is very small in one or more dimensions
     // which may lead to zbuffer artefacts during the occlusion check, in that
     // case, don't do an occlusion query for this object
@@ -85,7 +85,7 @@ nSceneServer::DoOcclusionQuery()
         // of the occlusion plane might be clipped which would return 0 drawn pixels
         // when the object really isn't occluded (simply turning off backface
         // culling won't help either in some cases!)
-        
+
         // FIXME: hmm, this method sucks... better to check viewer position against
         // a slightly scaled bounding box in IssueOcclusionQuery()!
         const vector3& viewerPos = gfxServer->GetTransform(nGfxServer2::InvView).pos_component();

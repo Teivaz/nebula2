@@ -214,7 +214,7 @@ n_isopen(void* slf, nCmd* cmd)
     @output
     s(ClientStatus)
     @info
-    Get the current client status. This is one of 
+    Get the current client status. This is one of
     invalid, connecting, connected, joinaccepted, joindenied, started,
     timeout.
 */

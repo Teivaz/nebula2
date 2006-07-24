@@ -7,7 +7,7 @@
 #include "gfx2/nd3d9server.h"
 #include "gfx2/nd3d9mesh.h"
 
-nNebulaClass(nD3D9MeshArray, "gfx2::nmesharray");
+nNebulaClass(nD3D9MeshArray, "nmesharray");
 
 //------------------------------------------------------------------------------
 /**

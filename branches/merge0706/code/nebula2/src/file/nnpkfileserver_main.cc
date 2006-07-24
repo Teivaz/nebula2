@@ -10,7 +10,7 @@
 #include "file/nnpkdirectory.h"
 #include "tools/nnpkbuilder.h"
 
-nNebulaScriptClass(nNpkFileServer, "kernel::nfileserver2");
+nNebulaScriptClass(nNpkFileServer, "nfileserver2");
 
 //------------------------------------------------------------------------------
 /**

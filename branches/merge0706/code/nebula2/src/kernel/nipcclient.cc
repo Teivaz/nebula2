@@ -122,7 +122,7 @@ nIpcClient::Connect(nIpcAddress& addr)
 
         // configure the socket
         int trueAsInt = 1;
-        int res = setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt)); 
+        int res = setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt));
         n_assert(res != -1);
 
         // try connection
@@ -150,7 +150,7 @@ nIpcClient::Connect(nIpcAddress& addr)
 
         // put socket into nonblocking mode?
         this->ApplyBlocking(this->blocking);
-        
+
         // all ok
         this->isConnected = true;
         n_printf("\nConnected.");

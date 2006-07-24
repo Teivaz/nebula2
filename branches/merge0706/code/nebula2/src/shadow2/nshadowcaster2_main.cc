@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "shadow2/nshadowcaster2.h"
 
-nNebulaClass(nShadowCaster2, "resource::nresource");
+nNebulaClass(nShadowCaster2, "nresource");
 
 //------------------------------------------------------------------------------
 /**

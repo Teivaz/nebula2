@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "misc/nprefserver.h"
 
-nNebulaScriptClass(nPrefServer, "kernel::nroot");
+nNebulaScriptClass(nPrefServer, "nroot");
 nPrefServer* nPrefServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

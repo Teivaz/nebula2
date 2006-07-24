@@ -18,11 +18,11 @@ nSceneServer::RenderCameraScene()
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     int i;
     for (i = 0; i < this->cameraArray.Size(); i++)
-    {          
+    {
         // get the camera node
         Group& cameraNodeGroup = this->groupArray[cameraArray[i]];
-        nAbstractCameraNode* cameraNode = (nAbstractCameraNode*) cameraNodeGroup.sceneNode;   
-    
+        nAbstractCameraNode* cameraNode = (nAbstractCameraNode*) cameraNodeGroup.sceneNode;
+
         // check if the render target available
         const nString& rpSectionName = cameraNode->GetRenderPathSection();
         int sectionIndex = this->renderPath.FindSectionIndex(rpSectionName);
@@ -80,7 +80,7 @@ nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
         if(child->IsA(reqReflectClass))
         {
             reflect1Found = true;
-        
+
             // check if this child is a refraction(clipping) camera
             if(child->IsA(reqRefractClass))
             {
@@ -93,7 +93,7 @@ nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
             refract2Found = true;
         }
         // if the two cams are not the only childs, this is no reflectin shape
-        else 
+        else
         {
             return false;
         }
@@ -120,8 +120,8 @@ nSceneServer::IsShapesBBVisible(const Group& groupNode)
     // get bounding box
     bbox3 bBox = groupNode.sceneNode->GetLocalBox();
     bBox.transform( groupNode.modelTransform );
-    
-    // compute clipping for box    
+
+    // compute clipping for box
     int clipStat = bBox.clipstatus( viewProj );
     return (clipStat != 0);
 }
@@ -132,7 +132,7 @@ nSceneServer::IsShapesBBVisible(const Group& groupNode)
 */
 float
 nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
-{    
+{
     // get bounding box
     bbox3 bBox = groupNode.sceneNode->GetLocalBox();
     bBox.transform(groupNode.modelTransform);
@@ -146,7 +146,7 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     // build 4 lines
     line3 l12(v1, v2);
     line3 l24(v2, v4);
-    line3 l43(v4, v3); 
+    line3 l43(v4, v3);
     line3 l31(v3, v1);
 
     // get the distances, if 0 < tVal < 1 then everything is allright, if not
@@ -165,7 +165,7 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     {
         retVal = l12.distance(viewerPos);
     }
-  
+
     // get next to compare
     float tempVal;
     tVal = l24.closestpoint(viewerPos);
@@ -176,7 +176,7 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     else if(tVal > 1.0f)
     {
         tempVal = vector3::distance(viewerPos, v4);
-    }    
+    }
     else
     {
         tempVal = l24.distance(viewerPos);
@@ -203,7 +203,7 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     // compare
     retVal = tempVal < retVal ? tempVal : retVal;
 
-    // get next to compare    
+    // get next to compare
     tVal = l31.closestpoint(viewerPos);
     if(tVal < 0.0f)
     {
@@ -228,7 +228,7 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
 //------------------------------------------------------------------------------
 /**
     Parses the given node (usually a relecting, refracting sea) for its priority.
-    If this sea gets the highest priority, the member 'renderedReflectorPtr' will be set 
+    If this sea gets the highest priority, the member 'renderedReflectorPtr' will be set
     to this one, and the distance 'renderedReflectorDistance' will be set.
     Returns true if the given node gains complex render priority
 */
@@ -252,24 +252,24 @@ nSceneServer::ParsePriority(const Group& groupNode)
             this->renderedReflectorDistance = tempDistance;
             return true;
         }
-        
+
         // if this is allready the chosen one to render  //////////////////////////////// THIRD CONDITION - not allready assigned
         if(this->renderContextPtr == groupNode.renderContext)
         {
             // assign new distance
             this->renderedReflectorDistance = tempDistance;
-            
+
             // nothing else to do
             return true;
         }
 
         // if this is not the chosen one to render, check if it will be new one
         if(tempDistance < this->renderedReflectorDistance) ///////////////////////////// FOURTH CONDITION - nearer then assigned OR assigned is invisible
-        {                        
+        {
             // assign new nearest sea object
             this->renderedReflectorDistance = tempDistance;
             this->renderContextPtr = groupNode.renderContext;
-                
+
             return true;
         }
     }

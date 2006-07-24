@@ -11,7 +11,7 @@
 #include "gui/nguicheckbuttongroup2.h"
 #include "misc/nprefserver.h"
 
-nNebulaClass(nGuiSettingsForm, "gui::nguiformlayout");
+nNebulaClass(nGuiSettingsForm, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

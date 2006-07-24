@@ -5,7 +5,7 @@
 #include "toolkit/ntoolkitserver.h"
 #include "scene/nmultilayerednode.h"
 
-nNebulaScriptClass(nToolkitServer, "kernel::nroot");
+nNebulaScriptClass(nToolkitServer, "nroot");
 nToolkitServer* nToolkitServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

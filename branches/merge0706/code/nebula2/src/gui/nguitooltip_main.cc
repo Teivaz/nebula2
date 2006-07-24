@@ -9,7 +9,7 @@
 #include "kernel/ntimeserver.h"
 #include "gui/nguimousecursor.h"
 
-nNebulaClass(nGuiToolTip, "gui::nguitextlabel");
+nNebulaClass(nGuiToolTip, "nguitextlabel");
 
 //------------------------------------------------------------------------------
 /**

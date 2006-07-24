@@ -7,7 +7,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguiwindow.h"
 
-nNebulaClass(nGuiBar, "gui::nguiwidget");
+nNebulaClass(nGuiBar, "nguiwidget");
 
 //-----------------------------------------------------------------------------
 /**

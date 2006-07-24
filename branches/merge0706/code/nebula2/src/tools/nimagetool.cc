@@ -3,9 +3,9 @@
     @page NebulaToolsnimagetool nimagetool
 
     nimagetool
-    
+
     Nebula image processing tool.
-    
+
     <dl>
      <dt>-in</dt>
        <dd>filename of input file</dd>
@@ -108,7 +108,7 @@ CreateNormCubeMap(ILuint image[numImages], int size)
         {
             float y = 1.0f - float(iy) * d;
             float z = 1.0f - float(ix) * d;
-            
+
             vec.set(1.0f, y, z);
             vec.norm();
 
@@ -180,7 +180,7 @@ LoadImage(ILuint image, const char* filename)
     if ((ilGetInteger(IL_IMAGE_FORMAT) != IL_BGR) && (ilGetInteger(IL_IMAGE_FORMAT) != IL_BGRA))
     {
         if (ilGetInteger(IL_IMAGE_FORMAT) == IL_RGB)
-        {    
+        {
             ilConvertImage(IL_BGR, IL_UNSIGNED_BYTE);
         }
         else
@@ -203,7 +203,7 @@ ScaleImage(ILuint image, int width, int height, bool smallerOnly)
     ilBindImage(image);
     int curWidth  = ilGetInteger(IL_IMAGE_WIDTH);
     int curHeight = ilGetInteger(IL_IMAGE_HEIGHT);
-    
+
     // do not scale if sizes are identical
     if ((curWidth == width) && (curHeight == height))
     {
@@ -216,7 +216,7 @@ ScaleImage(ILuint image, int width, int height, bool smallerOnly)
         return;
     }
 
-    // select filter based on current size (use a simple and 
+    // select filter based on current size (use a simple and
     // fast filter if current size is 1, which is the case if
     // the image is still in its default state after creation)
     if ((curWidth == 1) && (curHeight == 1))
@@ -280,7 +280,7 @@ SaveImageTGA(ILuint image, const char* filename)
 /**
     Main function.
 */
-int 
+int
 main(int argc, const char** argv)
 {
     nCmdLineArgs args(argc, argv);
@@ -391,7 +391,7 @@ main(int argc, const char** argv)
     if ((!normCubeMapArg) && (!specMapArg))
     {
         // If no target width and height is defined, set the size to the size of the first valid
-        // image in the image array. This takes care of any leftover 1x1 images in 
+        // image in the image array. This takes care of any leftover 1x1 images in
         // the cube maps (which are then scaled to the correct size)
         int width = widthArg;
         int height = heightArg;

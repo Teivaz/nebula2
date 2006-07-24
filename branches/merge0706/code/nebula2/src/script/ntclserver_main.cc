@@ -6,7 +6,7 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 
-nNebulaClass(nTclServer, "kernel::nscriptserver");
+nNebulaClass(nTclServer, "nscriptserver");
 
 // new tcl commands and tcl command replacements
 extern Tcl_ObjCmdProc tclcmd_New;

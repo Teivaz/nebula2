@@ -6,7 +6,7 @@
 #include "variable/nvariableserver.h"
 #include "variable/nvariablecontext.h"
 
-nNebulaScriptClass(nVariableServer, "kernel::nroot");
+nNebulaScriptClass(nVariableServer, "nroot");
 nVariableServer* nVariableServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

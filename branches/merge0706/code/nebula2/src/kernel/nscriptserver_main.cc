@@ -5,7 +5,7 @@
 #include "kernel/nscriptserver.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass(nScriptServer, "kernel::nroot");
+nNebulaClass(nScriptServer, "nroot");
 
 nObject* nScriptServer::currentTargetObject = 0;
 

@@ -6,12 +6,12 @@
 
     Selfcontained viewer application for Nebula.
 
-    The Nebula2 viewer displays Nebula2 3D objects in realtime. It can be invoked 
+    The Nebula2 viewer displays Nebula2 3D objects in realtime. It can be invoked
     from the command line (nviewer.exe) or from the start menu.
 
-    The viewer offers an overlay 2D user interface which is activated by pressing 
+    The viewer offers an overlay 2D user interface which is activated by pressing
     the Escape key.
-    The GUI offers builtin command consoles, a texture browser window, a graphics 
+    The GUI offers builtin command consoles, a texture browser window, a graphics
     object browser window, and 2 windows with runtime and debug information.
 
     <dl>
@@ -81,7 +81,7 @@ nNebulaUsePackage(ndsound);
 //------------------------------------------------------------------------------
 /*
     Win32 specific method which checks the registry for the Nebula2
-    Toolkit's project path. If the reg keys are not found, the 
+    Toolkit's project path. If the reg keys are not found, the
     routine just returns 0.
 */
 #ifdef __WIN32__
@@ -157,7 +157,7 @@ main(int argc, const char** argv)
         n_assert("Invalid window height. Using height of 30.\n");
         heightArg = 30;
     }
-    
+
     // If the user needs an explanation, just provide one, and don't do anything else this execution
     if (helpArg)
     {
@@ -261,7 +261,7 @@ main(int argc, const char** argv)
     if (viewArg.IsValid())          viewerApp.SetSceneFile(viewArg);
     if (projDir.IsValid())          viewerApp.SetProjDir(projDir);
     if (startupArg.IsValid())       viewerApp.SetStartupScript(startupArg);
-    if (renderPath.IsValid())       viewerApp.SetRenderPath(renderPath);    
+    if (renderPath.IsValid())       viewerApp.SetRenderPath(renderPath);
     if (featureSetArg.IsValid())
     {
         nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg.Get());
@@ -271,10 +271,10 @@ main(int argc, const char** argv)
         }
         viewerApp.SetFeatureSetOverride(featureSet);
     }
-    
+
     viewerApp.SetStageScript(stageArg);
 
-    //set viewer propherties 
+    //set viewer propherties
     viewerApp.GetCamControl().SetDefaultCenterOfInterest(eyeCoi);
     viewerApp.GetCamControl().SetDefaultEyePos(eyePos);
     viewerApp.GetCamControl().SetDefaultUpVec(eyeUp);

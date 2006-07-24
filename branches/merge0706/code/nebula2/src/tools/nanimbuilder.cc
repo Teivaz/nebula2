@@ -35,7 +35,7 @@ nAnimBuilder::Clear()
 
 //------------------------------------------------------------------------------
 /**
-    Return the actual number of keys (not including the 'keys' in collapsed 
+    Return the actual number of keys (not including the 'keys' in collapsed
     curves).
 */
 int
@@ -157,7 +157,7 @@ nAnimBuilder::SaveNanim2(nFileServer2* fileServer, const char* filename)
             }
         }
 
-        // cleanup 
+        // cleanup
         file->Close();
     }
     file->Release();
@@ -222,11 +222,11 @@ nAnimBuilder::SaveNax2(nFile* file)
                 case Curve::QUAT:   ipolType = nAnimation::Curve::Quat; break;
                 default:            ipolType = nAnimation::Curve::None; break;
             }
-            
+
             const int firstKeyIndex = curve.GetFirstKeyIndex();
             const int isAnim = curve.IsAnimated();
             const vector4& collapsedKey = curve.GetCollapsedKey();
-            
+
             file->PutInt(int(ipolType));
             file->PutInt(firstKeyIndex);
             file->PutInt(isAnim);
@@ -500,9 +500,9 @@ nAnimBuilder::LoadNanim2(nFileServer2* fileServer, const char* filename)
                 n_assert(keyXString && keyYString && keyZString && keyWString);
 
                 static vector4 key;
-                key.set(float(atof(keyXString)), 
-                        float(atof(keyYString)), 
-                        float(atof(keyZString)), 
+                key.set(float(atof(keyXString)),
+                        float(atof(keyYString)),
+                        float(atof(keyZString)),
                         float(atof(keyWString)));
                 keyArray.Append(key);
             }
@@ -584,7 +584,7 @@ nAnimBuilder::LoadNax2(nFileServer2* fileServer, const char* filename)
             int loopType  = file->GetInt();
 
             Group group;
-            
+
             // add empty curve objects to the group
             Curve curve;
             int curveIndex;

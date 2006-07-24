@@ -6,7 +6,7 @@
 #include "resource/nresourceserver.h"
 #include "sql/nsqldatabase.h"
 
-nNebulaClass(nSQLite3Server, "sql::nsqlserver");
+nNebulaClass(nSQLite3Server, "nsqlserver");
 
 //------------------------------------------------------------------------------
 /**

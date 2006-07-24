@@ -7,7 +7,7 @@
 #include "kernel/ndirectory.h"
 #include "util/nstring.h"
 
-nNebulaClass(nGuiHardpointsLister, "gui::nguitextview");
+nNebulaClass(nGuiHardpointsLister, "nguitextview");
 
 //------------------------------------------------------------------------------
 /**

@@ -14,7 +14,7 @@
 #include "character/ncharacter3set.h"
 #include "resource/nresourceserver.h"
 
-nNebulaClass(nCharacter3SkinAnimator, "scene::nskinanimator");
+nNebulaClass(nCharacter3SkinAnimator, "nskinanimator");
 
 //------------------------------------------------------------------------------
 /**

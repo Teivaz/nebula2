@@ -7,7 +7,7 @@
 #include "gfx2/ngfxserver2.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiTextTable, "gui::nguiformlayout");
+nNebulaClass(nGuiTextTable, "nguiformlayout");
 
 //------------------------------------------------------------------------------
 /**

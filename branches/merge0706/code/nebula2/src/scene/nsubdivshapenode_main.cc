@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "scene/nsubdivshapenode.h"
 
-nNebulaScriptClass(nSubdivShapeNode, "scene::nshapenode");
+nNebulaScriptClass(nSubdivShapeNode, "nshapenode");
 
 //------------------------------------------------------------------------------
 /**

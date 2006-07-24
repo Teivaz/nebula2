@@ -11,7 +11,7 @@
 #include "kernel/ndebug.h"
 #include "scene/nanimator.h"
 
-nNebulaScriptClass(nMaterialNode, "scene::nabstractshadernode");
+nNebulaScriptClass(nMaterialNode, "nabstractshadernode");
 
 //------------------------------------------------------------------------------
 /**

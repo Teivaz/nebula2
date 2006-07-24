@@ -6,7 +6,7 @@
 #include "network/nnetclient.h"
 #include "kernel/nipcbuffer.h"
 
-nNebulaScriptClass(nNetClient, "kernel::nroot");
+nNebulaScriptClass(nNetClient, "nroot");
 
 //------------------------------------------------------------------------------
 /**

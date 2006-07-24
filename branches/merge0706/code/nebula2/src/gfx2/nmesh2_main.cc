@@ -10,7 +10,7 @@
 #include "gfx2/nnvx2loader.h"
 #include "gfx2/nmesharray.h"
 
-nNebulaClass(nMesh2, "resource::nresource");
+nNebulaClass(nMesh2, "nresource");
 
 //------------------------------------------------------------------------------
 /**

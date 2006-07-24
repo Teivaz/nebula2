@@ -7,7 +7,7 @@
 #include "gui/nguicolorslidergroup.h"
 #include "variable/nvariableserver.h"
 
-nNebulaClass(nGuiAdjustDisplayWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiAdjustDisplayWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

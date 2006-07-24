@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "sql/nsqlserver.h"
 
-nNebulaScriptClass(nSqlServer, "kernel::nroot");
+nNebulaScriptClass(nSqlServer, "nroot");
 nSqlServer* nSqlServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

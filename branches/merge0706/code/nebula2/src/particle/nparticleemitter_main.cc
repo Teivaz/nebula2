@@ -161,11 +161,11 @@ nParticleEmitter::Trigger(float curTime)
                         vector3 position = this->matrix * vector3(emitterVertices[curIndex+0],
                             emitterVertices[curIndex+1], emitterVertices[curIndex+2]);
 
-                        matrix33 m33 = matrix33(this->matrix.M11, this->matrix.M12, this->matrix.M13, 
-                            this->matrix.M21, this->matrix.M22, this->matrix.M23, 
+                        matrix33 m33 = matrix33(this->matrix.M11, this->matrix.M12, this->matrix.M13,
+                            this->matrix.M21, this->matrix.M22, this->matrix.M23,
                             this->matrix.M31, this->matrix.M32, this->matrix.M33);
 
-                        vector3 normal = m33 * vector3(emitterVertices[curIndex+3], 
+                        vector3 normal = m33 * vector3(emitterVertices[curIndex+3],
                             emitterVertices[curIndex+4], emitterVertices[curIndex+5]);
 
                         // find orthogonal vectors to spread normal vector
@@ -182,7 +182,7 @@ nParticleEmitter::Trigger(float curTime)
                         float birthTime = float(curTime) + ((particleServer->PseudoRandomFloat(this->randomKey++) + 1.0f) / 2.0f * this->birthDelay);
                         float startVelocity = this->curves[ParticleStartVelocity].GetValue(relAge);
                         float startRotation = particleServer->PseudoRandomFloat(this->randomKey++) * this->startRotation;
-                        particle->Initialize(position, normal * startVelocity, birthTime, 
+                        particle->Initialize(position, normal * startVelocity, birthTime,
                             this->curves[ParticleLifeTime].GetValue(relAge),
                             startRotation);
 
@@ -229,8 +229,8 @@ void nParticleEmitter::Render(float curTime)
     if (!this->dynMesh.IsValid())
     {
         this->dynMesh.Initialize(nGfxServer2::TriangleList,
-            nMesh2::Coord | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 | nMesh2::Color, 
-            nMesh2::WriteOnly | nMesh2::NeedsVertexShader, 
+            nMesh2::Coord | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 | nMesh2::Color,
+            nMesh2::WriteOnly | nMesh2::NeedsVertexShader,
             false, "particle_", true);
         n_assert(this->dynMesh.IsValid());
     }
@@ -356,7 +356,7 @@ void nParticleEmitter::Render(float curTime)
 
             dstVertices[curIndex++] = spriteCorners[2].x;
             dstVertices[curIndex++] = spriteCorners[2].y;
- 
+
             dstVertices[curIndex++] = curRotation;
             dstVertices[curIndex++] = curScale;
 

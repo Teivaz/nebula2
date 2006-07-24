@@ -109,7 +109,7 @@ CheckCleanupDirectory(const nString& dirName)
 //------------------------------------------------------------------------------
 /**
     Check if the given file also exists in the NewDir, and if no, creates
-    an entry in the BatchFile (which will contain delete statements for 
+    an entry in the BatchFile (which will contain delete statements for
     files and directories that are obsolete.
 */
 void
@@ -171,7 +171,7 @@ WalkDirectory(const nString& dirName, bool cleanupMode)
                     nString subDirName = dir->GetEntryName();
                     WalkDirectory(subDirName, cleanupMode);
                 }
-            } 
+            }
             while (dir->SetToNextEntry());
         }
         dir->Close();

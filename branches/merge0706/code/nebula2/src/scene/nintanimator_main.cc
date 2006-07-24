@@ -6,7 +6,7 @@
 #include "scene/nabstractshadernode.h"
 #include "scene/nrendercontext.h"
 
-nNebulaScriptClass(nIntAnimator, "scene::nshaderanimator");
+nNebulaScriptClass(nIntAnimator, "nshaderanimator");
 
 //------------------------------------------------------------------------------
 /**

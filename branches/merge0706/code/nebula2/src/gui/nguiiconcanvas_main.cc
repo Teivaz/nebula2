@@ -5,7 +5,7 @@
 #include "gui/nguiiconcanvas.h"
 #include "gui/nguiserver.h"
 
-nNebulaClass(nGuiIconCanvas, "gui::nguiwidget");
+nNebulaClass(nGuiIconCanvas, "nguiwidget");
 
 //------------------------------------------------------------------------------
 /**

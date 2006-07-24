@@ -1,4 +1,4 @@
-/* 
+/*
  * tclAlloc.c --
  *
  *  This is a very fast storage allocator.  It allocates blocks of a
@@ -90,15 +90,15 @@ union overhead {
 #define MAXMALLOC   (1<<(NBUCKETS+2))
 static  union overhead *nextf[NBUCKETS];
 
-/* 
- * The following structure is used to keep track of all system memory 
+/*
+ * The following structure is used to keep track of all system memory
  * currently owned by Tcl.  When finalizing, all this memory will
  * be returned to the system.
  */
 
 struct block {
     struct block *nextPtr;  /* Linked list. */
-    struct block *prevPtr;  /* Linked list for big blocks, ensures 8-byte 
+    struct block *prevPtr;  /* Linked list for big blocks, ensures 8-byte
                  * alignment for suballocated blocks. */
 };
 
@@ -183,20 +183,20 @@ TclInitAlloc()
  *
  * TclFinalizeAllocSubsystem --
  *
- *  Release all resources being used by this subsystem, including 
- *  aggressively freeing all memory allocated by TclpAlloc() that 
+ *  Release all resources being used by this subsystem, including
+ *  aggressively freeing all memory allocated by TclpAlloc() that
  *  has not yet been released with TclpFree().
- *  
- *  After this function is called, all memory allocated with 
+ *
+ *  After this function is called, all memory allocated with
  *  TclpAlloc() should be considered unusable.
  *
  * Results:
  *  None.
  *
  * Side effects:
- *  This subsystem is self-initializing, since memory can be 
+ *  This subsystem is self-initializing, since memory can be
  *  allocated before Tcl is formally initialized.  After this call,
- *  this subsystem has been reset to its initial state and is 
+ *  this subsystem has been reset to its initial state and is
  *  usable again.
  *
  *-------------------------------------------------------------------------
@@ -274,7 +274,7 @@ TclpAlloc(nbytes)
      * First the simple case: we simple allocate big blocks directly
      */
     if (nbytes + OVERHEAD >= MAXMALLOC) {
-    bigBlockPtr = (struct block *) TclpSysAlloc((unsigned) 
+    bigBlockPtr = (struct block *) TclpSysAlloc((unsigned)
         (sizeof(struct block) + OVERHEAD + nbytes), 0);
     if (bigBlockPtr == NULL) {
 //        Tcl_MutexUnlock(allocMutexPtr);
@@ -397,7 +397,7 @@ MoreCore(bucket)
     nblks = amt / sz;
     ASSERT(nblks*sz == amt);
 
-    blockPtr = (struct block *) TclpSysAlloc((unsigned) 
+    blockPtr = (struct block *) TclpSysAlloc((unsigned)
         (sizeof(struct block) + amt), 1);
     /* no more room! */
     if (blockPtr == NULL) {
@@ -407,7 +407,7 @@ MoreCore(bucket)
     blockList = blockPtr;
 
     op = (union overhead *) (blockPtr + 1);
-    
+
     /*
      * Add new memory allocated to that on
      * free list for this hash bucket.
@@ -439,7 +439,7 @@ MoreCore(bucket)
 void
 TclpFree(cp)
     char *cp;       /* Pointer to memory to free. */
-{   
+{
     register long size;
     register union overhead *op;
     struct block *bigBlockPtr;
@@ -501,7 +501,7 @@ char *
 TclpRealloc(cp, nbytes)
     char *cp;           /* Pointer to alloced block. */
     unsigned int nbytes;    /* New size of memory. */
-{   
+{
     int i;
     union overhead *op;
     struct block *bigBlockPtr;
@@ -536,7 +536,7 @@ TclpRealloc(cp, nbytes)
     bigBlockPtr = (struct block *) op - 1;
     prevPtr = bigBlockPtr->prevPtr;
     nextPtr = bigBlockPtr->nextPtr;
-    bigBlockPtr = (struct block *) TclpSysRealloc(bigBlockPtr, 
+    bigBlockPtr = (struct block *) TclpSysRealloc(bigBlockPtr,
         sizeof(struct block) + OVERHEAD + nbytes);
     if (bigBlockPtr == NULL) {
 //        Tcl_MutexUnlock(allocMutexPtr);
@@ -546,7 +546,7 @@ TclpRealloc(cp, nbytes)
     if (prevPtr->nextPtr != bigBlockPtr) {
         /*
          * If the block has moved, splice the new block into the list where
-         * the old block used to be. 
+         * the old block used to be.
          */
 
         prevPtr->nextPtr = bigBlockPtr;
@@ -592,7 +592,7 @@ TclpRealloc(cp, nbytes)
     TclpFree(cp);
     return newp;
     }
-    
+
     /*
      * Ok, we don't have to copy, it fits as-is
      */
@@ -609,8 +609,8 @@ TclpRealloc(cp, nbytes)
  *
  * mstats --
  *
- *  Prints two lines of numbers, one showing the length of the 
- *  free list for each size category, the second showing the 
+ *  Prints two lines of numbers, one showing the length of the
+ *  free list for each size category, the second showing the
  *  number of mallocs - frees for each size category.
  *
  * Results:
@@ -646,7 +646,7 @@ mstats(s)
     }
     fprintf(stderr, "\n\tTotal small in use: %d, total free: %d\n",
         totused, totfree);
-    fprintf(stderr, "\n\tNumber of big (>%d) blocks in use: %d\n", 
+    fprintf(stderr, "\n\tNumber of big (>%d) blocks in use: %d\n",
         MAXMALLOC, nmalloc[NBUCKETS]);
 //    Tcl_MutexUnlock(allocMutexPtr);
 }
@@ -696,7 +696,7 @@ TclpAlloc(nbytes)
 void
 TclpFree(cp)
     char *cp;       /* Pointer to memory to free. */
-{   
+{
     free(cp);
     return;
 }
@@ -721,7 +721,7 @@ char *
 TclpRealloc(cp, nbytes)
     char *cp;           /* Pointer to alloced block. */
     unsigned int nbytes;    /* New size of memory. */
-{   
+{
     return (char*) realloc(cp, nbytes);
 }
 

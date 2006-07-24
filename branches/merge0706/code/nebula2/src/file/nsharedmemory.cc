@@ -11,7 +11,7 @@
 #include <unistd.h>
 #endif
 
-nNebulaClass(nSharedMemory, "kernel::nroot");
+nNebulaClass(nSharedMemory, "nroot");
 
 /// Initialize static members.
 const int nSharedMemory::InitialReadBufferCapacity = 1024;

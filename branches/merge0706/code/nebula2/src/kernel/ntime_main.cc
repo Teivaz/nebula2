@@ -11,7 +11,7 @@
 #define tv2micro(x) (x.tv_sec * N_MICROSEC_INT + x.tv_usec);
 #endif
 
-nNebulaScriptClass(nTimeServer, "kernel::nroot");
+nNebulaScriptClass(nTimeServer, "nroot");
 nTimeServer* nTimeServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
 #include "gui/nguiserver.h"
 #include "gui/nguitextentry.h"
 
-nNebulaClass(nGuiTexBrowserWindow, "gui::nguiclientwindow");
+nNebulaClass(nGuiTexBrowserWindow, "nguiclientwindow");
 
 //------------------------------------------------------------------------------
 /**

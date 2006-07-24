@@ -38,7 +38,7 @@ nInputServer::AddInputState(const char *n)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::BeginMap(void)
 {
     n_assert(!this->in_begin_map);
@@ -46,7 +46,7 @@ nInputServer::BeginMap(void)
     this->in_begin_map = true;
 
     // set the N_IMF_KILLME flag, so that EndMap() can
-    // throw away all existing mappings that have not been 
+    // throw away all existing mappings that have not been
     // touched
     nInputMapping *im;
     for (im = (nInputMapping *) this->im_list.GetHead();
@@ -92,7 +92,7 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
 
     // recycle existing mapping?
     nInputMapping *im = (nInputMapping *) this->im_list.Find(imName);
-    if (!im) 
+    if (!im)
     {
         // no, create new mapping
         nInputEvent *ie  = NULL;
@@ -104,7 +104,7 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
         n_strncpy2(buf, ie_str, sizeof(buf));
         ie_part  = strchr(buf,'&');
         mod_part = strchr(buf,'.');
-        if (ie_part) 
+        if (ie_part)
         {
             // ...has qualifier (*** OBSOLETE AND IGNORED! ***)
             *ie_part++ = 0;
@@ -118,10 +118,10 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
         }
 
         // generate input event object...
-        if (ie_part) 
+        if (ie_part)
         {
             ie = this->NewEvent();
-            if (!this->MapStrToEvent(ie_part,ie)) 
+            if (!this->MapStrToEvent(ie_part,ie))
             {
                 this->ReleaseEvent(ie);
                 return false;
@@ -130,7 +130,7 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
 
         // get modifier flags...
         int mod_flags = 0;
-        if (mod_part) 
+        if (mod_part)
         {
             if (strcmp(mod_part, "pressed")       == 0) mod_flags = nInputMapping::N_IMSTATE_PRESSED;
             else if (strcmp(mod_part, "down")     == 0) mod_flags = nInputMapping::N_IMSTATE_DOWN;
@@ -138,7 +138,7 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
             else if (strcmp(mod_part, "long")     == 0) mod_flags = nInputMapping::N_IMSTATE_LONGPRESSED;
             else if (strcmp(mod_part, "double")   == 0) mod_flags = nInputMapping::N_IMSTATE_DOUBLECLICKED;
             else if (strcmp(mod_part, "longdown") == 0) mod_flags = nInputMapping::N_IMSTATE_LONGDOWN;
-            else 
+            else
             {
                 n_printf("nInputServer::Map(%s,%s): invalid modifier '%s'!\n",
                          ie_str,is_str,mod_part);
@@ -158,12 +158,12 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
     // bind input state or script command
     char *scr_kw = "script:";
     int len_scr_kw = strlen(scr_kw);
-    if (strncmp(is_str,scr_kw,len_scr_kw)==0) 
+    if (strncmp(is_str,scr_kw,len_scr_kw)==0)
     {
         // script command...
         im->SetCmdString(&(is_str[len_scr_kw]));
-    } 
-    else 
+    }
+    else
     {
         // normal input state...
         nInputState *is = this->GetInputState(is_str);
@@ -177,7 +177,7 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::EndMap(void)
 {
     n_assert(this->in_begin_map);
@@ -186,10 +186,10 @@ nInputServer::EndMap(void)
     // throw away all untouched mapping objects
     nInputMapping *im = (nInputMapping *) this->im_list.GetHead();
     nInputMapping *next_im;
-    if (im) do 
+    if (im) do
     {
         next_im = (nInputMapping *) im->GetSucc();
-        if (im->GetKillMe()) 
+        if (im->GetKillMe())
         {
             im->Remove();
             n_delete(im);
@@ -201,7 +201,7 @@ nInputServer::EndMap(void)
          im;
          im = (nInputMapping *) im->GetSucc())
     {
-        if (im->GetInputState()) 
+        if (im->GetInputState())
         {
             nInputState *is;
             bool exists = false;
@@ -209,13 +209,13 @@ nInputServer::EndMap(void)
                  is;
                  is = (nInputState *) is->GetSucc())
             {
-                if (is == im->GetInputState()) 
+                if (is == im->GetInputState())
                 {
                     exists = true;
                     break;
                 }
             }
-            if (!exists) 
+            if (!exists)
             {
                 n_error("nInputServer::EndMap(): ALERT! ALERT! ALERT!\n");
             }
@@ -226,15 +226,15 @@ nInputServer::EndMap(void)
 //------------------------------------------------------------------------------
 /**
 */
-float 
+float
 nInputServer::GetSlider(const char *n)
 {
     nInputState *is = this->GetInputState(n);
-    if (is) 
-    {    
+    if (is)
+    {
         return is->GetSlider();
-    } 
-    else 
+    }
+    else
     {
         return 0.0f;
     }
@@ -243,15 +243,15 @@ nInputServer::GetSlider(const char *n)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nInputServer::GetButton(const char *n)
 {
     nInputState *is = this->GetInputState(n);
-    if (is) 
+    if (is)
     {
         return is->GetButton();
-    } 
-    else 
+    }
+    else
     {
         return false;
     }
@@ -260,7 +260,7 @@ nInputServer::GetButton(const char *n)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputServer::DoInputMapping(void)
 {
     nInputMapping *im;
@@ -281,11 +281,11 @@ nInputServer::DoInputMapping(void)
         nInputEvent *ie = im->GetInputEvent();
         n_assert(ie);
         nInputEvent *cur_ie = this->FirstIdenticalEvent(ie);
-        if (cur_ie) do 
+        if (cur_ie) do
         {
-            if (!cur_ie->IsDisabled()) 
+            if (!cur_ie->IsDisabled())
             {
-                switch (cur_ie->GetType()) 
+                switch (cur_ie->GetType())
                 {
                     case N_INPUT_KEY_DOWN:
                     case N_INPUT_BUTTON_DOWN:
@@ -318,7 +318,7 @@ nInputServer::DoInputMapping(void)
 /**
 */
 void nInputServer::ObtainFocus(void)
-{ 
+{
     // all active input mappings must be reset
     nInputMapping *im;
     for (im = (nInputMapping *) this->im_list.GetHead();

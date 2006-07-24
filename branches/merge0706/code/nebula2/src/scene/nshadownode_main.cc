@@ -5,7 +5,7 @@
 #include "scene/nshadownode.h"
 #include "shadow2/nshadowserver2.h"
 
-nNebulaScriptClass(nShadowNode, "scene::ntransformnode");
+nNebulaScriptClass(nShadowNode, "ntransformnode");
 
 const float nShadowNode::maxSmallObjectDistance = 30.0f;
 

@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "input/ndi8server.h"
 
-nNebulaClass(nDI8Server, "input::ninputserver");
+nNebulaClass(nDI8Server, "ninputserver");
 
 //------------------------------------------------------------------------------
 /**

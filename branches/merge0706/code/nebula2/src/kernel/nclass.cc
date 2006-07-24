@@ -363,7 +363,7 @@ nClass::FindCmdById(nFourCC id)
 //--------------------------------------------------------------------
 /**
     Checks if the given class is an ancestor of this class.
-    
+
     @param className Name (all lowercase) of a class.
     @return true if className is an ancestor of this class, or if
             ancestorName is the name of this class.
@@ -373,10 +373,10 @@ bool
 nClass::IsA(const char* className) const
 {
     n_assert(className);
-    
+
     if (strcmp(this->GetName(), className) == 0)
         return true;
-        
+
     nClass *ancestor = this->superClass;
     while (ancestor)
     {
@@ -384,7 +384,7 @@ nClass::IsA(const char* className) const
             return true;
         ancestor = ancestor->GetSuperClass();
     }
-    
+
     return false;
 }
 

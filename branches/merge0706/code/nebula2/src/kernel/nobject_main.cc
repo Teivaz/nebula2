@@ -27,7 +27,7 @@ nObject::~nObject()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nObject::Dispatch(nCmd *cmd)
 {
     n_assert(cmd->GetProto());
@@ -40,23 +40,23 @@ nObject::Dispatch(nCmd *cmd)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nObject::GetCmdProtos(nHashList *cmd_list)
 {
     // for each superclass attach it's command proto names
     // to the list
     nClass *cl = this->instanceClass;
-    
+
     // for each superclass...
-    do 
+    do
     {
         nHashList *cl_cmdprotos = cl->GetCmdList();
         if (cl_cmdprotos)
         {
             nCmdProto *cmd_proto;
-            for (cmd_proto=(nCmdProto *) cl_cmdprotos->GetHead(); 
-                 cmd_proto; 
-                 cmd_proto=(nCmdProto *) cmd_proto->GetSucc()) 
+            for (cmd_proto=(nCmdProto *) cl_cmdprotos->GetHead();
+                 cmd_proto;
+                 cmd_proto=(nCmdProto *) cmd_proto->GetSucc())
             {
                 nHashNode* node = n_new(nHashNode(cmd_proto->GetName()));
                 node->SetPtr((void*)cmd_proto);
@@ -69,7 +69,7 @@ nObject::GetCmdProtos(nHashList *cmd_list)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nObject::SaveAs(const char *name)
 {
     n_assert(name);
@@ -81,8 +81,8 @@ nObject::SaveAs(const char *name)
     {
         retval = this->SaveCmds(ps);
         ps->EndObject(false);
-    } 
-    else 
+    }
+    else
     {
         n_error("nObject::SaveAs(): BeginObject() failed!");
     }
@@ -102,13 +102,13 @@ nObject::Clone(const char *)
 
     nPersistServer::nSaveMode oldMode = ps->GetSaveMode();
     ps->SetSaveMode(nPersistServer::SAVEMODE_CLONE);
-    if (ps->BeginObject(this, 0, false)) 
+    if (ps->BeginObject(this, 0, false))
     {
         this->SaveCmds(ps);
         ps->EndObject(false);
         clone = ps->GetClone();
-    } 
-    else 
+    }
+    else
     {
         n_error("nObject::Clone(): BeginObject() failed!");
     }
@@ -119,10 +119,10 @@ nObject::Clone(const char *)
 
 //------------------------------------------------------------------------------
 /**
-    This method is usually derived by subclasses to write their peristent 
+    This method is usually derived by subclasses to write their peristent
     attributes to the file server.
 */
-bool 
+bool
 nObject::SaveCmds(nPersistServer *)
 {
     return true;
@@ -145,7 +145,7 @@ nObject::GetInstanceSize() const
     @brief Checks if a class of the given name is part of the class hierarchy
            for this object.
 */
-bool 
+bool
 nObject::IsA(const char *className) const
 {
     return this->IsA(nKernelServer::Instance()->FindClass(className));

@@ -46,7 +46,7 @@ n_initcmds(nClass* cl)
 */
 static void
 n_saveanim(void* slf, nCmd* cmd)
-{    
+{
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
     //void* server = cmd->In()->GetO();
     const char* filename = cmd->In()->GetS();
@@ -60,7 +60,7 @@ n_saveanim(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_setlooptype(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
@@ -74,7 +74,7 @@ void n_setlooptype(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_begingroup(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
@@ -86,7 +86,7 @@ void n_begingroup(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addcurve(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
@@ -101,7 +101,7 @@ void n_addcurve(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addkey(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
@@ -120,7 +120,7 @@ void n_addkey(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_endgroup(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
@@ -131,7 +131,7 @@ void n_endgroup(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_getnumgroups(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
@@ -143,7 +143,7 @@ void n_getnumgroups(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_optimize(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);
@@ -155,7 +155,7 @@ void n_optimize(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_clear(void* slf, nCmd* cmd)
 {
     nScriptableAnimBuilder* self = static_cast<nScriptableAnimBuilder*>(slf);

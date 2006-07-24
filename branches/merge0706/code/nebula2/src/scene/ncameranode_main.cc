@@ -6,7 +6,7 @@
 #include "scene/ncameranode.h"
 #include "mathlib/polar.h"
 
-nNebulaClass(nCameraNode, "scene::nabstractcameranode");
+nNebulaClass(nCameraNode, "nabstractcameranode");
 
 //------------------------------------------------------------------------------
 /**
