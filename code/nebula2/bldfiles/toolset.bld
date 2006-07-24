@@ -1,0 +1,196 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/toolset.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+begintarget nanalyzeexport
+    settype exe
+    setmodules {
+        tools::nanalyzeexport
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ndshow
+        ngui
+        nnetwork
+        ntoollib
+    }
+endtarget
+
+begintarget nanimtool
+    settype exe
+    setmodules {
+        tools::nanimtool
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget nbumprev
+    settype exe
+    setmodules {
+        tools::nbumprev
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget nbundler
+    settype exe
+    setmodules {
+        tools::nbundler
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ngui
+        ntoollib
+    }
+endtarget
+
+begintarget ngetcrc
+    settype exe
+    setmodules {
+        tools::ngetcrc
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget ngfxtool
+    settype exe
+    setmodules {
+        tools::ngfxtool
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ngui
+        ntoollib
+    }
+endtarget
+
+begintarget nimagetool
+    settype exe
+    setmodules {
+        tools::nimagetool
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget nmakepatch
+    settype exe
+    setmodules {
+        tools::nmakepatch
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget nmeshtool
+    settype exe
+    setmodules {
+        tools::nmeshtool
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget nnpktool
+    settype exe
+    setmodules {
+        tools::nnpktool
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        ntoollib
+    }
+endtarget
+
+begintarget nremoteshell
+    settype exe
+    setmodules {
+        tools::nremoteshell
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget nsetpath
+    settype exe
+    setmodules {
+        tools::nsetpath
+    }
+    settargetdeps {
+        nkernel
+        ntoollib
+    }
+endtarget
+
+begintarget nsh
+    settype exe
+    setmodules {
+        tools::nsh
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ngui
+        nnetwork
+        ntoollib
+    }
+endtarget
+
+begintarget nstub
+    settype exe
+    setmodules {
+        tools::nstub
+    }
+    settargetdeps {
+        nkernel
+        ngui
+        ntoollib
+    }
+endtarget
+
+begintarget nviewer
+    settype exe
+    setmodules {
+        tools::nviewer
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ndshow
+        ngui
+        nnetwork
+        ntoollib
+    }
+endtarget

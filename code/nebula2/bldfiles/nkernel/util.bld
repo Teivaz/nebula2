@@ -152,7 +152,7 @@ beginmodule util::utils
         nattr
         nbitstream
         nbucket
-        ndirectory
+        ndictionary
         ndie
         neditline
         nkeyvaluepair
