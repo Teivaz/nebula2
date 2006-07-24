@@ -21,12 +21,12 @@ static void n_GetSurfaceIndex(void *, nCmd *);
 /**
     @scriptclass
     nopendeserver
-    
+
     @superclass
     nroot
 
     @classinfo
-    Provides facilities for collision detection and physics. 
+    Provides facilities for collision detection and physics.
 */
 void
 n_initcmds(nClass* clazz)
@@ -148,7 +148,7 @@ void n_AddSurface( void* slf, nCmd* cmd )
     @info
     Enable a surface parameter. Here are the available parameters,
     see the ODE user manual for additional info.
-    
+
     fdir1         - corresponds to dContactFDir1
     approxfdir1   - corresponds to dContactApprox1_1
     approxfdir2   - corresponds to dContactApprox1_2
@@ -176,7 +176,7 @@ void n_EnableSurfParam( void* slf, nCmd* cmd )
     @info
     Enable and set a surface parameter. Here are the available parameters
     and possible values, see the ODE user manual for additional info.
-    
+
     mu        - Coulomb friction coefficient for friction direction 1
                 (corresponds to dSurfaceParameters::mu).
                 Value must be in range 0 to infinity, specify -1 to indicate

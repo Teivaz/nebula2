@@ -72,7 +72,7 @@ void nOctSphere::recurse_collect_by_sphere(nOctNode* on,
     }
 }
 
-//------------------------------------------------------------------- 
+//-------------------------------------------------------------------
 /**
     @brief Collect nodes in this node only.
 */

@@ -14,7 +14,7 @@
 
 #include "opende/nopendelayer.h"
 
-nNebulaScriptClass(nCLODShapeNode, "scene::nmaterialnode");
+nNebulaScriptClass(nCLODShapeNode, "nmaterialnode");
 
 class nCLODQuadTreeNode {
 public:

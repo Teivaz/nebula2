@@ -39,11 +39,11 @@ nLWViewerRemote::~nLWViewerRemote()
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWViewerRemote::Open()
 {
-    n_assert(!this->isOpen);   
-    
+    n_assert(!this->isOpen);
+
     if (!this->client)
     {
         this->client = n_new(nIpcClient);
@@ -66,7 +66,7 @@ nLWViewerRemote::Open()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWViewerRemote::Close()
 {
     n_assert(this->isOpen);
@@ -84,15 +84,15 @@ nLWViewerRemote::Close()
 //----------------------------------------------------------------------------
 /**
 */
-bool 
-nLWViewerRemote::ChangeShaderParam(const nString& shaderName, 
+bool
+nLWViewerRemote::ChangeShaderParam(const nString& shaderName,
                                    const nString& shaderHandler,
                                    nShaderState::Param shaderParamId,
                                    const nShaderArg& shaderParamValue)
 {
     nString msg;
     msg.Format("/sys/servers/toolkit.changeshaderparameter \"%s\" \"%s\" \"%s\" \"%s\"",
-               shaderName.Get(), shaderHandler.Get(), 
+               shaderName.Get(), shaderHandler.Get(),
                nShaderState::ParamToString(shaderParamId),
                this->ShaderArgToString(shaderParamValue).Get());
     return this->Send(msg);
@@ -101,7 +101,7 @@ nLWViewerRemote::ChangeShaderParam(const nString& shaderName,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWViewerRemote::Send(const nString& msg)
 {
     static nIpcBuffer buffer(4096);
@@ -117,7 +117,7 @@ nLWViewerRemote::Send(const nString& msg)
 //----------------------------------------------------------------------------
 /**
 */
-nString 
+nString
 nLWViewerRemote::ShaderArgToString(const nShaderArg& arg)
 {
     switch (arg.GetType())
@@ -138,7 +138,7 @@ nLWViewerRemote::ShaderArgToString(const nShaderArg& arg)
             temp.Format("%.6f %.6f %.6f %.6f", f4.x, f4.y, f4.z, f4.w);
             return temp;
         }
-    
+
         default:
             // should never get here
             n_assert(false);

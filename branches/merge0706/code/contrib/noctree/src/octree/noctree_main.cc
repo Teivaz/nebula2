@@ -7,7 +7,7 @@
 #include "octree/noctree.h"
 //#include "gfx2/nprimitiveserver.h"
 
-nNebulaScriptClass(nOctree, "kernel::nroot");
+nNebulaScriptClass(nOctree, "nroot");
 
 //-------------------------------------------------------------------
 /**

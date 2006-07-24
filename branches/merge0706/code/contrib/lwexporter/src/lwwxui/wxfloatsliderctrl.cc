@@ -22,7 +22,7 @@ public:
     {
         if (event.GetEventType() == wxEVT_KILL_FOCUS)
         {
-            // Update the wxSlider sub-control whenever the 
+            // Update the wxSlider sub-control whenever the
             // wxFloatCtrl sub-control loses input focus.
             if (this->parent->floatCtrl && this->parent->sliderCtrl)
             {
@@ -61,7 +61,7 @@ enum
 
 BEGIN_EVENT_TABLE(wxFloatSliderCtrl, wxPanel)
     EVT_COMMAND_SCROLL(ID_SLIDER, wxFloatSliderCtrl::OnScroll)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -79,7 +79,7 @@ wxFloatSliderCtrl::wxFloatSliderCtrl() :
 //----------------------------------------------------------------------------
 /**
 */
-wxFloatSliderCtrl::wxFloatSliderCtrl(wxWindow* parent, wxWindowID id, 
+wxFloatSliderCtrl::wxFloatSliderCtrl(wxWindow* parent, wxWindowID id,
                                      float minVal, float maxVal,
                                      const wxPoint& pos, const wxSize& size) :
     sliderCtrl(0),
@@ -92,7 +92,7 @@ wxFloatSliderCtrl::wxFloatSliderCtrl(wxWindow* parent, wxWindowID id,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 wxFloatSliderCtrl::Create(wxWindow* parent, wxWindowID id,
                           float minVal, float maxVal,
                           const wxPoint& pos, const wxSize& size,
@@ -119,7 +119,7 @@ wxFloatSliderCtrl::Create(wxWindow* parent, wxWindowID id,
         // this the sizing goes nuts and all the sub-controls
         // end up on top of each other
         this->bestSize.SetWidth(this->bestSize.GetWidth() + 1);
-        
+
         return true;
     }
     return false;
@@ -130,7 +130,7 @@ wxFloatSliderCtrl::Create(wxWindow* parent, wxWindowID id,
 */
 wxFloatSliderCtrl::~wxFloatSliderCtrl()
 {
-    // have to pop and delete the custom event handler we created and pushed 
+    // have to pop and delete the custom event handler we created and pushed
     // back in wxFloatSliderCtrl::Create() otherwise bad things can happen
     if (this->floatCtrl)
         this->floatCtrl->PopEventHandler(true);
@@ -143,7 +143,7 @@ wxFloatSliderCtrl::~wxFloatSliderCtrl()
 /**
     @brief Convert the given float value to an integer in the range 0-100.
 */
-int 
+int
 wxFloatSliderCtrl::ScaleFloatToInt(float val) const
 {
     int intVal;
@@ -194,7 +194,7 @@ wxFloatSliderCtrl::ScaleIntToFloat(int inVal) const
 //----------------------------------------------------------------------------
 /**
 */
-float 
+float
 wxFloatSliderCtrl::ClampValue(float val) const
 {
     if (val < this->minValue)
@@ -215,7 +215,7 @@ wxFloatSliderCtrl::ClampValue(float val) const
     The wxFloatCtrl sub-control will be updated to reflect the new position
     within the wxSlider sub-control.
 */
-void 
+void
 wxFloatSliderCtrl::OnScroll(wxScrollEvent& event)
 {
     if (this->floatCtrl)
@@ -233,7 +233,7 @@ wxFloatSliderCtrl::OnScroll(wxScrollEvent& event)
 //----------------------------------------------------------------------------
 /**
 */
-wxSize 
+wxSize
 wxFloatSliderCtrl::DoGetBestSize() const
 {
     return this->bestSize;

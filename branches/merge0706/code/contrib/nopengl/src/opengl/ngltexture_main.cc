@@ -10,7 +10,7 @@
 #include "il/il.h"
 #include "il/ilu.h"
 
-nNebulaClass(nGLTexture, "gfx2::ntexture2");
+nNebulaClass(nGLTexture, "ntexture2");
 
 //------------------------------------------------------------------------------
 /**

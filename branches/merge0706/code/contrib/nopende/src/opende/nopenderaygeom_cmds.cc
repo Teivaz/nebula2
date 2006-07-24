@@ -17,7 +17,7 @@ static void n_GetClosestHit( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopenderaygeom
-    
+
     @superclass
     nopendegeom
 
@@ -52,7 +52,7 @@ n_initcmds(nClass* clazz)
 
     @info
 */
-static void 
+static void
 n_SetLength( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -72,7 +72,7 @@ n_SetLength( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetLength( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -93,7 +93,7 @@ n_GetLength( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_Set( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -121,7 +121,7 @@ n_Set( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_Get( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -148,7 +148,7 @@ n_Get( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetParams( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -170,7 +170,7 @@ n_SetParams( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetParams( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -193,7 +193,7 @@ n_GetParams( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetClosestHit( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -213,7 +213,7 @@ n_SetClosestHit( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetClosestHit( void* slf, nCmd* cmd )
 {
     nOpendeRayGeom* self = (nOpendeRayGeom*)slf;
@@ -230,12 +230,12 @@ bool nOpendeRayGeom::SaveCmds( nPersistServer* ps )
     if ( nOpendeGeom::SaveCmds( ps ) )
     {
         nCmd* cmd;
-        
+
         // SetLength
         cmd = ps->GetCmd( this, 'SLEN' );
         cmd->In()->SetF( this->GetLength() );
         ps->PutCmd( cmd );
-        
+
         // Set
         cmd = ps->GetCmd( this, 'SET_' );
         vector3 p, d;
@@ -247,7 +247,7 @@ bool nOpendeRayGeom::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( d.y );
         cmd->In()->SetF( d.z );
         ps->PutCmd( cmd );
-        
+
         // SetParams
         cmd = ps->GetCmd( this, 'SPRM' );
         bool a, b;
@@ -255,12 +255,12 @@ bool nOpendeRayGeom::SaveCmds( nPersistServer* ps )
         cmd->In()->SetB( a );
         cmd->In()->SetB( b );
         ps->PutCmd( cmd );
-        
+
         // SetClosestHit
         cmd = ps->GetCmd( this, 'SCHT' );
         cmd->In()->SetB( this->GetClosestHit() );
         ps->PutCmd( cmd );
-            
+
         return true;
     }
     return false;

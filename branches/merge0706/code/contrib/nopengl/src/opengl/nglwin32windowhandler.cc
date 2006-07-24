@@ -60,7 +60,7 @@ void
 nGLWin32WindowHandler::OnPaint()
 {
     n_assert(this->glServer);
-/*    if ((this->GetDisplayMode().GetType() != nDisplayMode2::Fullscreen) && this->d3d9Server->d3d9Device) 
+/*    if ((this->GetDisplayMode().GetType() != nDisplayMode2::Fullscreen) && this->d3d9Server->d3d9Device)
     {
         if (!this->d3d9Server->InDialogBoxMode())
         {

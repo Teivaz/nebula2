@@ -8,7 +8,7 @@
 #include "scene/nrendercontext.h"
 #include "variable/nvariableserver.h"
 
-nNebulaScriptClass(nTerrainGrassNode, "scene::nmaterialnode");
+nNebulaScriptClass(nTerrainGrassNode, "nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**

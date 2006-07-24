@@ -26,9 +26,9 @@
 
     Converting material specular values to D3D
 
-    For Max's viewport rendering it simply takes the value of GetShininess 
-    and multiplies by 100.0f and uses this as the power value. 
-    To set the specular element for the material it simple takes the Specular 
+    For Max's viewport rendering it simply takes the value of GetShininess
+    and multiplies by 100.0f and uses this as the power value.
+    To set the specular element for the material it simple takes the Specular
     color and multiplies by GetShinStr().
 
     @param mtl pointer to the material which to export.
@@ -82,7 +82,7 @@ void nMaxMaterial::GetStandardMaterial(Mtl* mtl, nShapeNode* shapeNode)
             shapeNode->SetInt(nShaderState::AlphaSrcBlend, 1/*Zero*/);
             shapeNode->SetInt(nShaderState::AlphaDstBlend, 3/*SrcColor*/);
         }
-        else 
+        else
         if (stdMat->GetTransparencyType() == TRANSP_ADDITIVE)
         {
             shapeNode->SetInt(nShaderState::AlphaSrcBlend, 5/*SrcAlpha*/);

@@ -16,29 +16,29 @@ static
 bool IsValidName(TCHAR* str)
 {
     int iLen = strlen(str);
-    if ( iLen == 0) 
+    if ( iLen == 0)
         return false;
 
     for (int ui = 0; ui < iLen; ui++)
     {
         if (str[ui] >= 'a' && str[ui] <= 'z')
             continue;
-        else 
+        else
         if (str[ui] >= 'A' && str[ui] <= 'Z')
             continue;
-        else 
+        else
         if (str[ui] >= '1' && str[ui] <= '9')
             continue;
-        else 
+        else
         if (str[ui] == '0')
             continue;
-        else 
+        else
         if (str[ui] == ' ')
             continue;
-        else 
+        else
         if (str[ui] == '\t')
             continue;
-        else 
+        else
         if (str[ui] == '_')
             continue;
         else
@@ -159,7 +159,7 @@ bool nMaxCustAttrib::Convert(Animatable* obj, TiXmlDocument& xmlDoc)
 */
 void nMaxCustAttrib::StringToXml(IParamBlock2* pBlock, int index, TiXmlDocument& xmlDoc)
 {
-    // get paramblock description 
+    // get paramblock description
     ParamBlockDesc2* pblockDesc = pBlock->GetDesc();
     if (NULL == pblockDesc)
         return;
@@ -176,7 +176,7 @@ void nMaxCustAttrib::StringToXml(IParamBlock2* pBlock, int index, TiXmlDocument&
     if (result)
     {
         // get fixed internal name.
-        TCHAR* name = paramDef.int_name; 
+        TCHAR* name = paramDef.int_name;
         if (!IsValidName(name))
         {
             // if the internal name is not valid, get local name of the param.
@@ -441,7 +441,7 @@ void nMaxCustAttrib::Point3ToXml(IParamBlock2* pBlock, int index, TiXmlDocument&
         TiXmlElement* elmVal;
 
         float p[3];
-        p[0] = point3Value.x; p[1] = point3Value.y; p[2] = point3Value.z; 
+        p[0] = point3Value.x; p[1] = point3Value.y; p[2] = point3Value.z;
         for (int i=0; i<3; i++)
         {
             elmVal = n_new(TiXmlElement(""));
@@ -523,7 +523,7 @@ void nMaxCustAttrib::FloatTabToXml(IParamBlock2* pBlock, int index, TiXmlDocumen
 
 //-----------------------------------------------------------------------------
 /**
-    
+
 */
 void nMaxCustAttrib::UnknownToXml(IParamBlock2* pBlock, int index, TiXmlDocument& xmlDoc)
 {

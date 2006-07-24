@@ -15,7 +15,7 @@ nOpendeSimpleSpace::nOpendeSimpleSpace()
 
 //----------------------------------------------------------------------------
 /**
-    @param parent The NOH path of the parent space, use "none" to indicate 
+    @param parent The NOH path of the parent space, use "none" to indicate
                   this space doesn't have a parent.
 */
 void nOpendeSimpleSpace::Create( const char* parent )

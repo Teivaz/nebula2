@@ -275,7 +275,7 @@ static StkId callrethooks (lua_State *L, StkId firstResult) {
 }
 
 
-void luaD_poscall (lua_State *L, int wanted, StkId firstResult) { 
+void luaD_poscall (lua_State *L, int wanted, StkId firstResult) {
   StkId res;
   if (L->hookmask & LUA_MASKRET)
     firstResult = callrethooks(L, firstResult);
@@ -298,7 +298,7 @@ void luaD_poscall (lua_State *L, int wanted, StkId firstResult) {
 ** The arguments are on the stack, right after the function.
 ** When returns, all the results are on the stack, starting at the original
 ** function position.
-*/ 
+*/
 void luaD_call (lua_State *L, StkId func, int nResults) {
   StkId firstResult;
   lua_assert(!(L->ci->state & CI_CALLING));

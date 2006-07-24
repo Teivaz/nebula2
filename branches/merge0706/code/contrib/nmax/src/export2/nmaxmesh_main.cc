@@ -33,7 +33,7 @@
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxMesh::nMaxMesh() : 
+nMaxMesh::nMaxMesh() :
     maxNode(0),
     refMaker (NULL),
     mesh(NULL),
@@ -79,7 +79,7 @@ Mesh* nMaxMesh::GetMeshFromRenderMesh(INode* inode, BOOL &needDelete)
 
     Mesh* mesh = 0;
 
-    // Primitives that already have a mesh cached can just return a pointer to it 
+    // Primitives that already have a mesh cached can just return a pointer to it
     // (and set needDelete to false).
     mesh = geomObj->GetRenderMesh(animStart, inode, nullView, needDelete);
 
@@ -103,12 +103,12 @@ Mesh* nMaxMesh::GetMeshFromTriObject(INode* inode, BOOL &needDelete)
     n_assert(inode);
 
     TimeValue animStart = nMaxInterface::Instance()->GetAnimStartTime();
-    
+
     Object* obj = nMaxUtil::GetBaseObject(inode, animStart);
 
     if (obj->CanConvertToType(Class_ID(TRIOBJ_CLASS_ID, 0)))
     {
-        TriObject* tri = (TriObject*)obj->ConvertToType(animStart, 
+        TriObject* tri = (TriObject*)obj->ConvertToType(animStart,
                                                 Class_ID(TRIOBJ_CLASS_ID, 0));
 
         needDelete = false;
@@ -174,9 +174,9 @@ void nMaxMesh::UnlockMesh()
 //-----------------------------------------------------------------------------
 /**
     Retrieves mesh options from node custom attribute and create xml elements
-    based on it. 
+    based on it.
 
-    @return 
+    @return
 */
 bool nMaxMesh::GetCustAttrib(INode* inode)
 {
@@ -220,7 +220,7 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
         {
             int type;
             child->Attribute("value", &type);
-        
+
             // radiobutton of max script ui start with '1'.
             switch(type)
             {
@@ -355,7 +355,7 @@ nSceneNode* nMaxMesh::CreateShapeNode(INode* inode, nString &nodename)
     @param globalMeshBuilder mesh builder to merge each of mesh data into it.
     @param useIndivisualMesh save mesh data per 3dsmax geometry node if it is true.
 
-    @return return created nebula object. 
+    @return return created nebula object.
 */
 nSceneNode* nMaxMesh::Export(INode* inode)
 {
@@ -369,8 +369,8 @@ nSceneNode* nMaxMesh::Export(INode* inode)
         n_maxlog(Medium, "%s node has custom attributes.", inode->GetName());
     }
 
-    // check for that this mesh is skinned(or physique). 
-    // if it does, do some initializations to acess max skin(or physique) interface 
+    // check for that this mesh is skinned(or physique).
+    // if it does, do some initializations to acess max skin(or physique) interface
     // to extract vertex weight.
     //bool skinnedMesh = false;
     //skinnedMesh = BeginSkin(inode);
@@ -384,7 +384,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
     if (numMaterials == 1)
     {
         // we have single material.
-     
+
         nString nodename(inode->GetName());
 
         //FIXME: in case of the shadow node, add '_shadow' postfix.
@@ -422,9 +422,9 @@ nSceneNode* nMaxMesh::Export(INode* inode)
         // Create nTransform node for a mesh has multi material.
         // Guess that, a multi material mesh has some other child mesh in its hierarchy.
         // The multi material mesh to be splited by its number of the material and create
-        // nShapeNode(or nSkinShapeNode) as that number. 
+        // nShapeNode(or nSkinShapeNode) as that number.
         // And so, where its child mesh to be located? We put its child under nTransformNode.
-        // e.g) 
+        // e.g)
         //    nTransformNode parent // parent mesh
         //        nShapeNode material0
         //        nShapeNode material1
@@ -480,7 +480,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
 
             // save mesh file and specifies it to the shape node.
             SetMeshFile((nShapeNode*)createdNode, nodename);
-            
+
             // set cwd to the parent to put the shape in the same hierarchy.
             // (cause all these shapes belong to same mesh)
             nKernelServer::Instance()->PopCwd();
@@ -488,7 +488,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
 
         // specifies local bouding box of multi-sub transform node's.
         transformNode->SetLocalBox(parentLocalBox);
-        
+
         //nKernelServer::Instance()->PopCwd();
 
         createdNode = transformNode;
@@ -612,7 +612,7 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
 
 
 #ifdef _DEBUG
-    n_maxlog(Medium, "Number of vertices of %s node are %d", inode->GetName(), 
+    n_maxlog(Medium, "Number of vertices of %s node are %d", inode->GetName(),
                                                              meshBuilder->GetNumVertices());
 #endif
     //return true;
@@ -621,7 +621,7 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
 
 //-----------------------------------------------------------------------------
 /**
-    Get per vertex component from 3dsmax's Mesh and specifies it to 
+    Get per vertex component from 3dsmax's Mesh and specifies it to
     mesh builder's vertex.
 
     @return mesh builder's vertex.
@@ -725,11 +725,11 @@ Point3 nMaxMesh::GetVertexNormal(Mesh* mesh, int faceNo, RVertex* rv)
     }
     // If normal is not specified it's only available if the face belongs
     // to a smoothing group
-    else 
-        if ((numNormals = rv->rFlags & NORCT_MASK) && smGroup) 
+    else
+        if ((numNormals = rv->rFlags & NORCT_MASK) && smGroup)
         {
             // If there is only one vertex is found in the rn member.
-            if (numNormals == 1) 
+            if (numNormals == 1)
             {
                 vertexNormal = rv->rn.getNormal();
             }
@@ -872,7 +872,7 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
                         }
                         else
                         {
-                            n_maxlog(High, "No bone influence for this vertex: bone '%s' vertex Index [%d]", 
+                            n_maxlog(High, "No bone influence for this vertex: bone '%s' vertex Index [%d]",
                                 bone->GetName(), vertexIdx);
                         }
                     }
@@ -902,7 +902,7 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
                     }
                     else
                     {
-                        n_maxlog(High, "No bone influence for this vertex: bone '%s' vertex Index [%d]", 
+                        n_maxlog(High, "No bone influence for this vertex: bone '%s' vertex Index [%d]",
                             bone->GetName(), vertexIdx);
                     }
                 }
@@ -955,7 +955,7 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
             }
             else
             {
-                n_maxlog(High, "No bone influence for this vertex: bone [%s] vertex Index [%d]", 
+                n_maxlog(High, "No bone influence for this vertex: bone [%s] vertex Index [%d]",
                     bone->GetName(), vertexIdx);
             }
         }
@@ -963,7 +963,7 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
     else
     {
         // should not reach here!
-        n_maxlog(Error, "Failed to get the physique or skin context for the given node %s", 
+        n_maxlog(Error, "Failed to get the physique or skin context for the given node %s",
             this->maxNode->GetName());
     }
 
@@ -996,7 +996,7 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 //            }
 //            else
 //            {
-//                n_maxlog(High, "No bone influence for this vertex: bone '%s' vertex Index [%d]", 
+//                n_maxlog(High, "No bone influence for this vertex: bone '%s' vertex Index [%d]",
 //                bone->GetName(), vertexIdx);
 //            }
 //        }
@@ -1049,8 +1049,8 @@ bool nMaxMesh::HasSameMaterial(Mesh* mesh, int faceIdx, const int matIdx, const 
 /**
     Negatively scaled node has inverted order of vertices. (counter clockwise)
 
-    For example, consider exporting mirrored objects. 
-    The mirrored objects has negative scale factor and the vertices of that 
+    For example, consider exporting mirrored objects.
+    The mirrored objects has negative scale factor and the vertices of that
     should be exported with counter clockwise order not to be inverted.
 
     @param m matrix of a node.
@@ -1082,7 +1082,7 @@ bool nMaxMesh::HasNegativeScale(INode* inode)
     Retrieves used map channels from given mesh.
 
     @param mesh pointer to the given Mesh.
-    @return array of used map channel, size of the array is the number of map 
+    @return array of used map channel, size of the array is the number of map
             channel which used by this the mesh.
 */
 nArray<int> nMaxMesh::GetUsedMapChannels(Mesh* mesh)
@@ -1090,12 +1090,12 @@ nArray<int> nMaxMesh::GetUsedMapChannels(Mesh* mesh)
     nArray<int> mapChannelArray;
 
     // m = 0 : used for vertex color.
-    for (int m=1; m<MAX_MESHMAPS-1; m++) 
+    for (int m=1; m<MAX_MESHMAPS-1; m++)
     {
-        if (mesh->mapSupport(m)) 
+        if (mesh->mapSupport(m))
         {
             int numTVx = mesh->getNumMapVerts(m);
-            if (numTVx) 
+            if (numTVx)
             {
                 mapChannelArray.Append(m);
             }
@@ -1139,11 +1139,11 @@ void nMaxMesh::SetSkinAnimator(INode* inode, nSceneNode* createdNode, int numMat
 //-----------------------------------------------------------------------------
 /**
 */
-nString nMaxMesh::GetSkinAnimatorName(const char* baseName, int skelIndex) 
+nString nMaxMesh::GetSkinAnimatorName(const char* baseName, int skelIndex)
 {
     n_assert(baseName);
     nString name(baseName);
-    if (skelIndex != -1) 
+    if (skelIndex != -1)
     {
         name.AppendInt(skelIndex);
     }
@@ -1159,7 +1159,7 @@ nString nMaxMesh::GetSkinAnimatorName(const char* baseName, int skelIndex)
     Specifies base group index of the all created shape or shadow nodes.
 
     @note
-    Only the first base group index is passed for in-argument. 
+    Only the first base group index is passed for in-argument.
     Last group indexes are calculated based on this in-argument.
 
     @param baseGroupIndex The first group index of this local mesh builder.
@@ -1171,7 +1171,7 @@ void nMaxMesh::SetBaseGroupIndex(int baseGroupIndex)
     {
         if (this->meshType == Shape)
         {
-            // we don't need this for shadow skin shape node 
+            // we don't need this for shadow skin shape node
             // cause nShadowNode dees not need to be partitioned.
             int numShapeNode = this->sceneNodeArray.Size();
             for (int i=0; i<numShapeNode; i++)
@@ -1216,8 +1216,8 @@ void nMaxMesh::SetBaseGroupIndex(int baseGroupIndex)
     If each shape node uses its own mesh file, it set its node name for its mesh
     filename otherwise uses save name.
 
-    - 05-Mar-05 kims modified to export shadow node, 
-                     The face that nshadownode and nshapenode is not derived 
+    - 05-Mar-05 kims modified to export shadow node,
+                     The face that nshadownode and nshapenode is not derived
                      from the same parent, ugly type casting was needed. Better idea?
 */
 void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName)

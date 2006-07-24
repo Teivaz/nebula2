@@ -17,7 +17,7 @@ static void n_GetPoint( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendetrimeshgeom
-    
+
     @superclass
     nopendegeom
 
@@ -51,7 +51,7 @@ n_initcmds(nClass* clazz)
 
     @info
 */
-static void 
+static void
 n_SetMesh( void* slf, nCmd* cmd )
 {
     nOpendeTriMeshGeom* self = (nOpendeTriMeshGeom*)slf;
@@ -71,7 +71,7 @@ n_SetMesh( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetMesh( void* slf, nCmd* cmd )
 {
     nOpendeTriMeshGeom* self = (nOpendeTriMeshGeom*)slf;
@@ -91,7 +91,7 @@ n_GetMesh( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_EnableTC( void* slf, nCmd* cmd )
 {
     nOpendeTriMeshGeom* self = (nOpendeTriMeshGeom*)slf;
@@ -113,7 +113,7 @@ n_EnableTC( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_IsTCEnabled( void* slf, nCmd* cmd )
 {
     nOpendeTriMeshGeom* self = (nOpendeTriMeshGeom*)slf;
@@ -134,7 +134,7 @@ n_IsTCEnabled( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_ClearTCCache( void* slf, nCmd* cmd )
 {
     nOpendeTriMeshGeom* self = (nOpendeTriMeshGeom*)slf;
@@ -156,7 +156,7 @@ n_ClearTCCache( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetTriangle( void* slf, nCmd* cmd )
 {
     nOpendeTriMeshGeom* self = (nOpendeTriMeshGeom*)slf;
@@ -187,7 +187,7 @@ n_GetTriangle( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetPoint( void* slf, nCmd* cmd )
 {
     nOpendeTriMeshGeom* self = (nOpendeTriMeshGeom*)slf;
@@ -211,7 +211,7 @@ bool nOpendeTriMeshGeom::SaveCmds( nPersistServer* ps )
     if ( nOpendeGeom::SaveCmds( ps ) )
     {
         nCmd* cmd;
-        
+
         // SetMesh
         if ( this->triMesh )
         {
@@ -219,7 +219,7 @@ bool nOpendeTriMeshGeom::SaveCmds( nPersistServer* ps )
             cmd->In()->SetS( this->triMesh->GetName() );
             ps->PutCmd( cmd );
         }
-        
+
         // EnableTC sphere
         cmd = ps->GetCmd( this, 'ETC_' );
         cmd->In()->SetS( "sphere" );
@@ -228,7 +228,7 @@ bool nOpendeTriMeshGeom::SaveCmds( nPersistServer* ps )
         else
             cmd->In()->SetB( false );
         ps->PutCmd( cmd );
-        
+
         // EnableTC box
         cmd = ps->GetCmd( this, 'ETC_' );
         cmd->In()->SetS( "box" );
@@ -237,7 +237,7 @@ bool nOpendeTriMeshGeom::SaveCmds( nPersistServer* ps )
         else
             cmd->In()->SetB( false );
         ps->PutCmd( cmd );
-            
+
         // EnableTC capsule
         cmd = ps->GetCmd( this, 'ETC_' );
         cmd->In()->SetS( "capsule" );
@@ -246,7 +246,7 @@ bool nOpendeTriMeshGeom::SaveCmds( nPersistServer* ps )
         else
             cmd->In()->SetB( false );
         ps->PutCmd( cmd );
-        
+
         // EnableTC cylinder
         cmd = ps->GetCmd( this, 'ETC_' );
         cmd->In()->SetS( "cylinder" );
@@ -255,7 +255,7 @@ bool nOpendeTriMeshGeom::SaveCmds( nPersistServer* ps )
         else
             cmd->In()->SetB( false );
         ps->PutCmd( cmd );
-        
+
         return true;
     }
     return false;

@@ -22,7 +22,7 @@
 
 //--------------------------------------------------------------------
 //  _luaDispatch() - by nCmdProto
-//--------------------------------------------------------------------    
+//--------------------------------------------------------------------
 /**
     @brief Static function that will handle Lua to nCmd translations
     and dispatch to the provided nObject* pointer.
@@ -32,12 +32,12 @@ int _luaDispatch(lua_State* L, nObject* obj, nCmdProto* cmd_proto, bool print)
     n_assert(cmd_proto); // -- unfriendly isn't it?
     nCmd* cmd = cmd_proto->NewCmd();
     n_assert(cmd);
-    
+
     // Need to get the proper args in...
     int numargs = cmd->GetNumInArgs();
     if ((lua_gettop(L) - 1) != numargs)
     {
-        n_message("Wrong number of arguments for command: %s\n", 
+        n_message("Wrong number of arguments for command: %s\n",
                     cmd_proto->GetProtoDef());
         lua_settop(L, 0);
         lua_pushnil(L);
@@ -101,7 +101,7 @@ int luacmd_StackDump(lua_State* L)
 //  luacmd_Panic()
 //--------------------------------------------------------------------
 int luacmd_Panic(lua_State* L)
-{  
+{
     n_error("Lua paniced!");
     nScriptServer* ss = (nScriptServer*)lua_touserdata(L, lua_upvalueindex(1));
     ss->SetQuitRequested(1);
@@ -131,7 +131,7 @@ int luacmd_New(lua_State* L)
     nRoot* o = nLuaServer::kernelServer->NewNoFail(class_name, object_name);
     if (!o)
     {
-        n_message("Could not create object '%s' of class '%s'\n", 
+        n_message("Could not create object '%s' of class '%s'\n",
                     object_name, class_name);
         lua_pushnil(L);
     }
@@ -160,16 +160,16 @@ int luacmd_NewThunk(lua_State* L)
         lua_pushnil(L);
         return 1;
     }
-    
+
     const char* className = lua_tostring(L, -2);
     const char* objectName = lua_tostring(L, -1);
-    
+
     lua_settop(L, 0);
-    
+
     nRoot* obj = nLuaServer::kernelServer->NewNoFail(className, objectName);
     if (!obj)
     {
-        n_message("Could not create object '%s' of class '%s'\n", 
+        n_message("Could not create object '%s' of class '%s'\n",
                     objectName, className);
         lua_pushnil(L);
     }
@@ -196,7 +196,7 @@ int luacmd_Delete(lua_State* L)
     // returns nil on failure and true on success
     nRoot* o;
     const char* object_name;
-    
+
     if ((1 != lua_gettop(L)) || !lua_isstring(L, -1) && !lua_istable(L, -1))
     {
         n_message("Usage is delete('object name') or delete(thunk)");
@@ -246,7 +246,7 @@ int luacmd_UnpinThunk(lua_State* L)
     // returns nil on failure and true on success
     nRoot* o;
     const char* object_name;
-    
+
     if ((1 != lua_gettop(L)) || !lua_isstring(L, -1) && !lua_istable(L, -1))
     {
         n_message("Usage is unpin('object name') or unpin(thunk)");
@@ -296,7 +296,7 @@ int luacmd_PinThunk(lua_State* L)
 {
     // takes 1 thunk as an argument
     // returns nil on failure and true on success
-      
+
     if ((1 != lua_gettop(L)) || !lua_istable(L, -1))
     {
         n_message("Usage is pin(thunk)");
@@ -319,7 +319,7 @@ int luacmd_PinThunk(lua_State* L)
 int luacmd_Sel(lua_State* L)
 {
     // takes 1 string as an argument
-    // returns false on incorrect usage, nil if there is no such object, 
+    // returns false on incorrect usage, nil if there is no such object,
     // or true on success
     nRoot* o;
 
@@ -347,7 +347,7 @@ int luacmd_Sel(lua_State* L)
         n_printf("Could not select object\n");
         lua_pushnil(L);
     }
-    else 
+    else
     {
         nLuaServer::kernelServer->SetCwd(o);
         lua_pushboolean(L, true);
@@ -373,7 +373,7 @@ int luacmd_Psel(lua_State* L)
         {
             lua_settop(L, 0);
             nLuaServer::Instance->ThunkNebObject(L, o);
-        }   
+        }
     }
     else
     {
@@ -419,7 +419,7 @@ int luacmd_Get(lua_State* L)
         lua_settop(L, 0); // clear stack
         nLuaServer::Instance->ThunkNebObject(L, (nRoot *)o);
     }
-    return 1;   
+    return 1;
 }
 
 //--------------------------------------------------------------------
@@ -503,7 +503,7 @@ int luacmd_CmdDispatch(lua_State* L)
     nRoot* root = nLuaServer::UnpackThunkRoot(L, 1);
     // haul out the particular call - in the upvalue
     nCmdProto* cmdproto = (nCmdProto*)lua_touserdata(L, lua_upvalueindex(1));
-    
+
     return _luaDispatch(L, root, cmdproto, false);
 }
 
@@ -544,7 +544,7 @@ int luacmd_Call(lua_State* L)
 
 //--------------------------------------------------------------------
 //  luacmd_ConCall()
-//  executes a func on the current working directory and prints 
+//  executes a func on the current working directory and prints
 //  the result to the console
 //--------------------------------------------------------------------
 int luacmd_ConCall(lua_State* L)
@@ -622,7 +622,7 @@ int luacmd_Mangle(lua_State* L)
         lua_pushnil(L);
         return 1;
     }
-    
+
     nString path = nFileServer2::Instance()->ManglePath(lua_tostring(L, -1));
     if (path.IsEmpty())
     {
@@ -677,7 +677,7 @@ int luacmd_BeginCmds(lua_State* L)
         clazz->BeginScriptCmds(int(lua_tonumber(L, -1)));
     else
         n_error("Failed to open class %s!\n", className);
-    
+
     lua_settop(L, 0);
     return 0;
 }
@@ -695,7 +695,7 @@ int luacmd_AddCmd(lua_State* L)
         lua_settop(L, 0);
         return 0;
     }
-    
+
     nCmdProtoLua* cmdProto = new nCmdProtoLua(lua_tostring(L, -1));
     const char* className = lua_tostring(L, -2);
     nClass* clazz = nLuaServer::kernelServer->FindClass(className);
@@ -703,7 +703,7 @@ int luacmd_AddCmd(lua_State* L)
         clazz->AddScriptCmd((nCmdProto*)cmdProto);
     else
         n_error("Failed to find class %s!\n", className);
-        
+
     lua_settop(L, 0);
     return 0;
 }
@@ -721,14 +721,14 @@ int luacmd_EndCmds(lua_State* L)
         lua_settop(L, 0);
         return 0;
     }
-    
+
     const char* className = lua_tostring(L, -1);
     nClass* clazz = nLuaServer::kernelServer->FindClass(className);
     if (clazz)
         clazz->EndScriptCmds();
     else
         n_error("Failed to find class %s!\n", className);
-        
+
     lua_settop(L, 0);
     return 0;
 }
@@ -798,7 +798,7 @@ int luacmd_PushCwd(lua_State* L)
         lua_pushboolean(L, false);
         return 1;
     }
-    
+
     if (lua_istable(L, -1)) // thunk case
     {
         lua_pushstring(L, "_");
@@ -830,7 +830,7 @@ int luacmd_PushCwd(lua_State* L)
             lua_pushboolean(L, false);
         }
     }
-        
+
     return 1;
 }
 
@@ -967,7 +967,7 @@ int luaobject_Post( lua_State *L )
     {
         if( ! signalServer->PostCmd( timeValue, obj, cmd) )
         {
-            n_printf( "Post error, in object of class '%s', with signal '%s'", 
+            n_printf( "Post error, in object of class '%s', with signal '%s'",
                 obj->GetClass()->GetName(), signal.Get() );
             cmd_proto->RelCmd( cmd );
         }
@@ -988,4 +988,4 @@ int luaobject_Post( lua_State *L )
 //--------------------------------------------------------------------
 //  EOF
 //--------------------------------------------------------------------
- 
+

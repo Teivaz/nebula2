@@ -7,7 +7,7 @@
 #include "signals_tutorial/receiverscript.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass( ReceiverScript, "kernel::nroot" );
+nNebulaScriptClass( ReceiverScript, "nroot" );
 //------------------------------------------------------------------------------
 //   EOF
 //------------------------------------------------------------------------------

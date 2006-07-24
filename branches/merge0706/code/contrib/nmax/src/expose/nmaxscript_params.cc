@@ -22,18 +22,18 @@
     @param uiFieldWidth
     @param bOffset
 */
-nString CreateFloatUI(nString strVarName, nString strCaption, float fVal, 
-    float fMin, float fMax, bool bAcross = false, 
-    unsigned int uiAcrossCnt = 1, unsigned int uiFieldWidth = 70, 
+nString CreateFloatUI(nString strVarName, nString strCaption, float fVal,
+    float fMin, float fMax, bool bAcross = false,
+    unsigned int uiAcrossCnt = 1, unsigned int uiFieldWidth = 70,
     bool bOffset = true)
 {
     // we dont need caption for the control.
-    // script command will be palced at the start of parsing of the 
+    // script command will be palced at the start of parsing of the
     // inarguments instead of the caption.
-    
+
     nString strDef = "spinner ";
     strDef += strVarName + " \"" + strCaption + "\" ";
-    
+
     strDef += "type:#float ";
     strDef += "range:[";
     strDef.AppendFloat(fMin);
@@ -48,12 +48,12 @@ nString CreateFloatUI(nString strVarName, nString strCaption, float fVal,
         strDef += " across:";
         strDef.AppendInt(uiAcrossCnt);
     }
-    strDef += " align:#left fieldwidth:"; 
+    strDef += " align:#left fieldwidth:";
     strDef.AppendInt(uiFieldWidth);
-     
+
     if (bOffset)
         strDef += " offset:[0,6]";
-     
+
     return strDef;
 }
 //-----------------------------------------------------------------------------
@@ -75,7 +75,7 @@ void AddFloatParam(const nObjectAttribute::Command* objCmd,
     strAttrUIName.AppendInt(cmd->GetInArgIndex());
 
     float fVal= arg->GetF();
-    
+
     param += "\t\t";
     param += strAttrName + " type:#float default:";
     param.AppendFloat(fVal);
@@ -91,7 +91,7 @@ void AddFloatParam(const nObjectAttribute::Command* objCmd,
         fMax = objCmd->GetMax();
         fMin = objCmd->GetMin();
     }
-    
+
     rollout += CreateFloatUI(strAttrUIName, "", fVal, fMin, fMax);
 }
 
@@ -149,11 +149,11 @@ void AddVector2Param(const nObjectAttribute::Command* objCmd,
             rollout += CreateFloatUI(strAttrUIName, "y: ",fVal, min, max, false, 1, 70, false);
         }
 
-        nString strSetupName = strAttrName + "["; 
+        nString strSetupName = strAttrName + "[";
         strSetupName.AppendInt(uj + 1);
         strSetupName += "]";
 
-        setupbody += "if " + strSetupName + 
+        setupbody += "if " + strSetupName +
             " == -339999995214436420000000000000000000000.000000 then ";
         setupbody += strSetupName + " = ";
         setupbody.AppendFloat(fVal);
@@ -173,7 +173,7 @@ void AddVector3Param(const nObjectAttribute::Command* objCmd,
     nCmd* cmd, nString& param, nString& rollout, nString& setupbody)
 {
     n_assert(cmd);
-     
+
     nString strAttrName = cmd->GetProto()->GetName();
     nString strAttrUIName = strAttrName + "UI";
 
@@ -193,7 +193,7 @@ void AddVector3Param(const nObjectAttribute::Command* objCmd,
     param += strAttrName + " type:#floatTab tabSize:3 "
         "default:-339999995214436420000000000000000000000.000000 "
         "tabSizeVariable:true";
-    
+
     param += " ui:(";
     uint uiSize = 3;
 
@@ -224,20 +224,20 @@ void AddVector3Param(const nObjectAttribute::Command* objCmd,
             fVal = val.z;
             rollout += CreateFloatUI(strAttrUIName, "z: ",fVal, min, max, false, 1, 70, false);
         }
-        
+
         nString strSetupName = strAttrName + "[";
         strSetupName.AppendInt(uj + 1);
         strSetupName +=  "]";
 
-        setupbody += "if " + strSetupName + 
+        setupbody += "if " + strSetupName +
             " == -339999995214436420000000000000000000000.000000 then ";
         setupbody += strSetupName + " = ";
         setupbody.AppendFloat(fVal);
         setupbody += "\n\t\t";
-        
+
         rollout += "\n\t\t";
     }
-    
+
     param += ")";
 }
 
@@ -256,7 +256,7 @@ void AddVector4Param(const nObjectAttribute::Command* objCmd,
 
     float max = 3.40E38f;
     float min = -3.40E38f;
-    
+
     if (objCmd)
     {
         max = objCmd->GetMax();
@@ -281,7 +281,7 @@ void AddVector4Param(const nObjectAttribute::Command* objCmd,
     param += strAttrName + " type:#floatTab tabSize:4 "
         "default:-339999995214436420000000000000000000000.000000 "
         "tabSizeVariable:true";
-    
+
     param += " ui:(";
 
     uint uiSize = 4;
@@ -291,7 +291,7 @@ void AddVector4Param(const nObjectAttribute::Command* objCmd,
         strAttrUIName.AppendInt(uj);
 
         param += strAttrUIName;
-        
+
         if (uj != uiSize -1)
             param += " , ";
 
@@ -316,7 +316,7 @@ void AddVector4Param(const nObjectAttribute::Command* objCmd,
         strSetupName.AppendInt(uj + 1);
         strSetupName += "]";
 
-        setupbody += "if " + strSetupName + 
+        setupbody += "if " + strSetupName +
             " == -339999995214436420000000000000000000000.000000 then ";
         setupbody += strSetupName + " = ";
         setupbody.AppendFloat(pfVal[uj]);
@@ -338,7 +338,7 @@ void AddMatrix4Param(const nObjectAttribute::Command* objCmd,
 {
     float fMin = -3.40E38f;
     float fMax = 3.40E38f;
-    
+
     matrix44 val (cmd->In()->GetM44());
 
     nString strAttrName = cmd->GetProto()->GetName();
@@ -346,11 +346,11 @@ void AddMatrix4Param(const nObjectAttribute::Command* objCmd,
     param += strAttrName + " type:#floatTab tabSize:16 "
         "default:-339999995214436420000000000000000000000.000000 "
         "tabSizeVariable:true";
-    
+
     param += " ui:(";
     unsigned int uiSize = 4;
     nString strName = "";
-    
+
     for (unsigned int ui = 0; ui < uiSize; ui++)
     {
         for (unsigned int uj = 0; uj < uiSize; uj++)
@@ -365,7 +365,7 @@ void AddMatrix4Param(const nObjectAttribute::Command* objCmd,
                 param += strAttrUIName + ", ";
 
             float fVal = val.m[ui][uj];
-            
+
             strName = "(";
             strName.AppendInt(ui); strName += ", ";
             strName.AppendInt(uj); strName += "): ";
@@ -374,16 +374,16 @@ void AddMatrix4Param(const nObjectAttribute::Command* objCmd,
             {
                 rollout += CreateFloatUI(strAttrUIName, "", fVal, fMin, fMax, true, 4, 52, false);
             }
-            else 
+            else
             {
                 rollout += CreateFloatUI(strAttrUIName, "", fVal, fMin, fMax, false, 1, 52, false);
             }
-            
+
             nString strSetupName = strAttrName + "[";
-            strSetupName.AppendInt(ui*uiSize + uj + 1); 
+            strSetupName.AppendInt(ui*uiSize + uj + 1);
             strSetupName += "]";
 
-            setupbody += "if " + strSetupName + 
+            setupbody += "if " + strSetupName +
                 " == -339999995214436420000000000000000000000.000000 then ";
             setupbody += strSetupName + " = ";
             setupbody.AppendFloat(fVal);
@@ -406,7 +406,7 @@ void AddBoolParam(const nObjectAttribute::Command* objCmd,
 {
     n_assert(cmd);
     n_assert(arg);
-     
+
     nString strAttrName = cmd->GetProto()->GetName();
     strAttrName.AppendInt(cmd->GetInArgIndex());
 
@@ -427,7 +427,7 @@ void AddBoolParam(const nObjectAttribute::Command* objCmd,
     param += strAttrUIName;
 
     rollout += "checkbox ";
-    rollout += strAttrUIName + " \"" + 
+    rollout += strAttrUIName + " \"" +
     strAttrName + ": \" ";
     rollout += "checked: ";
 
@@ -448,7 +448,7 @@ void AddRGBParam(const nObjectAttribute::Command* objCmd,
     nString& param, nString& rollout, nString& setupbody)
 {
     n_assert(cmd);
-     
+
     nString strAttrName = cmd->GetProto()->GetName();
     nString strAttrUIName = strAttrName + "UI";
 
@@ -457,7 +457,7 @@ void AddRGBParam(const nObjectAttribute::Command* objCmd,
     val.x = cmd->In()->GetF();
     val.y = cmd->In()->GetF();
     val.z = cmd->In()->GetF();
-    
+
     nString rgb;
 
     rgb.AppendFloat(val.x * 255.0f);    rgb += " ";
@@ -470,7 +470,7 @@ void AddRGBParam(const nObjectAttribute::Command* objCmd,
     param += "\n\t\t";
 
     rollout += "colorpicker ";
-    rollout += strAttrUIName + " \"" + strAttrName + 
+    rollout += strAttrUIName + " \"" + strAttrName +
         ": \" align:#left across:2 offset:[0,6]\n\t\t";
 }
 
@@ -483,7 +483,7 @@ void AddRGBAParam(const nObjectAttribute::Command* objCmd,
     nString& param, nString& rollout, nString& setupbody)
 {
     n_assert(cmd);
-     
+
     nString strAttrName = cmd->GetProto()->GetName();
     nString strAttrUIName = strAttrName + "UI";
 
@@ -493,7 +493,7 @@ void AddRGBAParam(const nObjectAttribute::Command* objCmd,
     val.z = cmd->In()->GetF();
 
     float a = cmd->In()->GetF();
-    
+
     nString rgb, alpha;
 
     rgb.AppendFloat(val.x * 255.0f);    rgb += " ";
@@ -514,7 +514,7 @@ void AddRGBAParam(const nObjectAttribute::Command* objCmd,
     param += strAttrUIName + "Alpha";
 
     rollout += "colorpicker ";
-    rollout += strAttrUIName + " \"" + strAttrName + 
+    rollout += strAttrUIName + " \"" + strAttrName +
         ": \" align:#left across:2 offset:[0,6]\n\t\t";
 
     rollout += "spinner ";
@@ -553,7 +553,7 @@ void AddStringParam(const nObjectAttribute::Command* objCmd,
     param += "ui:" + strAttrUIName;
 
     rollout += "edittext ";
-    rollout += strAttrUIName + " \"" + 
+    rollout += strAttrUIName + " \"" +
     strAttrName + ": \" ";
     rollout += "text:\"";
     rollout += (char*)pcValue;
@@ -570,7 +570,7 @@ void AddIntParam(const nObjectAttribute::Command* objCmd,
 {
     n_assert(cmd);
     n_assert(arg);
-     
+
     nString strAttrName = cmd->GetProto()->GetName();
     strAttrName.AppendInt(cmd->GetInArgIndex());
 
@@ -607,9 +607,9 @@ void AddIntParam(const nObjectAttribute::Command* objCmd,
     param += strAttrUIName;
 
     rollout += "spinner ";
-    rollout += strAttrUIName + " \"" + 
+    rollout += strAttrUIName + " \"" +
     strAttrName + ": \" ";
-               
+
     rollout += "type:#integer ";
     rollout += "range:[";
     rollout.AppendInt(uiMin);

@@ -29,18 +29,18 @@ nMaxUtilityObj::~nMaxUtilityObj()
     Create Nebula2 utility panel plugin to support options.
 
     - 21-Mar-05 kims changed to check nMaxOptionParamMapDlg is correctly created.
-                     (used native 'new' instead of 'n_new' cause destroying its  
+                     (used native 'new' instead of 'n_new' cause destroying its
                       instance is depends on 3dsmax side)
 */
 void nMaxUtilityObj::BeginEditParams(Interface* intf, IUtil* iutil)
 {
     // create nebula utility panel dialog.
     optionParamMap = CreateCPParamMap(
-        NULL, 
+        NULL,
         0,//1,
-        this, 
-        intf, 
-        maxUtilityObjInterfaceClassDesc2.HInstance(), 
+        this,
+        intf,
+        maxUtilityObjInterfaceClassDesc2.HInstance(),
         MAKEINTRESOURCE(IDD_UTILITY_OPTION),
         "Nebula Export Options",
         (flags & ROLLUP_EXPORTOPTIONS_OPEN) ? 0 : APPENDROLL_CLOSED);
@@ -72,7 +72,7 @@ void nMaxUtilityObj::EndEditParams(Interface* intf, IUtil* iutil)
         // destroy nebula utility panel dialog.
         if (IsRollupPanelOpen(optionParamMap->GetHWnd()))
             flags |= ROLLUP_EXPORTOPTIONS_OPEN;
-        DestroyCPParamMap(optionParamMap); 
+        DestroyCPParamMap(optionParamMap);
         optionParamMap = NULL;
     }
 }

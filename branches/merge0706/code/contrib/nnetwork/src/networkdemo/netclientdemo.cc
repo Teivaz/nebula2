@@ -10,7 +10,7 @@
 #include "networkdemo/netclientdemo.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass( NetClientDemo, "network::nnetclient" );
+nNebulaClass( NetClientDemo, "nnetclient" );
 
 //------------------------------------------------------------------------------
 /**

@@ -26,8 +26,8 @@ void MeshGenerator::emit_vertex(int x, int y)
 
     // Check coordinates and update bounding box.
     float z = m_hf->getHeight(x,y);
-    vector3 v( x * m_hf->getXscale(), 
-               y * m_hf->getYscale(), 
+    vector3 v( x * m_hf->getXscale(),
+               y * m_hf->getYscale(),
                z);
     update_bounding_box(v);
 }
@@ -78,7 +78,7 @@ int MeshGenerator::get_vertex_index(int x, int y)
 
     // no index allocated yet, allocate one
     index = m_vertices.Size();
-    
+
     chunkvertex v(x,y);
     v.bufferindex = index;
     int key = chunkvertex::genkey(v);
@@ -131,7 +131,7 @@ trianglestats MeshGenerator::write_vertex_data(nFile &destfile, int level)
     int current_pos = destfile.Tell();
     int dummy=0;
     SI32SPEW(destfile,dummy);
-    
+
     // write out the vertex data at the *end* of the file.
     destfile.Seek(0,nFile::END);
     int mesh_pos = destfile.Tell();
@@ -220,7 +220,7 @@ void MeshGenerator::write_svg_debug(nFile &svgfile, int level)
     char pathstart[] = "<path style=\"stroke:black\" d=\"";
     char buffer[1000];
     float v1x,v1y,v2x,v2y,v3x,v3y;
-    
+
     // write out the header and move to the first point
     svgfile.Write( pathstart, strlen(pathstart) );
 

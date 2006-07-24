@@ -14,7 +14,7 @@ nOpenALListener::nOpenALListener()
 
 //-----------------------------------------------------------------------------
 /**
-    Destructor.  
+    Destructor.
 */
 nOpenALServer::~nOpenALServer()
 {

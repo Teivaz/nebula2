@@ -82,7 +82,7 @@ void nOctFrustum::init_clip_planes_for_frustum()
     //normalize planes.
     float denom;
     vector3 tmp;
-    
+
     for (int i=0; i<6; i++)
     {
         tmp.set (clipPlanes[i].x, clipPlanes[i].y, clipPlanes[i].z);
@@ -98,14 +98,14 @@ void nOctFrustum::init_clip_planes_for_frustum()
 /**
     @brief Recursively collect within the clip planes.
 */
-void nOctFrustum::recurse_collect_within_clip_planes(nOctNode* on, 
+void nOctFrustum::recurse_collect_within_clip_planes(nOctNode* on,
                                                      uint clip_mask)
 {
     uint out_clip_mask;
 
     // Clip-Status der aktuellen Node...
-    if (false == box_clip_against_clip_planes(on->minCorner, 
-                                              on->maxCorner, clipPlanes, 
+    if (false == box_clip_against_clip_planes(on->minCorner,
+                                              on->maxCorner, clipPlanes,
                                               out_clip_mask, clip_mask))
         return;
 
@@ -142,7 +142,7 @@ void nOctFrustum::recurse_collect_within_clip_planes(nOctNode* on,
     @param in_clip_mask planes to clip against
     @return true if the AABB is at least partially inside clip
 */
-bool nOctFrustum::box_clip_against_clip_planes(vector3& minCorner, vector3& maxCorner, 
+bool nOctFrustum::box_clip_against_clip_planes(vector3& minCorner, vector3& maxCorner,
                                                vector4* planes,
                                                uint& out_clip_mask,
                                                uint in_clip_mask)
@@ -188,7 +188,7 @@ bool nOctFrustum::box_clip_against_clip_planes(vector3& minCorner, vector3& maxC
 /**
     @brief Collect nodes in this node only.
 */
-void nOctFrustum::collect_nodes_within_clip_planes(nOctNode* on, 
+void nOctFrustum::collect_nodes_within_clip_planes(nOctNode* on,
                                                    uint clip_mask)
 {
     nOctElement *oe;
@@ -197,7 +197,7 @@ void nOctFrustum::collect_nodes_within_clip_planes(nOctNode* on,
          oe = (nOctElement *) oe->GetSucc())
     {
         uint out_clip_mask = 0;
-        if (true == box_clip_against_clip_planes(oe->minCorner,oe->maxCorner, clipPlanes, 
+        if (true == box_clip_against_clip_planes(oe->minCorner,oe->maxCorner, clipPlanes,
                                                  out_clip_mask, clip_mask))
         {
             oe->SetCollectFlags(nOctElement::N_COLLECT_CLIP_PLANES);

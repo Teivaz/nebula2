@@ -24,7 +24,7 @@ static void n_setresourceloader(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nmapnode
-    
+
     @cppclass
     nMapNode
 

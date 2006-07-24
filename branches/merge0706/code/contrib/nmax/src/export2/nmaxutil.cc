@@ -15,7 +15,7 @@
 //-----------------------------------------------------------------------------
 /**
     Retrieves Object from the given node.
-    It checkes the returned object is derived object and if it is, 
+    It checkes the returned object is derived object and if it is,
     tri to get its referenced object until it is not a derived object.
 */
 Object* nMaxUtil::GetBaseObject(INode* inode, TimeValue time)
@@ -154,11 +154,11 @@ bool nMaxUtil::IsMorphObject(INode* inode)
         IDerivedObject *derivedObj = (IDerivedObject*)objRef;
         Object *objref2 = derivedObj->GetObjRef();
         Class_ID cID2 = objref2->ClassID();
-        
+
         if (cID2 == Class_ID(MORPHOBJ_CLASS_ID, 0))
             return true;
     }
-    else 
+    else
     if (cID == Class_ID(MORPHOBJ_CLASS_ID, 0))
         return true;
     */
@@ -227,7 +227,7 @@ Modifier* nMaxUtil::FindSkin(INode* inode)
 {
     // Get object from node. Abort if no object.
     Object* obj = inode->GetObjectRef();
-    if (!obj) 
+    if (!obj)
         return NULL;
 
     // Is derived object ?

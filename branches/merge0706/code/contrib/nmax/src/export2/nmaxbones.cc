@@ -27,7 +27,7 @@ nMaxBoneManager::Bone::Bone() :
     name(""),
     node(0),
     dummy(false)
-    
+
 {
 }
 
@@ -43,7 +43,7 @@ nMaxBoneManager::nMaxBoneManager()
 //---------------------------------------------------------------------------
 /**
 */
-nMaxBoneManager::~nMaxBoneManager()    
+nMaxBoneManager::~nMaxBoneManager()
 {
     Singleton = 0;
 }
@@ -72,7 +72,7 @@ void nMaxBoneManager::GetNodes(INode* node, nArray<INode*>& nodeArray)
     @param nodeArray scene nodes array
     @param boneNodeArray array which retrieved bone is contained.
 */
-void nMaxBoneManager::GetBoneByModifier(const nArray<INode*>& nodeArray, 
+void nMaxBoneManager::GetBoneByModifier(const nArray<INode*>& nodeArray,
                                         nArray<INode*> &boneNodeArray)
 {
     for (int i=0; i<nodeArray.Size(); i++)
@@ -108,7 +108,7 @@ void nMaxBoneManager::GetBoneByModifier(const nArray<INode*>& nodeArray,
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray, 
+void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
                                        nArray<INode*> &boneNodeArray)
 {
     for (int i=0; i<nodeArray.Size(); i++)
@@ -118,11 +118,11 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
         // check the given node is bone node.
         bool isBone = this->IsBone(node);
 
-        //HACK: if the dummy node is just like a group node or something 
+        //HACK: if the dummy node is just like a group node or something
         //      which is not actually bone?
         //      dummy node can be used in various way in 3dsmax.
         //      so it should be considered when it actually used for bone.
-        //      A dummy node which used for bone should be added when it has modifier 
+        //      A dummy node which used for bone should be added when it has modifier
         //      in GetBoneByModifier() func
 
         //bool isDummy = this->IsDummy(node);
@@ -144,7 +144,7 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
 
     3dsmax support any type of object to be bone, so it is not enough
     to check an object which type is bone or biped.
-    So, we check an object which has any physique or skin modifier and 
+    So, we check an object which has any physique or skin modifier and
     retrieve bones from it via physique(or skin) interface.
 
     It is accomplished by two ways to collect bones from the given scene.
@@ -170,10 +170,10 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
     In the above example, if the bone A is not used for the animation, the root
     bone is bone B.
 
-    And last we build bone array and indices of its elements which will be used 
-    for joint indices of vertices. 
+    And last we build bone array and indices of its elements which will be used
+    for joint indices of vertices.
     At this time, only collected bones are added to the bone array.
-    An artist can add constraint or something other which is not a bone to a bone 
+    An artist can add constraint or something other which is not a bone to a bone
     hierarchy and it should be filtered out when the bone array is built.
 
 */
@@ -293,7 +293,7 @@ int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArra
     #endif
 
     nArray<BoneLevel> boneLevelArray;
-    
+
     INode* bone;
     int depth;
 
@@ -394,22 +394,22 @@ void nMaxBoneManager::AddBoneToNode(INode* inode, INode* bone) {
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed a bug that it cannot find correct nskinanimator 
+    -03-Jun-06  kims  Fixed a bug that it cannot find correct nskinanimator
                       when there are more than one root bones. (The case that
                       two or more nskinanimator is created)
-                      When multiple nskinanimator are created, already added 
-                      bone has -1 so it always fails to find correct skinanimator 
-                      because nskinshapenode always find the first skinanimaotr0 
+                      When multiple nskinanimator are created, already added
+                      bone has -1 so it always fails to find correct skinanimator
+                      because nskinshapenode always find the first skinanimaotr0
                       when it try to find nskinanimator.
                       Thanks Kim, Seung Hoon for this fix.
 */
-void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, ObjectState* os, 
+void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, ObjectState* os,
                                      nArray<INode*> &boneNodeArray)
 {
-    if (phyMod == NULL) 
+    if (phyMod == NULL)
         return;
 
-    // create a Physique Export Interface for the given Physique Modifier       
+    // create a Physique Export Interface for the given Physique Modifier
     IPhysiqueExport *phyExport = (IPhysiqueExport *)phyMod->GetInterface(I_PHYINTERFACE);
 
     if (phyExport)
@@ -451,9 +451,9 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
                         }
 
                         mcExport->ReleaseVertexInterface(vtxExport);
-                        vtxExport = NULL;	
+                        vtxExport = NULL;
                     }
-                    else 
+                    else
                     {
                         IPhyRigidVertex *rigidVertex = (IPhyRigidVertex *)vtxExport;
                         INode* bone = rigidVertex->GetNode();
@@ -484,17 +484,17 @@ void nMaxBoneManager::ExtractPhysiqueBones(INode* node, Modifier* phyMod, Object
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed a bug that it cannot find correct nskinanimator 
+    -03-Jun-06  kims  Fixed a bug that it cannot find correct nskinanimator
                       when there are more than one root bones. (The case that
                       two or more nskinanimator is created)
-                      When multiple nskinanimator are created, already added 
-                      bone has -1 so it always fails to find correct skinanimator 
-                      because nskinshapenode always find the first skinanimaotr0 
+                      When multiple nskinanimator are created, already added
+                      bone has -1 so it always fails to find correct skinanimator
+                      because nskinshapenode always find the first skinanimaotr0
                       when it try to find nskinanimator.
                       Thanks Kim, Seung Hoon for this fix.
 
 */
-void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod, 
+void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod,
                                        nArray<INode*> &boneNodeArray)
 {
     // get the skin interface
@@ -543,7 +543,7 @@ void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod,
 */
 bool nMaxBoneManager::IsGeomObject(INode *node)
 {
-    ObjectState os = node->EvalWorldState(0); 
+    ObjectState os = node->EvalWorldState(0);
 
     // only add geometry nodes
     if (os.obj)
@@ -770,10 +770,10 @@ bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) {
         if (numStateKeys <= 0 || numClipKeys <= 0)
             continue;
 
-        // determine animations loop type. 
-        // the value is specified inside of nMaxNoteTrack::GetAnimState(). 
+        // determine animations loop type.
+        // the value is specified inside of nMaxNoteTrack::GetAnimState().
         // default is 'REPEAT'.
-        switch(animState.loopType) 
+        switch(animState.loopType)
         {
         case nAnimBuilder::Group::REPEAT:
             animGroup.SetLoopType(nAnimBuilder::Group::REPEAT);
@@ -784,7 +784,7 @@ bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) {
         default:
             break; // unknown loop type.
         }
-        
+
         animGroup.SetKeyTime(keyDuration);
         animGroup.SetNumKeys(numClipKeys);
 

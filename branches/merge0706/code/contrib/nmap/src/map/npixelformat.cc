@@ -102,7 +102,7 @@ nPixelFormat::nPixelFormat(nPixelFormat *pf)
     this->a_shift = pf->a_shift;
     this->pf_from = NULL;
 }
-    
+
 //-------------------------------------------------------------------
 //  ~nPixelFormat()
 //  24-Nov-98   floh    created
@@ -120,7 +120,7 @@ nPixelFormat::~nPixelFormat()
 bool nPixelFormat::BeginConv(nPixelFormat *from)
 {
     this->pf_from = from;
-    
+
     // check for illegal combinations...
     if ((from->type==N_PFTYPE_RGBA) && (this->type==N_PFTYPE_CLUT)) {
         n_message("nPixelFormat: illegal conversion, rgba->clut!");
@@ -204,7 +204,7 @@ void nPixelFormat::Conv(uchar *from_buf, uchar *to_buf, int num_pixels)
     int from_addr = 0;
     int to_addr   = 0;
     uchar *src,*tar;
-        
+
     // Fallunterscheidung
     // RGBA->RGBA
     if ((this->pf_from->type==N_PFTYPE_RGBA) && (this->type==N_PFTYPE_RGBA)) {
@@ -250,7 +250,7 @@ void nPixelFormat::Conv(uchar *from_buf, uchar *to_buf, int num_pixels)
                 tar = to_buf   + (to_addr/8);
             }
         }
-                   
+
     // CLUT->RGBA
     } else if ((pf_from->type==N_PFTYPE_CLUT) && (type==N_PFTYPE_RGBA)) {
         int rs,gs,bs,as;
@@ -282,8 +282,8 @@ void nPixelFormat::Conv(uchar *from_buf, uchar *to_buf, int num_pixels)
             src++;
             tar = to_buf + (to_addr/8);
         }
-    
-    // CLUT->CLUT 
+
+    // CLUT->CLUT
     } else memcpy(to_buf,from_buf,num_pixels);
 }
 

@@ -38,7 +38,7 @@ nMaxNode::~nMaxNode()
 
     @return pointer to the created Nebula object.
 */
-nSceneNode* 
+nSceneNode*
 nMaxNode::CreateNebulaObject(const char* classname, const char* objectname)
 {
     n_assert(classname);

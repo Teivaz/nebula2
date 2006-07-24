@@ -33,7 +33,7 @@ nLWTextureExport::~nLWTextureExport()
 /**
     @return true if all textures were exported successfully, false otherwise.
 */
-bool 
+bool
 nLWTextureExport::Run()
 {
     bool retVal = true;
@@ -85,14 +85,14 @@ nLWTextureExport::Run()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWTextureExport::CopyTextureParamsTo(nMaterialNode* node)
 {
     for (int i = 0; i < this->textures.Size(); i++)
     {
         n_assert2(!this->textures[i].exportedTexture.IsEmpty(),
                   "Must call nLWTextureExport::Run() first!");
-        node->SetTexture(this->textures[i].param, 
+        node->SetTexture(this->textures[i].param,
                          this->textures[i].exportedTexture.Get());
     }
 }

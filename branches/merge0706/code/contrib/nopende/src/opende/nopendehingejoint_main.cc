@@ -97,7 +97,7 @@ float nOpendeHingeJoint::GetAngleRate()
 
 //----------------------------------------------------------------------------
 /**
-*/  
+*/
 void nOpendeHingeJoint::SetParam( int param, float value )
 {
     n_assert( this->id && "nOpendeJoint::id not valid!" );

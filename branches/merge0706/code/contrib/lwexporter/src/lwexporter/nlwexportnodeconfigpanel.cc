@@ -23,7 +23,7 @@ BEGIN_EVENT_TABLE(nLWExportNodeConfigPanel, wxDialog)
     EVT_BUTTON(ID_DEL_EXPORT_TYPE, nLWExportNodeConfigPanel::OnDelExportTypeBtn)
     EVT_BUTTON(wxID_OK, nLWExportNodeConfigPanel::OnOKBtn)
     EVT_BUTTON(wxID_CANCEL, nLWExportNodeConfigPanel::OnCancelBtn)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -59,12 +59,12 @@ nLWExportNodeConfigPanel::nLWExportNodeConfigPanel(wxWindow* parent) :
 
     wxStaticText* sceneNodeTypeLabel = new wxStaticText(this, wxID_ANY, "Scene Node Type");
     this->sceneNodeTypePopup = new wxChoice(this, wxID_ANY);
-    
+
     wxStaticBox* exportBox = new wxStaticBox(this, wxID_ANY, "Export");
 
     this->texturesCheckBox = new wxCheckBox(this, wxID_ANY, "Textures");
     this->animationCheckBox = new wxCheckBox(this, wxID_ANY, "Animation");
-    
+
     wxStaticBox* vertexBox = new wxStaticBox(this, wxID_ANY, "Vertex Components");
 
     this->coordCheckBox = new wxCheckBox(this, wxID_ANY, "Coord");
@@ -77,7 +77,7 @@ nLWExportNodeConfigPanel::nLWExportNodeConfigPanel(wxWindow* parent) :
     this->uv3CheckBox = new wxCheckBox(this, wxID_ANY, "UV 3");
     this->weightsCheckBox = new wxCheckBox(this, wxID_ANY, "Joint Weights");
     this->colorCheckBox = new wxCheckBox(this, wxID_ANY, "Color");
-    
+
     // populate controls
 
     nLWExporterSettings* settings = nLWExporterSettings::Instance();
@@ -102,12 +102,12 @@ nLWExportNodeConfigPanel::nLWExportNodeConfigPanel(wxWindow* parent) :
         {
             this->sceneNodeTypePopup->AppendString(settings->GetSceneNodeType(i).Get());
         }
-        
+
         this->UpdateControls();
     }
-    
+
     // layout controls
-    
+
     wxStaticBoxSizer* vertexBoxSizer = new wxStaticBoxSizer(vertexBox, wxVERTICAL);
     vertexBoxSizer->Add(this->coordCheckBox);
     vertexBoxSizer->Add(this->tangentCheckBox);
@@ -125,7 +125,7 @@ nLWExportNodeConfigPanel::nLWExportNodeConfigPanel(wxWindow* parent) :
     exportBoxSizer->Add(this->animationCheckBox);
     exportBoxSizer->AddSpacer(5);
     exportBoxSizer->Add(vertexBoxSizer, 0, wxEXPAND);
-    
+
     wxBoxSizer* exportNodeTypeBtnSizer = new wxBoxSizer(wxHORIZONTAL);
     exportNodeTypeBtnSizer->Add(newExportNodeTypeBtn, 1);
     exportNodeTypeBtnSizer->Add(this->renameExportNodeTypeBtn, 1);
@@ -166,7 +166,7 @@ nLWExportNodeConfigPanel::~nLWExportNodeConfigPanel()
 //----------------------------------------------------------------------------
 /**
 */
-nLWExportNodeType* 
+nLWExportNodeType*
 nLWExportNodeConfigPanel::GetExportNodeType(const nString& typeName)
 {
     for (int i = 0; i < this->exportTypeArray.Size(); i++)
@@ -181,7 +181,7 @@ nLWExportNodeConfigPanel::GetExportNodeType(const nString& typeName)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExportNodeConfigPanel::StoreCurrentData()
 {
     if (!this->curExportNodeType)
@@ -344,14 +344,14 @@ nLWExportNodeConfigPanel::OnExportTypePopup(wxCommandEvent& event)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExportNodeConfigPanel::OnNewExportTypeBtn(wxCommandEvent& WXUNUSED(event))
 {
     wxTextEntryDialog dialog(this, "Name", "New Export Node Type");
     if (dialog.ShowModal() == wxID_OK)
     {
         nString typeName(dialog.GetValue().c_str());
-        
+
         if (typeName.IsEmpty())
         {
             wxMessageBox("You must provide a name for the new export node type.",
@@ -378,13 +378,13 @@ nLWExportNodeConfigPanel::OnNewExportTypeBtn(wxCommandEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExportNodeConfigPanel::OnRenExportTypeBtn(wxCommandEvent& WXUNUSED(event))
 {
     if (!this->curExportNodeType)
         return;
 
-    wxTextEntryDialog dialog(this, "New Name", "Rename Export Node Type", 
+    wxTextEntryDialog dialog(this, "New Name", "Rename Export Node Type",
                              this->exportNodeTypePopup->GetStringSelection());
     if (dialog.ShowModal() == wxID_OK)
     {
@@ -411,14 +411,14 @@ nLWExportNodeConfigPanel::OnRenExportTypeBtn(wxCommandEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExportNodeConfigPanel::OnDelExportTypeBtn(wxCommandEvent& WXUNUSED(event))
 {
     if (!this->curExportNodeType)
         return;
 
     nString curTypeName(this->exportNodeTypePopup->GetStringSelection().c_str());
-    
+
     for (int i = 0; i < this->exportTypeArray.Size(); i++)
     {
         if (curTypeName == this->exportTypeArray[i]->GetName())
@@ -431,7 +431,7 @@ nLWExportNodeConfigPanel::OnDelExportTypeBtn(wxCommandEvent& WXUNUSED(event))
     }
 
     this->exportNodeTypePopup->Delete(this->exportNodeTypePopup->GetSelection());
-    
+
     if (this->exportNodeTypePopup->GetCount() == 0)
     {
         this->curExportNodeType = 0;

@@ -73,7 +73,7 @@ nLWShaderEditor::~nLWShaderEditor()
 /**
     @brief Handler callback. Allocate and initialize instance data.
 */
-XCALL_(LWInstance) 
+XCALL_(LWInstance)
 nLWShaderEditor::OnCreate(void* priv, void* context, LWError* error)
 {
     if (!priv)
@@ -90,7 +90,7 @@ nLWShaderEditor::OnCreate(void* priv, void* context, LWError* error)
 /**
     @brief Handler callback. Copy instance data.
 */
-XCALL_(LWError) 
+XCALL_(LWError)
 nLWShaderEditor::OnCopy(LWInstance dest, LWInstance source)
 {
     // TODO: Copy all plug-in data.
@@ -106,8 +106,8 @@ nLWShaderEditor::OnCopy(LWInstance dest, LWInstance source)
 //----------------------------------------------------------------------------
 /**
     @brief Handler callback. Read instance data.
-    
-    Shader instance data is stored in the SURF chunks of object files, 
+
+    Shader instance data is stored in the SURF chunks of object files,
     but it isn't necessary to know that to read the data.
 */
 LWError
@@ -117,17 +117,17 @@ nLWShaderEditor::OnLoad(const LWLoadState* loadState)
         return 0;
 
     this->shaderSettings->Clear();
-    
+
     nLWLoadState state(loadState);
     if (state.BeginBlock(FileBlockId::SHADER))
     {
         nString tempStr;
-        
+
         if (state.ReadString(tempStr))
         {
             this->shaderSettings->SetShaderName(tempStr);
         }
-        
+
         if (state.ReadString(tempStr))
         {
             this->shaderSettings->SetShaderFile(tempStr);
@@ -171,7 +171,7 @@ nLWShaderEditor::OnLoad(const LWLoadState* loadState)
                     }
                     break;
                 }
-                
+
                 case nShaderState::Float:
                 {
                     float val = 0.0f;
@@ -217,8 +217,8 @@ nLWShaderEditor::OnLoad(const LWLoadState* loadState)
 //----------------------------------------------------------------------------
 /**
     @brief Handler callback. Write instance data.
-    
-    Shader instance data is stored in the SURF chunks of object files, 
+
+    Shader instance data is stored in the SURF chunks of object files,
     but it isn't necessary to know that to write the data.
 */
 LWError
@@ -226,7 +226,7 @@ nLWShaderEditor::OnSave(const LWSaveState* saveState)
 {
     if (!this->shaderSettings)
         return 0;
-    
+
     if (!this->shaderSettings->Valid())
         return 0;
 
@@ -279,7 +279,7 @@ nLWShaderEditor::OnSave(const LWSaveState* saveState)
         }
         state.EndBlock(/*FileBlockId::SHADER_PARAM*/);
     }
-    
+
     // texture params
     for (int i = 0; i < this->shaderSettings->GetNumTextures(); i++)
     {
@@ -294,9 +294,9 @@ nLWShaderEditor::OnSave(const LWSaveState* saveState)
         state.WriteString(this->shaderSettings->GetTextureAt(i));
         state.EndBlock(/*FileBlockId::SHADER_PARAM*/);
     }
-    
+
     state.EndBlock(/*FileBlockId::SHADER*/);
-    
+
     // no errors;
     return 0;
 }
@@ -335,7 +335,7 @@ nLWShaderEditor::OnBeginRender(int /*renderMode*/)
 {
     // nothing to do
     // no errors
-    return 0;    
+    return 0;
 }
 
 //----------------------------------------------------------------------------
@@ -365,7 +365,7 @@ nLWShaderEditor::OnEndRender()
 /**
     @brief Handler callback. Called to draw a single pixel.
 
-    The evaluation callback is called for every visible spot on a surface 
+    The evaluation callback is called for every visible spot on a surface
     and is passed a shader access structure describing the spot to be shaded.
 */
 void
@@ -407,13 +407,13 @@ nLWShaderEditor::OnDisplayUI()
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWShaderEditor::Activate_Handler(long version, 
+XCALL_(int)
+nLWShaderEditor::Activate_Handler(long version,
                                   GlobalFunc* global,
-                                  LWShaderHandler* local, 
+                                  LWShaderHandler* local,
                                   void* /*serverData*/)
 {
-    if (version != LWSHADER_VERSION) 
+    if (version != LWSHADER_VERSION)
         return AFUNC_BADVERSION;
 
     if (!local)
@@ -462,13 +462,13 @@ nLWShaderEditor::Activate_Handler(long version,
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWShaderEditor::Activate_Interface(long version, 
+XCALL_(int)
+nLWShaderEditor::Activate_Interface(long version,
                                     GlobalFunc* global,
-                                    LWInterface* local, 
+                                    LWInterface* local,
                                     void* /*serverData*/)
 {
-    if (version != LWINTERFACE_VERSION) 
+    if (version != LWINTERFACE_VERSION)
         return AFUNC_BADVERSION;
 
     if (!local)

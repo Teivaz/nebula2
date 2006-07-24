@@ -17,7 +17,7 @@
 #include "MAXScrpt\MAXScrpt.h"
 #include "MAXScrpt\MAXObj.h"
 #include "MAXScrpt\Listener.h"
-#include "MAXScrpt\scripted.h" 
+#include "MAXScrpt\scripted.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -33,7 +33,7 @@ void n_listener (char* msg, ...)
     va_start(argList, msg);
     vsprintf (message, msg, argList);
     va_end(argList);
-    
+
     the_listener->edit_stream->printf (message);
 }
 
@@ -48,7 +48,7 @@ void n_listener (char* msg, ...)
     @param filename maxscript file which be opened with a new maxscript editor.
 */
 void n_openeditor(const char* filename)
-{   
+{
     open_script((TCHAR*)filename);
 }
 //-----------------------------------------------------------------------------

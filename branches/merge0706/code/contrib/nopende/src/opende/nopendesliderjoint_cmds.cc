@@ -13,7 +13,7 @@ static void n_GetPositionRate( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendesliderjoint
-    
+
     @superclass
     nopendejoint
 
@@ -138,14 +138,14 @@ nOpendeSliderJoint::SaveCmds( nPersistServer* ps )
     {
         vector3 v;
         this->GetAxis( v );
-    
+
         // SetAxis
         nCmd* cmd = ps->GetCmd( this, 'SAX_' );
         cmd->In()->SetF( v.x );
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-    
+
         // save parameters
         for ( int i = 0; i < nOpendeJoint::NUM_JOINT_PARAMS; i++ )
         {
@@ -155,7 +155,7 @@ nOpendeSliderJoint::SaveCmds( nPersistServer* ps )
             cmd->In()->SetF( this->GetParam2( nOpendeJoint::JOINT_PARAM_NAMES[i], 0 ) );
             ps->PutCmd( cmd );
         }
-    
+
         return true;
     }
     return false;

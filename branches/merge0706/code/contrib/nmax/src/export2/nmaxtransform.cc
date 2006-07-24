@@ -88,12 +88,12 @@ nMaxTransform::ScaleComponent(const AffineParts &ap, const TCHAR* nodeName)
 */
 vector3
 nMaxTransform::ScaleComponent(const Quat &u, const Point3 &k, const TCHAR* nodeName)
-{   
+{
     //check if the scale axis system is not equal to the nebula axis system
     if (u.IsIdentity() == 0)
     {
-        //convert the scale from max scale axis to nebula scale axis system       
-        n_printf("WARNING: '%s': There is a nonuniform scale, this may result in unecpected data!.\n", nodeName ? nodeName : "UNKNOWN NODE");        
+        //convert the scale from max scale axis to nebula scale axis system
+        n_printf("WARNING: '%s': There is a nonuniform scale, this may result in unecpected data!.\n", nodeName ? nodeName : "UNKNOWN NODE");
 
         Matrix3 scaleAxis;
         u.MakeMatrix(scaleAxis, false);
@@ -136,12 +136,12 @@ nMaxTransform::Convert(Matrix3 &m)
     // swap y and z.
     p = m.GetRow(2);
     result.M21 = p.x;
-    result.M22 = p.z;   
+    result.M22 = p.z;
     result.M23 = p.y;
 
     p = m.GetRow(1);
     result.M31 = p.x;
-    result.M32 = p.z;   
+    result.M32 = p.z;
     result.M33 = p.y;
 
     return result;
@@ -157,7 +157,7 @@ nMaxTransform::Convert(matrix33 &m)
 {
     Point3 p;
     Matrix3 result;
-    
+
     p.x = result.M11;
     p.z = result.M12;
     p.y = result.M13;
@@ -183,7 +183,7 @@ nMaxTransform::Convert(matrix33 &m)
     Retrieves local transformation from the given node.
 */
 static
-Matrix3 UniformMatrix(Matrix3 sMatrix) 
+Matrix3 UniformMatrix(Matrix3 sMatrix)
 {
     AffineParts sAP;
     Matrix3 sResult;

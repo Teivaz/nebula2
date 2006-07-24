@@ -101,7 +101,7 @@ nOpenALHelper::SetSourceVelocity(nOpenALObj* oalobj, float *velocity)
 
 //------------------------------------------------------------------------------
 /**
-    
+
 */
 int
 nOpenALHelper::IncrementEnv()

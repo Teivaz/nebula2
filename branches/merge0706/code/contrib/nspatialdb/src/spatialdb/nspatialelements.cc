@@ -49,9 +49,9 @@ void nBBoxSpatialElement::Accept(nOcclusionVisitor &visitor, int recursiondepth,
 // unless we've hit the bottom of the allow recursion, in which case the portal is accepted instead
 void nSpatialPortalElement::Accept(nVisibilityVisitor &visitor, int recursiondepth, VisitorFlags flags)
 {
-    if ( 
+    if (
         (visitor.VisibilityTest(GetAABB(), flags).TestResult()) &&
-        (recursiondepth > 0) && 
+        (recursiondepth > 0) &&
         (m_otherside.isvalid())
         )
     {

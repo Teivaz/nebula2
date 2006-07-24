@@ -51,7 +51,7 @@ bool nMaxTransformAnimator::Export(INode* inode, Control *control)
 
     // create nTransformAnimator.
     nTransformAnimator* animator;
-    animator = static_cast<nTransformAnimator*>(CreateNebulaObject("ntransformanimator", 
+    animator = static_cast<nTransformAnimator*>(CreateNebulaObject("ntransformanimator",
                                                                    animatorName.Get()));
     if (animator)
     {

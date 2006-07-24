@@ -12,8 +12,8 @@
 /**
     @brief Ensures that the given map point is actually on the map
 */
-int 
-nMap::ClampToBounds( int coord ) const 
+int
+nMap::ClampToBounds( int coord ) const
 {
     if (coord < 0 )
     {
@@ -29,7 +29,7 @@ nMap::ClampToBounds( int coord ) const
 /**
     @brief Return the interpolated height at a supplied point.
 */
-float 
+float
 nMap::GetHeight(float x, float z) const
 {
     n_assert( 0 != mapDimension && "nMap::GetHeight: Perhaps the map hasn't been loaded yet?" );
@@ -58,7 +58,7 @@ nMap::GetHeight(float x, float z) const
 
     float top = Interpolate(nw, ne, x_frac);
     float bottom = Interpolate(sw, se, x_frac);
-    
+
     return Interpolate(top, bottom, z_frac);
 }
 
@@ -69,7 +69,7 @@ nMap::GetHeight(float x, float z) const
     @param z
     @param normal the output normal result
 */
-void 
+void
 nMap::GetNormal(float x, float z, vector3& normal) const
 {
     float temp;
@@ -164,7 +164,7 @@ nMap::GetNormal(float x, float z, vector3& normal) const
     @bug Sometimes does not deal with near vertical rays.
     @bug Occassionally misses sharp peaks on the terrain.
 */
-bool 
+bool
 nMap::GetIntersect(const line3& line, vector3& contact) const
 {
     // Obtain point on or inside terrain bounding box
@@ -174,7 +174,7 @@ nMap::GetIntersect(const line3& line, vector3& contact) const
         return false;
     }
     vector3 pos = contact;
-    
+
     // Special case, vertical ray
     if (0.0f == line.m.x && 0.0f == line.m.z)
     {
@@ -256,7 +256,7 @@ nMap::GetIntersect(const line3& line, vector3& contact) const
     @brief Check intersection between a point on line and map tile.
     Makes two line-triangle intersection checks for each tile, i.e. quad.
 */
-bool 
+bool
 nMap::CheckIntersect(int x, int z,
                           const line3& line,
                           vector3& contact) const

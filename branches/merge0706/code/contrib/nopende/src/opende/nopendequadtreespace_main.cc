@@ -15,15 +15,15 @@ nOpendeQuadTreeSpace::nOpendeQuadTreeSpace()
 
 //----------------------------------------------------------------------------
 /**
-    @param parent The NOH path of the parent space, use "none" to indicate 
+    @param parent The NOH path of the parent space, use "none" to indicate
                   this space doesn't have a parent.
 */
-void nOpendeQuadTreeSpace::Create( const char* parent, const vector3& center, 
+void nOpendeQuadTreeSpace::Create( const char* parent, const vector3& center,
                                    const vector3& extents, int depth )
 {
     nOpendeGeom::Create( parent );
     this->geomId = (dGeomID)nOpende::QuadTreeSpaceCreate( this->getSpace(),
-                                                          center, extents, 
+                                                          center, extents,
                                                           depth );
 }
 

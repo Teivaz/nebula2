@@ -12,7 +12,7 @@ static void n_PointDepth( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendecapsulegeom
-    
+
     @superclass
     nopendegeom
 
@@ -42,7 +42,7 @@ n_initcmds(nClass* clazz)
 
     @info
 */
-static void 
+static void
 n_SetParams( void* slf, nCmd* cmd )
 {
     nOpendeCapsuleGeom* self = (nOpendeCapsuleGeom*)slf;
@@ -64,7 +64,7 @@ n_SetParams( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetParams( void* slf, nCmd* cmd )
 {
     nOpendeCapsuleGeom* self = (nOpendeCapsuleGeom*)slf;
@@ -87,7 +87,7 @@ n_GetParams( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_PointDepth( void* slf, nCmd* cmd )
 {
     nOpendeCapsuleGeom* self = (nOpendeCapsuleGeom*)slf;
@@ -114,7 +114,7 @@ bool nOpendeCapsuleGeom::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( radius );
         cmd->In()->SetF( length );
         ps->PutCmd( cmd );
-            
+
         return true;
     }
     return false;

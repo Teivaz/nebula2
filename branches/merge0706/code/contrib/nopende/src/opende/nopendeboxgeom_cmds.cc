@@ -12,7 +12,7 @@ static void n_PointDepth( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendeboxgeom
-    
+
     @superclass
     nopendegeom
 
@@ -42,7 +42,7 @@ n_initcmds(nClass* clazz)
 
     @info
 */
-static void 
+static void
 n_SetLengths( void* slf, nCmd* cmd )
 {
     nOpendeBoxGeom* self = (nOpendeBoxGeom*)slf;
@@ -65,7 +65,7 @@ n_SetLengths( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetLengths( void* slf, nCmd* cmd )
 {
     nOpendeBoxGeom* self = (nOpendeBoxGeom*)slf;
@@ -89,7 +89,7 @@ n_GetLengths( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_PointDepth( void* slf, nCmd* cmd )
 {
     nOpendeBoxGeom* self = (nOpendeBoxGeom*)slf;
@@ -117,7 +117,7 @@ bool nOpendeBoxGeom::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-            
+
         return true;
     }
     return false;

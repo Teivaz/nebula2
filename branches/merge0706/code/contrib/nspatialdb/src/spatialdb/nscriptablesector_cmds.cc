@@ -158,7 +158,7 @@ nScriptableSector::SaveCmds(nPersistServer* ps)
         for (int i=0; i < m_scriptobject_array.Size(); i++)
         {
             nScriptableSectorObject *object = m_scriptobject_array[i];
-            
+
             // dump this object out--what type is it?
             nSpatialElement *se = object->spatialinfo;
             if (se->GetSpatialType() & nSpatialElement::N_SPATIAL_OCCLUDER)

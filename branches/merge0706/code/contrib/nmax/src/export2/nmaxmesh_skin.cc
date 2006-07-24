@@ -76,7 +76,7 @@ bool nMaxMesh::BeginSkin(INode* node)
     n_assert(node);
     n_assert(beginSkin == false);
 
-    beginSkin = true;   
+    beginSkin = true;
 
     // Get object from given node.
     Object *obj = node->GetObjectRef();
@@ -164,7 +164,7 @@ void nMaxMesh::EndSkin()
         modifier->ReleaseInterface(I_PHYINTERFACE, phyExport);
     }
 
-    beginSkin = false;  
+    beginSkin = false;
     modifier = 0;
     phyExport = 0;
     phyContextExport = 0;

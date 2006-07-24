@@ -10,7 +10,7 @@ static void n_Fix( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendefixedjoint
-    
+
     @superclass
     nopendejoint
 
@@ -37,7 +37,7 @@ n_initcmds(nClass* clazz)
     v
 
     @info
-    Call this on the fixed joint after it has been attached to remember 
+    Call this on the fixed joint after it has been attached to remember
     the current desired relative offset between the bodies it is attached to.
 */
 static

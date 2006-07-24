@@ -15,7 +15,7 @@ n_initcmds(nClass* cl)
 
 
 //------------------------------------------------------------------------------
-bool 
+bool
 nOpenALServer::SaveCmds (nPersistServer* ps)
 {
     if (nRoot::SaveCmds (ps))

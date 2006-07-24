@@ -8,7 +8,7 @@
 #include "nopenaldemo/nappopenaldemo.h"
 #include "nopenaldemo/nappopenalstate.h"
 
-nNebulaScriptClass(nAppOpenALDemo, "application::napplication")
+nNebulaScriptClass(nAppOpenALDemo, "napplication")
 
 //----------------------------------------------------------------------------
 /**

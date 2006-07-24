@@ -59,7 +59,7 @@ namespace
         {
             case nArg::Bool:
                 argTypeStr = "Bool";
-                argValStr.SetInt(arg.GetB() ? 1 : 0); 
+                argValStr.SetInt(arg.GetB() ? 1 : 0);
                 return true;
 
             case nArg::Int:
@@ -78,7 +78,7 @@ namespace
                 return true;
         }
         return false;
-    }    
+    }
 } // anonymous namespace
 
 namespace GeneralSettings
@@ -154,7 +154,7 @@ nLWExporterSettings::~nLWExporterSettings()
 //----------------------------------------------------------------------------
 /**
 */
-nLWExporterSettings* 
+nLWExporterSettings*
 nLWExporterSettings::Instance()
 {
     if (!nLWExporterSettings::singleton)
@@ -168,7 +168,7 @@ nLWExporterSettings::Instance()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::FreeInstance()
 {
     if (nLWExporterSettings::singleton)
@@ -181,7 +181,7 @@ nLWExporterSettings::FreeInstance()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetDefaults()
 {
     this->SetGeometryScale(1.0f);
@@ -198,7 +198,7 @@ nLWExporterSettings::SetDefaults()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::Load()
 {
     // the settings are stored in the Lightwave content directory
@@ -284,7 +284,7 @@ nLWExporterSettings::Load()
         {
             if (exportNodeType->LoadFromXML(settingElem))
             {
-                this->exportNodeTypesArray.PushBack(exportNodeType);    
+                this->exportNodeTypesArray.PushBack(exportNodeType);
             }
             else
             {
@@ -297,7 +297,7 @@ nLWExporterSettings::Load()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::Save()
 {
     // the settings are stored in the Lightwave content directory
@@ -306,7 +306,7 @@ nLWExporterSettings::Save()
     settingsFileName.StripTrailingSlash();
     settingsFileName += "\\";
     settingsFileName += nLWExporterSettings::SETTINGS_FILENAME;
-    
+
     TiXmlDocument xmlDoc;
     if (!xmlDoc.LoadFile(settingsFileName.Get()))
     {
@@ -323,7 +323,7 @@ nLWExporterSettings::Save()
     {
         // discard all general settings currently in the xml file
         categoryElem->Clear();
-        
+
         // write out the current general settings
         for (int i = 0; i < this->settingsArray.Size(); i++)
         {
@@ -415,7 +415,7 @@ nLWExporterSettings::GetProjectDir() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetGeometryScale(float factor)
 {
     this->settingsArray[(int)GeneralSettings::GeometryScale].SetF(factor);
@@ -424,7 +424,7 @@ nLWExporterSettings::SetGeometryScale(float factor)
 //----------------------------------------------------------------------------
 /**
 */
-float 
+float
 nLWExporterSettings::GetGeometryScale() const
 {
     return this->settingsArray[(int)GeneralSettings::GeometryScale].GetF();
@@ -433,7 +433,7 @@ nLWExporterSettings::GetGeometryScale() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetScriptServer(const nString& scriptServer)
 {
     this->settingsArray[(int)GeneralSettings::ScriptServer].SetS(scriptServer.Get());
@@ -451,7 +451,7 @@ nLWExporterSettings::GetScriptServer() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetPreviewRenderer(const nString& renderer)
 {
     this->settingsArray[(int)GeneralSettings::PreviewRenderer].SetS(renderer.Get());
@@ -469,7 +469,7 @@ nLWExporterSettings::GetPreviewRenderer() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetPreviewWidth(int w)
 {
     this->settingsArray[(int)GeneralSettings::PreviewWidth].SetI(w);
@@ -478,7 +478,7 @@ nLWExporterSettings::SetPreviewWidth(int w)
 //----------------------------------------------------------------------------
 /**
 */
-int 
+int
 nLWExporterSettings::GetPreviewWidth() const
 {
     return this->settingsArray[(int)GeneralSettings::PreviewWidth].GetI();
@@ -487,7 +487,7 @@ nLWExporterSettings::GetPreviewWidth() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetPreviewHeight(int h)
 {
     this->settingsArray[(int)GeneralSettings::PreviewHeight].SetI(h);
@@ -496,7 +496,7 @@ nLWExporterSettings::SetPreviewHeight(int h)
 //----------------------------------------------------------------------------
 /**
 */
-int 
+int
 nLWExporterSettings::GetPreviewHeight() const
 {
     return this->settingsArray[(int)GeneralSettings::PreviewHeight].GetI();
@@ -505,7 +505,7 @@ nLWExporterSettings::GetPreviewHeight() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetPreviewFullScreen(bool fullScreen)
 {
     this->settingsArray[(int)GeneralSettings::PreviewFullScreen].SetB(fullScreen);
@@ -514,7 +514,7 @@ nLWExporterSettings::SetPreviewFullScreen(bool fullScreen)
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWExporterSettings::GetPreviewFullScreen() const
 {
     return this->settingsArray[(int)GeneralSettings::PreviewFullScreen].GetB();
@@ -523,7 +523,7 @@ nLWExporterSettings::GetPreviewFullScreen() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetOutputBinarySceneNode(bool binaryOutput)
 {
     this->settingsArray[(int)GeneralSettings::OutputBinarySceneNode].SetB(binaryOutput);
@@ -532,7 +532,7 @@ nLWExporterSettings::SetOutputBinarySceneNode(bool binaryOutput)
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWExporterSettings::GetOutputBinarySceneNode() const
 {
     return this->settingsArray[(int)GeneralSettings::OutputBinarySceneNode].GetB();
@@ -541,7 +541,7 @@ nLWExporterSettings::GetOutputBinarySceneNode() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetOutputBinaryMesh(bool binaryOutput)
 {
     this->settingsArray[(int)GeneralSettings::OutputBinaryMesh].SetB(binaryOutput);
@@ -550,7 +550,7 @@ nLWExporterSettings::SetOutputBinaryMesh(bool binaryOutput)
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWExporterSettings::GetOutputBinaryMesh() const
 {
     return this->settingsArray[(int)GeneralSettings::OutputBinaryMesh].GetB();
@@ -559,7 +559,7 @@ nLWExporterSettings::GetOutputBinaryMesh() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetOutputBinaryAnimation(bool binaryOutput)
 {
     this->settingsArray[(int)GeneralSettings::OutputBinaryAnimation].SetB(binaryOutput);
@@ -568,7 +568,7 @@ nLWExporterSettings::SetOutputBinaryAnimation(bool binaryOutput)
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWExporterSettings::GetOutputBinaryAnimation() const
 {
     return this->settingsArray[(int)GeneralSettings::OutputBinaryAnimation].GetB();
@@ -577,7 +577,7 @@ nLWExporterSettings::GetOutputBinaryAnimation() const
 //----------------------------------------------------------------------------
 /**
 */
-int 
+int
 nLWExporterSettings::GetNumPreviewRenderers() const
 {
     return this->rendererNameArray.Size();
@@ -586,7 +586,7 @@ nLWExporterSettings::GetNumPreviewRenderers() const
 //----------------------------------------------------------------------------
 /**
 */
-const nString& 
+const nString&
 nLWExporterSettings::GetPreviewRendererName(int index) const
 {
     return this->rendererNameArray[index];
@@ -595,7 +595,7 @@ nLWExporterSettings::GetPreviewRendererName(int index) const
 //----------------------------------------------------------------------------
 /**
 */
-const nString& 
+const nString&
 nLWExporterSettings::GetPreviewRendererFeatureSet(int index) const
 {
     return this->rendererFeatureSetArray[index];
@@ -604,13 +604,13 @@ nLWExporterSettings::GetPreviewRendererFeatureSet(int index) const
 //----------------------------------------------------------------------------
 /**
 */
-const nString& 
+const nString&
 nLWExporterSettings::GetPreviewRendererFeatureSet(const nString& renderer)
 {
     for (int i = 0; i < this->rendererNameArray.Size(); i++)
         if (this->rendererNameArray[i] == renderer)
             return this->rendererFeatureSetArray[i];
-    
+
     n_assert(false); // should never get here
     static nString emptyStr;
     return emptyStr;
@@ -619,7 +619,7 @@ nLWExporterSettings::GetPreviewRendererFeatureSet(const nString& renderer)
 //----------------------------------------------------------------------------
 /**
 */
-int 
+int
 nLWExporterSettings::GetNumPreviewSizes() const
 {
     return this->previewSizeArray.Size();
@@ -628,7 +628,7 @@ nLWExporterSettings::GetNumPreviewSizes() const
 //----------------------------------------------------------------------------
 /**
 */
-const nString& 
+const nString&
 nLWExporterSettings::GetPreviewSize(int index) const
 {
     return this->previewSizeArray[index];
@@ -637,7 +637,7 @@ nLWExporterSettings::GetPreviewSize(int index) const
 //----------------------------------------------------------------------------
 /**
 */
-int 
+int
 nLWExporterSettings::GetNumExportNodeTypes() const
 {
     return this->exportNodeTypesArray.Size();
@@ -655,7 +655,7 @@ nLWExporterSettings::GetExportNodeType(int index) const
 //----------------------------------------------------------------------------
 /**
 */
-nLWExportNodeType* 
+nLWExportNodeType*
 nLWExporterSettings::GetExportNodeType(const nString& nodeType) const
 {
     for (int i = 0; i < this->exportNodeTypesArray.Size(); i++)
@@ -671,7 +671,7 @@ nLWExporterSettings::GetExportNodeType(const nString& nodeType) const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::ClearExportNodeTypes()
 {
     for (int i = 0; i < this->exportNodeTypesArray.Size(); i++)
@@ -684,7 +684,7 @@ nLWExporterSettings::ClearExportNodeTypes()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettings::SetExportNodeTypes(nArray<nLWExportNodeType*>& array)
 {
     this->ClearExportNodeTypes();
@@ -698,7 +698,7 @@ nLWExporterSettings::SetExportNodeTypes(nArray<nLWExportNodeType*>& array)
 //----------------------------------------------------------------------------
 /**
 */
-int 
+int
 nLWExporterSettings::GetNumSceneNodeTypes() const
 {
     return this->sceneNodeTypesArray.Size();
@@ -707,7 +707,7 @@ nLWExporterSettings::GetNumSceneNodeTypes() const
 //----------------------------------------------------------------------------
 /**
 */
-const nString& 
+const nString&
 nLWExporterSettings::GetSceneNodeType(int index) const
 {
     return this->sceneNodeTypesArray[index];

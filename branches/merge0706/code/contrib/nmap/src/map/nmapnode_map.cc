@@ -13,7 +13,7 @@
 /**
     Initialise map vertex buffer.
 */
-void 
+void
 nMapNode::ProcessMap()
 {
     n_assert(true == isDirty);
@@ -77,7 +77,7 @@ nMapNode::ProcessMap()
 /**
     Link all the terrain blocks together.
 */
-void 
+void
 nMapNode::LinkBlocks()
 {
     for (int j = 0; j < numBlocks; ++j)
@@ -105,7 +105,7 @@ nMapNode::LinkBlocks()
 
 /**
 */
-void 
+void
 nMapNode::CalculateMinD2Levels()
 {
     float c2 = CalculateCFactor();
@@ -125,7 +125,7 @@ nMapNode::CalculateMinD2Levels()
     It is a factor related to the distance from the camera for a given pixel
     pop to occur.
 */
-float 
+float
 nMapNode::CalculateCFactor()
 {
     float minx, maxx, miny, maxy, minz, maxz;

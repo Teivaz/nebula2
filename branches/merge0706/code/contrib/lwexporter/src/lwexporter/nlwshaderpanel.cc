@@ -19,12 +19,12 @@ BEGIN_EVENT_TABLE(nLWShaderPanel, wxDialog)
     EVT_BUTTON(wxID_OK, nLWShaderPanel::OnOKBtn)
     EVT_BUTTON(wxID_CANCEL, nLWShaderPanel::OnCancelBtn)
     EVT_CHOICE(ID_SHADER_POPUP, nLWShaderPanel::OnShaderPopup)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanel::nLWShaderPanel(wxWindow* parent, 
+nLWShaderPanel::nLWShaderPanel(wxWindow* parent,
                                const nLWShaderPanelTemplate* panelTemplate,
                                const nArray<nString>& shaderNames) :
     wxDialog(parent, wxID_ANY, "Shader Settings...", wxDefaultPosition),
@@ -80,8 +80,8 @@ nLWShaderPanel::nLWShaderPanel(wxWindow* parent,
     }
 
     // last row
-    topSizer->Add(CreateButtonSizer(wxOK|wxCANCEL), 
-                  wxGBPosition(sizerRow, 0), wxGBSpan(1, 2), 
+    topSizer->Add(CreateButtonSizer(wxOK|wxCANCEL),
+                  wxGBPosition(sizerRow, 0), wxGBSpan(1, 2),
                   wxALIGN_CENTER_HORIZONTAL|wxALL, 10);
 
     topSizer->Fit(this);
@@ -115,7 +115,7 @@ nLWShaderPanel::ResetShaderPopup()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWShaderPanel::SetShaderSettings(nLWShaderExportSettings* shaderSettings)
 {
     this->curShaderSettings = shaderSettings;
@@ -141,8 +141,8 @@ nLWShaderPanel::SetShaderSettings(nLWShaderExportSettings* shaderSettings)
 
 //----------------------------------------------------------------------------
 /**
-    @brief Called when the user selects a new shader from the shader popup. 
-    
+    @brief Called when the user selects a new shader from the shader popup.
+
     The current panel will be closed and a new panel will be displayed.
 */
 void

@@ -23,7 +23,7 @@ nMaxVertexInfluence::~nMaxVertexInfluence()
 //---------------------------------------------------------------------------
 /**
 */
-int 
+int
 nMaxVertexInfluence::GetNumInfuences()
 {
     return this->boneArray.Size();
@@ -32,7 +32,7 @@ nMaxVertexInfluence::GetNumInfuences()
 //---------------------------------------------------------------------------
 /**
 */
-vector4 
+vector4
 nMaxVertexInfluence::GetWeightsVector()
 {
     vector4 vec(0, 0, 0, 0);
@@ -62,7 +62,7 @@ nMaxVertexInfluence::GetWeightsVector()
 //---------------------------------------------------------------------------
 /**
 */
-vector4 
+vector4
 nMaxVertexInfluence::GetIndicesVector()
 {
     vector4 vec(0, 0, 0, 0);

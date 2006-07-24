@@ -82,7 +82,7 @@ int nMaxTransformAnimator::ExportTCBRotation(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
@@ -93,7 +93,7 @@ int nMaxTransformAnimator::ExportHybridRotation(IKeyControl* ikc, int numKeys,
     n_maxlog(Warning, "The bezier controller is used for rotation. \
                       Only rotation value will be exported.");
 
-    for (int i=0; i<numKeys; i++) 
+    for (int i=0; i<numKeys; i++)
     {
         IBezQuatKey key;
         ikc->GetKey(i, &key);
@@ -107,8 +107,8 @@ int nMaxTransformAnimator::ExportHybridRotation(IKeyControl* ikc, int numKeys,
         float time = key.time * SECONDSPERTICK;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f &&
             animator->GetNumQuatKeys() == 0)
@@ -124,7 +124,7 @@ int nMaxTransformAnimator::ExportHybridRotation(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
@@ -147,8 +147,8 @@ int nMaxTransformAnimator::ExportLinearRotation(IKeyControl* ikc, int numKeys,
         float time = key.time * SECONDSPERTICK;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f &&
             animator->GetNumQuatKeys() == 0)
@@ -176,7 +176,7 @@ int nMaxTransformAnimator::ExportEulerRotation(Control* control, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
@@ -204,8 +204,8 @@ int nMaxTransformAnimator::ExportSampledKeyRotation(nTransformAnimator* animator
         float time = sampleKey.time;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f &&
             animator->GetNumQuatKeys() == 0)

@@ -32,7 +32,7 @@ static void n_getautodisabletime( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendeworld
-    
+
     @superclass
     nroot
 
@@ -82,7 +82,7 @@ n_initcmds(nClass* clazz)
     @info
     Set world gravity.
 */
-static 
+static
 void n_setgravity( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -107,7 +107,7 @@ void n_setgravity( void* slf, nCmd* cmd )
     @info
     Get world gravity.
 */
-static 
+static
 void n_getgravity( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -132,7 +132,7 @@ void n_getgravity( void* slf, nCmd* cmd )
     @info
     Set global ERP value.
 */
-static 
+static
 void n_seterp( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -153,7 +153,7 @@ void n_seterp( void* slf, nCmd* cmd )
     @info
     Get global ERP value.
 */
-static 
+static
 void n_geterp( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -174,7 +174,7 @@ void n_geterp( void* slf, nCmd* cmd )
     @info
     Set global CFM value.
 */
-static 
+static
 void n_setcfm( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -195,7 +195,7 @@ void n_setcfm( void* slf, nCmd* cmd )
     @info
     Get global CFM value.
 */
-static 
+static
 void n_getcfm( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -216,7 +216,7 @@ void n_getcfm( void* slf, nCmd* cmd )
     @info
     Step the world.
 */
-static 
+static
 void n_step( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -237,7 +237,7 @@ void n_step( void* slf, nCmd* cmd )
     @info
     Step the world using QuickStep
 */
-static 
+static
 void n_quickstep( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -258,7 +258,7 @@ void n_quickstep( void* slf, nCmd* cmd )
     @info
     Set the number of iterations the QuickStep solver will perform per step.
 */
-static 
+static
 void n_qstepsetnumiters( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -279,7 +279,7 @@ void n_qstepsetnumiters( void* slf, nCmd* cmd )
     @info
     Get the number of iterations the QuickStep solver will perform per step.
 */
-static 
+static
 void n_qstepgetnumiters( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -300,7 +300,7 @@ void n_qstepgetnumiters( void* slf, nCmd* cmd )
     @info
     Convert impulse to force.
 */
-static 
+static
 void n_impulsetoforce( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -329,7 +329,7 @@ void n_impulsetoforce( void* slf, nCmd* cmd )
     @info
     Step the world using StepFast.
 */
-static 
+static
 void n_stepfast1( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -353,7 +353,7 @@ void n_stepfast1( void* slf, nCmd* cmd )
     @info
     Set the AutoDisableFlag. Default is 0.
 */
-static 
+static
 void n_setautodisableflag( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -374,7 +374,7 @@ void n_setautodisableflag( void* slf, nCmd* cmd )
     @info
     Get the AutoDisableFlag. Default is 0.
 */
-static 
+static
 void n_getautodisableflag( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -395,7 +395,7 @@ void n_getautodisableflag( void* slf, nCmd* cmd )
     @info
     Set the SetAutoDisableLinearThreshold. Default is 0.01.
 */
-static 
+static
 void n_setautodisablelinearthreshold( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -416,7 +416,7 @@ void n_setautodisablelinearthreshold( void* slf, nCmd* cmd )
     @info
     Get the SetAutoDisableLinearThreshold. Default is 0.01.
 */
-static 
+static
 void n_getautodisablelinearthreshold( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -437,7 +437,7 @@ void n_getautodisablelinearthreshold( void* slf, nCmd* cmd )
     @info
     Set the SetAutoDisableAngularThreshold. Default is 0.01.
 */
-static 
+static
 void n_setautodisableangularthreshold( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -458,7 +458,7 @@ void n_setautodisableangularthreshold( void* slf, nCmd* cmd )
     @info
     Get the SetAutoDisableAngularThreshold. Default is 0.01.
 */
-static 
+static
 void n_getautodisableangularthreshold( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -479,7 +479,7 @@ void n_getautodisableangularthreshold( void* slf, nCmd* cmd )
     @info
     Set the SetAutoDisableSteps. Default is 10.
 */
-static 
+static
 void n_setautodisablesteps( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -500,7 +500,7 @@ void n_setautodisablesteps( void* slf, nCmd* cmd )
     @info
     Get the GetAutoDisableSteps. Default is 10.
 */
-static 
+static
 void n_getautodisablesteps( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -521,7 +521,7 @@ void n_getautodisablesteps( void* slf, nCmd* cmd )
     @info
     Set the SetAutoDisableTime. Default is 0.
 */
-static 
+static
 void n_setautodisabletime( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -542,7 +542,7 @@ void n_setautodisabletime( void* slf, nCmd* cmd )
     @info
     Get the GetAutoDisableTime. Default is 0.
 */
-static 
+static
 void n_getautodisabletime( void* slf, nCmd* cmd )
 {
     nOpendeWorld* self = (nOpendeWorld*)slf;
@@ -569,12 +569,12 @@ nOpendeWorld::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-        
+
         // SetERP
         cmd = ps->GetCmd( this, 'SERP' );
         cmd->In()->SetF( this->GetERP() );
         ps->PutCmd( cmd );
-        
+
         // SetCFM
         cmd = ps->GetCmd( this, 'SCFM' );
         cmd->In()->SetF( this->GetCFM() );

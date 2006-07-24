@@ -26,7 +26,7 @@ Value* nImportMesh_cf(Value** arg_list, int count)
 
 #if 0
     //TODO: check the file extension and validate the file to import is
-    //      Nebula mesh file type. 
+    //      Nebula mesh file type.
     //      nString can not be used for this due to redefinition error.
 
     //FIXME: How do we get the pointer of ImpInterface?

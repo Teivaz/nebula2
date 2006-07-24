@@ -31,13 +31,13 @@ nMaxSkinPartitioner::~nMaxSkinPartitioner()
 
 //-----------------------------------------------------------------------------
 /**
-    Partitioning the given meshes and specifies its fragments to each 
+    Partitioning the given meshes and specifies its fragments to each
     skinned shape nodes.
 
     @param srcMeshArray Array which contains exported meshes.
     @param srcMeshBuilder Mesh builder which contains exported meshes mesh data.
 */
-void nMaxSkinPartitioner::Partitioning(nArray<nMaxMesh*> &srcMeshArray, 
+void nMaxSkinPartitioner::Partitioning(nArray<nMaxMesh*> &srcMeshArray,
                                        nMeshBuilder &srcMeshBuilder)
 {
     // array to store partitioned mesh and its fragments.
@@ -61,7 +61,7 @@ void nMaxSkinPartitioner::Partitioning(nArray<nMaxMesh*> &srcMeshArray,
             {
                 const nMaxSkinMeshData& groupMesh = mesh->GetGroupMesh(j);
 
-                nSkinShapeNode* node = groupMesh.node;//groupMesh.GetNode(); 
+                nSkinShapeNode* node = groupMesh.node;//groupMesh.GetNode();
                 n_assert(node);
 
                 int groupIndex = groupMesh.groupIndex;//groupMesh.GetGroupIndex();
@@ -77,7 +77,7 @@ void nMaxSkinPartitioner::Partitioning(nArray<nMaxMesh*> &srcMeshArray,
                     for ( int k=0; k<groupMapArray.Size(); k++ )
                     {
                         if ( groupMapArray[k] == groupIndex )
-                        {                          
+                        {
                             nArray<int> bonePaletteArray = skinPartitioner.GetJointPalette(k);
 
                             if (bonePaletteArray.Size() > 0)
@@ -112,10 +112,10 @@ void nMaxSkinPartitioner::Partitioning(nArray<nMaxMesh*> &srcMeshArray,
 
 //-----------------------------------------------------------------------------
 /**
-    Specifies fragments and joint palette of the skin mesh based on 
+    Specifies fragments and joint palette of the skin mesh based on
     the given nMaxMeshFragment
 
-    @param meshFragmentArray Array which contains skinned shape node and its 
+    @param meshFragmentArray Array which contains skinned shape node and its
     mesh fragments of previously partitioned mesh.
 */
 void nMaxSkinPartitioner::BuildMeshFragments(nArray<nMaxMeshFragment>& meshFragmentArray)

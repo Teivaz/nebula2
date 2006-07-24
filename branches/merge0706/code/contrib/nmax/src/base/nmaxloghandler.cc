@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  nmaxloghandler.cc
 //
-//  (C)2004 Johannes Kellner 
+//  (C)2004 Johannes Kellner
 //------------------------------------------------------------------------------
 #include "base/nmaxloghandler.h"
 
@@ -9,7 +9,7 @@
 /**
 */
 nMaxLogHandler::nMaxLogHandler() :
-	log(0), 
+	log(0),
     numMsgDismissed(0)
 {
 	//empty
@@ -53,11 +53,11 @@ nMaxLogHandler::Error(const char* msg, va_list argList)
 //------------------------------------------------------------------------------
 /*
 */
-void 
+void
 nMaxLogHandler::OutputDebug(const char* msg, va_list argList)
 {
     char buf[LOG_SIZE];
-    int len = vsprintf(buf, msg, argList); 
+    int len = vsprintf(buf, msg, argList);
 
     OutputDebugString(buf);
 }
@@ -72,8 +72,8 @@ nMaxLogHandler::doLog(logType type, const char* msg, va_list argList)
 	if (this->log)
 	{
 		char* buf = n_new_array(char, LOG_SIZE);
-		int len = vsprintf(buf, msg, argList); 
-				
+		int len = vsprintf(buf, msg, argList);
+
 		switch (type)
 		{
 			case LOG_PRINT:
@@ -90,7 +90,7 @@ nMaxLogHandler::doLog(logType type, const char* msg, va_list argList)
 	}
 	else
 		this->numMsgDismissed++;
-	    //TODO: add a fifo for the messeages before we have a ptr to the max syslog 
+	    //TODO: add a fifo for the messeages before we have a ptr to the max syslog
 }
 
 //------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 #include "octree/noctvisitor.h"
 
-nNebulaClass(nOctVisitor, "kernel::nroot");
+nNebulaClass(nOctVisitor, "nroot");
 
 //-----------------------------------------------------------------------------
 /**

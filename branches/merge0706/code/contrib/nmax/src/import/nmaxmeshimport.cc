@@ -92,8 +92,8 @@ bool nMaxMeshImport::Import(const char* path, ImpInterface *i)
     Set vertices and indices to the created 3DS Max Mesh.
 
     @note
-    made it to be static function not a member function of the nMaxMeshImport 
-    class to avoid compile problem of 3dsmax and nebula 
+    made it to be static function not a member function of the nMaxMeshImport
+    class to avoid compile problem of 3dsmax and nebula
     (n_error and n_message redefinition error is occured in nmaximport_script.cc
      if we include 'nmeshbuilder.h')
 
@@ -101,7 +101,7 @@ bool nMaxMeshImport::Import(const char* path, ImpInterface *i)
     @param group       mesh group for this Mesh.
     @param mesh        3DS Max Mesh. (destination)
     @param mehsBuilder mesh data container which contains loaded mesh info. (source)
-    
+
 */
 static
 void BuildMesh(int groupIdx, nArray<nMeshBuilder::Group> &group,
@@ -109,8 +109,8 @@ void BuildMesh(int groupIdx, nArray<nMeshBuilder::Group> &group,
 {
     int numFaces = group[groupIdx].GetNumTriangles();
 
-    int numVerts = 0; 
-    int vmin, vmax;   // vertex range 
+    int numVerts = 0;
+    int vmin, vmax;   // vertex range
 
     if (meshBuilder.GetGroupVertexRange(groupIdx, vmin, vmax))
     {

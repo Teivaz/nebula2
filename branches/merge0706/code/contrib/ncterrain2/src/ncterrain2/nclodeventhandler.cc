@@ -30,8 +30,8 @@ nCLODEventHandler::OnEvent(Event event, nChunkLodNode* node)
 {
     n_assert(node);
     switch (event)
-    {       
-        case CreateNode:    
+    {
+        case CreateNode:
             n_printf("nCLODEventHandler: CreateNode (%d, %d, %d)\n", node->GetLevel(), node->GetX(), node->GetZ());
             break;
 

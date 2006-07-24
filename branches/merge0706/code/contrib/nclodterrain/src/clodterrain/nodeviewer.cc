@@ -88,7 +88,7 @@ main(int argc, const char** argv)
 //    scriptArg = "home:code/contrib/nclodterrain/bin/compileterrain.lua";
     if (viewArg == NULL)
         viewArg = "home:code/contrib/nclodterrain/bin/clod.n2";
-    
+
     // initialize a display mode object
     nString title;
     if (viewArg.Get())

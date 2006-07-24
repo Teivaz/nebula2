@@ -369,7 +369,7 @@ NebulaObject_Post(NebulaObject *self, PyObject * args)
     {
         relT = (double) PyInt_AsLong(arg0);
     }
-    else 
+    else
     {
         PyErr_SetString(PyExc_Exception, "Relative time not valid");
         return result;

@@ -16,7 +16,7 @@ BEGIN_EVENT_TABLE(nLWAnimStatePanel, wxDialog)
     EVT_BUTTON(wxID_CANCEL, nLWAnimStatePanel::OnCancelBtn)
     EVT_BUTTON(ID_START_FRAME_BTN, nLWAnimStatePanel::OnStartFrameBtn)
     EVT_BUTTON(ID_END_FRAME_BTN, nLWAnimStatePanel::OnEndFrameBtn)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -40,7 +40,7 @@ nLWAnimStatePanel::nLWAnimStatePanel(wxWindow* parent, const char* title) :
     wxStaticText* fadeInLabel = new wxStaticText(this, wxID_ANY, "Fade-in Time");
     this->fadeInBox = new wxTextCtrl(this, wxID_ANY);
     this->loopAnimCheckBox = new wxCheckBox(this, wxID_ANY, "Loop");
-    
+
     // layout controls
     wxGridBagSizer* topSizer = new wxGridBagSizer(5, 5);
     // row 0
@@ -77,7 +77,7 @@ nLWAnimStatePanel::~nLWAnimStatePanel()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWAnimStatePanel::SetAnimState(const nLWAnimationState& animState)
 {
     this->animState = animState;
@@ -96,7 +96,7 @@ nLWAnimStatePanel::GetAnimState() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWAnimStatePanel::CopyDataToControls()
 {
     if (this->stateNameBox)
@@ -128,7 +128,7 @@ nLWAnimStatePanel::CopyDataToControls()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWAnimStatePanel::CopyDataFromControls()
 {
     if (this->stateNameBox)

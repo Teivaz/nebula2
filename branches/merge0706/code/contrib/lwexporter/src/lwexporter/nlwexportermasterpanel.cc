@@ -9,7 +9,7 @@ const char nLWExporterMasterPanel::GENERIC_NAME[] = "N2_ExporterAboutPanel";
 BEGIN_EVENT_TABLE(nLWExporterMasterPanel, wxDialog)
     EVT_BUTTON(wxID_OK, nLWExporterMasterPanel::OnOK)
     EVT_CLOSE(nLWExporterMasterPanel::OnClose)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -17,7 +17,7 @@ END_EVENT_TABLE()
 nLWExporterMasterPanel::nLWExporterMasterPanel(wxWindow* parent) :
     wxDialog(parent, wxID_ANY, "Nebula 2 Exporter", wxDefaultPosition)
 {
-    wxStaticText* textCtrl = new wxStaticText(this, wxID_ANY, 
+    wxStaticText* textCtrl = new wxStaticText(this, wxID_ANY,
                                               "Build: Pre-Alpha\n" \
                                               "Website: http://www.nebuladevice.org\n\n" \
                                               "\251 2006 Vadim Macagon");
@@ -41,7 +41,7 @@ nLWExporterMasterPanel::~nLWExporterMasterPanel()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterMasterPanel::OnOK(wxCommandEvent& WXUNUSED(event))
 {
     this->EndModal(wxOK);
@@ -50,17 +50,17 @@ nLWExporterMasterPanel::OnOK(wxCommandEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterMasterPanel::OnClose(wxCloseEvent& WXUNUSED(event))
 {
     this->EndModal(wxOK);
-} 
+}
 
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWExporterMasterPanel::Activate(long version, GlobalFunc* global, 
+XCALL_(int)
+nLWExporterMasterPanel::Activate(long version, GlobalFunc* global,
                                  LWLayoutGeneric* local, void* /*serverData*/)
 {
     if (version != LWINTERFACE_VERSION)

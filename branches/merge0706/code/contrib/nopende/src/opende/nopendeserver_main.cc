@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------------
 #include "kernel/nkernelserver.h"
 #include "opende/nopendeserver.h"
-nNebulaScriptClass(nOpendeServer, "kernel::nroot");
+nNebulaScriptClass(nOpendeServer, "nroot");
 
 #include "opende/nopendetrimesh.h"
 

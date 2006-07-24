@@ -20,7 +20,7 @@
 //------------------------------------------------------------------------------
 /**
 */
-nOpendeTriMesh::nOpendeTriMesh( const char* id ) : 
+nOpendeTriMesh::nOpendeTriMesh( const char* id ) :
     nHashNode(id), refCount(0),
     numVertices(0), numFaces(0), vertexData(0), faceData(0),
     isLoaded(false), data(0)
@@ -92,7 +92,7 @@ void nOpendeTriMesh::Begin( int numVerts, int numTris )
     n_assert( !this->isLoaded );
     n_assert( !this->vertexData );
     n_assert( !this->faceData );
-    
+
     this->numVertices = numVerts;
     this->numFaces    = numTris;
     this->vertexData  = (float*) n_malloc(numVerts * 3 * sizeof(float));
@@ -141,9 +141,9 @@ void nOpendeTriMesh::End()
     n_assert( !this->isLoaded );
 
     this->data = nOpende::GeomTriMeshDataCreate();
-    dGeomTriMeshDataBuildSingle( this->data, 
-                                 this->vertexData, sizeof(float) * 3, 
-                                 this->numVertices, this->faceData, 
+    dGeomTriMeshDataBuildSingle( this->data,
+                                 this->vertexData, sizeof(float) * 3,
+                                 this->numVertices, this->faceData,
                                  this->numFaces * 3, sizeof(int) * 3 );
     this->isLoaded = true;
 }
@@ -154,7 +154,7 @@ void nOpendeTriMesh::End()
 bool nOpendeTriMesh::Load( nFileServer2* fs, const char* fname, int group )
 {
     n_assert( !this->isLoaded );
-    
+
     if ( strstr( fname, ".n3d2" ) )
         return this->LoadN3d2( fs, fname, group );
     else if ( strstr( fname, ".nvx2" ) )
@@ -174,7 +174,7 @@ bool nOpendeTriMesh::LoadN3d2( nFileServer2* fs, const char* fname, int group )
     nN3d2Loader loader;
     loader.SetFilename( fname );
     loader.SetIndexType( nMeshLoader::Index32 );
-    
+
     if ( loader.Open() )
     {
         n_assert( group < loader.GetNumGroups() );
@@ -184,7 +184,7 @@ bool nOpendeTriMesh::LoadN3d2( nFileServer2* fs, const char* fname, int group )
         // coord component is the ONLY one that should be present
         n_assert( (loader.GetVertexWidth() == 3)
                   && "Only the Coord vertex component must be present!" );
-                
+
         const nMeshGroup& meshGroup = loader.GetGroupAt( group );
         this->Begin( meshGroup.GetNumVertices(), meshGroup.GetNumIndices() / 3 );
         int vertexBufSize = loader.GetNumVertices() * 3 * sizeof(float);
@@ -201,11 +201,11 @@ bool nOpendeTriMesh::LoadN3d2( nFileServer2* fs, const char* fname, int group )
             n_assert( indices );
             loader.ReadIndices( indices, indexBufSize );
             // copy the mesh group data we want
-            memcpy( this->vertexData, 
-                    vertices + meshGroup.GetFirstVertex() * 3 * sizeof(float), 
+            memcpy( this->vertexData,
+                    vertices + meshGroup.GetFirstVertex() * 3 * sizeof(float),
                     meshGroup.GetNumVertices() * 3 * sizeof(float) );
-            memcpy( this->faceData, 
-                    indices + meshGroup.GetFirstIndex() * sizeof(int), 
+            memcpy( this->faceData,
+                    indices + meshGroup.GetFirstIndex() * sizeof(int),
                     meshGroup.GetNumIndices() * sizeof(int) );
             // release all the other data we don't need
             if ( vertices )
@@ -220,11 +220,11 @@ bool nOpendeTriMesh::LoadN3d2( nFileServer2* fs, const char* fname, int group )
             loader.ReadIndices( this->faceData, indexBufSize );
         }
         this->End();
-        
+
         loader.Close();
         return true;
     }
-    
+
     return false;
 }
 
@@ -236,7 +236,7 @@ bool nOpendeTriMesh::LoadNvx2( nFileServer2* fs, const char* fname, int group )
     nNvx2Loader loader;
     loader.SetFilename( fname );
     loader.SetIndexType( nMeshLoader::Index32 );
-    
+
     if ( loader.Open() )
     {
         n_assert( group < loader.GetNumGroups() );
@@ -246,7 +246,7 @@ bool nOpendeTriMesh::LoadNvx2( nFileServer2* fs, const char* fname, int group )
         // coord component is the ONLY one that should be present
         n_assert( (loader.GetVertexWidth() == 3)
                   && "Only the Coord vertex component must be present!" );
-                
+
         const nMeshGroup& meshGroup = loader.GetGroupAt( group );
         this->Begin( meshGroup.GetNumVertices(), meshGroup.GetNumIndices() / 3 );
         int vertexBufSize = loader.GetNumVertices() * 3 * sizeof(float);
@@ -263,11 +263,11 @@ bool nOpendeTriMesh::LoadNvx2( nFileServer2* fs, const char* fname, int group )
             n_assert( indices );
             loader.ReadIndices( indices, indexBufSize );
             // copy the mesh group data we want
-            memcpy( this->vertexData, 
-                    vertices + meshGroup.GetFirstVertex() * 3 * sizeof(float), 
+            memcpy( this->vertexData,
+                    vertices + meshGroup.GetFirstVertex() * 3 * sizeof(float),
                     meshGroup.GetNumVertices() * 3 * sizeof(float) );
-            memcpy( this->faceData, 
-                    indices + meshGroup.GetFirstIndex() * sizeof(int), 
+            memcpy( this->faceData,
+                    indices + meshGroup.GetFirstIndex() * sizeof(int),
                     meshGroup.GetNumIndices() * sizeof(int) );
             // release all the other data we don't need
             if ( vertices )
@@ -282,11 +282,11 @@ bool nOpendeTriMesh::LoadNvx2( nFileServer2* fs, const char* fname, int group )
             loader.ReadIndices( this->faceData, indexBufSize );
         }
         this->End();
-        
+
         loader.Close();
         return true;
     }
-    
+
     return false;
 }
 

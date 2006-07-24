@@ -32,7 +32,7 @@ bool nMaxScriptCall(const char* script)
     vl.ss = new StringStream(cmds);
 
     //bool ret = false;
-    try 
+    try
     {
         //vl.result = LocalExecuteScript(vl.ss,&res);
         //res = true;
@@ -44,11 +44,11 @@ bool nMaxScriptCall(const char* script)
         CharStream* out = thread_local(current_stdout);
         vl.parser = new Parser (out);
 
-        try 
+        try
         {
             source->flush_whitespace();
 
-            while (!source->at_eos()) 
+            while (!source->at_eos())
             {
                 vl.code   = vl.parser->compile(source);
 
@@ -58,8 +58,8 @@ bool nMaxScriptCall(const char* script)
                 source->flush_whitespace();
             }
             source->close();
-        } 
-        catch (...) 
+        }
+        catch (...)
         {
             return false;
         }

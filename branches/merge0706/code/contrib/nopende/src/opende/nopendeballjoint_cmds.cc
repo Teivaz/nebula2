@@ -12,7 +12,7 @@ static void n_GetAnchor2( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendeballjoint
-    
+
     @superclass
     nopendejoint
 
@@ -119,7 +119,7 @@ nOpendeBallJoint::SaveCmds( nPersistServer* ps )
     {
         vector3 v;
         this->GetAnchor( v );
-    
+
         // SetAnchor
         nCmd* cmd = ps->GetCmd( this, 'SA__' );
         cmd->In()->SetF( v.x );

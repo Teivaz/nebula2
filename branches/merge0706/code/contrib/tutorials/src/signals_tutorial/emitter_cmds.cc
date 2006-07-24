@@ -5,7 +5,7 @@ NSIGNAL_DEFINE( Emitter, Trigger2 );
 NSIGNAL_DEFINE( Emitter, OnInt );
 NSIGNAL_DEFINE( Emitter, GetKey );
 
-void 
+void
 n_initcmds( nClass * cl )
 {
 

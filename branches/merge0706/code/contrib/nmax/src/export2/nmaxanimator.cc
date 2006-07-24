@@ -53,7 +53,7 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 {
     n_assert(inode);
 
-    // retrieves the node's transform controller. 
+    // retrieves the node's transform controller.
     Control* control = inode->GetTMController();
     // retrieves the node's visibility controller.
     //Control* visctrl = inode->GetVisController();
@@ -93,7 +93,7 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
             return NULL;
         }
 
-        if (classID == IKSLAVE_CLASSID || 
+        if (classID == IKSLAVE_CLASSID ||
             (posControl && posControl->ClassID() == IKSLAVE_CLASSID) ||
             (rotControl && rotControl->ClassID() == IKSLAVE_CLASSID))
         {
@@ -132,7 +132,7 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
     }
     else
     {
-        n_maxlog(High, "%s node has Control but it does not contain have any PRS controller.", 
+        n_maxlog(High, "%s node has Control but it does not contain have any PRS controller.",
                  inode->GetName());
         return NULL;
     }

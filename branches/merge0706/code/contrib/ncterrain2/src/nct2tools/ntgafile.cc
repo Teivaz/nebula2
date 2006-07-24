@@ -129,7 +129,7 @@ nTgaFile::OpenWrite(const char* filename)
     {
         file->Write(row, this->width * sizeof(uint));
     }
-    n_delete_array(row); 
+    n_delete_array(row);
     return true;
 }
 
@@ -156,7 +156,7 @@ nTgaFile::ReadChunk(int x, int y, int w, int h, char* buffer, int bufSize)
 {
     n_assert(this->file);
     n_assert(buffer);
-    
+
     // check for parameter errors
     if (bufSize < (w * h * this->GetBytesPerPixel()))
     {

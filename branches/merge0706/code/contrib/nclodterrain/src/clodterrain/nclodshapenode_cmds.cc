@@ -28,7 +28,7 @@ static void n_getdetailscale(void *slf, nCmd *cmd);
 
     @cppclass
     nShapeNode
-    
+
     @superclass
     nmaterialnode
 

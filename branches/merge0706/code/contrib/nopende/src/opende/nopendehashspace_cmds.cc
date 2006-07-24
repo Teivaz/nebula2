@@ -11,7 +11,7 @@ static void n_SetLevels( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendehashspace
-    
+
     @superclass
     nopendespace
 

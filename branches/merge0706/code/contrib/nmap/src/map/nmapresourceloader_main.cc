@@ -7,7 +7,7 @@
 #include "map/mapblock.h"
 #include "map/nmap.h"
 
-nNebulaScriptClass(nMapResourceLoader, "resource::nresourceloader");
+nNebulaScriptClass(nMapResourceLoader, "nresourceloader");
 
 //------------------------------------------------------------------------------
 const char* const nMapResourceLoader::SEPARATOR = "!";

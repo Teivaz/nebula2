@@ -32,9 +32,9 @@ const char* predefinedCA[NUM_PREDEFINED_CA] = {
 
 //-----------------------------------------------------------------------------
 /**
-    Check the given name of the custom attribute is predefined standard 
+    Check the given name of the custom attribute is predefined standard
     custom attribute of 3dsmax or not.
-    
+
     @param caName custom attribute name.
 */
 static
@@ -87,7 +87,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
 
                 for (int i=0; i<numParamBlocks; i++)
                 {
-                    // NOTE: the only valid parameter block which can be exported is 
+                    // NOTE: the only valid parameter block which can be exported is
                     //       the custom attribute's one but we process it with general way.
                     IParamBlock2* pblock2 = custAttr->GetParamBlock(i);
 
@@ -107,7 +107,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                         ParamDef& paramDef = pblockDesc->GetParamDef(paramID);
 
                         TCHAR* name = paramDef.int_name;
-                        
+
                         // find nShaderState::Param which match to parameter name.
                         shaderParam = this->GetShaderParam(name);
 
@@ -127,7 +127,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 BOOL result;
 
                                 // Shader name
-                                TCHAR* value; 
+                                TCHAR* value;
                                 Interval interval;
                                 result = pblock2->GetValue(j, 0, value, interval);
 
@@ -255,7 +255,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         result1 = pblock2->GetValue(alphaIndex, 0, alpha, interval);
                                     }
                                 }
-                                
+
                                 vector4 color;
                                 color.set(value.r, value.g, value.b, alpha);
                                 ClampColor(color);
@@ -273,7 +273,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                             }
                             break;
 
-                    // The following types are Available in 3dsmax6 or higher. 
+                    // The following types are Available in 3dsmax6 or higher.
                     // See '$3dsmax/maxsdk/include/paramtype.h' for more details.
                     #if MAX_RELEASE >= 6000
                         case TYPE_FRGBA:
@@ -358,7 +358,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 BOOL result;
                                 Texmap* value;
                                 Interval interval;
-                                
+
                                 result = pblock2->GetValue(j, 0, value, interval);
                                 if (result)
                                 {
@@ -393,7 +393,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
 
     @return return 'nShaderState::InvalidParameter' if there is no matched param.
 */
-nShaderState::Param 
+nShaderState::Param
 nMaxMaterial::GetShaderParam(const char* param)
 {
     return nShaderState::StringToParam(param);

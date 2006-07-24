@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelTemplate::nLWShaderPanelTemplate(const nString& shaderName, 
+nLWShaderPanelTemplate::nLWShaderPanelTemplate(const nString& shaderName,
                                                const nString& shaderFile) :
     shaderName(shaderName),
     shaderFile(shaderFile)
@@ -33,7 +33,7 @@ nLWShaderPanelTemplate::~nLWShaderPanelTemplate()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWShaderPanelTemplate::AddShaderParam(const TiXmlElement* paramElem)
 {
     // ignore params marked as non-exportable

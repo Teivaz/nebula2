@@ -8,7 +8,7 @@
 
 #include "kernel/nkernelserver.h"
 #include "opende/nopendepickserver.h"
-nNebulaClass(nOpendePickServer, "kernel::nroot");
+nNebulaClass(nOpendePickServer, "nroot");
 
 #include "opende/nopendetrimesh.h"
 #include "gfx2/ngfxserver2.h"

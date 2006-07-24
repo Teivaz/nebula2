@@ -5,7 +5,7 @@
 #include "opengl/nglextensionserver.h"
 #include "opengl/nglserver2.h"
 
-nNebulaClass(nGLExtensionServer, "kernel::nroot");
+nNebulaClass(nGLExtensionServer, "nroot");
 nGLExtensionServer* nGLExtensionServer::Singleton = 0;
 
 //------------------------------------------------------------------------------

@@ -1,8 +1,8 @@
 //-----------------------------------------------------------------------------
 //  nrmgeomloader_main.cc
 //
-//  N2 Loader's plug-in management kernel. 
-//  This class can be used as an illustration for managing multiple  plug-ins 
+//  N2 Loader's plug-in management kernel.
+//  This class can be used as an illustration for managing multiple  plug-ins
 //  in single DLL.
 //
 //  (C) 2005 Kim, Hyoun Woo.

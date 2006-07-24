@@ -9,7 +9,7 @@
 
 class nSpatialAABBTreeNode {
 public:
-    nSpatialAABBTreeNode() : m_elementsinnode(0), m_totalelements(0), m_parent(NULL) 
+    nSpatialAABBTreeNode() : m_elementsinnode(0), m_totalelements(0), m_parent(NULL)
     { m_children[0] = m_children[1] = NULL; }
 
     // destructor does nothing really
@@ -76,7 +76,7 @@ void nSpatialAABBTreeNode::AddElement(nSpatialElement *addme)
     if (m_parent)
         m_parent->RecomputeElementCount();
     // expand bounding boxes up the tree
-    RecomputeBoundingBox();        
+    RecomputeBoundingBox();
 }
 
 nSpatialAABBTreeNode *nSpatialAABBTreeNode::FindElement(nSpatialElement *findme)
@@ -136,7 +136,7 @@ void nSpatialAABBTreeNode::RemoveElement(nSpatialElement *removeme)
             return;
         }
     }
-    
+
     //no match, oops
     n_assert(0);
 }
@@ -385,7 +385,7 @@ void nSpatialAABBTree::AddElement(nSpatialElement *appendme)
     n_assert(appendme->HasAABB());
 	nSpatialAABBTreeNode *walknode = FindSuitableNode(appendme->GetAABB().center());
 
-    // stuff into that leaf node 
+    // stuff into that leaf node
     n_assert(walknode->m_elementsinnode < nSpatialAABBTreeNode::MAX_ELEMENTSPERNODE);
     walknode->AddElement(appendme);
 

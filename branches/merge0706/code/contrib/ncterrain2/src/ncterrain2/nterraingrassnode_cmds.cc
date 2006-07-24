@@ -12,7 +12,7 @@
 
     @superclass
     nmaterialnode
-    
+
     @classinfo
     A specialized terrain grass renderer. Gets list of grass triangles
     from application.

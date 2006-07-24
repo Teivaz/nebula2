@@ -41,7 +41,7 @@ bool nMaxViewerOptions::Read()
     iniFilename += "\\";
     iniFilename += N_MAXEXPORT_INIFILE;
 
-    nFileServer2* fileServer = nFileServer2::Instance(); 
+    nFileServer2* fileServer = nFileServer2::Instance();
 
     // check the .ini file exist in 3dsmax plugin directory.
     if (!fileServer->FileExists(iniFilename.Get()))
@@ -93,10 +93,10 @@ bool nMaxViewerOptions::Read()
     Read viewer options for default viewer.
 
     @param iniFilename .ini filename which contains default viewer options.
-    @param sectionName section name in .ini file. "DefaultViewerSetting" is used 
+    @param sectionName section name in .ini file. "DefaultViewerSetting" is used
                        for a custom viewer.
 */
-bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename, 
+bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
                                                  const nString &sectionName)
 {
     nString scriptServer;
@@ -164,7 +164,7 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     this->arguments += "-projdir ";
     if (!projDir.IsEmpty())
     {
-        this->arguments += projDir; 
+        this->arguments += projDir;
     }
     else
     {
@@ -218,10 +218,10 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     Read viewer options for custom viewer.
 
     @param iniFilename .ini filename which contains custom viewer options.
-    @param sectionName section name in .ini file. "CustomViewerSetting" is used 
+    @param sectionName section name in .ini file. "CustomViewerSetting" is used
                        for a custom viewer.
 */
-bool nMaxViewerOptions::ReadCustomViewerOptions(const nString &iniFilename, 
+bool nMaxViewerOptions::ReadCustomViewerOptions(const nString &iniFilename,
                                                 const nString &sectionName)
 {
     nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");

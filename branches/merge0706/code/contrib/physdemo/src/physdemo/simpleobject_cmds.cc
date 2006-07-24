@@ -8,10 +8,10 @@
 /**
     @scriptclass
     simpleobject
-    
+
     @cppclass
     SimpleObject
-    
+
     @superclass
     nroot
 

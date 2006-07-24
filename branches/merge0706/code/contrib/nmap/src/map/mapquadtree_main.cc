@@ -46,7 +46,7 @@ MapQuadtree::MapQuadtree(nMap* map) :
 //-------------------------------------------------------------------
 MapQuadtree::~MapQuadtree()
 {
-    
+
     // make sure that there are no more elements in the tree
     n_assert(0 == this->tree_root->all_num_elms);
 }
@@ -84,7 +84,7 @@ int MapQuadtree::GetSubdivNum(void)
 //-------------------------------------------------------------------
 /**
     Takes a new MapQuadNode from the free_pool and initializes
-    its parent pointer and bounding box 
+    its parent pointer and bounding box
 
     - 31-May-99   floh    created
 */
@@ -212,7 +212,7 @@ void MapQuadtree::collapse(MapQuadNode *n)
     // n_printf("# collapsing octnode %d\n",n);
 
     // Abort recursion if no childs found
-    if (n->c[0]) {   
+    if (n->c[0]) {
         // for each child...
         for (int i=0; i<4; i++) {
             // First, collapse() the childs (recursion)
@@ -224,7 +224,7 @@ void MapQuadtree::collapse(MapQuadNode *n)
                 n->c[i]->RemElm(oe);
                 n->AddElm(oe);
             }
-            
+
             // destroy child
             this->freenode(n->c[i]);
             n->c[i] = NULL;
@@ -235,7 +235,7 @@ void MapQuadtree::collapse(MapQuadNode *n)
 //-------------------------------------------------------------------
 /**
     Starting at the specified MapQuadNode, searches the first node
-    towards the root which is able to entirely contain the 
+    towards the root which is able to entirely contain the
     MapQuadElement.
 
     Will return NULL if the element doesn't even fit in the
@@ -274,7 +274,7 @@ MapQuadNode *MapQuadtree::find_node_downward(MapQuadNode *n, MapQuadElement *oe)
                 break;
             }
         }
-        
+
         // If we reach this point, then, althought there
         // are children, none of them is big enough to contain
         // the MapQuadElement
@@ -317,7 +317,7 @@ void MapQuadtree::insert_element(MapQuadElement *oe)
 void MapQuadtree::move_element(MapQuadElement *oe)
 {
     n_assert(oe->octnode);
-    
+
     MapQuadNode *on = oe->octnode;
 
     // Search for the first node towards root which
@@ -401,7 +401,7 @@ void MapQuadtree::RemElement(MapQuadElement *oe)
 //-------------------------------------------------------------------
 /**
     @brief Update position and/or radius of an item.
-    
+
     The item is sorted into the tree, however the tree should
     be balanced again prior to executing another CollectX(), so that
     the collection process to some extent brings optimal results.
@@ -423,7 +423,7 @@ void MapQuadtree::UpdateElement(MapQuadElement* map_elm, const vector3& min, con
 
     This should always be run directly before a collection is made,
     so that the collection process runs in optimal time and the
-    smallest possible set is returned. 
+    smallest possible set is returned.
 
     - 31-May-99   floh    created
 */
@@ -505,8 +505,8 @@ void MapQuadtree::visualize_node(nGfxServer2 *gs, MapQuadNode *on)
         z1 = oe->p1.z;
         gs->Rgba(1.0f, 0.0f, 0.0f, 1.0f);
         cube(gs,x0,y0,z0,x1,y1,z1);
-       
-        // Line to the node's center      
+
+        // Line to the node's center
         gs->Rgba(0.7f, 0.7f, 0.0f, 1.0f);
         gs->Coord(x,y,z); gs->Coord(x0,y0,z0);
         gs->Coord(x,y,z); gs->Coord(x1,y1,z1);
@@ -523,7 +523,7 @@ void MapQuadtree::visualize_node(nGfxServer2 *gs, MapQuadNode *on)
 //-------------------------------------------------------------------
 /**
     @brief Render a visualization of the MapQuadtree.
-    
+
     The nOctNodes are drawn in green, with their nOctElements as red
     squares, which point with oranges lines to the center of the MapQuadNode,
     in which they're situated.

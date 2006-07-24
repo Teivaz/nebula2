@@ -34,7 +34,7 @@ void nVisibleSphereVisitor::Reset(const sphere &viewsphere)
 
   m_viewspherestack.PushBack(viewsphere);
   m_sphereclipperstack.PushBack(nSphereClipper(viewsphere));
-  
+
 }
 
 void nVisibleSphereVisitor::StartVisualizeDebug(nGfxServer2 *gfx2)
@@ -56,7 +56,7 @@ VisitorFlags nVisibleSphereVisitor::VisibilityTest(const bbox3 &testbox, Visitor
 
     VisitorFlags out;
     out = clipper.TestBBox( testbox, flags);
-    
+
     return out;
 }
 
@@ -67,7 +67,7 @@ VisitorFlags nVisibleSphereVisitor::VisibilityTest(const sphere &testsphere, Vis
 
     VisitorFlags out;
     out = clipper.TestSphere( testsphere, flags);
-    
+
     return out;
 }
 

@@ -116,7 +116,7 @@ nGenTerrainTexture::ParseConfigFile()
 {
     n_assert(!this->configFilename.IsEmpty());
     nString mangledPath = nFileServer2::Instance()->ManglePath(this->configFilename.Get());
-    
+
     TiXmlDocument doc(mangledPath.Get());
     if (!doc.LoadFile())
     {

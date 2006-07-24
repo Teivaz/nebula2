@@ -12,7 +12,7 @@
 
 //#include <sys/stat.h>
 
-nNebulaClass(nOpenALResource, "audio3::nsoundresource");
+nNebulaClass(nOpenALResource, "nsoundresource");
 
 
 //-----------------------------------------------------------

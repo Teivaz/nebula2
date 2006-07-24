@@ -30,7 +30,7 @@ wxColorAlphaCtrl::wxColorAlphaCtrl() :
 //----------------------------------------------------------------------------
 /**
 */
-wxColorAlphaCtrl::wxColorAlphaCtrl(wxWindow* parent, wxWindowID id, 
+wxColorAlphaCtrl::wxColorAlphaCtrl(wxWindow* parent, wxWindowID id,
                                    const wxPoint& pos, const wxSize& size) :
     colorCtrl(0),
     alphaCtrl(0)
@@ -41,8 +41,8 @@ wxColorAlphaCtrl::wxColorAlphaCtrl(wxWindow* parent, wxWindowID id,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
-wxColorAlphaCtrl::Create(wxWindow* parent, wxWindowID id, 
+bool
+wxColorAlphaCtrl::Create(wxWindow* parent, wxWindowID id,
                          const wxPoint& pos, const wxSize& size,
                          long style, const wxString& name)
 {
@@ -82,7 +82,7 @@ wxColorAlphaCtrl::~wxColorAlphaCtrl()
 //----------------------------------------------------------------------------
 /**
 */
-wxSize 
+wxSize
 wxColorAlphaCtrl::DoGetBestSize() const
 {
     return this->bestSize;
@@ -91,7 +91,7 @@ wxColorAlphaCtrl::DoGetBestSize() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxColorAlphaCtrl::OnCustomChange(wxCommandEvent& WXUNUSED(event))
 {
     // fire off a custom event to let anyone interested know the

@@ -46,7 +46,7 @@ nCgFXShaderInclude::Begin(const nString& sourceFile)
 
     this->tmpFilePath.Append(mangledPath.ExtractDirName());
     this->tmpFilePath.Append("__tmp__.fx");
-    
+
     if (!f->Open(this->tmpFilePath.Get(), "w"))
     {
         n_error("nCgFXShaderInclude::Begin(): Could not create file %s\n", this->tmpFilePath.Get());

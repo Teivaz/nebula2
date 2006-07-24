@@ -19,7 +19,7 @@ static void n_GetAngle2Rate( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendehinge2joint
-    
+
     @superclass
     nopendejoint
 
@@ -296,15 +296,15 @@ nOpendeHinge2Joint::SaveCmds( nPersistServer* ps )
     {
         nCmd* cmd;
         vector3 v;
-        
-        // SetAnchor    
+
+        // SetAnchor
         cmd = ps->GetCmd( this, 'SANC' );
         this->GetAnchor( v );
         cmd->In()->SetF( v.x );
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-    
+
         // SetAxis1
         cmd = ps->GetCmd( this, 'SAX1' );
         this->GetAxis1( v );
@@ -312,7 +312,7 @@ nOpendeHinge2Joint::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-    
+
         // SetAxis2
         cmd = ps->GetCmd( this, 'SAX2' );
         this->GetAxis1( v );
@@ -320,7 +320,7 @@ nOpendeHinge2Joint::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-    
+
         // save parameters
         for ( int axisNum = 0; axisNum < 3; axisNum++ )
         {

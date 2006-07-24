@@ -8,7 +8,7 @@
 #include "map/nmap.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass(nMap, "kernel::nroot");
+nNebulaScriptClass(nMap, "nroot");
 
 //------------------------------------------------------------------------------
 /**

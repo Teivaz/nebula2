@@ -15,7 +15,7 @@ static void n_GetInfo( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendetransformgeom
-    
+
     @superclass
     nopendegeom
 
@@ -48,7 +48,7 @@ n_initcmds(nClass* clazz)
 
     @info
 */
-static void 
+static void
 n_SetGeom( void* slf, nCmd* cmd )
 {
     nOpendeTransformGeom* self = (nOpendeTransformGeom*)slf;
@@ -68,7 +68,7 @@ n_SetGeom( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetGeom( void* slf, nCmd* cmd )
 {
     nOpendeTransformGeom* self = (nOpendeTransformGeom*)slf;
@@ -88,7 +88,7 @@ n_GetGeom( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetCleanup( void* slf, nCmd* cmd )
 {
     nOpendeTransformGeom* self = (nOpendeTransformGeom*)slf;
@@ -108,7 +108,7 @@ n_SetCleanup( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetCleanup( void* slf, nCmd* cmd )
 {
     nOpendeTransformGeom* self = (nOpendeTransformGeom*)slf;
@@ -128,7 +128,7 @@ n_GetCleanup( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetInfo( void* slf, nCmd* cmd )
 {
     nOpendeTransformGeom* self = (nOpendeTransformGeom*)slf;
@@ -148,7 +148,7 @@ n_SetInfo( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetInfo( void* slf, nCmd* cmd )
 {
     nOpendeTransformGeom* self = (nOpendeTransformGeom*)slf;
@@ -165,22 +165,22 @@ bool nOpendeTransformGeom::SaveCmds( nPersistServer* ps )
     if ( nOpendeGeom::SaveCmds( ps ) )
     {
         nCmd* cmd;
-        
+
         // SetGeom
         cmd = ps->GetCmd( this, 'SGEO' );
         cmd->In()->SetS( this->geomName.Get() );
         ps->PutCmd( cmd );
-        
+
         // SetCleanup
         cmd = ps->GetCmd( this, 'SCLN' );
         cmd->In()->SetB( this->GetCleanup() );
         ps->PutCmd( cmd );
-        
+
         // SetInfo
         cmd = ps->GetCmd( this, 'SINF' );
         cmd->In()->SetI( this->GetInfo() );
         ps->PutCmd( cmd );
-            
+
         return true;
     }
     return false;

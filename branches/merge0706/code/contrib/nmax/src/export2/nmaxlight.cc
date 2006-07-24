@@ -133,7 +133,7 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
     color.y = ambient.g;
     color.z = ambient.b;
     color.w = 1.0f;
-    
+
     light->SetVector(nShaderState::LightAmbient, color);
 
     //TODO: any good way to specifies secondary colors for a light node?
@@ -152,7 +152,7 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
 
         nString paramName;
 
-        //HACK: set the shader state param of the color animation of the light with 
+        //HACK: set the shader state param of the color animation of the light with
         //      GenLight::GetAffectDiffuse() and GetAffectSpecular() function.
         //      This is experimental I have no idea is there any proper way for this.
         //      Do we speicifies this through custom attribute either?

@@ -23,7 +23,7 @@ int nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator* 
 {
     if (control->NumKeys())
     {
-    
+
         IKeyControl* iKeyControl = GetKeyControlInterface(control);
 
         Control* xControl = control->GetXController();
@@ -85,7 +85,7 @@ int nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator* 
 //-----------------------------------------------------------------------------
 /**
 */
-int nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys, 
+int nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys,
                                              nTransformAnimator* animator)
 {
     //for (int i=0; i<numKeys; i++)
@@ -102,7 +102,7 @@ int nMaxTransformAnimator::ExportTCBPosition(IKeyControl* ikc, int numKeys,
 //-----------------------------------------------------------------------------
 /**
 */
-int nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys, 
+int nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys,
                                                 nTransformAnimator* animator)
 {
     //for (int i=0; i<numKeys; i++)
@@ -118,13 +118,13 @@ int nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
     @return the number of the keys which to be used for the actual aniamtion.
 */
-int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys, 
+int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys,
                                                  nTransformAnimator* animator)
 {
     for (int i=0; i<numKeys; i++)
@@ -140,8 +140,8 @@ int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys,
         float time = key.time * SECONDSPERTICK;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f && animator->GetNumPosKeys() == 0)
         {
@@ -156,7 +156,7 @@ int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
@@ -183,8 +183,8 @@ int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
         pos.z = sampleKey.pos.y;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f && animator->GetNumPosKeys() == 0)
         {
@@ -202,7 +202,7 @@ int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
     Check the given controller has any one of the xyz sub controller.
 
     @note:
-    Controllers that have XYZ sub-controllers are the Euler angle controller 
+    Controllers that have XYZ sub-controllers are the Euler angle controller
     or the Position XYZ controller.
 */
 bool nMaxTransformAnimator::HasSampledKeys(Control *control)

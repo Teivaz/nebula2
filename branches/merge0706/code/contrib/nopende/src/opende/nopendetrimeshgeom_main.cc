@@ -46,7 +46,7 @@ nOpendeTriMeshGeom::~nOpendeTriMeshGeom()
 //----------------------------------------------------------------------------
 /**
     @param triMeshId Tri mesh id that corresponds to an existing tri mesh.
-    
+
     Sets the mesh data, if it has been previously set the new data will
     replace the old data.
 */
@@ -62,13 +62,13 @@ void nOpendeTriMeshGeom::SetMesh( const char* triMeshId )
             n_delete( this->triMesh );
         }
     }
-    
+
     // store pointer to new data
     this->triMesh = nOpendeServer::opendeServer->FindTriMesh( triMeshId );
     this->triMesh->AddRef();
-    
+
     n_assert( this->triMesh && "triMeshId does not match an existing mesh!" );
-    
+
     // associate data with geom
     this->SetData( this->triMesh->data );
 }
@@ -164,8 +164,8 @@ void nOpendeTriMeshGeom::EnableTC( int geomClass, bool enable )
 void nOpendeTriMeshGeom::EnableTC( const char* geomClass, bool enable )
 {
     n_assert( this->id() && "nOpendeTriMeshGeom::id not valid!" );
-    nOpende::GeomTriMeshEnableTC( this->id(), 
-                                  nOpendeMarshal::StringToGeomClass( geomClass ), 
+    nOpende::GeomTriMeshEnableTC( this->id(),
+                                  nOpendeMarshal::StringToGeomClass( geomClass ),
                                   enable );
 }
 
@@ -184,8 +184,8 @@ bool nOpendeTriMeshGeom::IsTCEnabled( int geomClass )
 bool nOpendeTriMeshGeom::IsTCEnabled( const char* geomClass )
 {
     n_assert( this->id() && "nOpendeTriMeshGeom::id not valid!" );
-    return nOpende::GeomTriMeshIsTCEnabled( this->id(), 
-                                            nOpendeMarshal::StringToGeomClass( 
+    return nOpende::GeomTriMeshIsTCEnabled( this->id(),
+                                            nOpendeMarshal::StringToGeomClass(
                                             geomClass ) );
 }
 
@@ -201,7 +201,7 @@ void nOpendeTriMeshGeom::ClearTCCache()
 //----------------------------------------------------------------------------
 /**
 */
-void nOpendeTriMeshGeom::GetTriangle( int index, 
+void nOpendeTriMeshGeom::GetTriangle( int index,
                                       vector3& v0, vector3& v1, vector3& v2 )
 {
     n_assert( this->id() && "nOpendeTriMeshGeom::id not valid!" );

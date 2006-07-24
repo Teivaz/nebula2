@@ -12,7 +12,7 @@ static void n_PointDepth( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendeplanegeom
-    
+
     @superclass
     nopendegeom
 
@@ -42,7 +42,7 @@ n_initcmds(nClass* clazz)
 
     @info
 */
-static void 
+static void
 n_SetParams( void* slf, nCmd* cmd )
 {
     nOpendePlaneGeom* self = (nOpendePlaneGeom*)slf;
@@ -66,7 +66,7 @@ n_SetParams( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetParams( void* slf, nCmd* cmd )
 {
     nOpendePlaneGeom* self = (nOpendePlaneGeom*)slf;
@@ -91,7 +91,7 @@ n_GetParams( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_PointDepth( void* slf, nCmd* cmd )
 {
     nOpendePlaneGeom* self = (nOpendePlaneGeom*)slf;
@@ -120,7 +120,7 @@ bool nOpendePlaneGeom::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.z );
         cmd->In()->SetF( v.w );
         ps->PutCmd( cmd );
-            
+
         return true;
     }
     return false;

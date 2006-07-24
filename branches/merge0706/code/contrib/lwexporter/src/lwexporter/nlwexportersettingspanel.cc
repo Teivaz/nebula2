@@ -20,13 +20,13 @@ BEGIN_EVENT_TABLE(nLWExporterSettingsPanel, wxDialog)
     EVT_BUTTON(wxID_OK, nLWExporterSettingsPanel::OnOKBtn)
     EVT_BUTTON(wxID_CANCEL, nLWExporterSettingsPanel::OnCancelBtn)
     EVT_BUTTON(ID_EXPORT_NODE_CONFIG_BTN, nLWExporterSettingsPanel::OnExportNodeConfigBtn)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
 */
 nLWExporterSettingsPanel::nLWExporterSettingsPanel(wxWindow* parent) :
-    wxDialog(parent, wxID_ANY, "Exporter Settings", wxDefaultPosition)    
+    wxDialog(parent, wxID_ANY, "Exporter Settings", wxDefaultPosition)
 {
     wxStaticText* geometryScaleLabel = new wxStaticText(this, wxID_ANY, "Scale Geometry By");
     this->geometryScaleBox = new wxFloatCtrl(this, wxID_ANY);
@@ -51,9 +51,9 @@ nLWExporterSettingsPanel::nLWExporterSettingsPanel(wxWindow* parent) :
     wxStaticText* rendererLabel = new wxStaticText(this, wxID_ANY, "Renderer");
     this->rendererPopup = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(160, 0));
     wxStaticText* renderSizeLabel = new wxStaticText(this, wxID_ANY, "Size");
-    this->renderSizePopup = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(160, 0));    
+    this->renderSizePopup = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(160, 0));
     this->renderFullScreenCheckBox = new wxCheckBox(this, wxID_ANY, "Full Screen");
-    
+
     this->PopulateControls();
 
     // layout controls
@@ -114,7 +114,7 @@ void
 nLWExporterSettingsPanel::PopulateControls()
 {
     nLWExporterSettings* settings = nLWExporterSettings::Instance();
-    
+
     if (settings)
     {
         this->geometryScaleBox->SetFloatValue(settings->GetGeometryScale());
@@ -170,7 +170,7 @@ nLWExporterSettingsPanel::OnCancelBtn(wxCommandEvent&)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporterSettingsPanel::Save()
 {
     // read values from controls and save to file
@@ -196,8 +196,8 @@ nLWExporterSettingsPanel::Save()
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWExporterSettingsPanel::Activate(long version, GlobalFunc* global, 
+XCALL_(int)
+nLWExporterSettingsPanel::Activate(long version, GlobalFunc* global,
                                   LWLayoutGeneric* local, void* /*serverData*/)
 {
     if (version != LWINTERFACE_VERSION)
@@ -231,7 +231,7 @@ nLWExporterSettingsPanel::Activate(long version, GlobalFunc* global,
     panel.ShowModal();
     parent.Enable(true);
     parent.SetHWND(0);
-    
+
     return AFUNC_OK;
 }
 

@@ -23,22 +23,22 @@ nLWAnimExportHandler::nLWAnimExportHandler(LWItemID boneId) :
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWAnimExportHandler::AttachToBone(LWItemID boneId, nLWCmdExec* cmdExec)
 {
     nString cmdStr;
-    
+
     cmdStr.Format("SelectItem %x", boneId);
-    
+
     if (!cmdExec->ExecuteCmd(cmdStr))
     {
         return false;
     }
 
-    cmdStr.Format("ApplyServer %s %s", 
-                  LWITEMMOTION_HCLASS, 
+    cmdStr.Format("ApplyServer %s %s",
+                  LWITEMMOTION_HCLASS,
                   nLWAnimExportHandler::HANDLER_NAME);
-    
+
     if (!cmdExec->ExecuteCmd(cmdStr))
     {
         return false;
@@ -50,7 +50,7 @@ nLWAnimExportHandler::AttachToBone(LWItemID boneId, nLWCmdExec* cmdExec)
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWAnimExportHandler::DetachFromBone(LWItemID boneId, nLWCmdExec* cmdExec)
 {
     nString cmdStr;
@@ -61,7 +61,7 @@ nLWAnimExportHandler::DetachFromBone(LWItemID boneId, nLWCmdExec* cmdExec)
     {
         return false;
     }
-    
+
     nLWGlobals::ItemInfo itemInfo;
     n_assert(itemInfo.IsValid());
     if (!itemInfo.IsValid())
@@ -69,18 +69,18 @@ nLWAnimExportHandler::DetachFromBone(LWItemID boneId, nLWCmdExec* cmdExec)
         return false;
     }
 
-    for (int serverIdx = 1; ; serverIdx++) 
+    for (int serverIdx = 1; ; serverIdx++)
     {
         const char* serverName = itemInfo.Get()->server(boneId, LWITEMMOTION_HCLASS, serverIdx);
         if (!serverName)
         {
             break;
         }
-        if (strcmp(serverName, nLWAnimExportHandler::HANDLER_NAME) == 0) 
+        if (strcmp(serverName, nLWAnimExportHandler::HANDLER_NAME) == 0)
         {
             cmdStr.Format("RemoveServer %s %d", LWITEMMOTION_HCLASS, serverIdx);
-    
-            if (!cmdExec->ExecuteCmd(cmdStr)) 
+
+            if (!cmdExec->ExecuteCmd(cmdStr))
             {
                 return false;
             }
@@ -93,13 +93,13 @@ nLWAnimExportHandler::DetachFromBone(LWItemID boneId, nLWCmdExec* cmdExec)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWAnimExportHandler::Activate_Handler(long version, 
+XCALL_(int)
+nLWAnimExportHandler::Activate_Handler(long version,
                                        GlobalFunc* global,
-                                       LWItemMotionHandler* local, 
+                                       LWItemMotionHandler* local,
                                        void* serverData)
 {
-    if (version != LWITEMMOTION_VERSION) 
+    if (version != LWITEMMOTION_VERSION)
         return AFUNC_BADVERSION;
 
     if (!local)
@@ -123,7 +123,7 @@ nLWAnimExportHandler::Activate_Handler(long version,
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(LWInstance) 
+XCALL_(LWInstance)
 nLWAnimExportHandler::Create(void* priv, void* boxedItemId, LWError*)
 {
     return (LWInstance)(n_new(nLWAnimExportHandler((LWItemID)boxedItemId)));
@@ -132,7 +132,7 @@ nLWAnimExportHandler::Create(void* priv, void* boxedItemId, LWError*)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(void) 
+XCALL_(void)
 nLWAnimExportHandler::Destroy(LWInstance boxedHandler)
 {
     if (boxedHandler)
@@ -144,7 +144,7 @@ nLWAnimExportHandler::Destroy(LWInstance boxedHandler)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(LWError) 
+XCALL_(LWError)
 nLWAnimExportHandler::Copy(LWInstance boxedDest, LWInstance boxedSrc)
 {
     if (!boxedDest || !boxedSrc)
@@ -161,7 +161,7 @@ nLWAnimExportHandler::Copy(LWInstance boxedDest, LWInstance boxedSrc)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(LWError) 
+XCALL_(LWError)
 nLWAnimExportHandler::Load(LWInstance, const LWLoadState*)
 {
     // plugin doesn't need to load any data
@@ -172,7 +172,7 @@ nLWAnimExportHandler::Load(LWInstance, const LWLoadState*)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(LWError) 
+XCALL_(LWError)
 nLWAnimExportHandler::Save(LWInstance, const LWSaveState*)
 {
     // plugin doesn't need to save any data
@@ -183,7 +183,7 @@ nLWAnimExportHandler::Save(LWInstance, const LWSaveState*)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(const char*) 
+XCALL_(const char*)
 nLWAnimExportHandler::Describe(LWInstance)
 {
     return nLWAnimExportHandler::HANDLER_NAME;
@@ -192,8 +192,8 @@ nLWAnimExportHandler::Describe(LWInstance)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(void) 
-nLWAnimExportHandler::Evaluate(LWInstance lwInst, 
+XCALL_(void)
+nLWAnimExportHandler::Evaluate(LWInstance lwInst,
                                const LWItemMotionAccess* access)
 {
     n_assert(lwInst);
@@ -221,8 +221,8 @@ nLWAnimExportHandler::Evaluate(LWInstance lwInst,
     nAnimBuilder::Curve* scaleCurve = 0;
     if (nLWSkinAnimExport::GetAnimCurvesForBone(self->boneId,
                                                 startFrame,
-                                                &transCurve, 
-                                                &rotCurve, 
+                                                &transCurve,
+                                                &rotCurve,
                                                 &scaleCurve))
     {
         nAnimBuilder::Key animKey;
@@ -235,7 +235,7 @@ nLWAnimExportHandler::Evaluate(LWInstance lwInst,
         {
             access->getParam(LWIP_POSITION, access->time, lwVec);
             animKey.Set(vector4((float)lwVec[0], (float)lwVec[1], (float)lwVec[2], 0.0f));
-            transCurve->SetKey(animKeyIdx, animKey);    
+            transCurve->SetKey(animKeyIdx, animKey);
         }
 
         n_assert(rotCurve);
@@ -265,7 +265,7 @@ nLWAnimExportHandler::Evaluate(LWInstance lwInst,
                 {
                     // take into account the global scale
                     scaleSample *= exporterSettings->GetGeometryScale();
-                }    
+                }
             }
             animKey.Set(vector4(scaleSample.x, scaleSample.y, scaleSample.z, 0.0f));
             scaleCurve->SetKey(animKeyIdx, animKey);
@@ -276,7 +276,7 @@ nLWAnimExportHandler::Evaluate(LWInstance lwInst,
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(unsigned int) 
+XCALL_(unsigned int)
 nLWAnimExportHandler::Flags(LWInstance)
 {
     return LWIMF_AFTERIK;

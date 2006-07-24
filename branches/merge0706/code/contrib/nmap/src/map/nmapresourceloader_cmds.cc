@@ -9,12 +9,12 @@
 /**
     @scriptclass
     nmapresourceloader
-    
+
     @superclass
     nresourceloader
 
     @classinfo
-    A detailed description of what the class does (written for script programmers!) 
+    A detailed description of what the class does (written for script programmers!)
 */
 void
 n_initcmds(nClass* clazz)

@@ -10,11 +10,11 @@ const char nLWExporterMaster::HANDLER_NAME[] = "N2_LayoutExporter";
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
+XCALL_(int)
 nLWExporterMaster::Activate_Handler(long version, GlobalFunc* global,
                                   LWMasterHandler* local, void* serverData)
 {
-    if (version != LWINTERFACE_VERSION) 
+    if (version != LWINTERFACE_VERSION)
         return AFUNC_BADVERSION;
 
     if (!local)
@@ -55,7 +55,7 @@ XCALL_(int)
 nLWExporterMaster::Activate_Interface(long version, GlobalFunc* global,
                                       LWInterface* local, void* serverData)
 {
-    if (version != LWINTERFACE_VERSION) 
+    if (version != LWINTERFACE_VERSION)
         return AFUNC_BADVERSION;
 
     if (!local)
@@ -80,14 +80,14 @@ nLWExporterMaster::ApplyToSceneFromGeneric(LWLayoutGeneric* local)
     n_assert(local);
     if (!local)
         return AFUNC_BADLOCAL;
-    
+
     nString command;
     command.Format("ApplyServer %s %s", LWMASTER_HCLASS, nLWExporterMaster::HANDLER_NAME);
     if (local->evaluate(local->data, command.Get()) != 1)
     {
         return AFUNC_BADAPP;
     }
-    
+
     return AFUNC_OK;
 }
 
@@ -99,7 +99,7 @@ nLWExporterMaster::ApplyToSceneFromGeneric(LWLayoutGeneric* local)
     @return AFUNC_OK on success, something else otherwise.
 
     This function will try to find the server index for the exporter's master
-    handler, if that fails because there is no master handler in the scene it 
+    handler, if that fails because there is no master handler in the scene it
     will try to create one.
 */
 static
@@ -132,7 +132,7 @@ GetMasterHandlerServerIndex(int& serverIndex, GlobalFunc* global, LWLayoutGeneri
         if (retVal != AFUNC_OK)
             return retVal;
     }
-    
+
     // serverIndex now contains the index of our master handler
     return AFUNC_OK;
 }
@@ -143,7 +143,7 @@ GetMasterHandlerServerIndex(int& serverIndex, GlobalFunc* global, LWLayoutGeneri
     @param serverIndex Index of the master handler in the scene server list.
                        @see GetMasterHandlerServerIndex.
     @return AFUNC_OK on success, something else otherwise.
-    
+
     When the master handler is invoked it will perform the action that was
     set using @see nLWExporterMaster::SetNextAction.
 */

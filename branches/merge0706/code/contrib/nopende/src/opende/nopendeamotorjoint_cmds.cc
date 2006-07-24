@@ -19,7 +19,7 @@ static void n_GetAngleRate( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendeamotorjoint
-    
+
     @superclass
     nopendejoint
 
@@ -291,25 +291,25 @@ nOpendeAMotorJoint::SaveCmds( nPersistServer* ps )
     if ( nOpendeJoint::SaveCmds( ps ) )
     {
         nCmd* cmd;
-            
+
         // SetNumAxes
         cmd = ps->GetCmd( this, 'SNA_' );
         cmd->In()->SetI( this->GetNumAxes() );
         ps->PutCmd( cmd );
-    
+
         // SetMode
         cmd = ps->GetCmd( this, 'SM__' );
         cmd->In()->SetS( this->GetModeName() );
         ps->PutCmd( cmd );
-    
+
         vector3 v;
-        
+
         for ( int axisNum = 0; axisNum < 3; axisNum++ )
         {
             this->GetAxis( axisNum, v );
             int rel = this->GetAxisRel( axisNum );
             float angle = this->GetAngle( axisNum );
-      
+
             // SetAxis
             cmd = ps->GetCmd( this, 'SA__' );
             cmd->In()->SetI( axisNum );
@@ -318,13 +318,13 @@ nOpendeAMotorJoint::SaveCmds( nPersistServer* ps )
             cmd->In()->SetF( v.y );
             cmd->In()->SetF( v.z );
             ps->PutCmd( cmd );
-      
+
             // SetAngle
             cmd = ps->GetCmd( this, 'SANG' );
             cmd->In()->SetI( axisNum );
             cmd->In()->SetF( angle );
             ps->PutCmd( cmd );
-      
+
             // save parameters
             for ( int i = 0; i < nOpendeJoint::NUM_JOINT_PARAMS; i++ )
             {
