@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 #include "physdemo/simpleobject.h"
 
-nNebulaScriptClass(SimpleObject, "kernel::nroot");
+nNebulaScriptClass(SimpleObject, "nroot");
 
 //------------------------------------------------------------------------------
 /**

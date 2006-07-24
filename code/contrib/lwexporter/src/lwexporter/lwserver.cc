@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------
 // (c) 2006    Vadim Macagon
 //----------------------------------------------------------------------------
-extern "C" 
+extern "C"
 {
 #include <lwsdk/lwmodule.h>
 #include <lwsdk/lwserver.h>
@@ -68,20 +68,20 @@ ServerUserName AnimExportUN[] = {
 
 ServerRecord ServerDesc[] = {
     //{ ServerClass, ServerName, Activate, UserNames },
-    { 
-        LWMASTER_HCLASS, nLWExporterMaster::HANDLER_NAME, 
-        (ActivateFunc*)&nLWExporterMaster::Activate_Handler, 
-        MasterUN 
+    {
+        LWMASTER_HCLASS, nLWExporterMaster::HANDLER_NAME,
+        (ActivateFunc*)&nLWExporterMaster::Activate_Handler,
+        MasterUN
     },
-    { 
-        LWMASTER_ICLASS, nLWExporterMaster::HANDLER_NAME, 
-        (ActivateFunc*)&nLWExporterMaster::Activate_Interface, 
-        MasterUN 
+    {
+        LWMASTER_ICLASS, nLWExporterMaster::HANDLER_NAME,
+        (ActivateFunc*)&nLWExporterMaster::Activate_Interface,
+        MasterUN
     },
-    { 
+    {
         LWLAYOUTGENERIC_CLASS, nLWExporterMasterPanel::GENERIC_NAME,
-        (ActivateFunc*)&nLWExporterMasterPanel::Activate, 
-        AboutPanelUN 
+        (ActivateFunc*)&nLWExporterMasterPanel::Activate,
+        AboutPanelUN
     },
     {
         LWLAYOUTGENERIC_CLASS, nLWExporterSettingsPanel::GENERIC_NAME,
@@ -90,13 +90,13 @@ ServerRecord ServerDesc[] = {
     },
     {
         LWLAYOUTGENERIC_CLASS, nLWPreviewPanel::GENERIC_NAME,
-        (ActivateFunc*)&nLWPreviewPanel::Activate, 
-        PreviewPanelUN 
+        (ActivateFunc*)&nLWPreviewPanel::Activate,
+        PreviewPanelUN
     },
     {
         LWLAYOUTGENERIC_CLASS, nLWExportPanel::GENERIC_NAME,
-        (ActivateFunc*)&nLWExportPanel::Activate, 
-        ExportPanelUN 
+        (ActivateFunc*)&nLWExportPanel::Activate,
+        ExportPanelUN
     },
     {
         LWCUSTOMOBJ_HCLASS, nLWObjectExportSettings::HANDLER_NAME,
@@ -110,8 +110,8 @@ ServerRecord ServerDesc[] = {
     },
     {
         LWLAYOUTGENERIC_CLASS, nLWObjectExportSettings::SHORTCUT_GENERIC_NAME,
-        (ActivateFunc*)&nLWObjectExportSettings::Activate_SettingsPanel, 
-        ObjExpSettingsShortcutUN 
+        (ActivateFunc*)&nLWObjectExportSettings::Activate_SettingsPanel,
+        ObjExpSettingsShortcutUN
     },
     {
         LWSHADER_HCLASS, nLWShaderEditor::HANDLER_NAME,
@@ -166,17 +166,17 @@ class wxPluginApp : public wxApp
 bool wxPluginApp::OnInit()
 {
     return true;
-} 
+}
 
 IMPLEMENT_APP_NO_MAIN(wxPluginApp)
 
-BOOL WINAPI DllMain(HANDLE hModule, DWORD ul_reason_for_call, 
+BOOL WINAPI DllMain(HANDLE hModule, DWORD ul_reason_for_call,
                     LPVOID lpReserved)
 {
     switch (ul_reason_for_call)
     {
         case DLL_PROCESS_ATTACH:
-        {   
+        {
             wxSetInstance((HINSTANCE)hModule);
             int argc = 0;
             char** argv = 0;

@@ -85,7 +85,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
     {
         nMaxControl::GetSampledKey(c, vAngleKeys, sampleRate, nMaxFloat, true);
     }
-    
+
     if(uOffsetKeys.Size() || vOffsetKeys.Size() ||
        uScaleKeys.Size()  || vScaleKeys.Size()  ||
        uAngleKeys.Size()  || vAngleKeys.Size())
@@ -101,7 +101,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
         StdUVGen* uvGen = ((BitmapTex*)texmap)->GetUVGen();
 
         // TO DO: there must be a way to get the channel automatically from the shader material??
-        int mapChannel = uvGen->GetMapChannel() - 1; 
+        int mapChannel = uvGen->GetMapChannel() - 1;
 
         // add UV Offsets
         vector2 key;
@@ -127,7 +127,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
                 }
                 time = n_min(uTime, vTime);
             }
-            else 
+            else
             if(u < uOffsetKeys.Size())
             {
                 key.x = uOffsetKeys[u].fval;
@@ -170,7 +170,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
 
                 time = n_min(uTime, vTime);
             }
-            else 
+            else
             if(u < uScaleKeys.Size())
             {
                 key.x = uScaleKeys[u].fval;
@@ -235,7 +235,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
 */
 Control* nMaxUVAnimator::GetControlFromAnimatable(Animatable* anim, char* name)
 {
-    if(!anim) 
+    if(!anim)
     {
         return NULL;
     }

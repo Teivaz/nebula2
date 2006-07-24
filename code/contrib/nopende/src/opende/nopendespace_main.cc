@@ -102,7 +102,7 @@ bool nOpendeSpace::ContainsGeom( const char* path )
     n_assert( this->id() && "nOpendeSpace::id not valid!" );
     nRoot* temp = this->kernelServer->Lookup( path );
     n_assert( temp && temp->IsA( this->kernelServer->FindClass( "nopendegeom" ) ) );
-    return nOpende::SpaceQuery( this->id(), 
+    return nOpende::SpaceQuery( this->id(),
                                 static_cast<nOpendeGeom*>(temp)->id() ) == 1;
 }
 
@@ -153,11 +153,11 @@ dGeomID nOpendeSpace::GetGeom( int i )
 
 //----------------------------------------------------------------------------
 /**
-    @brief Determines which pairs of geoms in a space may potentially 
-           intersect, and calls the callback function with each candidate 
+    @brief Determines which pairs of geoms in a space may potentially
+           intersect, and calls the callback function with each candidate
            pair.
-    
-    This is really nothing more than a "shortcut" for calling 
+
+    This is really nothing more than a "shortcut" for calling
     dSpaceCollide( this->id, data, callback );
 */
 void nOpendeSpace::Collide( void* data, dNearCallback* callback )

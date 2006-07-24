@@ -12,7 +12,7 @@
 
     @cppclass
     nAppOpenALDemo
-    
+
     @superclass
     napplication
 

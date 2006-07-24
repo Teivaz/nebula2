@@ -16,7 +16,7 @@
     @param size the maximum number of collected nodes
     @return the number of nodes collected
 */
-int nOctree::Collect(nOctVisitor& culler, 
+int nOctree::Collect(nOctVisitor& culler,
                      nOctElement** ext_array, int size)
 {
     n_assert(ext_array);

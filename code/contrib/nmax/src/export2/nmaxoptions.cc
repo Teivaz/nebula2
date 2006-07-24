@@ -19,7 +19,7 @@ nMaxOptions* nMaxOptions::Singleton = 0;
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxOptions::nMaxOptions() : 
+nMaxOptions::nMaxOptions() :
     exportNormal(true),
     exportVertColor(true),
     exportUvs(true),
@@ -56,7 +56,7 @@ nMaxOptions::~nMaxOptions()
 
 //-----------------------------------------------------------------------------
 /**
-    Read .ini file in '$3dsmax/plugcfg' directory and specifies assigns and 
+    Read .ini file in '$3dsmax/plugcfg' directory and specifies assigns and
     paths to file server.
 
     @return true if the function call is success.
@@ -84,34 +84,34 @@ bool nMaxOptions::Initialize()
     iniFile->SetFileName(iniFilename);
     iniFile->SetSection("GeneralSettings");
     iniFile->SetDefault(".");
-    
+
     homeDir = iniFile->ReadString("HomeDir");
-    if (homeDir.IsEmpty()) 
+    if (homeDir.IsEmpty())
         return false;
-    
+
     projDir = iniFile->ReadString("ProjDir");
-    if (projDir.IsEmpty()) 
+    if (projDir.IsEmpty())
         return false;
-    
+
     binaryPath = iniFile->ReadString("BinaryPath") ;
-    if (binaryPath.IsEmpty())    
+    if (binaryPath.IsEmpty())
         return false;
 
     iniFile->SetDefault(N_MAXEXPORT_ANIMS_ASSIGN);
     animsAssign = iniFile->ReadString("AnimsAssign");
     if (animsAssign.IsEmpty())
         return false;
-    
+
     iniFile->SetDefault(N_MAXEXPORT_GFXLIB_ASSIGN);
     gfxlibAssign = iniFile->ReadString("GfxlibAssign");
     if (gfxlibAssign.IsEmpty())
         return false;
-    
+
     iniFile->SetDefault(N_MAXEXPORT_GUI_ASSIGN);
     guiAssign = iniFile->ReadString("GuiAssign") ;
     if (guiAssign.IsEmpty())
         return false;
-    
+
     iniFile->SetDefault(N_MAXEXPORT_LIGHTS_ASSIGN);
     lightsAssign = iniFile->ReadString("LightsAssign");
     if (lightsAssign.IsEmpty())
@@ -318,7 +318,7 @@ bool nMaxOptions::Initialize()
     Load various utility options from nmaxtoolbox.ini file.
 
     @note
-    If you add any optin in .ini file, don't forget to add code saves the option 
+    If you add any optin in .ini file, don't forget to add code saves the option
     in nMaxOptions::SaveUtilityOptions() function.
 */
 bool nMaxOptions::LoadUtilityOptions()
@@ -391,11 +391,11 @@ bool nMaxOptions::LoadUtilityOptions()
 //-----------------------------------------------------------------------------
 /**
     Save the settings to nmaxtoolbox.ini file. Called when the plugin is detached.
-    
-    @note 
+
+    @note
     The settings of 'GeneralSettings' section in the nmaxtoolbox.ini are saved
     when the 'ok' buttion of the directory setting dialog is clicked.
-        
+
 */
 void nMaxOptions::SaveUtilityOptions()
 {
@@ -497,13 +497,13 @@ bool nMaxOptions::RunViewer()
     return this->runViewer;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetHomePath() const
 {
     return this->homeDir;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetAnimAssign() const
 {
     return this->animsAssign;
@@ -515,37 +515,37 @@ nMaxOptions::GetAnimPath() const
     return this->animsPath;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetGfxLibAssign() const
 {
     return this->gfxlibAssign;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetGfxLibPath() const
 {
     return this->gfxlibPath;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetMeshesAssign() const
 {
     return this->meshesAssign;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetMeshesPath() const
 {
     return this->meshesPath;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetTextureAssign() const
 {
     return this->texturesAssign;
 }
 //-----------------------------------------------------------------------------
-const nString& 
+const nString&
 nMaxOptions::GetTexturePath() const
 {
     return this->texturesPath;

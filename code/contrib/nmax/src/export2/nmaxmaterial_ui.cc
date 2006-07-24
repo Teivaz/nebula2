@@ -17,7 +17,7 @@
 
     -14-Mar-06  kims  changed to get proper range for value of color picker.
 */
-nString 
+nString
 GetDefault(TiXmlElement* elemParam)
 {
     nString paramType = elemParam->Attribute("type");
@@ -48,7 +48,7 @@ GetDefault(TiXmlElement* elemParam)
         defScript += "[";
         for (int i=0; i<numValues; i++)
         {
-            // A Color value of 3dsmax are normally in the range 0.0 to 255.0 and 
+            // A Color value of 3dsmax are normally in the range 0.0 to 255.0 and
             // Nebula uses 0.0 to 1.0 for its range.
             // so it needs to be converted to the proper range.
             nString tmp = tokens[i];
@@ -57,15 +57,15 @@ GetDefault(TiXmlElement* elemParam)
             tmp.SetFloat(fval * 255.0f);
 
             defScript += tmp;
-            
+
             if (i < numValues - 1)
                 defScript += ", ";
         }
         defScript += "]";
     }
     else
-    if (paramType == "Texture" || 
-        paramType == "BumpTexture" || 
+    if (paramType == "Texture" ||
+        paramType == "BumpTexture" ||
         paramType == "CubeTexture" )
     {
     }
@@ -105,7 +105,7 @@ GetDefault(TiXmlElement* elemParam)
     @param values  to contain each enum values string.
 */
 static
-void 
+void
 EnumToItem(const nString &enums, nArray<nString> &values)
 {
     nArray<nString> tokens;
@@ -128,11 +128,11 @@ EnumToItem(const nString &enums, nArray<nString> &values)
     spinner RenderPri "Render Priority" align:#left fieldwidth:36 range:[-100,100,0]
     @endverbatim
 */
-nString 
+nString
 AddSpinner(TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
-    nString caption    = elemParam->Attribute("label"); // UI caption 
+    nString caption    = elemParam->Attribute("label"); // UI caption
     nString defaultVal = elemParam->Attribute("def");   // default value of the ui.
 
     nString uiScript;
@@ -158,9 +158,9 @@ AddSpinner(TiXmlElement* elemParam)
     uiScript += ",";
     uiScript += max.Substitute("+", ""); // max value has '+' sign, so we substitute it to empty char.
     uiScript += ",";
-    
+
     uiScript += GetDefault(elemParam);
-    
+
     uiScript += "]";
     uiScript += "\n";
 
@@ -176,7 +176,7 @@ AddSpinner(TiXmlElement* elemParam)
     checkbox LockViewer "Lock To Viewer" align:#left checked:false
     @endverbatim
 */
-nString 
+nString
 AddCheckBox(TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
@@ -212,7 +212,7 @@ AddCheckBox(TiXmlElement* elemParam)
     dropdownlist CullMode "Cull Mode" align:#left width:100 items:#("None","CW","CCW") selection:2
     @endverbatim
 */
-nString 
+nString
 AddDropdownList(TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
@@ -257,8 +257,8 @@ AddDropdownList(TiXmlElement* elemParam)
 
     uiScript += ")";
     uiScript += " ";
-    
-    // add default value. 
+
+    // add default value.
     uiScript += "selection:";
     uiScript += GetDefault(elemParam);
     uiScript += " ";
@@ -277,7 +277,7 @@ AddDropdownList(TiXmlElement* elemParam)
     colorpicker MatDiffuse "Diffuse Color" align:#left alpha:true color:[1.0, 1.0, 1.0, 1.0]
     @endverbatim
 */
-nString 
+nString
 AddColorPicker(TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
@@ -313,7 +313,7 @@ AddColorPicker(TiXmlElement* elemParam)
 
     uiScript += "\n";
     uiScript += "spinner ";
-    nString uiName; 
+    nString uiName;
     uiName.Format("%sAlpha",paramName.Get());
     uiScript += uiName;
     uiScript += " ";
@@ -340,7 +340,7 @@ AddColorPicker(TiXmlElement* elemParam)
     mapbutton DiffMap0 "Texture Map" align:#left width:150
     @endverbatim
 */
-nString 
+nString
 AddMapButton(TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
@@ -381,11 +381,11 @@ AddMapButton(TiXmlElement* elemParam)
     spinner TexGenS0123 align:#left fieldwidth:36
     @endverbatim
 */
-nString 
+nString
 AddVector4Spinner(TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
-    nString caption    = elemParam->Attribute("label"); // UI caption 
+    nString caption    = elemParam->Attribute("label"); // UI caption
     nString defaultVal = elemParam->Attribute("def");   // default value of the ui.
 
     nString uiScript;
@@ -400,7 +400,7 @@ AddVector4Spinner(TiXmlElement* elemParam)
     for (int i=0; i<4; i++)
     {
         index.AppendInt(i);
-        
+
         //switch(i)
         //{
         //case 0: label = "x:"; break;
@@ -439,7 +439,7 @@ AddVector4Spinner(TiXmlElement* elemParam)
     label dummy "" align:#left across:1
     @endverbatim
 */
-nString 
+nString
 AddLabel(const nString &uiname, const nString &caption, int across, bool addDot)
 {
     nString uiScript;

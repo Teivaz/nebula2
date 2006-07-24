@@ -17,7 +17,7 @@
 #endif
 
 #include "luaserver/nluaserver.h"
-nNebulaClass(nLuaServer, "kernel::nscriptserver");
+nNebulaClass(nLuaServer, "nscriptserver");
 
 // Initialize static members to NULL
 nLuaServer *nLuaServer::Instance = NULL;

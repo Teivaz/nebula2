@@ -34,12 +34,12 @@ void nVisibilityVisitor::Reset(const vector3 &newviewpoint)
     m_viewpointstack.PushBack(newviewpoint);
 }
 
-void nVisibilityVisitor::StartVisualizeDebug(nGfxServer2 *gfx) 
-{ 
+void nVisibilityVisitor::StartVisualizeDebug(nGfxServer2 *gfx)
+{
     m_gfxdebug = gfx;
 }
 
-void nVisibilityVisitor::EndVisualizeDebug() 
+void nVisibilityVisitor::EndVisualizeDebug()
 {
 }
 
@@ -87,13 +87,13 @@ void nSpatialVisitor::Reset()
 {
 }
 
-void nSpatialVisitor::StartVisualizeDebug(nGfxServer2 *gfx) 
-{ 
-    m_gfxdebug = gfx; 
+void nSpatialVisitor::StartVisualizeDebug(nGfxServer2 *gfx)
+{
+    m_gfxdebug = gfx;
 }
 
-void nSpatialVisitor::EndVisualizeDebug() 
-{  
+void nSpatialVisitor::EndVisualizeDebug()
+{
 }
 
 //
@@ -109,12 +109,12 @@ nOcclusionVisitor::~nOcclusionVisitor()
 {
 }
 
-void nOcclusionVisitor::StartVisualizeDebug(nGfxServer2 *gfx) 
-{ 
-    m_gfxdebug = gfx; 
+void nOcclusionVisitor::StartVisualizeDebug(nGfxServer2 *gfx)
+{
+    m_gfxdebug = gfx;
 }
 
-void nOcclusionVisitor::EndVisualizeDebug() 
-{ 
+void nOcclusionVisitor::EndVisualizeDebug()
+{
 
 }

@@ -24,9 +24,9 @@
 /**
     Find the full path of shaders.xml file.
 
-    The reason we do not directly call nMaxOption::GetHomePath() is that 
-    nMaxOption is mostly used for exporting. 
-    It is singleton class so calling that here makes hard to handle and destroy 
+    The reason we do not directly call nMaxOption::GetHomePath() is that
+    nMaxOption is mostly used for exporting.
+    It is singleton class so calling that here makes hard to handle and destroy
     its instance.
 */
 static
@@ -45,7 +45,7 @@ nString GetShaderXmlPath()
     if (!fileServer->FileExists(iniFilename.Get()))
     {
         // .ini file does not exist in '/plugcfg' directory.
-        n_message("%s file does not exist in '$3dsmax/plugcfg' directory.\n", 
+        n_message("%s file does not exist in '$3dsmax/plugcfg' directory.\n",
             N_MAXEXPORT_INIFILE);
 
         // return a empty string.
@@ -91,7 +91,7 @@ nString GetShaderXmlPath()
     Retrieves parameter type based on the given shader type.
 
     @param shdType shader type which described in xml file.
-    @return string which represent parameter type. 
+    @return string which represent parameter type.
 */
 static
 nString GetParameterType(const nString &shdType)
@@ -140,7 +140,7 @@ nString GetParameterType(const nString &shdType)
 //-----------------------------------------------------------------------------
 /**
     Retrieves UI from the given type.
-    @note 
+    @note
         EnvelopeCurve and ColorEnvelopeCurve are ignored.
 
     The followings are parameters type and its corresponding UI control.
@@ -194,8 +194,8 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
 /**
     The followinig maxscript is generated:
     @verbatim
-    param = "" 
-    param += (val.r/255.0) as string 
+    param = ""
+    param += (val.r/255.0) as string
     param += " "
     param += (val.g/255.0) as string
     param += " "
@@ -264,8 +264,8 @@ nString GetStringForMapButton(const nString &shdName, const nString &type, const
 /**
     The followinig maxscript is generated:
     @verbatim
-    param = "" 
-    param += val as string 
+    param = ""
+    param += val as string
     nChangeShaderParameter "Standard" "common" "MatEmissiveIntensity" param
     @endverbatim
 */
@@ -299,7 +299,7 @@ nString GetStringForDefault(const nString &shdName, const nString &type, const n
 
     The following maxscript is one of an example which might be generated:
     @verbatim
-    on RenderPri changed val do 
+    on RenderPri changed val do
     (
         nChangeShaderParameter "Standard", "common", "RenderPri", "1.0 1.0 1.0 1.0"
     )
@@ -316,7 +316,7 @@ nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
     //color picker
     if (paramName == "MatDiffuse"  ||
         paramName == "MatEmissive" ||
-        paramName == "MatSpecular") 
+        paramName == "MatSpecular")
     {
         handler += GetStringForColorPicker(shdName, "common", paramName);
     }
@@ -335,8 +335,8 @@ nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
     }
     //texture map
     else
-    if (paramName == "DiffMap0" || 
-        paramName == "BumpMap0") 
+    if (paramName == "DiffMap0" ||
+        paramName == "BumpMap0")
     {
         handler += GetStringForMapButton(shdName, "common", paramName);
     }
@@ -458,7 +458,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
     if (paramName == "BumpMap0")
     {
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-        
+
         //FIXME: should assign map channel to delegate.
 
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
@@ -513,7 +513,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
 //-----------------------------------------------------------------------------
 /**
     Generate script plug-in script.(part of 'param' element in xml)
-    
+
     @param name 'name' attribute in param element
                  The followings are known names:
                  'name', 'label', 'type', 'gui', 'export', 'min', 'max', 'def', 'enum'
@@ -674,12 +674,12 @@ nString AddPluginEventHandlers()
 
 //-----------------------------------------------------------------------------
 /**
-    max script expose function which to generate material script plugin based on 
+    max script expose function which to generate material script plugin based on
     '$nebula2/data/shaders/shaders.xml' file.
 
-    The following max script generate nebula2 custom material plugin. 
+    The following max script generate nebula2 custom material plugin.
     @verbatim
-    nCreateCustomMaterialPlugin() 
+    nCreateCustomMaterialPlugin()
     @endverbatim
 
     @note
@@ -687,7 +687,7 @@ nString AddPluginEventHandlers()
     This function should be called at once when 3DS Max start up.
     If not, all previously specified materials in the slot will be reset.
 
-    The generated file, "n2materialplugin.ms" can be found in the 
+    The generated file, "n2materialplugin.ms" can be found in the
     '$3dsmax/scripts/' directory. Use it for the purpose of test or debugging.
     It is only available on the debug version of plugin.
 
@@ -719,7 +719,7 @@ bool EvalCustomMaterialPlugin()
     // array for shader name of shader element.
     nArray<nString> shaderArray;
     shaderArray.Append("None");
-   
+
     nArray<nString> custAttribNameArray;
     custAttribNameArray.Append("undefined");
 
@@ -750,7 +750,7 @@ bool EvalCustomMaterialPlugin()
         shaderArray.Append(name);
 
         nString custattrib, custattribName;
-        
+
         // we append 'ca' prefix to avoid name confliction.
         // e.g. "Standard' and "Ocean' are already defined keyword in max script.
         custattribName +="ca";
@@ -877,10 +877,10 @@ bool EvalCustomMaterialPlugin()
     script += ")\n";
 
     // parameter block
-    script += "\tparameters SelectShader rollout:main \n"; 
-    script += "\t(\n"; 
-    script += "\t\tparamCurShader type:#integer default:1 animatable:false \n"; 
-    script += "\t\tparamEffectFile type:#string default:\"'None'\" animatable:false ui:effectFileName \n"; 
+    script += "\tparameters SelectShader rollout:main \n";
+    script += "\t(\n";
+    script += "\t\tparamCurShader type:#integer default:1 animatable:false \n";
+    script += "\t\tparamEffectFile type:#string default:\"'None'\" animatable:false ui:effectFileName \n";
     script += "\t)\n";
 
     nString mainRollout;

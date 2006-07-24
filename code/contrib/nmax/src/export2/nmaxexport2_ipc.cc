@@ -23,7 +23,7 @@ static nIpcClient* ipcClient = 0;
     @param paramID e.g) 'MatDiffuse'
     @param value In the case of the value is color of a material, e.g)  '1.0, 1.0, 1.0, 1.0'
 */
-bool nChangeShaderParameter(const char* toolkitShaderName, const char* shaderHandling, 
+bool nChangeShaderParameter(const char* toolkitShaderName, const char* shaderHandling,
                             const char* paramID, const char* value)
 {
     nString msg;
@@ -79,7 +79,7 @@ bool nConnectIpc(const char* host, const char* port)
     }
 
     nIpcAddress ipcAddress(host, port);
-    
+
     ipcClient = n_new(nIpcClient);
     ipcClient->SetBlocking(true);
     if (!ipcClient->Connect(ipcAddress))

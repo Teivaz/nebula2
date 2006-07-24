@@ -10,7 +10,7 @@
 #include "ncterrain2/nchunklodrenderparams.h"
 #include "ncterrain2/nclodeventhandler.h"
 
-nNebulaClass(nChunkLodTree, "resource::nresource");
+nNebulaClass(nChunkLodTree, "nresource");
 
 //------------------------------------------------------------------------------
 /**

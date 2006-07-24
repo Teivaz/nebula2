@@ -46,7 +46,7 @@ nGLServer2::DrawLines2d(const vector2* vertexList, int numVertices, const vector
     glVertexPointer(2, GL_FLOAT, sizeof(vector2), vertexList);
     glColor4f(color.x, color.y, color.z, color.w);
     glDrawArrays(GL_LINES, 0, numVertices);
-    
+
     n_gltrace("nGLServer2::DrawLines2d().");
 }
 

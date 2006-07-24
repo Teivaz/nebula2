@@ -60,18 +60,18 @@ bool ConstructScene(const RM_TCHAR* filename, RmMeshModelContainer *modelContain
     Specify vertices and indices of loaded n3d2 mesh to RenderMonkey mesh.
 
     @param groupIdx
-    @param group 
-    @param modelContainer, 
+    @param group
+    @param modelContainer,
     @param meshbuilder
 */
-bool BuildMesh(int groupIdx, nArray<nMeshBuilder::Group> &group, 
+bool BuildMesh(int groupIdx, nArray<nMeshBuilder::Group> &group,
                RmMeshModel* mesh, RmMeshModelContainer *modelContainer,
                const nMeshBuilder& meshbuilder)
 {
     int numFaces = group[groupIdx].GetNumTriangles();
 
-    int numVerts = 0; 
-    int vmin, vmax;   // vertex range 
+    int numVerts = 0;
+    int vmin, vmax;   // vertex range
 
     if (meshbuilder.GetGroupVertexRange(groupIdx, vmin, vmax))
     {
@@ -172,7 +172,7 @@ bool BuildMesh(int groupIdx, nArray<nMeshBuilder::Group> &group,
         }
     }
 
-    // copy face index data into the index element 
+    // copy face index data into the index element
     mesh->SetPrimitiveType(RM_PRIMITIVETYPE_TRIANGLELIST);
     mesh->SetNumIndices(numFaces * 3);
 

@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------
 // (c) 2006    Vadim Macagon
 //----------------------------------------------------------------------------
-extern "C" 
+extern "C"
 {
 #include <lwsdk/lwhost.h>
 }
@@ -17,13 +17,13 @@ const char nLWObjectExportSettings::SHORTCUT_GENERIC_NAME[] = "N2_ExporterObjExp
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWObjectExportSettings::Activate_Handler(long version, 
+XCALL_(int)
+nLWObjectExportSettings::Activate_Handler(long version,
                                           GlobalFunc* global,
-                                          LWCustomObjHandler* local, 
+                                          LWCustomObjHandler* local,
                                           void* /*serverData*/)
 {
-    if (version != LWINTERFACE_VERSION) 
+    if (version != LWINTERFACE_VERSION)
         return AFUNC_BADVERSION;
 
     if (!local)
@@ -33,8 +33,8 @@ nLWObjectExportSettings::Activate_Handler(long version,
         return AFUNC_BADLOCAL;
 
     // This stuff below is now obsolete.
-    // This doesn't actually work for me in Lightwave 7.5c because priv 
-    // is not passed to OnCreate(), even though it should according to the 
+    // This doesn't actually work for me in Lightwave 7.5c because priv
+    // is not passed to OnCreate(), even though it should according to the
     // docs and this approach works for the master and shader handlers.
     // I'm leaving it uncommented just in case it works in other versions.
     //local->inst->priv = global;
@@ -69,13 +69,13 @@ nLWObjectExportSettings::Activate_Handler(long version,
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWObjectExportSettings::Activate_Interface(long version, 
-                                            GlobalFunc* global, 
-                                            LWInterface* local, 
+XCALL_(int)
+nLWObjectExportSettings::Activate_Interface(long version,
+                                            GlobalFunc* global,
+                                            LWInterface* local,
                                             void* serverData)
 {
-    if (version != LWINTERFACE_VERSION) 
+    if (version != LWINTERFACE_VERSION)
         return AFUNC_BADVERSION;
 
     if (!local)
@@ -100,7 +100,7 @@ nLWObjectExportSettings::Activate_Interface(long version,
            object handler attached.
     @return true if the handler is found, false otherwise.
 */
-bool 
+bool
 nLWObjectExportSettings::HasHandler(LWItemID lwItemId)
 {
     nLWGlobals::ItemInfo itemInfo;
@@ -125,7 +125,7 @@ nLWObjectExportSettings::HasHandler(LWItemID lwItemId)
 
     if (serverName) // serverName will by NULL if the handler wasn't found
         return true;
-    
+
     return false;
 }
 
@@ -137,14 +137,14 @@ nLWObjectExportSettings::HasHandler(LWItemID lwItemId)
     @return AFUNC_OK on success, something else otherwise.
 
     This function will try to find the server index for the object export
-    settings custom object hander, if that fails because there is no such 
+    settings custom object hander, if that fails because there is no such
     handler attached to the object it will try to create one.
 */
 static
 int
-GetCustomObjectHandlerServerIndex(LWItemID lwItemId, 
-                                  int& serverIndex, 
-                                  GlobalFunc* global, 
+GetCustomObjectHandlerServerIndex(LWItemID lwItemId,
+                                  int& serverIndex,
+                                  GlobalFunc* global,
                                   LWLayoutGeneric* local)
 {
     LWItemInfo* itemInfo = (LWItemInfo*)global(LWITEMINFO_GLOBAL, GFUSE_TRANSIENT);
@@ -170,8 +170,8 @@ GetCustomObjectHandlerServerIndex(LWItemID lwItemId,
     if (!serverName)
     {
         nString command;
-        command.Format("ApplyServer %s %s", 
-                       LWCUSTOMOBJ_HCLASS, 
+        command.Format("ApplyServer %s %s",
+                       LWCUSTOMOBJ_HCLASS,
                        nLWObjectExportSettings::HANDLER_NAME);
         if (local->evaluate(local->data, command.Get()) != 1)
             return AFUNC_BADAPP;
@@ -203,10 +203,10 @@ InvokeCustomObjectHandlerFromGeneric(int serverIndex, LWLayoutGeneric* local)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWObjectExportSettings::Activate_SettingsPanel(long version, 
-                                                GlobalFunc* global, 
-                                                LWLayoutGeneric* local, 
+XCALL_(int)
+nLWObjectExportSettings::Activate_SettingsPanel(long version,
+                                                GlobalFunc* global,
+                                                LWLayoutGeneric* local,
                                                 void* /*serverData*/)
 {
     if (version != LWINTERFACE_VERSION)
@@ -249,7 +249,7 @@ nLWObjectExportSettings::Activate_SettingsPanel(long version,
         nLWGlobals::ItemInfo itemInfo;
         if (!itemInfo.IsValid())
             return AFUNC_BADGLOBAL;
-        
+
         // object export settings can only be set for mesh objects
         if (LWI_OBJECT != itemInfo.Get()->type(interfaceInfo.Get()->selItems[0]))
             itemCount = 0;
@@ -263,12 +263,12 @@ nLWObjectExportSettings::Activate_SettingsPanel(long version,
     }
 
     int serverIndex = 0;
-    retval = GetCustomObjectHandlerServerIndex(interfaceInfo.Get()->selItems[0], 
-                                               serverIndex, 
+    retval = GetCustomObjectHandlerServerIndex(interfaceInfo.Get()->selItems[0],
+                                               serverIndex,
                                                global, local);
     if (AFUNC_OK == retval)
         retval = InvokeCustomObjectHandlerFromGeneric(serverIndex, local);
-        
+
     return retval;
 }
 

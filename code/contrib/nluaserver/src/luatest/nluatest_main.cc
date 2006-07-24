@@ -5,7 +5,7 @@
 #include "kernel/ncmdprotonative.h"
 #include "luatest/nluatest.h"
 
-nNebulaScriptClass(nLuaTest, "kernel::nroot")
+nNebulaScriptClass(nLuaTest, "nroot")
 
 //------------------------------------------------------------------------------
 /**

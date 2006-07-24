@@ -165,7 +165,7 @@ nTqt2FileMaker::Run()
                 this->SetError("Error while loading tga chunk!");
                 return false;
             }
-            
+
             // copy to dst image and scale to destination size
             ilBindImage(dstImage);
             ilCopyImage(srcImage);
@@ -176,7 +176,7 @@ nTqt2FileMaker::Run()
             int quadTreeIndex = this->GetNodeIndex(this->treeDepth - 1, col, row);
             this->toc[quadTreeIndex].pos = filePos;
             this->toc[quadTreeIndex].size = dstByteSize;
-            
+
             ILubyte* dstData = ilGetData();
             this->tarFile->Write(dstData, dstByteSize);
 
@@ -237,7 +237,7 @@ nTqt2FileMaker::CopyImage(ILuint srcImage, ILuint dstImage, int dstX, int dstY)
 //------------------------------------------------------------------------------
 /**
     Recursively generates the sublevel files by reading 4 chunks, combining them
-    into one image, scaling them to the tile size and writing the chunk 
+    into one image, scaling them to the tile size and writing the chunk
     back to the target file.
 */
 ILuint
@@ -253,7 +253,7 @@ nTqt2FileMaker::RecurseGenerateTiles(int level, int col, int row)
         // tile alread built, read it from the file into a new IL image
         ILuint newImage = iluGenImage();
         ilBindImage(newImage);
-        ilTexImage(this->tileSize, this->tileSize, 1, bytesPerPixel, IL_RGBA, IL_UNSIGNED_BYTE, 0); 
+        ilTexImage(this->tileSize, this->tileSize, 1, bytesPerPixel, IL_RGBA, IL_UNSIGNED_BYTE, 0);
         ILubyte* data = ilGetData();
         this->tarFile->Seek(filePos, nFile::START);
         this->tarFile->Read(data, dataSize);

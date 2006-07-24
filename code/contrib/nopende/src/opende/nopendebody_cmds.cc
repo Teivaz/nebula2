@@ -64,7 +64,7 @@ static void n_addmassof( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendebody
-    
+
     @superclass
     nroot
 
@@ -188,7 +188,7 @@ n_setposition( void* slf, nCmd* cmd )
   v
 
   @output
-  f(x), f(y), f(z) 
+  f(x), f(y), f(z)
 
   @info
   Get the position of the body.
@@ -359,7 +359,7 @@ n_setlinearvel( void* slf, nCmd* cmd )
   v
 
   @output
-  f(x), f(y), f(z) 
+  f(x), f(y), f(z)
 
   @info
   Get the linear velocity of the body.
@@ -409,7 +409,7 @@ n_setangularvel( void* slf, nCmd* cmd )
   v
 
   @output
-  f(x), f(y), f(z) 
+  f(x), f(y), f(z)
 
   @info
   Get the angular velocity of the body.
@@ -646,7 +646,7 @@ n_addrelforceatrelpos( void* slf, nCmd* cmd )
   v
 
   @output
-  f(fx), f(fy), f(fz) 
+  f(fx), f(fy), f(fz)
 
   @info
   Get the accumulated force vector for the body.
@@ -671,7 +671,7 @@ n_getforce( void* slf, nCmd* cmd )
   v
 
   @output
-  f(fx), f(fy), f(fz) 
+  f(fx), f(fy), f(fz)
 
   @info
   Get the accumulated torque vector for the body.
@@ -775,7 +775,7 @@ n_getrelpointpos( void* slf, nCmd* cmd )
   f(BodyRelativeX), f(BodyRelativeY), f(BodyRelativeZ)
 
   @output
-  f(GlobalVelX), f(GlobalVelY), f(GlobalVelZ) 
+  f(GlobalVelX), f(GlobalVelY), f(GlobalVelZ)
 
   @info
   See ODE manual. (dBodyGetRelPointVel)
@@ -865,7 +865,7 @@ n_getposrelpoint( void* slf, nCmd* cmd )
   f(GlobalX), f(GlobalY), f(GlobalZ)
 
   @info
-  Transform a vector expressed in the body coordinate system to 
+  Transform a vector expressed in the body coordinate system to
   the global/world coordinate system.
 */
 static
@@ -927,7 +927,7 @@ n_vectorfromworld( void* slf, nCmd* cmd )
   @info
   Enable the body.
 */
-static 
+static
 void n_enable( void* slf, nCmd* cmd )
 {
     nOpendeBody* self = (nOpendeBody*)slf;
@@ -948,7 +948,7 @@ void n_enable( void* slf, nCmd* cmd )
   @info
   Disable the body.
 */
-static 
+static
 void n_disable( void* slf, nCmd* cmd )
 {
     nOpendeBody* self = (nOpendeBody*)slf;
@@ -964,7 +964,7 @@ void n_disable( void* slf, nCmd* cmd )
   v
 
   @output
-  b(True/False) 
+  b(True/False)
 
   @info
   Check if the body is enabled.
@@ -1008,7 +1008,7 @@ n_setfiniterotationmode( void* slf, nCmd* cmd )
   v
 
   @output
-  i(Mode) 
+  i(Mode)
 
   @info
   Get the finite rotation mode for the body.
@@ -1125,7 +1125,7 @@ n_setgravitymode( void* slf, nCmd* cmd )
   v
 
   @output
-  b(True/False) 
+  b(True/False)
 
   @info
   Check if the body is influenced by gravity.
@@ -1214,7 +1214,7 @@ n_resetmass( void* slf, nCmd* cmd )
   SetMassParams
 
   @input
-  f(theMass), f(cgx), f(cgy), f(cgz), 
+  f(theMass), f(cgx), f(cgy), f(cgz),
   f(I11), f(I22), f(I33),
   f(I12), f(I13), f(I23)
 
@@ -1550,14 +1550,14 @@ nOpendeBody::SaveCmds( nPersistServer* ps )
     if ( nRoot::SaveCmds( ps ) )
     {
         // TODO
-    
+
         // Create
         //nCmd* cmd = ps->GetCmd( this, 'CREA' );
         //cmd->In()->SetS( );
         //ps->PutCmd( cmd );
 
-        
-        
+
+
         return true;
     }
     return false;

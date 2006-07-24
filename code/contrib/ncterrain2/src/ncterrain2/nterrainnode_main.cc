@@ -7,7 +7,7 @@
 #include "resource/nresourceserver.h"
 #include "misc/nwatched.h"
 
-nNebulaScriptClass(nTerrainNode, "scene::nmaterialnode");
+nNebulaScriptClass(nTerrainNode, "nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**

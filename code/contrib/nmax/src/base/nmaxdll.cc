@@ -6,12 +6,12 @@
 #include "base/nmaxdll.h"
 
 ///the dllHandle
-HINSTANCE hInstance; 
+HINSTANCE hInstance;
 
 ///have we already initiated the custom controlls?
 int controlsInit = FALSE;
 
-///the array where a 'unique' instances of the classDesc are registered 
+///the array where a 'unique' instances of the classDesc are registered
 nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
 
 //------------------------------------------------------------------------------
@@ -20,13 +20,13 @@ nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
     - to create a class description by inherit from ClassDesc
     - you must count the number of ClassDesc you want to publish to Max, returned in LibNumberClasses()
     - you must return a pointer to an instance of the right inherited ClassDesc in LibClassDesc(int i).
-    
+
     The common solution for this task is:
     - create a inherited ClassDesc's for each Class and a static instance of this
     - count the number of classes you will to pulish to in the plugin and update
     the return value for LibNumberClasses()
     - update LibClassDesc(int i) to return the right instances adress
-    
+
     Bads:
     - done as parts of the code, so all is static
     - request a special maxdll-header for every plugin you create
@@ -34,9 +34,9 @@ nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
     - requires to change 3-4 parts in you code if you add or remove a class for the export
     to max
     - can not adjusted dynamic
-    
+
     A 'better' solution:
-    - the inherited ClassDecs's is created with the template 
+    - the inherited ClassDecs's is created with the template
     tRegisteredClassDesc<class TYPE> and must only a static instance must be created.
     So you have only two lines code that defines all you need to know about this tasks
     - the linkedClassDesc is parrent for all the individual ClassDesc's created in step 1.
@@ -48,12 +48,12 @@ nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
     members and is equal to size of the nArray.
     - Because every linkedClassDesc push ther 'this'-pointer to the array it is easy to get the right
     adresses of the instance.
-    
+
     Goods:
     - count and get the right instance adresses is done automatic
     - easy add or remove of classes you like to export to max
     - only one generic maxplugin dllheader for all plugins you like to create
-    
+
     Bads:
     - in the moment there is a bug (only worked around, not fixed)
     all static variables are initiated two times,
@@ -78,13 +78,13 @@ registeredClassDesc::registeredClassDesc(
   myInternalName (internalName)
 {
     bool unique = true;
-    
+
     if (!this->array)
     {
         /*a automatic init with the static keyword dons't work for this,
         because the order of the initialitze the static vars is not defined.
         So we can run in the case where the static implentation of the tRegisteredClassDesc
-        calls this constructor but the static nArray isn't initiated. 
+        calls this constructor but the static nArray isn't initiated.
         */
         this->array = n_new(nArray<registeredClassDesc*>(1,1));
     }
@@ -95,7 +95,7 @@ registeredClassDesc::registeredClassDesc(
         So we get 2 objects and adresses for the same implementation of the tRegisteredClassDesc.
         please send me a mail if you have a idea why this can happen
         */
-        int i = 0; 
+        int i = 0;
         while (i < this->array->Size() && unique)
         {
             /*FIXME: this is just a WORKKAROUND/HACK,
@@ -121,30 +121,30 @@ registeredClassDesc::registeredClassDesc(
 /**
     the dll entry funtion, this is called after init of the static vars
 */
-BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved) 
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 {
 	switch (fdwReason)
 	{
 		case DLL_PROCESS_ATTACH: //DLL - load
 		{
-			// Hang on to this DLL's instance handle. 
+			// Hang on to this DLL's instance handle.
 			hInstance = hinstDLL;
-			
+
 			// Initialize the custom controls. This should be done only once.
-			if (!controlsInit) 
+			if (!controlsInit)
 			{
 				controlsInit = true;
 				// Registering window classes for custom controls.
 				// Previously every DLL had to initialize the window classes through a call to InitCustomControls()
-				// in DllMain. This caused a substantial hit on the available system resources in Windows 9x 
+				// in DllMain. This caused a substantial hit on the available system resources in Windows 9x
 				// for every plug-in that was loaded. The classes are now globally registered for the whole process.
 				// Plug-ins no longer have to call InitCustomControls() at startup - but it doesn't hurt since once
 				// the classes has been registered they will not be registered again.
 				InitCustomControls(hInstance);
-				
+
 				//InitCommonControls(); //win95... don't used
 			}
-           
+
             //create a new kernelserver if needed
             if (nKernelServer::ks == 0)
             {
@@ -186,10 +186,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 __declspec( dllexport ) ClassDesc*
 LibClassDesc(int i)
 {
-    
+
 	if (registeredClassDesc::array)
 	    return registeredClassDesc::array->At(i);
-    
+
 	return 0;
 }
 
@@ -198,12 +198,12 @@ LibClassDesc(int i)
     tell max the number classes, public to max in this dll
 */
 __declspec( dllexport ) int
-LibNumberClasses() 
+LibNumberClasses()
 {
-    
+
 	if (registeredClassDesc::array)
 	    return registeredClassDesc::array->Size();
-    
+
 	return 0;
 }
 
@@ -212,8 +212,8 @@ LibNumberClasses()
     return desription of this dll
 */
 __declspec( dllexport ) const TCHAR*
-LibDescription() 
-{   
+LibDescription()
+{
 	return LIB_DESCRIPTION;
 }
 
@@ -223,7 +223,7 @@ LibDescription()
     compiled for
 */
 __declspec( dllexport ) ULONG
-LibVersion() 
+LibVersion()
 {
 	return LIB_MAX_VERSION;
 }

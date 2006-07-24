@@ -51,7 +51,7 @@ enum
 
 BEGIN_EVENT_TABLE(wxTextureFileCtrl, wxPanel)
     EVT_BUTTON(ID_FILE_BTN, wxTextureFileCtrl::OnFileBtn)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -66,7 +66,7 @@ wxTextureFileCtrl::wxTextureFileCtrl() :
 //----------------------------------------------------------------------------
 /**
 */
-wxTextureFileCtrl::wxTextureFileCtrl(wxWindow* parent, wxWindowID id, 
+wxTextureFileCtrl::wxTextureFileCtrl(wxWindow* parent, wxWindowID id,
                                      const wxPoint& pos, const wxSize& size) :
     textCtrl(0),
     btnCtrl(0)
@@ -77,8 +77,8 @@ wxTextureFileCtrl::wxTextureFileCtrl(wxWindow* parent, wxWindowID id,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
-wxTextureFileCtrl::Create(wxWindow* parent, wxWindowID id, 
+bool
+wxTextureFileCtrl::Create(wxWindow* parent, wxWindowID id,
                           const wxPoint& pos, const wxSize& size,
                           long style, const wxString& name)
 {
@@ -86,7 +86,7 @@ wxTextureFileCtrl::Create(wxWindow* parent, wxWindowID id,
     {
         this->textCtrl = new wxTextCtrl(this, wxID_ANY);
         this->textCtrl->PushEventHandler(new TextCtrlEvtHandler(this));
-        this->btnCtrl = new wxButton(this, ID_FILE_BTN, "...", 
+        this->btnCtrl = new wxButton(this, ID_FILE_BTN, "...",
                                      wxDefaultPosition, wxSize(20,20));
 
         wxBoxSizer* topSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -112,7 +112,7 @@ wxTextureFileCtrl::Create(wxWindow* parent, wxWindowID id,
 */
 wxTextureFileCtrl::~wxTextureFileCtrl()
 {
-    // have to pop and delete the custom event handler we created and pushed 
+    // have to pop and delete the custom event handler we created and pushed
     // back in Create() otherwise bad things can happen
     if (this->textCtrl)
         this->textCtrl->PopEventHandler(true);
@@ -124,7 +124,7 @@ wxTextureFileCtrl::~wxTextureFileCtrl()
 //----------------------------------------------------------------------------
 /**
 */
-wxSize 
+wxSize
 wxTextureFileCtrl::DoGetBestSize() const
 {
     return this->bestSize;
@@ -134,18 +134,18 @@ wxTextureFileCtrl::DoGetBestSize() const
 /**
 */
 static
-nString 
+nString
 ConvertPathToAbsolute(const nString& inPath)
 {
     // if the path starts with "textures:" we can just mangle it
     nString texturesAssign("textures:");
-    if ((inPath.Length() > texturesAssign.Length()) && 
+    if ((inPath.Length() > texturesAssign.Length()) &&
         strncmp(inPath.Get(), texturesAssign.Get(), texturesAssign.Length()) == 0)
     {
         return nFileServer2::Instance()->ManglePath(inPath);
     }
 
-    // if the path doesn't start with "textures:" we assume it must be 
+    // if the path doesn't start with "textures:" we assume it must be
     // relative to Lightwave Images dir
     nLWGlobals::DirInfoFunc dirInfo;
     nString lwImagesDir(dirInfo.GetImagesDir());
@@ -166,7 +166,7 @@ ConvertPathToRelative(const nString& inPath)
 {
     if (inPath.IsEmpty())
         return inPath;
-    
+
     nString cleanPath(inPath);
     cleanPath.ToLower();
     cleanPath.ConvertBackslashes();
@@ -202,10 +202,10 @@ ConvertPathToRelative(const nString& inPath)
 
     nString texturesAssign("textures:");
 
-    if ((cleanPath.Length() > texturesAssign.Length()) && 
+    if ((cleanPath.Length() > texturesAssign.Length()) &&
         strncmp(cleanPath.Get(), texturesAssign.Get(), texturesAssign.Length()) == 0)
     {
-        // if the path is relative to "textures:" already we don't 
+        // if the path is relative to "textures:" already we don't
         // have to do anything
         return cleanPath;
     }
@@ -213,7 +213,7 @@ ConvertPathToRelative(const nString& inPath)
     if (cleanPath.FindCharIndex(':', 0) == -1)
     {
         // assume that if the path is relative it's relative to the images
-        // dir and therefore valid, this doesn't work with UNC paths... 
+        // dir and therefore valid, this doesn't work with UNC paths...
         // but who cares?
         return cleanPath;
     }
@@ -230,7 +230,7 @@ ConvertPathToRelative(const nString& inPath)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxTextureFileCtrl::OnFileBtn(wxCommandEvent& WXUNUSED(event))
 {
     n_assert(this->textCtrl);
@@ -240,7 +240,7 @@ wxTextureFileCtrl::OnFileBtn(wxCommandEvent& WXUNUSED(event))
         nString defaultDir(ConvertPathToAbsolute(curPath.ExtractDirName()));
         nString defaultFile(curPath.ExtractFileName());
 
-        wxFileDialog dialog(this, "Select Texture", 
+        wxFileDialog dialog(this, "Select Texture",
                             defaultDir.Get(), defaultFile.Get());
         if (dialog.ShowModal() == wxID_OK)
         {

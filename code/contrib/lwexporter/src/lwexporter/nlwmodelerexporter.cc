@@ -65,19 +65,19 @@ EDError PolyScanCallback(void* userData, const EDPolygonInfo* polyInfo)
 //----------------------------------------------------------------------------
 /**
 */
-nLWModelerExporter::nLWModelerExporter(MeshEditOp* meshEditOp, 
+nLWModelerExporter::nLWModelerExporter(MeshEditOp* meshEditOp,
 									   GlobalFunc* globals)
 : numPolys(0), polyArray(0), curPolyIdx(0)
 {
 	this->meshEditOp = meshEditOp;
 	this->globals = globals;
-	this->surff = (LWSurfaceFuncs*)globals(LWSURFACEFUNCS_GLOBAL, 
+	this->surff = (LWSurfaceFuncs*)globals(LWSURFACEFUNCS_GLOBAL,
 										   GFUSE_TRANSIENT);
-	this->queryf = (LWStateQueryFuncs*)globals(LWSTATEQUERYFUNCS_GLOBAL, 
+	this->queryf = (LWStateQueryFuncs*)globals(LWSTATEQUERYFUNCS_GLOBAL,
 											   GFUSE_TRANSIENT);
-	this->msgf = (LWMessageFuncs*)globals(LWMESSAGEFUNCS_GLOBAL, 
+	this->msgf = (LWMessageFuncs*)globals(LWMESSAGEFUNCS_GLOBAL,
 										  GFUSE_TRANSIENT);
-	this->txtrf = (LWTextureFuncs*)globals(LWTEXTUREFUNCS_GLOBAL, 
+	this->txtrf = (LWTextureFuncs*)globals(LWTEXTUREFUNCS_GLOBAL,
 										   GFUSE_TRANSIENT);
 }
 
@@ -101,7 +101,7 @@ EDError nLWModelerExporter::PolyScan(const EDPolygonInfo* polyInfo)
 		this->msgf->error("You can only export faces!", 0);
 		return EDERR_BADARGS;
 	}
-	
+
 	if (polyInfo->numPnts != 3)
 	{
 		this->msgf->error("All faces must be triangles!", 0);
@@ -159,7 +159,7 @@ void nLWModelerExporter::ExportMesh()
 
 	if (!this->msgf)
 		return;
-	
+
 	const char* objName = this->queryf->object();
 	if (!objName)
 	{
@@ -187,10 +187,10 @@ void nLWModelerExporter::ExportMesh()
 
 	// extract polygons from modeler
 	this->curPolyIdx = 0;
-	this->numPolys = meshEditOp->polyCount(meshEditOp->state, OPLYR_FG, 
+	this->numPolys = meshEditOp->polyCount(meshEditOp->state, OPLYR_FG,
 										   EDCOUNT_ALL);
 	this->polyArray = n_new_array(nLWPolygon, this->numPolys);
-	this->meshEditOp->polyScan(meshEditOp->state, PolyScanCallback, this, 
+	this->meshEditOp->polyScan(meshEditOp->state, PolyScanCallback, this,
 							   OPLYR_FG);
 
 	n_assert(this->curPolyIdx == this->numPolys);
@@ -199,7 +199,7 @@ void nLWModelerExporter::ExportMesh()
 	int groupId = 0;
 	nMeshBuilder::Vertex vertex;
 	nMeshBuilder::Triangle tri;
-	
+
 	// first handle the polys with surfaces
 	nSurfaceNode* surfNode = (nSurfaceNode*)this->surfaceList.GetHead();
 	for (; surfNode; surfNode = (nSurfaceNode*)surfNode->GetSucc())
@@ -227,7 +227,7 @@ void nLWModelerExporter::ExportMesh()
 					for (int pointIdx = 0; pointIdx < 3; pointIdx++)
 					{
 						EDPointInfo* point = this->meshEditOp->pointInfo(
-											     this->meshEditOp->state, 
+											     this->meshEditOp->state,
 												 poly.points[pointIdx]);
 						vertex.SetCoord(vector3((float)point->position[0],
 							                    (float)point->position[1],
@@ -257,15 +257,15 @@ void nLWModelerExporter::ExportMesh()
 						this->meshBuilder.AddVertex(vertex);
 					}
 					tri.SetGroupId(groupId);
-					tri.SetVertexIndices(polyIdx * 3, 
-						                 polyIdx * 3 + 1, 
+					tri.SetVertexIndices(polyIdx * 3,
+						                 polyIdx * 3 + 1,
 										 polyIdx * 3 + 2);
 					this->meshBuilder.AddTriangle(tri);
 				}
 			}
 			++groupId;
 		}
-	
+
 	// now handle the polys without any surface
 	// only export coordinates for these
 	for (int polyIdx = 0; polyIdx < this->numPolys; polyIdx++)
@@ -276,7 +276,7 @@ void nLWModelerExporter::ExportMesh()
 			for (int pointIdx = 0; pointIdx < 3; pointIdx++)
 			{
 				EDPointInfo* point = this->meshEditOp->pointInfo(
-									     this->meshEditOp->state, 
+									     this->meshEditOp->state,
 										 poly.points[pointIdx]);
 				vertex.SetCoord(vector3((float)point->position[0],
 					                    (float)point->position[1],
@@ -284,8 +284,8 @@ void nLWModelerExporter::ExportMesh()
 				this->meshBuilder.AddVertex(vertex);
 			}
 			tri.SetGroupId(groupId);
-			tri.SetVertexIndices(polyIdx * 3, 
-				                 polyIdx * 3 + 1, 
+			tri.SetVertexIndices(polyIdx * 3,
+				                 polyIdx * 3 + 1,
 								 polyIdx * 3 + 2);
 			this->meshBuilder.AddTriangle(tri);
 		}
@@ -300,14 +300,14 @@ void nLWModelerExporter::ExportMesh()
 */
 /*
 extern "C"
-void UIChangeNotify(LWXPanelID panel, unsigned long cid, unsigned long vid, 
+void UIChangeNotify(LWXPanelID panel, unsigned long cid, unsigned long vid,
 					int eventType)
 {
 	if (LWXPEVENT_VALUE == eventType)
 		switch (cid)
 		{
 			case ID_BINARY:
-				
+
 		}
 }
 */
@@ -315,32 +315,32 @@ void UIChangeNotify(LWXPanelID panel, unsigned long cid, unsigned long vid,
 //----------------------------------------------------------------------------
 /**
 */
-static 
+static
 bool ShowUI(LWXPanelFuncs* xpanf, nLWModelerExportOptions* options)
 {
 	LWXPanelID panel;
 	bool ok = false;
-	enum 
+	enum
 	{
 		ID_OUTPUT_FILENAME = 0x8001,
 		ID_BINARY
 	};
 
-	LWXPanelControl controls[] = 
+	LWXPanelControl controls[] =
 	{
         { ID_OUTPUT_FILENAME, "Output File", "sFileName" },
 		{ ID_BINARY, "Save As Binary", "iBoolean" },
         { 0 }
     };
 
-    LWXPanelDataDesc controlDesc[] = 
+    LWXPanelDataDesc controlDesc[] =
 	{
         { ID_OUTPUT_FILENAME, "OutputFile", "string" },
 		{ ID_BINARY, "SaveAsBinary", "integer" },
         { 0 }
     };
 
-    LWXPanelHint controlHints[] = 
+    LWXPanelHint controlHints[] =
 	{
         XpLABEL(0, "Nebula 2 Mesh Exporter"),
 		XpXREQCFG(ID_OUTPUT_FILENAME, LWXPREQ_SAVE, "Save Mesh As...", "*.n3d2;*.nvx2"),
@@ -370,7 +370,7 @@ bool ShowUI(LWXPanelFuncs* xpanf, nLWModelerExportOptions* options)
 /**
 	@brief Modeler Mesh Exporter plugin activation function.
 */
-XCALL_(int) Activate_ModelerMeshExporter(long version, GlobalFunc* global, 
+XCALL_(int) Activate_ModelerMeshExporter(long version, GlobalFunc* global,
 										 void* local, void* serverData)
 {
 	if (version != LWINTERFACE_VERSION)
@@ -391,7 +391,7 @@ XCALL_(int) Activate_ModelerMeshExporter(long version, GlobalFunc* global,
 		if (exporter)
 			exporter->ExportMesh();
 	}
-	
+
 	if (exporter)
 		n_delete(exporter);
 

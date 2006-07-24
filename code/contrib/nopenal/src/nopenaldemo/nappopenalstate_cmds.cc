@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------------
-//  nappopenalstate_cmds.cc 
+//  nappopenalstate_cmds.cc
 //
 //  (C)2005 Kim, Hyoun Woo
 //----------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 
     @cppclass
     nAppOpenALState
-    
+
     @superclass
     nappstate
 

@@ -50,7 +50,7 @@ public:
         }
         else if (event.GetEventType() == wxEVT_CHAR)
         {
-            // Only allow numbers and dots to be entered in the 
+            // Only allow numbers and dots to be entered in the
             // wxTextCtrl sub-control.
             int keyCode = ((wxKeyEvent*)&event)->GetKeyCode();
             // Don't filter most of the special keys
@@ -97,7 +97,7 @@ enum
 
 BEGIN_EVENT_TABLE(wxIntSliderCtrl, wxPanel)
     EVT_COMMAND_SCROLL(ID_SLIDER, wxIntSliderCtrl::OnScroll)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -112,7 +112,7 @@ wxIntSliderCtrl::wxIntSliderCtrl() :
 //----------------------------------------------------------------------------
 /**
 */
-wxIntSliderCtrl::wxIntSliderCtrl(wxWindow* parent, wxWindowID id, 
+wxIntSliderCtrl::wxIntSliderCtrl(wxWindow* parent, wxWindowID id,
                                  int minVal, int maxVal,
                                  const wxPoint& pos, const wxSize& size) :
     sliderCtrl(0),
@@ -124,7 +124,7 @@ wxIntSliderCtrl::wxIntSliderCtrl(wxWindow* parent, wxWindowID id,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 wxIntSliderCtrl::Create(wxWindow* parent, wxWindowID id,
                         int minVal, int maxVal,
                         const wxPoint& pos, const wxSize& size,
@@ -147,7 +147,7 @@ wxIntSliderCtrl::Create(wxWindow* parent, wxWindowID id,
         // this the sizing goes nuts and all the sub-controls
         // end up on top of each other
         this->bestSize.SetWidth(this->bestSize.GetWidth() + 1);
-        
+
         return true;
     }
     return false;
@@ -158,7 +158,7 @@ wxIntSliderCtrl::Create(wxWindow* parent, wxWindowID id,
 */
 wxIntSliderCtrl::~wxIntSliderCtrl()
 {
-    // have to pop and delete the custom event handler we created and pushed 
+    // have to pop and delete the custom event handler we created and pushed
     // back in wxFloatSliderCtrl::Create() otherwise bad things can happen
     if (this->textCtrl)
         this->textCtrl->PopEventHandler(true);
@@ -170,11 +170,11 @@ wxIntSliderCtrl::~wxIntSliderCtrl()
 //----------------------------------------------------------------------------
 /**
 */
-int 
+int
 wxIntSliderCtrl::ClampValue(int val) const
 {
     assert(this->sliderCtrl);
-    
+
     if (this->sliderCtrl)
     {
         if (val < this->sliderCtrl->GetMin())
@@ -196,7 +196,7 @@ wxIntSliderCtrl::ClampValue(int val) const
     The wxTextCtrl sub-control will be updated to reflect the new position
     within the wxSlider sub-control.
 */
-void 
+void
 wxIntSliderCtrl::OnScroll(wxScrollEvent& event)
 {
     assert(this->textCtrl);
@@ -214,7 +214,7 @@ wxIntSliderCtrl::OnScroll(wxScrollEvent& event)
 //----------------------------------------------------------------------------
 /**
 */
-wxSize 
+wxSize
 wxIntSliderCtrl::DoGetBestSize() const
 {
     return this->bestSize;

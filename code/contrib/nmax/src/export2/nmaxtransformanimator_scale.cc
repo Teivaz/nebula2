@@ -16,7 +16,7 @@
 
 //-----------------------------------------------------------------------------
 /**
-    Export scale animation depends on the type of the controller which is used 
+    Export scale animation depends on the type of the controller which is used
     for the  scale animatoion.
 
     @param control Controller which used for the animation.
@@ -68,7 +68,7 @@ int nMaxTransformAnimator::ExportScale(Control *control, nTransformAnimator* ani
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
@@ -77,7 +77,7 @@ int nMaxTransformAnimator::ExportScale(Control *control, nTransformAnimator* ani
 
     @return the number of the keys which to be used for the actual animation.
 */
-int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys, 
+int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
                                           nTransformAnimator* animator)
 {
     n_maxlog(Warning, "The TCB controller is used for scaling. Only scale value will be exported.");
@@ -95,8 +95,8 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
         float time = key.time * SECONDSPERTICK;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f && animator->GetNumScaleKeys() == 0)
         {
@@ -111,7 +111,7 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
@@ -121,7 +121,7 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
 
     @return the number of the keys which to be used for the actual animation.
 */
-int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys, 
+int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
                                              nTransformAnimator* animator)
 {
     n_maxlog(Warning, "Warning: The bezier controller is used for scaling. Only scale value will be exported.");
@@ -139,8 +139,8 @@ int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
         float time = key.time * SECONDSPERTICK;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f && animator->GetNumScaleKeys() == 0)
         {
@@ -155,16 +155,16 @@ int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
 
 //-----------------------------------------------------------------------------
 /**
-    Interpolates between animation keys by evenly dividing the change from 
+    Interpolates between animation keys by evenly dividing the change from
     one key value to the next by the amount of time between the keys.
 
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
     @return the number of the keys which to be used for the actual animation.
 */
-int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys, 
+int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys,
                                              nTransformAnimator* animator)
 {
     for (int i=0; i<numKeys; i++)
@@ -180,8 +180,8 @@ int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys,
         float time = key.time * SECONDSPERTICK;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f && animator->GetNumScaleKeys() == 0)
         {
@@ -198,7 +198,7 @@ int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys,
 /**
     Export sampled key scale animation.
 
-    -03-Jun-06  kims  Fixed to use second key value if there is no first one 
+    -03-Jun-06  kims  Fixed to use second key value if there is no first one
                       when its start time.
                       Thanks Kim, Seung Hoon for this fix.
 
@@ -226,8 +226,8 @@ int nMaxTransformAnimator::ExportSampledScale(nTransformAnimator* animator)
         scale.z = sampleKey.pos.z;
 
         // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
+        // If the value is not exist the second key value can be used for it
+        // because 3dsmax uses the second key instead of the first
         // if the first one is not exist.
         if (time > 0.0f && animator->GetNumScaleKeys() == 0)
         {

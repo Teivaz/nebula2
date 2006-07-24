@@ -30,7 +30,7 @@ nMaxSkinAnimator::~nMaxSkinAnimator()
 //-----------------------------------------------------------------------------
 /**
 */
-nAnimator* nMaxSkinAnimator::Export(int skelIndex, const char* animatorName, const char* animFilename) 
+nAnimator* nMaxSkinAnimator::Export(int skelIndex, const char* animatorName, const char* animFilename)
 {
     n_assert(skelIndex >= 0);
     n_assert(animatorName);
@@ -69,7 +69,7 @@ nAnimator* nMaxSkinAnimator::Export(int skelIndex, const char* animatorName, con
 
     - 01-Mar-05 kims added joint name export option.
 */
-void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator, 
+void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
                                    const nArray<nMaxBoneManager::Bone> &boneArray)
 {
     Matrix3 localTM;
@@ -108,7 +108,7 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
         quaternion poseRotate (-ap.q.x, ap.q.z, ap.q.y, -ap.q.w);
         vector3 poseScale (ap.k.x, ap.k.z, ap.k.y);
 
-        animator->SetJoint(bone.id, 
+        animator->SetJoint(bone.id,
                            bone.parentID,
                            poseTranlator,
                            poseRotate,

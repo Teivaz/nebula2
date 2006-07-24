@@ -36,7 +36,7 @@ nAnimator* nMaxIntAnimator::Export(const char* paramName, Control* control)
 {
     nIntAnimator* createdAnimator = 0;
 
-    // the number of the keys in the control should be checked cause some of 
+    // the number of the keys in the control should be checked cause some of
     // the node has control even it has no animations.
     if (control->NumKeys())
     {
@@ -53,7 +53,7 @@ nAnimator* nMaxIntAnimator::Export(const char* paramName, Control* control)
         animatorName += "animator";
         animatorName.ToLower();
 
-        createdAnimator = static_cast<nIntAnimator*>(CreateNebulaObject("nintanimator", 
+        createdAnimator = static_cast<nIntAnimator*>(CreateNebulaObject("nintanimator",
                                                                         animatorName.Get()));
 
         if (createdAnimator)

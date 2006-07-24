@@ -10,7 +10,7 @@
 #include "map/nmap.h"
 #include "map/mapquadtree.h"
 
-nNebulaScriptClass(nMapNode, "scene::nmaterialnode");
+nNebulaScriptClass(nMapNode, "nmaterialnode");
 
 //------------------------------------------------------------------------------
 /**

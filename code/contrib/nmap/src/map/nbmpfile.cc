@@ -109,7 +109,7 @@ bool nBmpFile::Open(const char *fname, const char *mode)
             struct nBitmapFileHeader bfh;
             struct nBitmapInfoHeader bih;
             this->act_y = 0;
-            
+
             // read bitmap file header
             this->readBitmapFileHeader(this->fp,&bfh);
             this->readBitmapInfoHeader(this->fp,&bih);
@@ -177,7 +177,7 @@ bool nBmpFile::Open(const char *fname, const char *mode)
             return true;
 
         } else {
-            
+
             // *** WRITE MODE ***
             int w = this->GetWidth();
             int h = this->GetHeight();
@@ -197,7 +197,7 @@ bool nBmpFile::Open(const char *fname, const char *mode)
             bfh.reserved1 = 0;
             bfh.reserved2 = 0;
             bfh.offbits   = 0x36;
-                            
+
 
             // fill out the bitmap info header
             bih.size          = sizeof(nBitmapInfoHeader);

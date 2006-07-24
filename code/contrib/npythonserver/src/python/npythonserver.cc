@@ -147,7 +147,7 @@ nPythonInitialize(const char* moduleName)
     }
 }
 
-nNebulaClass(nPythonServer, "kernel::nscriptserver");
+nNebulaClass(nPythonServer, "nscriptserver");
 
 //--------------------------------------------------------------------
 /**

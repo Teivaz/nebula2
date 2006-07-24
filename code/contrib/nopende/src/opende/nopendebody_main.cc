@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------------
 #include "opende/nopendebody.h"
 
-nNebulaScriptClass(nOpendeBody, "kernel::nroot");
+nNebulaScriptClass(nOpendeBody, "nroot");
 
 #include "opende/nopendeworld.h"
 

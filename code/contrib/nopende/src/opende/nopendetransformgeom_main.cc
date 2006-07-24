@@ -56,7 +56,7 @@ void nOpendeTransformGeom::SetGeom( const char* gName )
 {
     n_assert( this->id() && "nOpendeTransformGeom::id not valid!" );
     nRoot* temp = nKernelServer::ks->Lookup( gName );
-    n_assert( temp && 
+    n_assert( temp &&
               temp->IsA( nKernelServer::ks->FindClass( "nopendegeom" ) ) );
     this->geomName = gName;
     nOpende::GeomTransformSetGeom( this->id(), ((nOpendeGeom*)temp)->id() );

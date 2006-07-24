@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------------
 #include "opende/nopendegeom.h"
 
-nNebulaScriptClass(nOpendeGeom, "kernel::nroot");
+nNebulaScriptClass(nOpendeGeom, "nroot");
 
 #include "opende/nopendespace.h"
 #include "opende/nopendebody.h"

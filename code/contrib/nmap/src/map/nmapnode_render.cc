@@ -13,7 +13,7 @@
 #include "map/nmap.h"
 
 
-bool 
+bool
 nMapNode::HasGeometry() const
 {
     return true;
@@ -23,7 +23,7 @@ nMapNode::HasGeometry() const
 /**
     Compute
 */
-bool 
+bool
 nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderContext)
 {
     int i;
@@ -50,7 +50,7 @@ nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderCont
     matrix44 view;
     view = gfx_server->GetTransform(nGfxServer2::View);
     vector3 camera_pos = view.pos_component();
-    
+
     for (i = 0; i < num_blocks; ++i)
     {
         MapBlock* block = (MapBlock*)collect_array[i]->GetPtr();
@@ -84,7 +84,7 @@ nMapNode::RenderGeometry(nSceneServer * scene_graph, nRenderContext * renderCont
 /**
     Visualises terrain occlusion details
 */
-int 
+int
 nMapNode::Visualize()
 {
     nGfxServer2* gfx_server = refGfxServer;

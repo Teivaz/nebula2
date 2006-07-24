@@ -36,7 +36,7 @@ nLWExporter::~nLWExporter()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporter::Preview()
 {
     this->previewMode = true;
@@ -46,7 +46,7 @@ nLWExporter::Preview()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporter::Export()
 {
     this->previewMode = false;
@@ -56,7 +56,7 @@ nLWExporter::Export()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporter::DoExport()
 {
     nLWExporterSettings* exporterSettings = nLWExporterSettings::Instance();
@@ -78,7 +78,7 @@ nLWExporter::DoExport()
 
     nLWLayoutMonitor monitor(monitorMsg, LMO_REVIEW);
     int numNodesToExport = this->GetTotalExportNodeCount();
-    
+
     monitorMsg.Format("[INFO] Exporting %d node(s).\n", numNodesToExport);
     monitor.Open(numNodesToExport, monitorMsg);
     n_printf(monitorMsg.Get());
@@ -108,7 +108,7 @@ nLWExporter::DoExport()
         ks->ReplaceFileServer("nfileserver2");
     }
     */
-    
+
     nFileServer2* fs = ks->GetFileServer();
     fs->SetAssign("proj", exporterSettings->GetProjectDir());
     fs->SetAssign("gfxlib", "proj:export/gfxlib");
@@ -120,7 +120,7 @@ nLWExporter::DoExport()
     this->n2FileName.Clear();
 
     // all scene nodes will be created under this root node
-    this->exportRoot = static_cast<nTransformNode*>(ks->NewNoFail("ntransformnode", 
+    this->exportRoot = static_cast<nTransformNode*>(ks->NewNoFail("ntransformnode",
                                                                   "/export"));
 
     if (this->exportRoot)
@@ -144,7 +144,7 @@ nLWExporter::DoExport()
             // now write out the whole export scene node tree
             if (this->exportRoot->SaveAs(this->n2FileName.Get()))
             {
-                monitorMsg.Format("[INFO] Saved scene node file as %s\n", 
+                monitorMsg.Format("[INFO] Saved scene node file as %s\n",
                                   this->n2FileName.Get());
             }
             else
@@ -194,7 +194,7 @@ nLWExporter::DoExport()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporter::ConstructN2FileName(nLWLayoutMonitor* monitor)
 {
     nLWGlobals::SceneInfo sceneInfo;
@@ -248,7 +248,7 @@ nLWExporter::ConstructN2FileName(nLWLayoutMonitor* monitor)
     @brief Get the total number of nodes to be exported.
     @note CollectExportNodes() must have been called for this to work.
 */
-int 
+int
 nLWExporter::GetTotalExportNodeCount()
 {
     int count = 0;
@@ -262,7 +262,7 @@ nLWExporter::GetTotalExportNodeCount()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExporter::ClearExportNodes()
 {
     for (int i = 0; i < this->topLevelExportNodes.Size(); i++)
@@ -328,8 +328,8 @@ nLWExporter::CollectExportNodes()
             }
         }
 
-        // exclude any export nodes that are parented and will be exported by 
-        // a parent (it may not be exported if the "export hierarchy" feature 
+        // exclude any export nodes that are parented and will be exported by
+        // a parent (it may not be exported if the "export hierarchy" feature
         // is disabled for the parent)
         for (int i = 0; i < selectedExportNodes.Size(); i++)
         {
@@ -366,7 +366,7 @@ nLWExporter::CollectExportNodes()
             }
         }
 
-        // don't want to delete any nodes it still contains, 
+        // don't want to delete any nodes it still contains,
         // so just reset the element count to zero
         selectedExportNodes.Reset();
     }
@@ -414,7 +414,7 @@ nLWExporter::LaunchNebulaViewer(const nString& n2FileName)
     viewerDir += "/bin/win32";
 #endif
     appLauncher.SetWorkingDirectory(viewerDir.Get());
-    
+
     nString appArgs;
     appArgs.Format("-projdir %s -w %d -h %d -view %s",
                    projDir.Get(),
@@ -423,7 +423,7 @@ nLWExporter::LaunchNebulaViewer(const nString& n2FileName)
                    n2FileName.Get());
     if (settings->GetPreviewFullScreen())
         appArgs += " -fullscreen ";
-    
+
     nString renderer(settings->GetPreviewRenderer());
     nString featureSet(settings->GetPreviewRendererFeatureSet(renderer));
     if (!featureSet.IsEmpty())
@@ -431,7 +431,7 @@ nLWExporter::LaunchNebulaViewer(const nString& n2FileName)
         appArgs += " -featureset ";
         appArgs += featureSet;
     }
-    
+
     // get camera info
     nLWGlobals::SceneInfo sceneInfo;
     n_assert(sceneInfo.IsValid());

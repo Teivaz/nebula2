@@ -19,7 +19,7 @@ static Tab<FPValue*>* putOutArgs(nCmd* cmd);
 /**
     @class nNebulaInterface
     @ingroup NMaxExposeContrib
-             
+
     @brief The implementation class.
 
 */
@@ -27,10 +27,10 @@ class nNebulaInterface : public INebulaInterface
 {
 public:
     //-- enum type of function ID --
-    enum { 
-        fn_new, 
-        fn_delete, 
-        fn_dir, 
+    enum {
+        fn_new,
+        fn_delete,
+        fn_dir,
         fn_sel,
         fn_lookup,
         fn_exists,
@@ -43,17 +43,17 @@ private:
     DECLARE_DESCRIPTOR(nNebulaInterface)
 
     //-- function map --
-    BEGIN_FUNCTION_MAP 
+    BEGIN_FUNCTION_MAP
         FN_2  (fn_new, TYPE_STRING, New, TYPE_STRING, TYPE_STRING);
         FN_1  (fn_delete, TYPE_BOOL, Delete, TYPE_STRING);
-        FN_0  (fn_dir, TYPE_STRING_TAB_BV, Dir); 
+        FN_0  (fn_dir, TYPE_STRING_TAB_BV, Dir);
         FN_1  (fn_sel, TYPE_STRING, Sel, TYPE_STRING);
         FN_1  (fn_lookup, TYPE_STRING, Lookup, TYPE_STRING);
         FN_1  (fn_exists, TYPE_BOOL, Exists, TYPE_STRING);
         VFN_1 (fn_nprint, NPrint, TYPE_STRING);
         FN_2  (fn_call, TYPE_FPVALUE_TAB, Call, TYPE_STRING, TYPE_FPVALUE_TAB);
         FN_1  (fn_callv, TYPE_FPVALUE_TAB, CallV, TYPE_STRING);
-    END_FUNCTION_MAP 
+    END_FUNCTION_MAP
 
     //-- function declaration --
     TCHAR* New (TCHAR* className, TCHAR* objectName);
@@ -69,7 +69,7 @@ private:
 
     Tab<FPValue*>* Call(TCHAR* command, Tab<FPValue*> *val);
     Tab<FPValue*>* CallV(TCHAR* command);
-    
+
 };
 
 //-----------------------------------------------------------------------------
@@ -77,11 +77,11 @@ private:
     Interface definitions.
 */
 static nNebulaInterface nebulaInterfaceFP (
-    N_MAX_SCRIPT_INTERFACE_ID, _T("foo"), 0, &maxScriptInterfaceClassDesc2, FP_CORE,//FP_CORE + FP_MIXIN, 
-    
+    N_MAX_SCRIPT_INTERFACE_ID, _T("foo"), 0, &maxScriptInterfaceClassDesc2, FP_CORE,//FP_CORE + FP_MIXIN,
+
     // 'new'
-    nNebulaInterface::fn_new, _T("New"), 0, TYPE_STRING, 0, 2, 
-        _T("classname"), 0, TYPE_STRING, 
+    nNebulaInterface::fn_new, _T("New"), 0, TYPE_STRING, 0, 2,
+        _T("classname"), 0, TYPE_STRING,
         _T("objectname"), 0, TYPE_STRING,
 
     // 'delete'
@@ -93,7 +93,7 @@ static nNebulaInterface nebulaInterfaceFP (
 
     // 'sel'
     nNebulaInterface::fn_sel, _T("Sel"), 0, TYPE_STRING, 0, 1,
-        _T("objectname"), 0, TYPE_STRING, 
+        _T("objectname"), 0, TYPE_STRING,
 
     // 'lookup'
     nNebulaInterface::fn_lookup, _T("Lookup"), 0, TYPE_STRING, 0, 1,
@@ -116,12 +116,12 @@ static nNebulaInterface nebulaInterfaceFP (
     nNebulaInterface::fn_callv, _T("CallV"), 0, TYPE_FPVALUE_TAB, 0, 1,
         _T("command"), 0, TYPE_STRING,
 
-    end 
+    end
 );
 
 //-----------------------------------------------------------------------------
-FPInterfaceDesc* nMaxExpose::GetDesc() 
-{ 
+FPInterfaceDesc* nMaxExpose::GetDesc()
+{
     return &nebulaInterfaceFP;
 }
 
@@ -133,7 +133,7 @@ FPInterfaceDesc* nMaxExpose::GetDesc()
     @param className     nebula class name of object to create.
     @param objectName    string of object's name.
 
-    @return 
+    @return
 */
 TCHAR* nNebulaInterface::New(TCHAR *className, TCHAR *objectName)
 {
@@ -230,7 +230,7 @@ Tab<TCHAR*> nNebulaInterface::Dir()
     Move within the current graph path.
     Called in Sel and Lookup function.
 
-    @see nNebulaInterface::Sel 
+    @see nNebulaInterface::Sel
     @see nNebulaInterface::Lookup
 */
 TCHAR* nNebulaInterface::Sel_(TCHAR* objectName, bool setCwd)
@@ -281,7 +281,7 @@ TCHAR* nNebulaInterface::Sel (TCHAR* objectName)
 /**
     Return object name if there's the object in given path.
 
-    @param  'path' of object whici to select. Not likely 'sel' command, selected 
+    @param  'path' of object whici to select. Not likely 'sel' command, selected
             object is not specified for current working directory.
     @return current selected object name on success and empty string on failure.
 */
@@ -293,7 +293,7 @@ TCHAR* nNebulaInterface::Lookup (TCHAR* objectName)
 /**
     Implements the 'exists' command.
 
-    @param objectName 'path' of the object which to check that object is exist 
+    @param objectName 'path' of the object which to check that object is exist
                       or not.
     @return Return true if the object is exist or false it is not.
 */
@@ -354,7 +354,7 @@ Tab<FPValue*>* nNebulaInterface::CallV(TCHAR* command)
     e.g. nebula2.set "/usr/scene/object.setpos" #(100.0, 20.0, 0.0)
 
     FPValue* (TYPE_FPVALUE) can only hold same type of argument in it's Tab<>.
-    So, for using variant type of arguements, we need Tab<FPValue*>* 
+    So, for using variant type of arguements, we need Tab<FPValue*>*
 
     @param command Nebula script command
     @param val in-arguments. It should be array type of maxscript.
@@ -416,7 +416,7 @@ Tab<FPValue*>* nNebulaInterface::Call(TCHAR* command, Tab<FPValue*> *val)
 
                     if (!getInArgs(ncmd, val))
                     {
-                        n_listener ("Broken input args, object '%s', command '%s'\n", 
+                        n_listener ("Broken input args, object '%s', command '%s'\n",
                                     o->GetName(), commandName);
                     }
                     else
@@ -589,7 +589,7 @@ Tab<FPValue*>* putOutArgs(nCmd* cmd)
         arg = cmd->Out();
 
         putOutSingleArg (arg, result);
-    }    
+    }
 
     return result;
 }
@@ -663,10 +663,10 @@ void putOutSingleArg(nArg* arg, Tab<FPValue*>* out)
         {
             nArg *outArgs, *a;
             int count;
-            
+
             count = arg->GetL(outArgs);
             a = outArgs;
-            
+
             for (int i=0; i<count; i++)
             {
                 putOutSingleArg(a, out);

@@ -125,7 +125,7 @@ void nXSI::HandleXSIMaterialVariables(CSLXSIMaterial* material, nShapeNode* node
                 break;
             }
         }
-        
+
         // default material colors
         vector4 ambient(0.2f, 0.2f, 0.2f, 1.0f);
         vector4 diffuse(0.6f, 0.6f, 0.6f, 1.0f);

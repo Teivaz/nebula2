@@ -9,7 +9,7 @@
 #include "map/mapquadtree.h"
 #include "map/mapblock.h"
 #include "map/nmapresourceloader.h"
-#include <strstream> 
+#include <strstream>
 /**
     Automatically infer map position and obtain centre and all that.
 */
@@ -30,7 +30,7 @@ MapBlock::MapBlock(nMapNode* m) :
 
 MapBlock::~MapBlock()
 {
-    if (meshTriStrip.isvalid()) 
+    if (meshTriStrip.isvalid())
     {
         meshTriStrip->Release();
         meshTriStrip.invalidate();
@@ -51,7 +51,7 @@ MapBlock::~MapBlock()
 /**
     @brief Initialise vertex buffer
 */
-void 
+void
 MapBlock::Init(const char* resourceLoader, nGfxServer2 * gfx_server, int num, int x, int z)
 {
     this->startX = x * (blockSize - 1);
@@ -74,8 +74,8 @@ MapBlock::Init(const char* resourceLoader, nGfxServer2 * gfx_server, int num, in
     n_assert( !meshTriStrip.isvalid() );
     meshTriStrip = map->refGfxServer->NewMesh(0);
     n_assert(meshTriStrip.isvalid());
-    meshTriStrip->SetVertexComponents( 
-        nMesh2::Coord | 
+    meshTriStrip->SetVertexComponents(
+        nMesh2::Coord |
         nMesh2::Normal |
         nMesh2::Uv0 |
         nMesh2::Uv1 );
@@ -87,13 +87,13 @@ MapBlock::Init(const char* resourceLoader, nGfxServer2 * gfx_server, int num, in
     // indices needed by the crack fixes
     num_indices += (map->GetBlockSize()-1) * (map->GetBlockSize()-1) * 4;
     meshTriStrip->SetNumIndices(num_indices);
-    
+
     meshTriStrip->SetResourceLoader( resourceLoader );
     meshTriStrip->SetFilename( GenerateResourceLoaderString() );
     meshTriStrip->Load();
 }
 
-const char* 
+const char*
 MapBlock::GenerateResourceLoaderString()
 {
     nString fullName = map->GetFullName();
@@ -114,17 +114,17 @@ MapBlock::GenerateResourceLoaderString()
     For each mip map level, it takes the greatest delta from that level
     to the missing vertices.
 */
-void 
+void
 MapBlock::CalculateMinD2Levels(float c2)
 {
     nMap* map_data = map->GetMap();
     // d for level 0 is always 0
     minD2[0] = 0;
-    
+
     float max_delta = 0;
 
     float heights[4];
-    
+
     // Loop thru mip map levels
     for (int level = 1; level < map->GetNumMipMapLevels(); ++level)
     {
@@ -168,7 +168,7 @@ MapBlock::CalculateMinD2Levels(float c2)
 */
 float MapBlock::BilinearInterpolate(float* h, float x, float z) const
 {
-    float top = h[0]*(1.0f - x) + x*h[1]; 
+    float top = h[0]*(1.0f - x) + x*h[1];
     float bottom = h[2]*(1.0f - x) + x*h[3];
 
     return top*(1.0f - z) + z*bottom;
@@ -177,7 +177,7 @@ float MapBlock::BilinearInterpolate(float* h, float x, float z) const
 /**
     Render block
 */
-void 
+void
 MapBlock::Render(nSceneServer * scene_graph)
 {
     BeginRender();
@@ -269,7 +269,7 @@ MapBlock::Render(nSceneServer * scene_graph)
 /**
     Render triangle fans starting from northwest corners
 */
-void 
+void
 MapBlock::RenderNorthEdge(bool align_west, bool align_east)
 {
     int vertices[5];
@@ -313,7 +313,7 @@ MapBlock::RenderNorthEdge(bool align_west, bool align_east)
 /**
     Render triangle fans starting from southwest corners
 */
-void 
+void
 MapBlock::RenderSouthEdge(bool align_west, bool align_east)
 {
     int vertices[5];
@@ -357,7 +357,7 @@ MapBlock::RenderSouthEdge(bool align_west, bool align_east)
 /**
     Render triangle fans starting from northwest corners
 */
-void 
+void
 MapBlock::RenderWestEdge(bool align_north, bool align_south)
 {
     int vertices[5];
@@ -401,7 +401,7 @@ MapBlock::RenderWestEdge(bool align_north, bool align_south)
 /**
     Render triangle fans starting from southeast corners
 */
-void 
+void
 MapBlock::RenderEastEdge(bool align_north, bool align_south)
 {
     int vertices[5];
@@ -442,7 +442,7 @@ MapBlock::RenderEastEdge(bool align_north, bool align_south)
     }
 }
 
-MapQuadElement* 
+MapQuadElement*
 MapBlock::GetQuadElement()
 {
     if (!quadElement)

@@ -8,7 +8,7 @@
 /**
 */
 void
-nLWBoneJointMap::MapBonesToJointIndices(LWItemID boneId, int& nextJointIdx, 
+nLWBoneJointMap::MapBonesToJointIndices(LWItemID boneId, int& nextJointIdx,
                                         LWItemInfo* itemInfo)
 {
     this->boneJointMap[boneId] = nextJointIdx++;
@@ -26,7 +26,7 @@ nLWBoneJointMap::MapBonesToJointIndices(LWItemID boneId, int& nextJointIdx,
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWBoneJointMap::Fill(LWItemID rootBoneId)
 {
     nLWGlobals::ItemInfo itemInfo;

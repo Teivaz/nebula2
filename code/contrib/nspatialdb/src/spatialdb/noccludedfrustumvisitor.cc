@@ -6,8 +6,8 @@
 #include "spatialdb/nOccludedFrustumVisitor.h"
 #include "gfx2/ngfxserver2.h"
 
-nOccludedFrustumVisitor::nOccludedFrustumVisitor(const nCamera2 &cameraprojection, 
-                                                 const matrix44 &cameratransform, 
+nOccludedFrustumVisitor::nOccludedFrustumVisitor(const nCamera2 &cameraprojection,
+                                                 const matrix44 &cameratransform,
                                                  nOcclusionVisitor &occlusionvisitor)
 : nVisibleFrustumVisitor(cameraprojection, cameratransform), m_occlusionvisitor(occlusionvisitor),
   m_frustumvisitor(cameraprojection, cameratransform)

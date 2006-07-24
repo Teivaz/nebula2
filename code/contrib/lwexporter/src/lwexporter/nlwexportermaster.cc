@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------
 // (c) 2006    Vadim Macagon
 //----------------------------------------------------------------------------
-extern "C" 
+extern "C"
 {
 #include <lwsdk/lwserver.h>
 #include <lwsdk/lwhandler.h>
@@ -112,7 +112,7 @@ nLWExporterMaster::~nLWExporterMaster()
 //----------------------------------------------------------------------------
 /**
 */
-nLWExporterMaster* 
+nLWExporterMaster*
 nLWExporterMaster::Instance()
 {
     // unlike the other singletons like nLWExporterSettings the master is
@@ -123,7 +123,7 @@ nLWExporterMaster::Instance()
 
 //----------------------------------------------------------------------------
 /**
-    This MUST be called when a new plugin is created (with the possible 
+    This MUST be called when a new plugin is created (with the possible
     exception of generics if you sure they can't outlive the master plugin).
 */
 void nLWExporterMaster::PluginCreated()
@@ -140,7 +140,7 @@ void nLWExporterMaster::PluginCreated()
 
 //----------------------------------------------------------------------------
 /**
-    This MUST be called when a plugin is destroyed (with the possible 
+    This MUST be called when a plugin is destroyed (with the possible
     exception of generics if you sure they can't outlive the master plugin).
 */
 void nLWExporterMaster::PluginDestroyed()
@@ -157,14 +157,14 @@ void nLWExporterMaster::PluginDestroyed()
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(LWInstance) 
+XCALL_(LWInstance)
 nLWExporterMaster::OnCreate(void* priv, void* context, LWError* error)
 {
     if (!nLWExporterMaster::singleton)
     {
         return n_new(nLWExporterMaster);
     }
-    
+
     *error = "Only one Nebula 2 Exporter Master Handler allowed per scene.";
     return 0;
 }
@@ -172,7 +172,7 @@ nLWExporterMaster::OnCreate(void* priv, void* context, LWError* error)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(void) 
+XCALL_(void)
 nLWExporterMaster::OnDestroy(LWInstance instance)
 {
     if (instance)
@@ -187,7 +187,7 @@ nLWExporterMaster::OnDestroy(LWInstance instance)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(LWError) 
+XCALL_(LWError)
 nLWExporterMaster::OnCopy(LWInstance dest, LWInstance source)
 {
     // don't support copy, should only be one instance of the master anyway

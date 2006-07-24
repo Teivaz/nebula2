@@ -21,7 +21,7 @@ static void n_getnormal(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nmap
-    
+
     @superclass
     nroot
 

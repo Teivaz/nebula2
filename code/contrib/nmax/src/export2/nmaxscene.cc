@@ -76,7 +76,7 @@ bool nMaxScene::Export(INode* inode)
         n_maxlog(Error, "No root node exist.");
         return false;
     }
-    
+
     // prepares export and do needed preprocess.
     if(!this->Begin(rootNode))
     {
@@ -97,7 +97,7 @@ bool nMaxScene::Export(INode* inode)
     {
         return false;
     }
-    
+
     n_maxlog(Low, "End exporting.");
 
     return true;
@@ -126,7 +126,7 @@ bool nMaxScene::Begin(INode *rootNode)
 
 //-----------------------------------------------------------------------------
 /**
-    Do any preprocessing for this scene. 
+    Do any preprocessing for this scene.
     This is called before the scene is exported.
 
     @param root scene root node which retrieved from core interface.
@@ -165,14 +165,14 @@ bool nMaxScene::Preprocess(INode* root)
 */
 void SetFlags(ReferenceMaker *pRefMaker, int iStat)
 {
-    for (int i = 0; i < pRefMaker->NumRefs(); i++) 
+    for (int i = 0; i < pRefMaker->NumRefs(); i++)
     {
         ReferenceMaker *pChildRef = pRefMaker->GetReference(i);
-        if (pChildRef) 
+        if (pChildRef)
             SetFlags(pChildRef, iStat);
     }
 
-    switch (iStat) 
+    switch (iStat)
     {
     case 0:
         pRefMaker->ClearAFlag(A_WORK1);
@@ -195,7 +195,7 @@ void nMaxScene::InitializeNodes(INode* inode)
 
     ObjectState kOState = inode->EvalWorldState(0);
     Object* obj = kOState.obj;
-    if (!obj) 
+    if (!obj)
         return;
 
     if (obj->SuperClassID() == GEOMOBJECT_CLASS_ID)
@@ -339,7 +339,7 @@ bool nMaxScene::CloseNebula()
 
 //-----------------------------------------------------------------------------
 /**
-    Do any postprocessing for this scene. 
+    Do any postprocessing for this scene.
     This is called after the scene is exported.
 */
 bool nMaxScene::Postprocess()
@@ -378,7 +378,7 @@ bool nMaxScene::Postprocess()
         }
     }
 
-    // if the global mesh has skinned animation, it might be needed to be partitioning. 
+    // if the global mesh has skinned animation, it might be needed to be partitioning.
     if (!nMaxOptions::Instance()->UseIndivisualMesh())
     {
         if (!isShadowMesh)
@@ -417,7 +417,7 @@ bool nMaxScene::Postprocess()
                 // shadow mesh needs to call CreateEdges() which should be called after Cleanup()
                 this->globalMeshBuilder.CreateEdges();
             }
-                       
+
             // check the mesh for geometry error.
             nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
 
@@ -445,9 +445,9 @@ bool nMaxScene::Postprocess()
     }
 
     nMaxBoneManager *bm = nMaxBoneManager::Instance();
-    if (nMaxBoneManager::Instance()->GetNumBones() > 0) 
+    if (nMaxBoneManager::Instance()->GetNumBones() > 0)
     {
-        for (int skelIndex = 0; skelIndex < bm->GetNumSkeletons(); skelIndex++) 
+        for (int skelIndex = 0; skelIndex < bm->GetNumSkeletons(); skelIndex++)
         {
             // export .anim2 and skin animator, if the exported scene has skinned mesh.
             nString animFilename = this->GetAnimFileNameToSave(skelIndex);
@@ -494,7 +494,7 @@ bool nMaxScene::Postprocess()
 /**
     Returns animation file name without extension.
 */
-nString nMaxScene::GetAnimFileNameToSaveBase() 
+nString nMaxScene::GetAnimFileNameToSaveBase()
 {
     nString animFilename;
     animFilename += nMaxOptions::Instance()->GetSaveFileName();
@@ -506,7 +506,7 @@ nString nMaxScene::GetAnimFileNameToSaveBase()
 //-----------------------------------------------------------------------------
 /**
 */
-nString nMaxScene::GetAnimFileNameToSave(int skelIndex) 
+nString nMaxScene::GetAnimFileNameToSave(int skelIndex)
 {
     nString animFilename;
     animFilename += this->GetAnimFileNameToSaveBase();
@@ -519,7 +519,7 @@ nString nMaxScene::GetAnimFileNameToSave(int skelIndex)
 //-----------------------------------------------------------------------------
 /**
 */
-nString nMaxScene::GetMeshFileNameToSave() 
+nString nMaxScene::GetMeshFileNameToSave()
 {
     nString filename;
     filename += nMaxOptions::Instance()->GetMeshesAssign();
@@ -536,7 +536,7 @@ nString nMaxScene::GetMeshFileNameToSave()
 //-----------------------------------------------------------------------------
 /**
 */
-nString nMaxScene::GetFileNameToSave() 
+nString nMaxScene::GetFileNameToSave()
 {
     nString tmp = nMaxOptions::Instance()->GetSaveFilePath().Get();
 
@@ -559,7 +559,7 @@ bool nMaxScene::ExportNodes(INode* inode)
     n_dbgout("Current Node: %s.\n", inode->GetName());
 #endif
 
-    //TODO: check any errors exist in stack. 
+    //TODO: check any errors exist in stack.
     //      if there, return false to exit export.
 
     nSceneNode* createdNode = 0;
@@ -626,7 +626,7 @@ bool nMaxScene::ExportNodes(INode* inode)
         nMaxAnimator animator;
         animator.Export(inode);
 
-        
+
         // HACK: do not export xform if there is skin animation
         nClass* clazz = createdNode->GetClass();
         if (nString(clazz->GetName()) != "nskinshapenode") {
@@ -657,7 +657,7 @@ bool nMaxScene::ExportNodes(INode* inode)
 
 //-----------------------------------------------------------------------------
 /**
-    Export anything else. 
+    Export anything else.
 
     @note
     To be derived in subclasses.
@@ -669,7 +669,7 @@ nSceneNode* nMaxScene::ExportNodesHook(SClass_ID sID, INode* inode, Object* obj)
 //-----------------------------------------------------------------------------
 /**
 */
-nSceneNode* nMaxScene::ExportDummy(INode* inode, Object* obj) 
+nSceneNode* nMaxScene::ExportDummy(INode* inode, Object* obj)
 {
     nMaxDummy dummyNode;
     return dummyNode.Export(inode);
@@ -678,7 +678,7 @@ nSceneNode* nMaxScene::ExportDummy(INode* inode, Object* obj)
 //-----------------------------------------------------------------------------
 /**
 */
-nSceneNode* nMaxScene::ExportCamera(INode* inode, Object* obj) 
+nSceneNode* nMaxScene::ExportCamera(INode* inode, Object* obj)
 {
     nMaxCamera camera;
     camera.Export(inode, obj);
@@ -696,7 +696,7 @@ nSceneNode* nMaxScene::ExportLight(INode* inode, Object* obj) {
 //-----------------------------------------------------------------------------
 /**
 */
-nSceneNode* nMaxScene::ExportGeomObject(INode* inode, Object* obj) 
+nSceneNode* nMaxScene::ExportGeomObject(INode* inode, Object* obj)
 {
     nSceneNode* createdNode = 0;
     if (obj->IsRenderable())
@@ -707,7 +707,7 @@ nSceneNode* nMaxScene::ExportGeomObject(INode* inode, Object* obj)
 
         // export only renderable geometry objects from the scene.
         if ((!inode->IsNodeHidden() || exportHidden ) &&
-            !nMaxBoneManager::Instance()->IsBone(inode) && 
+            !nMaxBoneManager::Instance()->IsBone(inode) &&
             !nMaxBoneManager::Instance()->IsFootStep(inode))
             //!nMaxBoneManager::Instance()->FindBoneIDByNode(inode))
         {
@@ -719,7 +719,7 @@ nSceneNode* nMaxScene::ExportGeomObject(INode* inode, Object* obj)
 
 //-----------------------------------------------------------------------------
 /**
-    Export geometry type of nodes. 
+    Export geometry type of nodes.
 
     @note
     A geometry class type of objects are normally meshes or bones in 3dsmax.
@@ -727,7 +727,7 @@ nSceneNode* nMaxScene::ExportGeomObject(INode* inode, Object* obj)
 nSceneNode* nMaxScene::ExportGeomObject2(INode* inode)
 {
     nSceneNode* createdNode = 0;
-    
+
     if (nMaxUtil::IsMorphObject(inode))
     {
         return ExportMorph();
@@ -804,7 +804,7 @@ void nMaxScene::CollectTopLevelNodes(INode* inode)
         return;
 
     const int numChildren = inode->NumberOfChildren();
-    
+
     for (int i=0; i<numChildren; i++)
     {
         INode* child = inode->GetChildNode(i);
@@ -856,7 +856,7 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
 
         bXForm = true;
     }
-    
+
     if (!(flag & ROT_IDENT))
     {
         quaternion rot (-ap.q.x, ap.q.z, ap.q.y, -ap.q.w);

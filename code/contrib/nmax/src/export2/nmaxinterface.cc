@@ -24,7 +24,7 @@ nMaxInterface::~nMaxInterface()
 
 //-----------------------------------------------------------------------------
 /**
-    DO NOT FORGET TO CALL 'n_delete' for intance of nMaxOption 
+    DO NOT FORGET TO CALL 'n_delete' for intance of nMaxOption
     when application exit.
 */
 nMaxInterface* nMaxInterface::Instance()
@@ -32,7 +32,7 @@ nMaxInterface* nMaxInterface::Instance()
     //n_assert(Singleton);
     //return Singleton;
 
-    // nMaxInterface is not nRoot derived class, so we make its instance 
+    // nMaxInterface is not nRoot derived class, so we make its instance
     // directly with n_new if it is not created before.
     if (0 == Singleton)
     {
@@ -54,7 +54,7 @@ bool nMaxInterface::Create(Interface * intf)
     return true;
 }
 
-// This function passed to ProgressStart() is a dummy function, 
+// This function passed to ProgressStart() is a dummy function,
 // and the processing is done outside it
 DWORD WINAPI fn(LPVOID arg)
 {
@@ -79,11 +79,11 @@ void nMaxInterface::ProgressUpdate(int percent)
 
 //-----------------------------------------------------------------------------
 /**
-    @return 
+    @return
 */
 bool nMaxInterface::CheckUserCancel()
 {
-    if (this->maxInterface->GetCancel()) 
+    if (this->maxInterface->GetCancel())
     {
         int ret = MessageBox(this->maxInterface->GetMAXHWnd(), _T("Really Cancel"),
             _T("Question"), MB_ICONQUESTION | MB_YESNO);
@@ -92,7 +92,7 @@ bool nMaxInterface::CheckUserCancel()
         {
             return true;
         }
-        else 
+        else
         if (ret == IDNO)
         {
             this->maxInterface->SetCancel(FALSE);

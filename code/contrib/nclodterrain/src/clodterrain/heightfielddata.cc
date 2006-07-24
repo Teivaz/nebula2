@@ -5,9 +5,9 @@
 #include "clodterrain/heightfielddata.h"
 #include "kernel/nfileserver2.h"
 
-HeightFieldData::HeightFieldData(float xscale, float yscale, float zscale) 
+HeightFieldData::HeightFieldData(float xscale, float yscale, float zscale)
 : m_bitmapxsize(0), m_bitmapysize(0), m_logxsize(0), m_logysize(0),
-  m_xscale(xscale), m_yscale(yscale), m_zscale(zscale), 
+  m_xscale(xscale), m_yscale(yscale), m_zscale(zscale),
   m_activations(NULL), m_heights(NULL)
 { }
 
@@ -128,9 +128,9 @@ void HeightFieldData::dumpActivationLevels(nString dumpfilename, unsigned int ma
     delete[] rgbval;
 }
 
-Sint16 HeightFieldData::height_query(unsigned int level, unsigned int x, unsigned int y, 
-                        unsigned int ax, unsigned int ay, 
-                        unsigned int rx, unsigned int ry, 
+Sint16 HeightFieldData::height_query(unsigned int level, unsigned int x, unsigned int y,
+                        unsigned int ax, unsigned int ay,
+                        unsigned int rx, unsigned int ry,
                         unsigned int lx, unsigned int ly)
 // Returns the height of the query point (x,y) within the triangle (a, r, l),
 // as tesselated to the specified LOD.

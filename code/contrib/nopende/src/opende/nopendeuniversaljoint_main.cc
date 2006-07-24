@@ -37,7 +37,7 @@ nOpendeUniversalJoint::~nOpendeUniversalJoint()
 */
 void nOpendeUniversalJoint::SetAnchor( const vector3& a )
 {
-    n_assert( this->id && "nOpendeJoint::id not valid!" );  
+    n_assert( this->id && "nOpendeJoint::id not valid!" );
     nOpende::JointSetUniversalAnchor( this->id, a );
 }
 

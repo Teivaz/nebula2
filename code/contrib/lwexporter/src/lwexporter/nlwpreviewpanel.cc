@@ -22,8 +22,8 @@ nLWPreviewPanel::nLWPreviewPanel(wxWindow* parent, const nLWCmdExec& cmdExec) :
     cmdExec(cmdExec)
 {
     wxString choices[] = { _T("Selected Objects"), _T("Entire Scene") };
-    this->radioBox = new wxRadioBox(this, wxID_ANY, "", 
-                                    wxDefaultPosition, wxDefaultSize, 
+    this->radioBox = new wxRadioBox(this, wxID_ANY, "",
+                                    wxDefaultPosition, wxDefaultSize,
                                     2, choices,
                                     2, wxRA_SPECIFY_ROWS);
 
@@ -75,7 +75,7 @@ nLWPreviewPanel::OnCancelBtn(wxCommandEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWPreviewPanel::RunPreview(nLWExporter::ExportMode exportMode)
 {
     nLWExporter exporter(&this->cmdExec);
@@ -86,8 +86,8 @@ nLWPreviewPanel::RunPreview(nLWExporter::ExportMode exportMode)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWPreviewPanel::Activate(long version, GlobalFunc* global, 
+XCALL_(int)
+nLWPreviewPanel::Activate(long version, GlobalFunc* global,
                           LWLayoutGeneric* local, void* /*serverData*/)
 {
     if (version != LWINTERFACE_VERSION)

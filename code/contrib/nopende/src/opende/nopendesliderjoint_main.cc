@@ -70,7 +70,7 @@ float nOpendeSliderJoint::GetPositionRate()
 
 //----------------------------------------------------------------------------
 /**
-*/          
+*/
 void nOpendeSliderJoint::SetParam( int param, float value )
 {
     n_assert( this->id && "nOpendeJoint::id not valid!" );
@@ -85,7 +85,7 @@ float nOpendeSliderJoint::GetParam( int param )
     n_assert( this->id && "nOpendeJoint::id not valid!" );
     return nOpende::JointGetSliderParam( this->id, param );
 }
-        
+
 //----------------------------------------------------------------------------
 // EOF
 //----------------------------------------------------------------------------

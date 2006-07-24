@@ -15,7 +15,7 @@ static void n_GetNumGeoms( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendespace
-    
+
     @superclass
     nroot
 

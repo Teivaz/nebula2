@@ -40,7 +40,7 @@ void nMaxAnimState::AddClip(const char* weightChannelName)
 //---------------------------------------------------------------------------
 /**
 */
-const nString& 
+const nString&
 nMaxAnimState::GetClip(int index) const
 {
     n_assert(index >= 0);
@@ -134,7 +134,7 @@ void nMaxNoteTrack::GetAnimState(INode* inode)
                     }
 
                     int durLen = note.Length() - idx - 1;
-                    if (durLen > 0) 
+                    if (durLen > 0)
                     {
                         strDuration = nMaxUtil::CorrectName(note.ExtractRange(idx+1, durLen));
                         duration = strDuration.AsInt();//duration = atoi(strDuration.Get());

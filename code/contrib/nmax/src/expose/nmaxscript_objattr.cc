@@ -40,7 +40,7 @@ void nObjectAttribute::SetFilename(const nString& name)
 /**
     Open specified xml file and parse it.
 
-    To parse xml file, the name of the xml file should be specified first 
+    To parse xml file, the name of the xml file should be specified first
     with calling nObjectAttribute::SetFilename().
 
     @return If there's no xml file to parse, return false.
@@ -92,7 +92,7 @@ void nObjectAttribute::ClearCommandList()
 
 //------------------------------------------------------------------------------
 /**
-    Parsing given xml file. 
+    Parsing given xml file.
 
     The name of the xml file is identical to the nebula object name.
     e.g. ntransformnode -> ntransformnode.xml
@@ -150,7 +150,7 @@ bool nObjectAttribute::ParseXmlFile()
 //------------------------------------------------------------------------------
 /**
 */
-nObjectAttribute::Command::Command() : 
+nObjectAttribute::Command::Command() :
     fMin(-3.40E38f),
     fMax(3.40E38f)
 {

@@ -10,7 +10,7 @@ static void n_Create2( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendequadtreespace
-    
+
     @superclass
     nopendespace
 
@@ -39,7 +39,7 @@ n_initcmds(nClass* clazz)
     v
 
     @info
-    nOpendeSpaceName should be the NOH path of the parent space, use "none" 
+    nOpendeSpaceName should be the NOH path of the parent space, use "none"
     to indicate this space doesn't have a parent.
 */
 static

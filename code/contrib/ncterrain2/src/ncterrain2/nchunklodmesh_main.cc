@@ -8,7 +8,7 @@
 #include "gfx2/nmesh2.h"
 #include "gfx2/ngfxserver2.h"
 
-nNebulaClass(nChunkLodMesh, "resource::nresource");
+nNebulaClass(nChunkLodMesh, "nresource");
 
 //------------------------------------------------------------------------------
 /**

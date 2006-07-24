@@ -17,7 +17,7 @@
 #include "il/il.h"
 #include "il/ilu.h"
 
-nNebulaScriptClass(nCLODTQTSplatterNode, "kernel::nroot");
+nNebulaScriptClass(nCLODTQTSplatterNode, "nroot");
 
 #define TQTTILE_HEADER_BYTES (8)
 #define TQT_TOCENTRYSIZE (3 * sizeof(int))

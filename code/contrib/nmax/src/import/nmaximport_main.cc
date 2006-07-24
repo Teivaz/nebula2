@@ -50,7 +50,7 @@ int nMaxImport::DoImport(const TCHAR *name, ImpInterface *i, Interface *gi, BOOL
         nMaxMeshImport meshImport;
         return (meshImport.Import(filename.Get(), i) ? 1 : 0);
     }
-    
+
     return 1;
 }
 
@@ -62,7 +62,7 @@ bool nMaxImport::IsMeshFile(const nString &filename)
 {
     if (filename.CheckExtension("n3d2") ||
         filename.CheckExtension("n3d")  ||
-        filename.CheckExtension("nvx2") || 
+        filename.CheckExtension("nvx2") ||
         filename.CheckExtension("nvx")  ||
         filename.CheckExtension("obj") )
         return true;

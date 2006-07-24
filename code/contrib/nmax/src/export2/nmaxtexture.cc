@@ -105,8 +105,8 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
     {
         // A common mistake on this warning is that:
         // Usually there is more than one texmap object in Nebula2 custom material.
-        // For example, standard material has two texmap objects, one for diffuse map 
-        // and the other for bump map. 
+        // For example, standard material has two texmap objects, one for diffuse map
+        // and the other for bump map.
         // The warning will be shown If you set only diffuse map.
         n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
         return;
@@ -135,7 +135,7 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
 
         // get uv transform if it exist.
         StdUVGen* uvGen = ((BitmapTex *)texmap)->GetUVGen();
-  
+
         ExportUVTransform(uvGen, shapeNode);
 
         nMaxUVAnimator maxAnimator;
@@ -292,7 +292,7 @@ nShaderState::Param nMaxTexture::GetShaderParamFromStdMapSlot(StdUVGen* uvGen, i
         case 3: shaderParam = nShaderState::AmbientMap2; break;
         case 4: shaderParam = nShaderState::AmbientMap3; break;
         default:
-            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used", 
+            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used",
                         SubMapIDToString(subID), mapChannel);
             shaderParam = nShaderState::AmbientMap0;
             break;
@@ -307,7 +307,7 @@ nShaderState::Param nMaxTexture::GetShaderParamFromStdMapSlot(StdUVGen* uvGen, i
         case 3: shaderParam = nShaderState::DiffMap2; break;
         case 4: shaderParam = nShaderState::DiffMap3; break;
         default:
-            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used", 
+            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used",
                 SubMapIDToString(subID), mapChannel);
             shaderParam = nShaderState::DiffMap0;
             break;
@@ -322,7 +322,7 @@ nShaderState::Param nMaxTexture::GetShaderParamFromStdMapSlot(StdUVGen* uvGen, i
         case 3: shaderParam = nShaderState::SpecMap2; break;
         case 4: shaderParam = nShaderState::SpecMap3; break;
         default:
-            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used", 
+            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used",
                 SubMapIDToString(subID), mapChannel);
             shaderParam = nShaderState::SpecMap0;
             break;
@@ -337,7 +337,7 @@ nShaderState::Param nMaxTexture::GetShaderParamFromStdMapSlot(StdUVGen* uvGen, i
         case 3: shaderParam = nShaderState::BumpMap2; break;
         case 4: shaderParam = nShaderState::BumpMap3; break;
         default:
-            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used", 
+            n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used",
                 SubMapIDToString(subID), mapChannel);
             shaderParam = nShaderState::SpecMap0;
             break;
@@ -373,7 +373,7 @@ nShaderState::Param nMaxTexture::GetShaderParamFromStdMapSlot(StdUVGen* uvGen, i
     Check texture map ID is identical to given class ID.
 
     @param texmap
-    @param classID 
+    @param classID
 */
 bool nMaxTexture::IsClassID(Texmap* texmap, ulong classID)
 {

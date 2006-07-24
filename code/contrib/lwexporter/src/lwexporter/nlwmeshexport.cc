@@ -20,7 +20,7 @@
 /**
 */
 nLWMeshExport::nLWMeshExport(const nString& meshName,
-                             nLWObjectExportSettings* objSettings, 
+                             nLWObjectExportSettings* objSettings,
                              nLWLayoutMonitor* monitor) :
     meshName(meshName),
     objSettings(objSettings),
@@ -71,7 +71,7 @@ nLWMeshExport::~nLWMeshExport()
 /**
     @return true if the mesh was exported successfully, false otherwise.
 */
-bool 
+bool
 nLWMeshExport::Run()
 {
     nLWExporterSettings* exporterSettings = nLWExporterSettings::Instance();
@@ -162,16 +162,16 @@ nLWMeshExport::Run()
 
     // partition the mesh if necessary (for skinning)
     this->PartitionMesh();
-    
+
     this->ConstructMeshFileName();
-    
+
     return this->Save();
 }
 
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWMeshExport::NeedUV() const
 {
     nLWExporterSettings* exps = nLWExporterSettings::Instance();
@@ -192,7 +192,7 @@ nLWMeshExport::NeedUV() const
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWMeshExport::NeedNormals() const
 {
     nLWExporterSettings* exps = nLWExporterSettings::Instance();
@@ -210,7 +210,7 @@ nLWMeshExport::NeedNormals() const
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWMeshExport::Save()
 {
     nKernelServer* ks = nKernelServer::Instance();
@@ -220,7 +220,7 @@ nLWMeshExport::Save()
         return false;
     }
 
-    // if the mesh was partitioned we need to save the partitioned mesh 
+    // if the mesh was partitioned we need to save the partitioned mesh
     // builder otherwise just save the unpartitioned one
     nMeshBuilder* meshBuilderToSave = &this->meshBuilder;
     if (this->skinMeshBuilder)
@@ -256,7 +256,7 @@ nLWMeshExport::Save()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderExportSettings* 
+nLWShaderExportSettings*
 nLWMeshExport::GetShaderForGroup(int groupIdx) const
 {
     nLWSettingsRegistry* registry = nLWSettingsRegistry::Instance();
@@ -271,7 +271,7 @@ nLWMeshExport::GetShaderForGroup(int groupIdx) const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWMeshExport::ConstructMeshFileName()
 {
     nLWGlobals::ObjectInfo objectInfo;
@@ -295,7 +295,7 @@ nLWMeshExport::ConstructMeshFileName()
     objFileDir.ConvertBackslashes();
     objFileDir.StripTrailingSlash();
     objFileDir += "/";
-    
+
     // the absolute path to the current Lightwave Objects directory.
     nLWGlobals::DirInfoFunc dirInfo;
     nString lwObjectsDir = dirInfo.GetObjectsDir();
@@ -439,9 +439,9 @@ nLWMeshExport::ExtractMeshTriangles()
     LWItemID curItemId = this->objSettings->GetItemId();
     int maxPolygons = objectInfo.Get()->numPolygons(curItemId);
     if (maxPolygons > 0)
-    {    
+    {
         // allocate storage to be used during the polygon scan,
-        // some polygons may be discarded during the scan so the final 
+        // some polygons may be discarded during the scan so the final
         // number of polygons may be less than expected
         this->meshPolygons.Reallocate(maxPolygons, 0);
         // scan all polygons
@@ -493,7 +493,7 @@ nLWMeshExport::CollectUsedSurfaces(nArray<MeshSurface>& allSurfaces)
         // copy the used surface id to the surface id array passed in
         if (allSurfaces[surfIdx].used)
         {
-            this->usedSurfaceArray.PushBack(allSurfaces[surfIdx].id);        
+            this->usedSurfaceArray.PushBack(allSurfaces[surfIdx].id);
         }
     }
 }
@@ -672,7 +672,7 @@ nLWMeshExport::CollectUV()
 /**
 */
 void
-nLWMeshExport::CollectWeightMaps(LWItemID boneId, 
+nLWMeshExport::CollectWeightMaps(LWItemID boneId,
                                  nArray<nString>& weightMapNames,
                                  LWItemInfo* itemInfo,
                                  LWBoneInfo* boneInfo)
@@ -681,7 +681,7 @@ nLWMeshExport::CollectWeightMaps(LWItemID boneId,
     if (weightMapName.IsEmpty())
     {
         nString msg;
-        msg.Format("[WARNING] Bone %s doesn't have a weight-map!\n", 
+        msg.Format("[WARNING] Bone %s doesn't have a weight-map!\n",
                    itemInfo->name(boneId));
         if (this->monitor)
         {
@@ -700,7 +700,7 @@ nLWMeshExport::CollectWeightMaps(LWItemID boneId,
     {
         if (itemInfo->type(childId) == LWI_BONE)
         {
-            this->CollectWeightMaps(childId, weightMapNames, itemInfo, 
+            this->CollectWeightMaps(childId, weightMapNames, itemInfo,
                                     boneInfo);
         }
         childId = itemInfo->nextChild(boneId, childId);
@@ -710,16 +710,16 @@ nLWMeshExport::CollectWeightMaps(LWItemID boneId,
 //----------------------------------------------------------------------------
 /**
 */
-void 
-nLWMeshExport::MapWeightMapsToJointIndices(LWItemID boneId, 
-                                           const nArray<nString>& weightMapNames, 
+void
+nLWMeshExport::MapWeightMapsToJointIndices(LWItemID boneId,
+                                           const nArray<nString>& weightMapNames,
                                            nKeyArray<int>& weightMapIndexToJointIndex,
                                            const nLWBoneJointMap& boneJointMap,
                                            LWItemInfo* itemInfo,
                                            LWBoneInfo* boneInfo)
 {
     nString weightMapName(boneInfo->weightMap(boneId));
-    // the bone may not have a weight map (assumption is that in that case it 
+    // the bone may not have a weight map (assumption is that in that case it
     // doesn't actually influence any vertices, just other joints)
     if (!weightMapName.IsEmpty())
     {
@@ -739,9 +739,9 @@ nLWMeshExport::MapWeightMapsToJointIndices(LWItemID boneId,
     {
         if (itemInfo->type(childId) == LWI_BONE)
         {
-            this->MapWeightMapsToJointIndices(childId, weightMapNames, 
-                                              weightMapIndexToJointIndex, 
-                                              boneJointMap, 
+            this->MapWeightMapsToJointIndices(childId, weightMapNames,
+                                              weightMapIndexToJointIndex,
+                                              boneJointMap,
                                               itemInfo, boneInfo);
         }
         childId = itemInfo->nextChild(boneId, childId);
@@ -752,7 +752,7 @@ nLWMeshExport::MapWeightMapsToJointIndices(LWItemID boneId,
 /**
 */
 bool
-nLWMeshExport::MapWeightMapsToPointers(const nArray<nString>& weightMapNames, 
+nLWMeshExport::MapWeightMapsToPointers(const nArray<nString>& weightMapNames,
                                        nKeyArray<void*>& weightMapIndexToPtr)
 {
     n_assert(this->curMeshInfo);
@@ -767,7 +767,7 @@ nLWMeshExport::MapWeightMapsToPointers(const nArray<nString>& weightMapNames,
         if (!vmap)
         {
             nString msg;
-            msg.Format("[ERROR] Failed to find weight map %s\n", 
+            msg.Format("[ERROR] Failed to find weight map %s\n",
                        weightMapNames[i].Get());
             if (this->monitor)
             {
@@ -834,7 +834,7 @@ nLWMeshExport::CollectJointWeights()
 
     // get a list of all bone weight map names
     nArray<nString> weightMapNames;
-    this->CollectWeightMaps(rootBoneId, weightMapNames, 
+    this->CollectWeightMaps(rootBoneId, weightMapNames,
                             itemInfo.Get(), boneInfo.Get());
     int numWeightMaps = weightMapNames.Size();
 
@@ -846,16 +846,16 @@ nLWMeshExport::CollectJointWeights()
     }
     n_printf("Weightmaps Ends\n");
     */
-    
+
     // create a mapping of bone ids to joint indices
     nLWBoneJointMap boneJointMap;
     boneJointMap.Fill(rootBoneId);
 
     // create a mapping of weight map indices to joint indices
     nKeyArray<int> weightMapIndexToJointIndex;
-    this->MapWeightMapsToJointIndices(rootBoneId, weightMapNames, 
-                                      weightMapIndexToJointIndex, 
-                                      boneJointMap, itemInfo.Get(), 
+    this->MapWeightMapsToJointIndices(rootBoneId, weightMapNames,
+                                      weightMapIndexToJointIndex,
+                                      boneJointMap, itemInfo.Get(),
                                       boneInfo.Get());
 
     /*
@@ -863,7 +863,7 @@ nLWMeshExport::CollectJointWeights()
     for (int i = 0; i < weightMapIndexToJointIndex.Size(); i++)
     {
         n_printf("Map: %s    Joint %d\n",
-                 weightMapNames[weightMapIndexToJointIndex.GetKeyAt(i)].Get(), 
+                 weightMapNames[weightMapIndexToJointIndex.GetKeyAt(i)].Get(),
                  weightMapIndexToJointIndex.GetElementAt(i));
     }
     n_printf("Weight Map To Joint Mapping Ends\n");
@@ -878,16 +878,16 @@ nLWMeshExport::CollectJointWeights()
     for (int i = 0; i < weightMapIndexToPtr.Size(); i++)
     {
         n_printf("Map: %s    Pointer %x\n",
-                 weightMapNames[weightMapIndexToPtr.GetKeyAt(i)].Get(), 
+                 weightMapNames[weightMapIndexToPtr.GetKeyAt(i)].Get(),
                  weightMapIndexToPtr.GetElementAt(i));
     }
     n_printf("Weight Map To Pointers Mapping Ends\n");
     */
-    
+
     bool negativeWeightFound = false;
     bool overFourWeightsFound = false;
     bool weightsNormalized = false;
-    
+
     // copy joint indices and weights into the mesh builder
     for (int polyIdx = 0; polyIdx < this->meshPolygons.Size(); polyIdx++)
     {
@@ -915,11 +915,11 @@ nLWMeshExport::CollectJointWeights()
                     n_assert(false);
                     break;
                 }
-                
+
                 float vWeight = 0.0f;
-                if (this->curMeshInfo->pntVGet(pointId, &vWeight)) 
+                if (this->curMeshInfo->pntVGet(pointId, &vWeight))
                 {
-                    if (vWeight < 0.0f) 
+                    if (vWeight < 0.0f)
                     {
                         negativeWeightFound = true;
                     }
@@ -938,9 +938,9 @@ nLWMeshExport::CollectJointWeights()
                     }
                 }
             }
-            vector4 jointsVec((float)jointIndices[0], (float)jointIndices[1], 
+            vector4 jointsVec((float)jointIndices[0], (float)jointIndices[1],
                               (float)jointIndices[2], (float)jointIndices[3]);
-            vector4 weightsVec(jointWeights[0], jointWeights[1], 
+            vector4 weightsVec(jointWeights[0], jointWeights[1],
                                jointWeights[2], jointWeights[3]);
             float totalWeight = weightsVec.x + weightsVec.y + weightsVec.z + weightsVec.w;
             // normalize weights if necessary so the sum of all weights for a vertex is 1.0
@@ -991,7 +991,7 @@ nLWMeshExport::CollectJointWeights()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWMeshExport::ExtractGeometry()
 {
     nLWGlobals::ObjectInfo objectInfo;
@@ -1010,7 +1010,7 @@ nLWMeshExport::ExtractGeometry()
     this->ExtractAllMeshSurfaces(surfaceArray);
     // get all the triangles from Lightwave (don't put them into the mesh builder yet)
     this->ExtractMeshTriangles();
-    
+
     if (!this->meshPolygons.Empty())
     {
         // figure out which surfaces are actually used
@@ -1025,13 +1025,13 @@ nLWMeshExport::ExtractGeometry()
             // add the UV components to the triangles in the mesh builder
             this->CollectUV();
         }
-        
+
         if (this->NeedJointWeights())
         {
             // add the joint indices and weights to the triangles in the mesh builder
             this->CollectJointWeights();
         }
-        
+
         // get the mesh builder ready for the next stage of processing
         this->meshBuilder.SortTriangles();
         // remove redundant vertices
@@ -1073,8 +1073,8 @@ nLWMeshExport::PartitionMesh()
         nSkinPartitioner skinPartitioner;
         const int maxJointPaletteSize = 24; // TODO: make this adjustable via exporter settings
 
-        if (skinPartitioner.PartitionMesh(this->meshBuilder, 
-                                          *this->skinMeshBuilder, 
+        if (skinPartitioner.PartitionMesh(this->meshBuilder,
+                                          *this->skinMeshBuilder,
                                           maxJointPaletteSize))
         {
             // store the mapping of fragments to pre-partitioning mesh groups
@@ -1087,7 +1087,7 @@ nLWMeshExport::PartitionMesh()
             {
                 this->groupFragmentsArray[groupIdx] = n_new(nArray<int>());
             }
-            
+
             // map pre-partitioning mesh groups to fragments
             // each group will be mapped to one or more fragments
             for (int groupIdx = 0; groupIdx < this->numMeshGroups; groupIdx++)
@@ -1104,7 +1104,7 @@ nLWMeshExport::PartitionMesh()
             // pre-allocate some space
             this->fragmentJointsArray.SetFixedSize(skinPartitioner.GetNumPartitions());
             this->fragmentJointsArray.Fill(0, this->fragmentJointsArray.Size(), 0);
-            
+
             // map fragments to joint indices
             // each fragment will be mapped to one or more joint indices
             for (int fragIdx = 0; fragIdx < fragmentGroupArray.Size(); fragIdx++)

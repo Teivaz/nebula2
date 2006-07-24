@@ -88,10 +88,10 @@ main(int argc, const char** argv)
                "-y                      y position of the window (default: 0)\n");
         return 5;
     }
-    
+
     // initialize a display mode object
     nString title;
-    
+
     title.Append("PhysDemo");
     nDisplayMode2 displayMode;
     if (fullscreenArg)

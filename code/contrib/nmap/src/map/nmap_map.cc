@@ -12,7 +12,7 @@
     Load height map from image file.
     Set isDirty to false when done.
 */
-void 
+void
 nMap::LoadMap()
 {
     if (!isDataDirty)
@@ -20,7 +20,7 @@ nMap::LoadMap()
         return;
     }
 
-    
+
     const char * path = GetHeightMap();
     nString mangledPath = this->refFileServer->ManglePath(path);
 
@@ -49,11 +49,11 @@ nMap::LoadMap()
 /**
     Read in heightmap info from image file.
 */
-bool 
+bool
 nMap::LoadFromImage(const nString& abs_path)
 {
     bool retval = false;
-    
+
     nBmpFile bmp_file;
     if (bmp_file.Open(abs_path.Get(), "rb"))
     {
@@ -87,7 +87,7 @@ nMap::LoadFromImage(const nString& abs_path)
         line_pf.BeginConv(file_pf);
         while ((l = bmp_file.ReadLine(act_y))) {
             line_pf.Conv(l,line_buf, mapDimension);
-            
+
             int y = mapDimension-1 - act_y;
 
             // Read single line
@@ -106,7 +106,7 @@ nMap::LoadFromImage(const nString& abs_path)
                 {
                     min_height = dbl_byte;
                 }
- 
+
                 float height = heightMin + heightScale*float(dbl_byte);
                 pointData[x + y*mapDimension].coord.set(gridInterval * float(x), height, gridInterval * float(y));
             }
@@ -118,7 +118,7 @@ nMap::LoadFromImage(const nString& abs_path)
         bmp_file.Close();
 
         // Figure bounding box
-        boundingBox.vmin.set(0.0f, 
+        boundingBox.vmin.set(0.0f,
                              heightMin + heightScale*float(min_height),
                              0.0f);
         boundingBox.vmax.set(gridInterval * mapDimension,
@@ -144,7 +144,7 @@ nMap::LoadFromImage(const nString& abs_path)
         -1   0   1          -1  -2  -1
 
 */
-void 
+void
 nMap::CalculateNormals()
 {
     vector3 ns, we, normal;

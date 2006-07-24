@@ -12,7 +12,7 @@ static void n_PointDepth( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendespheregeom
-    
+
     @superclass
     nopendegeom
 
@@ -42,7 +42,7 @@ n_initcmds(nClass* clazz)
 
     @info
 */
-static void 
+static void
 n_SetRadius( void* slf, nCmd* cmd )
 {
     nOpendeSphereGeom* self = (nOpendeSphereGeom*)slf;
@@ -62,7 +62,7 @@ n_SetRadius( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetRadius( void* slf, nCmd* cmd )
 {
     nOpendeSphereGeom* self = (nOpendeSphereGeom*)slf;
@@ -82,7 +82,7 @@ n_GetRadius( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_PointDepth( void* slf, nCmd* cmd )
 {
     nOpendeSphereGeom* self = (nOpendeSphereGeom*)slf;
@@ -106,7 +106,7 @@ bool nOpendeSphereGeom::SaveCmds( nPersistServer* ps )
         nCmd* cmd = ps->GetCmd( this, 'SRAD' );
         cmd->In()->SetF( this->GetRadius() );
         ps->PutCmd( cmd );
-            
+
         return true;
     }
     return false;

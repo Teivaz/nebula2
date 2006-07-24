@@ -12,7 +12,7 @@
 
 #include "util/nstrlist.h"
 
-nNebulaClass(nCgFXShader, "gfx2::nshader2");
+nNebulaClass(nCgFXShader, "nshader2");
 
 const char* cgFX_modes[] = {"","OpenGL","DirectX8","DirectX9"};
 

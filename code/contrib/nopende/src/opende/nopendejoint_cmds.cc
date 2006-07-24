@@ -17,7 +17,7 @@ static void n_GetParam( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendejoint
-    
+
     @superclass
     nroot
 
@@ -126,7 +126,7 @@ void n_GetJointType( void* slf, nCmd* cmd )
 
     @info
     BodyIndex can be either 0 (first body) or 1 (second body).
-    nOpendeBody name may be "none" to indicate a body with a zero id 
+    nOpendeBody name may be "none" to indicate a body with a zero id
     (ie. the static environment).
 */
 static
@@ -169,7 +169,7 @@ void n_IsFeedbackEnabled( void* slf, nCmd* cmd )
     v
 
     @output
-    f(f1.x), f(f1.y), f(f1.z), f(t1.x), f(t1.y), f(t1.z), 
+    f(f1.x), f(f1.y), f(f1.z), f(t1.x), f(t1.y), f(t1.z),
     f(f2.x), f(f2.y), f(f2.z), f(t2.x), f(t2.y), f(t2.z)
 
     @info
@@ -207,7 +207,7 @@ void n_GetFeedback( void* slf, nCmd* cmd )
     v
 
     @info
-    Set a joint parameter. 
+    Set a joint parameter.
     ParamName must be one of:
         - lostop
         - histop
@@ -221,7 +221,7 @@ void n_GetFeedback( void* slf, nCmd* cmd )
         - suspensionerp
         - suspensioncfm
     AxisNum must be 1, 2, or 3.
-     
+
     For more info lookup dJointSet*Param in the ODE manual.
 */
 static
@@ -269,7 +269,7 @@ bool nOpendeJoint::SaveCmds( nPersistServer* ps )
     if ( nRoot::SaveCmds( ps ) )
     {
         nCmd* cmd;
-        
+
         // Create
         if ( this->ref_World.getname() )
         {
@@ -277,13 +277,13 @@ bool nOpendeJoint::SaveCmds( nPersistServer* ps )
             cmd->In()->SetS( this->ref_World.getname() );
             ps->PutCmd( cmd );
         }
-    
+
         // AttachTo
         cmd = ps->GetCmd( this, 'AT__' );
         cmd->In()->SetS( this->GetBodyName( 0 ) );
         cmd->In()->SetS( this->GetBodyName( 1 ) );
         ps->PutCmd( cmd );
-    
+
         return true;
     }
     return false;

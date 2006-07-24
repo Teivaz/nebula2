@@ -13,7 +13,7 @@
 #include "util/nstring.h"
 #include "ruby.h"
 
-nNebulaClass(nRubyServer, "kernel::nscriptserver");
+nNebulaClass(nRubyServer, "nscriptserver");
 
 extern VALUE rubycmd_New;
 extern VALUE rubycmd_Sel;

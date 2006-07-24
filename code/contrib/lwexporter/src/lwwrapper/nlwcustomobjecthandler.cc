@@ -14,7 +14,7 @@ nLWCustomObjectHandlerBase::~nLWCustomObjectHandlerBase()
 //----------------------------------------------------------------------------
 /**
 */
-LWError 
+LWError
 nLWCustomObjectHandlerBase::OnLoad(const LWLoadState* state)
 {
     // do nothing
@@ -24,7 +24,7 @@ nLWCustomObjectHandlerBase::OnLoad(const LWLoadState* state)
 //----------------------------------------------------------------------------
 /**
 */
-LWError 
+LWError
 nLWCustomObjectHandlerBase::OnSave(const LWSaveState* state)
 {
     // do nothing
@@ -34,7 +34,7 @@ nLWCustomObjectHandlerBase::OnSave(const LWSaveState* state)
 //----------------------------------------------------------------------------
 /**
 */
-const LWItemID* 
+const LWItemID*
 nLWCustomObjectHandlerBase::OnUseItems()
 {
     return 0;
@@ -43,7 +43,7 @@ nLWCustomObjectHandlerBase::OnUseItems()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWCustomObjectHandlerBase::OnChangeID(const LWItemID* idList)
 {
     // do nothing
@@ -52,7 +52,7 @@ nLWCustomObjectHandlerBase::OnChangeID(const LWItemID* idList)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWCustomObjectHandlerBase::OnEvaluate(const LWCustomObjAccess* access)
 {
     // do nothing
@@ -61,7 +61,7 @@ nLWCustomObjectHandlerBase::OnEvaluate(const LWCustomObjAccess* access)
 //----------------------------------------------------------------------------
 /**
 */
-unsigned int 
+unsigned int
 nLWCustomObjectHandlerBase::OnFlags()
 {
     return 0;
@@ -70,7 +70,7 @@ nLWCustomObjectHandlerBase::OnFlags()
 //----------------------------------------------------------------------------
 /**
 */
-LWError 
+LWError
 nLWCustomObjectHandlerBase::OnDisplayUI()
 {
     // do nothing

@@ -136,7 +136,7 @@ nGLServer2::OnDeviceLost(bool unloadManaged)
     // release other resources
     if (unloadManaged)
     {
-        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);      
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
     }
     else
     {
@@ -168,7 +168,7 @@ nGLServer2::OnDeviceLost(bool unloadManaged)
         this->depthStencilSurface->Release();
         this->depthStencilSurface = 0;
     }
-    
+
     #ifdef __NEBULA_STATS__
     // release the d3d query object
     if (this->queryResourceManager)

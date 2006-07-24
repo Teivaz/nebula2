@@ -31,7 +31,7 @@ nMaxDummy::~nMaxDummy()
 
 //-----------------------------------------------------------------------------
 /**
-    @note 
+    @note
         Do not create more than one nSceneNode derived node from the given node.
 */
 nSceneNode* nMaxDummy::Export(INode* inode)
@@ -50,15 +50,15 @@ nSceneNode* nMaxDummy::Export(INode* inode)
         if (inode->IsGroupHead())
         {
             // the node is group owner node.
-            // If this node is a group owner node(this is a dummy node in max), add 
+            // If this node is a group owner node(this is a dummy node in max), add
             // a transform node, so we can handle the group complete later)
             nTransformNode* transformNode;
-            transformNode = static_cast<nTransformNode*>(CreateNebulaObject("ntransformnode", 
+            transformNode = static_cast<nTransformNode*>(CreateNebulaObject("ntransformnode",
                                                                             inode->GetName()));
             createdNode = transformNode;
         }
     }
-    
+
     return createdNode;
 }
 
@@ -162,7 +162,7 @@ nSceneNode* nMaxDummy::ExportLODNode(INode *inode, TiXmlHandle &xmlHandle, const
 
 //-----------------------------------------------------------------------------
 /**
-    The given node has custom attributes for attachment node so, create 
+    The given node has custom attributes for attachment node so, create
     nAttachmentNode from its custom attributes.
 */
 nSceneNode* nMaxDummy::ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName)

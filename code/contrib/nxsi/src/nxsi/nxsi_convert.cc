@@ -51,7 +51,7 @@ void nXSI::ConvertSIPolygonList(CSLPolygonList* polyList)
     }
 
     // convert datas
-    { 
+    {
         // get poly buffers
         int* polyPositions = polyList->GetVertexIndicesPtr();
         int* polyNormals   = polyList->GetNormalIndicesPtr();
@@ -190,7 +190,7 @@ void nXSI::ConvertSITriangleStripList(CSLTriangleStripList* stripList)
 
     // copy datas
     for (j = 0; j < stripCount; j++)
-    { 
+    {
         CSLTriangleStrip* strip = strips[j];
 
         // get strip buffers

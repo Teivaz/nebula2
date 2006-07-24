@@ -167,7 +167,7 @@ nLWExportNodeType::LoadFromXML(TiXmlElement* elem)
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWExportNodeType::SaveToXML(TiXmlElement* elem) const
 {
     n_assert(elem);
@@ -178,7 +178,7 @@ nLWExportNodeType::SaveToXML(TiXmlElement* elem) const
 
     elem->SetAttribute("name", this->typeName.Get());
     TiXmlElement* settingElem = 0;
-    
+
     settingElem = n_new(TiXmlElement("setting"));
     if (settingElem)
     {
@@ -195,7 +195,7 @@ nLWExportNodeType::SaveToXML(TiXmlElement* elem) const
             n_delete(settingElem);
         }
     }
-    
+
     settingElem = n_new(TiXmlElement("setting"));
     if (settingElem)
     {

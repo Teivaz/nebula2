@@ -92,7 +92,7 @@ TestEmit()
 
     // bind signals with receiver methods
     emitter->BindSignal( Emitter::SignalTrigger, receiver, &Receiver::Trigger, 0 );
-    // 
+    //
     emitter->BindSignal( Emitter::SignalTrigger2, receiver, &Receiver::Trigger, 0 );
     emitter->BindSignal( Emitter::SignalOnInt, receiver, &Receiver::OnInt, 0 );
 
@@ -146,7 +146,7 @@ TestPost()
         time += TIME_INC;
         n_sleep( ACCEL_FACTOR * TIME_INC ); // use magic to accelerate time
     }
-    
+
     receiver->Release();
     emitter->Release();
 }
@@ -164,7 +164,7 @@ TestPriority()
     Receiver * receiver01 = static_cast<Receiver*>( ks->New( "receiver" ) );
     Receiver * receiver02 = static_cast<Receiver*>( ks->New( "receiver" ) );
     Receiver * receiver03 = static_cast<Receiver*>( ks->New( "receiver" ) );
-    
+
     // set the number of receiver to identify they.
     receiver01->SetNumber( 1 );
     receiver02->SetNumber( 2 );
@@ -211,8 +211,8 @@ TestScriptingTCL()
     nScriptServer* tclScript = static_cast<nScriptServer*>( ks->New( "ntclserver", "/sys/servers/script" ) );
     Emitter * emitter = static_cast<Emitter*>( ks->New( "emitter", "/signals/emitter" ) );
     Receiver * receiver = static_cast<Receiver*>( ks->New( "receiver" ) );
-    ReceiverScript * receiverScript = static_cast<ReceiverScript*>( 
-            ks->New( "receiverscript", "/signals/receiverscript" ) 
+    ReceiverScript * receiverScript = static_cast<ReceiverScript*>(
+            ks->New( "receiverscript", "/signals/receiverscript" )
         );
 
     // bind signals with receiver methods
@@ -280,8 +280,8 @@ TestScriptingLUA()
     nScriptServer* luaScript = static_cast<nScriptServer*>( ks->New( "nluaserver", "/sys/servers/luascript" ) );
     Emitter * emitter = static_cast<Emitter*>( ks->New( "emitter", "/signals/emitter" ) );
     Receiver * receiver = static_cast<Receiver*>( ks->New( "receiver" ) );
-    ReceiverScript * receiverScript = static_cast<ReceiverScript*>( 
-            ks->New( "receiverscript", "/signals/receiverscript" ) 
+    ReceiverScript * receiverScript = static_cast<ReceiverScript*>(
+            ks->New( "receiverscript", "/signals/receiverscript" )
         );
 
     // bind signals with receiver methods
@@ -354,8 +354,8 @@ TestScriptingPYTHON()
     nScriptServer* pyScript = static_cast<nScriptServer*>( ks->New( "npythonserver", "/sys/servers/pyscript" ) );
     Emitter * emitter = static_cast<Emitter*>( ks->New( "emitter", "/signals/emitter" ) );
     Receiver * receiver = static_cast<Receiver*>( ks->New( "receiver" ) );
-    ReceiverScript * receiverScript = static_cast<ReceiverScript*>( 
-            ks->New( "receiverscript", "/signals/receiverscript" ) 
+    ReceiverScript * receiverScript = static_cast<ReceiverScript*>(
+            ks->New( "receiverscript", "/signals/receiverscript" )
         );
 
     // bind signals with receiver methods
@@ -364,7 +364,7 @@ TestScriptingPYTHON()
     // create Python script
     // the script does binding.
     nString result;
-    nString programPython( 
+    nString programPython(
         "import pynebula; "
         "emitter = pynebula.lookup( '/signals/emitter' );"
         "receiver = pynebula.lookup( '/signals/receiverscript' );"
@@ -425,11 +425,11 @@ TestScriptingCmdsLUA()
 
     nScriptServer* luaScript = static_cast<nScriptServer*>( ks->New( "nluaserver", "/sys/servers/luascript" ) );
     Emitter * emitter = static_cast<Emitter*>( ks->New( "emitter", "/signals/emitter" ) );
-    ReceiverScript * receiverScript01 = static_cast<ReceiverScript*>( 
-            ks->New( "receiverscript", "/signals/receiverscript01" ) 
+    ReceiverScript * receiverScript01 = static_cast<ReceiverScript*>(
+            ks->New( "receiverscript", "/signals/receiverscript01" )
         );
-    ReceiverScript * receiverScript02 = static_cast<ReceiverScript*>( 
-            ks->New( "receiverscript", "/signals/receiverscript02" ) 
+    ReceiverScript * receiverScript02 = static_cast<ReceiverScript*>(
+            ks->New( "receiverscript", "/signals/receiverscript02" )
         );
 
     // create Lua script
@@ -471,13 +471,13 @@ TestScriptingCmdsLUA()
     emitter->BindSignal( "onint", receiverScript01, "ScriptCmds2", 0 );
 
     // bind with script cmds of receiverScript02
-    // the ScriptCmds1 has implementation for this object but the ScriptCmds2 
-    // hasn't implementation. Bind signal don't fail because it find 
+    // the ScriptCmds1 has implementation for this object but the ScriptCmds2
+    // hasn't implementation. Bind signal don't fail because it find
     // ScriptCmds2 in the class definition.
     emitter->BindSignal( "trigger", receiverScript02, "ScriptCmds1", 0 );
     emitter->BindSignal( "onint", receiverScript02, "ScriptCmds2", 0 );
 
-    // Emit Trigger signal only affect receiverScript01 because only it has 
+    // Emit Trigger signal only affect receiverScript01 because only it has
     // implementation.
     emitter->EmitSignal( "trigger" );
     // Emit OnInt signal affect the two objects, but with different behaviour

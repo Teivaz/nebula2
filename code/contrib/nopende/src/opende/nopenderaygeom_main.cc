@@ -72,8 +72,8 @@ void nOpendeRayGeom::Get( vector3& start, vector3& dir )
 void nOpendeRayGeom::SetParams( bool firstContact, bool backfaceCull )
 {
     n_assert( this->id() && "nOpendeRayGeom::id not valid!" );
-    nOpende::GeomRaySetParams( this->id(), 
-                               firstContact ? 1:0, 
+    nOpende::GeomRaySetParams( this->id(),
+                               firstContact ? 1:0,
                                backfaceCull ? 1:0 );
 }
 

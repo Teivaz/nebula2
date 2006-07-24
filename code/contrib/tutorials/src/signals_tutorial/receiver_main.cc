@@ -8,7 +8,7 @@
 #include "signals_tutorial/receiver.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaClass( Receiver, "kernel::nobject" );
+nNebulaClass( Receiver, "nobject" );
 //------------------------------------------------------------------------------
 //   EOF
 //------------------------------------------------------------------------------

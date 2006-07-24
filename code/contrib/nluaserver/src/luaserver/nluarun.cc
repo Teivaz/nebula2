@@ -25,11 +25,11 @@
 bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
 {
     n_assert2(errfunc > 0, "Error function stack index must be absolute!");
-    
+
     // call chunk main
-    int status = lua_pcall(this->L, 
-                           0 /* no args */, 
-                           LUA_MULTRET, 
+    int status = lua_pcall(this->L,
+                           0 /* no args */,
+                           LUA_MULTRET,
                            errfunc /* stack index of error handler */);
     if (0 != status) // error occured
     {
@@ -42,21 +42,21 @@ bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
         result.Clear();
         this->StackToString(this->L, 0, result);
     }
-    
+
     return (0 == status);
 }
 
 //--------------------------------------------------------------------
 /**
-    @brief Empties the Lua stack and returns a string representation 
+    @brief Empties the Lua stack and returns a string representation
            of the contents.
-           
+
     @param L Pointer to the Lua state.
     @param bottom Absolute index of the bottom stack item.
-    
+
     Only items between the bottom index and the stack top
-    (excluding the bottom index) will be crammed into the 
-    string, passing 0 for the bottom will dump all the 
+    (excluding the bottom index) will be crammed into the
+    string, passing 0 for the bottom will dump all the
     items in the stack.
 */
 void nLuaServer::StackToString(lua_State* L, int bottom, nString& result)
@@ -67,11 +67,11 @@ void nLuaServer::StackToString(lua_State* L, int bottom, nString& result)
         {
             case LUA_TBOOLEAN:
             {
-                if (lua_toboolean(L, -1)) 
+                if (lua_toboolean(L, -1))
                     result.Append("true");
-                else 
+                else
                     result.Append("false");
-                break;  
+                break;
             }
             case LUA_TNUMBER:
             case LUA_TSTRING:
@@ -121,7 +121,7 @@ void nLuaServer::StackToString(lua_State* L, int bottom, nString& result)
             }
             default:
                 //result.Append("???");
-                break;  
+                break;
         }
         lua_pop(L, -1);
     }
@@ -132,7 +132,7 @@ void nLuaServer::StackToString(lua_State* L, int bottom, nString& result)
 //--------------------------------------------------------------------
 nString nLuaServer::Prompt()
 {
-    nString prompt = kernelServer->GetCwd()->GetFullName();       
+    nString prompt = kernelServer->GetCwd()->GetFullName();
     prompt.Append("> ");
     return prompt;
 }
@@ -140,7 +140,7 @@ nString nLuaServer::Prompt()
 
 //--------------------------------------------------------------------
 /**
-    @brief Execute a chunk of Lua code and provide a string 
+    @brief Execute a chunk of Lua code and provide a string
            representation of the result.
     @param cmdStr A null-terminated string of Lua code.
     @param result The result (if any) of the execution of the Lua code.
@@ -182,11 +182,11 @@ bool nLuaServer::Run(const char *cmdStr, nString& result)
 bool nLuaServer::RunScript(const char *filename, nString& result)
 {
     n_assert(filename);
-    
+
     int filesize;
     char *cmdbuf;
     bool retval;
-    
+
     nFile* nfile = nFileServer2::Instance()->NewFileObject();
     nString path = nFileServer2::Instance()->ManglePath(filename);
     if (!nfile->Open(path.Get(), "r"))
@@ -195,25 +195,25 @@ bool nLuaServer::RunScript(const char *filename, nString& result)
         nfile->Release();
         return false;
     }
-    
+
     nfile->Seek(0, nFile::END);
     filesize = nfile->Tell();
     nfile->Seek(0, nFile::START);
-       
+
     cmdbuf = (char*)n_malloc(filesize + 1);
     n_assert2(cmdbuf, "Failed to allocate command buffer!");
     nfile->Read(cmdbuf, filesize + 1);
     cmdbuf[filesize] = 0;
-    
+
     nfile->Close();
     nfile->Release();
-    
+
     retval = this->Run(cmdbuf, result);
     if (!retval)
     {
         if (!result.IsEmpty())
         {
-            n_message("nLuaServer::RunScript failed:\nfile: %s\nmessage:\n%s\n", 
+            n_message("nLuaServer::RunScript failed:\nfile: %s\nmessage:\n%s\n",
                       path.Get(), result.Get());
         }
         else

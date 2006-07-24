@@ -24,7 +24,7 @@
 //-----------------------------------------------------------------------------
 /**
 */
-nMaxDirDlg::nMaxDirDlg(WORD resID, HINSTANCE hInst, HWND hwndParent) : 
+nMaxDirDlg::nMaxDirDlg(WORD resID, HINSTANCE hInst, HWND hwndParent) :
     nMaxDlg(resID, hInst, hwndParent)
 {
 }
@@ -291,7 +291,7 @@ bool nMaxDirDlg::OnOK()
 /**
     Shows up file select browser to specify nebula2 installed directory.
 
-    FIXME: shown up the dialog has ugly white background. 
+    FIXME: shown up the dialog has ugly white background.
            some setting of it seems be wrong.
 */
 void nMaxDirDlg::OnSelHomeDir()
@@ -324,7 +324,7 @@ void nMaxDirDlg::OnSelHomeDir()
     // if the user selected a folder . . .
     if (browseList)
     {
-        // Convert the item ID to a pathname, 
+        // Convert the item ID to a pathname,
         if(::SHGetPathFromIDList(browseList, szBuf))
         {
             nString homeDir;

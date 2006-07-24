@@ -30,7 +30,7 @@ static void nearCallback (void *data, dGeomID o1, dGeomID o2)
   n = dCollide (o1,o2,N,&contact[0].geom,sizeof(dContact));
   if (n > 0) {
     for (i=0; i<n; i++) {
-      contact[i].surface.mode = dContactSlip1 | dContactSlip2 | 
+      contact[i].surface.mode = dContactSlip1 | dContactSlip2 |
           dContactSoftERP | dContactSoftCFM | dContactApprox1;
       contact[i].surface.mu = dInfinity;
       contact[i].surface.slip1 = 0.1f;
@@ -156,7 +156,7 @@ nODEViewerApp::Open()
     this->refSceneServer->Open();
 
     // define the input mapping
-    // late initialization of input server, because it relies on 
+    // late initialization of input server, because it relies on
     // refGfxServer->OpenDisplay having been called
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     if (NULL != this->GetInputScript())
@@ -235,7 +235,7 @@ void nODEViewerApp::Close()
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
-    this->refSceneServer->Release();    
+    this->refSceneServer->Release();
     this->refInputServer->Release();
     this->refGfxServer->Release();
     this->refScriptServer->Release();
@@ -388,7 +388,7 @@ void
 nODEViewerApp::HandleInput(float frameTime)
 {
     nInputServer* inputServer = this->refInputServer.get();
-    
+
     if (Maya == this->controlMode)
     {
         this->HandleInputMaya(frameTime);
@@ -459,7 +459,7 @@ nODEViewerApp::HandleInputMaya(float frameTime)
     if (inputServer->GetButton("zoom"))
     {
         zoomHori    = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up"); 
+        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up");
     }
 
     // toggle console
@@ -599,7 +599,7 @@ nODEViewerApp::HandleInputFly(float frameTime)
 //------------------------------------------------------------------------------
 /**
     Initialize the overlay GUI.
-*/  
+*/
 void
 nODEViewerApp::InitOverlayGui()
 {

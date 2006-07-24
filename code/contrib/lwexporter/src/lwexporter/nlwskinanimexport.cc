@@ -38,13 +38,13 @@ nLWSkinAnimExport::~nLWSkinAnimExport()
     @brief Export animation curves and create a skin animator node.
     @return false if some sort of major error occurred, true otherwise.
 */
-bool 
+bool
 nLWSkinAnimExport::Run(nLWLayoutMonitor* monitor)
 {
     nKernelServer* ks = nKernelServer::Instance();
     nObject* object = ks->NewNoFail("nskinanimator", "skinanimator");
     nSkinAnimator* skinAnimator = static_cast<nSkinAnimator*>(object);
-    
+
     if (!skinAnimator)
         return false;
 
@@ -77,8 +77,8 @@ namespace
     //------------------------------------------------------------------------
     /**
     */
-    bool 
-    ValidateBones(LWItemID boneId, LWBoneInfo* boneInfo, 
+    bool
+    ValidateBones(LWItemID boneId, LWBoneInfo* boneInfo,
                   LWItemInfo* itemInfo, nLWLayoutMonitor* monitor)
     {
         unsigned int boneFlags = boneInfo->flags(boneId);
@@ -92,7 +92,7 @@ namespace
             n_printf(monitorMsg.Get());
             return false;
         }
-        
+
         LWItemID childId = itemInfo->firstChild(boneId);
         while (childId != LWITEM_NULL)
         {
@@ -146,11 +146,11 @@ namespace
 /**
 */
 bool
-nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator, 
+nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator,
                                            LWItemID boneId,
-                                           int parentJointIdx, 
-                                           LWBoneInfo* boneInfo, 
-                                           LWItemInfo* itemInfo, 
+                                           int parentJointIdx,
+                                           LWBoneInfo* boneInfo,
+                                           LWItemInfo* itemInfo,
                                            float scale)
 {
     LWDVector lwPos;
@@ -179,17 +179,17 @@ nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator,
     n_assert(jointIdx != -1);
     if (jointIdx != -1)
     {
-        skinAnimator->SetJoint(jointIdx, parentJointIdx, poseTranslate, 
+        skinAnimator->SetJoint(jointIdx, parentJointIdx, poseTranslate,
                                poseRotate, poseScale, jointName);
     }
-    
+
     LWItemID childId = itemInfo->firstChild(boneId);
     while (childId != LWITEM_NULL)
     {
         if (itemInfo->type(childId) == LWI_BONE)
         {
-            if (!this->AddJointsToSkinAnimator(skinAnimator, childId, 
-                                               jointIdx, boneInfo, 
+            if (!this->AddJointsToSkinAnimator(skinAnimator, childId,
+                                               jointIdx, boneInfo,
                                                itemInfo, scale))
             {
                 return false;
@@ -205,9 +205,9 @@ nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator,
 /**
 */
 bool
-nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator, 
+nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator,
                                            LWItemID rootBoneId,
-                                           LWBoneInfo* boneInfo, 
+                                           LWBoneInfo* boneInfo,
                                            LWItemInfo* itemInfo)
 {
     nLWExporterSettings* exporterSettings = nLWExporterSettings::Instance();
@@ -215,7 +215,7 @@ nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator,
     if (!exporterSettings)
         return false;
 
-    return this->AddJointsToSkinAnimator(skinAnimator, rootBoneId, -1, 
+    return this->AddJointsToSkinAnimator(skinAnimator, rootBoneId, -1,
                                          boneInfo, itemInfo,
                                          exporterSettings->GetGeometryScale());
 }
@@ -223,7 +223,7 @@ nLWSkinAnimExport::AddJointsToSkinAnimator(nSkinAnimator* skinAnimator,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWSkinAnimExport::CollectJoints(nSkinAnimator* skinAnimator,
                                  nLWLayoutMonitor* monitor)
 {
@@ -243,14 +243,14 @@ nLWSkinAnimExport::CollectJoints(nSkinAnimator* skinAnimator,
                                         objectInfo.Get(), itemInfo.Get());
     if (LWITEM_NULL == rootBoneId)
         return false;
-    
+
     ValidateBones(rootBoneId, boneInfo.Get(), itemInfo.Get(), monitor);
 
     this->boneJointMap.Fill(rootBoneId);
 
     // populate the skin animator joint list
     skinAnimator->BeginJoints(GetNumJoints(rootBoneId, itemInfo.Get()));
-    if (!this->AddJointsToSkinAnimator(skinAnimator, rootBoneId, 
+    if (!this->AddJointsToSkinAnimator(skinAnimator, rootBoneId,
                                        boneInfo.Get(), itemInfo.Get()))
     {
         return false;
@@ -263,8 +263,8 @@ nLWSkinAnimExport::CollectJoints(nSkinAnimator* skinAnimator,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
-nLWSkinAnimExport::CollectAnimStates(nSkinAnimator* skinAnimator, 
+bool
+nLWSkinAnimExport::CollectAnimStates(nSkinAnimator* skinAnimator,
                                      nLWLayoutMonitor* monitor)
 {
     const nArray<nLWAnimationState>& stateArray = this->objSettings->GetAnimationStates();
@@ -285,7 +285,7 @@ nLWSkinAnimExport::CollectAnimStates(nSkinAnimator* skinAnimator,
 /**
 */
 bool
-nLWSkinAnimExport::ConstructAnimFileName(nString& animFileName, 
+nLWSkinAnimExport::ConstructAnimFileName(nString& animFileName,
                                          nLWLayoutMonitor* monitor) const
 {
     n_assert(this->objSettings);
@@ -324,7 +324,7 @@ nLWSkinAnimExport::ConstructAnimFileName(nString& animFileName,
     lwObjectsDir += "/";
 
     animFileName = "anims:";
-    
+
     // figure out what the category dir is and append it to the filename
     if (objFileDir.Length() > lwObjectsDir.Length())
     {
@@ -344,7 +344,7 @@ nLWSkinAnimExport::ConstructAnimFileName(nString& animFileName,
             n_printf(msg.Get());
         }
     }
-    
+
     nString shortName = itemInfo.Get()->name(this->objSettings->GetItemId());
     shortName.ReplaceIllegalFilenameChars('_');
     animFileName += shortName;
@@ -368,14 +368,14 @@ nLWSkinAnimExport::ConstructAnimFileName(nString& animFileName,
     @return true if the animation export handler was successfully attached,
             false otherwise.
 */
-bool 
+bool
 nLWSkinAnimExport::AttachFrameHandler(LWItemID boneId, LWItemInfo* itemInfo)
 {
     if (!nLWAnimExportHandler::AttachToBone(boneId, this->cmdExec))
     {
         return false;
     }
-    
+
     LWItemID childId = itemInfo->firstChild(boneId);
     while (childId != LWITEM_NULL)
     {
@@ -399,14 +399,14 @@ nLWSkinAnimExport::AttachFrameHandler(LWItemID boneId, LWItemInfo* itemInfo)
     @return true if the animation export handler was successfully detached,
             false otherwise.
 */
-bool 
+bool
 nLWSkinAnimExport::DetachFrameHandler(LWItemID boneId, LWItemInfo* itemInfo)
 {
     if (!nLWAnimExportHandler::DetachFromBone(boneId, this->cmdExec))
     {
         return false;
     }
-    
+
     LWItemID childId = itemInfo->firstChild(boneId);
     while (childId != LWITEM_NULL)
     {
@@ -426,7 +426,7 @@ nLWSkinAnimExport::DetachFrameHandler(LWItemID boneId, LWItemInfo* itemInfo)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWSkinAnimExport::BeginFrameGrab(int startFrame, nAnimBuilder::Group* animGroup)
 {
     nLWSkinAnimExport::curBoneJointMap = &this->boneJointMap;
@@ -437,7 +437,7 @@ nLWSkinAnimExport::BeginFrameGrab(int startFrame, nAnimBuilder::Group* animGroup
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWSkinAnimExport::GrabFrame(int frameNum)
 {
     nString cmdStr("GoToFrame ");
@@ -448,7 +448,7 @@ nLWSkinAnimExport::GrabFrame(int frameNum)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWSkinAnimExport::EndFrameGrab()
 {
     nLWSkinAnimExport::curBoneJointMap = 0;
@@ -459,11 +459,11 @@ nLWSkinAnimExport::EndFrameGrab()
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWSkinAnimExport::GetAnimCurvesForBone(LWItemID boneId,
                                         int& startFrame,
-                                        nAnimBuilder::Curve** transCurve, 
-                                        nAnimBuilder::Curve** rotCurve, 
+                                        nAnimBuilder::Curve** transCurve,
+                                        nAnimBuilder::Curve** rotCurve,
                                         nAnimBuilder::Curve** scaleCurve)
 {
     n_assert(nLWSkinAnimExport::curBoneJointMap);
@@ -489,7 +489,7 @@ nLWSkinAnimExport::GetAnimCurvesForBone(LWItemID boneId,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWSkinAnimExport::ExportAnimation(const nString& fileName,
                                    nLWLayoutMonitor* monitor)
 {
@@ -515,7 +515,7 @@ nLWSkinAnimExport::ExportAnimation(const nString& fileName,
     const nArray<nLWAnimationState>& states = this->objSettings->GetAnimationStates();
     LWItemID rootBoneId = GetRootBoneId(this->objSettings->GetItemId(),
                                         objectInfo.Get(), itemInfo.Get());
-    
+
     if (!this->AttachFrameHandler(rootBoneId, itemInfo.Get()))
         return false;
 
@@ -531,7 +531,7 @@ nLWSkinAnimExport::ExportAnimation(const nString& fileName,
         int numStateKeys = endFrame - startFrame + 1;
 
         nAnimBuilder::Group animGroup;
-        animGroup.SetLoopType(state.repeat ? nAnimBuilder::Group::REPEAT 
+        animGroup.SetLoopType(state.repeat ? nAnimBuilder::Group::REPEAT
                                            : nAnimBuilder::Group::CLAMP);
         animGroup.SetKeyTime(keyDuration);
         animGroup.SetNumKeys(numStateKeys);
@@ -541,7 +541,7 @@ nLWSkinAnimExport::ExportAnimation(const nString& fileName,
 
         nAnimBuilder::Curve rotCurve;
         rotCurve.SetIpolType(nAnimBuilder::Curve::QUAT);
-        
+
         nAnimBuilder::Curve scaleCurve;
         scaleCurve.SetIpolType(nAnimBuilder::Curve::LINEAR);
 
@@ -550,7 +550,7 @@ nLWSkinAnimExport::ExportAnimation(const nString& fileName,
         {
             animGroup.AddCurve(transCurve);
             animGroup.AddCurve(rotCurve);
-            animGroup.AddCurve(scaleCurve);    
+            animGroup.AddCurve(scaleCurve);
         }
 
         // fill in the curves
@@ -611,7 +611,7 @@ nLWSkinAnimExport::ExportAnimation(const nString& fileName,
         n_printf(monitorMsg.Get());
         return false;
     }
-    
+
     return true;
 }
 

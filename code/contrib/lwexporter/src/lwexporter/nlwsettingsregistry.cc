@@ -27,7 +27,7 @@ nLWSettingsRegistry::~nLWSettingsRegistry()
 //----------------------------------------------------------------------------
 /**
 */
-nLWSettingsRegistry* 
+nLWSettingsRegistry*
 nLWSettingsRegistry::Instance()
 {
     if (!nLWSettingsRegistry::singleton)
@@ -41,7 +41,7 @@ nLWSettingsRegistry::Instance()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWSettingsRegistry::FreeInstance()
 {
     if (nLWSettingsRegistry::singleton)
@@ -55,7 +55,7 @@ nLWSettingsRegistry::FreeInstance()
 /**
     @brief Add the given object export settings handler to the registry.
 */
-void 
+void
 nLWSettingsRegistry::Add(nLWObjectExportSettings* settings)
 {
     n_assert(settings);
@@ -71,7 +71,7 @@ nLWSettingsRegistry::Add(nLWObjectExportSettings* settings)
 /**
     @brief Remove the given object export settings handler from the registry.
 */
-void 
+void
 nLWSettingsRegistry::Remove(nLWObjectExportSettings* settings)
 {
     n_assert(settings);
@@ -87,7 +87,7 @@ nLWSettingsRegistry::Remove(nLWObjectExportSettings* settings)
 /**
     @brief Associate an existing handler in the registry with a new item id.
 */
-void 
+void
 nLWSettingsRegistry::Update(LWItemID oldId, LWItemID newId)
 {
     int oldKey = reinterpret_cast<int>(oldId);
@@ -98,7 +98,7 @@ nLWSettingsRegistry::Update(LWItemID oldId, LWItemID newId)
         return;
     }
     this->objExpSettingsArray.Rem(oldKey);
-    
+
     int newKey = reinterpret_cast<int>(newId);
     if (this->objExpSettingsArray.HasKey(newKey))
     {
@@ -110,11 +110,11 @@ nLWSettingsRegistry::Update(LWItemID oldId, LWItemID newId)
 
 //----------------------------------------------------------------------------
 /**
-    @brief Find an object export settings handler in the master registry 
+    @brief Find an object export settings handler in the master registry
            for the given item.
     @return Pointer to a handler or NULL if one isn't found for the given item.
 */
-nLWObjectExportSettings* 
+nLWObjectExportSettings*
 nLWSettingsRegistry::Get(LWItemID itemId) const
 {
     int key = reinterpret_cast<int>(itemId);
@@ -126,7 +126,7 @@ nLWSettingsRegistry::Get(LWItemID itemId) const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWSettingsRegistry::Add(LWSurfaceID surfId, nLWShaderExportSettings* settings)
 {
     this->surfaceShaderMap[surfId] = settings;
@@ -135,16 +135,16 @@ nLWSettingsRegistry::Add(LWSurfaceID surfId, nLWShaderExportSettings* settings)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWSettingsRegistry::Remove(LWSurfaceID surfId)
 {
-    this->surfaceShaderMap.erase(surfId);    
+    this->surfaceShaderMap.erase(surfId);
 }
 
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderExportSettings* 
+nLWShaderExportSettings*
 nLWSettingsRegistry::Get(LWSurfaceID surfId) const
 {
     nLWSurfaceShaderMap::const_iterator it = this->surfaceShaderMap.find(surfId);
@@ -159,8 +159,8 @@ nLWSettingsRegistry::Get(LWSurfaceID surfId) const
 /**
 */
 /*
-void 
-nLWSettingsRegistry::Add(const nString& objFileName, const nString& surfName, 
+void
+nLWSettingsRegistry::Add(const nString& objFileName, const nString& surfName,
                          nLWShaderExportSettings* settings)
 {
     nHashNode* objNode = objFileNameList.Find(objFileName.Get());
@@ -187,7 +187,7 @@ nLWSettingsRegistry::Add(const nString& objFileName, const nString& surfName,
 */
 /*
 void
-nLWSettingsRegistry::Remove(const nString& objFileName, 
+nLWSettingsRegistry::Remove(const nString& objFileName,
                             const nString& surfName)
 {
     nHashNode* objNode = objFileNameList.Find(objFileName.Get());
@@ -218,8 +218,8 @@ nLWSettingsRegistry::Remove(const nString& objFileName,
 /**
 */
 /*
-nLWShaderExportSettings* 
-nLWSettingsRegistry::Get(const nString& objFileName, 
+nLWShaderExportSettings*
+nLWSettingsRegistry::Get(const nString& objFileName,
                          const nString& surfName) const
 {
     nHashNode* objNode = objFileNameList.Find(objFileName.Get());

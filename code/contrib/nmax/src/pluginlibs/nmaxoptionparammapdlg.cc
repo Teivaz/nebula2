@@ -18,7 +18,7 @@ const char* script_server[nMaxOptionParamMapDlg::NumScriptServers] = {
     "Ruby"
 };
 
-// verbose level. 
+// verbose level.
 // The index of the verbose_level array should be match enum in nmax.h.
 static
 const char* verbose_level[NumVerboseLevel] = {
@@ -94,7 +94,7 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
 
     // max joint palette.
     int maxJointPalett = nMaxOptions::Instance()->GetMaxJointPaletteSize();
-    
+
     spinMaxJointPalette = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_MAXJOINTPALETTE));
     spinMaxJointPalette->SetScale(1);
     // The minimum joint palette size is 4. under that value causes error when
@@ -110,7 +110,7 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
 
     // weight trash hold.
     float weightThreshold = nMaxOptions::Instance()->GetWeightThreshold();
-    
+
     spinWeightThreshold = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_WEIGHTHRESHOLD));
     spinWeightThreshold->SetScale(0.00001f);
     spinWeightThreshold->SetLimits(0.00001f, 1.0f);
@@ -157,7 +157,7 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
         CheckDlgButton(hwnd, IDC_NANIM2, BST_UNCHECKED);
         CheckDlgButton(hwnd, IDC_NAX2, BST_CHECKED);
     }
-    
+
     // hidden node.
     bool tmpExportHiddenNode = nMaxOptions::Instance()->ExportHiddenNodes();
     int exportHiddenNode = tmpExportHiddenNode ? 1 : 0;
@@ -204,7 +204,7 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
 /**
     window procedure of the dialog.
 */
-BOOL nMaxOptionParamMapDlg::DlgProc(TimeValue t, IParamMap *map, HWND hWnd, 
+BOOL nMaxOptionParamMapDlg::DlgProc(TimeValue t, IParamMap *map, HWND hWnd,
                                     UINT msg, WPARAM wParam, LPARAM lParam)
 {
     switch(msg)
@@ -320,7 +320,7 @@ bool nMaxOptionParamMapDlg::IsChecked(HWND hwnd, int id)
     switch (status)
     {
     case BST_CHECKED:
-        return true; 
+        return true;
     case BST_INDETERMINATE:
         return false;
     case BST_UNCHECKED:
@@ -348,13 +348,13 @@ void nMaxOptionParamMapDlg::OnVertexComponent(HWND hwnd)
         option->SetExportColors(true);
     else
         option->SetExportColors(false);
-    
+
     // uvs
     if (IsChecked(hwnd, IDC_VERTEX_UV))
         option->SetExportUvs(true);
     else
         option->SetExportUvs(false);
-    
+
     // tangent
     if (IsChecked(hwnd, IDC_VERTEX_TANGENT))
     {
@@ -424,17 +424,17 @@ void nMaxOptionParamMapDlg::OnHiddenObject(HWND hwnd)
 */
 void nMaxOptionParamMapDlg::OnSelectedScriptServer(HWND hwnd)
 {
-    int selectedItem = SendDlgItemMessage(hwnd, IDC_SELECT_SCRIPT_SERVER, 
+    int selectedItem = SendDlgItemMessage(hwnd, IDC_SELECT_SCRIPT_SERVER,
                                           CB_GETCURSEL, 0, 0);
 
     if (selectedItem != CB_ERR)
     {
         // retrieves selected item name.
         char itemName[N_MAXPATH];
-        SendDlgItemMessage(hwnd, 
+        SendDlgItemMessage(hwnd,
                            IDC_SELECT_SCRIPT_SERVER,
-                           CB_GETLBTEXT, 
-                           (WPARAM) selectedItem, 
+                           CB_GETLBTEXT,
+                           (WPARAM) selectedItem,
                            (LPARAM)(LPCSTR)&itemName[0]);
 
         nString scriptServerName = itemName;
@@ -448,7 +448,7 @@ void nMaxOptionParamMapDlg::OnSelectedScriptServer(HWND hwnd)
 /**
     Retrieves proper script server name based on the selected item.
 */
-const char* 
+const char*
 nMaxOptionParamMapDlg::GetScriptServer(const char* item)
 {
     nString serverName = item;
@@ -504,12 +504,12 @@ nMaxOptionParamMapDlg::GetItemIndexFromScript(const char* name)
 */
 void nMaxOptionParamMapDlg::OnSelectedVerboseLevel(HWND hwnd)
 {
-    int selectedItem = SendDlgItemMessage(hwnd, IDC_SELECT_VERBOSE_LEVEL, 
+    int selectedItem = SendDlgItemMessage(hwnd, IDC_SELECT_VERBOSE_LEVEL,
         CB_GETCURSEL, 0, 0);
 
     if (selectedItem != CB_ERR)
     {
-        n_assert2(selectedItem >= 0 && selectedItem < NumVerboseLevel, 
+        n_assert2(selectedItem >= 0 && selectedItem < NumVerboseLevel,
                   "The item index should be between 0 and 4");
         nMaxOptions::Instance()->SetVerboseLevel(selectedItem);
     }

@@ -194,7 +194,7 @@ Value* nDisconnectIpc_cf(Value** arg_list, int count)
 {
     one_typed_value_local(Value* result);
     //Value* result = &undefined;
-    
+
     nDisConnectIpc();
 
     return &ok;

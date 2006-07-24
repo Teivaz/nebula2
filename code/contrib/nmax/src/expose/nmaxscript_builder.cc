@@ -11,11 +11,11 @@
 #include "expose/nmaxscriptobjattr.h"
 #include "expose/nmaxscriptparams.h"
 
-static 
+static
 void MakeControl(nObjectAttribute&, nCmdProto*, nString&, nString&, nString&);
-static 
+static
 void AddVariousParam(const nObjectAttribute::Command*, nCmd*, nString&, nString&, nString&);
-static 
+static
 void ArgToAttr(const nObjectAttribute::Command*, nCmd*, nString&, nString&, nString&);
 
 //------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ bool FilterCmds(nCmdProto* cmdproto)
         if (strcmp(rootcmds[i], cmdname) == 0)
             return true;
     }
-    
+
     return false;
 }
 
@@ -67,7 +67,7 @@ bool FilterCmds(nCmdProto* cmdproto)
 char* nMaxScriptBuilder::BuildMaxScriptFromNebulaObject(const char* objPath)
 {
     // find nebula object with given path of the object and
-    // get pointer of nClass 
+    // get pointer of nClass
     nRoot* object = nKernelServer::Instance()->Lookup(objPath);
 
     nString strAttribute =  "attributes \"";
@@ -82,7 +82,7 @@ char* nMaxScriptBuilder::BuildMaxScriptFromNebulaObject(const char* objPath)
     nString strRollout;
 
     nString strSetupBody = "(\n\t\t";
-  
+
     nString strOnCreate =  "\ton create do \n\t";
     nString strOnUpdate =  "\ton update do \n\t";
 
@@ -129,7 +129,7 @@ char* nMaxScriptBuilder::BuildMaxScriptFromNebulaObject(const char* objPath)
 //--> begin recursive part
             //nString param     = "\tparameters main rollout:params\n\t(\n";
             nString param     = "\tparameters ";
-            param += clazz->GetName();//main 
+            param += clazz->GetName();//main
             param += "_main ";
             param += "rollout:";
             param += clazz->GetName();//params
@@ -148,27 +148,27 @@ char* nMaxScriptBuilder::BuildMaxScriptFromNebulaObject(const char* objPath)
             // read the xml file which of name is same to the object's classname.
             // e.g. if the classname is 'ntransformnode', find and read 'ntransformnode.xml'
             nObjectAttribute objAttr;
-            
+
             nString xmlFile;
             xmlFile += "xml:";
             xmlFile += clazz->GetName();
             xmlFile += ".xml";
 
             objAttr.SetFilename(xmlFile);
-               
+
             if (!objAttr.Open())
             {
                 n_listener("nMaxScriptBuilder: %s.xml file does not exist", clazz->GetName());
             }
 
-            // get cmds list of the object 
+            // get cmds list of the object
             nHashList* lstCmdProto = clazz->GetCmdList();
             if (lstCmdProto != NULL)
-            { 
+            {
                 const char* cmd_proto;
 
                 nCmdProto* cp;
-                for (cp = (nCmdProto*)lstCmdProto->GetHead(); 
+                for (cp = (nCmdProto*)lstCmdProto->GetHead();
                     cp;
                     cp = (nCmdProto*)cp->GetSucc())
                 { // per each of command
@@ -233,7 +233,7 @@ void MakeControl(nObjectAttribute& objAttr, nCmdProto* cmdProto, nString& param,
     //nCmdProto* proto = cmd->GetProto();
     nString commandName = cmdProto->GetName();
     rollout += "\t\t";
-    rollout += "label " + commandName + "Label \"" + commandName + 
+    rollout += "label " + commandName + "Label \"" + commandName +
         "\" align:#left offset:[0,6]\n\t\t";
 
     const nObjectAttribute::Command* ncmd = 0;
@@ -299,7 +299,7 @@ void MakeControl(nObjectAttribute& objAttr, nCmdProto* cmdProto, nString& param,
         AddVariousParam(ncmd, cmd, param, rollout, setupbody);
         break;
     default:
-        n_listener("Unknown type in %s.xml file: %s command.", 
+        n_listener("Unknown type in %s.xml file: %s command.",
             objAttr.GetName().Get(), commandName.Get());
         break;
     }
@@ -314,7 +314,7 @@ void MakeControl(nObjectAttribute& objAttr, nCmdProto* cmdProto, nString& param,
 /**
 */
 static
-void AddVariousParam(const nObjectAttribute::Command* ncmd, nCmd* cmd, 
+void AddVariousParam(const nObjectAttribute::Command* ncmd, nCmd* cmd,
     nString& param, nString& rollout, nString& setupbody)
 {
     n_assert(cmd);
@@ -338,7 +338,7 @@ void AddVariousParam(const nObjectAttribute::Command* ncmd, nCmd* cmd,
 /**
 */
 static
-void ArgToAttr(const nObjectAttribute::Command* ncmd, nCmd* cmd, 
+void ArgToAttr(const nObjectAttribute::Command* ncmd, nCmd* cmd,
    nString& param, nString& rollout, nString& setupbody)
 {
     n_assert(cmd);

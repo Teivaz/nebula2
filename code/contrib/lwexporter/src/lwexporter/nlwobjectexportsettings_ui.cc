@@ -117,7 +117,7 @@ BEGIN_EVENT_TABLE(nLWObjectExportSettingsPanel, wxDialog)
     EVT_BUTTON(ID_MOVE_ANIM_DOWN_BTN, nLWObjectExportSettingsPanel::OnMoveAnimStateDownBtn)
     EVT_LIST_ITEM_SELECTED(ID_ANIM_LIST, nLWObjectExportSettingsPanel::OnAnimListChanged)
     EVT_CHOICE(ID_EXPORT_TYPE_POPUP, nLWObjectExportSettingsPanel::OnExportTypePopup)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -156,7 +156,7 @@ nLWObjectExportSettingsPanel::nLWObjectExportSettingsPanel(wxWindow* parent,
     this->animVarTextBox = new wxTextCtrl(this, wxID_ANY);
     this->scanMotionMixerBtn = new wxButton(this, ID_SCAN_MM_BTN, "Scan MotionMixer");
 
-    this->animMultiListBox = new wxAnimListCtrl(this, ID_ANIM_LIST, 
+    this->animMultiListBox = new wxAnimListCtrl(this, ID_ANIM_LIST,
                                                 wxDefaultPosition, wxSize(380, 300));
 
     this->newAnimBtn = new wxButton(this, ID_NEW_ANIM_BTN, "New");
@@ -188,7 +188,7 @@ nLWObjectExportSettingsPanel::nLWObjectExportSettingsPanel(wxWindow* parent,
     this->Load();
 
     // layout controls
-    
+
     wxBoxSizer* animBtnSizer = new wxBoxSizer(wxHORIZONTAL);
     animBtnSizer->Add(this->newAnimBtn);
     animBtnSizer->Add(this->editAnimBtn);
@@ -218,7 +218,7 @@ nLWObjectExportSettingsPanel::nLWObjectExportSettingsPanel(wxWindow* parent,
     topSizer->Add(nodeGroupBoxBorderSizer, 0, wxEXPAND);
     topSizer->Add(animGroupBoxBorderSizer, 0, wxEXPAND);
     topSizer->Add(CreateButtonSizer(wxOK|wxCANCEL), 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 10);
-    
+
     topSizer->Fit(this);
     this->SetSizer(topSizer);
 }
@@ -251,7 +251,7 @@ nLWObjectExportSettingsPanel::GetAnimStatesFromListBox(nArray<nLWAnimationState>
 /**
     @brief Populate the animation state multi-list box from the given array.
 */
-void 
+void
 nLWObjectExportSettingsPanel::FillListBoxWithAnimStates(const nArray<nLWAnimationState>& array)
 {
     this->animMultiListBox->ClearAnims();
@@ -264,7 +264,7 @@ nLWObjectExportSettingsPanel::FillListBoxWithAnimStates(const nArray<nLWAnimatio
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWObjectExportSettingsPanel::SetItemName(const nString& itemName)
 {
     this->itemName = itemName;
@@ -275,7 +275,7 @@ nLWObjectExportSettingsPanel::SetItemName(const nString& itemName)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWObjectExportSettingsPanel::Save()
 {
     n_assert(this->settings);
@@ -283,7 +283,7 @@ nLWObjectExportSettingsPanel::Save()
         return;
 
     nLWObjectExportSettings* s = this->settings;
-    
+
     // scene node group box
     s->SetExportNodeType(this->nodeTypePopup->GetStringSelection().c_str());
     s->SetExportSceneNodeHierarchy(this->nodeHierarchyCheckBox->GetValue());
@@ -298,7 +298,7 @@ nLWObjectExportSettingsPanel::Save()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWObjectExportSettingsPanel::Load()
 {
     n_assert(this->settings);
@@ -340,7 +340,7 @@ nLWObjectExportSettingsPanel::NeedAnimControls() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWObjectExportSettingsPanel::RefreshAnimControls()
 {
     if (this->NeedAnimControls())
@@ -394,7 +394,7 @@ nLWObjectExportSettingsPanel::OnScanMMBtn(wxCommandEvent& WXUNUSED(event))
     for (int mixerIdx = 0; mixerIdx < mixerAnimStateArray.Size(); mixerIdx++)
     {
         bool animInListBox = false;
-        
+
         for (int boxIdx = 0; boxIdx < boxAnimStateArray.Size(); boxIdx++)
         {
             if (mixerAnimStateArray[mixerIdx].name == boxAnimStateArray[boxIdx].name)
@@ -406,7 +406,7 @@ nLWObjectExportSettingsPanel::OnScanMMBtn(wxCommandEvent& WXUNUSED(event))
                 break;
             }
         }
-        
+
         if (!animInListBox)
         {
             this->animMultiListBox->AddAnim(mixerAnimStateArray[mixerIdx]);
@@ -528,7 +528,7 @@ nLWObjectExportSettingsPanel::OnCancelBtn(wxCommandEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWObjectExportSettingsPanel::OnExportTypePopup(wxCommandEvent& WXUNUSED(event))
 {
     this->RefreshAnimControls();

@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  nbttotga.cc
 //
-//  Converts a bt (binary terrain) file to a tga greyscale image or a 
+//  Converts a bt (binary terrain) file to a tga greyscale image or a
 //  tga normal map.
 //
 //  (C) 2003 RadonLabs GmbH
@@ -59,7 +59,7 @@ main(int argc, const char** argv)
         printf("Could not open bt file '%s' for reading.\n", inArg);
         return 10;
     }
-    
+
     // open the tga file
     nTgaFile tgaFile(&kernelServer);
     tgaFile.SetWidth(sizeArg);

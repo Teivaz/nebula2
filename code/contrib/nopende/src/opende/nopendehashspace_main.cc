@@ -15,7 +15,7 @@ nOpendeHashSpace::nOpendeHashSpace()
 
 //----------------------------------------------------------------------------
 /**
-    @param parent The NOH path of the parent space, use "none" to indicate 
+    @param parent The NOH path of the parent space, use "none" to indicate
                   this space doesn't have a parent.
 */
 void nOpendeHashSpace::Create( const char* parent )

@@ -12,7 +12,7 @@
 #include "kernel/nfileserver2.h"
 #include "clodterrain/nclodchunkernode.h"
 
-nNebulaScriptClass(nCLODChunkerNode, "kernel::nroot");
+nNebulaScriptClass(nCLODChunkerNode, "nroot");
 
 // Manually synced!!!  (@@ should use a fixed-size struct, to be
 // safer, although that ruins endian safety.)  If you change the chunk

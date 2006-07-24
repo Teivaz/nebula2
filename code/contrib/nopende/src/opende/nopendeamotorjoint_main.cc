@@ -155,7 +155,7 @@ float nOpendeAMotorJoint::GetAngleRate( int anum )
     n_assert( this->id && "nOpendeJoint::id not valid!" );
     return nOpende::JointGetAMotorAngleRate( this->id, anum );
 }
-    
+
 //----------------------------------------------------------------------------
 /**
 */

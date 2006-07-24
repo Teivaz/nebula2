@@ -11,7 +11,7 @@ const char nLWExportPanel::GENERIC_NAME[] = "N2_ExportPanel";
 BEGIN_EVENT_TABLE(nLWExportPanel, wxDialog)
     EVT_BUTTON(wxID_OK, nLWExportPanel::OnOKBtn)
     EVT_BUTTON(wxID_CANCEL, nLWExportPanel::OnCancelBtn)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -22,11 +22,11 @@ nLWExportPanel::nLWExportPanel(wxWindow* parent, const nLWCmdExec& cmdExec) :
     cmdExec(cmdExec)
 {
     wxString choices[] = { _T("Selected Objects"), _T("Entire Scene") };
-    this->radioBox = new wxRadioBox(this, wxID_ANY, "", 
-                                    wxDefaultPosition, wxDefaultSize, 
+    this->radioBox = new wxRadioBox(this, wxID_ANY, "",
+                                    wxDefaultPosition, wxDefaultSize,
                                     2, choices,
                                     2, wxRA_SPECIFY_ROWS);
-    
+
     wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
     topSizer->Add(this->radioBox, 0, wxEXPAND|wxLEFT|wxRIGHT, 10);
     topSizer->Add(CreateButtonSizer(wxOK|wxCANCEL), 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 10);
@@ -59,7 +59,7 @@ nLWExportPanel::OnOKBtn(wxCommandEvent& WXUNUSED(event))
             this->RunExport(nLWExporter::EXPORT_SCENE);
         break;
     }
-    
+
     this->EndModal(wxOK);
 }
 
@@ -75,7 +75,7 @@ nLWExportPanel::OnCancelBtn(wxCommandEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExportPanel::RunExport(nLWExporter::ExportMode exportMode)
 {
     nLWExporter exporter(&this->cmdExec);
@@ -86,8 +86,8 @@ nLWExportPanel::RunExport(nLWExporter::ExportMode exportMode)
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(int) 
-nLWExportPanel::Activate(long version, GlobalFunc* global, 
+XCALL_(int)
+nLWExportPanel::Activate(long version, GlobalFunc* global,
                          LWLayoutGeneric* local, void* /*serverData*/)
 {
     if (version != LWINTERFACE_VERSION)

@@ -35,10 +35,10 @@ nMaxExport2::~nMaxExport2()
 /**
     Export a scene.
 */
-int	nMaxExport2::DoExport(const TCHAR *name, 
-    ExpInterface *ei, 
-    Interface *inf, 
-    BOOL suppressPrompts, 
+int	nMaxExport2::DoExport(const TCHAR *name,
+    ExpInterface *ei,
+    Interface *inf,
+    BOOL suppressPrompts,
     DWORD options)
 {
     // it exports root node in the scene.
@@ -47,7 +47,7 @@ int	nMaxExport2::DoExport(const TCHAR *name,
 
 //-----------------------------------------------------------------------------
 /**
-    Launch preview application.  
+    Launch preview application.
 */
 static
 bool LaunchViewer(const char* sceneFile)
@@ -76,7 +76,7 @@ bool LaunchViewer(const char* sceneFile)
 // begin camera
     // extract camera info from the current viewport.
     nMaxCamera camera;
-    //FIXME: 
+    //FIXME:
     camera.ExtractFromViewport();
 
     vector3 eyepos = camera.GetEyePos();
@@ -125,8 +125,8 @@ bool LaunchViewer(const char* sceneFile)
 
     appLauncher.SetExecutable(viewerOptions.GetExecutable());
 
-    nString cwd; 
-    cwd += nMaxOptions::Instance()->GetHomePath(); 
+    nString cwd;
+    cwd += nMaxOptions::Instance()->GetHomePath();
 #ifdef _DEBUG
     cwd += "\\bin\\win32d";
 #else
@@ -156,7 +156,7 @@ void ReleaseSingletons()
 
     // idle until user click 'ok' button of log dialog.
     logDlg->Wait();
-    //FIXME: 
+    //FIXME:
     //n_delete(logDlg);
 }
 
@@ -198,7 +198,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
     nMaxOptions* expOptions = nMaxOptions::Instance();
     if (!expOptions->Initialize())
     {
-        n_maxlog(Error, "Faile to read '%s' file from 'plugcfg' directory.", 
+        n_maxlog(Error, "Faile to read '%s' file from 'plugcfg' directory.",
             N_MAXEXPORT_INIFILE);
 
         ReleaseSingletons();

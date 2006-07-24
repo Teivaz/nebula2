@@ -16,7 +16,7 @@ static void n_GetAxis2( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendeuniversaljoint
-    
+
     @superclass
     nopendejoint
 
@@ -231,7 +231,7 @@ nOpendeUniversalJoint::SaveCmds( nPersistServer* ps )
     {
         nCmd* cmd;
         vector3 v;
-        
+
         // SetAnchor
         this->GetAnchor( v );
         cmd = ps->GetCmd( this, 'SANC' );
@@ -239,7 +239,7 @@ nOpendeUniversalJoint::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-    
+
         // SetAxis1
         this->GetAxis1( v );
         cmd = ps->GetCmd( this, 'SAX1' );
@@ -247,7 +247,7 @@ nOpendeUniversalJoint::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-    
+
         // SetAxis2
         this->GetAxis2( v );
         cmd = ps->GetCmd( this, 'SAX2' );
@@ -268,8 +268,8 @@ nOpendeUniversalJoint::SaveCmds( nPersistServer* ps )
                                  axisNum ) );
                 ps->PutCmd( cmd );
             }
-        }       
-        
+        }
+
         return true;
     }
     return false;

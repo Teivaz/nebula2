@@ -5,7 +5,7 @@
 #include "kernel/nkernelserver.h"
 #include "spatialdb/nspatialsector.h"
 
-nNebulaScriptClass(nSpatialSector, "kernel::nroot");
+nNebulaScriptClass(nSpatialSector, "nroot");
 
 nSpatialSector::nSpatialSector()
 {

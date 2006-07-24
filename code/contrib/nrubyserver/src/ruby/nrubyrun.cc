@@ -39,7 +39,7 @@ nString nRubyServer::Prompt()
     Evaluate a ruby command string
     Result will be empty, as any errors get printed out by ruby itself for
     ease of use.
-    
+
     - 02-01-04  Tom     created
     - 11-02-04  Tom     error printing for N2
 */
@@ -49,10 +49,10 @@ bool nRubyServer::Run(const char *cmd_str, nString& result)
     result.Clear();
     int ret = 0;
     rb_p(rb_eval_string_protect((char *)cmd_str, &ret));
-    if (ret) 
+    if (ret)
     {
         //same as rb_p but without rb_default_rs
-        if (this->GetFailOnError()) 
+        if (this->GetFailOnError())
         {
             n_error(RSTRING(rb_obj_as_string(rb_inspect(ruby_errinfo)))->ptr);
         }
@@ -73,7 +73,7 @@ extern "C" {
 //--------------------------------------------------------------------
 /**
     NArg2RubyObj
-    
+
     Converts a nebula argument into an ruby native object.
     TODO implement LIST Type for nebula 2
 
@@ -81,7 +81,7 @@ extern "C" {
     - 11-02-04  Tom     N2 args
 */
 //--------------------------------------------------------------------
-VALUE NArg2RubyObj(nArg *a) 
+VALUE NArg2RubyObj(nArg *a)
 {
     switch (a->GetType()) {
         case nArg::Void:
@@ -99,7 +99,7 @@ VALUE NArg2RubyObj(nArg *a)
                   nRoot* o = (nRoot *) a->GetO();
                   if(o)
                   {
-                      VALUE tst = Data_Wrap_Struct(cNRoot, 0, free_d, (void *)o); 
+                      VALUE tst = Data_Wrap_Struct(cNRoot, 0, free_d, (void *)o);
                         return tst;
                   }
                   else
@@ -115,7 +115,7 @@ VALUE NArg2RubyObj(nArg *a)
                 int num_args = a->GetL(args);
                 VALUE result = rb_ary_new2(num_args);
 
-                for(int i = 0; i < num_args; i++) 
+                for(int i = 0; i < num_args; i++)
                 {
                     rb_ary_push(result, NArg2RubyObj(&args[i]));
                 }
@@ -149,32 +149,32 @@ bool nRubyServer::RunCommand(nCmd *c)
     VALUE rargs = Qfalse;
 
     // handle single return args (no need to create list)
-    if (1 == num_args) 
+    if (1 == num_args)
     {
         arg = c->In();
         rargs = NArg2RubyObj(arg);
-    } 
-    else 
+    }
+    else
     {
 //      rargs = rb_ary_new();
 
         // more then one in arg, create an Array
         int i;
-        for (i=0; i<num_args; i++) 
+        for (i=0; i<num_args; i++)
         {
             arg = c->In();
             rb_ary_push(rargs, NArg2RubyObj(arg));
             //rargs[i] = NArg2RubyObj(arg);
         }
     }
-    
+
     //rb_str_new2(c->In()->GetS());
 
     rb_p(rb_funcall2(rb_mKernel,rb_intern(c->In()->GetS()), num_args, &rargs));
-    if (NIL_P(ruby_errinfo)) 
+    if (NIL_P(ruby_errinfo))
     {
         //same as rb_p but without rb_default_rs
-        if (this->GetFailOnError()) 
+        if (this->GetFailOnError())
         {
             n_error(RSTRING(rb_obj_as_string(rb_inspect(ruby_errinfo)))->ptr);
         }
@@ -192,7 +192,7 @@ bool nRubyServer::RunCommand(nCmd *c)
 /**
     RunScript
     Load and evaluate a ruby script then switches over to interactive mode
-    Result is left empty as errors get printed out by nebula itself for 
+    Result is left empty as errors get printed out by nebula itself for
     ease of use.
 
     - 18-12-03  Tom     created
@@ -205,16 +205,16 @@ bool nRubyServer::RunScript(const char *fname, nString& result)
     result.Clear();
     strcpy(buf,(kernelServer->GetFileServer()->ManglePath(fname).Get()));
     this->print_error = true;
-    ruby_script(buf);  
-    //rb_load_file(buf);  
+    ruby_script(buf);
+    //rb_load_file(buf);
 
     int ret =0;
     rb_load_protect(rb_str_new2(buf), 0, &ret);
-    if (ret) 
+    if (ret)
     {
         //rb_p(ruby_errinfo);
         //same as rb_p but without rb_default_rs
-        if (this->GetFailOnError()) 
+        if (this->GetFailOnError())
         {
             n_error(RSTRING(rb_obj_as_string(rb_inspect(ruby_errinfo)))->ptr);
         }

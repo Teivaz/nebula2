@@ -98,7 +98,7 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
                 setModelLightProjection = true;
                 setModelLightPos = true;
                 break;
-            
+
             case View:
                 shd->SetMatrix(nShaderState::View, this->transform[View]);
                 shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
@@ -204,7 +204,7 @@ nGLServer2::Clear(int bufferTypes, float red, float green, float blue, float alp
 
 //------------------------------------------------------------------------------
 /**
-    Bind a texture to a texture stage. 
+    Bind a texture to a texture stage.
 
     @param  stage       the texture stage (0..7)
     @param  tex         pointer to a nGLTexture object or 0 to clear the
@@ -231,7 +231,7 @@ nGLServer2::SetTexture(int stage, nTexture2* tex)
 
     @param  mesh        pointer to a nGLMesh object or 0 to clear the
                         current stream and index buffer
-*/                  
+*/
 void
 nGLServer2::SetMesh(nMesh2* mesh)
 {
@@ -282,7 +282,7 @@ nGLServer2::SetMeshArray(nMeshArray* meshArray)
         {
             this->SetMesh(0);
         }
-        
+
         if (this->GetMeshArray() != meshArray)
         {
             //clean old mesh array before set new
@@ -312,12 +312,12 @@ nGLServer2::SetShader(nShader2* shader)
 
 //------------------------------------------------------------------------------
 /**
-    Draw the currently set mesh with indexed primitives, texture and shader to 
+    Draw the currently set mesh with indexed primitives, texture and shader to
     the current render target.
 
     FIXME: the multipass renderer should check if state actually needs to
     be applied again. This is not necessary if the effect only has 1 pass,
-    and is the same effect with the same parameters as in the last 
+    and is the same effect with the same parameters as in the last
     invocation of Draw().
 */
 void
@@ -352,7 +352,7 @@ nGLServer2::DrawIndexed(PrimitiveType primType)
                 this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
                 #endif
             }
-            shader->End();                
+            shader->End();
             mesh->EndRender(true);
         }
         n_gltrace("nGLServer2::DrawIndexed().");
@@ -401,7 +401,7 @@ nGLServer2::Draw(PrimitiveType primType)
                 this->dbgQueryNumDrawCalls->SetI(this->dbgQueryNumDrawCalls->GetI() + 1);
                 #endif
             }
-            shader->End();                
+            shader->End();
             mesh->EndRender();
         }
         n_gltrace("nGLServer2::Draw().");
@@ -437,7 +437,7 @@ nGLServer2::DrawIndexedNS(PrimitiveType primType)
             mesh->BeginRender(this->vertexRangeFirst, true, this->indexRangeFirst))
         {
             glDrawElements(glPrimType, glNumPrimitives, GL_UNSIGNED_SHORT, mesh->IndexOffset(0));
-            
+
             mesh->EndRender(true);
 
             #ifdef __NEBULA_STATS__
@@ -473,7 +473,7 @@ nGLServer2::DrawNS(PrimitiveType primType)
         if (mesh->BeginRender(this->vertexRangeFirst))
         {
             glDrawArrays(glPrimType, 0, glNumPrimitives); // 0 - ???
-            
+
             mesh->EndRender();
 
             #ifdef __NEBULA_STATS__

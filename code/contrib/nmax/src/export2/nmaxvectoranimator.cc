@@ -37,14 +37,14 @@ nMaxVectorAnimator::~nMaxVectorAnimator()
            Do we need any other control type supporting via IKeyControl?
 
     @param paramName A valid shader parameter name. e.g. "MatDiffuse"
-    @param control Controller which is animatable. 
+    @param control Controller which is animatable.
                    It can be retrieved from parameter block.
 */
 nAnimator* nMaxVectorAnimator::Export(const char* paramName, Control* control)
 {
     nVectorAnimator* createdAnimator = NULL;
 
-    // the number of the keys in the control should be checked cause some of 
+    // the number of the keys in the control should be checked cause some of
     // the node has control even it has no animations.
     if (control->NumKeys())
     {
@@ -61,7 +61,7 @@ nAnimator* nMaxVectorAnimator::Export(const char* paramName, Control* control)
         animatorName += "animator";
         animatorName.ToLower();
 
-        createdAnimator = static_cast<nVectorAnimator*>(CreateNebulaObject("nvectoranimator", 
+        createdAnimator = static_cast<nVectorAnimator*>(CreateNebulaObject("nvectoranimator",
                                                                            animatorName.Get()));
 
         if (createdAnimator)
@@ -70,7 +70,7 @@ nAnimator* nMaxVectorAnimator::Export(const char* paramName, Control* control)
 
             // retrieves sampled keys from the control.
             nArray<nMaxSampleKey> sampleKeyArray;
-            
+
             int sampleRate;
             sampleRate = nMaxOptions::Instance()->GetSampleRate();
 

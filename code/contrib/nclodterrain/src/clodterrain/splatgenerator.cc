@@ -38,7 +38,7 @@ void SplatGenerator::emit_vertex(int x, int y)
 void SplatGenerator::emit_special_vertex(int x, int y, int z)
 {
     MeshGenerator::emit_special_vertex(x,y,z);
-    
+
     emit_triangle_maybe();
 }
 
@@ -156,7 +156,7 @@ trianglestats SplatGenerator::write_vertex_data(nFile &destfile, int level)
     int current_pos = destfile.Tell();
     int dummy=0;
     SI32SPEW(destfile,dummy);
-    
+
     // write out the vertex data at the *end* of the file.
     destfile.Seek(0,nFile::END);
     int mesh_pos = destfile.Tell();
@@ -264,7 +264,7 @@ trianglestats SplatGenerator::write_vertex_data(nFile &destfile, int level)
             SI16SPEW(destfile, *idx);
         }
     }
-    
+
     // Count the real triangles in the main chunk.
     {
         int tris = 0;
@@ -347,7 +347,7 @@ void SplatGenerator::write_svg_debug(nFile &svgfile, int level)
 
     // generate a line strip outline
     char pathstart[] = "<path style=\"stroke:black;fill:none\" d=\"";
-    
+
     // write out the header and move to the first point
     svgfile.Write( pathstart, strlen(pathstart) );
 
@@ -378,5 +378,5 @@ void SplatGenerator::write_svg_debug(nFile &svgfile, int level)
     svgfile.Write( "\"/>\n", 4);
 
 }
-    
+
 

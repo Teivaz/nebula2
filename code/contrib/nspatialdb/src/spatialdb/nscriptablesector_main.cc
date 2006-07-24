@@ -107,7 +107,7 @@ bool nScriptableSector::RemObject(const char *objname)
     {
         nScriptableSectorObject *object = m_scriptobject_array[i];
         nSpatialElement *element = object->spatialinfo;
-                
+
         if (object->objectname == objname)
         {
             m_scriptobject_array.Erase(i);

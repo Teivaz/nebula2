@@ -27,7 +27,7 @@ static void n_IsEnabled( void* slf, nCmd* cmd );
 /**
     @scriptclass
     nopendegeom
-    
+
     @superclass
     nroot
 
@@ -73,7 +73,7 @@ n_initcmds(nClass* clazz)
     @info
     Create the underlying ODE object.
 */
-static void 
+static void
 n_Create( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -95,7 +95,7 @@ n_Create( void* slf, nCmd* cmd )
     Attach the geom to the specified body, can be "none" to indicate the geom
     is independent of any bodies (or to detach it if it is already attached).
 */
-static void 
+static void
 n_SetBody( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -117,7 +117,7 @@ n_SetBody( void* slf, nCmd* cmd )
     Get the body that the geom is attached to, will be "none" if the geom is
     not attached to any body.
 */
-static void 
+static void
 n_GetBody( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -137,7 +137,7 @@ n_GetBody( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetPosition( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -163,7 +163,7 @@ n_SetPosition( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetRotation( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -193,7 +193,7 @@ n_SetRotation( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetQuaternion( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -219,7 +219,7 @@ n_SetQuaternion( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetPosition( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -245,7 +245,7 @@ n_GetPosition( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetRotation( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -275,7 +275,7 @@ n_GetRotation( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetQuaternion( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -303,13 +303,13 @@ n_GetQuaternion( void* slf, nCmd* cmd )
         - sphere
         - box
         - capsule
-        - cylinder 
+        - cylinder
         - plane
         - transform
         - ray
         - mesh
 */
-static void 
+static void
 n_GetGeomClassName( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -329,7 +329,7 @@ n_GetGeomClassName( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetAABB( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -356,7 +356,7 @@ n_GetAABB( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetCategoryBits( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -376,7 +376,7 @@ n_SetCategoryBits( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_SetCollideBits( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -396,7 +396,7 @@ n_SetCollideBits( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetCategoryBits( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -417,7 +417,7 @@ n_GetCategoryBits( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_GetCollideBits( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -438,7 +438,7 @@ n_GetCollideBits( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_Enable( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -458,7 +458,7 @@ n_Enable( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_Disable( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -478,7 +478,7 @@ n_Disable( void* slf, nCmd* cmd )
 
     @info
 */
-static void 
+static void
 n_IsEnabled( void* slf, nCmd* cmd )
 {
     nOpendeGeom* self = (nOpendeGeom*)slf;
@@ -495,7 +495,7 @@ bool nOpendeGeom::SaveCmds( nPersistServer* ps )
     if ( nRoot::SaveCmds( ps ) )
     {
         nCmd* cmd;
-        
+
         // Create
         cmd = ps->GetCmd( this, 'CREA' );
         if ( this->getSpace() )
@@ -503,12 +503,12 @@ bool nOpendeGeom::SaveCmds( nPersistServer* ps )
         else
             cmd->In()->SetS( "none" );
         ps->PutCmd( cmd );
-    
+
         // SetBody
         cmd = ps->GetCmd( this, 'SBOD' );
         cmd->In()->SetS( this->bodyName.Get() );
         ps->PutCmd( cmd );
-    
+
         // SetPosition
         cmd = ps->GetCmd( this, 'SPOS' );
         vector3 v;
@@ -517,7 +517,7 @@ bool nOpendeGeom::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( v.y );
         cmd->In()->SetF( v.z );
         ps->PutCmd( cmd );
-        
+
         // SetQuaternion
         cmd = ps->GetCmd( this, 'SQUA' );
         quaternion q;
@@ -527,24 +527,24 @@ bool nOpendeGeom::SaveCmds( nPersistServer* ps )
         cmd->In()->SetF( q.z );
         cmd->In()->SetF( q.w );
         ps->PutCmd( cmd );
-        
+
         // SetCategoryBits
         cmd = ps->GetCmd( this, 'SCTB' );
         cmd->In()->SetI( int(this->GetCategoryBits()) );
         ps->PutCmd( cmd );
-        
+
         // SetCollideBits
         cmd = ps->GetCmd( this, 'SCLB' );
         cmd->In()->SetI( int(this->GetCollideBits()) );
         ps->PutCmd( cmd );
-        
+
         // Enable
         if ( this->IsEnabled() )
             cmd = ps->GetCmd( this, 'ENBL' );
         else
             cmd = ps->GetCmd( this, 'DSBL' );
         ps->PutCmd( cmd );
-    
+
         return true;
     }
     return false;

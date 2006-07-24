@@ -9,7 +9,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxFloatCtrl, wxTextCtrl)
 BEGIN_EVENT_TABLE(wxFloatCtrl, wxTextCtrl)
     EVT_CHAR(wxFloatCtrl::OnChar)
     EVT_KILL_FOCUS(wxFloatCtrl::OnKillFocus)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -23,7 +23,7 @@ wxFloatCtrl::wxFloatCtrl() :
 //----------------------------------------------------------------------------
 /**
 */
-wxFloatCtrl::wxFloatCtrl(wxWindow* parent, wxWindowID id, 
+wxFloatCtrl::wxFloatCtrl(wxWindow* parent, wxWindowID id,
                          const wxPoint& pos, const wxSize& size) :
     created(false)
 {
@@ -33,12 +33,12 @@ wxFloatCtrl::wxFloatCtrl(wxWindow* parent, wxWindowID id,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
-wxFloatCtrl::Create(wxWindow* parent, wxWindowID id, 
+bool
+wxFloatCtrl::Create(wxWindow* parent, wxWindowID id,
                     const wxPoint& pos, const wxSize& size,
                     long style, const wxString& name)
 {
-    this->created = wxTextCtrl::Create(parent, id, wxEmptyString, pos, size, 
+    this->created = wxTextCtrl::Create(parent, id, wxEmptyString, pos, size,
                                        style, wxDefaultValidator, name);
     return this->created;
 }
@@ -54,7 +54,7 @@ wxFloatCtrl::~wxFloatCtrl()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxFloatCtrl::OnChar(wxKeyEvent& event)
 {
     // Only allow numbers and dots to be entered in the control
@@ -91,7 +91,7 @@ wxFloatCtrl::OnChar(wxKeyEvent& event)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxFloatCtrl::OnKillFocus(wxFocusEvent& WXUNUSED(event))
 {
     nString tempStr(wxTextCtrl::GetValue().c_str());

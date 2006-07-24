@@ -113,7 +113,7 @@ nOpenALServer::EndScene()
     if (diff > 0.05)
     {
         this->lastStreamUpdateCheck = curTime;
-    
+
         //nRoot* rsrcPool = this->refResourceServer->GetResourcePool(nResource::SoundResource);
         //nRoot* cur;
         //for (cur = rsrcPool->GetHead(); cur; cur = cur->GetSucc())

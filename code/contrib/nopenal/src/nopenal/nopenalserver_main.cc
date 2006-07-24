@@ -9,7 +9,7 @@
 
 #include <vorbis/codec.h>
 
-nNebulaScriptClass(nOpenALServer, "audio3::naudioserver3");
+nNebulaScriptClass(nOpenALServer, "naudioserver3");
 
 nOpenALServer * nOpenALServer::m_pSelf = 0;
 

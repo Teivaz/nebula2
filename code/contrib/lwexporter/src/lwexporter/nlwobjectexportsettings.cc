@@ -41,7 +41,7 @@ nLWObjectExportSettings::~nLWObjectExportSettings()
 //----------------------------------------------------------------------------
 /**
 */
-LWError 
+LWError
 nLWObjectExportSettings::DisplaySettingsPanel()
 {
     HostDisplayInfo* hdi = nLWGlobals::GetHostDisplayInfo();
@@ -64,7 +64,7 @@ nLWObjectExportSettings::DisplaySettingsPanel()
 //----------------------------------------------------------------------------
 /**
 */
-nString 
+nString
 nLWObjectExportSettings::GetItemName() const
 {
     nLWGlobals::ItemInfo itemInfo;
@@ -81,7 +81,7 @@ nLWObjectExportSettings::GetItemName() const
 //----------------------------------------------------------------------------
 /**
 */
-LWItemID 
+LWItemID
 nLWObjectExportSettings::GetItemId() const
 {
     return this->lwItemId;
@@ -106,17 +106,17 @@ namespace FileBlockId
 //----------------------------------------------------------------------------
 /**
 */
-LWError 
+LWError
 nLWObjectExportSettings::OnLoad(const LWLoadState* lwLoadState)
 {
     nLWLoadState state(lwLoadState);
-    
+
     this->exportNodeType = "None";
     if (!state.ReadString(this->exportNodeType))
     {
         n_assert2(false, "Failed to read in Export Node Type.");
     }
-    
+
     this->exportSceneNodeHierarchy = false;
     if (!state.ReadBool(this->exportSceneNodeHierarchy))
     {
@@ -139,11 +139,11 @@ nLWObjectExportSettings::OnLoad(const LWLoadState* lwLoadState)
         nLWAnimationState animState;
         while (state.BeginBlock(FileBlockId::ANIM_STATE))
         {
-            animState.name.Clear();            
+            animState.name.Clear();
             if (state.BeginBlock(FileBlockId::ANIM_STATE_NAME))
             {
                 state.ReadString(animState.name);
-                state.EndBlock();    
+                state.EndBlock();
             }
 
             animState.startFrame = 0;
@@ -152,28 +152,28 @@ nLWObjectExportSettings::OnLoad(const LWLoadState* lwLoadState)
                 state.ReadInt(animState.startFrame);
                 state.EndBlock();
             }
-            
+
             animState.endFrame = animState.startFrame;
             if (state.BeginBlock(FileBlockId::ANIM_STATE_EF))
             {
                 state.ReadInt(animState.endFrame);
                 state.EndBlock();
             }
-            
+
             animState.fadeInTime = 0.0f;
             if (state.BeginBlock(FileBlockId::ANIM_STATE_FIT))
             {
                 state.ReadFloat(animState.fadeInTime);
                 state.EndBlock();
             }
-            
+
             animState.repeat = false;
             if (state.BeginBlock(FileBlockId::ANIM_STATE_LOOP))
             {
                 state.ReadBool(animState.repeat);
                 state.EndBlock();
             }
-            
+
             this->animationStateArray.PushBack(animState);
 
             state.EndBlock(/*ANIM_STATE*/);
@@ -188,45 +188,45 @@ nLWObjectExportSettings::OnLoad(const LWLoadState* lwLoadState)
 //----------------------------------------------------------------------------
 /**
 */
-LWError 
+LWError
 nLWObjectExportSettings::OnSave(const LWSaveState* lwSaveState)
 {
     nLWSaveState state(lwSaveState);
     state.WriteString(this->exportNodeType);
     state.WriteBool(this->exportSceneNodeHierarchy);
-    
+
     // animation stuff
     state.BeginBlock(FileBlockId::ANIMATION_DATA, false);
-    
+
     state.BeginBlock(FileBlockId::ANIM_VAR, true);
     state.WriteString(this->animationVarName);
     state.EndBlock();
-    
+
     for (int i = 0; i < this->animationStateArray.Size(); i++)
     {
         const nLWAnimationState& animState = this->animationStateArray[i];
         state.BeginBlock(FileBlockId::ANIM_STATE, false);
-        
+
         state.BeginBlock(FileBlockId::ANIM_STATE_NAME, true);
         state.WriteString(animState.name);
         state.EndBlock();
-        
+
         state.BeginBlock(FileBlockId::ANIM_STATE_SF, true);
         state.WriteInt(animState.startFrame);
         state.EndBlock();
-        
+
         state.BeginBlock(FileBlockId::ANIM_STATE_EF, true);
         state.WriteInt(animState.endFrame);
         state.EndBlock();
-        
+
         state.BeginBlock(FileBlockId::ANIM_STATE_FIT, true);
         state.WriteFloat(animState.fadeInTime);
         state.EndBlock();
-        
+
         state.BeginBlock(FileBlockId::ANIM_STATE_LOOP, true);
         state.WriteBool(animState.repeat);
         state.EndBlock();
-        
+
         state.EndBlock(/*FileBlockId::ANIM_STATE*/);
     }
     state.EndBlock(/*FileBlockId::ANIMATION_DATA*/);
@@ -237,7 +237,7 @@ nLWObjectExportSettings::OnSave(const LWSaveState* lwSaveState)
 //----------------------------------------------------------------------------
 /**
 */
-const char* 
+const char*
 nLWObjectExportSettings::OnGetDescription()
 {
     return "N2 Exporter Object Export Settings Handler";
@@ -246,7 +246,7 @@ nLWObjectExportSettings::OnGetDescription()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWObjectExportSettings::OnChangeID(const LWItemID* idList)
 {
     nLWItemIDChangeList changeList(idList);
@@ -258,7 +258,7 @@ nLWObjectExportSettings::OnChangeID(const LWItemID* idList)
         if (registry)
         {
             registry->Update(this->lwItemId, newItemId);
-        }    
+        }
         this->lwItemId = newItemId;
     }
 }
@@ -266,7 +266,7 @@ nLWObjectExportSettings::OnChangeID(const LWItemID* idList)
 //----------------------------------------------------------------------------
 /**
 */
-LWError 
+LWError
 nLWObjectExportSettings::OnDisplayUI()
 {
     return this->DisplaySettingsPanel();
@@ -275,12 +275,12 @@ nLWObjectExportSettings::OnDisplayUI()
 //----------------------------------------------------------------------------
 /**
 */
-XCALL_(LWInstance) 
+XCALL_(LWInstance)
 nLWObjectExportSettings::OnLWCreate(void* /*priv*/, void* context, LWError* error)
 {
     // warning: in 7.5c at least Lightwave always passes in NULL for priv, even if
     //          specifically tell it to pass something else!
-    
+
     LWItemID lwItemID = (LWItemID)context;
     n_assert(lwItemID);
     if (!lwItemID)

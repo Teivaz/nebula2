@@ -11,7 +11,7 @@ namespace // anonymous namespace, local to this translation unit
 //----------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nLWGlobals::IsGlobalFuncSet()
 {
     return (globalFunc != 0);
@@ -20,7 +20,7 @@ nLWGlobals::IsGlobalFuncSet()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWGlobals::SetGlobalFunc(GlobalFunc* func)
 {
     globalFunc = func;
@@ -29,7 +29,7 @@ nLWGlobals::SetGlobalFunc(GlobalFunc* func)
 //----------------------------------------------------------------------------
 /**
 */
-GlobalFunc* 
+GlobalFunc*
 nLWGlobals::GetGlobalFunc()
 {
     n_assert(globalFunc);

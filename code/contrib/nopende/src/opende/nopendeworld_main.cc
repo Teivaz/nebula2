@@ -4,7 +4,7 @@
 #include "opende/nopendeworld.h"
 #include "kernel/nkernelserver.h"
 
-nNebulaScriptClass(nOpendeWorld, "kernel::nroot");
+nNebulaScriptClass(nOpendeWorld, "nroot");
 
 //----------------------------------------------------------------------------
 /**

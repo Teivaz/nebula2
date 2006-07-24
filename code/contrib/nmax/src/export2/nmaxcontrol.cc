@@ -28,17 +28,17 @@ nMaxControl::~nMaxControl()
 
 //-----------------------------------------------------------------------------
 /**
-    Samples the node TM controllers and specifies retrieved keys to the given 
+    Samples the node TM controllers and specifies retrieved keys to the given
     sampleKeyArray.
 
     - 21-Feb-05 kims Fixed transform scale.
 */
-void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyArray, 
+void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyArray,
                                     int sampleRate, nMaxControlType type)
 {
-    if (type != nMaxTM  && 
-        type != nMaxPos && 
-        type != nMaxRot && 
+    if (type != nMaxTM  &&
+        type != nMaxPos &&
+        type != nMaxRot &&
         type != nMaxScale)
     {
         return;
@@ -85,7 +85,7 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
             sampleKey.scale = ap.k;
 
         sampleKey.time = t * SECONDSPERTICK;
-      
+
         sampleKeyArray.Append(sampleKey);
     }
 
@@ -95,7 +95,7 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
         t = end;
 
         nMaxSampleKey sampleKey;
-  
+
         sampleKey.tm = nMaxTransform::GetLocalTM(inode, t);
 
         AffineParts ap;
@@ -119,13 +119,13 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
 
 //-----------------------------------------------------------------------------
 /**
-    Samples the float or point3 controllers and specifies retrieved keys to 
+    Samples the float or point3 controllers and specifies retrieved keys to
     the given sampleKeyArray.
 
     - 21-Feb-05 kims added optimize routine which remove a key if the key has
                      same value except time value to previous key.
 */
-void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sampleKeyArray, 
+void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sampleKeyArray,
                                     int sampleRate, nMaxControlType type, bool optimize)
 {
     TimeValue t;
@@ -225,7 +225,7 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
                 nMaxSampleKey previousKey = sampleKeyArray[i - 1];
                 nMaxSampleKey currentKey = sampleKeyArray[i];
                 nMaxSampleKey nextKey = sampleKeyArray[i + 1];
-                if(!AreKeysEqual(currentKey, previousKey, type) || 
+                if(!AreKeysEqual(currentKey, previousKey, type) ||
                    !AreKeysEqual(currentKey, nextKey, type))
                 {
                     tmpKeyArray.Append(currentKey);
@@ -256,7 +256,7 @@ bool nMaxControl::AreKeysEqual(nMaxSampleKey& key1, nMaxSampleKey& key2, nMaxCon
         return key1.fval == key2.fval;
     }
 
-    // TO DO: support other types 
+    // TO DO: support other types
     return false;
 }
 

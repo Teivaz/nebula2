@@ -9,7 +9,7 @@
 #include "kernel/nfile.h"
 
 //------------------------------------------------------------------------------
-int 
+int
 main(int argc, const char** argv)
 {
     nCmdLineArgs args(argc, argv);

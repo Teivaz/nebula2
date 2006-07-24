@@ -17,9 +17,9 @@ enum AnimListBoxColumns
 //----------------------------------------------------------------------------
 /**
 */
-wxAnimListCtrl::wxAnimListCtrl(wxWindow* parent, wxWindowID id, 
+wxAnimListCtrl::wxAnimListCtrl(wxWindow* parent, wxWindowID id,
                                const wxPoint& pos, const wxSize& size) :
-    wxListCtrl(parent, id, pos, size, 
+    wxListCtrl(parent, id, pos, size,
                wxLC_VIRTUAL|wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_HRULES|wxLC_VRULES)
 {
     this->InsertColumn(ANIM_LIST_NAME_COL, "State Name", wxLIST_FORMAT_LEFT, 180);
@@ -40,7 +40,7 @@ wxAnimListCtrl::~wxAnimListCtrl()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxAnimListCtrl::ClearAnims()
 {
     for (int i = 0; i < this->rows.Size(); i++)
@@ -53,7 +53,7 @@ wxAnimListCtrl::ClearAnims()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxAnimListCtrl::AddAnim(const nLWAnimationState& anim)
 {
     nLWAnimationState* newAnim = n_new(nLWAnimationState);
@@ -65,7 +65,7 @@ wxAnimListCtrl::AddAnim(const nLWAnimationState& anim)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxAnimListCtrl::RemoveAnim(int row)
 {
     n_assert(row < this->rows.Size());
@@ -91,7 +91,7 @@ wxAnimListCtrl::RemoveAnim(int row)
                            negative the row will be moved up, if it's positive
                            the row will be moved down.
 */
-void 
+void
 wxAnimListCtrl::MoveAnim(int rowToMove, int numRowsToMoveBy)
 {
     if (0 == numRowsToMoveBy)
@@ -132,7 +132,7 @@ wxAnimListCtrl::MoveAnim(int rowToMove, int numRowsToMoveBy)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxAnimListCtrl::SetAnim(int row, const nLWAnimationState& anim)
 {
     n_assert(row < this->rows.Size());
@@ -161,7 +161,7 @@ wxAnimListCtrl::GetAnim(int row, nLWAnimationState& anim) const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxAnimListCtrl::SelectAnim(int rowIdx)
 {
     this->SetItemState(rowIdx, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
@@ -173,7 +173,7 @@ wxAnimListCtrl::SelectAnim(int rowIdx)
            list.
     @return Index of the selected animation, or -1 if no animation is selected.
 */
-int 
+int
 wxAnimListCtrl::GetSelectedAnimIdx() const
 {
     return this->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
@@ -182,7 +182,7 @@ wxAnimListCtrl::GetSelectedAnimIdx() const
 //----------------------------------------------------------------------------
 /**
 */
-wxString 
+wxString
 wxAnimListCtrl::OnGetItemText(long rowIdx, long columnIdx) const
 {
     nLWAnimationState* animState = this->rows[rowIdx];
@@ -204,7 +204,7 @@ wxAnimListCtrl::OnGetItemText(long rowIdx, long columnIdx) const
         case ANIM_LIST_FADEIN_COL:
             retVal.SetFloat(animState->fadeInTime);
         break;
-            
+
         case ANIM_LIST_LOOP_COL:
             retVal = animState->repeat ? "Y" : "N";
         break;

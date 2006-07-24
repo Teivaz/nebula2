@@ -9,7 +9,7 @@
 
 #include "nopenal/nopenalserver.h"
 
-nNebulaScriptClass(nAppOpenALState, "application::nappstate")
+nNebulaScriptClass(nAppOpenALState, "nappstate")
 
 //----------------------------------------------------------------------------
 /**

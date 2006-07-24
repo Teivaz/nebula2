@@ -131,7 +131,7 @@ nChunkLodNode::LookupNeighbours(nChunkLodTree* tree)
 //------------------------------------------------------------------------------
 /**
     This clears the "split" node members throughout the quad tree.
-    If this node is not split, then the recursion does not continue to the 
+    If this node is not split, then the recursion does not continue to the
     child nodes, since their m_split values should be false.
 
     Do this before calling Update().
@@ -164,7 +164,7 @@ nChunkLodNode::ClearSplits()
 
     Invariant: if a node has m_split == true, then all its ancestors
     have m_split == true.
-    
+
     Invariant: if a node has m_data != NULL, then all its ancestors
     have m_data != NULL.
 
@@ -182,7 +182,7 @@ nChunkLodNode::Update(nChunkLodTree* tree, const vector3& viewPoint)
     if (this->HasChildren() && (desiredLod > (this->lod | 0xff)) && this->CanSplit(tree))
     {
         this->DoSplit(tree, viewPoint);
-        
+
         // recurse to children
         int i;
         for (i = 0; i < 4; i++)
@@ -331,7 +331,7 @@ nChunkLodNode::DoSplit(nChunkLodTree* tree, const vector3& viewPoint)
     {
         n_assert(this->CanSplit(tree));
         n_assert(this->IsValid());
-        
+
         this->split = true;
 
         if (this->HasChildren())
@@ -531,7 +531,7 @@ nChunkLodNode::RequestLoadData(nChunkLodTree* tree, float /*priority*/)
     }
     this->chunkLodMesh = (nChunkLodMesh*) tree->GetResourceServer()->NewResource("nchunklodmesh", 0, nResource::Other);
     n_assert(this->chunkLodMesh);
-    
+
     // fill chunk mesh parameters
     static bbox3 box;
     this->ComputeBoundingBox(tree, box);
@@ -641,7 +641,7 @@ nChunkLodNode::GetTexGen(nChunkLodTree* tree, nFloat4& texGenS, nFloat4& texGenT
 
 //------------------------------------------------------------------------------
 /**
-    Bind the given texture to the current shader and set up texgen so that it 
+    Bind the given texture to the current shader and set up texgen so that it
     stretches over the x-z extent of the given box.
 */
 void
@@ -721,7 +721,7 @@ nChunkLodNode::RenderTexture(nChunkLodRenderParams& renderParams)
     Recursively render the chunk lod node. Returns number of triangles.
 */
 int
-nChunkLodNode::Render(nChunkLodRenderParams& renderParams, 
+nChunkLodNode::Render(nChunkLodRenderParams& renderParams,
                       bbox3::ClipStatus clipStatus,
                       bool textureBound)
 {

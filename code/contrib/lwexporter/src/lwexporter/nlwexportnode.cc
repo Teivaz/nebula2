@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------------
 /**
 */
-nLWExportNode::nLWExportNode(nLWObjectExportSettings* settings, 
+nLWExportNode::nLWExportNode(nLWObjectExportSettings* settings,
                              nLWCmdExec* cmdExec) :
     nodeType(0),
     settings(settings),
@@ -49,7 +49,7 @@ nLWExportNode::~nLWExportNode()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWExportNode::ClearChildren()
 {
     for (int i = 0; i < this->children.Size(); i++)
@@ -67,7 +67,7 @@ nLWExportNode::ClearChildren()
     @brief Check if this node will export it's descendants.
     @return true if descendants will be exported, false otherwise.
 */
-bool 
+bool
 nLWExportNode::GetExportHierarchy()
 {
     n_assert(this->settings);
@@ -81,8 +81,8 @@ nLWExportNode::GetExportHierarchy()
 /**
     @brief Collect all of the descendants of this node.
 */
-void 
-nLWExportNode::CollectDescendants(const nLWGlobals::ItemInfo* itemInfo, 
+void
+nLWExportNode::CollectDescendants(const nLWGlobals::ItemInfo* itemInfo,
                                   const nLWSettingsRegistry* registry)
 {
     n_assert(itemInfo);
@@ -97,7 +97,7 @@ nLWExportNode::CollectDescendants(const nLWGlobals::ItemInfo* itemInfo,
     // the user explicitly told us not to export the descendants
     if (!this->settings->GetExportSceneNodeHierarchy())
         return;
-    
+
     // figure out how many children the node has so we can allocate storage in one go
     LWItemID parentItemId = this->settings->GetItemId();
     int numChildren = 0;
@@ -138,7 +138,7 @@ nLWExportNode::CollectDescendants(const nLWGlobals::ItemInfo* itemInfo,
 /**
     @brief Get the number of immediate child nodes of this node.
 */
-int 
+int
 nLWExportNode::GetNumChildren()
 {
     return this->children.Size();
@@ -148,7 +148,7 @@ nLWExportNode::GetNumChildren()
 /**
     @brief Get the total number of descendants of this node.
 */
-int 
+int
 nLWExportNode::GetNumDescendants()
 {
     int count = 0;
@@ -164,18 +164,18 @@ nLWExportNode::GetNumDescendants()
     @brief Check if this node is an ancestor of the given node.
     @note This only works if CollectChildren() has been called for this node.
 */
-bool 
+bool
 nLWExportNode::IsAncestorOf(nLWExportNode* otherNode)
 {
     if (-1 != this->children.FindIndex(otherNode))
         return true;
-    
+
     for (int i = 0; i < this->children.Size(); i++)
     {
         if (this->children[i]->IsAncestorOf(otherNode))
             return true;
     }
-    
+
     return false;
 }
 
@@ -183,7 +183,7 @@ nLWExportNode::IsAncestorOf(nLWExportNode* otherNode)
 /**
     Entry point from exporter.
 */
-void 
+void
 nLWExportNode::Export(nLWLayoutMonitor* monitor)
 {
     // get the name of the node item
@@ -199,7 +199,7 @@ nLWExportNode::Export(nLWLayoutMonitor* monitor)
     nString itemName(rawItemName);
     itemName.ReplaceIllegalFilenameChars('_');
     nString monitorMsg;
-    monitorMsg.Format("[INFO] Started exporting %s as %s\n", rawItemName.Get(), 
+    monitorMsg.Format("[INFO] Started exporting %s as %s\n", rawItemName.Get(),
                       itemName.Get());
 
     if (monitor)
@@ -272,12 +272,12 @@ nLWExportNode::Export(nLWLayoutMonitor* monitor)
     @return Root scene node of the visual node sub-tree.
 
     If the object has multiple surfaces multiple nShapeNode(s) will be created
-    under a single nTransformNode, one nShapeNode per surface. If the object 
-    consists of only one surface then only one nShapeNode will be created. 
+    under a single nTransformNode, one nShapeNode per surface. If the object
+    consists of only one surface then only one nShapeNode will be created.
     Any mesh and texture data the sub-tree require will also be exported.
 */
-nSceneNode* 
-nLWExportNode::ExportShapeNode(const nString& topNodeName, 
+nSceneNode*
+nLWExportNode::ExportShapeNode(const nString& topNodeName,
                                nLWLayoutMonitor* monitor)
 {
     nKernelServer* ks = nKernelServer::Instance();
@@ -289,12 +289,12 @@ nLWExportNode::ExportShapeNode(const nString& topNodeName,
     {
         return 0;
     }
-    
+
     if (meshExport.GetNumGroups() > 1)
     {
-        // a bunch of shape nodes grouped under a transform node, 
+        // a bunch of shape nodes grouped under a transform node,
         // one shape node per material
-        topSceneNode = static_cast<nSceneNode*>(ks->NewNoFail("ntransformnode", 
+        topSceneNode = static_cast<nSceneNode*>(ks->NewNoFail("ntransformnode",
                                                               topNodeName.Get()));
         topSceneNode->SetLocalBox(meshExport.GetBBox());
         ks->PushCwd(topSceneNode);
@@ -305,7 +305,7 @@ nLWExportNode::ExportShapeNode(const nString& topNodeName,
             {
                 nString nodeName;
                 nodeName.Format("%s_%d", topNodeName.Get(), i);
-                nShapeNode* shapeNode = static_cast<nShapeNode*>(ks->NewNoFail("nshapenode", 
+                nShapeNode* shapeNode = static_cast<nShapeNode*>(ks->NewNoFail("nshapenode",
                                                                                nodeName.Get()));
                 shaderSettings->CopyNonTextureParamsTo(shapeNode);
                 nLWTextureExport textureExport(shaderSettings);
@@ -326,7 +326,7 @@ nLWExportNode::ExportShapeNode(const nString& topNodeName,
         nLWShaderExportSettings* shaderSettings = meshExport.GetShaderForGroup(0);
         if (shaderSettings && shaderSettings->Valid())
         {
-            nShapeNode* shapeNode = static_cast<nShapeNode*>(ks->NewNoFail("nshapenode", 
+            nShapeNode* shapeNode = static_cast<nShapeNode*>(ks->NewNoFail("nshapenode",
                                                                            topNodeName.Get()));
             // set the shader and shader params
             shaderSettings->CopyNonTextureParamsTo(shapeNode);
@@ -348,17 +348,17 @@ nLWExportNode::ExportShapeNode(const nString& topNodeName,
 
 //----------------------------------------------------------------------------
 /**
-    @brief Create a visual node sub-tree to represent a bone-animated mesh 
+    @brief Create a visual node sub-tree to represent a bone-animated mesh
            object in Nebula 2.
     @return Root scene node of the visual node sub-tree.
-    
+
     The root of the visual node sub-tree will be an nTransformNode, with one
-    nSkinAnimator below it and one or more nSkinShapeNode(s) 
-    (one nSkinShapeNode per surface). Any mesh, texture and animation data the 
+    nSkinAnimator below it and one or more nSkinShapeNode(s)
+    (one nSkinShapeNode per surface). Any mesh, texture and animation data the
     sub-tree requires will also be exported.
 */
-nSceneNode* 
-nLWExportNode::ExportSkinShapeNode(const nString& topNodeName, 
+nSceneNode*
+nLWExportNode::ExportSkinShapeNode(const nString& topNodeName,
                                    nLWLayoutMonitor* monitor)
 {
     nKernelServer* ks = nKernelServer::Instance();
@@ -370,7 +370,7 @@ nLWExportNode::ExportSkinShapeNode(const nString& topNodeName,
         return 0;
     }
 
-    // one skin animator and one or more skin shape nodes grouped under 
+    // one skin animator and one or more skin shape nodes grouped under
     // a transform node
     nObject* object = ks->NewNoFail("ntransformnode", topNodeName.Get());
     nSceneNode* topSceneNode = static_cast<nSceneNode*>(object);
@@ -400,7 +400,7 @@ nLWExportNode::ExportSkinShapeNode(const nString& topNodeName,
             object = ks->NewNoFail("nskinshapenode", nodeName.Get());
             nSkinShapeNode* skinShapeNode = static_cast<nSkinShapeNode*>(object);
             // Testing:
-            //nSkinShapeNode* skinShapeNode = static_cast<nSkinShapeNode*>(ks->NewNoFail("ncharskeletonnode", 
+            //nSkinShapeNode* skinShapeNode = static_cast<nSkinShapeNode*>(ks->NewNoFail("ncharskeletonnode",
             //                                                             nodeName.Get()));
             shaderSettings->CopyNonTextureParamsTo(skinShapeNode);
             nLWTextureExport textureExport(shaderSettings);
@@ -420,7 +420,7 @@ nLWExportNode::ExportSkinShapeNode(const nString& topNodeName,
             {
                 int meshFragIdx = groupFrags[groupFragIdx];
                 skinShapeNode->SetFragGroupIndex(meshFragIdx, meshFragIdx);
-                
+
                 const nArray<int>& fragJoints = meshExport.GetFragmentJoints(meshFragIdx);
                 skinShapeNode->BeginJointPalette(meshFragIdx, fragJoints.Size());
                 for (int fragJointIdx = 0; fragJointIdx < fragJoints.Size(); fragJointIdx++)
@@ -432,7 +432,7 @@ nLWExportNode::ExportSkinShapeNode(const nString& topNodeName,
             skinShapeNode->EndFragments();
         }
     }
-    
+
     ks->PopCwd();
 
     return topSceneNode;
@@ -443,12 +443,12 @@ nLWExportNode::ExportSkinShapeNode(const nString& topNodeName,
     @brief Export just the raw resources for an object, without creating a
            visual node sub-tree.
 
-    Only certain mesh data is handled here at the moment (for collision 
-    meshes), will probably be expanded in the future to handle textures 
+    Only certain mesh data is handled here at the moment (for collision
+    meshes), will probably be expanded in the future to handle textures
     and animations.
 */
-void 
-nLWExportNode::ExportResourcesOnly(const nString& topNodeName, 
+void
+nLWExportNode::ExportResourcesOnly(const nString& topNodeName,
                                    nLWLayoutMonitor* monitor)
 {
     nLWExporterSettings* exps = nLWExporterSettings::Instance();
@@ -458,7 +458,7 @@ nLWExportNode::ExportResourcesOnly(const nString& topNodeName,
 
     nLWExportNodeType* exportType = 0;
     exportType = exps->GetExportNodeType(this->settings->GetExportNodeType());
-    
+
     if (exportType->GetVertexComponentMask() != 0)
     {
         // write out mesh data

@@ -40,7 +40,7 @@ nLWShaderPanelFactory::~nLWShaderPanelFactory()
 //----------------------------------------------------------------------------
 /**
 */
-nLWShaderPanelFactory* 
+nLWShaderPanelFactory*
 nLWShaderPanelFactory::Instance()
 {
     if (!nLWShaderPanelFactory::singleton)
@@ -54,7 +54,7 @@ nLWShaderPanelFactory::Instance()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWShaderPanelFactory::FreeInstance()
 {
     if (nLWShaderPanelFactory::singleton)
@@ -67,7 +67,7 @@ nLWShaderPanelFactory::FreeInstance()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWShaderPanelFactory::SetShadersFile(const nString& shadersFileName)
 {
     this->shadersFileName = shadersFileName;
@@ -76,7 +76,7 @@ nLWShaderPanelFactory::SetShadersFile(const nString& shadersFileName)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWShaderPanelFactory::Load()
 {
     n_assert(!this->shadersFileName.IsEmpty());
@@ -182,14 +182,14 @@ nLWShaderPanelFactory::GetNextShaderPanelToDisplay() const
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWShaderPanelFactory::DisplayNextPanel(nLWShaderExportSettings* settings)
 {
     nLWShaderPanelTemplate* panelTemplate = 0;
     while ((panelTemplate = this->GetNextShaderPanelToDisplay()))
     {
         this->SetNextShaderPanelToDisplay(0);
-        
+
         HostDisplayInfo* hdi = nLWGlobals::GetHostDisplayInfo();
         if (!hdi)
             return;
@@ -217,7 +217,7 @@ nLWShaderPanelFactory::DisplayNextPanel(nLWShaderExportSettings* settings)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 nLWShaderPanelFactory::DisplayPanel(LWSurfaceID surfId)
 {
     nLWGlobals::SurfaceFuncs surfFuncs;

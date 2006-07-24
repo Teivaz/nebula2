@@ -48,14 +48,14 @@ main(int argc, const char** argv)
     kernelServer.SetLogHandler(&logHandler);
 #endif
 
-    
+
     kernelServer.AddPackage(nnebula);
     kernelServer.AddPackage(ndirect3d9);
     kernelServer.AddPackage(ndinput8);
     kernelServer.AddPackage(ndsaudioserver3);
     kernelServer.AddPackage(ndshow);
     kernelServer.AddPackage(ngui);
-    kernelServer.AddPackage(napplication);    
+    kernelServer.AddPackage(napplication);
     kernelServer.AddPackage(nopenaldemo);
     kernelServer.AddPackage(nopenal);
 

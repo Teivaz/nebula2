@@ -11,7 +11,7 @@ BEGIN_EVENT_TABLE(wxColorCtrl, wxControl)
     EVT_PAINT(wxColorCtrl::OnPaint)
     EVT_ERASE_BACKGROUND(wxColorCtrl::OnEraseBackground)
     EVT_LEFT_UP(wxColorCtrl::OnLeftUp)
-END_EVENT_TABLE() 
+END_EVENT_TABLE()
 
 //----------------------------------------------------------------------------
 /**
@@ -25,7 +25,7 @@ wxColorCtrl::wxColorCtrl() :
 //----------------------------------------------------------------------------
 /**
 */
-wxColorCtrl::wxColorCtrl(wxWindow* parent, wxWindowID id, 
+wxColorCtrl::wxColorCtrl(wxWindow* parent, wxWindowID id,
                          const wxPoint& pos, const wxSize& size) :
     created(false)
 {
@@ -35,8 +35,8 @@ wxColorCtrl::wxColorCtrl(wxWindow* parent, wxWindowID id,
 //----------------------------------------------------------------------------
 /**
 */
-bool 
-wxColorCtrl::Create(wxWindow* parent, wxWindowID id, 
+bool
+wxColorCtrl::Create(wxWindow* parent, wxWindowID id,
                     const wxPoint& pos, const wxSize& size,
                     long style, const wxValidator& val, const wxString& name)
 {
@@ -55,7 +55,7 @@ wxColorCtrl::~wxColorCtrl()
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxColorCtrl::OnPaint(wxPaintEvent &event)
 {
     wxPaintDC dc(this);
@@ -70,7 +70,7 @@ wxColorCtrl::OnPaint(wxPaintEvent &event)
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxColorCtrl::OnEraseBackground(wxEraseEvent& WXUNUSED(event))
 {
     // empty
@@ -79,13 +79,13 @@ wxColorCtrl::OnEraseBackground(wxEraseEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-void 
+void
 wxColorCtrl::OnLeftUp(wxMouseEvent& WXUNUSED(event))
 {
     wxColourData data;
     data.SetChooseFull(true);
     data.SetColour(this->curColor);
-    
+
     wxColourDialog dialog(this, &data);
     if (dialog.ShowModal() == wxID_OK)
     {
@@ -103,7 +103,7 @@ wxColorCtrl::OnLeftUp(wxMouseEvent& WXUNUSED(event))
 //----------------------------------------------------------------------------
 /**
 */
-wxSize 
+wxSize
 wxColorCtrl::DoGetBestSize() const
 {
     // some magic numbers, but they work for me :)

@@ -16,7 +16,7 @@
 //--------------------------------------------------------------------
 /**
 
-    @return 
+    @return
 */
 nString
 nPythonServer::Prompt()
@@ -32,7 +32,7 @@ nPythonServer::Prompt()
 
     @param cmdStr
     @param result
-    @return 
+    @return
 */
 bool
 nPythonServer::Run(const char *cmdStr, nString& result)
@@ -41,7 +41,7 @@ nPythonServer::Run(const char *cmdStr, nString& result)
 }
 
 PyObject*
-NArg2PyObject(nArg *a) 
+NArg2PyObject(nArg *a)
 {
     switch (a->GetType())
     {
@@ -66,12 +66,12 @@ NArg2PyObject(nArg *a)
 
 //--------------------------------------------------------------------
 /**
- 
+
     @param c
-    @return 
+    @return
 */
 bool
-nPythonServer::RunCommand(nCmd *c) 
+nPythonServer::RunCommand(nCmd *c)
 {
     c->Rewind();
     int len = c->GetNumInArgs();
@@ -86,14 +86,14 @@ nPythonServer::RunCommand(nCmd *c)
         {
             PyTuple_SET_ITEM(args, i, NArg2PyObject(c->In()));
         }
-        if (PyObject_CallObject(f, args)) 
+        if (PyObject_CallObject(f, args))
             return true;
     }
     else
     {
         f = PyDict_GetItemString(module_dict, funcName);
     }
-    return false;  
+    return false;
 }
 
 //--------------------------------------------------------------------
@@ -103,7 +103,7 @@ nPythonServer::RunCommand(nCmd *c)
     @param cmdStr
     @param mode
     @param result
-    @return 
+    @return
 */
 bool
 nPythonServer::Run(const char *cmdStr, int mode, nString& result)
@@ -166,10 +166,10 @@ nPythonServer::Run(const char *cmdStr, int mode, nString& result)
 //--------------------------------------------------------------------
 /**
     Executes the contents of a file as Python code
-    
+
     @param filename
     @param result
-    @return 
+    @return
 */
 bool
 nPythonServer::RunScript(const char *filename, nString& result)
@@ -184,7 +184,7 @@ nPythonServer::RunScript(const char *filename, nString& result)
     nString fname = file2->ManglePath(filename);
     nFile* file = file2->NewFileObject();
 
-    if (file->Open(fname.Get(), "r")) 
+    if (file->Open(fname.Get(), "r"))
     {
         // We only opened this to be able to report the error ourselves.
         // So, go on, close it now.
@@ -200,7 +200,7 @@ nPythonServer::RunScript(const char *filename, nString& result)
         nString execString;
         execString.Format("execfile('%s')", fname.Get());
         int success = PyRun_SimpleString(execString.Get());
-        if (success == -1) 
+        if (success == -1)
         {
             // interpreter exits due to an exception
             if (PyErr_Occurred())
@@ -211,7 +211,7 @@ nPythonServer::RunScript(const char *filename, nString& result)
             return false;
         }
     }
-    else 
+    else
     {
         file->Release();
         n_printf("Error unable to open file %s", filename);

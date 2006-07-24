@@ -1,7 +1,7 @@
 #define N_IMPLEMENTS nRubyServer
 //--------------------------------------------------------------------
 //  nrubycmds.cc --  implements ruby command extensions
-//                  
+//
 //  (C) 2004 Thomas Miskiewicz see 3di_license.txt for usage
 //--------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ nRoot * getRoot(VALUE val)
         o = (nRubyServer::kernelServer)->Lookup(RSTRING(val)->ptr);
         break;
     case T_OBJECT:
-    case T_DATA: 
+    case T_DATA:
         {
             if(CLASS_OF(val) == cNRoot)
             {
@@ -74,7 +74,7 @@ nRoot * getRoot(VALUE val)
             }
         }break;
     }
-    
+
     return o;
 }
 //--------------------------------------------------------------------
@@ -85,7 +85,7 @@ nRoot * getRoot(VALUE val)
 
     -TODO
         support for list arguments
-    
+
     -18-Dec-03  Tom     adapted from ruby
     -10-Feb-04  Tom     redone for N2 args
 */
@@ -96,18 +96,18 @@ static bool _getInArgs(nCmd *cmd, int argc, VALUE *argv)
     VALUE rbarg;
 
     num_args = cmd->GetNumInArgs();
-    if (num_args == argc) 
+    if (num_args == argc)
     {
 
         int i;
         nArg *arg;
         cmd->Rewind();
-        for (i=0; i<num_args; i++) 
+        for (i=0; i<num_args; i++)
         {
             arg = cmd->In();
             rbarg = argv[i];
 
-            switch(arg->GetType()) 
+            switch(arg->GetType())
             {
               case nArg::Int:
                 arg->SetI(NUM2INT(rbarg));
@@ -120,12 +120,12 @@ static bool _getInArgs(nCmd *cmd, int argc, VALUE *argv)
               case nArg::String:
                 rb_check_type(rbarg, T_STRING);
                 arg->SetS(RSTRING(rbarg)->ptr);
-                break;    
+                break;
 
               //case nArg::ARGTYPE_CODE:
                 //rb_check_type(rbarg, T_STRING);
                 //arg->SetC(RSTRING(rbarg)->ptr);
-                //break; 
+                //break;
                 // seems to be gone in N2
 
               case nArg::Bool:
@@ -150,7 +150,7 @@ static bool _getInArgs(nCmd *cmd, int argc, VALUE *argv)
                     n_assert(inargs);
 
                     VALUE result,str;
-                    
+
                     for(int j=0;j<len;j++)
                     {
                         str = rb_ary_entry(rbarg,j);
@@ -165,7 +165,7 @@ static bool _getInArgs(nCmd *cmd, int argc, VALUE *argv)
         }
         return true;
     }
-    rb_raise(cNError, "%s: Expected %ld arg(s), but got %d", 
+    rb_raise(cNError, "%s: Expected %ld arg(s), but got %d",
        cmd->GetProto()->GetProtoDef(), num_args, argc);
     return false;
 }
@@ -185,19 +185,19 @@ static VALUE _putOutArgs(nCmd *cmd)
     cmd->Rewind();
 
     // handle single return args (no need to create list)
-    if (1 == num_args) 
+    if (1 == num_args)
     {
         arg = cmd->Out();
         //return _arg_to_value(arg);
         return NArg2RubyObj(arg);
-    } 
-    else 
+    }
+    else
     {
         VALUE array = rb_ary_new();
 
         // more then one output arg, create an Array
         int i;
-        for (i=0; i<num_args; i++) 
+        for (i=0; i<num_args; i++)
         {
             arg = cmd->Out();
             //rb_ary_push(array, _arg_to_value(arg));
@@ -205,7 +205,7 @@ static VALUE _putOutArgs(nCmd *cmd)
         }
         return array;
     }
-}         
+}
 
 
 //--------------------------------------------------------------------
@@ -221,15 +221,15 @@ VALUE rubycmd_New(VALUE, VALUE node, VALUE name)
 {
     rb_check_type(node, T_STRING);
     rb_check_type(name, T_STRING);
-    
-    if (!RSTRING(node)->ptr || !RSTRING(name)->ptr) 
+
+    if (!RSTRING(node)->ptr || !RSTRING(name)->ptr)
     {
         rb_warn("Syntax is 'name = new 'class' , 'name'");
     }
-    else 
+    else
     {
         nRoot *o = (nRubyServer::kernelServer)->NewNoFail(RSTRING(node)->ptr,RSTRING(name)->ptr);
-        if (o) 
+        if (o)
         {
             return setRoot(o);
         }
@@ -249,12 +249,12 @@ VALUE rubycmd_Delete(VALUE, VALUE name)
 {
     nRoot *o = getRoot(name);
 
-    if(o) 
+    if(o)
     {
         o->Release();
         return Qtrue;
-    } 
-    else 
+    }
+    else
     {
         rb_raise(cNError,"Unable to lookup object %s", RSTRING(name)->ptr);
         return Qfalse;
@@ -287,7 +287,7 @@ VALUE rubycmd_Sel(VALUE, VALUE obj)
         if (rb_block_given_p())
             res = rb_yield(res);
 
-            return res; 
+            return res;
     }
     else
     {
@@ -299,7 +299,7 @@ VALUE rubycmd_Sel(VALUE, VALUE obj)
 //--------------------------------------------------------------------
 /**
     rubycmd_Psel()
-    Return the currently selected object in nebula (cwd) as a string if 
+    Return the currently selected object in nebula (cwd) as a string if
     successfull or Qnil otherwise.
 
     -19-Dec-03  Tom     created
@@ -308,7 +308,7 @@ VALUE rubycmd_Sel(VALUE, VALUE obj)
 VALUE rubycmd_Psel(VALUE)
 {
     nRoot *o = (nRubyServer::kernelServer)->GetCwd();
-    
+
     if(o)
     {
         return setRoot(o);
@@ -321,7 +321,7 @@ VALUE rubycmd_Psel(VALUE)
 /**
     rubycmd_Dir()
     Return a list of all objects beneath the currently selected node
-    
+
     -28-Dec-03  Tom     created by adopting from Michael Witrant
 */
 //--------------------------------------------------------------------
@@ -329,18 +329,18 @@ VALUE rubycmd_Dir(VALUE)
 {
     nRoot *cwd = (nRubyServer::kernelServer)->GetCwd();
 
-    if(cwd) 
+    if(cwd)
     {
         nRoot *o;
         VALUE result = rb_ary_new();
 
-        for (o=cwd->GetHead(); o; o=o->GetSucc()) 
+        for (o=cwd->GetHead(); o; o=o->GetSucc())
         {
             rb_ary_push(result, rb_str_new2(o->GetName()));
         }
         return result;
-    } 
-    else 
+    }
+    else
     {
         rb_raise(cNError,"Unable to get current working node");
         return Qnil;
@@ -402,8 +402,8 @@ VALUE rubycmd_Unknown(int argc, VALUE *argv, VALUE obj)
     if(strcmp(RSTRING(res)->ptr,"main")==0)
         o = (nRubyServer::kernelServer)->GetCwd();
     else
-        o = getRoot(obj); 
-    
+        o = getRoot(obj);
+
     if(!o)
     {
 //      n_printf(" %s",RSTRING(res)->ptr);
@@ -416,30 +416,30 @@ VALUE rubycmd_Unknown(int argc, VALUE *argv, VALUE obj)
     nClass *cl = o->GetClass();
     VALUE retval;
     nCmdProto *cmd_proto = (nCmdProto *) cl->FindCmdByName(cmd_name);
-    if (cmd_proto) 
+    if (cmd_proto)
     {
         nCmd *cmd = cmd_proto->NewCmd();
-  
+
         if (!_getInArgs(cmd, argc-1, &argv[1]))
             return Qnil;
-    
+
         // let object handle the command
-        if (o->Dispatch(cmd)) 
+        if (o->Dispatch(cmd))
         {
             retval = _putOutArgs(cmd);
-        } 
-        else 
+        }
+        else
         {
             rb_raise(cNError,"Unable to dispatch command %s", cmd_name);
             return Qnil;
         }
         cmd_proto->RelCmd(cmd);
-    } 
+    }
     else
     {
         retval = Qnil;
     }
-  
+
     return retval;
 }
 
@@ -471,7 +471,7 @@ VALUE rubycmd_Puts(int argc, VALUE *argv, VALUE klass)
     VALUE str;
     int i;
     char buffer[N_MAXPATH] ="";
-    for (i=0; i<argc; i++) 
+    for (i=0; i<argc; i++)
     {
 /*      if(CLASS_OF(argv[i]) == cNRoot)//||CLASS_OF(argv[i]) == cNError||CLASS_OF(argv[i]) == mNebula)
         {
@@ -499,7 +499,7 @@ VALUE rubycmd_Puts(int argc, VALUE *argv, VALUE klass)
         }
         (nRubyServer::kernelServer)->Print("\n");
     }
-  
+
     return Qnil;
 }
 
@@ -507,7 +507,7 @@ VALUE rubycmd_Puts(int argc, VALUE *argv, VALUE klass)
 /**
     rubycmd_Exists
     Returns qtrue if the specified nebula object exists in the named hierarchy.
-    
+
     -TODO
         Test it
 

@@ -30,9 +30,9 @@ nTqt2Compressor::nTqt2Compressor(nKernelServer* ks) :
     pp.BackBufferCount = 1;
     pp.SwapEffect = D3DSWAPEFFECT_COPY;
     pp.Windowed = TRUE;
-    HRESULT hr = this->d3d9->CreateDevice(0, 
-                                          D3DDEVTYPE_REF, 
-                                          GetDesktopWindow(), 
+    HRESULT hr = this->d3d9->CreateDevice(0,
+                                          D3DDEVTYPE_REF,
+                                          GetDesktopWindow(),
                                           D3DCREATE_HARDWARE_VERTEXPROCESSING,
                                           &pp, &(this->d3d9Dev));
     n_assert(SUCCEEDED(hr));
@@ -79,7 +79,7 @@ bool
 nTqt2Compressor::OpenSourceFile()
 {
     n_assert(0 == this->sourceFile);
-    
+
     this->sourceFile = kernelServer->GetFileServer()->NewFileObject();
     if (!this->sourceFile->Open(this->GetSourceFile(), "rb"))
     {
@@ -87,7 +87,7 @@ nTqt2Compressor::OpenSourceFile()
         this->CloseSourceFile();
         return false;
     }
-    
+
     // read tqt header, make sure it's in RAW format
     int magic = this->sourceFile->GetInt();
     if (magic != 'TQT2')
@@ -143,7 +143,7 @@ nTqt2Compressor::OpenTargetFile()
     this->targetFile->PutInt(this->treeDepth);
     this->targetFile->PutInt(this->tileSize);
     this->targetFile->PutInt(1); // DDS format
-    
+
     // write empty toc
     int numNodes = this->GetNumNodes(this->treeDepth);
     this->targetToc.SetFixedSize(numNodes);

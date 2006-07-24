@@ -160,7 +160,7 @@ static char *buildop (Proto *p, int pc, char *buff) {
   const char *name = luaP_opnames[o];
   int line = getline(p, pc);
   sprintf(buff, "(%4d) %4d - ", line, pc);
-  switch (getOpMode(o)) {  
+  switch (getOpMode(o)) {
     case iABC:
       sprintf(buff+strlen(buff), "%-12s%4d %4d %4d", name,
               GETARG_A(i), GETARG_B(i), GETARG_C(i));
@@ -307,7 +307,7 @@ static int table_query (lua_State *L) {
   else if (i < t->sizearray) {
     lua_pushintegral(L, i);
     luaA_pushobject(L, &t->array[i]);
-    lua_pushnil(L); 
+    lua_pushnil(L);
   }
   else if ((i -= t->sizearray) < sizenode(t)) {
     if (!ttisnil(gval(gnode(t, i))) ||
@@ -564,7 +564,7 @@ static int getnum_aux (lua_State *L, const char **pc) {
   while (isdigit(cast(int, **pc))) res = res*10 + (*(*pc)++) - '0';
   return sig*res;
 }
-  
+
 static const char *getname_aux (char *buff, const char **pc) {
   int i = 0;
   skip(pc);

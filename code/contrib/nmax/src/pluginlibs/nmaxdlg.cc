@@ -70,9 +70,9 @@ void nMaxDlg::Destroy()
 int nMaxDlg::DoModal()
 {
     int result;
-    result = DialogBoxParam(this->hInstance, 
+    result = DialogBoxParam(this->hInstance,
                             MAKEINTRESOURCE(this->resourceID),
-                            this->hWnd, 
+                            this->hWnd,
                             &DlgProc,
                             (LPARAM)this);
     if (result < 0)

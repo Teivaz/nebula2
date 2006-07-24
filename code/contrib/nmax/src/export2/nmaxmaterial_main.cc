@@ -81,7 +81,7 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
 
                 if (nMaxMaterial::Standard == subMtlType)
                 {
-                 #if (MAX_RELEASE >= 6000)   
+                 #if (MAX_RELEASE >= 6000)
                     // available on 3dsmax R6 or higher.
                     IDxMaterial* dxMaterial = (IDxMaterial*)mtl->GetInterface(IDXMATERIAL_INTERFACE);
                     if (dxMaterial)
@@ -107,7 +107,7 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
                 n_maxlog(Error, "multi material but no sub-material");
             }
         }
-        else 
+        else
         if (nMaxMaterial::Shell == materialType)
         {
             // Shell material type which is used for backed texture.
@@ -122,7 +122,7 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
             {
                 // call recursively until the material to be standard.
                 Export(subMtl, shapeNode, matID);
-            }    
+            }
         }
         else
         if (nMaxMaterial::NebulaCustom == materialType)
@@ -217,7 +217,7 @@ bool nMaxMaterial::SetAlphaParam(StdMat2* stdMat, nShapeNode* shapeNode)
 
         hasAlpha = true;
     }
-    else 
+    else
     if (stdMat->GetTransparencyType() == TRANSP_ADDITIVE)
     {
         shapeNode->SetInt(nShaderState::AlphaSrcBlend, 5); // SrcAlpha
@@ -276,7 +276,7 @@ void nMaxMaterial::SetStandardNebulaShader(nShapeNode* shapeNode, bool hasOpacit
       -# MatSpecular - specular color of the material.
 
     @note
-        Use Nebula2 custom material as it possible. 
+        Use Nebula2 custom material as it possible.
         It support various type of material animations.
 */
 void nMaxMaterial::ExportShaderAnimations(Mtl* mtl, nShapeNode* shapeNode)
@@ -341,12 +341,12 @@ void nMaxMaterial::ExportShaderAnimations(Mtl* mtl, nShapeNode* shapeNode)
 
     @param shapeNode nebula node which the created animator is attached.
     @param param A valid parameter of nShaderState.
-    @param ctrlColor Control for material color. 
+    @param ctrlColor Control for material color.
                      (Only ambient, diffuse and specular are supported)
     @param ctrlAlpha Control for material opacity(aka alpha)
 */
-void nMaxMaterial::CreateShaderAnimator(nShapeNode* shapeNode, 
-                                        nShaderState::Param param, 
+void nMaxMaterial::CreateShaderAnimator(nShapeNode* shapeNode,
+                                        nShaderState::Param param,
                                         Control* ctrlColor, Control* ctrlAlpha)
 {
     if (!ctrlColor && !ctrlAlpha)
@@ -444,11 +444,11 @@ int nMaxMaterial::GetNumMaps(StdMat2 *mtl)
 /**
     Get material type from given max material
 */
-nMaxMaterial::Type 
+nMaxMaterial::Type
 nMaxMaterial::GetType(Mtl* material)
 {
     n_assert(material);
-  
+
     nMaxMaterial::Type type;
 
     if (material->ClassID() == Class_ID(CMTL_CLASS_ID, 0) ||
@@ -503,7 +503,7 @@ nMaxMaterial::GetType(Mtl* material)
       - ID_RL - Reflection (value 9)
       - ID_RR - Refraction (value 10)
       - ID_DP - Displacement (value 11)
-    
+
 */
 Texmap* nMaxMaterial::GetSubTexmap(Mtl* mtl, int subMapIdx)
 {

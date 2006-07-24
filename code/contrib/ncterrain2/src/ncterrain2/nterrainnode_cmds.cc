@@ -22,7 +22,7 @@ static void n_getterrainorigin(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nterrainnode
-    
+
     @superclass
     nmaterialnode
 

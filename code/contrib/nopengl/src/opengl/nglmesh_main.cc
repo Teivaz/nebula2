@@ -6,7 +6,7 @@
 #include "opengl/nglextensionserver.h"
 #include "opengl/ngltexture.h"
 
-nNebulaClass(nGLMesh, "gfx2::nmesh2");
+nNebulaClass(nGLMesh, "nmesh2");
 
 const ushort nGLMesh::componentSize[] = {3,3,2,2,2,2,4,3,3,4,4};
 

@@ -1,7 +1,7 @@
-#ifdef __WIN32__ 
+#ifdef __WIN32__
 //------------------------------------------------------------------------------
 //  win32 specific window handling
-//  07-Sep-2003 cubejk 
+//  07-Sep-2003 cubejk
 //------------------------------------------------------------------------------
 #include "opengl/nglserver2.h"
 #include "opengl/nglextensionserver.h"
@@ -56,11 +56,11 @@ nGLServer2::InitDeviceState()
 */
 void
 nGLServer2::ContextOpen(void)
-{    
+{
     //n_assert(this->windowOpen);
     n_assert(this->hDC);
 
-    PIXELFORMATDESCRIPTOR pfd = 
+    PIXELFORMATDESCRIPTOR pfd =
     {
         sizeof(PIXELFORMATDESCRIPTOR),    // size of this pfd
         1,                                // version number
@@ -83,26 +83,26 @@ nGLServer2::ContextOpen(void)
     PIXELFORMATDESCRIPTOR* pPFDtoUse;
 
     // let the user override the default pixel format
-    pPFDtoUse = &pfd; 
- 
+    pPFDtoUse = &pfd;
+
     int pixelformat;
 
     // First try to get a 24b depth buffer
     pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
 
     if (pixelformat == 0) {
-        
+
         // Now try a 16b depth buffer
         pPFDtoUse->cDepthBits = 16;
         pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
         if (pixelformat == 0) {
-        
+
             // Now try a 24b depth buffer without stencil
             pPFDtoUse->cDepthBits = 24;
             pPFDtoUse->cStencilBits = 0;
             pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
             if (pixelformat == 0) {
-                
+
                 // Now try a 16b depth buffer without stencil
                 pPFDtoUse->cDepthBits = 16;
                 pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
@@ -117,18 +117,18 @@ nGLServer2::ContextOpen(void)
                     // First try to get a 24b depth buffer
                     pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
                     if (pixelformat == 0) {
-        
+
                         // Now try a 16b depth buffer
                         pPFDtoUse->cDepthBits = 16;
                         pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
                         if (pixelformat == 0) {
-        
+
                             // Now try a 24b depth buffer without stencil
                             pPFDtoUse->cDepthBits = 24;
                             pPFDtoUse->cStencilBits = 0;
                             pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
                             if (pixelformat == 0) {
-                
+
                                 // Now try a 16b depth buffer without stencil
                                 pPFDtoUse->cDepthBits = 16;
                                 pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
@@ -168,7 +168,7 @@ nGLServer2::ContextOpen(void)
     {
         n_error("nGLServer2: wglCreateContext() failed!");
     }
-    
+
     // make it the calling thread's current rendering context
     if (!wglMakeCurrent(this->hDC, this->context))
     {
@@ -218,7 +218,7 @@ nGLServer2::UpdateFeatureSet()
             n_printf("nD3D9Server: DX9 feature set implemented.\n");
         }
         else
-  
+
         {
             this->featureSet = DX7;
             n_printf("nD3D9Server: DX7 feature set implemented.\n");
@@ -293,7 +293,7 @@ nGLServer2::DeviceOpen()
     n_printf("    Version:  %s\n", glGetString(GL_VERSION));
     n_printf("Supported Extensions:\n");
     extServer->PrintExtensions(nString((const char*)glGetString(GL_EXTENSIONS)));
-    
+
     //init extensitions
     extServer->InitExtensions();
 
@@ -305,7 +305,7 @@ nGLServer2::DeviceOpen()
 
     // restore window
     this->windowHandler.RestoreWindow();
-    
+
     n_gltrace("nGLServer2::DeviceOpen().");
     return res;
 }
@@ -334,7 +334,7 @@ nGLServer2::DeviceClose()
     // destroy gl device
     ReleaseDC(this->windowHandler.GetHwnd(), this->hDC);
     this->hDC = NULL;
-    
+
     // minimze the app window
     this->windowHandler.MinimizeWindow();
     n_gltrace("nGLServer2::DeviceClose().");
@@ -399,7 +399,7 @@ nGLServer2::UpdateCursor()
 
 //------------------------------------------------------------------------------
 /**
-    Set a new render target. This method must be called outside 
+    Set a new render target. This method must be called outside
     BeginScene()/EndScene() with a pointer to a nTexture2 object
     which must have been created as render target. A 0 pointer
     restores the original back buffer as render target.
@@ -414,7 +414,7 @@ nGLServer2::SetRenderTarget(nTexture2* t)
 
     BOOL res;
     nGfxServer2::SetRenderTarget(t);
-    if (t)    
+    if (t)
     {
         nGLTexture* glTex = (nGLTexture*) t;
         res = wglMakeCurrent(glTex->hPBufferDC, glTex->hPBufferRC);
@@ -477,7 +477,7 @@ nGLServer2::BeginScene()
         this->statsNumRenderStateChanges = 0;
         this->statsNumTextureChanges = 0;
         #endif
-        
+
         n_gltrace("nGLServer2::BeginScene().");
         return true;
     }
@@ -498,7 +498,7 @@ nGLServer2::EndScene()
     // query statistics
     this->QueryStatistics();
     #endif
-    
+
     nGfxServer2::EndScene();
 }
 

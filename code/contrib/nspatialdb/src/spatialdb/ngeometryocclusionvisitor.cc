@@ -100,12 +100,12 @@ void nGeometryOcclusionVisitor::AddBBoxOccluder(const bbox3 &occludingbox)
 
     // array of vertex locations, specifying the relative point locations
     // from the bbox center
-    vector3 vertexvp[8] = { 
+    vector3 vertexvp[8] = {
         vector3(-1,-1,-1), vector3(1,-1,-1), vector3(-1,-1,1), vector3(1,-1,1),
         vector3(-1, 1,-1), vector3(1, 1,-1), vector3(-1, 1,1), vector3(1, 1,1)
     };
 
-    // compute actual locations of the bounding box 
+    // compute actual locations of the bounding box
     vector3 vertexv[8];
     for (int vix=0; vix<8; vix++)
     {
@@ -209,7 +209,7 @@ void nGeometryOcclusionVisitor::AddHullOccluder(const nPlaneClipper &hullocclude
 VisitorFlags nGeometryOcclusionVisitor::VisibilityTest(const bbox3 &testbox, VisitorFlags flags)
 {
     // note that the occlusionvisitor uses all the bitflags in the VisitorFlags structure to
-    // determine which of its occluders can be safely ignored.  This means the restricting 
+    // determine which of its occluders can be safely ignored.  This means the restricting
     // visibilityvisitor gets a default set of bitflags and always has to do all its tests!
     // Perhaps someday we'll 'reallocate' the first 6 bitflags or so for the restricting
     // visibilityvisitor...
@@ -266,7 +266,7 @@ void nGeometryOcclusionVisitor::EnterLocalSpace(matrix44 &warp)
 {
     // we should really transform all the occluders into the new space, or at
     // least ditch them while in the new space
-    
+
     // transform the restricting visitor at least!
     if (m_restrictingvisitor)
         m_restrictingvisitor->EnterLocalSpace(warp);
