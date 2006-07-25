@@ -296,7 +296,7 @@ nStream::Open(Mode m)
     {
         // when in write mode, we add a declaration to the XML stream
         // (this creates the line <?xml version="1.0" encoding="UTF-8"?> to the file
-        this->xmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", 0));
+        this->xmlDocument->InsertEndChild(TiXmlDeclaration("1.0", "UTF-8", ""));
     }
 
     return true;
