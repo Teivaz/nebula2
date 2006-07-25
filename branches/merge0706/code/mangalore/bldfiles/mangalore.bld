@@ -17,35 +17,43 @@ beginworkspace mangalore
         nnetwork
         ntoollib
         mangalore
+        mcegui
     }
 endworkspace
 #-------------------------------------------------------------------------------
 begintarget mangalore
     settype lib
     setmodules {
+        mangalore::application
         mangalore::attr
+        mangalore::audio
+        mangalore::db
         mangalore::foundation
-        mangalore::managers
-        mangalore::message
-        mangalore::properties
+        mangalore::fsm
         mangalore::game
         mangalore::game::time
         mangalore::graphics
         mangalore::input
         mangalore::loader
+        mangalore::managers
+        mangalore::message
         mangalore::msg
         mangalore::msg::ui
-        mangalore::physics
-        mangalore::fsm
-        mangalore::audio
         mangalore::navigation
-        mangalore::application
-        mangalore::vfx
-        mangalore::db
+        mangalore::physics
+        mangalore::properties
+        mangalore::script
         mangalore::ui
         mangalore::util
+        mangalore::vfx
+    }
+endtarget
+
+begintarget mcegui
+    settype lib
+    setexceptions true
+    setmodules {
         mangalore::ceui
-        mangalore::script
     }
 endtarget
 
@@ -67,5 +75,6 @@ begintarget mviewer
         nnetwork
         ntoollib
         mangalore
+        mcegui
     }
 endtarget
