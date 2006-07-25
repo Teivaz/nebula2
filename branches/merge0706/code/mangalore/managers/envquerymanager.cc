@@ -2,7 +2,6 @@
 //  managers/envquerymanager.cc
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
-#define MANGALORE_USE_CEGUI
 #include "managers/envquerymanager.h"
 #include "managers/entitymanager.h"
 #include "physics/server.h"
