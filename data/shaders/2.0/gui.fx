@@ -60,7 +60,7 @@ technique tColor
     {
         ZWriteEnable     = False;
         ZEnable          = False;
-        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
+        ColorWriteEnable = RED|GREEN|BLUE|ALPHA;        
         AlphaBlendEnable = True;
         SrcBlend         = SrcAlpha;
         DestBlend        = InvSrcAlpha;
@@ -68,7 +68,7 @@ technique tColor
         StencilEnable    = False;
 
         CullMode = None;
-
+        
         VertexShader = compile vs_2_0 vsMain();
         PixelShader = compile ps_2_0 psMain();
     }

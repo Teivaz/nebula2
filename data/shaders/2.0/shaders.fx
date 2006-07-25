@@ -13,10 +13,10 @@
     NOTE: VS_PROFILE and PS_PROFILE macros are usually provided by the
     application and contain the highest supported shader models.
 */
-/*
+
 #define VS_PROFILE vs_2_0
 #define PS_PROFILE ps_2_0
-*/
+
 
 #define DIRLIGHTS_ENABLEOPPOSITECOLOR 1
 #define DIRLIGHTS_OPPOSITECOLOR float3(0.45f, 0.52f, 0.608f)
@@ -144,11 +144,11 @@ texture AmbientMap0;
 texture LightModMap;
 shared texture AmbientMap1;
 
-#include "shaders:../lib/lib.fx"
-#include "shaders:../lib/randtable.fx"
+//#include "shaders:../lib/lib.fx"
+//#include "shaders:../lib/randtable.fx"
 
-//#include "c:/radonlabs/data/shaders/lib/lib.fx"
-//#include "c:/radonlabs/data/shaders/lib/randtable.fx"
+#include "../lib/lib.fx"
+#include "../lib/randtable.fx"
 
 //------------------------------------------------------------------------------
 /**

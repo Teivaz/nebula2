@@ -23,13 +23,13 @@ static float DirExtrudeLen = 100000.0f;
     Vertex shader for static shadow volumes. This will do the extrusion
     on the GPU. The extrude vector's x component is either 0.0 if the vector
     should not be extruded, or 1.0 if the vector should be extruded.
-
+    
     If the light is a directional light, ModelLightPos does not contain a
     position, but instead the light direction in model space.
-
+    
     NOTE: the non-extruded component could also be a very small number to
     shift the shadow volume a little bit away from the light source.
-
+    
     NOTE: the extrusion may clip against the far plane, this case is not
     currently handled at all (should we even care??).
 */
@@ -81,7 +81,7 @@ technique SinglePass
 
         CullMode            = None;
 
-        StencilFunc         = Always;
+        StencilFunc         = Always;        
         StencilZFail        = <StencilFrontZFailOp>;
         StencilPass         = <StencilFrontPassOp>;
 
@@ -89,8 +89,8 @@ technique SinglePass
         Ccw_StencilZFail    = <StencilBackZFailOp>;
         Ccw_StencilPass     = <StencilBackPassOp>;
 
-        VertexShader        = compile VS_PROFILE vsMain();
-
+        VertexShader        = compile VS_PROFILE vsMain();        
+        
         ColorWriteEnable    = 0;
         AlphaBlendEnable    = false;
         StencilEnable       = true;
@@ -118,11 +118,11 @@ technique TwoPass
 
         CullMode            = Cw;
 
-        StencilFunc         = Always;
+        StencilFunc         = Always;        
         StencilZFail        = <StencilFrontZFailOp>;
         StencilPass         = <StencilFrontPassOp>;
 
-        VertexShader        = compile VS_PROFILE vsMain();
+        VertexShader        = compile VS_PROFILE vsMain();        
         PixelShader         = compile PS_PROFILE psMain();
     }
     pass BackFace

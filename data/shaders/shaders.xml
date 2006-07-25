@@ -5,20 +5,116 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Standard with Refraction E3" shaderType="default" meshType="default bsp" file="staticref">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Standard Specularmap" shaderType="default" meshType="default bsp" file="static_specmap">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Specular Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Standard Specularmap Skin" shaderType="default" meshType="default bsp" file="static_specmap_skin">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="MatAmbient" label="Skin Glow Color" type="Color" gui="1" export="1" def="0.45 0.52 0.608 1.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Specular Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Simpleshader" shaderType="default" meshType="default bsp" file="simpleshader">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+<shader name="Hair Skinned" shaderType="default" meshType="skin" file="hair">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="500.0" def="360.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map with Alpha" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap1" label="Specmap with Hair Structure" type="Texture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+      <shader name="Hair Skinned No Alpha" shaderType="default" meshType="skin" file="hair_noalpha">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="500.0" def="360.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap1" label="Specmap with Hair Structure" type="Texture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Hair" shaderType="default" meshType="default bsp" file="statichair">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="500.0" def="360.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map with Alpha" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap1" label="Specmap with Hair Structure" type="Texture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Hair No Alpha" shaderType="default" meshType="default bsp" file="statichair_noalpha">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="500.0" def="360.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map " type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap1" label="Specmap with Hair Structure" type="Texture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Alphatest" shaderType="default" meshType="default bsp" file="static_atest">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaRef" label="Alpha Ref" type="Int" gui="1" export="1" min="0" max="255" def="100" />
@@ -26,26 +122,59 @@
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Skinned" shaderType="default" meshType="skin" file="skinned">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Standard Skinned Specularmap" shaderType="default" meshType="skin" file="skinned_specmap">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Specular Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Standard Skinned Specularmap Skin" shaderType="default" meshType="skin" file="skinned_specmap_skin">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="MatAmbient" label="Skin Glow Color" type="Color" gui="1" export="1" def="0.45 0.52 0.608 1.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Specular Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Alpha Skinned" shaderType="default" meshType="skin" file="skinned_alpha">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -54,13 +183,69 @@
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Alpha Skinned Specularmap" shaderType="default" meshType="skin" file="skinned_alpha_specmap">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Specular Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Multitex Skinned" shaderType="default" meshType="skin vertexcolor" file="multitexskinned">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="TexLayer0" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap1" label="TexLayer1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap2" label="TexLayer2" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap3" label="TexLayer3" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="TexLayer4" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="CubeMap0" label="Environment Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Alpha Multitex Skinned" shaderType="default" meshType="skin vertexcolor" file="multitexskinnedalpha">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="TexLayer0" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap1" label="TexLayer1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap2" label="TexLayer2" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="DiffMap3" label="TexLayer3" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="TexLayer4" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="CubeMap0" label="Environment Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Alpha" shaderType="default" meshType="default bsp" file="alpha">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -69,13 +254,31 @@
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+      <shader name="Standard Alpha Specularmap" shaderType="default" meshType="default bsp" file="alpha_specmap">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Specular Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="UVAnimated Alpha" shaderType="default" meshType="default bsp" file="alpha_uvanimation">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Velocity" label="UV Animation (2D)" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
@@ -85,13 +288,14 @@
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Soft Silhouette Alpha" shaderType="default" meshType="default bsp" file="alpha_soft">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -100,13 +304,14 @@
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Alpha (2 Layers)" shaderType="default" meshType="default bsp" file="alpha2">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
@@ -117,26 +322,28 @@
         <param name="DiffMap1" label="Texture Map 1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap1" label="Bump Map 1" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Blended" shaderType="default" meshType="blend" file="blended">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Layered" shaderType="layered" meshType="default" file="layered">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="DiffMap0" label="Tile Map 1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="DiffMap1" label="Tile Map 2" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="DiffMap2" label="Tile Map 3" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
@@ -144,13 +351,14 @@
         <param name="NoiseMap0" label="layer 1" type="Texture" gui="0" export="1" def="textures:system/white.dds" />
         <param name="NoiseMap1" label="layer 2" type="Texture" gui="0" export="1" def="textures:system/white.dds" />
         <param name="NoiseMap2" label="layer 3" type="Texture" gui="0" export="1" def="textures:system/white.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Lightmapped" shaderType="default" meshType="default bsp" file="lightmapped">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -159,13 +367,14 @@
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="DiffMap1" label="Light Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Lightmapped 2" shaderType="default" meshType="default bsp" file="lightmapped2">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -174,13 +383,48 @@
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="DiffMap1" label="Light Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader> 
+    <shader name="Unlighted Lightmapped 2" shaderType="default" meshType="default bsp" file="unlightedlightmapped2">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Light Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
+    <shader name="Unlighted Alpha Lightmapped 2" shaderType="default" meshType="default bsp" file="unlightedalphalightmapped2">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="DiffMap1" label="Light Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader> 
     <shader name="Standard Radiosity Parallax Lightmapped" shaderType="default" meshType="default bsp" file="radiosity_normalmapped">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -192,13 +436,14 @@
         <param name="DiffMap1" label="Light Map 1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="DiffMap2" label="Light Map 2" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="DiffMap3" label="Light Map 3" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Standard Environment" shaderType="default" meshType="default bsp" file="environment">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -206,22 +451,24 @@
         <param name="CubeMap0" label="Environment Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
         <shader name="Standard Environment Alpha" shaderType="default" meshType="default bsp" file="environment_alpha">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
-        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />    
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="CubeMap0" label="Cube Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
-    </shader>
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>  
     <shader name="Leaf" shaderType="default" meshType="sprite" file="leaf">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
@@ -235,7 +482,7 @@
         <param name="MatTranslucency" label="Leaf Translucency" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.5" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaRef" label="Alpha Ref" type="Int" gui="1" export="1" min="0" max="255" def="100" />
@@ -244,6 +491,7 @@
         <param name="BumpMap0" label="Leaf Sprite Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="AmbientMap0" label="Env Light Map" type="CubeTexture" gui="0" export="1" def="textures:system/defcube.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Tree" file="tree" shaderType="default" meshType="swing">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
@@ -252,7 +500,7 @@
         <param name="SwingTime" label="Tree Swing Time" type="Float" gui="1" export="0" min="0.5" max="10.0" def="3.0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="AlphaRef" label="Alpha Ref" type="Int" gui="1" export="1" min="0" max="255" def="100" />
@@ -261,6 +509,7 @@
         <param name="BumpMap0" label="Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="AmbientMap0" label="Env Light Map" type="CubeTexture" gui="0" export="1" def="textures:system/defcube.dds" />
         <param name="BumpScale" label="Parallax Bump Scale" type="Float" gui="1" export="1" min="0.0" max="40.0" def="0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Skybox" shaderType="default" meshType="default" file="skybox">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
@@ -268,19 +517,14 @@
         <param name="MatDiffuse" label="Color Modulate" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
-    </shader>
-    <shader name="CubeSkybox" shaderType="default" meshType="default" file="cubeskybox">
-        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
-        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
-        <param name="MatDiffuse" label="Color Modulate" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
-        <param name="CubeMap0" label="Cube Map" type="Texture" gui="1" export="1" def="textures:system/defcube.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Ocean" shaderType="default" meshType="default bsp" file="ocean">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Deep Water Color" type="Color" gui="1" export="1" def="0.0 0.0 0.1 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Shallow Water Color" type="Color" gui="1" export="1" def="0.0 0.5 0.5 1.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="100.0" def="3.0" />
         <param name="Intensity1" label="Reflection Amount" type="Float" gui="1" export="1" min="0.0" max="2.0" def="1.0" />
@@ -294,22 +538,39 @@
         <param name="BumpScale" label="Bump Scale" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.1" />
         <param name="BumpMap0" label="Wave Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="CubeMap0" label="Environment Cube Map" type="CubeTexture" gui="1" export="1" def="textures:system/cube.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <shader name="Water" shaderType="default" meshType="water" file="water">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="MatDiffuse" label="Deep Water Color" type="Color" gui="1" export="1" def="0.0 0.0 0.1 1.0" />
         <param name="MatSpecular" label="Shallow Water Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 1.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
-        <param name="Velocity" label="Wave Velocity" type="Vector" gui="1" export="1" def="0.05 0.05 0.0 0.0" />
-        <param name="TexGenS" label="Texture Scale" type="Vector" gui="1" export="1" def="8.0 4.0 0.0 0.0" />
+        <param name="Velocity" label="Wave Velocity" type="Vector" gui="1" export="1" def="0.01 0.01 0.0 0.0" />
+        <param name="TexGenS" label="Texture Scale" type="Vector" gui="1" export="1" def="30.0 30.0 0.0 0.0" />
         <param name="Intensity0" label="Water Depth Opacity" type="Float" gui="1" export="1" min="0.0" max="100.0" def="1.0" />
-        <param name="FresnelBias" label="Fresnel Bias" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.1" />
-        <param name="FresnelPower" label="Fresnel Exponent" type="Float" gui="1" export="1" min="1.0" max="10.0" def="4.0" />
-        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/alphazerowhite.dds" />
-        <param name="BumpScale" label="Bump Scale" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.1" />
+        <param name="FresnelBias" label="Fresnel Bias" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.03" />
+        <param name="FresnelPower" label="Fresnel Exponent" type="Float" gui="1" export="1" min="1.0" max="10.0" def="10.0" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="BumpScale" label="Bump Scale" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.56" />
         <param name="BumpMap0" label="Wave Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
         <param name="CubeMap0" label="Cube Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
-    </shader>
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>    
+    <shader name="River" shaderType="default" meshType="default" file="river">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="MatDiffuse" label="Deep Water Color" type="Color" gui="1" export="1" def="0.0 0.0 0.1 1.0" />
+        <param name="MatSpecular" label="Shallow Water Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 1.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
+        <param name="Velocity" label="Wave Velocity" type="Vector" gui="1" export="1" def="0.01 0.01 0.0 0.0" />
+        <param name="TexGenS" label="Texture Scale" type="Vector" gui="1" export="1" def="30.0 30.0 0.0 0.0" />
+        <param name="Intensity0" label="Water Depth Opacity" type="Float" gui="1" export="1" min="0.0" max="100.0" def="1.0" />
+        <param name="FresnelBias" label="Fresnel Bias" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.03" />
+        <param name="FresnelPower" label="Fresnel Exponent" type="Float" gui="1" export="1" min="1.0" max="10.0" def="10.0" />
+        <param name="BumpScale" label="Bump Scale" type="Float" gui="1" export="1" min="0.0" max="1.0" def="0.56" />
+        <param name="BumpMap0" label="Wave Bump Map" type="BumpTexture" gui="1" export="1" def="textures:system/nobump.dds" />
+        <param name="CubeMap0" label="Environment Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>    
     <shader name="Particle" shaderType="default" meshType="particleemitter" file="particle">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
@@ -334,6 +595,60 @@
         <param name="ParticleSideVelocity2" label="Particle Side Velocity 2" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="5.0" def="0.0 0.0 0.0 0.0 0.2 0.8 0.0 0.0" />
         <param name="ParticleAirResistance" label="Particle Air Resistance" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="0.0 0.0 0.0 0.0 0.2 0.8 0.0 0.0" />
         <param name="ParticleVelocityFactor" label="Particle Velocity Factor" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="2.0" def="0.5 0.5 0.5 0.5 0.2 0.8 0.0 0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="Particle2" shaderType="default" meshType="particleemitter2" file="particle2">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="TileTexture" label="Texture Tiling" type="Int" gui="1" export="0" min="1" max="16" def="1" />
+        <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="EmissionDuration" label="Emission Duration" type="Float" gui="1" export="0" min="0.0" max="1000.0" def="10.0" />
+        <param name="ParticleStartDelay" label="Start Delay" type="Float" gui="1" export="0" min="0.0" max="30.0" def="0.0" />
+        <param name="PrecalcTime" label="Precalculation at Start" type="Float" gui="1" export="0" min="0.0" max="10.0" def="0.0" />
+        <param name="Loop" label="Loop Emission" type="Bool" gui="1" export="0" def="1" />
+        <param name="ParticleGravity" label="Gravity" type="Float" gui="1" export="0" min="-50.0" max="50.0" def="-9.81" />
+        <param name="ActivityDistance" label="Activity Distance" type="Float" gui="1" export="0" min="0.0" max="1000.0" def="100.0" />
+        <param name="ParticleStretch" label="Particle Stretch" type="Float" gui="1" export="0" min="0.0" max="3.0" def="0.0" />
+        <param name="StretchDetail" label="Stretch Detail" type="Int" gui="1" export="0" min="1" max="30" def="1" />
+        <param name="StretchToStart" label="StretchToStart" type="Bool" gui="1" export="0" def="0" />
+        <param name="ViewAngleFade" label="Avoid Errors by fading out" type="Bool" gui="1" export="0" def="0" />
+        <param name="RenderOldestFirst" label="Render Oldest First" type="Bool" gui="1" export="0" def="1" />
+        <param name="EmissionFrequency" label="Emission Frequency" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="10.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleLifeTime" label="Particle Life Time" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="2.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleStartVelocity" label="Particle Initial Velocity" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="5.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleStartVelocityRandomize" label="Initial Velocity Randomize" type="Float" gui="1" export="0" min="0.0" max="1.0" def="0.0" />
+        <param name="ParticleSpreadMax" label="Particle Spread Max" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="10.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleSpreadMin" label="Particle Spread Min" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="0.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleInitialRotationMin" label="Initial Rotationangle Min" type="Float" gui="1" export="0" min="-360.0" max="360.0" def="0.0" />
+        <param name="ParticleInitialRotationMax" label="Initial Rotationangle Max" type="Float" gui="1" export="0" min="-360.0" max="360.0" def="0.0" />
+        <param name="ParticleRotationVelocity" label="Particle Rotation Velocity" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="0.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleRotationRandomize" label="Rotation Randomize" type="Float" gui="1" export="0" min="0.0" max="1.0" def="0.0" />
+        <param name="RandomRotDir" label="Left-Right-Randomize" type="Bool" gui="1" export="0" def="0" />
+        <param name="ParticleSize" label="Particle Size" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="1.0 1.0 1.0 0.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleSizeRandomize" label="Size Randomize" type="Float" gui="1" export="0" min="0.0" max="1.0" def="0.0" />
+        <param name="ParticleColor" label="Particle Color" type="ColorEnvelopeCurve" gui="1" export="0" />
+        <param name="ParticleAlpha" label="Particle Alpha" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="1.0 1.0 1.0 0.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleAirResistance" label="Particle Air Resistance" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="0.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleVelocityFactor" label="Particle Velocity Factor" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="ParticleMass" label="Particle Mass" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="TimeManipulator" label="Time Manipulator" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="1.0 1.0 1.0 1.0 0.3 0.7 0.0 0.0" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+    </shader>
+    <shader name="MultiLayered" shaderType="multilayered" meshType="multilayered" file="multilayered">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
+        <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
+        <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
+        <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="DiffMap1" label="Light Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="VertexColors" label="Vertex Colors" type="Bool" gui="1" export="0" def="0" />
+        <param name="ExportDX7" label="Export For DX7" type="Bool" gui="1" export="0" def="1" />
+        <param name="ExportDX9" label="Export For DX9" type="Bool" gui="1" export="0" def="1"/>
     </shader>
     <!-- OBSOLETE -->
     <shader name="Particle (Additive)" shaderType="default" meshType="particleemitter" file="particle">
@@ -389,7 +704,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="1" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -408,7 +723,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="1" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="Intensity0" label="Hdr Multiplier" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
@@ -428,7 +743,7 @@
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -439,8 +754,9 @@
     <shader name="Gui" shaderType="default" meshType="defaultvs" file="gui3d">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="MatTransparency" label="Alpha" type="Float" gui="1" export="1" min="0.0" max="1.0" def="1.0"  />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />        
         <param name="MatSpecular" label="Specular Color" type="Color" gui="1" export="1" def="0.5 0.5 0.5 1.0" />
         <param name="MatSpecularPower" label="Specular Power" type="Float" gui="1" export="1" min="0.1" max="256.0" def="32.0" />
         <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="2" />
@@ -454,7 +770,7 @@
         <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
         <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="MatEmissive" label="Emissive Color" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
-        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />
+        <param name="MatEmissiveIntensity" label="Emissive Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1.0" />   
         <param name="Velocity" label="Caustics Velocity" type="Vector" gui="1" export="1" def="0.05 0.05 0.0 0.0" />
         <param name="TexGenS" label="Caustics Texture Scale" type="Vector" gui="1" export="1" def="8.0 4.0 0.0 0.0" />
         <param name="DiffMap0" label="Tile Map 1" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
@@ -471,5 +787,5 @@
         <param name="MatAmbient" label="Ambient Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
     </shader>
-
+ 
 </NebulaShaderDatabase>

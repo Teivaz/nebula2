@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  occlusionquery.fx
 //
-//  Simple shader for occlusion queries. Just renders the passed geometry
+//  Simple shader for occlusion queries. Just renders the passed geometry 
 //  with zwrite and color writes disabled.
 //------------------------------------------------------------------------------
 shared float4x4 ModelViewProjection;
@@ -32,8 +32,8 @@ technique t0
         ColorWriteEnable = 0;
         ZWriteEnable     = False;
         AlphaBlendEnable = False;
-        AlphaTestEnable  = False;
-        FogEnable        = False;
+        AlphaTestEnable  = False; 
+        FogEnable        = False;        
         ZEnable          = True;
         ZFunc            = LessEqual;
         StencilEnable    = False;
@@ -44,8 +44,8 @@ technique t0
     }
 }
 
-
-
-
-
-
+        
+        
+        
+        
+        
