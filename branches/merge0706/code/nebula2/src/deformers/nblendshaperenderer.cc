@@ -61,7 +61,7 @@ nBlendShapeRenderer::Setup()
         // create a destination mesh as clone of the first mesh in the src mesh array
         nMesh2* srcMesh = this->refSrcMeshArray->GetMeshAt(0);
 
-        n_assert(srcMesh->GetMeshUsage() & nMesh2::ReadOnly);
+        n_assert(srcMesh->GetUsage() & nMesh2::ReadOnly);
         nString dstMeshName = srcMesh->GetName();
         dstMeshName.Append("_bsr");
 
