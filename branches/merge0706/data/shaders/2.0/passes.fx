@@ -42,7 +42,7 @@ technique tPassColor
         FogEnable           = False;
         AlphaBlendEnable    = True;
         AlphaTestEnable     = True;
-        AlphaFunc           = GreaterEqual;
+        AlphaFunc           = GreaterEqual;        
         SrcBlend            = One;
         DestBlend           = One;
         ScissorTestEnable   = True;
@@ -65,7 +65,7 @@ technique tPassEnvironment
         FogEnable           = False;
         AlphaBlendEnable    = True;
         AlphaTestEnable     = True;
-        AlphaFunc           = GreaterEqual;
+        AlphaFunc           = GreaterEqual;                
         SrcBlend            = One;
         DestBlend           = One;
         ScissorTestEnable   = True;
@@ -88,7 +88,7 @@ technique tPassGui3D
         FogEnable           = False;
         AlphaBlendEnable    = True;
         AlphaTestEnable     = False;
-        AlphaFunc           = GreaterEqual;
+        AlphaFunc           = GreaterEqual;                
         SrcBlend            = SrcAlpha;
         DestBlend           = InvSrcAlpha;
         ScissorTestEnable   = False;
