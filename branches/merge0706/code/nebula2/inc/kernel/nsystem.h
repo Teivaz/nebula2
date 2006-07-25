@@ -13,7 +13,7 @@
 
 #define __NEBULA_STATS__ (1)
 //#define __NEBULA_NO_THREADS__ (1)
-#define __NEBULA_NO_ASSERT__ (0)
+//#define __NEBULA_NO_ASSERT__ (1)
 
 #define N_TOGGLE_FULLSCREEN_ENABLED
 // use MicroTcl?

@@ -51,7 +51,7 @@ private:
 
 #if __NEBULA_STATS__
 #define PROFILER_DECLARE(prof) nProfiler prof;
-#define PROFILER_INIT(prof,name) prof.Initialize(name)
+#define PROFILER_INIT(prof,name) prof.Initialize(name);
 #define PROFILER_START(prof) prof.Start();
 #define PROFILER_STOP(prof)  prof.Stop();
 #define PROFILER_RESET(prof) prof.ResetAccum();
