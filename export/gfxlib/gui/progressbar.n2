@@ -1,0 +1,88 @@
+# ---
+# $parser:ntclserver$ $class:ntransformnode$
+# ---
+.setlocalbox 0.000000 0.000000 0.050000 2.000000 1.500000 0.050000
+new ntransformnode model
+	sel model
+	.setlocalbox 0.000000 0.000000 0.050000 2.000000 1.500000 0.050000
+	new ntransformnode canvas
+		sel canvas
+		.setlocalbox 0.000000 0.000000 0.050000 2.000000 1.500000 0.050000
+		.addhints 1
+		.setboolattr "rlGui" true
+		.setstringattr "rlGuiType" "Canvas"
+		new ntransformnode Label
+			sel Label
+			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.125000 0.000000
+			.addhints 1
+			.addanimator "anim_0"
+			.setboolattr "rlGui" true
+			.setstringattr "rlGuiType" "Label"
+			.setposition -0.324393 -1.316942 0.100000
+			.setscale 0.217075 0.333269 1.000000
+			.setrotatepivot -0.500000 0.000000 0.000000
+			.setscalepivot -0.500000 0.000000 0.000000			
+			new ntransformnode normal
+				sel normal
+				.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.125000 0.000000
+				.addhints 1
+				new nshapenode static_0_1
+					sel static_0_1
+					.setrenderpri 1
+					.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.125000 0.000000
+					.settexture "DiffMap0" "textures:system/white.dds"
+					.settexture "BumpMap0" "textures:system/nobump.dds"
+					.setvector "MatDiffuse" 0.000000 0.600000 0.000000 1.000000
+					.setfloat "MatTransparency" 1.000000
+					.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
+					.setfloat "MatEmissiveIntensity" 1.000000
+					.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+					.setfloat "MatSpecularPower" 32.000000
+					.setint "CullMode" 2
+					.setfloat "BumpScale" 0.000000
+					.setshader "gui3d"
+					.setmesh "meshes:examples/progressbar_s_0.n3d2"
+					.setgroupindex 1
+					.setneedsvertexshader true
+					new nvectoranimator colanim
+                        sel colanim
+                        .setchannel "time"
+                        .setlooptype "clamp"
+                        .setvectorname "MatDiffuse"
+                        .addkey 0 0 0.6 0 1
+                        .addkey 0.5 1 0.6 0 1
+                        .addkey 1 1 1 0 1
+                    sel ..
+                    .addanimator "colanim"
+				sel ..
+			sel ..
+			new ntransformcurveanimator anim_0
+				sel anim_0
+				.setchannel "time"
+				.setlooptype "loop"
+				.setanimation "anims:examples/progressbar.nanim2"
+				.setanimationgroup 0
+			sel ..
+		sel ..
+		new nshapenode static_0_0
+			sel static_0_0
+			.setlocalbox 0.000000 0.000000 0.000000 2.000000 1.500000 0.000000
+			.settexture "DiffMap0" "textures:ground/rock.dds"
+			.settexture "BumpMap0" "textures:system/nobump.dds"
+			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+			.setfloat "MatTransparency" 1.000000
+			.setvector "MatEmissive" 0.000000 0.000000 0.000000 1.000000
+			.setfloat "MatEmissiveIntensity" 1.000000
+			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+			.setfloat "MatSpecularPower" 32.000000
+			.setint "CullMode" 2
+			.setfloat "BumpScale" 0.000000
+			.setshader "gui3d"
+			.setmesh "meshes:examples/progressbar_s_0.n3d2"
+			.setgroupindex 0
+			.setneedsvertexshader true
+		sel ..
+	sel ..
+sel ..
+# ---
+# Eof
