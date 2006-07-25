@@ -31,25 +31,25 @@ sel $skin
     .addbrush window       skin   8 154  4  4 1.0 1.0 1.0 1.0
     .addbrush tooltip      skin   8 154  4  4 1.0 1.0 0.878 0.8
     .addbrush pink         skin   8 154  4  4 1.0 0.0 1.0 1.0
-    .addbrush dragbox      skin   8 154  4  4   1.0 0.8 0.8 0.5
+    .addbrush dragbox      skin   8 154  4  4   1.0 0.8 0.8 0.5    
     .addbrush bgmessagebox skin   0 188 300 150 1.0 1.0 1.0 1.0
-
+    
     # text entry field
     .addbrush textentry_n skin 446 124 8 8 0.7 0.7 0.7 1.0
     .addbrush textentry_p skin 446 124 8 8 0.8 0.8 0.8 1.0
     .addbrush textentry_h skin 446 124 8 8 0.9 0.9 0.9 1.0
     .addbrush textcursor  skin 446 124 8 8 0.4 0.4 0.4 1.0
-
+    
     # the window close button
     .addbrush close_n skin 388 40 16 16 1.0 1.0 1.0 1.0
     .addbrush close_h skin 404 40 16 16 1.0 1.0 1.0 1.0
     .addbrush close_p skin 420 40 16 16 1.0 1.0 1.0 1.0
-
+    
     # the window size button
     .addbrush size_n skin 372 40 16 16 1.0 1.0 1.0 1.0
     .addbrush size_h skin 372 40 16 16 1.0 1.0 1.0 1.0
     .addbrush size_p skin 372 40 16 16 1.0 1.0 1.0 1.0
-
+    
     # arrows
     .addbrush arrowleft_n  skin  68 40 16 16 1.0 1.0 1.0 1.0
     .addbrush arrowleft_h  skin  84 40 16 16 1.0 1.0 1.0 1.0
@@ -65,6 +65,7 @@ sel $skin
     .addbrush arrowdown_p  skin  52 40 16 16 1.0 1.0 1.0 1.0
 
     # sliders
+    .addbrush sliderbg         skin 228  40 16 16 0.5 0.5 0.5 1.0
     .addbrush sliderhori_bg    skin 228  40 16 16 0.5 0.5 0.5 1.0
     .addbrush slidervert_bg    skin 228  40 16 16 0.5 0.5 0.5 1.0
     .addbrush sliderknobhori_n skin 276  40 16 16 1.0 1.0 1.0 1.0
@@ -73,16 +74,16 @@ sel $skin
     .addbrush sliderknobvert_n skin 324  40 16 16 1.0 1.0 1.0 1.0
     .addbrush sliderknobvert_h skin 340  40 16 16 1.0 1.0 1.0 1.0
     .addbrush sliderknobvert_p skin 356  40 16 16 1.0 1.0 1.0 1.0
-
+            
     # standard buttons
     .addbrush button_n skin 192 152 96 20 1.0 1.0 1.0 1.0
     .addbrush button_h skin 288 152 96 20 1.0 1.0 1.0 1.0
     .addbrush button_p skin 384 152 96 20 1.0 1.0 1.0 1.0
-
+    
     .addbrush menu_n skin 192 172 96 16 1.0 1.0 1.0 1.0
     .addbrush menu_h skin 288 172 96 16 1.0 1.0 1.0 1.0
     .addbrush menu_p skin 384 172 96 16 1.0 1.0 1.0 1.0
-
+        
     .addbrush button_64x16_n skin   0 0 64 16 1.0 1.0 1.0 1.0
     .addbrush button_64x16_h skin  64 0 64 16 1.0 1.0 1.0 1.0
     .addbrush button_64x16_p skin 128 0 64 16 1.0 1.0 1.0 1.0
@@ -114,7 +115,7 @@ sel $skin
     # list views
     .addbrush list_background skin 446  72 8 8 1.0 1.0 1.0 1.0
     .addbrush list_selection  skin  64 172 64 16 1.0 1.0 1.0 1.0
-
+ 
     # icons
     .addbrush console_n skin     0  56 48 48 1.0 1.0 1.0 1.0
     .addbrush console_p skin     0  56 48 48 0.5 0.5 0.5 1.0
@@ -155,6 +156,14 @@ sel $skin
     .addbrush disp_n skin       384  56 48 48 1.0 1.0 1.0 1.0
     .addbrush disp_p skin       384  56 48 48 0.5 0.5 0.5 1.0
     .addbrush disp_h skin       384 104 48 48 1.0 1.0 1.0 1.0
+
+    .addbrush savewindow_n skin    96 188 48 48 1.0 1.0 1.0 1.0
+    .addbrush savewindow_p skin    96 188 48 48 0.5 0.5 0.5 1.0
+    .addbrush savewindow_h skin   144 188 48 48 1.0 1.0 1.0 1.0
+
+    .addbrush charwindow_n skin   192 188 48 48 1.0 1.0 1.0 1.0
+    .addbrush charwindow_p skin   192 188 48 48 0.5 0.5 0.5 1.0
+    .addbrush charwindow_h skin   240 188 48 48 1.0 1.0 1.0 1.0
 
     # the left and right logos
     .addbrush leftlogo  radonlabs 0 0 128 64 1.0 1.0 1.0 1.0
