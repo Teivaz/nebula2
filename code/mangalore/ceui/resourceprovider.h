@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/resourceprovider.h
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #ifndef CEUI_RESOURCEPROVIDER_H
 #define CEUI_RESOURCEPROVIDER_H
 

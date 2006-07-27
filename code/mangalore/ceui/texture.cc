@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/texture.cc
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #include "ceui/texture.h"
 #include "ceui/renderer.h"
 #include "gfx2/ngfxserver2.h"
