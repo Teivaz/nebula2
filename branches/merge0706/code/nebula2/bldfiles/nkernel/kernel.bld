@@ -198,6 +198,9 @@ beginmodule kernel::nguid
     setheaders {
         nguid
     }
+    setlibs_win32 {
+        rpcrt4.lib
+    }
 endmodule
 
 beginmodule kernel::nhardrefserver

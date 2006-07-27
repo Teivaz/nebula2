@@ -17,7 +17,7 @@ beginworkspace nebula2
         nremoteshell
         nsetpath
         nsh
-        nstub        
+        nstub
         nkernel
         nnebula
         microtcl

@@ -246,9 +246,9 @@ beginmodule gfx2::nd3d9server
         d3d9.lib
         d3dx9.lib
         dxerr9.lib
-        dxguid.lib        
+        dxguid.lib
         gdi32.lib
-        user32.lib        
+        user32.lib
     }
 endmodule
 
