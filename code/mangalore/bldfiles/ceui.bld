@@ -17,7 +17,6 @@ beginmodule mangalore::ceui
         resourceprovider
         server
         texture
-
     }
     setlibs_win32_release {
         CEGUIBase.lib
