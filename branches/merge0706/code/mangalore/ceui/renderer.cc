@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/render.cc
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #include "ceui/renderer.h"
 #include "ceui/texture.h"
 #include "ceui/resourceprovider.h"
