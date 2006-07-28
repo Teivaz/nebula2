@@ -46,7 +46,6 @@ bool Server::Open() {
     n_new(CEUI::Logger);
     renderer = n_new(CEUI::Renderer);
     ceGuiSystem = n_new(CEGUI::System(renderer));
-    CEGUI::Logger::getSingleton().setLogFilename("ceguilog.txt");
     CEGUI::Logger::getSingleton().setLoggingLevel(CEGUI::Standard);
     nGfxServer2::Instance()->SetCursorVisibility(nGfxServer2::Custom);
     isOpen = true;
