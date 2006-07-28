@@ -184,7 +184,7 @@ static CEGUI::uint Key2CeGuiKey(nKey key) {
 
 //------------------------------------------------------------------------------
 /**
-    Trigger the ceui server. This distributes input to the current canvas
+    Trigger the CEUI server. This distributes input to the current canvas
 */
 void Server::Trigger() {
     // inject time pulse
@@ -232,7 +232,7 @@ void Server::Render() {
 
 //------------------------------------------------------------------------------
 /**
-    create gui font
+    create GUI font
 */
 void Server::CreateFont(const nString& fontName) {
     CEGUI::FontManager::getSingleton().createFont(fontName.Get());
@@ -240,7 +240,7 @@ void Server::CreateFont(const nString& fontName) {
 
 //------------------------------------------------------------------------------
 /**
-    destroy gui font
+    destroy GUI font
 */
 void Server::DestroyFont(const nString& fontName) {
     CEGUI::FontManager::getSingleton().destroyFont(fontName.Get());
@@ -248,7 +248,7 @@ void Server::DestroyFont(const nString& fontName) {
 
 //------------------------------------------------------------------------------
 /**
-    destroy all gui fonts
+    destroy all GUI fonts
 */
 void Server::DestroyAllFonts() {
     CEGUI::FontManager::getSingleton().destroyAllFonts();
@@ -256,7 +256,7 @@ void Server::DestroyAllFonts() {
 
 //------------------------------------------------------------------------------
 /**
-    load gui scheme
+    load GUI scheme
 */
 void Server::LoadScheme(const nString& schemeName) {
     CEGUI::SchemeManager::getSingleton().loadScheme(schemeName.Get());
@@ -264,7 +264,7 @@ void Server::LoadScheme(const nString& schemeName) {
 
 //------------------------------------------------------------------------------
 /**
-    unload gui scheme
+    unload GUI scheme
 */
 void Server::UnloadScheme(const nString& schemeName) {
     CEGUI::SchemeManager::getSingleton().unloadScheme(schemeName.Get());
@@ -272,7 +272,7 @@ void Server::UnloadScheme(const nString& schemeName) {
 
 //------------------------------------------------------------------------------
 /**
-    unload all gui schemes
+    unload all GUI schemes
 */
 void Server::UnloadAllSchemes() {
     CEGUI::SchemeManager::getSingleton().unloadAllSchemes();
@@ -312,7 +312,7 @@ void Server::DestroyAllWindows() {
 
 //------------------------------------------------------------------------------
 /**
-    load window layout from xml and display GUI
+    load window layout from XML and display GUI
 */
 void Server::LoadWindowLayout(const nString& resName) {
     CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get());
@@ -328,7 +328,7 @@ void Server::SetDefaultMouseCursor(const nString& schemeName, const nString& cur
 
 //-----------------------------------------------------------------------------
 /**
-    Check if the mouse is currently over an GUI element.
+    check if the mouse is currently over an GUI element.
 */
 bool Server::IsMouseOverGui() const {
     return ceGuiSystem->getWindowContainingMouse() != ceGuiSystem->getGUISheet();
