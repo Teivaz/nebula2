@@ -114,54 +114,72 @@ bool Server::IsOpen() const {
 
 //------------------------------------------------------------------------------
 /**
+    set current time
 */
 inline
 void Server::SetTime(nTime t) {
-    this->time = t;
+    time = t;
 }
 
 //------------------------------------------------------------------------------
 /**
+    get current time
 */
 inline
 nTime Server::GetTime() const {
-    return this->time;
+    return time;
 }
 
 //------------------------------------------------------------------------------
 /**
+    set current frame time
 */
 inline
 void Server::SetFrameTime(nTime f) {
-    this->frameTime = f;
+    frameTime = f;
 }
 
 //------------------------------------------------------------------------------
 /**
+    get current frame time
 */
 inline
 nTime Server::GetFrameTime() const {
-    return this->frameTime;
+    return frameTime;
 }
 
 //------------------------------------------------------------------------------
 /**
+    display GUI
 */
 inline
 void Server::DisplayGui() {
-    if (this->ceGuiSystem->getGUISheet() != 0) {
-        this->ceGuiSystem->getGUISheet()->setVisible(true);
+    if (ceGuiSystem->getGUISheet() != 0) {
+        ceGuiSystem->getGUISheet()->setVisible(true);
     }
 }
 
 //------------------------------------------------------------------------------
 /**
+    hide GUI
 */
 inline
 void Server::HideGui() {
-    if (this->ceGuiSystem->getGUISheet() != 0) {
-        this->ceGuiSystem->getGUISheet()->setVisible(false);
+    if (ceGuiSystem->getGUISheet() != 0) {
+        ceGuiSystem->getGUISheet()->setVisible(false);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    check if current GUI visible
+*/
+inline
+bool Server::IsGuiVisible() const {
+    if (ceGuiSystem->getGUISheet() != 0) {
+        return ceGuiSystem->getGUISheet()->isVisible();
+    }
+    return false;
 }
 
 } // namespace CEUI
