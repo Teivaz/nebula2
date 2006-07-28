@@ -37,7 +37,7 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("b_createtable_sss", 'CRTB', n_createtable);
+    cl->AddCmd("v_createtable_sss", 'CRTB', n_createtable);
     cl->AddCmd("v_deletetable_s",   'DLTB', n_deletetable);
     cl->AddCmd("v_renametable_ss",  'RNTB', n_renametable);
     cl->AddCmd("v_updatetable_ss",  'UPTB', n_updatetable);
