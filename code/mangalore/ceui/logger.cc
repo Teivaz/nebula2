@@ -24,7 +24,7 @@ Logger::~Logger() {
 /**
 */
 void Logger::logEvent(const CEGUI::String& message, CEGUI::LoggingLevel level) {
-    if (level < getLoggingLevel()) {
+    if (level <= getLoggingLevel()) {
         switch (level)
         {
         case CEGUI::Errors:

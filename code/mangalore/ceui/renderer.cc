@@ -23,6 +23,7 @@ Renderer::Renderer() {
     transform.set_translation(vector3(-1.0f/getWidth() - 1.0f, -1.0f/getHeight() + 1.0f, 0.0f));
     resourceProvider = 0;
     queueingEnabled = false;
+    d_identifierString = "CEGUI::MangaloreRenderer - Nebula 2 renderer module for CEGUI";
 }
 
 //------------------------------------------------------------------------------
