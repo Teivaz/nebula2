@@ -14,6 +14,7 @@ namespace CEUI
 {
 
 class Renderer;
+class Window;
 
 class Server : public Foundation::RefCounted
 {
@@ -47,14 +48,30 @@ public:
     void Render();
     /// create GUI font
     void CreateFont(const nString& fontName);
+    /// destroy GUI font
+    void DestroyFont(const nString& fontName);
+    /// destroy all GUI fonts
+    void DestroyAllFonts();
     /// load GUI scheme
     void LoadScheme(const nString& schemeName);
+    /// unload GUI scheme
+    void UnloadScheme(const nString& schemeName);
+    /// unload all GUI scheme
+    void UnloadAllSchemes();
+
+#ifdef CreateWindow
+#undef CreateWindow
+#endif
+    /// create window
+    CEGUI::Window* CreateWindow(const nString& type, const nString& winName);
+    /// find window by name
+    CEGUI::Window* GetWindow(const nString& winName);
+    /// destroy window
+    void DestroyWindow(CEGUI::Window* window);
+    /// destroy all windows
+    void DestroyAllWindows();
     /// load window layout
     void LoadWindowLayout(const nString& resName);
-    /// create empty layout
-    void CreateEmptyLayout();
-    /// get root window
-    CEGUI::Window* GetRootWindow() const;
     /// display GUI
     void DisplayGui();
     /// hide GUI
@@ -70,7 +87,6 @@ private:
     static Server* Singleton;
     CEUI::Renderer* renderer;
     CEGUI::System* ceGuiSystem;
-    CEGUI::Window* rootWindow;
     bool isOpen;
     nTime time;
     nTime frameTime;
@@ -132,17 +148,9 @@ nTime Server::GetFrameTime() const {
 /**
 */
 inline
-CEGUI::Window* Server::GetRootWindow() const {
-    return this->rootWindow;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
 void Server::DisplayGui() {
-    if (this->rootWindow != 0 && this->ceGuiSystem->getGUISheet() == 0) {
-        this->ceGuiSystem->setGUISheet(this->rootWindow);
+    if (this->ceGuiSystem->getGUISheet() != 0) {
+        this->ceGuiSystem->getGUISheet()->setVisible(true);
     }
 }
 
@@ -152,7 +160,7 @@ void Server::DisplayGui() {
 inline
 void Server::HideGui() {
     if (this->ceGuiSystem->getGUISheet() != 0) {
-        this->ceGuiSystem->setGUISheet(NULL);
+        this->ceGuiSystem->getGUISheet()->setVisible(false);
     }
 }
 
