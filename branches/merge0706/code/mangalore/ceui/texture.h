@@ -42,7 +42,7 @@ public:
     ///
     virtual void loadFromFile(const CEGUI::String& fileName, const CEGUI::String& resGroup);
     ///
-    virtual void loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight);
+    virtual void loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight, CEGUI::Texture::PixelFormat pixelFormat);
     ///
     virtual CEGUI::ushort getWidth() const;
     ///
