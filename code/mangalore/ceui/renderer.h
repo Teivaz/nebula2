@@ -29,7 +29,7 @@ public:
     ///
     virtual CEGUI::Texture* createTexture(const CEGUI::String& fileName, const CEGUI::String& resGroup);
     ///
-    virtual void destroyTexture(CEGUI::Texture* texture);
+    virtual void destroyTexture(CEGUI::Texture* tex);
     ///
     virtual void destroyAllTextures();
     ///

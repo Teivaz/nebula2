@@ -65,8 +65,9 @@ CEGUI::Texture* Renderer::createTexture(const CEGUI::String& fileName, const CEG
 //------------------------------------------------------------------------------
 /**
 */
-void Renderer::destroyTexture(CEGUI::Texture* texture) {
-    nArray<Texture*>::iterator i = textures.Find((Texture*)texture);
+void Renderer::destroyTexture(CEGUI::Texture* tex) {
+    Texture* texture = static_cast<Texture*>(tex);
+    nArray<Texture*>::iterator i = textures.Find(texture);
     if (i != 0) {
         textures.Erase(i);
     }

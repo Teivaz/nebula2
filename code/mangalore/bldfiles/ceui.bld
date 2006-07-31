@@ -23,15 +23,17 @@ beginmodule mangalore::ceui
     setlibs_win32_release {
         CEGUIBase.lib
         CEGUIFalagardWRBase.lib
-        CEGUITinyXMLParser.lib
+        CEGUIExpatParser.lib
         freetype.lib
         pcre.lib
+        libexpat.lib
     }
     setlibs_win32_debug {
         CEGUIBase_d.lib
         CEGUIFalagardWRBase_d.lib
-        CEGUITinyXMLParser_d.lib
+        CEGUIExpatParser_d.lib
         freetype_d.lib
         pcre_d.lib
+        libexpat_d.lib
     }
 endmodule
