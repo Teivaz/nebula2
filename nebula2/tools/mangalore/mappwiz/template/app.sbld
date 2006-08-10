@@ -1,0 +1,68 @@
+#-----------------------------------------------------------------------------
+#  %(appNameL)s.bld
+#  ============
+#  %(appName)s package definition
+#
+#  (C)%(curYear)s %(author)s  
+#-----------------------------------------------------------------------------
+beginmodule %(appStateNameL)s
+    setdir %(subDirL)s
+    setfiles { 
+        %(appStateNameL)s_main 
+    }
+    setheaders { %(appStateNameL)s }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule %(classNameL)s
+    setdir %(subDirL)s
+    setfiles { 
+        %(classNameL)s_main 
+    }
+    setheaders { %(classNameL)s }
+endmodule
+#-----------------------------------------------------------------------------
+beginmodule %(appNameL)s
+    setdir %(subDirL)s
+    setfiles { %(appNameL)s }
+endmodule
+#-----------------------------------------------------------------------------
+begintarget %(targetName)s
+    annotate "%(targetAnnotation)s"
+    settype exe
+    setmodules {
+        %(appStateNameL)s
+        %(classNameL)s
+        %(appNameL)s
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndshow
+        ndsound
+        ngui
+        nnetwork
+        mangalorelib
+    }
+endtarget 
+#-----------------------------------------------------------------------------
+beginworkspace %(targetName)s
+    settargets {
+        %(targetName)s
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndshow
+        ndsound
+        ngui
+        nnetwork
+        mangalorelib
+    }
+endworkspace
+#-----------------------------------------------------------------------------
+# EOF
+#-----------------------------------------------------------------------------
