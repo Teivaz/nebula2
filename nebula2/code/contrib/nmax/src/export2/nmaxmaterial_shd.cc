@@ -817,8 +817,8 @@ bool EvalCustomMaterialPlugin()
     nString script;
 
     script += "--------------------------------------------------------------------------------\n";
-    script += "--  The Nebula2 3ds Max Toolkit MaxScript code \n";
-    script += "--  This file was automatically generated and executed when 3ds Max started. \n";
+    script += "--  The Nebula2 3dsmax Toolkit MaxScript code \n";
+    script += "--  This file was automatically generated and executed when 3dsmax started. \n";
     script += "--------------------------------------------------------------------------------\n";
 
     // define 'materialhandlers.ms' including script.
