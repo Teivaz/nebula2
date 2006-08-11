@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/render.cc
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #include "ceui/renderer.h"
 #include "ceui/texture.h"
 #include "ceui/resourceprovider.h"
@@ -19,6 +23,7 @@ Renderer::Renderer() {
     transform.set_translation(vector3(-1.0f/getWidth() - 1.0f, -1.0f/getHeight() + 1.0f, 0.0f));
     resourceProvider = 0;
     queueingEnabled = false;
+    d_identifierString = "CEGUI::MangaloreRenderer - Nebula 2 renderer module for CEGUI";
 }
 
 //------------------------------------------------------------------------------
@@ -53,27 +58,28 @@ CEGUI::Texture* Renderer::createTexture(float size) {
 CEGUI::Texture* Renderer::createTexture(const CEGUI::String& fileName, const CEGUI::String& resGroup) {
     Texture* texture = n_new(Texture(this));
     texture->loadFromFile(fileName, resGroup);
-    textures.Insert(0, texture);
+    textures.Append(texture);
     return texture;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-void Renderer::destroyTexture(CEGUI::Texture* texture) {
-    nArray<Texture*>::iterator i = textures.Find((Texture*)texture);
-    if (i != 0) {
+void Renderer::destroyTexture(CEGUI::Texture* tex) {
+    Texture* texture = static_cast<Texture*>(tex);
+    int i = textures.FindIndex(texture);
+    if (i != -1) {
         textures.Erase(i);
-    }
-    n_delete(texture);
+        n_delete(texture);
+    }    
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void Renderer::destroyAllTextures() {
-    for (nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
-        delete *i;
+    for (int i = 0; i = textures.Size(); i++) {
+        delete textures[i];
     }
     textures.Clear();
 }

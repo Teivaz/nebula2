@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/server.cc
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #ifndef CEUI_SERVER_H
 #define CEUI_SERVER_H
 
@@ -43,12 +47,34 @@ public:
     void Render();
     /// create GUI font
     void CreateFont(const nString& fontName);
+    /// destroy GUI font
+    void DestroyFont(const nString& fontName);
+    /// destroy all GUI fonts
+    void DestroyAllFonts();
     /// load GUI scheme
     void LoadScheme(const nString& schemeName);
+    /// unload GUI scheme
+    void UnloadScheme(const nString& schemeName);
+    /// unload all GUI scheme
+    void UnloadAllSchemes();
+
+#ifdef CreateWindow
+#undef CreateWindow
+#endif
+    /// create window
+    CEGUI::Window* CreateWindow(const nString& type, const nString& winName);
+    /// find window by name
+    CEGUI::Window* GetWindow(const nString& winName);
+    /// destroy window by pointer
+    void DestroyWindow(CEGUI::Window* window);
+    /// destroy window by name
+    void DestroyWindow(const nString& winName);
+    /// destroy all windows
+    void DestroyAllWindows();
     /// load window layout
-    void LoadWindowLayout(const nString& resName);
-    /// create empty layout
-    void CreateEmptyLayout();
+    CEGUI::Window* LoadWindowLayout(const nString& resName);
+    /// set root window
+    void SetRootWindow(CEGUI::Window* window);
     /// get root window
     CEGUI::Window* GetRootWindow() const;
     /// display GUI
@@ -66,7 +92,6 @@ private:
     static Server* Singleton;
     CEUI::Renderer* renderer;
     CEGUI::System* ceGuiSystem;
-    CEGUI::Window* rootWindow;
     bool isOpen;
     nTime time;
     nTime frameTime;
@@ -94,62 +119,38 @@ bool Server::IsOpen() const {
 
 //------------------------------------------------------------------------------
 /**
+    set current time
 */
 inline
 void Server::SetTime(nTime t) {
-    this->time = t;
+    time = t;
 }
 
 //------------------------------------------------------------------------------
 /**
+    get current time
 */
 inline
 nTime Server::GetTime() const {
-    return this->time;
+    return time;
 }
 
 //------------------------------------------------------------------------------
 /**
+    set current frame time
 */
 inline
 void Server::SetFrameTime(nTime f) {
-    this->frameTime = f;
+    frameTime = f;
 }
 
 //------------------------------------------------------------------------------
 /**
+    get current frame time
 */
 inline
 nTime Server::GetFrameTime() const {
-    return this->frameTime;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-CEGUI::Window* Server::GetRootWindow() const {
-    return this->rootWindow;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void Server::DisplayGui() {
-    if (this->rootWindow != 0 && this->ceGuiSystem->getGUISheet() == 0) {
-        this->ceGuiSystem->setGUISheet(this->rootWindow);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void Server::HideGui() {
-    if (this->ceGuiSystem->getGUISheet() != 0) {
-        this->ceGuiSystem->setGUISheet(NULL);
-    }
+    return frameTime;
 }
 
 } // namespace CEUI

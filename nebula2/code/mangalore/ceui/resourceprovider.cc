@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/resourceprovider.cc
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #include "ceui/resourceprovider.h"
 #include "kernel/nfile.h"
 #include "kernel/nfileserver2.h"

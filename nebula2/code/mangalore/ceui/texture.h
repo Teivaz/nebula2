@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/texture.h
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #ifndef CEGUI_TEXTURE_H
 #define CEGUI_TEXTURE_H
 
@@ -38,7 +42,7 @@ public:
     ///
     virtual void loadFromFile(const CEGUI::String& fileName, const CEGUI::String& resGroup);
     ///
-    virtual void loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight);
+    virtual void loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight, CEGUI::Texture::PixelFormat pixelFormat);
     ///
     virtual CEGUI::ushort getWidth() const;
     ///
