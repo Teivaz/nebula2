@@ -339,7 +339,7 @@ nShaderState::Param nMaxTexture::GetShaderParamFromStdMapSlot(StdUVGen* uvGen, i
         default:
             n_maxlog(Low, "Use mapping channel [1~4] for %s map. map channel [%d] was used", 
                 SubMapIDToString(subID), mapChannel);
-            shaderParam = nShaderState::SpecMap0;
+            shaderParam = nShaderState::BumpMap0;
             break;
         }
         break;
