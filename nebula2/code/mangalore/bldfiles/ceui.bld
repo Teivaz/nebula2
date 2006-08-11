@@ -10,7 +10,6 @@ beginmodule mangalore::ceui
         server
         renderer
         texture
-        ceguitimesource
         resourceprovider
         logger
     }
@@ -18,7 +17,6 @@ beginmodule mangalore::ceui
         server
         renderer
         texture
-        ceguitimesource
         resourceprovider
         logger
     }
