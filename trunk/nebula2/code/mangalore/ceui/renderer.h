@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/render.h
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #ifndef CEUI_RENDERER_H
 #define CEUI_RENDERER_H
 
@@ -25,7 +29,7 @@ public:
     ///
     virtual CEGUI::Texture* createTexture(const CEGUI::String& fileName, const CEGUI::String& resGroup);
     ///
-    virtual void destroyTexture(CEGUI::Texture* texture);
+    virtual void destroyTexture(CEGUI::Texture* tex);
     ///
     virtual void destroyAllTextures();
     ///

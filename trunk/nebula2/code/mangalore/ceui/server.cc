@@ -1,3 +1,7 @@
+//------------------------------------------------------------------------------
+//  ceui/server.cc
+//  (c) 2006 Nebula2 Community
+//------------------------------------------------------------------------------
 #include "ceui/server.h"
 #include "ceui/renderer.h"
 #include "ceui/logger.h"
@@ -22,7 +26,6 @@ Server::Server() {
     Singleton = this;
     renderer = 0;
     ceGuiSystem = 0;
-    rootWindow = 0;
     isOpen = false;
     time = 0.0;
     frameTime = 0.0;
@@ -43,7 +46,6 @@ bool Server::Open() {
     n_new(CEUI::Logger);
     renderer = n_new(CEUI::Renderer);
     ceGuiSystem = n_new(CEGUI::System(renderer));
-    CEGUI::Logger::getSingleton().setLogFilename("ceguilog.txt");
     CEGUI::Logger::getSingleton().setLoggingLevel(CEGUI::Standard);
     nGfxServer2::Instance()->SetCursorVisibility(nGfxServer2::Custom);
     isOpen = true;
@@ -181,7 +183,7 @@ static CEGUI::uint Key2CeGuiKey(nKey key) {
 
 //------------------------------------------------------------------------------
 /**
-    Trigger the ceui server. This distributes input to the current canvas
+    Trigger the CEUI server. This distributes input to the current canvas
 */
 void Server::Trigger() {
     // inject time pulse
@@ -229,7 +231,7 @@ void Server::Render() {
 
 //------------------------------------------------------------------------------
 /**
-    create gui font
+    create GUI font
 */
 void Server::CreateFont(const nString& fontName) {
     CEGUI::FontManager::getSingleton().createFont(fontName.Get());
@@ -237,7 +239,23 @@ void Server::CreateFont(const nString& fontName) {
 
 //------------------------------------------------------------------------------
 /**
-    load gui scheme
+    destroy GUI font
+*/
+void Server::DestroyFont(const nString& fontName) {
+    CEGUI::FontManager::getSingleton().destroyFont(fontName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy all GUI fonts
+*/
+void Server::DestroyAllFonts() {
+    CEGUI::FontManager::getSingleton().destroyAllFonts();
+}
+
+//------------------------------------------------------------------------------
+/**
+    load GUI scheme
 */
 void Server::LoadScheme(const nString& schemeName) {
     CEGUI::SchemeManager::getSingleton().loadScheme(schemeName.Get());
@@ -245,18 +263,114 @@ void Server::LoadScheme(const nString& schemeName) {
 
 //------------------------------------------------------------------------------
 /**
-    load window layout from xml and display GUI
+    unload GUI scheme
 */
-void Server::LoadWindowLayout(const nString& resName) {
-    this->rootWindow = CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get());
+void Server::UnloadScheme(const nString& schemeName) {
+    CEGUI::SchemeManager::getSingleton().unloadScheme(schemeName.Get());
 }
 
 //------------------------------------------------------------------------------
 /**
-    create default root window and display GUI
+    unload all GUI schemes
 */
-void Server::CreateEmptyLayout() {
-    this->rootWindow = CEGUI::WindowManager::getSingleton().createWindow("DefaultWindow", "CEUIRootWindow");
+void Server::UnloadAllSchemes() {
+    CEGUI::SchemeManager::getSingleton().unloadAllSchemes();
+}
+
+//------------------------------------------------------------------------------
+/**
+    create window
+*/
+CEGUI::Window* Server::CreateWindow(const nString& type, const nString& winName) {
+    return CEGUI::WindowManager::getSingleton().createWindow(type.Get(), winName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    find window by name
+*/
+CEGUI::Window* Server::GetWindow(const nString& winName) {
+    return CEGUI::WindowManager::getSingleton().getWindow(winName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy window by pointer
+*/
+void Server::DestroyWindow(CEGUI::Window* window) {
+    CEGUI::WindowManager::getSingleton().destroyWindow(window);
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy window by name
+*/
+void Server::DestroyWindow(const nString& winName) {
+    CEGUI::WindowManager::getSingleton().destroyWindow(winName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy all windows
+*/
+void Server::DestroyAllWindows() {
+    CEGUI::WindowManager::getSingleton().destroyAllWindows();
+}
+
+//------------------------------------------------------------------------------
+/**
+    load window layout from XML and display GUI
+*/
+CEGUI::Window* Server::LoadWindowLayout(const nString& resName) {
+    return CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    set root window
+*/
+void Server::SetRootWindow(CEGUI::Window* window) {
+    n_assert(window != NULL);
+    ceGuiSystem->setGUISheet(window);
+}
+
+//------------------------------------------------------------------------------
+/**
+    get root window
+*/
+CEGUI::Window* Server::GetRootWindow() const {
+    return ceGuiSystem->getGUISheet();
+}
+
+//------------------------------------------------------------------------------
+/**
+    display GUI
+*/
+void Server::DisplayGui() {
+    if (ceGuiSystem->getGUISheet() != NULL) {
+        ceGuiSystem->getGUISheet()->setVisible(true);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    hide GUI
+*/
+void Server::HideGui() {
+    if (ceGuiSystem->getGUISheet() != NULL) {
+        ceGuiSystem->getGUISheet()->setVisible(false);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    check if current GUI visible
+*/
+bool Server::IsGuiVisible() const {
+    if (ceGuiSystem->getGUISheet() != NULL) {
+        return ceGuiSystem->getGUISheet()->isVisible();
+    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -269,7 +383,7 @@ void Server::SetDefaultMouseCursor(const nString& schemeName, const nString& cur
 
 //-----------------------------------------------------------------------------
 /**
-    Check if the mouse is currently over an GUI element.
+    check if the mouse is currently over an GUI element.
 */
 bool Server::IsMouseOverGui() const {
     return ceGuiSystem->getWindowContainingMouse() != ceGuiSystem->getGUISheet();
