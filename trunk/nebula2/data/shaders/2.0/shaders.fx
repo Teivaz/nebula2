@@ -1321,7 +1321,7 @@ color4 psEnvironmentColor(const vsOutputEnvironmentColor psIn, uniform bool hdr,
     }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
     float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
-    color4 reflectColor = tex2D(EnvironmentSampler, psIn.worldReflect);
+    color4 reflectColor = texCUBE(EnvironmentSampler, psIn.worldReflect);
     color4 color = lerp(diffColor, reflectColor, diffColor.a);
     color4 finalColor = psLight(color, tangentSurfaceNormal, psIn.lightVec, psIn.modelLightVec, psIn.halfVec, shadowIntensity);
     if (hdr)
