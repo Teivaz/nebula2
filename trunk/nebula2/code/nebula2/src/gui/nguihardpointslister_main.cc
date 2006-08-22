@@ -58,11 +58,11 @@ void nGuiHardpointsLister::FindHardpointsAndAddToList(nRoot* node)
     nRoot* subNode = node->GetHead();
     while( 0 != subNode )
     {
-        if( strcmp(subNode->GetName(),"skinanimator") == 0)
+        if (subNode->IsA("nskinanimator"))
         {
             nSkinAnimator* skinAnimator = (nSkinAnimator*) subNode;
             int numJoints = skinAnimator->GetNumJoints();
-            
+
             int j;
             for( j = 0 ; j < numJoints ; j++ )
             {
@@ -71,7 +71,7 @@ void nGuiHardpointsLister::FindHardpointsAndAddToList(nRoot* node)
                 quaternion  poseRotate;
                 vector3     poseScale;
                 nString     name;
-    
+
                 skinAnimator->GetJoint(j,parentJointIndex,poseTranslate,poseRotate,poseScale,name);
                 animatorList.Append(skinAnimator);
                 jointIndex.Append(j);
@@ -89,7 +89,7 @@ void nGuiHardpointsLister::FindHardpointsAndAddToList(nRoot* node)
 */
 bool nGuiHardpointsLister::GetSelectedJoint(nSkinAnimator* &skinAnimator,int &index)
 {
-    if(this->GetNumLines() == 0) 
+    if(this->GetNumLines() == 0)
         return false;
 
     int nr = this->GetSelectionIndex();
@@ -109,11 +109,11 @@ nGuiHardpointsLister::UpdateContent()
 {
     nNodeList* nodeList = nNodeList::Instance();
     n_assert( nodeList != 0 );
-    
+
     int nodesCount = nodeList->GetCount();
 
     this->BeginAppend();
-    
+
     int i;
     for( i=0 ; i<nodesCount ; i++)
     {
