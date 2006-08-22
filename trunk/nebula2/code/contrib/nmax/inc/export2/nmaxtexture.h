@@ -13,6 +13,7 @@
     @brief
 */
 #include "gfx2/nshaderstate.h"
+#include "util/nstring.h"
 
 class nShapeNode;
 
@@ -29,23 +30,34 @@ public:
         Unknown,
     };
     
+    /// Constructor.
     nMaxTexture();
+    /// Destructor.
     virtual ~nMaxTexture();
 
+    /// 
     void Export(Texmap* texmap, int subID, nShapeNode* shapeNode);
-    void Export(Texmap* texmap, nShaderState::Param param, nShapeNode* shapeNode);
+    /// 
+    void Export(Texmap* texmap, nShaderState::Param param, 
+                nShapeNode* shapeNode, nString texPath = "");
 
+    ///
     nShaderState::Param GetShaderParamFromStdMapSlot(StdUVGen* uvGen, int subID);
-
+    ///
     static bool IsClassID(Texmap* texmap, ulong classID);
+    ///
     static Type GetType (Texmap* map);
 
 protected:
+    ///
     const char* SubMapIDToString(int subID);
 
+    ///
     bool CopyTexture(const char* textureName);
 
+    ///
     void ExportUVTransform(StdUVGen* uvGen, nShapeNode* shapeNode);
+    ///
     void ExportUVAnimator(StdUVGen* uvGen, nShapeNode* shapeNode);
 
 };

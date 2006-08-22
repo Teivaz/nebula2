@@ -156,6 +156,8 @@ nString GetParameterType(const nString &shdType)
       -# Unknown - label
 
     @param type 'type' value of xml element.
+
+    -17-Aug-06  kims Changed to add texutre directory setting button.
 */
 static
 nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
@@ -176,13 +178,40 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
         return AddDropdownList(elemParam);
     else
     if (type == "Texture")
-        return AddMapButton(elemParam);
+    {
+        nString ret;
+
+        // Caution: The plugin max script code is always regenerated and
+        //          executed at the start time of 3dsmax so it is useless to 
+        //          specifying any initial value to a control or parameter block.
+        ret += AddMapButton(elemParam);
+        ret += AddSetDirDlg(elemParam);
+        return ret;
+    }
     else
     if (type == "BumpTexture")
-        return AddMapButton(elemParam);
+    {
+        nString ret;
+
+        // Caution: The plugin max script code is always regenerated and
+        //          executed at the start time of 3dsmax so it is useless to 
+        //          specifying any initial value to a control or parameter block.
+        ret += AddMapButton(elemParam);
+        ret += AddSetDirDlg(elemParam);
+        return ret;
+    }
     else
     if (type == "CubeTexture")
-        return AddMapButton(elemParam);
+    {
+        nString ret;
+
+        // Caution: The plugin max script code is always regenerated and
+        //          executed at the start time of 3dsmax so it is useless to 
+        //          specifying any initial value to a control or parameter block.
+        ret += AddMapButton(elemParam);
+        ret += AddSetDirDlg(elemParam);
+        return ret;
+    }
     else
     if (type == "Vector")
         return AddVector4Spinner(elemParam);
@@ -304,6 +333,8 @@ nString GetStringForDefault(const nString &shdName, const nString &type, const n
         nChangeShaderParameter "Standard", "common", "RenderPri", "1.0 1.0 1.0 1.0"
     )
     @endverbatim
+
+    -17-Aug-06  kims Added color picker to support MatAmbient.
 */
 static
 nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
@@ -316,7 +347,8 @@ nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
     //color picker
     if (paramName == "MatDiffuse"  ||
         paramName == "MatEmissive" ||
-        paramName == "MatSpecular") 
+        paramName == "MatSpecular" ||
+        paramName == "MatAmbient") 
     {
         handler += GetStringForColorPicker(shdName, "common", paramName);
     }
@@ -333,17 +365,17 @@ nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
     {
         handler += GetStringForDefault(shdName, "common", paramName);
     }
-    //texture map
     else
-    if (paramName == "DiffMap0" || 
-        paramName == "BumpMap0") 
+    if (strstr(paramName.Get(), "DiffMap") ||
+        strstr(paramName.Get(), "BumpMap") ||
+        strstr(paramName.Get(), "CubeMap") )
     {
         handler += GetStringForMapButton(shdName, "common", paramName);
     }
     else
     {
         // print "Unknown material type: shader name: xxx parameter name: yyy"
-        handler += "\t\t\tprint ";
+        handler += "\t\t\t\tprint ";
         handler += "\"Unknown material type: shader name: ";
         handler += shdName.Get();
         handler += " ";
@@ -439,7 +471,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         handler += GetIpcEventHandler(shdName, paramName);
     }
     else
-    if (paramName == "DiffMap0")
+    if (strstr(paramName.Get(), "DiffMap"))
     {
         handler += "\t\t\tOn" + paramName + "Changed val\n";
 
@@ -455,7 +487,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         handler += GetIpcEventHandler(shdName, paramName);
     }
     else
-    if (paramName == "BumpMap0")
+    if (strstr(paramName.Get(), "BumpMap"))
     {
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         
@@ -469,7 +501,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         handler += GetIpcEventHandler(shdName, paramName);
     }
     else
-    if (paramName == "CubeMap")
+    if (strstr(paramName.Get(), "CubeMap"))
     {
         handler += "\t\t\tOn" + paramName + "Changed val\n";
 
@@ -486,7 +518,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         handler += GetIpcEventHandler(shdName, paramName);
     }
     else
-    if (paramName == "SpecMap0")
+    if (strstr(paramName.Get(), "SpecMap"))
     {
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //FIXME: should assign map channel to delegate.
@@ -570,7 +602,26 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
     // append event handler.
     strParamBlock += GetEventHandler (shdName, paramName);
 
-    //strParamBlock += GetIpcEventHandler(shdName, paramName);
+    // if it is texture type, add destination directory setting value.
+    if (strstr(paramType.Get(), "Texture") && hasGui)
+    {
+        //HACK: 'dirSetting' is used again in AddSetDirDlg() function.
+        //      and nMaxMaterial::GetNebulaMaterial() function.
+        //      So, if you change the string, the string in AddSetDirDlg() 
+        //      also should be changed.
+        nString prefix = "dirSetting";
+
+        strParamBlock += "\t\t";
+        strParamBlock += prefix;
+        strParamBlock += paramName;
+        strParamBlock += " ";
+
+        strParamBlock += "type:#string ";
+        strParamBlock += "ui:";
+        strParamBlock += "edtFld";
+        strParamBlock += paramName;
+        strParamBlock += "\n";
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -902,10 +953,6 @@ bool EvalCustomMaterialPlugin()
     mainRollout += "width:160";
     mainRollout += " ";
 
-    //strRollout += "height:";
-    //strRollout += shaderArray.Size() + 2;
-    //strRollout += " ";
-
     mainRollout += "items:#(";
     for (i=0; i<shaderArray.Size(); i++)
     {
@@ -918,10 +965,6 @@ bool EvalCustomMaterialPlugin()
     }
     mainRollout += ") ";
     mainRollout += "selection:1";
-    //mainRollout += "selection:";
-    //int selIndex = shaderArray.FindIndex(nString(shdname));
-    //nString selection; selection.AppendInt(selIndex + 1); // 1 based.
-    //mainRollout += selection;
     mainRollout += "\n";
     // end of dropdownlist script for shader.
 

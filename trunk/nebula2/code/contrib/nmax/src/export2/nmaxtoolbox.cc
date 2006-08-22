@@ -11,6 +11,10 @@ nNebulaUsePackage(nnebula);
 //------------------------------------------------------------------------------
 /**
     called when the plugin dll is loaded.
+
+    -17-Aug-06  kims  Modified to read INI file before the plugin generates
+                      max script code.
+                      
 */
 bool nMaxPluginInitialize()
 {
@@ -20,7 +24,15 @@ bool nMaxPluginInitialize()
     // to the exporting task. (same reason for saving the utility options too)
     nMaxOptions* options = nMaxOptions::Instance();
     if (!options->LoadUtilityOptions())
+    {
         return false;
+    }
+
+    // read option values from '$3dsmax/plugincfg/nmaxtoolbox.ini' file.
+    if (!options->Initialize())
+    {
+        return false;
+    }
 
     return true;
 }

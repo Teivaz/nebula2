@@ -141,7 +141,11 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     }
                                     else
                                     {
-                                        n_maxlog(Error, "The parameter block has string type parameter but it is not effect filename.");
+                                        // HACK: we just pass it if the parameter block contains 'dirSetting' for its name.
+                                        if (strstr(name, "dirSetting") == 0 )
+                                        {
+                                            n_maxlog(Error, "The parameter block has string type parameter but it is not effect filename.");
+                                        }
                                     }
                                 }
                                 else
@@ -355,15 +359,34 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
 
                         case TYPE_TEXMAP:
                             {
-                                BOOL result;
+                                BOOL result0, result1;
                                 Texmap* value;
-                                Interval interval;
+                                TCHAR* mapDir;
+                                Interval interval0, interval1;
                                 
-                                result = pblock2->GetValue(j, 0, value, interval);
-                                if (result)
+                                // access to texture directory setting parameter block.
+                                // we always assume the next parameter block of the texture is 
+                                // texture directory setting dialog button.
+                                int pbType = pblock2->GetParameterType(j+1);
+                                if (pbType == TYPE_STRING)
+                                {
+                                    result0 = pblock2->GetValue(j+1, 0, mapDir, interval0);                                    
+                                    if (!result0)
+                                    {
+                                        n_maxlog(Error, "The next parameter block of textuermap should be texture directory setting");
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    n_maxlog(Error, "The next parameter block of textuermap should be texture directory setting");
+                                }
+
+                                result1 = pblock2->GetValue(j, 0, value, interval1);
+                                if (result1)
                                 {
                                     nMaxTexture texture;
-                                    texture.Export(value, shaderParam, shapeNode);
+                                    texture.Export(value, shaderParam, shapeNode, mapDir);
                                 }
                                 else
                                 {
