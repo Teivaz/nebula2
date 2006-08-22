@@ -117,6 +117,28 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         // and the other for bump map. 
         // The warning will be shown If you set only diffuse map.
         n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
+
+        // specify defaultl texture if no texture map is assigned.
+        nString shdParam = nShaderState::ParamToString(param);
+
+        nString texmap;
+
+        // FIXME: any other good idea to avoid this hard coding? :-)
+        if (strstr(shdParam.Get(), "DiffMap"))
+            texmap = "textures:system/white.dds";
+        else
+        if (strstr(shdParam.Get(), "BumpMap"))
+            texmap = "textures:system/nobump.dds";
+        else
+        if (strstr(shdParam.Get(), "CubeMap"))
+            texmap = "textures:system/cube.dds";
+        else
+            texmap = "textures:system/white.dds";
+
+        n_maxlog(Warning, "Warning: The '%s' file is used for the default one.", texmap.Get());
+
+        shapeNode->SetTexture(param, texmap.Get());
+
         return;
     }
 
