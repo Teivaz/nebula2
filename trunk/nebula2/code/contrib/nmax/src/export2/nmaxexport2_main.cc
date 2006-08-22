@@ -198,7 +198,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
     nMaxOptions* expOptions = nMaxOptions::Instance();
     if (!expOptions->Initialize())
     {
-        n_maxlog(Error, "Faile to read '%s' file from 'plugcfg' directory.", 
+        n_maxlog(Error, "Failed when the plugin reads '%s' file of '$3dsmax/plugcfg' directory.", 
             N_MAXEXPORT_INIFILE);
 
         ReleaseSingletons();
