@@ -125,7 +125,10 @@ nD3D9Server::~nD3D9Server()
         this->CloseDisplay();
     }
     this->D3dClose();
-    this->windowHandler.CloseWindow();
+    if (this->windowHandler.IsWindowOpen())
+    {
+        this->windowHandler.CloseWindow();
+    }
     n_assert(this->textNodeList.IsEmpty());
 }
 
