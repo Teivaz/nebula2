@@ -217,7 +217,6 @@ AddDropdownList(TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
     nString caption = elemParam->Attribute("label");
-    nString defaultVal = elemParam->Attribute("def");
 
     nString uiScript;
 
@@ -282,7 +281,6 @@ AddColorPicker(TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
     nString caption = elemParam->Attribute("label");
-    nString defaultVal = elemParam->Attribute("def");
 
     nString uiScript;
 
@@ -341,11 +339,10 @@ AddColorPicker(TiXmlElement* elemParam)
     @endverbatim
 */
 nString 
-AddMapButton(TiXmlElement* elemParam)
+AddMapButton(TiXmlElement* elemParam, nString defaultVal)
 {
     nString paramName = elemParam->Attribute("name");
     nString caption = elemParam->Attribute("label");
-    nString defaultVal = elemParam->Attribute("def");
 
     nString uiScript;
 
@@ -360,6 +357,13 @@ AddMapButton(TiXmlElement* elemParam)
     uiScript += " ";
     uiScript += "\"" + caption + "\"";
     uiScript += " ";
+    // add default map property if the default value is given.
+    if (!defaultVal.IsEmpty())
+    {
+        uiScript += "map:";
+        uiScript += "\"" + defaultVal + "\"";
+        uiScript += " ";
+    }
     uiScript += "align:#left";
     uiScript += " ";
     uiScript += "width:150";
@@ -386,7 +390,6 @@ AddVector4Spinner(TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
     nString caption    = elemParam->Attribute("label"); // UI caption 
-    nString defaultVal = elemParam->Attribute("def");   // default value of the ui.
 
     nString uiScript;
 
@@ -468,6 +471,117 @@ AddLabel(const nString &uiname, const nString &caption, int across, bool addDot)
     uiScript += strAcross;
 
     uiScript += "\n";
+
+    return uiScript;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Add texture directory setting button.
+
+    Example:
+    @verbatim
+	button btnFldBumpMap0 "texture:"align:#right width:150
+	on btnFBumpMap0 pressed do
+	(
+		mapPath = getSavePath caption:"Select path of Wave Bump Map"
+		if mapPath != undefined then 
+		(
+			dirSettingBumpMap0  = mapPath
+            edtFldBumpMap0.text = mapPath
+		)
+	)
+    @endverbatim
+*/
+nString
+AddSetDirDlg(TiXmlElement* elemParam)
+{
+    nString uiname  = elemParam->Attribute("name");
+    nString caption = elemParam->Attribute("label");
+
+    nString uiScript;
+    nString uiPrefix = "Fld";
+
+    // script code for 'edittext' control
+    uiScript += "\t\t";
+    uiScript += "edittext";
+    uiScript += " ";
+    uiScript += "edt";
+    uiScript += uiPrefix + uiname;
+    uiScript += " ";
+    uiScript += "\"";
+    uiScript += "Dest Folder : ";
+    uiScript += "\"";
+    uiScript += " align:#left fieldWidth:180 across:2 readonly:true \n";
+
+    // script code for 'button' control
+    uiScript += "\t\t";
+    uiScript += "button";
+    uiScript += " ";
+    uiScript += "btn";
+    uiScript += uiPrefix + uiname;
+    uiScript += " ";
+
+    //button name.
+    uiScript += " ";
+    uiScript += "\"";
+    uiScript += "<<";
+    uiScript += "\"";
+    uiScript += " ";
+
+    uiScript += "align:#right";
+    uiScript += " ";
+    uiScript += "width:40";
+    uiScript += "\n";
+
+    // button handler scrpt code
+    uiScript += "\t\t";
+    uiScript += "on ";
+    uiScript += "btn";
+    uiScript += uiPrefix + uiname;
+    uiScript += " ";
+    uiScript += "pressed do\n";
+    uiScript += "\t\t";
+    uiScript += "(\n";
+    
+    uiScript += "\t\t\t";
+
+    uiScript += "mapPath = getSavePath";
+    uiScript += " ";
+    uiScript += "caption:";
+    uiScript += "\"";
+    uiScript += "Select path of a ";
+    uiScript += caption;
+    uiScript += "\"";
+    uiScript += "\n";
+    
+    uiScript += "\t\t\t";
+    uiScript += "if mapPath != undefined then \n";
+    uiScript += "\t\t\t";
+    uiScript += "(\n";
+
+    //HACK: the string 'dirSetting' should be same with the string
+    //      which can be found in GenerateScript() function and
+    //      nMaxMaterial::GetNebulaMaterial() function.
+    //      code : dirSettngDiffmap0 = mapPath
+    uiScript += "\t\t\t\t"; 
+    uiScript += "dirSetting" + uiname;
+    uiScript += " = mapPath";
+    uiScript += "\n";
+
+    // code : edtFldDiffMap0.text = mapPath
+    uiScript += "\t\t\t\t";
+    uiScript += "edt";
+    uiScript += uiPrefix + uiname;
+    uiScript += ".text";
+    uiScript += " = mapPath";
+    uiScript += "\n";
+    
+    uiScript += "\t\t\t";
+    uiScript += ")\n";
+
+    uiScript += "\t\t";
+    uiScript += ")\n";
 
     return uiScript;
 }

@@ -98,8 +98,16 @@ void nMaxTexture::Export(Texmap* texmap, int subID, nShapeNode* shapeNode)
 //-----------------------------------------------------------------------------
 /**
     function for Nebula2 custom material.
+
+    @param texmap    - pointer to 3dsmax texture map object for this texture map file.
+    @param param     - shader parameter.
+    @param shapeNode - Nebula node for this texture file will be attached.
+    @param texPath   - directory path where the texture to be copied.
+
+    -21-Aug-06  kims  Changed to support to recognize subdirectories under 
+                      the 'export/textures'directory.
 */
-void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* shapeNode)
+void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* shapeNode, nString texPath)
 {
     if (0 == texmap)
     {
@@ -119,10 +127,38 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
 
         //FIXME: if no textures is assigned for this material, we should assign default one.
 
-        // set the texture to the given node.
-        nString textureName;
-        textureName += nMaxOptions::Instance()->GetTextureAssign();
+        // retrieve texture path and append destination texture path to the end of the directory.
+        nString textureName, textureAssign;
+        
+        //FIXME: should get texture path not texture assign!
+        textureAssign = nMaxOptions::Instance()->GetTextureAssign();
+        textureAssign.StripTrailingSlash();
+
+        nString manglePath = nFileServer2::Instance()->ManglePath(textureAssign);
+        
+        texPath.ConvertBackslashes();
+        texPath.ToLower();
+
+        if (texPath.ContainsCharFromSet(manglePath.Get()))
+        {
+            // retrieve subdirectory of texture assgin directory,
+            textureName += nMaxOptions::Instance()->GetTexturePath();
+            // HACK: every manglepath has no trailing slash. 
+            //       so we append the trailing shash to remove the first slash
+            manglePath += "/";
+            textureName += texPath.Substitute(manglePath.Get(), "");
+        }
+        else
+        {
+            n_maxlog(Warning, "The texture file %s directory is not under %s.", 
+                mapFileName.ExtractFileName().Get(), textureAssign.Get());
+            textureName += textureAssign;
+        }
+
+        textureName += "/";
         textureName += mapFileName.ExtractFileName();
+
+        // set the texture to the given node.
         shapeNode->SetTexture(param, textureName.Get());
 
         //TODO: check the texture image file already exist and the overwrite option.
