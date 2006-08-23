@@ -361,7 +361,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                             {
                                 BOOL result0, result1;
                                 Texmap* value;
-                                TCHAR* mapDir;
+                                TCHAR* mapDir = NULL;
                                 Interval interval0, interval1;
                                 
                                 // access to texture directory setting parameter block.
