@@ -87,7 +87,7 @@ TimeManager::GetFrameId() const
 //------------------------------------------------------------------------------
 /**
     The per-frame method is called by the game server. It currently
-    just update the frame id.
+    just updates the frame id.
 */
 void
 TimeManager::OnFrame()

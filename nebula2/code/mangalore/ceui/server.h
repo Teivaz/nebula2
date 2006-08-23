@@ -72,7 +72,7 @@ public:
     /// destroy all windows
     void DestroyAllWindows();
     /// load window layout
-    CEGUI::Window* LoadWindowLayout(const nString& resName);
+    CEGUI::Window* LoadWindowLayout(const nString& resName, const nString& prefix="");
     /// set root window
     void SetRootWindow(CEGUI::Window* window);
     /// get root window

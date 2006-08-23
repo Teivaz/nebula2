@@ -215,7 +215,7 @@ Shape::SetTransform(const matrix44& m)
 /**
     Returns the debug visualization color which is used in RenderDebug().
     This depends on the state of the rigid body which owns this state (if any):
-    red:     no rigid body attached to shape
+    yellow:  no rigid body attached to shape
     green:   rigid body is enabled
     blue:    ridig body is disabled
 */

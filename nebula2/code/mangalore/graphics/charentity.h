@@ -78,7 +78,7 @@ public:
     /// DEBUG : this is just for the MILESTONE, check actorgraphicsproperty.cc
     void LoadNextSkinListInDirectory();
 
-private:
+protected:
     /// create animation event handler
     virtual void CreateAnimationEventHandler();
     /// cleanup animation event handler
@@ -116,7 +116,7 @@ private:
     CharAnimEventHandler* animEventHandler;
     nCharacter2* nebCharacter;
 
-    int restartOverlayAnim;        // flag indicating to Nebula2 that animation must be restartet
+    int restartOverlayAnim;        // flag indicating to Nebula2 that animation must be restarted
 
     nString curOverlayAnimName;
     nString curBaseAnimName;

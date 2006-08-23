@@ -321,8 +321,8 @@ void Server::DestroyAllWindows() {
 /**
     load window layout from XML and display GUI
 */
-CEGUI::Window* Server::LoadWindowLayout(const nString& resName) {
-    return CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get());
+CEGUI::Window* Server::LoadWindowLayout(const nString& resName, const nString& prefix) {
+    return CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get(), prefix.Get());
 }
 
 //------------------------------------------------------------------------------

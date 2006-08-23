@@ -327,7 +327,7 @@ Server::CreateAMotor() const
 /**
     Create a new fully initialized box shape object.
 
-    @param  m           locale transformation of shape
+    @param  m           local transformation of shape
     @param  matType     MaterialType of the shape
     @param  size        size of the box
     @return             pointer to new box shape object
@@ -346,7 +346,7 @@ Server::CreateBoxShape(const matrix44& m, MaterialType matType, const vector3& s
 /**
     Create a fully initialized sphere shape object.
 
-    @param  m           locale transformation of shape
+    @param  m           local transformation of shape
     @param  matType     MaterialType of the shape
     @param  radius      radius of sphere
     @return             pointer to new sphere shape object
@@ -365,7 +365,7 @@ Server::CreateSphereShape(const matrix44& m, MaterialType matType, float radius)
 /**
     Create a fully initialized capsule shape object.
 
-    @param  m           locale transform of shape
+    @param  m           local transform of shape
     @param  matType     MaterialType of shape
     @param  radius      radius of capsule
     @param  length      lenght of capsule (not counting the caps)
@@ -386,7 +386,7 @@ Server::CreateCapsuleShape(const matrix44& m, MaterialType matType, float radius
 /**
     Create a fully initialized mesh shape object.
 
-    @param  m               locale transformation of shape
+    @param  m               local transformation of shape
     @param  matType         MaterialType of the shape
     @param  meshFilename    filename of mesh resource file
     @return                 pointer to new mesh shape object
