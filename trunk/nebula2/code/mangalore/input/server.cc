@@ -139,4 +139,4 @@ Server::GetMousePos() const
     return nInputServer::Instance()->GetMousePos();
 }
 
-} // namespace Graphics
+} // namespace Input

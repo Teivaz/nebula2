@@ -9,7 +9,7 @@
     of graphics it handles collision. All static collide geometry in a level
     will usually be added to one EnvironmentCollideProperty, which in
     turn lives in a single game entity which represent the environment
-    graphics and collission. That way the game entity pool isn't flooded
+    graphics and collision. That way the game entity pool isn't flooded
     with hundreds of game entities which would end up doing nothing because
     they just represent static geometry. Instead, everything static about
     the level is put into a single entity.
