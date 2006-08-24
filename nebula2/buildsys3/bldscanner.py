@@ -401,7 +401,7 @@ class BldScanner(Scanner):
             
     def SetTargetIcon(self, text):
         self.CheckTargetNameDefined()
-        self.targets[len(self.targets) - 1].icon = text
+        self.targets[len(self.targets) - 1].icon = string.strip(text, '"')
         self.begin('target')  # switch back to parent state
 
     def SetTargetWin32Resource(self, text):
@@ -612,7 +612,7 @@ class BldScanner(Scanner):
                             (AnyChar, IGNORE)
                         ]),
                         State('t_seticon', [
-                            (filename, SetTargetIcon),
+                            (pathname, SetTargetIcon),
                             (AnyChar, IGNORE)
                         ]),
                         State('t_setresource_win32', [

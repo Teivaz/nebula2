@@ -243,8 +243,10 @@ endworkspace
       </tr>
 
       <tr>
-        <td>seticon</td> <td>filename</td> <td>nebula.ico</td>
-        <td>Sets the icon for this target (ignored for libraries).</td>
+        <td>seticon</td> <td>filename</td> 
+        <td>code/nebula2/res/nebula.ico</td>
+        <td>Sets the icon for this target (ignored for libraries). The filename
+        should be relative to the root Nebula 2 directory.</td>
       </tr>
 
       <tr>
