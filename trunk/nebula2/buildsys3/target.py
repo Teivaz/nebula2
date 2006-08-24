@@ -18,7 +18,7 @@ class Target:
         self.type = 'lib'
         self.rtti = False
         self.exceptions = False
-        self.icon = 'nebula.ico'
+        self.icon = os.path.join('code', 'nebula2', 'res', 'nebula.ico')
         self.win32Resource = ''
         self.modules = []
         self.bundles = []
@@ -303,20 +303,19 @@ class Target:
 
     #--------------------------------------------------------------------------
     # Writes out a res_XXX.rc files an executable target that points to
-    # the target's icon in /code/nebula2/res.
+    # the target's icon (code/nebula2/res by default).
     def GenerateResFile(self):
         if self.type != 'exe':
             return
             
         relPath = self.buildSys.FindRelPath(os.path.join('build', 'pkg'), 
-                                            os.path.join('code', 'nebula2',
-                                                         'res'))
+                                            self.icon)
         safeTarName = self.GetFullNameNoColons()
         absPath = os.path.join(self.buildSys.homeDir, 'build', 'pkg', 
                                'res_' + safeTarName + '.rc')            
         resFile = file(absPath, 'w')
-        relPath = os.path.join(relPath, self.icon)
         relPath = string.replace(relPath, os.sep, '\\\\')
+        relPath = string.replace(relPath, '/', '\\\\')
         resFile.write('NebulaIcon ICON "' + relPath + '"')
         resFile.close()
     
