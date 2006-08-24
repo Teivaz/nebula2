@@ -208,7 +208,7 @@ main(int argc, const char** argv)
     }
     title.Append("Nebula2 viewer");
     nDisplayMode2 displayMode;
-    displayMode.SetIcon("NebulaIcon");
+    displayMode.SetIcon("Icon");
     displayMode.SetDialogBoxMode(true);
     if (fullscreenArg)
     {
