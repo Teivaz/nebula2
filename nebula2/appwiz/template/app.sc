@@ -67,7 +67,7 @@ main(int argc, const char** argv)
     nDisplayMode2::Bpp bpp = %(bpp)s;
 
     nDisplayMode2 disp;
-    disp.Set(title, type, 0, 0, w, h, vsync, false, "NEBULAICON");
+    disp.Set(title, type, 0, 0, w, h, vsync, false, "ICON");
     disp.SetBpp(bpp);
 
     app->SetAppName(appName);

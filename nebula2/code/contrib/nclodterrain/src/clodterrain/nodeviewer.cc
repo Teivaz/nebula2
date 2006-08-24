@@ -99,7 +99,7 @@ main(int argc, const char** argv)
     title.Append("CLOD-ODE viewer");
     nDisplayMode2 displayMode;
     displayMode.SetWindowTitle(title.Get());
-    displayMode.SetIcon("NebulaIcon");
+    displayMode.SetIcon("Icon");
     displayMode.SetDialogBoxMode(true);
     displayMode.SetXPos(xPosArg);
     displayMode.SetYPos(yPosArg);

@@ -8,4 +8,4 @@
 **
 **  (C) 2002 RadonLabs GmbH
 */
-NebulaIcon ICON "nebula.ico"
+Icon ICON "nebula.ico"

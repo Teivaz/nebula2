@@ -217,7 +217,7 @@ main(int argc, const char** argv)
         title.Append(" - ");
     }
     title.Append("Nebula2 viewer");
-    const char* iconName = "NebulaIcon";
+    const char* iconName = "Icon";
     nDisplayMode2 displayMode;
     displayMode.SetDialogBoxMode(true);
     if (fullscreenArg)

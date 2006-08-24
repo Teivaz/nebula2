@@ -316,7 +316,7 @@ class Target:
         resFile = file(absPath, 'w')
         relPath = string.replace(relPath, os.sep, '\\\\')
         relPath = string.replace(relPath, '/', '\\\\')
-        resFile.write('NebulaIcon ICON "' + relPath + '"')
+        resFile.write('Icon ICON "' + relPath + '"')
         resFile.close()
     
 #--------------------------------------------------------------------------
