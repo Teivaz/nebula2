@@ -550,8 +550,9 @@ AddSetDirDlg(TiXmlElement* elemParam)
     uiScript += " ";
     uiScript += "caption:";
     uiScript += "\"";
-    uiScript += "Select path of a ";
+    uiScript += "Select a directory where the ";
     uiScript += caption;
+    uiScript += " to be exported.";
     uiScript += "\"";
     uiScript += "\n";
     
