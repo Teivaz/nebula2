@@ -187,7 +187,11 @@ CompositeLoader::Load(const nString& filename)
         int numBodies = stream.GetInt("numBodies");
         int numJoints = stream.GetInt("numJoints");
         int numShapes = stream.GetInt("numMeshes");
-        numShapes += stream.GetInt("numShapes");
+        if (stream.HasAttr("numShapes"))
+        {
+            numShapes += stream.GetInt("numShapes");
+        }
+
         if (numBodies > 0)
         {
             composite->BeginBodies(numBodies);
