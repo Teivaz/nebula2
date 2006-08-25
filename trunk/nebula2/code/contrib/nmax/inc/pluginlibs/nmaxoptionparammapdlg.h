@@ -10,7 +10,7 @@
     @class nMaxOptionParamMapDlg
     @ingroup NebulaMaxExport2Contrib
 
-    @brief Nebula export option dialog in utility pannel.
+    @brief Nebula export option dialog in utility panel.
 */
 #include "export2/nmax.h"
 #include <iparamm.h>
@@ -25,7 +25,8 @@ public:
         Python = 1,
         Lua    = 2,
         Ruby   = 3,
-        NumScriptServers = 4,
+        Binary = 4,
+        NumScriptServers = 5,
     };
 
     nMaxOptionParamMapDlg();
@@ -51,14 +52,14 @@ private:
 
     void OnHiddenObject(HWND hwnd);
 
-    /// @name script serve combox
+    /// @name script server combobox
     /// @{
     void OnSelectedScriptServer(HWND hwnd);
     const char* GetScriptServer(const char* item);
     int GetItemIndexFromScript(const char* name);
     /// @}
 
-    /// @name verbose level combox
+    /// @name verbose level combobox
     /// @{
     void OnSelectedVerboseLevel(HWND hwnd);
     /// @}
@@ -68,7 +69,7 @@ private:
     ISpinnerControl* spinGeomScale;
     /// spinner control for setting of maximum joint palette.
     ISpinnerControl* spinMaxJointPalette;
-    /// spinner control for setting of weight trash hold.
+    /// spinner control for setting of weight threshold.
     ISpinnerControl* spinWeightThreshold;
     /// spinner control for setting global animation sample rate.
     ISpinnerControl* spinSampleRate;

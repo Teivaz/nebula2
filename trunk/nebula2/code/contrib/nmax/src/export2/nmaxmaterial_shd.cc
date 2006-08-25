@@ -983,14 +983,14 @@ bool EvalCustomMaterialPlugin()
     mainRollout += "\t\t\t)\n";
     mainRollout += "\t\t\tShader.selection = i \n";
     mainRollout += "\t\t\tparamCurShader = i \n";
-    mainRollout += "\t\t\teffectFileName.caption = \"Effect Fils: \" + effectFileNames[i] \n";
+    mainRollout += "\t\t\teffectFileName.caption = \"Effect File: \" + effectFileNames[i] \n";
     mainRollout += "\t\t\tparamEffectFile = effectFileNames[i]\n";
     mainRollout += "\t\t)\n";
 
     mainRollout += "\t\ton main open do \n";
     mainRollout += "\t\t(\n";
     mainRollout += "\t\t\tShader.selection = paramCurShader \n";
-    mainRollout += "\t\t\teffectFileName.caption = \"Effect Fils: \" + paramEffectFile\n";
+    mainRollout += "\t\t\teffectFileName.caption = \"Effect File: \" + paramEffectFile\n";
     mainRollout += "\t\t)\n";
 
     mainRollout += "\t)\n";

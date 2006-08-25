@@ -659,10 +659,11 @@ bool nMaxScene::ExportNodes(INode* inode)
         
         // HACK: do not export xform if there is skin animation
         nClass* clazz = createdNode->GetClass();
-        if (nString(clazz->GetName()) != "nskinshapenode") {
-        // export xform.
-        this->ExportXForm(inode, createdNode, animStart);
-    }
+        if (nString(clazz->GetName()) != "nskinshapenode") 
+        {
+            // export xform.
+            this->ExportXForm(inode, createdNode, animStart);
+        }
     }
 
     // recursively export the nodes.
@@ -692,7 +693,8 @@ bool nMaxScene::ExportNodes(INode* inode)
     @note
     To be derived in subclasses.
 */
-nSceneNode* nMaxScene::ExportNodesHook(SClass_ID sID, INode* inode, Object* obj) {
+nSceneNode* nMaxScene::ExportNodesHook(SClass_ID sID, INode* inode, Object* obj) 
+{
     return 0;
 }
 
