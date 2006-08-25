@@ -39,6 +39,24 @@ public:
     static char* CorrectName(char* string);
 
     static void PutVertexInfo(nMeshBuilder& meshBuilder);
+
+    /// assign name for resource types.
+    enum nAssignType
+    {
+        Anim,
+        Gfx,
+        Mesh,
+        Texture
+    };
+
+    static nString RelacePathToAssign(nAssignType type, nString& path, nString& fileName);
+
+protected:
+    ///
+    static nString GetAssignFromType (nAssignType type);
+    ///
+    static nString GetPathFromType(nAssignType type);
+
 };
 //-----------------------------------------------------------------------------
 #endif

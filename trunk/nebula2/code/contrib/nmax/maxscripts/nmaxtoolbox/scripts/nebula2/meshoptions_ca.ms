@@ -27,6 +27,11 @@ nMeshOptionsCA = attributes "nMeshOptions"
         uvs     type:#boolean default:true animatable:false ui:chkUvs
         tangent type:#boolean default:false animatable:false ui:chkTangent
     )
+
+    parameters MeshDirSetting rollout:rOptions
+    (
+        meshDir type:#string ui:edtDirSetting
+    )
     
     rollout rOptions "Nebula2 Mesh Options"
     (
@@ -42,6 +47,19 @@ nMeshOptionsCA = attributes "nMeshOptions"
         checkbox chkColor "Color" align:#left
         checkbox chkUvs "Uvs" align:#left
         checkbox chkTangent "Tangent" align:#left
+
+        -- destination directory setting
+        label lblDirSetting "Destination Directory : " align:#left
+        edittext edtDirSetting "" align:#left fieldWidth:100 across:2 readonly:true 
+        button btnDirSetting  "<<" align:#right width:20 height:18
+        on btnDirSetting pressed do
+        (
+            mapPath = getSavePath caption:"Select path where the mesh to be exported."
+            if mapPath != undefined then 
+            (
+                edtDirSetting.text = mapPath
+            )
+        ) 
         
         on rdoMeshTypes changed state do
         (

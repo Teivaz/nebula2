@@ -65,11 +65,14 @@ public:
 
     Type GetType() const;
 
-    const nMeshBuilder& GetMeshBuilder();
+    nMeshBuilder& GetMeshBuilder();
     void SetBaseGroupIndex(int baseGroupIndex);
 
     static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
     static void CheckGeometryErrors(nMeshBuilder& meshBuilder, const char* filename);
+
+    /// Retrieve directory path where the mesh will be located.
+    nString GetMeshPath() const;
 
 protected:
     Mesh* LockMesh(INode* node);
@@ -186,6 +189,8 @@ protected:
     /// storage for all created shape or shadow nodes.
     nArray<nSceneNode*> sceneNodeArray;
 
+    nString meshPath;
+
 };
 //-----------------------------------------------------------------------------
 /**
@@ -230,9 +235,15 @@ nMaxMesh::Type nMaxMesh::GetType() const
 }
 //-----------------------------------------------------------------------------
 inline
-const nMeshBuilder& nMaxMesh::GetMeshBuilder()
+nMeshBuilder& nMaxMesh::GetMeshBuilder()
 {
     return this->localMeshBuilder;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxMesh::GetMeshPath() const
+{
+    return this->meshPath;
 }
 //-----------------------------------------------------------------------------
 #endif

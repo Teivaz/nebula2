@@ -4,7 +4,10 @@
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #include "export2/nmaxutil.h"
+#include "export2/nmaxoptions.h"
+
 #include "kernel/ntypes.h"
+#include "kernel/nfileserver2.h"
 #include "util/nstring.h"
 
 #include "pluginlibs/nmaxdlg.h"
@@ -410,4 +413,96 @@ void nMaxUtil::PutVertexInfo(nMeshBuilder& meshBuilder)
     }
 
     n_maxlog(Low, "Vertex components: %s", msg.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    Retrieve assign which is defined nmaxtoolbox.ini file for the given type.
+*/
+nString 
+nMaxUtil::GetAssignFromType (nAssignType type)
+{
+    switch(type)
+    {
+    case Anim:
+        return nMaxOptions::Instance()->GetAnimAssign();
+    case Gfx:
+        return nMaxOptions::Instance()->GetGfxLibAssign();
+    case Mesh:
+        return nMaxOptions::Instance()->GetMeshesAssign();
+    case Texture:
+        return nMaxOptions::Instance()->GetTextureAssign();
+    default:
+        return nMaxOptions::Instance()->GetProjPath();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Retrieve path name which is defined nmaxtoolbox.ini file for the given type.
+*/
+nString
+nMaxUtil::GetPathFromType(nAssignType type)
+{
+    switch(type)
+    {
+    case Anim:
+        return nMaxOptions::Instance()->GetAnimPath();
+    case Gfx:
+        return nMaxOptions::Instance()->GetGfxLibPath();
+    case Mesh:
+        return nMaxOptions::Instance()->GetMeshesPath();
+    case Texture:
+        return nMaxOptions::Instance()->GetTexturePath();
+    default:
+        return nMaxOptions::Instance()->GetProjPath();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Replace part of the given direcotry path to the Nebula2 assign name.
+
+    @param type - assign type e.g. texture, gfx, mesh etc.
+    @param path - directory path which to be changed to one containing assgin name.
+                  e.g. 'c:/nebula2/exports/meshes/char2' will be changed to'meshes:char2'
+    @param fileName - resource file name
+
+    @return path which part of path was replaced to assign name.
+*/
+nString 
+nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
+{
+    // retrieve texture path and append destination texture path to the end of the directory.
+    nString ret, assign;
+    
+    assign = GetAssignFromType(type);
+    assign.StripTrailingSlash();
+
+    nString manglePath = nFileServer2::Instance()->ManglePath(assign);
+    
+    path.ConvertBackslashes();
+    path.ToLower();
+
+    if (path.ContainsCharFromSet(manglePath.Get()))
+    {
+        // retrieve subdirectory of texture assgin directory,
+        ret += GetPathFromType(type);
+        // HACK: every manglepath has no trailing slash. 
+        //       so we append the trailing shash to remove the first slash
+        manglePath += "/";
+        ret += path.Substitute(manglePath.Get(), "");
+    }
+    else
+    {
+        n_maxlog(Warning, "The file %s directory is not under %s.", 
+            fileName.ExtractFileName().Get(), assign.Get());
+
+        ret += assign;
+    }
+
+    ret += "/";
+    ret += fileName.ExtractFileName();
+
+    return ret;
 }

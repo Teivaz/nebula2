@@ -502,6 +502,13 @@ nMaxOptions::GetHomePath() const
 {
     return this->homeDir;
 }
+
+//-----------------------------------------------------------------------------
+const nString&
+nMaxOptions::GetProjPath() const
+{
+    return this->projDir;
+}
 //-----------------------------------------------------------------------------
 const nString& 
 nMaxOptions::GetAnimAssign() const

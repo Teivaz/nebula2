@@ -346,22 +346,34 @@ bool nMaxScene::Postprocess()
 {
     //this->UnInitializeNodes(this->sceneRoot);
 
+    nString globalMeshPath;
+
     // append meshes to one master mesh
     int nummeshes = this->meshArray.Size();
     if ( nummeshes > 0)
     {
-        nMaxMesh* mesh;
-
-        for (int i=0; i<nummeshes; i++)
+        if (!nMaxOptions::Instance()->UseIndivisualMesh())
         {
-            mesh = this->meshArray[i];
+            nMaxMesh* mesh;
 
-            //TODO: check the mesh has same vertex component.
-            //...
+            for (int i=0; i<nummeshes; i++)
+            {
+                mesh = this->meshArray[i];
 
-            // append retrieved meshes to a global mesh.
-            int baseGroupIndex = this->globalMeshBuilder.Append(mesh->GetMeshBuilder());
-            mesh->SetBaseGroupIndex(baseGroupIndex);
+                // if we consolidate all meshes to one mesh,
+                // use the first mesh's path for saving it.
+                if (i==0)
+                {
+                    globalMeshPath = mesh->GetMeshPath();
+                }
+
+                //TODO: check the mesh has same vertex component.
+                //...
+
+                // append retrieved meshes to a global mesh.
+                int baseGroupIndex = this->globalMeshBuilder.Append(mesh->GetMeshBuilder());
+                mesh->SetBaseGroupIndex(baseGroupIndex);
+            }
         }
     }
 
@@ -401,7 +413,7 @@ bool nMaxScene::Postprocess()
         if (this->globalMeshBuilder.GetNumVertices())
         {
             nString filename;
-            filename = this->GetMeshFileNameToSave();
+            filename = this->GetMeshFileNameToSave(globalMeshPath);
 
             // remove redundant vertices.
             this->globalMeshBuilder.Cleanup(0);
@@ -441,6 +453,24 @@ bool nMaxScene::Postprocess()
 
             // save mesh data.
             this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
+        }
+    }
+    else
+    {
+        // save meshses to each of specified direcotry.
+
+        nMaxMesh* mesh = 0;
+        nString meshFileName;
+
+        // save for each mehses.
+        for (int i=0; i<meshArray.Size(); i++)
+        {
+            mesh = this->meshArray[i];
+
+            nMeshBuilder& mehsBuilder = mesh->GetMeshBuilder();
+            meshFileName = GetMeshFileNameToSave(mesh->GetMeshPath());
+
+            mehsBuilder.Save(nKernelServer::Instance()->GetFileServer(), meshFileName.Get());
         }
     }
 
@@ -519,18 +549,18 @@ nString nMaxScene::GetAnimFileNameToSave(int skelIndex)
 //-----------------------------------------------------------------------------
 /**
 */
-nString nMaxScene::GetMeshFileNameToSave() 
+nString nMaxScene::GetMeshFileNameToSave(nString& meshPath) 
 {
-    nString filename;
-    filename += nMaxOptions::Instance()->GetMeshesAssign();
 
-    // add '_shadow' postfix for shadow node.
-    //if (isShadowMesh)
-    //    filename += "_shadow";
+    nString meshname, meshFileName;
 
-    filename += nMaxOptions::Instance()->GetSaveFileName();
-    filename += nMaxOptions::Instance()->GetMeshFileType();
-    return filename;
+    // use a scene name for a mesh name.
+    meshname = nMaxOptions::Instance()->GetSaveFileName();
+
+    meshFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Mesh, meshPath, meshname);
+    meshFileName += nMaxOptions::Instance()->GetMeshFileType();
+
+    return meshFileName;
 }
 
 //-----------------------------------------------------------------------------

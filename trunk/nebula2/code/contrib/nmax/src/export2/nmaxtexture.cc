@@ -6,6 +6,7 @@
 #include "export2/nmax.h"
 #include "export2/nmaxinterface.h"
 #include "export2/nmaxtexture.h"
+#include "export2/nmaxutil.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "export2/nmaxoptions.h"
@@ -147,38 +148,11 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         // get texture name.
         nString mapFileName = ((BitmapTex*)texmap)->GetMapName();
 
-        //FIXME: if no textures is assigned for this material, we should assign default one.
-
-        // retrieve texture path and append destination texture path to the end of the directory.
-        nString textureName, textureAssign;
-        
-        //FIXME: should get texture path not texture assign!
-        textureAssign = nMaxOptions::Instance()->GetTextureAssign();
-        textureAssign.StripTrailingSlash();
-
-        nString manglePath = nFileServer2::Instance()->ManglePath(textureAssign);
-        
-        texPath.ConvertBackslashes();
-        texPath.ToLower();
-
-        if (texPath.ContainsCharFromSet(manglePath.Get()))
-        {
-            // retrieve subdirectory of texture assgin directory,
-            textureName += nMaxOptions::Instance()->GetTexturePath();
-            // HACK: every manglepath has no trailing slash. 
-            //       so we append the trailing shash to remove the first slash
-            manglePath += "/";
-            textureName += texPath.Substitute(manglePath.Get(), "");
-        }
-        else
-        {
-            n_maxlog(Warning, "The texture file %s directory is not under %s.", 
-                mapFileName.ExtractFileName().Get(), textureAssign.Get());
-            textureName += textureAssign;
-        }
-
-        textureName += "/";
-        textureName += mapFileName.ExtractFileName();
+        // e.g. destination path : d:/nebula2/exports/textrues/char2
+        //      texture map      : char2_1.dds
+        //      it changes to 'textures:char2/char2_1.dds'.
+        nString textureName;
+        textureName = nMaxUtil::RelacePathToAssign(nMaxUtil::Texture, texPath, mapFileName);
 
         // set the texture to the given node.
         shapeNode->SetTexture(param, textureName.Get());

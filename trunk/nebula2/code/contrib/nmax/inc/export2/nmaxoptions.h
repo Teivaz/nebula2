@@ -49,6 +49,7 @@ public:
     // @name assign and path access functions.
     // @{
     const nString& GetHomePath() const;
+    const nString& GetProjPath() const;
     const nString& GetAnimAssign() const;
     const nString& GetAnimPath() const;
 
