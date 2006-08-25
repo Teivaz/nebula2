@@ -60,7 +60,7 @@ protected:
     /// To be overrided if needed.
     virtual nString GetFileNameToSave();
     /// To be overrided if needed.
-    virtual nString GetMeshFileNameToSave();
+    virtual nString GetMeshFileNameToSave(nString& meshPath);
     /// To be overrided if needed.
     virtual nString GetAnimFileNameToSaveBase();
     ///

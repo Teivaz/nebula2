@@ -290,6 +290,24 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
         }
     }
 
+    // parameter name for mesh directory setting.
+    const char* dirParamName = "MeshDirSetting";
+
+    e = xmlHandle.FirstChild(dirParamName).Element();
+    if (e)
+    {
+        TiXmlElement* child;
+        child = xmlHandle.FirstChild(dirParamName).FirstChild("meshDir").Child("", 0).Element();
+        if (child)
+        {
+            const char* meshPath = child->Attribute("value");
+            if (meshPath)
+            {
+                this->meshPath = meshPath;
+            }
+        }
+    }
+
     return true;
 }
 
@@ -1225,28 +1243,31 @@ void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName)
     if (createdNode)
     {
         // specify shape node's name.
-        nString meshname;
-        meshname += nMaxOptions::Instance()->GetMeshesAssign();
-        meshname += nMaxOptions::Instance()->GetSaveFileName();
-        meshname += nMaxOptions::Instance()->GetMeshFileType();
+        nString meshname, meshFileName;
+
+        // use a scene name for a mesh name.
+        meshname = nMaxOptions::Instance()->GetSaveFileName(); 
+
+        meshFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Mesh, this->meshPath, meshname);
+        meshFileName += nMaxOptions::Instance()->GetMeshFileType();
 
         if (this->meshType == Shadow)
         {
             if (this->IsSkinned() || this->IsPhysique())
             {
                 nShadowSkinShapeNode* shadowSkinNode = static_cast<nShadowSkinShapeNode*>(createdNode);
-                shadowSkinNode->SetMesh(meshname.Get());
+                shadowSkinNode->SetMesh(meshFileName.Get());
             }
             else
             {
                 nShadowNode* shadowNode = static_cast<nShadowNode*>(createdNode);
-                shadowNode->SetMesh(meshname.Get());
+                shadowNode->SetMesh(meshFileName.Get());
             }
         }
         else
         {
             nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
-            shapeNode->SetMesh(meshname.Get());
+            shapeNode->SetMesh(meshFileName.Get());
         }
     }
 }

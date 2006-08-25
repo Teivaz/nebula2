@@ -531,7 +531,7 @@ AddSetDirDlg(TiXmlElement* elemParam)
 
     uiScript += "align:#right";
     uiScript += " ";
-    uiScript += "width:40";
+    uiScript += "width:40 height:18";
     uiScript += "\n";
 
     // button handler scrpt code
