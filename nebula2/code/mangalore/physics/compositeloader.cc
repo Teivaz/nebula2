@@ -59,6 +59,88 @@ CompositeLoader::ParseJointRigidBodies(Composite* composite, const nStream& stre
 
 //------------------------------------------------------------------------------
 /**
+    Read shapes from the file and add them to either the RigidBody or the
+    Composite.  One of these arguments must be NULL.
+*/
+void
+CompositeLoader::ParseShapes(nStream& stream, RigidBody * body, Composite * composite)
+{
+    n_assert(!body || !composite);
+
+    // parse box shapes
+    if (stream.SetToFirstChild("BoxShape")) do
+    {
+        vector3 pos = stream.GetVector3("pos");
+        vector4 rot = stream.GetVector4("rot");
+        vector3 size = stream.GetVector3("size");
+        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
+
+        matrix44 m(quaternion(rot.x, rot.y, rot.z, rot.w));
+        m.translate(pos);
+
+        Ptr<BoxShape> shape = Server::Instance()->CreateBoxShape(m, matType, size);
+        n_assert(shape != 0);
+        if (body)
+        {
+            body->AddShape(shape);
+        }
+        else
+        {
+            composite->AddShape(shape);
+        }
+    }
+    while (stream.SetToNextChild("BoxShape"));
+
+    // parse sphere shapes
+    if (stream.SetToFirstChild("SphereShape")) do
+    {
+        vector3 pos  = stream.GetVector3("pos");
+        float radius = stream.GetFloat("radius");
+        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
+
+        matrix44 m;
+        m.translate(pos);
+
+        Ptr<SphereShape> shape = Physics::Server::Instance()->CreateSphereShape(m, matType, radius);
+        if (body)
+        {
+            body->AddShape(shape);
+        }
+        else
+        {
+            composite->AddShape(shape);
+        }
+    }
+    while (stream.SetToNextChild("SphereShape"));
+
+    // parse capsule shapes
+    if (stream.SetToFirstChild("CapsuleShape")) do
+    {
+        vector3 pos  = stream.GetVector3("pos");
+        vector4 rot  = stream.GetVector4("rot");
+        float radius = stream.GetFloat("radius");
+        float length = stream.GetFloat("length");
+        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
+
+        matrix44 m(quaternion(rot.x, rot.y, rot.z, rot.w));
+        m.translate(pos);
+
+        Ptr<CapsuleShape> shape = Server::Instance()->CreateCapsuleShape(m, matType, radius, length);
+        n_assert(shape != 0);
+        if (body)
+        {
+            body->AddShape(shape);
+        }
+        else
+        {
+            composite->AddShape(shape);
+        }
+    }
+    while (stream.SetToNextChild("CapsuleShape"));
+}
+
+//------------------------------------------------------------------------------
+/**
     Constructs a complete Physics::Composite object from a composite
     xml file.
 
@@ -105,6 +187,7 @@ CompositeLoader::Load(const nString& filename)
         int numBodies = stream.GetInt("numBodies");
         int numJoints = stream.GetInt("numJoints");
         int numShapes = stream.GetInt("numMeshes");
+        numShapes += stream.GetInt("numShapes");
         if (numBodies > 0)
         {
             composite->BeginBodies(numBodies);
@@ -117,6 +200,8 @@ CompositeLoader::Load(const nString& filename)
         {
             composite->BeginShapes(numShapes);
         }
+
+        this->ParseShapes(stream, NULL, composite);
 
         // iterate rigid bodies
         if (stream.SetToFirstChild("RigidBody")) do
@@ -158,55 +243,7 @@ CompositeLoader::Load(const nString& filename)
             initialTransform.translate(initialPos);
             body->SetInitialTransform(initialTransform);
 
-            // parse box shapes
-            if (stream.SetToFirstChild("BoxShape")) do
-            {
-                vector3 pos = stream.GetVector3("pos");
-                vector4 rot = stream.GetVector4("rot");
-                vector3 size = stream.GetVector3("size");
-                MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
-
-                matrix44 m(quaternion(rot.x, rot.y, rot.z, rot.w));
-                m.translate(pos);
-
-                Ptr<BoxShape> shape = Server::Instance()->CreateBoxShape(m, matType, size);
-                n_assert(shape != 0);
-                body->AddShape(shape);
-            }
-            while (stream.SetToNextChild("BoxShape"));
-
-            // parse sphere shapes
-            if (stream.SetToFirstChild("SphereShape")) do
-            {
-                vector3 pos  = stream.GetVector3("pos");
-                float radius = stream.GetFloat("radius");
-                MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
-
-                matrix44 m;
-                m.translate(pos);
-
-                Ptr<SphereShape> shape = Physics::Server::Instance()->CreateSphereShape(m, matType, radius);
-                body->AddShape(shape);
-            }
-            while (stream.SetToNextChild("SphereShape"));
-
-            // parse capsule shapes
-            if (stream.SetToFirstChild("CapsuleShape")) do
-            {
-                vector3 pos  = stream.GetVector3("pos");
-                vector4 rot  = stream.GetVector4("rot");
-                float radius = stream.GetFloat("radius");
-                float length = stream.GetFloat("length");
-                MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
-
-                matrix44 m(quaternion(rot.x, rot.y, rot.z, rot.w));
-                m.translate(pos);
-
-                Ptr<CapsuleShape> shape = Server::Instance()->CreateCapsuleShape(m, matType, radius, length);
-                n_assert(shape != 0);
-                body->AddShape(shape);
-            }
-            while (stream.SetToNextChild("CapsuleShape"));
+            this->ParseShapes(stream, body, NULL);
 
             // the body is ready, add it to the composite
             body->EndShapes();
