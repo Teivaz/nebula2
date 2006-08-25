@@ -31,6 +31,8 @@ private:
     bool LoadCollideMesh(const nString& filename);
     /// parse rigid body names of a joint and set on joint
     void ParseJointRigidBodies(Composite* composite, const nStream& stream, Joint* joint);
+    /// parse shapes and add them to the body or the composite, whichever isn't NULL
+    void ParseShapes(nStream& stream, RigidBody * body, Composite * composite);
 };
 
 } // namespace Physics
