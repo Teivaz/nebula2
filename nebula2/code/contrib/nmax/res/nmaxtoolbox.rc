@@ -51,7 +51,7 @@ BEGIN
     GROUPBOX        "Vertex ",IDC_STATIC,7,12,94,60
     GROUPBOX        "Skin",IDC_STATIC,7,109,94,71
     LTEXT           "Max Joint Palette:",IDC_STATIC,12,121,82,11
-    LTEXT           "Weight Trash Hold:",IDC_STATIC,12,149,82,11
+    LTEXT           "Weight Threshold:",IDC_STATIC,12,149,82,11
     CONTROL         "Tangent",IDC_VERTEX_TANGENT,"Button",BS_AUTOCHECKBOX | 
                     WS_TABSTOP,11,58,80,8
     GROUPBOX        "Misc",IDC_STATIC,3,290,102,91
@@ -240,4 +240,5 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+
 

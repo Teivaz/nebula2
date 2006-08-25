@@ -15,7 +15,8 @@ const char* script_server[nMaxOptionParamMapDlg::NumScriptServers] = {
     "Tcl",
     "Python",
     "Lua",
-    "Ruby"
+    "Ruby",
+    "Binary",
 };
 
 // verbose level. 
@@ -108,18 +109,18 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
     //FIXME: sending 'ES_RIGHT' message causes abnormal error on 3dsmax.
     //SendMessage(editJointPalette, ES_RIGHT, 0, 0L);
 
-    // weight trash hold.
+    // weight threshold.
     float weightThreshold = nMaxOptions::Instance()->GetWeightThreshold();
     
     spinWeightThreshold = GetISpinner(GetDlgItem(hwnd, IDC_SPIN_WEIGHTHRESHOLD));
     spinWeightThreshold->SetScale(0.00001f);
     spinWeightThreshold->SetLimits(0.00001f, 1.0f);
-    HWND editWeigihtThreshold = GetDlgItem(hwnd, IDC_EDIT_WEIGHTHRESHOLD);
-    spinWeightThreshold->LinkToEdit(editWeigihtThreshold, EDITTYPE_FLOAT);
+    HWND editWeightThreshold = GetDlgItem(hwnd, IDC_EDIT_WEIGHTHRESHOLD);
+    spinWeightThreshold->LinkToEdit(editWeightThreshold, EDITTYPE_FLOAT);
     spinWeightThreshold->SetResetValue(0.0001f);
     spinWeightThreshold->SetValue(weightThreshold, TRUE);
 
-    //SendMessage(editWeigihtTrashold, ES_RIGHT, 0, 0L);
+    //SendMessage(editWeightThreshold, ES_RIGHT, 0, 0L);
 
     // sample rate
     int sampleRate = nMaxOptions::Instance()->GetSampleRate();
@@ -466,6 +467,9 @@ nMaxOptionParamMapDlg::GetScriptServer(const char* item)
     if (serverName == "ruby")
         return "nrubyserver";
     else
+    if (serverName == "binary")
+        return "nbinscriptserver";
+    else
         return ""; // empty string.
 }
 
@@ -494,6 +498,9 @@ nMaxOptionParamMapDlg::GetItemIndexFromScript(const char* name)
     else
     if (serverName == "nrubyserver")
         return 3;
+    else
+    if (serverName == "nbinscriptserver")
+        return 4;
     else
         return -1; // empty string.
 }

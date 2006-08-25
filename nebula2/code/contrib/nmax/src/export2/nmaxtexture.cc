@@ -219,7 +219,15 @@ bool nMaxTexture::CopyTexture(const char* textureName)
 
     const char* to = dest.Get();
 
-    if (!fileServer->FileExists(to))
+    if (!fileServer->FileExists(from))
+    {
+        // An error message is much nicer than an assert that takes down Max.
+        nString fromFile = from;
+        fromFile.ReplaceChars("\\", '\\');
+        n_maxlog(Error, "Could not find source texture %s to copy.", fromFile.Get());
+        return false;
+    }
+    else if (!fileServer->FileExists(to))
     {
         // if the texture file does not exist, copy it to texture assign directory.
         if (!fileServer->CopyFile(from, to))

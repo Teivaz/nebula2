@@ -220,32 +220,32 @@ bool nMaxBoneManager::BuildBones(INode* node)
     for (int i=0; i<rootBonesNodeArray.Size(); i++) {
         this->skeletonsArray.Append(Skeleton());
         this->noteTracksArray.Append(nMaxNoteTrack());
-    // build bone array.
+        // build bone array.
         this->ReconstructBoneHierarchy(-1, i, rootBonesNodeArray[i], boneNodeArray);
 
-    // extract animation state from note track.
+        // extract animation state from note track.
         for (int ai=0; ai<this->GetNumBones(i); ai++)
-    {
+        {
             Bone bone = this->GetBone(i, ai);
-        n_maxlog(High, "%s ID:%d", bone.name.Get(), bone.id);
+            n_maxlog(High, "%s ID:%d", bone.name.Get(), bone.id);
 
-        // build animation states.
-        INode* boneNode = bone.node;
+            // build animation states.
+            INode* boneNode = bone.node;
 
             this->noteTracksArray[i].GetAnimState(boneNode);
-    }
+        }
 
-    // if there are no animation states, we add default one.
-    // (skin animator needs it at least one)
+        // if there are no animation states, we add default one.
+        // (skin animator needs it at least one)
         if (this->noteTracksArray[i].GetNumStates() <= 0) {
-        //FIXME: fix to get proper first frame.
-        int firstframe   = 0;
-        int duration     = nMaxInterface::Instance()->GetNumFrames();
-        float fadeintime = 0.0f;
+            //FIXME: fix to get proper first frame.
+            int firstframe   = 0;
+            int duration     = nMaxInterface::Instance()->GetNumFrames();
+            float fadeintime = 0.0f;
             this->noteTracksArray[i].AddAnimState(firstframe, duration, fadeintime);
-    }
+        }
 
-    n_maxlog(Medium, "Found %d bones", this->GetNumBones());
+        n_maxlog(Medium, "Found %d bones", this->GetNumBones());
     }
 
     std::map<INode*, INode*>::iterator iter = nodeToBone.begin();

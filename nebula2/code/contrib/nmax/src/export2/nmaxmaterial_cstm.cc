@@ -144,7 +144,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                         // HACK: we just pass it if the parameter block contains 'dirSetting' for its name.
                                         if (strstr(name, "dirSetting") == 0 )
                                         {
-                                            n_maxlog(Error, "The parameter block has string type parameter but it is not effect filename.");
+                                            n_maxlog(Error, "The parameter block has string type parameter but it is not an effect filename.");
                                         }
                                     }
                                 }
@@ -165,7 +165,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result)
                                     shapeNode->SetFloat(shaderParam, value);
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
                                 if (control)
@@ -201,7 +201,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result)
                                     shapeNode->SetBool(shaderParam, ((value > 0) ? true : false));
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
                             }
                             break;
 
@@ -215,7 +215,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result)
                                     shapeNode->SetInt(shaderParam, value);
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
                                 if (control)
@@ -267,7 +267,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result0 && result1)
                                     shapeNode->SetVector(shaderParam, color);
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
                                 if (control)
@@ -294,7 +294,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result)
                                     shapeNode->SetVector(shaderParam, color);
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
                                 if (control)
@@ -331,7 +331,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result)
                                     shapeNode->SetVector(shaderParam, value);
                                 else
-                                    n_maxlog(Error, "Failed to retrieves the value of the parameter %s.", name);
+                                    n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
                                 if (control)
@@ -373,13 +373,13 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     result0 = pblock2->GetValue(j+1, 0, mapDir, interval0);                                    
                                     if (!result0)
                                     {
-                                        n_maxlog(Error, "The next parameter block of textuermap should be texture directory setting");
+                                        n_maxlog(Error, "The next parameter block of texturemap should be texture directory setting");
                                         continue;
                                     }
                                 }
                                 else
                                 {
-                                    n_maxlog(Error, "The next parameter block of textuermap should be texture directory setting");
+                                    n_maxlog(Error, "The next parameter block of texturemap should be texture directory setting");
                                 }
 
                                 result1 = pblock2->GetValue(j, 0, value, interval1);
