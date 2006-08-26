@@ -6,10 +6,10 @@
     @ingroup Gui
     @brief A GUI skin object holds a user-defined table of gui resources which
     are used by the GUI widgets to render themselves.
-    
+
     Each gui resource describes a rectangular texture area. That way it is
     possible to distribute the GUI brushes over any number of textures.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -34,7 +34,7 @@ public:
     void SetTexturePrefix(const char* prefix);
     /// get texture prefix
     const char* GetTexturePrefix() const;
-    /// set texture postfix 
+    /// set texture postfix
     void SetTexturePostfix(const char* postfix);
     /// get texture postfix
     const char* GetTexturePostfix() const;

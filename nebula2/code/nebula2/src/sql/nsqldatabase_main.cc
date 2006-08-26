@@ -50,7 +50,7 @@ nSqlDatabase::DeleteTable(const nString& name)
 void
 nSqlDatabase::RenameTable(const nString& tableName, const nString& newTableName)
 {
-    // empty, override in subclass    
+    // empty, override in subclass
 }
 
 //------------------------------------------------------------------------------

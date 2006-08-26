@@ -49,7 +49,7 @@ nHttpSession::SetInternetLastError()
 
 //------------------------------------------------------------------------------
 /**
-    Check if the connection is a dialup connection and do the necessary 
+    Check if the connection is a dialup connection and do the necessary
     things to connect to the internet. If the method returns false,
     a connection to the internet could not be established.
 */
@@ -126,7 +126,7 @@ nHttpSession::Connect()
         this->SetError("InternetOpen() failed!");
         return false;
     }
-    
+
     // connect to HTTP server
     this->hConnect = InternetConnect(this->hInternet,                   // hInternet
                                      this->serverName.Get(),            // lpszServerName
@@ -190,7 +190,7 @@ bool
 nHttpSession::ReadResponse(HINTERNET hRequest, nString& response)
 {
     response.Clear();
-    
+
     // read data back
     DWORD numBytesToRead = 0;
     BOOL readSuccess = TRUE;
@@ -201,7 +201,7 @@ nHttpSession::ReadResponse(HINTERNET hRequest, nString& response)
         char* ptr = buffer;
         DWORD readNumBytes = numBytesToRead;
         DWORD numBytesRead = 0;
-        do 
+        do
         {
             readSuccess = InternetReadFile(hRequest, ptr, readNumBytes, &numBytesRead);
             readNumBytes -= numBytesRead;
@@ -293,9 +293,9 @@ nHttpSession::SendGetRequest(const nString& object, const nString& requestHeader
 /**
 */
 bool
-nHttpSession::SendPostRequest(const nString& object, 
-                              const nString& requestHeaders, 
-                              const nString& data, 
+nHttpSession::SendPostRequest(const nString& object,
+                              const nString& requestHeaders,
+                              const nString& data,
                               nString& response)
 {
     n_assert(this->IsConnected());

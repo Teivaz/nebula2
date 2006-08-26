@@ -99,7 +99,7 @@ nShadowSkinShapeNode::RenderShadow(nSceneServer* sceneServer, nRenderContext* re
         {
             this->refSkinAnimator->Animate(this, renderContext);
         }
-        kernelServer->PopCwd();    
+        kernelServer->PopCwd();
         nShadowServer2::Instance()->RenderShadowCaster(this->refShadowCaster, modelMatrix);
     }
     return true;

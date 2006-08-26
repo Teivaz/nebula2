@@ -28,9 +28,9 @@ nXmlSpreadSheet::~nXmlSpreadSheet()
 
 //------------------------------------------------------------------------------
 /**
-    Open the spread sheet file. If a filename is set, this will load the 
-    Excel-exported XML file via TinyXML and create nXmlTable objects for each 
-    contained WorkSheet. If no filename is set, this will just set the 
+    Open the spread sheet file. If a filename is set, this will load the
+    Excel-exported XML file via TinyXML and create nXmlTable objects for each
+    contained WorkSheet. If no filename is set, this will just set the
     object to the Open() status.
 */
 bool
@@ -183,7 +183,7 @@ nXmlSpreadSheet::SetupTables(TiXmlDocument* doc)
                                 curCol = val - 1;
                             }
                             TiXmlHandle colHandle(xmlCol);
-                            
+
                             // get direct data element in cell
                             TiXmlText* xmlText = colHandle.FirstChildElement("Data").FirstChild().Text();
                             if (xmlText)
@@ -218,7 +218,7 @@ nXmlSpreadSheet::SetupTables(TiXmlDocument* doc)
                             }
                             xmlCol = xmlCol->NextSiblingElement("Cell");
                         }
-                        else 
+                        else
                         {
                             break;
                         }

@@ -6,7 +6,7 @@
     @ingroup NebulaMathDataTypes
 
     A polar coordinate inline class, consisting of 2 angles theta (latitude)
-    and rho (longitude). Also offers conversion between cartesian and 
+    and rho (longitude). Also offers conversion between cartesian and
     polar space.
 
     Allowed range for theta is 0..180 degree (in rad!) and for rho 0..360 degree
@@ -34,15 +34,15 @@ public:
     polar2(const polar2& src);
     /// the assignment operator
     polar2& operator=(const polar2& rhs);
-    /// convert to normalized cartesian coords 
+    /// convert to normalized cartesian coords
     vector3 get_cartesian() const;
     /// set to polar object
     void set(const polar2& p);
     /// set to theta and rho
     void set(const float t, const float r);
-    /// set to cartesian 
+    /// set to cartesian
     void set(const vector3&);
-    /// fuzzy equality check 
+    /// fuzzy equality check
     bool isequal(const polar2& rhs, float tol) const;
 
     float theta;
@@ -155,7 +155,7 @@ polar2::set(const vector3& vec)
     }
     else if ((v2.x < 0.0f) && (v2.y >= 0.0f))
     {
-        // quadrant 2 
+        // quadrant 2
         dRho = asin(v2.y) + n_deg2rad(270.0f);
     }
     else if ((v2.x < 0.0f) && (v2.y < 0.0f))
@@ -172,7 +172,7 @@ polar2::set(const vector3& vec)
     this->theta = (float) dTheta;
     this->rho   = (float) dRho;
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Convert polar to cartesian.

@@ -6,7 +6,7 @@
     @ingroup Anim2
     @brief An nAnimEvent holds time, translation, rotation and scale of an
     animation event.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"

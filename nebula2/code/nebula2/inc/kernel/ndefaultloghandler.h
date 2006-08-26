@@ -6,7 +6,7 @@
     @ingroup Logging
 
     The default log handler routes all messages to stdout.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nloghandler.h"

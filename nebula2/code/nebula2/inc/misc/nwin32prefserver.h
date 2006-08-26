@@ -7,7 +7,7 @@
 
     @brief The Win32 version of nPrefServer. Uses the Windows registry to store
     persistent information under:
-    
+
     HKCU/Software/[company]/[appname]/prefs
 
     (C) 2004 RadonLabs GmbH

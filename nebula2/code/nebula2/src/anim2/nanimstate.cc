@@ -14,18 +14,18 @@
     @param  time            the time at which to sample
     @param  animSource      the nAnimation object which provides the anim data
     @param  varContext      a variable context containing the clip weights
-    @param  keyArray        pointer to a float4 array which will be filled with 
+    @param  keyArray        pointer to a float4 array which will be filled with
                             the sampled values (one per curve)
-    @param  keyArraySize    number of elements in the key array, must be identical 
+    @param  keyArraySize    number of elements in the key array, must be identical
                             to the number of curves in any anim clip
     @return                 true, if the returned keys are valid (false if all
                             clip weights are zero)
 */
 bool
-nAnimState::Sample(float time, 
-                   nAnimation* animSource, 
-                   nVariableContext* varContext, 
-                   vector4* keyArray, 
+nAnimState::Sample(float time,
+                   nAnimation* animSource,
+                   nVariableContext* varContext,
+                   vector4* keyArray,
                    vector4* scratchKeyArray,
                    int keyArraySize)
 {

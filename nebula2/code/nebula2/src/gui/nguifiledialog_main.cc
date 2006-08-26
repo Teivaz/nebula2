@@ -255,7 +255,7 @@ nGuiFileDialog::OnHide()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiFileDialog::OnEvent(const nGuiEvent& event)
 {
     // handle deletion warning message box events

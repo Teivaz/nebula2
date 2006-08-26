@@ -78,7 +78,7 @@ nShadowNode::UnloadResources()
 */
 bool
 nShadowNode::RenderShadow(nSceneServer* /*sceneServer*/, nRenderContext* /*renderContext*/, const matrix44& modelMatrix)
-{   
+{
     // HACK:
     // check distance for small objects < smaller 3 meters diagonal)
     // should be replaced by some proper LODing!

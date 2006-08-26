@@ -61,7 +61,7 @@ nGuiHardpointsBrowserWindow::OnShow()
     layout->AttachForm(addButton, nGuiFormLayout::Right, 0.005f);
     layout->AttachForm(addButton, nGuiFormLayout::Bottom, 0.005f);
     this->refAddButton = addButton;
-    
+
     // create reset time button
     nGuiTextButton* timeButton = (nGuiTextButton*) kernelServer->New("nguitextbutton", "TimeButton");
     n_assert(timeButton);

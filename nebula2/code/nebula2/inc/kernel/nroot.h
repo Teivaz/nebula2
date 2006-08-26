@@ -12,20 +12,20 @@
     - reference counting and tracking (through nObject)
     - Nebula RTTI (through nObject)
     - object serialization
-    - script interface   
+    - script interface
     - linkage into the hierarchical name space
 
     Rules for subclasses:
     - only the default constructor is allowed
-    - never use new/delete (or variants like n_new/n_delete) with 
+    - never use new/delete (or variants like n_new/n_delete) with
       nRoot objects
     - use nKernelServer::New() to create an object and
       the objects Release() method to destroy it
 
     NOTE: the hash list based approach has been replaced by
-    a normal linear string list. This saves 
+    a normal linear string list. This saves
     a great amount of per-object-memory-overhead, but may be slower when
-    searching by name. Need to collect feedback how bad the 
+    searching by name. Need to collect feedback how bad the
     slowdown really is, since name lookups don't happen too
     often anyway. I feel the memory savings are more important.
 
@@ -58,7 +58,7 @@ public:
     void LockMutex();
     /// unlock the object's main mutex
     void UnlockMutex();
-    
+
     /// save object to persistency stream
     bool Save();
     /// save object under different name
@@ -114,7 +114,7 @@ public:
     };
 
 protected:
-        
+
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nRoot();
 
@@ -130,7 +130,7 @@ protected:
 /**
 */
 inline
-void 
+void
 nRoot::SetName(const char *str)
 {
     this->name = str;
@@ -192,7 +192,7 @@ nRoot::GetSucc() const
 inline
 nRoot*
 nRoot::GetPred() const
-{ 
+{
     return (nRoot*) nNode::GetPred();
 }
 
@@ -200,23 +200,23 @@ nRoot::GetPred() const
 /**
 */
 inline
-void 
+void
 nRoot::AddHead(nRoot *n)
 {
     n->parent = this;
-    this->childList.AddHead(n);    
+    this->childList.AddHead(n);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
+void
 nRoot::AddTail(nRoot *n)
 {
     n->parent = this;
     this->childList.AddTail(n);
-}   
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -252,7 +252,7 @@ nRoot::RemTail()
 /**
 */
 inline
-void 
+void
 nRoot::Remove()
 {
     nNode::Remove();
@@ -271,13 +271,13 @@ nRoot::Find(const char *str)
     n_assert(str);
 
     // handle special cases '.' and '..'
-    if (str[0] == '.') 
+    if (str[0] == '.')
     {
-        if (str[1] == 0) 
+        if (str[1] == 0)
         {
             return this;
         }
-        else if ((str[1]=='.') && (str[2]==0)) 
+        else if ((str[1]=='.') && (str[2]==0))
         {
             return this->parent;
         }
@@ -308,13 +308,13 @@ nRoot::Find(const nAtom& atom)
 {
     // handle special cases '.' and '..'
     const char* str = atom.AsChar();
-    if (str[0] == '.') 
+    if (str[0] == '.')
     {
-        if (str[1] == 0) 
+        if (str[1] == 0)
         {
             return this;
         }
-        else if ((str[1]=='.') && (str[2]==0)) 
+        else if ((str[1]=='.') && (str[2]==0))
         {
             return this->parent;
         }
@@ -337,7 +337,7 @@ nRoot::Find(const nAtom& atom)
 /**
 */
 inline
-void 
+void
 nRoot::SetSaveModeFlags(int f)
 {
     this->saveModeFlags |= f;
@@ -347,7 +347,7 @@ nRoot::SetSaveModeFlags(int f)
 /**
 */
 inline
-void 
+void
 nRoot::UnsetSaveModeFlags(int f)
 {
     this->saveModeFlags &= ~f;

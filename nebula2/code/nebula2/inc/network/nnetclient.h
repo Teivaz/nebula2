@@ -6,7 +6,7 @@
     @ingroup Network
     @brief A client in a multiplayer session.  Works together with
     nNetServer, should be subclassed for a specific application or protocol.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nroot.h"

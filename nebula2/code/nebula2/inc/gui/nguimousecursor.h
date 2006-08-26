@@ -128,4 +128,4 @@ nGuiMouseCursor::SetHotSpot(const vector2& hotSpot)
 //------------------------------------------------------------------------------
 #endif
 
-    
+

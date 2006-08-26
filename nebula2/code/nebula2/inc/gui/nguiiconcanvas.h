@@ -5,7 +5,7 @@
     @class nGuiIconCanvas
     @ingroup Gui
     @brief A canvas for drag and drop icons (OBSOLETE?).
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gui/nguiwidget.h"

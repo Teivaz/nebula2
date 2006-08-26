@@ -7,7 +7,7 @@
 
     Implement POSIX nFileTime class. Please use the platform neutral
     nFileTime class for indirect access to _nFileTimePosix.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -51,7 +51,7 @@ _nFileTimePosix::_nFileTimePosix()
 /**
 */
 inline
-bool 
+bool
 operator ==(const _nFileTimePosix& a, const _nFileTimePosix& b)
 {
     return (a.time == b.time);
@@ -61,7 +61,7 @@ operator ==(const _nFileTimePosix& a, const _nFileTimePosix& b)
 /**
 */
 inline
-bool 
+bool
 operator !=(const _nFileTimePosix& a, const _nFileTimePosix& b)
 {
     return (a.time != b.time);

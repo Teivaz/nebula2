@@ -24,7 +24,7 @@
     some point in the past which has not been fullfilled yet, call
     the IsPending() method. IsPending() returns true after an async
     call to Load() and before IsValid() returns true to indicate the
-    the resource is available. In all other cases, IsPending() returns 
+    the resource is available. In all other cases, IsPending() returns
     false.
 
     Unloading resources always happend immediately, both in sync and
@@ -32,7 +32,7 @@
 
     A resource object can be in one of the following states:
 
-    - <b>Unloaded:</b> The resource is not currently loaded, resource 
+    - <b>Unloaded:</b> The resource is not currently loaded, resource
       object are in this state before Load() and after Unload()
 
     - <b>Valid:</b> The resource object has been loaded and is in a
@@ -41,7 +41,7 @@
     - <b>Lost:</b> The resource has been loaded at some time in the
       past, but is currently in a Lost state, so that it can't be used.
       This can happen for D3D-controlled resources which are not placed
-      in D3D's managed resource pool. Usually, applications don't need to 
+      in D3D's managed resource pool. Usually, applications don't need to
       be concerned about lost state, since no rendering will be performend
       while the application is in a lost state.
 
@@ -66,12 +66,12 @@
 
     For the general case (meshes and textures which load themselves from files),
     all resource management happens automatically. Special cases (where resources
-    are not loaded from normal resource files) should check for 
-    Empty or Unloaded state before using the resources, and initialize, or load 
-    the resources manually (don't forget to set the resource to Valid state afterwards). 
+    are not loaded from normal resource files) should check for
+    Empty or Unloaded state before using the resources, and initialize, or load
+    the resources manually (don't forget to set the resource to Valid state afterwards).
 
     This should only be of concern for programmers which extend Nebula2 itself.
-    Client applications should NEVER have to deal with any type of 
+    Client applications should NEVER have to deal with any type of
     low level resource management.
 
     Also check out the nResourceLoader class, this is a very clean way to handle

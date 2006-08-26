@@ -9,7 +9,7 @@
 
     FIXME: does not allow to erase entries (this would invalidate indices,
     probably add some sort of garbage collection pass?).
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -126,7 +126,7 @@ nHashMap::operator=(const nHashMap& /*rhs*/)
     Compute hash value from string.
 */
 inline
-int 
+int
 nHashMap::HashIndex(const char* str) const
 {
     n_assert(str);
@@ -135,9 +135,9 @@ nHashMap::HashIndex(const char* str) const
     int i = 0;
     int j = 1;
     char c;
-    while ((c = *str++)) 
+    while ((c = *str++))
     {
-        i += ((uchar)c) * j++; 
+        i += ((uchar)c) * j++;
     }
     return (i % hashSize);
 }
@@ -155,7 +155,7 @@ nHashMap::Rehash(int newHashSize)
     nFixedArray<nArray<ushort> >* oldTable = this->hashTable;
     n_assert(oldTable);
     this->hashTable = n_new(nFixedArray<nArray<ushort> >(newHashSize));
-    
+
     int oldTableIndex;
     int oldTableSize = oldTable->Size();
     for (oldTableIndex = 0; oldTableIndex < oldTableSize; oldTableIndex++)
@@ -185,7 +185,7 @@ nHashMap::operator[](const char* indexString)
 
     // compute hash index
     int hashIndex = this->HashIndex(indexString);
-    nArray<ushort>* entryArray = &((*this->hashTable)[hashIndex]); 
+    nArray<ushort>* entryArray = &((*this->hashTable)[hashIndex]);
 
     // check for existing entry
     int i;
@@ -199,7 +199,7 @@ nHashMap::operator[](const char* indexString)
         entryArray = &((*this->hashTable)[hashIndex]);
         num = entryArray->Size();
     }
-    
+
     // check if the string already exists, this involves string compares
     for (i = 0; i < num; i++)
     {
@@ -253,7 +253,7 @@ nHashMap::Exists(const char* indexString) const
 
     // compute hash index
     int hashIndex = this->HashIndex(indexString);
-    const nArray<ushort>& entryArray = (*this->hashTable)[hashIndex]; 
+    const nArray<ushort>& entryArray = (*this->hashTable)[hashIndex];
     int i;
     int num = entryArray.Size();
     for (i = 0; i < num; i++)

@@ -1,4 +1,4 @@
-/* 
+/*
  * tclParseExpr.c --
  *
  *	This file contains procedures that parse Tcl expressions. They
@@ -12,7 +12,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -176,7 +175,7 @@ static void		PrependSubExprTokens _ANSI_ARGS_((char *op,
 #else
 #define HERE(production, level)
 #endif /* TCL_COMPILE_DEBUG */
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -191,7 +190,7 @@ static void		PrependSubExprTokens _ANSI_ARGS_((char *op,
  *	The return value is TCL_OK if the command was parsed successfully
  *	and TCL_ERROR otherwise. If an error occurs and interp isn't NULL
  *	then an error message is left in its result. On a successful return,
- *	parsePtr is filled in with information about the expression that 
+ *	parsePtr is filled in with information about the expression that
  *	was parsed.
  *
  * Side effects:
@@ -229,7 +228,7 @@ Tcl_ParseExpr(interp, string, numBytes, parsePtr)
 	        numBytes, string);
     }
 #endif /* TCL_COMPILE_DEBUG */
-    
+
     parsePtr->commentStart = NULL;
     parsePtr->commentSize = 0;
     parsePtr->commandStart = NULL;
@@ -287,7 +286,7 @@ Tcl_ParseExpr(interp, string, numBytes, parsePtr)
     }
     string[numBytes] = (char) savedChar;
     return TCL_OK;
-    
+
     error:
     string[numBytes] = (char) savedChar;
     if (parsePtr->tokenPtr != parsePtr->staticTokens) {
@@ -295,7 +294,7 @@ Tcl_ParseExpr(interp, string, numBytes, parsePtr)
     }
     return TCL_ERROR;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -332,20 +331,20 @@ ParseCondExpr(infoPtr)
     Tcl_Token *tokenPtr, *firstTokenPtr, *condTokenPtr;
     int firstIndex, numToMove, code;
     char *srcStart;
-    
+
     HERE("condExpr", 1);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseLorExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
     }
-    
+
     if (infoPtr->lexeme == QUESTY) {
 	/*
 	 * Emit two tokens: one TCL_TOKEN_SUB_EXPR token for the entire
-	 * conditional expression, and a TCL_TOKEN_OPERATOR token for 
+	 * conditional expression, and a TCL_TOKEN_OPERATOR token for
 	 * the "?" operator. Note that these two tokens must be inserted
 	 * before the LOR operand tokens generated above.
 	 */
@@ -359,22 +358,22 @@ ParseCondExpr(infoPtr)
 	memmove((VOID *) tokenPtr, (VOID *) firstTokenPtr,
 	        (size_t) (numToMove * sizeof(Tcl_Token)));
 	parsePtr->numTokens += 2;
-	
+
 	tokenPtr = firstTokenPtr;
 	tokenPtr->type = TCL_TOKEN_SUB_EXPR;
 	tokenPtr->start = srcStart;
-	
+
 	tokenPtr++;
 	tokenPtr->type = TCL_TOKEN_OPERATOR;
 	tokenPtr->start = infoPtr->start;
 	tokenPtr->size = 1;
 	tokenPtr->numComponents = 0;
-    
+
 	/*
 	 * Skip over the '?'.
 	 */
-	
-	code = GetLexeme(infoPtr); 
+
+	code = GetLexeme(infoPtr);
 	if (code != TCL_OK) {
 	    return code;
 	}
@@ -415,7 +414,7 @@ ParseCondExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -445,11 +444,11 @@ ParseLorExpr(infoPtr)
     Tcl_Parse *parsePtr = infoPtr->parsePtr;
     int firstIndex, code;
     char *srcStart, *operator;
-    
+
     HERE("lorExpr", 2);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseLandExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -475,7 +474,7 @@ ParseLorExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -509,7 +508,7 @@ ParseLandExpr(infoPtr)
     HERE("landExpr", 3);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseBitOrExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -535,7 +534,7 @@ ParseLandExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -569,12 +568,12 @@ ParseBitOrExpr(infoPtr)
     HERE("bitOrExpr", 4);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseBitXorExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
     }
-    
+
     while (infoPtr->lexeme == BIT_OR) {
 	operator = infoPtr->start;
 	code = GetLexeme(infoPtr); /* skip over the '|' */
@@ -586,7 +585,7 @@ ParseBitOrExpr(infoPtr)
 	if (code != TCL_OK) {
 	    return code;
 	}
-	
+
 	/*
 	 * Generate tokens for the BITOR subexpression and the '|' operator.
 	 */
@@ -596,7 +595,7 @@ ParseBitOrExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -630,12 +629,12 @@ ParseBitXorExpr(infoPtr)
     HERE("bitXorExpr", 5);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseBitAndExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
     }
-    
+
     while (infoPtr->lexeme == BIT_XOR) {
 	operator = infoPtr->start;
 	code = GetLexeme(infoPtr); /* skip over the '^' */
@@ -647,7 +646,7 @@ ParseBitXorExpr(infoPtr)
 	if (code != TCL_OK) {
 	    return code;
 	}
-	
+
 	/*
 	 * Generate tokens for the XOR subexpression and the '^' operator.
 	 */
@@ -657,7 +656,7 @@ ParseBitXorExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -691,12 +690,12 @@ ParseBitAndExpr(infoPtr)
     HERE("bitAndExpr", 6);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseEqualityExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
     }
-    
+
     while (infoPtr->lexeme == BIT_AND) {
 	operator = infoPtr->start;
 	code = GetLexeme(infoPtr); /* skip over the '&' */
@@ -707,7 +706,7 @@ ParseBitAndExpr(infoPtr)
 	if (code != TCL_OK) {
 	    return code;
 	}
-	
+
 	/*
 	 * Generate tokens for the BITAND subexpression and '&' operator.
 	 */
@@ -717,7 +716,7 @@ ParseBitAndExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -752,7 +751,7 @@ ParseEqualityExpr(infoPtr)
     HERE("equalityExpr", 7);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseRelationalExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -782,7 +781,7 @@ ParseEqualityExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -816,7 +815,7 @@ ParseRelationalExpr(infoPtr)
     HERE("relationalExpr", 8);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseShiftExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -850,7 +849,7 @@ ParseRelationalExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -884,7 +883,7 @@ ParseShiftExpr(infoPtr)
     HERE("shiftExpr", 9);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseAddExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -912,7 +911,7 @@ ParseShiftExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -946,7 +945,7 @@ ParseAddExpr(infoPtr)
     HERE("addExpr", 10);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseMultiplyExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -974,7 +973,7 @@ ParseAddExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1008,7 +1007,7 @@ ParseMultiplyExpr(infoPtr)
     HERE("multiplyExpr", 11);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     code = ParseUnaryExpr(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -1036,7 +1035,7 @@ ParseMultiplyExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1070,7 +1069,7 @@ ParseUnaryExpr(infoPtr)
     HERE("unaryExpr", 12);
     srcStart = infoPtr->start;
     firstIndex = parsePtr->numTokens;
-    
+
     lexeme = infoPtr->lexeme;
     if ((lexeme == PLUS) || (lexeme == MINUS) || (lexeme == BIT_NOT)
             || (lexeme == NOT)) {
@@ -1098,7 +1097,7 @@ ParseUnaryExpr(infoPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1184,7 +1183,7 @@ ParsePrimaryExpr(infoPtr)
 	/*
 	 * Int or double number.
 	 */
-	
+
 	if (parsePtr->numTokens == parsePtr->tokensAvailable) {
 	    TclExpandTokenArray(parsePtr);
 	}
@@ -1199,12 +1198,12 @@ ParsePrimaryExpr(infoPtr)
 	exprTokenPtr->size = infoPtr->size;
 	exprTokenPtr->numComponents = 1;
 	break;
-	
+
     case DOLLAR:
 	/*
 	 * $var variable reference.
 	 */
-	
+
 	dollarPtr = (infoPtr->next - 1);
 	code = Tcl_ParseVarName(interp, dollarPtr,
 	        (infoPtr->lastChar - dollarPtr), parsePtr, 1);
@@ -1218,12 +1217,12 @@ ParsePrimaryExpr(infoPtr)
 	exprTokenPtr->numComponents =
 	        (parsePtr->tokenPtr[firstIndex].numComponents + 1);
 	break;
-	
+
     case QUOTE:
 	/*
 	 * '"' string '"'
 	 */
-	
+
 	stringStart = infoPtr->next;
 	code = Tcl_ParseQuotedString(interp, infoPtr->start,
 	        (infoPtr->lastChar - stringStart), parsePtr, 1, &termPtr);
@@ -1261,7 +1260,7 @@ ParsePrimaryExpr(infoPtr)
 	    tokenPtr->numComponents = (exprTokenPtr->numComponents - 1);
 	}
 	break;
-	
+
     case OPEN_BRACKET:
 	/*
 	 * '[' command {command} ']'
@@ -1280,7 +1279,7 @@ ParsePrimaryExpr(infoPtr)
 	 * Call Tcl_ParseCommand repeatedly to parse the nested command(s)
 	 * to find their end, then throw away that parse information.
 	 */
-	
+
 	src = infoPtr->next;
 	while (1) {
 	    if (Tcl_ParseCommand(interp, src, (parsePtr->end - src), 1,
@@ -1351,19 +1350,19 @@ ParsePrimaryExpr(infoPtr)
 
 	    exprTokenPtr = &parsePtr->tokenPtr[exprIndex];
 	    exprTokenPtr->numComponents++;
-	    
+
 	    tokenPtr->type = TCL_TOKEN_WORD;
 	    tokenPtr->start = exprTokenPtr->start;
 	    tokenPtr->size = exprTokenPtr->size;
 	    tokenPtr->numComponents = exprTokenPtr->numComponents-1;
 	}
 	break;
-	
+
     case FUNC_NAME:
 	/*
 	 * math_func '(' expr {',' expr} ')'
 	 */
-	
+
 	if (parsePtr->numTokens == parsePtr->tokensAvailable) {
 	    TclExpandTokenArray(parsePtr);
 	}
@@ -1373,7 +1372,7 @@ ParsePrimaryExpr(infoPtr)
 	tokenPtr->size = infoPtr->size;
 	tokenPtr->numComponents = 0;
 	parsePtr->numTokens++;
-	
+
 	code = GetLexeme(infoPtr); /* skip over function name */
 	if (code != TCL_OK) {
 	    return code;
@@ -1391,7 +1390,7 @@ ParsePrimaryExpr(infoPtr)
 	    if (code != TCL_OK) {
 		return code;
 	    }
-	    
+
 	    if (infoPtr->lexeme == COMMA) {
 		code = GetLexeme(infoPtr); /* skip over , */
 		if (code != TCL_OK) {
@@ -1406,7 +1405,7 @@ ParsePrimaryExpr(infoPtr)
 	exprTokenPtr->size = (infoPtr->next - exprTokenPtr->start);
 	exprTokenPtr->numComponents = parsePtr->numTokens - firstIndex;
 	break;
-	
+
     default:
 	goto syntaxError;
     }
@@ -1414,7 +1413,7 @@ ParsePrimaryExpr(infoPtr)
     /*
      * Advance to the next lexeme before returning.
      */
-    
+
     code = GetLexeme(infoPtr);
     if (code != TCL_OK) {
 	return code;
@@ -1426,7 +1425,7 @@ ParsePrimaryExpr(infoPtr)
     LogSyntaxError(infoPtr);
     return TCL_ERROR;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1570,11 +1569,11 @@ GetLexeme(infoPtr)
 		    parsePtr->errorType = TCL_PARSE_BAD_NUMBER;
 		    return TCL_ERROR;
 		}
-		
+
 		/*
                  * src was the start of a valid double.
                  */
-		
+
 		infoPtr->lexeme = LITERAL;
 		infoPtr->start = src;
 		infoPtr->size = (termPtr - src);
@@ -1594,7 +1593,7 @@ GetLexeme(infoPtr)
     infoPtr->size = 1;
     infoPtr->next = src+1;
     parsePtr->term = infoPtr->next;
-    
+
     switch (*src) {
 	case '[':
 	    infoPtr->lexeme = OPEN_BRACKET;
@@ -1784,7 +1783,7 @@ GetLexeme(infoPtr)
 	    return TCL_OK;
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1832,20 +1831,20 @@ PrependSubExprTokens(op, opBytes, src, srcBytes, firstIndex, infoPtr)
     memmove((VOID *) tokenPtr, (VOID *) firstTokenPtr,
             (size_t) (numToMove * sizeof(Tcl_Token)));
     parsePtr->numTokens += 2;
-    
+
     tokenPtr = firstTokenPtr;
     tokenPtr->type = TCL_TOKEN_SUB_EXPR;
     tokenPtr->start = src;
     tokenPtr->size = srcBytes;
     tokenPtr->numComponents = parsePtr->numTokens - (firstIndex + 1);
-    
+
     tokenPtr++;
     tokenPtr->type = TCL_TOKEN_OPERATOR;
     tokenPtr->start = op;
     tokenPtr->size = opBytes;
     tokenPtr->numComponents = 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *

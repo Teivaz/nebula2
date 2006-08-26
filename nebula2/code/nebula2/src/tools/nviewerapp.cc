@@ -262,7 +262,7 @@ nViewerApp::Run()
             this->camControl.SetSliderRight(inputServer->GetSlider("right"));
             this->camControl.SetSliderUp(inputServer->GetSlider("up"));
             this->camControl.SetSliderDown(inputServer->GetSlider("down"));
-            
+
             // Toggle console
             if (inputServer->GetButton("console"))
             {
@@ -287,12 +287,12 @@ nViewerApp::Run()
                 do
                 {
                     filename.Format("user:%s%03d.bmp", filename.Get(), screenshotID++);
-                } 
+                }
                 while (nFileServer2::Instance()->FileExists(filename));
 
                 nTexture2* screenshotBuffer = (nTexture2*) nResourceServer::Instance()->FindResource("Screenshot",nResource::Texture);
                 n_assert(screenshotBuffer);
-                screenshotBuffer->SaveTextureToFile(filename);
+                screenshotBuffer->SaveTextureToFile(filename, nTexture2::JPG);
             };
             // update view and get the actual viewMatrix
             this->camControl.Update();
@@ -366,7 +366,7 @@ nViewerApp::DefineInputMapping()
 //------------------------------------------------------------------------------
 /**
     Initialize the overlay GUI.
-*/  
+*/
 void
 nViewerApp::InitOverlayGui()
 {

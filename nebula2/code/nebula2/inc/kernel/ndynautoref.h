@@ -38,18 +38,18 @@ public:
 template<class TYPE>
 inline
 void
-nDynAutoRef<TYPE>::set(const char *name) 
+nDynAutoRef<TYPE>::set(const char *name)
 {
     this->invalidate();
-    if (this->targetName) 
+    if (this->targetName)
     {
         n_free((void*) this->targetName);
     }
-    if (name) 
+    if (name)
     {
         this->targetName = n_strdup(name);
     }
-    else      
+    else
     {
         this->targetName = 0;
     }
@@ -60,7 +60,7 @@ nDynAutoRef<TYPE>::set(const char *name)
 */
 template<class TYPE>
 inline
-nDynAutoRef<TYPE>::nDynAutoRef() 
+nDynAutoRef<TYPE>::nDynAutoRef()
 {
     // empty
 }
@@ -80,9 +80,9 @@ nDynAutoRef<TYPE>::nDynAutoRef(const char* tarName)
 */
 template<class TYPE>
 inline
-nDynAutoRef<TYPE>::~nDynAutoRef() 
+nDynAutoRef<TYPE>::~nDynAutoRef()
 {
-    if (this->targetName) 
+    if (this->targetName)
     {
         n_free((void *)this->targetName);
     }
@@ -107,8 +107,8 @@ nDynAutoRef<TYPE>::operator=(const nDynAutoRef<TYPE>& rhs)
 */
 template<class TYPE>
 inline
-void 
-nDynAutoRef<TYPE>::operator=(const char *name) 
+void
+nDynAutoRef<TYPE>::operator=(const char *name)
 {
     this->set(name);
 }
@@ -122,8 +122,8 @@ nDynAutoRef<TYPE>::operator=(const char *name)
 */
 template<class TYPE>
 inline
-void 
-nDynAutoRef<TYPE>::operator=(TYPE* obj) 
+void
+nDynAutoRef<TYPE>::operator=(TYPE* obj)
 {
     this->invalidate();
     nRef<TYPE>::set(obj);

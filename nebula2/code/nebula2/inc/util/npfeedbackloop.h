@@ -5,8 +5,8 @@
     @class nPFeedbackLoop
     @ingroup Util
 
-    A P feedback loop (proportional feedback loop) is a simple object which 
-    moves a system's current state towards a goal, using the resulting error 
+    A P feedback loop (proportional feedback loop) is a simple object which
+    moves a system's current state towards a goal, using the resulting error
     (difference between goal and state as feedback on the next run.
 
     If you need to implement motion controllers, camera controllers, etc...
@@ -151,7 +151,7 @@ nPFeedbackLoop<TYPE>::Update(nTime curTime)
     }
     else if (dt > 0.5)
     {
-        this->time = curTime;
+        this->time = curTime - 0.5;
     }
 
     while (this->time < curTime)

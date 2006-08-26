@@ -186,7 +186,7 @@ private:
     nRef<nGuiSkin>          refCurrentSkin;
     nRef<nGuiDragBox>       refDragBox;
     nRef<nGuiMouseCursor>   refMouseCursor;
-    
+
     nClass* guiWindowClass;
 
     uint uniqueId;

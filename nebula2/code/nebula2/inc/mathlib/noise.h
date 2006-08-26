@@ -4,9 +4,9 @@
 /**
     @class noise
     @ingroup Math
-    
+
     Perlin noise class.
-    
+
     See http://mrl.nyu.edu/~perlin/noise/ for details.
 
     (C) 2004 RadonLabs GmbH

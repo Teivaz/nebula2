@@ -70,7 +70,7 @@ nPadMouseDevice::Export(nRoot* dir)
             case 6: axisName = "u"; break;
             case 7: axisName = "v"; break;
             case 8: axisName = "w"; break;
-            default: 
+            default:
                 continue;
         }
 
@@ -101,9 +101,9 @@ nPadMouseDevice::Export(nRoot* dir)
         char chnName[N_MAXNAMELEN];
         sprintf(chnName, "btn%d", curBtn);
         this->ExportButton(devId, chnName, curBtn);
-    } 
+    }
 
-    kernelServer->PopCwd();        
+    kernelServer->PopCwd();
     kernelServer->PopCwd();
     kernelServer->PopCwd();
 }
@@ -149,7 +149,7 @@ nPadMouseDevice::EmitAxisMovedEvents(int axisNum, int value)
 
     float oldNegAxisVal = this->GetStoreValue(negAxisIndex);
     float oldPosAxisVal = this->GetStoreValue(posAxisIndex);
-    
+
     // generate positive/negative axis move events
     this->PutAxisEvent(devId, negAxisIndex, negAxisVal);
     this->PutAxisEvent(devId, posAxisIndex, posAxisVal);
@@ -165,7 +165,7 @@ nPadMouseDevice::EmitAxisMovedEvents(int axisNum, int value)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nPadMouseDevice::EmitButtonEvents(int btnNum, bool pressed)
 {
     n_assert((btnNum >= 0) && (btnNum < this->numButtons));

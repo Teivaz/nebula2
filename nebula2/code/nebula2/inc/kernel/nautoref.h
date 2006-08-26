@@ -15,7 +15,7 @@
 #include "kernel/nkernelserver.h"
 
 //------------------------------------------------------------------------------
-template<class TYPE> class nAutoRef : public nRef<TYPE> 
+template<class TYPE> class nAutoRef : public nRef<TYPE>
 {
 public:
     /// constructor
@@ -89,20 +89,20 @@ inline
 TYPE*
 nAutoRef<TYPE>::check()
 {
-    if (!this->targetObject) 
+    if (!this->targetObject)
     {
-        if (!this->targetName) 
+        if (!this->targetName)
         {
             return 0;
         }
         this->targetObject = (TYPE*) nKernelServer::ks->Lookup(this->targetName);
-        if (this->targetObject) 
+        if (this->targetObject)
         {
             ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
         }
     }
     return (TYPE *) this->targetObject;
-}    
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -112,7 +112,7 @@ inline
 TYPE*
 nAutoRef<TYPE>::get()
 {
-    if (!this->check()) 
+    if (!this->check())
     {
         n_error("nAutoRef: no target object '%s'!\n",  this->targetName ? this->targetName : "NOT INITIALIZED");
     }

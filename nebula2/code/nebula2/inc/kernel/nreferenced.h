@@ -22,7 +22,7 @@ public:
     /// release object (USE INSTEAD OF DESTRUCTOR!)
     virtual bool Release();
 
-    /// increment ref count of object 
+    /// increment ref count of object
     int AddRef();
     /// get refcount of object
     int GetRefCount() const;
@@ -34,13 +34,13 @@ public:
     /// get list of refs pointing to me
     nList *GetRefs();
 
-    
+
 protected:
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nReferenced();
     /// invalidate all references
     void InvalidateAllRefs();
-    
+
     nList refList;
     int refCount;
 };
@@ -70,7 +70,7 @@ nReferenced::AddRef()
     Hang the reference to an object on @c refList.
 */
 inline
-void 
+void
 nReferenced::AddObjectRef(nRef<nReferenced> *r)
 {
     this->refList.AddTail((nNode *)r);
@@ -81,7 +81,7 @@ nReferenced::AddObjectRef(nRef<nReferenced> *r)
     Remove the reference to @c r from the @c refList.
 */
 inline
-void 
+void
 nReferenced::RemObjectRef(nRef<nReferenced> *r)
 {
     ((nNode*)r)->Remove();

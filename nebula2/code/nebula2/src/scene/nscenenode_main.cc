@@ -50,7 +50,7 @@ nSceneNode::Release()
     This method makes sure that all resources needed by this object
     are loaded. The method does NOT recurse into its children.
 
-    Subclasses should expect that the LoadResources() method can be 
+    Subclasses should expect that the LoadResources() method can be
     called on them although some or all of their resources are valid.
     Thus, a check should exist, whether the resource really needs to
     be reloaded.
@@ -71,7 +71,7 @@ nSceneNode::LoadResources()
 //------------------------------------------------------------------------------
 /**
     This method makes sure that all resources used by this object are
-    unloaded. The method does NOT recurse into its children. 
+    unloaded. The method does NOT recurse into its children.
 
     If you ovverride this method, be sure to call the overridden version
     in your destructor.
@@ -125,7 +125,7 @@ nSceneNode::PreloadResources()
     Called by the client app when a new render context has been created for
     this scene node hierarchy. Scene node hierarchies must not contain
     frame-persistent data, since one hierarchy can be reused multiple times
-    per frame. All frame-persistent data must be stored in nRenderContext 
+    per frame. All frame-persistent data must be stored in nRenderContext
     objects, which must be communicated to the scene node hierarchy when
     it is rendered. nRenderContext objects are the primary way to
     communicate data from the client app to a scene node hierarchy (i.e.
@@ -134,7 +134,7 @@ nSceneNode::PreloadResources()
     The RenderContextCreated() method should be called when a new
     'game object' which needs rendering has been created by the application.
 
-    @param  renderContext   pointer to a nRenderContext object    
+    @param  renderContext   pointer to a nRenderContext object
 */
 void
 nSceneNode::RenderContextCreated(nRenderContext* renderContext)
@@ -180,7 +180,7 @@ nSceneNode::RenderContextDestroyed(nRenderContext* renderContext)
 //------------------------------------------------------------------------------
 /**
     Attach the object to the scene if necessary. This method is either
-    called by the nSceneServer, or by another nSceneNode object at 
+    called by the nSceneServer, or by another nSceneNode object at
     scene construction time. If the nSceneNode needs rendering it should
     call the appropriate nSceneServer method to attach itself to the scene.
 
@@ -208,7 +208,7 @@ nSceneNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
 //------------------------------------------------------------------------------
 /**
     Render the node's transformtion. This should be implemented by a subclass.
-    The method will only be called by nSceneServer if the method 
+    The method will only be called by nSceneServer if the method
     HasTransform() returns true.
 */
 bool
@@ -244,10 +244,22 @@ nSceneNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*rend
 
 //------------------------------------------------------------------------------
 /**
+    Perform debug-rendering. This method will be called by nSceneServer
+    on each shape node right after RenderGeometry() if debug visualization
+    is enabled.
+*/
+void
+nSceneNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix)
+{
+    // override in subclass
+}
+
+//------------------------------------------------------------------------------
+/**
     Perform pre-instance rendering of the shader. This method will be
     called once at the beginning of rendering different instances
     of the same scene node. Use this method to setup shader attributes
-    which are constant for a complete instance set. 
+    which are constant for a complete instance set.
 */
 bool
 nSceneNode::ApplyShader(nSceneServer* /*sceneServer*/)
@@ -319,7 +331,7 @@ nSceneNode::RenderShadow(nSceneServer* /*sceneServer*/, nRenderContext* /*render
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node provides transformation. Should overriden 
+    Return true if this node provides transformation. Should overriden
     by subclasses.
 */
 bool
@@ -330,7 +342,7 @@ nSceneNode::HasTransform() const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node provides geometry. Should overriden 
+    Return true if this node provides geometry. Should overriden
     by subclasses.
 */
 bool
@@ -351,7 +363,7 @@ nSceneNode::HasShader() const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node provides shadow. Should be 
+    Return true if this node provides shadow. Should be
     overriden by subclasses.
 */
 bool
@@ -362,7 +374,7 @@ nSceneNode::HasLight() const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node provides light information. Should be 
+    Return true if this node provides light information. Should be
     overriden by subclasses.
 */
 bool
@@ -373,7 +385,7 @@ nSceneNode::HasShadow() const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this node is a camera. Should be 
+    Return true if this node is a camera. Should be
     overriden by subclasses.
 */
 bool
@@ -498,7 +510,7 @@ nSceneNode::GetInstanceStream()
 //------------------------------------------------------------------------------
 /**
     Recursively build an instance stream declaration from the shaders in
-    the scene node hierarchy. Override this method in subclasses with 
+    the scene node hierarchy. Override this method in subclasses with
     shader handling.
 */
 void

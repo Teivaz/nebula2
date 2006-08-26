@@ -44,8 +44,8 @@ public:
     nHardRef(nKernelServer* kServer);
     /// the destructor
     ~nHardRef();
-    
-    /// defered initialization, call if default constructor used 
+
+    /// defered initialization, call if default constructor used
     void initialize(nKernelServer* kServer);
     /// validate name, invalidate object pointer
     void set(const char *objName);
@@ -92,7 +92,7 @@ nHardRef<TYPE>::nHardRef() :
     - 23-Jan-2001   floh    created
 */
 template<class TYPE>
-nHardRef<TYPE>::nHardRef(nKernelServer* kernelServer): 
+nHardRef<TYPE>::nHardRef(nKernelServer* kernelServer):
     ks(kernelServer),
     strNode((void*) this)
 {
@@ -117,7 +117,7 @@ nHardRef<TYPE>::~nHardRef()
 //------------------------------------------------------------------------------
 /**
     When using the default constructor, the object must be
-    initialized via this method.    
+    initialized via this method.
 
     @param kernelServer      pointer to the Nebula kernel server
 
@@ -147,15 +147,15 @@ nHardRef<TYPE>::invalidate_name()
     {
         this->strNode.Remove();
     }
-    
+
     // clear the string node's name
     this->strNode.SetName(0);
-}        
+}
 
 //------------------------------------------------------------------------------
 /**
     Set name of target object, this will invalidate the current
-    internal object pointer. The object pointer will NOT be 
+    internal object pointer. The object pointer will NOT be
     resolved, because the target object may not even exist yet.
     Before any object functionality can be used, the reference
     MUST be resolved by calling nHardRef::resolve(), the target
@@ -226,7 +226,7 @@ void
 nHardRef<TYPE>::resolve()
 {
     const char *name = this->strNode.GetName();
-    if ((!this->isvalid()) && name) 
+    if ((!this->isvalid()) && name)
     {
         TYPE* objPointer = (TYPE *) ks->Lookup(name);
         n_assert(objPointer);
@@ -246,7 +246,7 @@ nHardRef<TYPE>::resolve()
     dynamically build the name from the target object.
 
     @return         the name
-                    
+
 
     history:
     - 23-Jan-2001   floh    created

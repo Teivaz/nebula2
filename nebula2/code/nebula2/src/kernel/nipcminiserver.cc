@@ -41,7 +41,7 @@ nIpcMiniServer::~nIpcMiniServer()
 void
 nIpcMiniServer::CloseRcvrSocket()
 {
-    if (INVALID_SOCKET != this->rcvrSocket) 
+    if (INVALID_SOCKET != this->rcvrSocket)
     {
         shutdown(this->rcvrSocket, 2);
         closesocket(this->rcvrSocket);
@@ -56,9 +56,9 @@ nIpcMiniServer::CloseRcvrSocket()
 bool nIpcMiniServer::Listen()
 {
     bool retval = false;
-    
+
     // wait for a client...
-    if (listen(this->ipcServer->sock, 5) != -1) 
+    if (listen(this->ipcServer->sock, 5) != -1)
     {
         this->rcvrSocket = accept(this->ipcServer->sock, 0, 0);
         if (INVALID_SOCKET != this->rcvrSocket)
@@ -79,26 +79,26 @@ bool nIpcMiniServer::Listen()
 
             // set the connection status to false, this will only be set to true
             // when the actual handshake with the client has happened
-            this->isConnected = false;
+            //this->isConnected = false;
         }
-        else 
+        else
         {
             n_printf("nIpcMiniServer::Listen(): accept() failed!");
         }
-    } 
-    else 
+    }
+    else
     {
         n_printf("nIpcMiniServer::Listen(): listen() failed!");
     }
     return retval;
-}          
+}
 
 //------------------------------------------------------------------------------
 /**
     This method should be called after Listen() if the connection should
     be ignored for any reason.
 */
-void 
+void
 nIpcMiniServer::Ignore()
 {
     this->CloseRcvrSocket();
@@ -122,7 +122,7 @@ nIpcMiniServer::Poll()
     {
         // do a non-blocking recv
         int len = recv(this->rcvrSocket, this->msgBuffer.GetPointer(), this->msgBuffer.GetMaxSize(), 0);
-        if (len == 0)
+        if (len == 0 || N_SOCKET_LAST_ERROR == N_ECONNRESET)
         {
             // the connection has been closed
             n_printf("nIpcMiniServer: connection closed!\n");
@@ -155,14 +155,15 @@ nIpcMiniServer::Poll()
                     {
                         // handshake from client, one portname argument
                         const char* portName = tokenString.GetNextToken(" ");
-                        if (portName && (0 == strcmp(portName, this->ipcServer->selfAddr.GetPortName())))
+                        //if (portName && (0 == strcmp(portName, this->ipcServer->selfAddr.GetPortName())))
                         {
                             this->isConnected = true;
                         }
+                        /*
                         else
                         {
                             this->isConnected = false;
-                        }
+                        }*/
                         systemMessage = true;
                     }
                     else if (strcmp(cmd, "~close") == 0)
@@ -197,7 +198,7 @@ nIpcMiniServer::Poll()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nIpcMiniServer::Send(const nIpcBuffer& msg)
 {
     if ((INVALID_SOCKET != this->rcvrSocket) && (this->isConnected))

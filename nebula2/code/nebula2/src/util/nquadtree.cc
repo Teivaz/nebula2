@@ -34,7 +34,7 @@ nQuadTree::Initialize(uchar depth, const bbox3& box)
     n_assert(depth > 0);
     this->treeDepth = depth;
     this->boundingBox = box;
-    
+
     int baseDimension = 1 << (depth - 1);
     this->baseNodeSize.x = this->boundingBox.size().x / baseDimension;
     this->baseNodeSize.y = this->boundingBox.size().y;
@@ -142,13 +142,13 @@ nQuadTree::Element::~Element()
 //------------------------------------------------------------------------------
 /**
     Render a quad tree element. This virtual method should be overwritten
-    in a subclass. 
-    
-    The method is called with the current viewProjection matrix and a clip 
-    status as arguments. The clip status is either Inside or Clipped. If the 
-    clip status is inside, the element is guaranteed to be visible and can be 
-    rendered immediately. When clip status is Clipped, the element is not 
-    guaranteed to be visible, and a further Clipping check using the viewProj 
+    in a subclass.
+
+    The method is called with the current viewProjection matrix and a clip
+    status as arguments. The clip status is either Inside or Clipped. If the
+    clip status is inside, the element is guaranteed to be visible and can be
+    rendered immediately. When clip status is Clipped, the element is not
+    guaranteed to be visible, and a further Clipping check using the viewProj
     matrix and the element's bounding box should be performed.
 */
 void

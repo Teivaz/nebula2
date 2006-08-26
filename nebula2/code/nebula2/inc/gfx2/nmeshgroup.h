@@ -7,7 +7,7 @@
 
     A nMeshGroup object defines a group of vertices and indices inside
     a mesh.
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -59,7 +59,7 @@ private:
     int numEdges;
     bbox3 box;
 };
-    
+
 //------------------------------------------------------------------------------
 /**
 */

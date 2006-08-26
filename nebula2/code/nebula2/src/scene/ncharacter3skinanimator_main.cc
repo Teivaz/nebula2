@@ -51,7 +51,7 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::InvalidHandle != this->channelVarHandle);    
+    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
     const nVariable& charVar = renderContext->GetLocalVar(this->characterVarIndex);
     nCharacter2* curCharacter = (nCharacter2*) charVar.GetObj();
@@ -120,7 +120,7 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 
             // make a copy of the skeleton
             nCharSkeleton &skeleton = curCharacter->GetVariationSkeleton();
-            skeleton = curCharacter->GetSkeleton();        
+            skeleton = curCharacter->GetSkeleton();
 
             nArray<nCharJoint> *jointList = &this->variationJoints[this->currentVariation];
             int i;
@@ -166,7 +166,7 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 //------------------------------------------------------------------------------
 /**
 */
-nArray<nCharJoint> 
+nArray<nCharJoint>
 nCharacter3SkinAnimator::EvaluteVariation(nRef<nMemoryAnimation> variation)
 {
     nArray<nCharJoint> result;
@@ -196,11 +196,11 @@ nCharacter3SkinAnimator::EvaluteVariation(nRef<nMemoryAnimation> variation)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nCharacter3SkinAnimator::LoadResources()
 {
     bool result = true;
-    
+
     if(!this->AreResourcesValid())
     {
         result &= nSkinAnimator::LoadResources();
@@ -233,7 +233,7 @@ nCharacter3SkinAnimator::LoadResources()
             };
 
             this->animations->EndAnims();
-            
+
             this->character.SetAnimation(this->animations);
 
             // create the states
@@ -257,7 +257,7 @@ nCharacter3SkinAnimator::LoadResources()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nCharacter3SkinAnimator::UnloadResources()
 {
     if(this->AreResourcesValid())
@@ -294,7 +294,7 @@ nCharacter3SkinAnimator::UnloadResources()
 //------------------------------------------------------------------------------
 /**
 */
-nArray<nString> 
+nArray<nString>
 nCharacter3SkinAnimator::LoadAnimationsFromFolder(nString path,nArray<nRef<nMemoryAnimation> > &animArray)
 {
     nArray<nString> result;

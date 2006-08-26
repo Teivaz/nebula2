@@ -18,7 +18,7 @@ nD3D9Texture::nD3D9Texture() :
     textureCube(0),
     renderTargetSurface(0),
     depthStencilSurface(0)
-{   
+{
     // empty
 }
 
@@ -142,12 +142,12 @@ nD3D9Texture::LoadResource()
     }
     else if (filename.CheckExtension("ogg"))
     {
-        // load file through D3DX, assume file has mip maps 
+        // load file through D3DX, assume file has mip maps
         success = this->LoadOGGFile();
     }
     else if (filename.CheckExtension("dds"))
     {
-        // load file through D3DX, assume file has mip maps 
+        // load file through D3DX, assume file has mip maps
         success = this->LoadD3DXFile(false);
     }
     else
@@ -209,13 +209,13 @@ nD3D9Texture::OnRestored()
 
     @param  d3d9            pointer to Direct3D9 inteface
     @param  d3d9Device      pointer to Direct3D9 device
-    @param  usage           D3DUSAGE_DEPTHSTENCIL or D3DUSAGE_RENDERTARGET 
+    @param  usage           D3DUSAGE_DEPTHSTENCIL or D3DUSAGE_RENDERTARGET
     @param  pixelFormat     D3DFORMAT member
 */
 bool
-nD3D9Texture::CheckRenderTargetFormat(IDirect3D9* d3d9, 
+nD3D9Texture::CheckRenderTargetFormat(IDirect3D9* d3d9,
                                       IDirect3DDevice9* d3d9Device,
-                                      DWORD usage, 
+                                      DWORD usage,
                                       D3DFORMAT pixelFormat)
 {
     n_assert(d3d9);
@@ -453,7 +453,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     HRESULT hr;
     IDirect3DDevice9* d3d9Dev = this->refGfxServer->d3d9Device;
     n_assert(d3d9Dev);
- 
+
     // read file into temp mem buffer
     nFile* file = nFileServer2::Instance()->NewFileObject();
     if (!file->Open(this->GetFilename().Get(), "rb"))
@@ -578,7 +578,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     n_free(fileBuffer);
     fileBuffer = 0;
 
-    // query texture attributes 
+    // query texture attributes
     this->QueryD3DTextureAttributes();
     return true;
 }
@@ -656,7 +656,7 @@ nD3D9Texture::CreateEmptyTexture()
         return false;
     }
 
-    // query texture attributes 
+    // query texture attributes
     this->QueryD3DTextureAttributes();
     return true;
 }
@@ -709,7 +709,7 @@ nD3D9Texture::LoadFromRawCompoundFile()
 
             this->Unlock(0);
             return true;
-        }        
+        }
     }
     return false;
 }
@@ -775,7 +775,7 @@ nD3D9Texture::LoadFromDDSCompoundFile()
     n_free(buffer);
     buffer = 0;
 
-    // query texture attributes 
+    // query texture attributes
     this->QueryD3DTextureAttributes();
 
     return true;
@@ -989,39 +989,45 @@ nD3D9Texture::GetByteSize()
 
 //------------------------------------------------------------------------------
 /**
-    Save texture to file
+    Convert fileformat to D3DX type.
 */
-bool
-nD3D9Texture::SaveTextureToFile(const nString &filename)
+D3DXIMAGE_FILEFORMAT
+nD3D9Texture::FileFormatToD3DX(FileFormat fileFormat)
 {
-    n_assert(baseTexture);
-    n_assert(filename.IsValid());
-    nString physicalFileName = nFileServer2::Instance()->ManglePath(filename.Get());
-    HRESULT hr = D3DXSaveTextureToFile(physicalFileName.Get(),D3DXIFF_JPG,baseTexture,NULL);
-    n_dxtrace(hr, "Failed to save Texture (D3D)");
-    return true;
-};
+    switch (fileFormat)
+    {
+        case BMP: return D3DXIFF_BMP;
+        case JPG: return D3DXIFF_JPG;
+        case TGA: return D3DXIFF_TGA;
+        case PNG: return D3DXIFF_PNG;
+        case DDS: return D3DXIFF_DDS;
+        case PPM: return D3DXIFF_PPM;
+        case DIB: return D3DXIFF_DIB;
+        case HDR: return D3DXIFF_HDR;
+        case PFM: return D3DXIFF_PFM;
+        default:  return D3DXIFF_JPG;
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
-    Generante mip maps for surface data.
-
-    - Feb-04 Kim, H.W. added to support ngameswf.
+    Save texture to file
 */
-void nD3D9Texture::GenerateMipMaps()
+bool
+nD3D9Texture::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
 {
-    n_assert(this->texture2D);
+    n_assert(baseTexture);
+    n_assert(filename.IsValid());
 
-    HRESULT hr;
+    nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
+    D3DXIMAGE_FILEFORMAT d3dxFormat = FileFormatToD3DX(fileFormat);
 
-    hr = D3DXFilterTexture(this->texture2D,    // pTexture
-                           NULL,               // pPalette
-                           D3DX_DEFAULT,       // SrcLevel(0)
-                           D3DX_FILTER_LINEAR);// MipFilter
+    HRESULT hr = D3DXSaveTextureToFile(mangledPath.Get(), d3dxFormat, baseTexture, NULL);
+    n_dxtrace(hr, "nD3D9Texture::SaveTextureToFile(): Failed to save texture!");
 
-    n_assert (SUCCEEDED(hr));
-}
-                
+    return true;
+};
+
 //------------------------------------------------------------------------------
 /**
     Convert nTexture2::Fromat to D3DFORMAT.
@@ -1029,7 +1035,8 @@ void nD3D9Texture::GenerateMipMaps()
     -16-Jun-05    kims    Added to remove duplicated code from nD3D9Texture module
                           and nD3D9Surface module.
 */
-D3DFORMAT nD3D9Texture::FormatToD3DFormat(nTexture2::Format format)
+D3DFORMAT
+nD3D9Texture::FormatToD3DFormat(nTexture2::Format format)
 {
     D3DFORMAT d3dFormat;
     switch (format)
@@ -1053,9 +1060,30 @@ D3DFORMAT nD3D9Texture::FormatToD3DFormat(nTexture2::Format format)
         case G32R32F:           d3dFormat = D3DFMT_G32R32F;       break;
         case A32B32G32R32F:     d3dFormat = D3DFMT_A32B32G32R32F; break;
         case A8:                d3dFormat = D3DFMT_A8;            break;
-        default:            
+        default:
             // can't happen
             n_assert(false);
     }
     return d3dFormat;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Generante mip maps for surface data.
+
+    - Feb-04 Kim, H.W. added to support ngameswf.
+*/
+void
+nD3D9Texture::GenerateMipMaps()
+{
+    n_assert(this->texture2D);
+
+    HRESULT hr;
+
+    hr = D3DXFilterTexture(this->texture2D,    // pTexture
+                           NULL,               // pPalette
+                           D3DX_DEFAULT,       // SrcLevel(0)
+                           D3DX_FILTER_LINEAR);// MipFilter
+
+    n_assert (SUCCEEDED(hr));
 }

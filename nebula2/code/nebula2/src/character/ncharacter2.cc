@@ -52,7 +52,7 @@ nCharacter2::SetActiveState(int stateIndex, nTime time, nTime offset)
 {
     n_assert(this->IsValidStateIndex(stateIndex));
 
-    // only overwrite previous state if the current state was active 
+    // only overwrite previous state if the current state was active
     // for at least a little while to prevent excessive "plopping"
     if (this->curStateInfo.IsValid())
     {
@@ -87,7 +87,7 @@ nCharacter2::EvaluateSkeleton(float time, nVariableContext* varContext)
         // check if a state transition is necessary
         nAnimState& curAnimState = this->animStateArray->GetStateAt(this->curStateInfo.GetStateIndex());
         float curRelTime = time - this->curStateInfo.GetStateStarted();
-        
+
         // handle time exception (this happens when time is reset to a smaller value
         // since the last anim state switch)
         if (curRelTime < 0.0f)
@@ -142,7 +142,7 @@ nCharacter2::EvaluateSkeleton(float time, nVariableContext* varContext)
                     rotate.slerp(prevRotate, rotate, lerp);
                     scale.lerp(prevScale, lerp);
                 }
-                
+
                 nCharJoint& joint = this->charSkeleton.GetJointAt(jointIndex);
                 joint.SetTranslate(translate);
                 joint.SetRotate(rotate);
@@ -202,7 +202,7 @@ nCharacter2::EmitAnimEvents(float fromTime, float toTime)
     {
         n_assert(this->animation);
         float relFromTime = (fromTime - this->curStateInfo.GetStateStarted()) + this->curStateInfo.GetStateOffset();
-        float relToTime   = (toTime - this->curStateInfo.GetStateStarted()) + this->curStateInfo.GetStateOffset(); 
+        float relToTime   = (toTime - this->curStateInfo.GetStateStarted()) + this->curStateInfo.GetStateOffset();
         nAnimState& animState = this->animStateArray->GetStateAt(this->curStateInfo.GetStateIndex());
         animState.EmitAnimEvents(relFromTime, relToTime, this->animation, this->animEventHandler);
     }

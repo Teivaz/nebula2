@@ -7,7 +7,7 @@
 
     @brief The animation server offers central services of the animation
     subsystem (at the moment it is merely a factory for nAnimation objects).
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nroot.h"

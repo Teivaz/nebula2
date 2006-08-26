@@ -24,7 +24,7 @@ public:
     virtual ~nTextureAnimator();
     /// save object to persistent stream
     virtual bool SaveCmds(nPersistServer* ps);
-    
+
     /// return the type of this animator object
     virtual Type GetAnimatorType() const;
     /// called by scene node objects which wish to be animated by this object
@@ -44,7 +44,7 @@ private:
     const char* GetShaderParam() const;
 
     nAutoRef<nGfxServer2> refGfxServer;
-    nArray<nRef<nTexture2> > textureArray; 
+    nArray<nRef<nTexture2> > textureArray;
     nShaderState::Param shaderParam;
 
 };

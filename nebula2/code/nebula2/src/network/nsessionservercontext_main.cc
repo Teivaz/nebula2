@@ -49,7 +49,7 @@ nSessionServerContext::SetServerAttr(const char* name, const char* val)
 
 //------------------------------------------------------------------------------
 /**
-    Get a server attribute by name. Returns 0 if server attribute doesn't 
+    Get a server attribute by name. Returns 0 if server attribute doesn't
     exist.
 
     @param  name    an attribute name
@@ -91,7 +91,7 @@ nSessionServerContext::GetServerAttrAt(int index, const char*& name, const char*
 /**
     Open a reliable connection to the server.
 */
-bool 
+bool
 nSessionServerContext::Open()
 {
     n_assert(!this->isOpen);
@@ -265,7 +265,7 @@ nSessionServerContext::Trigger()
                     const char* gameServerHostName = tokenString.GetNextToken(" ");
                     const char* gameServerPortName = tokenString.GetNextToken(" ");
                     this->HandleStartMessage(gameServerHostName, gameServerPortName);
-                    
+
                     // a start session also causes the session to be closed
                     closeSessionReceived = true;
                 }

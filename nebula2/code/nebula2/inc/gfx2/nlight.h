@@ -6,7 +6,7 @@
     @ingroup Gfx2
 
     Describes a light source.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -88,7 +88,7 @@ nLight::nLight() :
     range(1.0f),
     diffuse(1.0f, 1.0f, 1.0f, 1.0f),
     specular(1.0f, 1.0f, 1.0f, 1.0f),
-    ambient(0.0f, 0.0f, 0.0f, 0.0f),    
+    ambient(0.0f, 0.0f, 0.0f, 0.0f),
     castShadows(false)
 {
     // empty
@@ -227,7 +227,7 @@ nLight::GetAmbient() const
 /**
 */
 inline
-void 
+void
 nLight::SetCastShadows(const bool& b)
 {
     this->castShadows = b;
@@ -237,7 +237,7 @@ nLight::SetCastShadows(const bool& b)
 /**
 */
 inline
-const bool& 
+const bool&
 nLight::GetCastShadows() const
 {
     return this->castShadows;
@@ -247,7 +247,7 @@ nLight::GetCastShadows() const
 /**
 */
 inline
-void 
+void
 nLight::SetShadowLightMask(const vector4& m)
 {
     this->shadowLightMask = m;
@@ -299,4 +299,4 @@ nLight::StringToType(const char* str)
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

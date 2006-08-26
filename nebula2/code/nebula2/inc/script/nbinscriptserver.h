@@ -5,7 +5,7 @@
     @class nBinScriptServer
     @ingroup NebulaScriptServices
 
-    A script server which provides a binary 'script syntax' for saving and 
+    A script server which provides a binary 'script syntax' for saving and
     loading object files.
 
     (C) 2002 RadonLabs GmbH

@@ -67,11 +67,11 @@ Tcl_EvalFile(Tcl_Interp* interp, char* fileName)
         n_free(scriptBuffer);
 
         // handle result
-        if (result == TCL_RETURN) 
+        if (result == TCL_RETURN)
         {
 	        result = TclUpdateReturnInfo(iPtr);
-        } 
-        else if (result == TCL_ERROR) 
+        }
+        else if (result == TCL_ERROR)
         {
 	        char msg[200 + TCL_INTEGER_SPACE];
 

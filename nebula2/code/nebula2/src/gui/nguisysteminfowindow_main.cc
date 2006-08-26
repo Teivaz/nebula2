@@ -137,12 +137,12 @@ nGuiSystemInfoWindow::UpdateTextView()
 
     // resource numbers
     const float mega = 1024 * 1024;
-    sprintf(buf, "Number of Meshes:\t%d (%.3f MBytes)", 
+    sprintf(buf, "Number of Meshes:\t%d (%.3f MBytes)",
         resServer->GetNumResources(nResource::Mesh),
         float(resServer->GetResourceByteSize(nResource::Mesh)) / mega);
     textView->AppendLine(buf);
 
-    sprintf(buf, "Number of Textures:\t%d (%.3f MBytes)", 
+    sprintf(buf, "Number of Textures:\t%d (%.3f MBytes)",
         resServer->GetNumResources(nResource::Texture),
         float(resServer->GetResourceByteSize(nResource::Texture)) / mega);
     textView->AppendLine(buf);
@@ -150,7 +150,7 @@ nGuiSystemInfoWindow::UpdateTextView()
     sprintf(buf, "Number of Shaders:\t%d", resServer->GetNumResources(nResource::Shader));
     textView->AppendLine(buf);
 
-    sprintf(buf, "Number of Animations:\t%d (%.3f MBytes)", 
+    sprintf(buf, "Number of Animations:\t%d (%.3f MBytes)",
         resServer->GetNumResources(nResource::Animation),
         float(resServer->GetResourceByteSize(nResource::Animation)) / mega);
     textView->AppendLine(buf);
@@ -158,7 +158,7 @@ nGuiSystemInfoWindow::UpdateTextView()
     sprintf(buf, "Number of Fonts:\t%d", resServer->GetNumResources(nResource::Font));
     textView->AppendLine(buf);
 
-    sprintf(buf, "Num Sound Resources:\t%d (%.3f MBytes)", 
+    sprintf(buf, "Num Sound Resources:\t%d (%.3f MBytes)",
         resServer->GetNumResources(nResource::SoundResource),
         float(resServer->GetResourceByteSize(nResource::SoundResource)) / mega);
     textView->AppendLine(buf);

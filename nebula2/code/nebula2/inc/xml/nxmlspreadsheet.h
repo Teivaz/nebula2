@@ -7,12 +7,12 @@
 
     A XML spreadsheet can load an XML-exported Excel spreadsheet file.
 
-    A database contains 1 or several XmlTable objects, which contain 
+    A database contains 1 or several XmlTable objects, which contain
     XmlTableCell objects.
 
     XmlTableCells are typeless, but access methods exist to set or
     get the content as several datatypes.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "util/narray.h"

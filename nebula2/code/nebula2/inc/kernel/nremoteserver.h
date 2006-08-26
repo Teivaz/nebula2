@@ -11,7 +11,7 @@
     each with its own current working object.
 
     All strings coming from the remote client will be send to the
-    script server for evaluation. All strings emitted by 
+    script server for evaluation. All strings emitted by
     the Nebula kernel will be sent back to the client.
 
     Please check out the @ref NebulaToolsnremoteshell tool, a

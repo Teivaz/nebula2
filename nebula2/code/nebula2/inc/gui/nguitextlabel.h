@@ -6,7 +6,7 @@
     @ingroup Gui
     @brief Uses the text server to render a gui label which contains ASCII
     text.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gui/nguilabel.h"
@@ -86,7 +86,7 @@ protected:
 
     nString fontName;
     nRef<nFont2> refFont;       // the font resource
-    nString text;               // the displayed text 
+    nString text;               // the displayed text
     vector4 color;
     vector4 blinkColor;
     vector2 pressedOffset;

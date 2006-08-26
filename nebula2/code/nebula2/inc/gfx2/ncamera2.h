@@ -6,9 +6,9 @@
     @ingroup NebulaGraphicsSystem
 
     Hold camera attributes for nGfxServer2.
-    
-    Technically this sets the projection matrix. The camera's position and 
-    orientation have to be set by the View matrix which can be done using 
+
+    Technically this sets the projection matrix. The camera's position and
+    orientation have to be set by the View matrix which can be done using
     nGfxServer2::SetTransform().
 
     (C) 2002 RadonLabs GmbH
@@ -24,7 +24,7 @@ class nCamera2
 {
 public:
     /// clip status
-    enum ClipStatus 
+    enum ClipStatus
     {
         Outside,
         Inside,
@@ -358,7 +358,7 @@ nCamera2::GetFarPlane() const
 /**
 */
 inline
-void 
+void
 nCamera2::SetShadowOffset(float v)
 {
     this->shadowOffset = v;
@@ -369,7 +369,7 @@ nCamera2::SetShadowOffset(float v)
 /**
 */
 inline
-float 
+float
 nCamera2::GetShadowOffset() const
 {
     return this->shadowOffset;
@@ -476,7 +476,7 @@ nCamera2::GetShadowProjection()
     Check if 2 view volumes intersect.
 */
 inline
-nCamera2::ClipStatus 
+nCamera2::ClipStatus
 nCamera2::GetClipStatus(const matrix44& myTransform, const matrix44& otherViewProjection)
 {
     // compute matrix which transforms my local hull into

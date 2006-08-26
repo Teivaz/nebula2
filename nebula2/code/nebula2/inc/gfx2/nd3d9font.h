@@ -6,7 +6,7 @@
     @ingroup Gfx2
 
     A D3D9 specific subclass of nFont2.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include <d3dx9.h>
@@ -31,7 +31,7 @@ protected:
     virtual bool LoadResource();
     /// unload resource
     virtual void UnloadResource();
-    /// called when contained resource may become lost 
+    /// called when contained resource may become lost
     virtual void OnLost();
     /// called when contained resource may be restored
     virtual void OnRestored();

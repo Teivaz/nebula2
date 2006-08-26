@@ -137,7 +137,7 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
     n_assert(renderContext);
-    n_assert(nVariable::InvalidHandle != this->channelVarHandle);    
+    n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
     const nVariable& charVar = renderContext->GetLocalVar(this->characterVarIndex);
     nCharacter2* curCharacter = (nCharacter2*) charVar.GetObj();
@@ -237,8 +237,8 @@ nSkinAnimator::SetStateChannel(const char* name)
 
 //------------------------------------------------------------------------------
 /**
-    Returns the name of the animation variable which drives this animation. 
-    This variable exists within the variable server located at 
+    Returns the name of the animation variable which drives this animation.
+    This variable exists within the variable server located at
     @c /sys/servers/variable.
 */
 const char*
@@ -277,7 +277,7 @@ nSkinAnimator::SetState(int stateIndex, int animGroupIndex, float fadeInTime)
 
 //------------------------------------------------------------------------------
 /**
-    @note Be sure that you should create a new animation state first by calling 
+    @note Be sure that you should create a new animation state first by calling
           nSkinAnimator::SetState() before you calling this function.
 */
 void

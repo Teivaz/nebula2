@@ -19,15 +19,15 @@ static void n_getclipplanefencing(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nsceneserver
-    
+
     @cppclass
     nSceneServer
-    
+
     @superclass
     nroot
 
     @classinfo
-    The scene server collects visible scene geometry and renders them in an 
+    The scene server collects visible scene geometry and renders them in an
     optimal way by sorting for minimal state switches.
 */
 void

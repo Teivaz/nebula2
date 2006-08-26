@@ -1,4 +1,4 @@
-/* 
+/*
  * tclHash.c --
  *
  *	Implementation of in-memory hash tables for Tcl and Tcl-based
@@ -10,7 +10,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -123,7 +122,7 @@ Tcl_HashKeyType tclStringHashKeyType = {
     NULL				/* freeEntryProc */
 };
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -159,7 +158,7 @@ Tcl_InitHashTable(tablePtr, keyType)
      */
     Tcl_InitHashTableEx(tablePtr, keyType, (Tcl_HashKeyType *) -1);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -191,11 +190,11 @@ Tcl_InitHashTableEx(tablePtr, keyType, typePtr)
     Tcl_HashKeyType *typePtr;		/* Pointer to structure which defines
 					 * the behaviour of this table. */
 {
-#if (TCL_SMALL_HASH_TABLE != 4) 
+#if (TCL_SMALL_HASH_TABLE != 4)
     panic("Tcl_InitHashTableEx: TCL_SMALL_HASH_TABLE is %d, not 4\n",
 	    TCL_SMALL_HASH_TABLE);
 #endif
-    
+
     tablePtr->buckets = tablePtr->staticBuckets;
     tablePtr->staticBuckets[0] = tablePtr->staticBuckets[1] = 0;
     tablePtr->staticBuckets[2] = tablePtr->staticBuckets[3] = 0;
@@ -252,7 +251,7 @@ Tcl_InitHashTableEx(tablePtr, keyType, typePtr)
     tablePtr->typePtr = typePtr;
 #endif
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -340,10 +339,10 @@ Tcl_FindHashEntry(tablePtr, key)
 	    }
 	}
     }
-    
+
     return NULL;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -452,7 +451,7 @@ Tcl_CreateHashEntry(tablePtr, key, newPtr)
 	hPtr = (Tcl_HashEntry *) ckalloc((unsigned) sizeof(Tcl_HashEntry));
 	hPtr->key.oneWordValue = (char *) key;
     }
-					 
+
     hPtr->tablePtr = tablePtr;
 #if TCL_HASH_KEY_STORE_HASH
 #   if TCL_PRESERVE_BINARY_COMPATABILITY
@@ -480,7 +479,7 @@ Tcl_CreateHashEntry(tablePtr, key, newPtr)
     }
     return hPtr;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -528,7 +527,7 @@ Tcl_DeleteHashEntry(entryPtr)
 #else
     typePtr = tablePtr->typePtr;
 #endif
-    
+
 #if TCL_HASH_KEY_STORE_HASH
     if (typePtr->hashKeyProc == NULL
 	|| typePtr->flags & TCL_HASH_KEY_RANDOMIZE_HASH) {
@@ -541,7 +540,7 @@ Tcl_DeleteHashEntry(entryPtr)
 #else
     bucketPtr = entryPtr->bucketPtr;
 #endif
-    
+
     if (*bucketPtr == entryPtr) {
 	*bucketPtr = entryPtr->nextPtr;
     } else {
@@ -563,7 +562,7 @@ Tcl_DeleteHashEntry(entryPtr)
 	ckfree((char *) entryPtr);
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -641,7 +640,7 @@ Tcl_DeleteHashTable(tablePtr)
     tablePtr->typePtr = NULL;
 #endif
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -675,7 +674,7 @@ Tcl_FirstHashEntry(tablePtr, searchPtr)
     searchPtr->nextEntryPtr = NULL;
     return Tcl_NextHashEntry(searchPtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -716,7 +715,7 @@ Tcl_NextHashEntry(searchPtr)
     searchPtr->nextEntryPtr = hPtr->nextPtr;
     return hPtr;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -788,7 +787,7 @@ Tcl_HashStats(tablePtr)
     sprintf(p, "average search distance for entry: %.1f", average);
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -816,10 +815,10 @@ AllocArrayEntry(tablePtr, keyPtr)
     int count;
 
     count = tablePtr->keyType;
-    
+
     hPtr = (Tcl_HashEntry *) ckalloc((unsigned) (sizeof(Tcl_HashEntry)
 	    + (count*sizeof(int)) - sizeof(hPtr->key)));
-    
+
     for (iPtr1 = array, iPtr2 = hPtr->key.words;
 	    count > 0; count--, iPtr1++, iPtr2++) {
 	*iPtr2 = *iPtr1;
@@ -827,7 +826,7 @@ AllocArrayEntry(tablePtr, keyPtr)
 
     return hPtr;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -865,7 +864,7 @@ CompareArrayKeys(keyPtr, hPtr)
     }
     return 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -899,7 +898,7 @@ HashArrayKey(tablePtr, keyPtr)
     }
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -930,7 +929,7 @@ AllocStringEntry(tablePtr, keyPtr)
 
     return hPtr;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -966,7 +965,7 @@ CompareStringKeys(keyPtr, hPtr)
     }
     return 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1021,7 +1020,7 @@ HashStringKey(tablePtr, keyPtr)
     }
     return result;
 }
-
+
 #if TCL_PRESERVE_BINARY_COMPATABILITY
 /*
  *----------------------------------------------------------------------
@@ -1050,7 +1049,7 @@ BogusFind(tablePtr, key)
     panic("called Tcl_FindHashEntry on deleted table");
     return NULL;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1082,7 +1081,7 @@ BogusCreate(tablePtr, key, newPtr)
     return NULL;
 }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *

@@ -49,7 +49,7 @@ nLightNode::ApplyLight(nSceneServer* /*sceneServer*/, nRenderContext* /*renderCo
     nGfxServer2::Instance()->AddLight(this->light);
     return this->light;
 }
-   
+
 //------------------------------------------------------------------------------
 /**
     This sets the lighting states which differ between rendering shape

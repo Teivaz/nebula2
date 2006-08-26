@@ -6,9 +6,9 @@
     @ingroup Locale
 
     The nLocaleServer object simplifies localization of Nebula2 applications
-    to international markets. It reads a "locale table", which is an 
+    to international markets. It reads a "locale table", which is an
     Excel spreadsheet in XML format, which contains 2 columns for original
-    text and localized text. Actual translation is done through the 
+    text and localized text. Actual translation is done through the
     nLocale() macro.
 */
 #include "kernel/nroot.h"
@@ -59,7 +59,7 @@ inline
 bool
 nLocaleServer::IsOpen() const
 {
-    return this->isOpen;    
+    return this->isOpen;
 }
 
 //------------------------------------------------------------------------------

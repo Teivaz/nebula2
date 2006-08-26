@@ -5,9 +5,9 @@
     @class nGuiGraphicsBrowserWindow
     @ingroup Gui
 
-    @brief A client window which browses the proj:export/gfxlib directory, and loads 
+    @brief A client window which browses the proj:export/gfxlib directory, and loads
     graphics objects under /usr/scene.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

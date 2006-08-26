@@ -4,9 +4,9 @@
 /**
     @class nAttr
     @ingroup Util
-    
+
     An nAttr object extends an nVariant object by a name.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/nvariant.h"
@@ -174,4 +174,4 @@ nAttr::GetName() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

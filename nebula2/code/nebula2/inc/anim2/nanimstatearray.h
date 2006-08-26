@@ -7,14 +7,14 @@
 
     @brief An anim state array holds several mutually exclusive nAnimState
     objects and allows switching between them.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "anim2/nanimstate.h"
 #include "util/narray.h"
 
 //------------------------------------------------------------------------------
-class nAnimStateArray 
+class nAnimStateArray
 {
 public:
     /// constructor

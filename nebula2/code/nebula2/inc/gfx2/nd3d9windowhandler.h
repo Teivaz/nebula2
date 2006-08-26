@@ -8,7 +8,7 @@
     A window handler for the d3d9 graphics server class.
     This just implements some Direct3D specific callbacks which are called
     from the nWin32WindowHandler's WinProc.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gfx2/nwin32windowhandler.h"
@@ -41,4 +41,4 @@ private:
 };
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

@@ -70,7 +70,7 @@ nAnimClip::nAnimClip(int firstAnimCurveIndex, int numAnimCurves, nVariable::Hand
     numCurves(numAnimCurves),
     firstCurveIndex(firstAnimCurveIndex),
     weight(0.0f),
-    weightChannelHandle(weightChnHandle)    
+    weightChannelHandle(weightChnHandle)
 {
     n_assert(numAnimCurves >= 0);
     n_assert(firstAnimCurveIndex >= 0);

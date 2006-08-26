@@ -30,7 +30,7 @@ nGfxObject::~nGfxObject()
 
 //------------------------------------------------------------------------------
 /**
-    Load the shared gfx resource (a Nebula2 .n2 object) from disk and 
+    Load the shared gfx resource (a Nebula2 .n2 object) from disk and
     store it under /res.
 */
 bool

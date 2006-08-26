@@ -7,9 +7,9 @@
     @ingroup Logging
 
     A log handler class for Win32 apps:
-    
+
     - maintains a log file where ALL output is recorded
-    - creates a message box for nKernelServer::Message() 
+    - creates a message box for nKernelServer::Message()
       and nKernelServer::Error()
     - Places log files in <tt>C:\\Documents and Settings\\&lt;your username&gt;\
       Local Settings\\Application Data\\&lt;subdir&gt;</tt>.

@@ -90,7 +90,7 @@ n_attachwidget(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Attaches the given widget's edge to a relative position (0.0 .. 1.0) 
+    Attaches the given widget's edge to a relative position (0.0 .. 1.0)
     in the form.
 */
 static void

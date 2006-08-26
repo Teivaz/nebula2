@@ -8,7 +8,7 @@
     level component which defines the shader states for mesh rendering.
 
     (C) 2004 RadonLabs GmbH
-*/    
+*/
 #include "renderpath/nrpshader.h"
 #include "variable/nvariablecontext.h"
 #include "variable/nvariableserver.h"
@@ -182,7 +182,7 @@ nRpSequence::SetRenderPath(nRenderPath2* rp)
 /**
 */
 inline
-nRenderPath2* 
+nRenderPath2*
 nRpSequence::GetRenderPath()
 {
     return this->renderPath;

@@ -28,7 +28,7 @@ public:
     void SetShader(nShader2* shader);
     /// get shader
     nShader2* GetShader() const;
-    
+
     //FIXME
     /*
     /// begin indexed rendering

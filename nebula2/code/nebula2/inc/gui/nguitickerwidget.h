@@ -106,7 +106,7 @@ nGuiTickerWidget::GetScrollSpeed() const
 //------------------------------------------------------------------------------
 /**
 */
-inline   
+inline
 void
 nGuiTickerWidget::Restart()
 {

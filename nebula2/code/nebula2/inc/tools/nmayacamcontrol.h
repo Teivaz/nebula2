@@ -6,7 +6,7 @@
     @ingroup Tools
 
     Implements a Maya camera control model.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/polar.h"
@@ -25,15 +25,15 @@ public:
     /// initialize the object
     void Initialize();
     /// update view matrix
-    void Update(); 
+    void Update();
     /// reset of View
     void Reset();
 
     /// set default center of interest - call initialize() for update
     void SetDefaultCenterOfInterest(const vector3& defCenterOfInterest);
-    /// get default center of interest    
+    /// get default center of interest
     const vector3& GetDefaultCenterOfInterest() const;
-    /// set default eyepos - call initialize() for update 
+    /// set default eyepos - call initialize() for update
     void SetDefaultEyePos(const vector3& defEyePos);
     /// get default eyepos
     const vector3& GetDefaultEyePos() const;
@@ -42,7 +42,7 @@ public:
     /// get default camera up vector
     const vector3& GetDefaultUpVec() const;
     /// get resulting view matrix
-    const matrix44& GetViewMatrix() const;    
+    const matrix44& GetViewMatrix() const;
     /// Set LookButton-state
     void SetLookButton(bool button);
     /// Get LookButton-state
@@ -78,7 +78,7 @@ public:
     /// Get Center of Interest
     const vector3& GetCenterOfInterest() const;
 
-protected: 
+protected:
 
     vector3 defEyePos;
     vector3 defCenterOfInterest;
@@ -101,7 +101,7 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 void
@@ -111,7 +111,7 @@ nMayaCamControl::SetDefaultCenterOfInterest(const vector3& defCenterOfInterest)
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 const vector3&
@@ -121,7 +121,7 @@ nMayaCamControl::GetDefaultCenterOfInterest() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 void
@@ -131,7 +131,7 @@ nMayaCamControl::SetDefaultEyePos(const vector3& defEyePos)
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 const vector3&
@@ -141,7 +141,7 @@ nMayaCamControl::GetDefaultEyePos() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 void
@@ -151,7 +151,7 @@ nMayaCamControl::SetDefaultUpVec(const vector3& defUpVec)
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 const vector3&
@@ -161,7 +161,7 @@ nMayaCamControl::GetDefaultUpVec() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 bool
@@ -171,7 +171,7 @@ nMayaCamControl::GetLookButton() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 bool
@@ -181,7 +181,7 @@ nMayaCamControl::GetPanButton() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 bool
@@ -191,7 +191,7 @@ nMayaCamControl::GetZoomButton() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 bool
@@ -201,7 +201,7 @@ nMayaCamControl::GetResetButton() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 float
@@ -211,7 +211,7 @@ nMayaCamControl::GetSliderLeft() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 float
@@ -221,7 +221,7 @@ nMayaCamControl::GetSliderRight() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 float
@@ -231,7 +231,7 @@ nMayaCamControl::GetSliderUp() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 float
@@ -241,7 +241,7 @@ nMayaCamControl::GetSliderDown() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 void
@@ -251,77 +251,77 @@ nMayaCamControl::SetLookButton(bool button)
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
-void 
+void
 nMayaCamControl::SetPanButton(bool button)
 {
     this->panButton = button;
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
-void 
+void
 nMayaCamControl::SetZoomButton(bool button)
 {
     this->zoomButton = button;
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
-void 
+void
 nMayaCamControl::SetResetButton(bool button)
 {
     this->resetButton = button;
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
-void 
+void
 nMayaCamControl::SetSliderLeft(float slider)
 {
     this->sliderLeft = slider;
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
-void 
+void
 nMayaCamControl::SetSliderRight(float slider)
 {
     this->sliderRight = slider;
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
-void 
+void
 nMayaCamControl::SetSliderUp(float slider)
 {
     this->sliderUp = slider;
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
-void 
+void
 nMayaCamControl::SetSliderDown(float slider)
 {
     this->sliderDown = slider;
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 const matrix44&
@@ -331,7 +331,7 @@ nMayaCamControl::GetViewMatrix() const
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 inline
 const vector3&
@@ -341,4 +341,4 @@ nMayaCamControl::GetCenterOfInterest() const
 }
 
 //------------------------------------------------------------------------------
-#endif 
+#endif

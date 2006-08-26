@@ -10,9 +10,9 @@
     A host name is either a valid tcp/ip address in string form,
     a name which can be resolved by <tt>gethostbyname()</tt> (including
     <tt>localhost</tt>), or the special strings <tt>self</tt>,
-    <tt>inetself</tt>, <tt>any</tt> and <tt>broadcast</tt>. The port 
-    id string is either a normal name, which will be hashed into a port number, 
-    or if the string is valid integer number, this number will be used directly 
+    <tt>inetself</tt>, <tt>any</tt> and <tt>broadcast</tt>. The port
+    id string is either a normal name, which will be hashed into a port number,
+    or if the string is valid integer number, this number will be used directly
     as port number.
 
     Examples:
@@ -58,6 +58,8 @@ public:
     nIpcAddress();
     /// constructor with address string
     nIpcAddress(const char* hostName, const char* portName);
+    /// constructor with address port
+    nIpcAddress(const char* hostName, short portNum);
     /// destructor
     ~nIpcAddress();
     /// set the host name
@@ -74,6 +76,8 @@ public:
     const sockaddr_in& GetAddrStruct();
     /// get the ip address defined by the host name as string
     const char* GetIpAddrString();
+    /// sets the port number directly
+    void SetPortNum(short portnum);
     /// get the port number defined by the port name
     short GetPortNum();
     /// update address struct from the address string

@@ -9,9 +9,9 @@
     handler code and feeds keyboard and mouse input events into the
     input server. An instance of a window handler subclass is used by
     the graphics servers to manage the application window. Subclasses
-    of nWindowHandler implement window handling for specific 
+    of nWindowHandler implement window handling for specific
     platforms (Win32, Linux, MacOSX, ...).
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -126,7 +126,7 @@ nWindowHandler::GetDisplayMode() const
 
     - 24-Nov-04 kims added
 */
-inline 
+inline
 void
 nWindowHandler::SetSkipMsgLoop(bool skip)
 {
@@ -139,7 +139,7 @@ nWindowHandler::SetSkipMsgLoop(bool skip)
 
     - 24-Nov-04 kims added
 */
-inline 
+inline
 bool
 nWindowHandler::IsSkipMsgLoop() const
 {

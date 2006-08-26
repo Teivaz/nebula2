@@ -111,7 +111,7 @@ typedef struct ExceptionRange {
 
 /*
  * Structure used to map between instruction pc and source locations. It
- * defines for each compiled Tcl command its code's starting offset and 
+ * defines for each compiled Tcl command its code's starting offset and
  * its source's starting offset and length. Note that the code offset
  * increases monotonically: that is, the table is sorted in code offset
  * order. The source offset is not monotonic.
@@ -233,7 +233,7 @@ typedef struct CompileEnv {
     unsigned char *codeNext;	/* Points to next code array byte to use. */
     unsigned char *codeEnd;	/* Points just after the last allocated
 				 * code array byte. */
-    int mallocedCodeArray;      /* Set 1 if code array was expanded 
+    int mallocedCodeArray;      /* Set 1 if code array was expanded
 				 * and codeStart points into the heap.*/
     LiteralEntry *literalArrayPtr;
     				/* Points to start of LiteralEntry array. */
@@ -760,7 +760,7 @@ EXTERN void		TclExpandCodeArray _ANSI_ARGS_((
 EXTERN void		TclExpandJumpFixupArray _ANSI_ARGS_((
                             JumpFixupArray *fixupArrayPtr));
 EXTERN void		TclFinalizeAuxDataTypeTable _ANSI_ARGS_((void));
-EXTERN int		TclFindCompiledLocal _ANSI_ARGS_((char *name, 
+EXTERN int		TclFindCompiledLocal _ANSI_ARGS_((char *name,
         		    int nameChars, int create, int flags,
 			    Proc *procPtr));
 EXTERN LiteralEntry *	TclLookupLiteralEntry _ANSI_ARGS_((
@@ -849,9 +849,9 @@ EXTERN void		TclVerifyLocalLiteralTable _ANSI_ARGS_((
  * byte stored at the lowest address.
  * The ANSI C "prototypes" for these macros are:
  *
- * EXTERN void	TclEmitInstInt1 _ANSI_ARGS_((unsigned char op, int i, 
+ * EXTERN void	TclEmitInstInt1 _ANSI_ARGS_((unsigned char op, int i,
  *		    CompileEnv *envPtr));
- * EXTERN void	TclEmitInstInt4 _ANSI_ARGS_((unsigned char op, int i, 
+ * EXTERN void	TclEmitInstInt4 _ANSI_ARGS_((unsigned char op, int i,
  *		    CompileEnv *envPtr));
  */
 
@@ -875,7 +875,7 @@ EXTERN void		TclVerifyLocalLiteralTable _ANSI_ARGS_((
         (unsigned char) ((unsigned int) (i) >>  8); \
     *(envPtr)->codeNext++ = \
         (unsigned char) ((unsigned int) (i)      )
-    
+
 /*
  * Macro to push a Tcl object onto the Tcl evaluation stack. It emits the
  * object's one or four byte array index into the CompileEnv's code
@@ -900,10 +900,10 @@ EXTERN void		TclVerifyLocalLiteralTable _ANSI_ARGS_((
  * EXTERN void	TclStoreInt1AtPtr _ANSI_ARGS_((int i, unsigned char *p));
  * EXTERN void	TclStoreInt4AtPtr _ANSI_ARGS_((int i, unsigned char *p));
  */
-    
+
 #define TclStoreInt1AtPtr(i, p) \
     *(p)   = (unsigned char) ((unsigned int) (i))
-    
+
 #define TclStoreInt4AtPtr(i, p) \
     *(p)   = (unsigned char) ((unsigned int) (i) >> 24); \
     *(p+1) = (unsigned char) ((unsigned int) (i) >> 16); \
@@ -928,7 +928,7 @@ EXTERN void		TclVerifyLocalLiteralTable _ANSI_ARGS_((
 #define TclUpdateInstInt4AtPc(op, i, pc) \
     *(pc) = (unsigned char) (op); \
     TclStoreInt4AtPtr((i), ((pc)+1))
-    
+
 /*
  * Macros to get a signed integer (GET_INT{1,2}) or an unsigned int
  * (GET_UINT{1,2}) from a pointer. There are two variants for each

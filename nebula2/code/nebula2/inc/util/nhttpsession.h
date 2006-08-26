@@ -12,7 +12,7 @@
 
     A simple object for communicating with HTTP servers. Builds on
     top of the Win32 internet functions.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -60,7 +60,7 @@ public:
     const nString& GetError() const;
     /// get the last cookie string
     const nString& GetCookie() const;
-    
+
 private:
     /// set error string
     void SetError(const nString& e);

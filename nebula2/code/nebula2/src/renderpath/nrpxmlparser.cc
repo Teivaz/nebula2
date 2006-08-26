@@ -10,6 +10,7 @@
 #include "renderpath/nrpphase.h"
 #include "renderpath/nrpsequence.h"
 #include "gfx2/ngfxserver2.h"
+#include "util/nstream.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -38,7 +39,7 @@ nRpXmlParser::OpenXml()
     n_assert(this->renderPath);
     n_assert(0 == this->xmlDocument);
 
-    nString mangledPath = nFileServer2::Instance()->ManglePath(this->renderPath->GetFilename().Get());
+    this->mangledPath = nFileServer2::Instance()->ManglePath(this->renderPath->GetFilename().Get());
     this->xmlDocument = n_new(TiXmlDocument);
     if (this->xmlDocument->LoadFile(mangledPath.Get()))
     {
@@ -85,9 +86,9 @@ nRpXmlParser::ParseXml()
     TiXmlElement* child;
     for (child = elmRenderPath->FirstChildElement(); child; child = child->NextSiblingElement())
     {
-        if (child->Value() == nString("Shader"))
+        if (child->Value() == nString("Shaders"))
         {
-            this->ParseShader(child, renderPath);
+            this->ParseShaders();
         }
         else if (child->Value() == nString("RenderTarget"))
         {
@@ -129,6 +130,46 @@ nRpXmlParser::ParseShader(TiXmlElement* elm, nRenderPath2* renderPath)
     newShader.SetName(elm->Attribute("name"));
     newShader.SetFilename(elm->Attribute("file"));
     renderPath->AddShader(newShader);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nRpXmlParser::ParseShaders()
+{
+    // setup the xml stream object
+    nStream newXmlStream;
+	n_assert(this->mangledPath.Get());
+    newXmlStream.SetFilename(this->mangledPath);
+	if(!newXmlStream.Open(nStream::Read))
+    {
+        n_error(nString("Failed to open " + this->mangledPath + "\n").Get());
+    }
+	else
+	{
+		newXmlStream.SetToNode("/RenderPath/Shaders");
+	}
+
+	newXmlStream.SetToFirstChild();
+    do
+    {
+		if(newXmlStream.HasAttr("name") && newXmlStream.HasAttr("file"))
+		{
+			nRpShader newShader;
+			nString name = newXmlStream.GetString("name");
+			nString file = newXmlStream.GetString("file");
+
+			newShader.SetName(name);
+			newShader.SetFilename(file);
+			renderPath->AddShader(newShader);
+		}
+		else
+		{
+			break;
+		}
+    }
+    while(newXmlStream.SetToNextChild());
 }
 
 //------------------------------------------------------------------------------
@@ -260,14 +301,18 @@ nRpXmlParser::ParsePass(TiXmlElement* elm, nRpSection* section)
     newPass.SetName(elm->Attribute("name"));
     newPass.SetShaderAlias(elm->Attribute("shader"));
     nString renderTargetName("renderTarget");
-    int i = 0;     
+    int i = 0;
     while (this->HasAttr(elm, renderTargetName.Get()))
-    { 
+    {
         newPass.SetRenderTargetName(i, elm->Attribute(renderTargetName.Get()));
         renderTargetName.Set("renderTarget");
-        renderTargetName.AppendInt(++i);        
+        renderTargetName.AppendInt(++i);
     }
-    
+
+    if (this->HasAttr(elm, "stats"))
+    {
+        newPass.SetStatsEnabled(this->GetBoolAttr(elm, "stats", true));
+    }
     int clearFlags = 0;
     if (this->HasAttr(elm, "clearColor"))
     {
@@ -537,8 +582,8 @@ nRpXmlParser::ParseSequence(TiXmlElement* elm, nRpPhase* phase)
 
 
 
-    
 
 
 
-    
+
+

@@ -5,7 +5,7 @@
     @class nGuiTextButton
     @ingroup Gui
     @brief A gui button which contains a label text.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gui/nguitextlabel.h"

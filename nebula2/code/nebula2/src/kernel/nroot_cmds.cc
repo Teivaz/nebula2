@@ -36,12 +36,12 @@ static void n_gettreesize(void*, nCmd*);
 
     @classinfo
     nroot is the superclass of all higher level NOH-dependent Nebula classes
-    and defines this basic behaviour and properties for all 
+    and defines this basic behaviour and properties for all
     nroot derived classes:
     - linkage into hierarchical name space of objects
     - runtime type information (through nobject)
     - object persistency
-    - language independent scripting interface 
+    - language independent scripting interface
 */
 void n_initcmds(nClass *cl)
 {
@@ -83,7 +83,7 @@ void n_initcmds(nClass *cl)
 static void n_save(void *o, nCmd *cmd)
 {
     nRoot *self = (nRoot *) o;
-    cmd->Out()->SetB(self->Save());                    
+    cmd->Out()->SetB(self->Save());
 }
 
 //-------------------------------------------------------------------
@@ -184,7 +184,7 @@ static void n_getsucc(void *o, nCmd *cmd)
 
     @info
     Return full pathname of previous object in the same
-    hierarchy level, zero if no previous object exists. 
+    hierarchy level, zero if no previous object exists.
 */
 static void n_getpred(void *o, nCmd *cmd)
 {
@@ -306,7 +306,7 @@ static void n_getfullname(void *o, nCmd *cmd)
 
     @info
     Return the shortest relative path leading from this object
-    to the given object. 
+    to the given object.
 */
 static void n_getrelpath(void *o, nCmd *cmd)
 {

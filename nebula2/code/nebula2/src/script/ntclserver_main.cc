@@ -74,7 +74,7 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
     n_assert(interp);
 
 #ifndef __MICROTCL__
-    if (isStandAlone) 
+    if (isStandAlone)
     {
         // initialize tcl_library variable
         char buf[N_MAXPATH];
@@ -86,9 +86,9 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
         #endif
 
         // FIXME: strangeness... if the following 'puts' block does not
-        // come before setting the tcl library, and Nebula has been started 
+        // come before setting the tcl library, and Nebula has been started
         // from nlaunch Tcl_Init() won't find the init.tcl script... nsh works ok.
-        // also, puts is only overriden in standalone mode, since 
+        // also, puts is only overriden in standalone mode, since
         // Tcl debuggers (at least the TclPro debugger) don't like it when puts
         // is modified
         Tcl_EvalEx(this->interp,"rename puts tcl_puts",-1, TCL_EVAL_DIRECT);
@@ -96,7 +96,7 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
 
         n_printf("Setting tcl_library to '%s'\n",buf);
         Tcl_SetVar(this->interp,"tcl_library",buf,0);
-        Tcl_Init(this->interp);    
+        Tcl_Init(this->interp);
     }
 
     Tcl_EvalEx(this->interp,"rename unknown tcl_unknown",-1,TCL_EVAL_DIRECT);
@@ -124,7 +124,7 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
 /**
     Unlink from tcl interpreter if running as extension.
 */
-void 
+void
 nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /*isStandAlone*/)
 {
     n_assert(interp);
@@ -149,7 +149,7 @@ nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /*isStandAlone*/)
     {
         Tcl_DeleteCommand(this->interp,"puts");
         Tcl_EvalEx(this->interp, "rename tcl_puts puts", -1, TCL_EVAL_DIRECT);
-    }    
+    }
     Tcl_EvalEx(this->interp, "rename tcl_unknown unknown", -1, TCL_EVAL_DIRECT);
 #endif
 }
@@ -162,7 +162,7 @@ nTclServer::UnlinkFromInterp(Tcl_Interp *interp, bool /*isStandAlone*/)
     Tcl interpreter.
 */
 #ifndef __MICROTCL__
-void 
+void
 nTclServer::InitAsExtension(Tcl_Interp *extInterp)
 {
     n_assert(extInterp);
@@ -172,7 +172,7 @@ nTclServer::InitAsExtension(Tcl_Interp *extInterp)
     this->UnlinkFromInterp(this->interp, this->isStandAloneTcl);
 
     // if we created the previous interpreter, kill it
-    if (this->isStandAloneTcl) 
+    if (this->isStandAloneTcl)
     {
         Tcl_DeleteInterp(this->interp);
         this->interp = NULL;
@@ -188,11 +188,11 @@ nTclServer::InitAsExtension(Tcl_Interp *extInterp)
 //------------------------------------------------------------------------------
 /**
     Begin writing a persistent object.
-    
+
      - 27-Feb-04   cubejk  check for already existing file and delete before
                            creating the new
 */
-nFile* 
+nFile*
 nTclServer::BeginWrite(const char* filename, nObject* obj)
 {
     n_assert(filename);
@@ -231,14 +231,14 @@ nTclServer::BeginWrite(const char* filename, nObject* obj)
 /**
     Finish writing a persistent object.
 */
-bool 
+bool
 nTclServer::EndWrite(nFile* file)
 {
     n_assert(file);
- 
+
     file->PutS("# ---\n");
     file->PutS("# Eof\n");
-    
+
     file->Close();
     file->Release();
     return (this->indentLevel == 0);
@@ -268,7 +268,7 @@ nTclServer::WriteSelectStatement(nFile* file, nRoot* o, nRoot* owner)
 {
     char indentBuf[MAXINDENT];
 
-    switch (this->GetSelectMethod()) 
+    switch (this->GetSelectMethod())
     {
         case SELCOMMAND:
             {
@@ -292,7 +292,7 @@ nTclServer::WriteSelectStatement(nFile* file, nRoot* o, nRoot* owner)
 /**
     Write start of persistent object with default constructor.
 */
-bool 
+bool
 nTclServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
 {
     n_assert(file);
@@ -322,7 +322,7 @@ nTclServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
     Write start of persistent object with custom constructor
     defined by command.
 */
-bool 
+bool
 nTclServer::WriteBeginNewObjectCmd(nFile* file, nRoot *o, nRoot *owner, nCmd *cmd)
 {
     n_assert(file);
@@ -342,7 +342,7 @@ nTclServer::WriteBeginNewObjectCmd(nFile* file, nRoot *o, nRoot *owner, nCmd *cm
     Write start of persisting object without constructor, only
     write the select statement.
 */
-bool 
+bool
 nTclServer::WriteBeginSelObject(nFile* file, nRoot *o, nRoot *owner)
 {
     n_assert(file);
@@ -356,7 +356,7 @@ nTclServer::WriteBeginSelObject(nFile* file, nRoot *o, nRoot *owner)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nTclServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
 {
     n_assert(file);
@@ -399,7 +399,7 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
     cmd->Rewind();
     int numArgs = cmd->GetNumInArgs();
     int i;
-    for (i = 0; i < numArgs; i++) 
+    for (i = 0; i < numArgs; i++)
     {
         nString str(" ");
         arg = cmd->In();
@@ -434,11 +434,11 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
             case nArg::Object:
                 {
                     nRoot *o = (nRoot *) arg->GetO();
-                    if (o) 
+                    if (o)
                     {
                         str.Append(o->GetFullName());
-                    } 
-                    else 
+                    }
+                    else
                     {
                         str.Append("null");
                     }
@@ -471,7 +471,7 @@ nTclServer::Prompt()
 /**
     Evaluate a Tcl statement.
 */
-bool 
+bool
 nTclServer::Run(const char *cmdStr, nString& result)
 {
     result.Clear();
@@ -511,7 +511,7 @@ nTclServer::RunFunction(const char *functionName, nString& result)
 /**
     Evaluate a Tcl script.
 */
-bool 
+bool
 nTclServer::RunScript(const char *filename, nString& result)
 {
     result.Clear();
@@ -526,7 +526,7 @@ nTclServer::RunScript(const char *filename, nString& result)
     // standard tcl implementations need a mangled path
     char buf[N_MAXPATH];
     kernelServer->GetFileServer()->ManglePath(filename,buf,sizeof(buf));
-    
+
     this->printError = true;
     int errCode = Tcl_EvalFile(this->interp, buf);
     this->printError = false;
@@ -534,7 +534,7 @@ nTclServer::RunScript(const char *filename, nString& result)
 
     Tcl_Obj *res = Tcl_GetObjResult(interp);
     result = Tcl_GetString(res);
-    if (errCode == TCL_ERROR) 
+    if (errCode == TCL_ERROR)
     {
         if (this->GetFailOnError())
         {
@@ -545,18 +545,18 @@ nTclServer::RunScript(const char *filename, nString& result)
             n_printf("*** Tcl error '%s' in file %s line %d.\n", result.Get(), filename, this->interp->errorLine);
         }
         return false;
-    }             
+    }
     return true;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Handle Tcl events. 
-    
+    Handle Tcl events.
+
     NOTE:
     The MicroTcl implementation on the xbox doesnt implement the event system.
 */
-bool 
+bool
 nTclServer::Trigger(void)
 {
 #ifndef __MICROTCL__
@@ -570,7 +570,7 @@ nTclServer::Trigger(void)
 /**
     Get the pointer of the tcl-interpreter.
 */
-Tcl_Interp* 
+Tcl_Interp*
 nTclServer::GetInterp()
 {
     return this->interp;

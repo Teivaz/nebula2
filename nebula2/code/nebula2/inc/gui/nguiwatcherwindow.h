@@ -5,7 +5,7 @@
     @class nGuiWatcherWindow
     @ingroup Gui
     @brief A debug watcher window.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

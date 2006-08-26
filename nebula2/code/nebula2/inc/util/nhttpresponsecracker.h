@@ -11,11 +11,11 @@
     @ingroup Http
 
     Crack a http server response string of the form
-    
+
     key=value\n
     key=value\n
     key=...
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"

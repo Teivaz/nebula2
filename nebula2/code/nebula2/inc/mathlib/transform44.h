@@ -6,7 +6,7 @@
     @ingroup NebulaMathDataTypes
 
     A 4x4 matrix which is described by translation, rotation and scale.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/matrix.h"

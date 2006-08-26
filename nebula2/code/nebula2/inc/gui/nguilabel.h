@@ -5,7 +5,7 @@
     @class nGuiLabel
     @ingroup Gui
     @brief A widget which is a graphical label.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gui/nguiwidget.h"

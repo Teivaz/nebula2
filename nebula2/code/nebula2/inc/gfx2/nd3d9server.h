@@ -39,7 +39,7 @@
 
 #if N_D3D9_USENVPERFHUD
 #define N_D3D9_DEVICETYPE D3DDEVTYPE_REF
-#define N_D3D9_ADAPTER (D3DADAPTER_DEFAULT + 1)
+#define N_D3D9_ADAPTER (nD3D9Server::Instance()->d3d9->GetAdapterCount() - 1)
 #else
 #define N_D3D9_DEVICETYPE D3DDEVTYPE_HAL
 #define N_D3D9_ADAPTER D3DADAPTER_DEFAULT
@@ -56,6 +56,8 @@ public:
     nD3D9Server();
     /// destructor
     virtual ~nD3D9Server();
+    /// get instance pointer
+    static nD3D9Server* Instance();
 
     /// create a shared mesh object
     virtual nMesh2* NewMesh(const char* rsrcName);
@@ -103,7 +105,7 @@ public:
 
     /// set a new render target texture
     virtual void SetRenderTarget(int index, nTexture2* t);
-    
+
     /// start rendering the current frame
     virtual bool BeginFrame();
     /// start rendering to current render target
@@ -142,15 +144,13 @@ public:
 
     /// trigger the window system message pump
     virtual bool Trigger();
-    /// draw 2d text (will be buffered until end of frame)
-    virtual void Text(const char* text, const vector4& color, float x, float y);
-    /// draw the text buffer
-    virtual void DrawTextBuffer();
 
     /// draw text (immediately)
-    virtual void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
+    virtual void DrawText(const nString& text, const vector4& color, const rectangle& rect, uint flags, bool immediate=true);
     /// get text extents
-    virtual vector2 GetTextExtent(const char* text);
+    virtual vector2 GetTextExtent(const nString& text);
+    /// draw accumulated text buffer
+    virtual void DrawTextBuffer();
 
     /// enter dialog box mode (display mode must have DialogBoxMode enabled!)
     virtual void EnterDialogBoxMode();
@@ -158,7 +158,7 @@ public:
     virtual void LeaveDialogBoxMode();
 
     /// save a screen shot
-    virtual bool SaveScreenshot(const char*);
+    virtual bool SaveScreenshot(const char* fileName, nTexture2::FileFormat fileFormat);
 
     /// begin rendering lines
     virtual void BeginLines();
@@ -254,12 +254,16 @@ private:
     vector2 GetCurrentRenderTargetSize() const;
     /// check for multisample AA compatibility
     D3DMULTISAMPLE_TYPE CheckMultiSampleType(D3DFORMAT backbufferFormat, D3DFORMAT depthFormat, bool windowed);
+    /// draw text immediately
+    void DrawTextImmediate(nFont2* font, const nString& text, const vector4& color, const rectangle& rect, uint flags);
     /// add nEnvs describing display modes (for all adapters) to the NOH
     void CreateDisplayModeEnvVars();
 
     friend class nD3D9Mesh;
     friend class nD3D9Texture;
     friend class nD3D9Shader;
+
+    static nD3D9Server* Singleton;
 
     nD3D9WindowHandler windowHandler; ///< a Win32 window handler object
 
@@ -268,17 +272,21 @@ private:
     D3DDISPLAYMODE d3dDisplayMode;  ///< the current d3d display mode
     FeatureSet featureSet;
 
-    class TextNode : public nNode
+    class TextElement
     {
     public:
+        /// default constructor
+        TextElement();
         /// constructor
-        TextNode(const char* str, const vector4& clr, float x, float y);
-        nString string;
+        TextElement(nFont2* f, const nString& t, const vector4& c, const rectangle& r, uint flg);
+
+        nRef<nFont2> refFont;
+        nString text;
         vector4 color;
-        float xpos;
-        float ypos;
+        rectangle rect;
+        uint flags;
     };
-    nList textNodeList;
+    nArray<TextElement> textElements;
     ID3DXSprite* d3dSprite;
     nRef<nFont2> refDefaultFont;
 
@@ -333,11 +341,33 @@ public:
 /**
 */
 inline
-nD3D9Server::TextNode::TextNode(const char* str, const vector4& clr, float x, float y) :
-    string(str),
-    color(clr),
-    xpos(x),
-    ypos(y)
+nD3D9Server*
+nD3D9Server::Instance()
+{
+    n_assert(0 != Singleton);
+    return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nD3D9Server::TextElement::TextElement() :
+    flags(0)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nD3D9Server::TextElement::TextElement(nFont2* f, const nString& t, const vector4& c, const rectangle& r, uint flg) :
+    refFont(f),
+    text(t),
+    color(c),
+    rect(r),
+    flags(flg)
 {
     // empty
 }
@@ -352,33 +382,33 @@ nD3D9Server::GetD3DPrimTypeAndNumIndexed(PrimitiveType primType, D3DPRIMITIVETYP
     int d3dNumPrimitives = 0;
     switch (primType)
     {
-        case PointList:     
+        case PointList:
             d3dPrimType = D3DPT_POINTLIST;
             d3dNumPrimitives = this->indexRangeNum;
             break;
 
-        case LineList:      
-            d3dPrimType = D3DPT_LINELIST; 
-            d3dNumPrimitives = this->indexRangeNum / 2;            
+        case LineList:
+            d3dPrimType = D3DPT_LINELIST;
+            d3dNumPrimitives = this->indexRangeNum / 2;
             break;
 
-        case LineStrip:     
-            d3dPrimType = D3DPT_LINESTRIP; 
-            d3dNumPrimitives = this->indexRangeNum - 1;            
+        case LineStrip:
+            d3dPrimType = D3DPT_LINESTRIP;
+            d3dNumPrimitives = this->indexRangeNum - 1;
             break;
 
-        case TriangleList:  
-            d3dPrimType = D3DPT_TRIANGLELIST; 
-            d3dNumPrimitives = this->indexRangeNum / 3;            
+        case TriangleList:
+            d3dPrimType = D3DPT_TRIANGLELIST;
+            d3dNumPrimitives = this->indexRangeNum / 3;
             break;
 
-        case TriangleStrip: 
-            d3dPrimType = D3DPT_TRIANGLESTRIP; 
+        case TriangleStrip:
+            d3dPrimType = D3DPT_TRIANGLESTRIP;
             d3dNumPrimitives = this->indexRangeNum - 2;
             break;
 
-        case TriangleFan:   
-            d3dPrimType = D3DPT_TRIANGLEFAN; 
+        case TriangleFan:
+            d3dPrimType = D3DPT_TRIANGLEFAN;
             d3dNumPrimitives = this->indexRangeNum - 2;
             break;
     }
@@ -395,33 +425,33 @@ nD3D9Server::GetD3DPrimTypeAndNum(PrimitiveType primType, D3DPRIMITIVETYPE& d3dP
     int d3dNumPrimitives = 0;
     switch (primType)
     {
-        case PointList:     
+        case PointList:
             d3dPrimType = D3DPT_POINTLIST;
             d3dNumPrimitives = this->vertexRangeNum;
             break;
 
-        case LineList:      
-            d3dPrimType = D3DPT_LINELIST; 
-            d3dNumPrimitives = this->vertexRangeNum / 2;            
+        case LineList:
+            d3dPrimType = D3DPT_LINELIST;
+            d3dNumPrimitives = this->vertexRangeNum / 2;
             break;
 
-        case LineStrip:     
-            d3dPrimType = D3DPT_LINESTRIP; 
-            d3dNumPrimitives = this->vertexRangeNum - 1;            
+        case LineStrip:
+            d3dPrimType = D3DPT_LINESTRIP;
+            d3dNumPrimitives = this->vertexRangeNum - 1;
             break;
 
-        case TriangleList:  
-            d3dPrimType = D3DPT_TRIANGLELIST; 
-            d3dNumPrimitives = this->vertexRangeNum / 3;            
+        case TriangleList:
+            d3dPrimType = D3DPT_TRIANGLELIST;
+            d3dNumPrimitives = this->vertexRangeNum / 3;
             break;
 
-        case TriangleStrip: 
-            d3dPrimType = D3DPT_TRIANGLESTRIP; 
+        case TriangleStrip:
+            d3dPrimType = D3DPT_TRIANGLESTRIP;
             d3dNumPrimitives = this->vertexRangeNum - 2;
             break;
 
-        case TriangleFan:   
-            d3dPrimType = D3DPT_TRIANGLEFAN; 
+        case TriangleFan:
+            d3dPrimType = D3DPT_TRIANGLEFAN;
             d3dNumPrimitives = this->vertexRangeNum - 2;
             break;
     }

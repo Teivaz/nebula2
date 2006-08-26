@@ -134,7 +134,7 @@ nBucket<TYPE, NUMBUCKETS>::Size() const
 {
     return NUMBUCKETS;
 }
- 
+
 //------------------------------------------------------------------------------
 #endif
 

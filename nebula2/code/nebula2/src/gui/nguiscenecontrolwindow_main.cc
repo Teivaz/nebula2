@@ -45,7 +45,7 @@ nGuiSceneControlWindow::nGuiSceneControlWindow():
 */
 nGuiSceneControlWindow::~nGuiSceneControlWindow()
 {
-    // make sure everything gets cleared    
+    // make sure everything gets cleared
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ nGuiSceneControlWindow::OnShow()
         nClass* nCharacter3NodeClass = this->kernelServer->FindClass("ncharacter3node");
 
         nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
-        nCharacter3Node* firstFoundNode = (nCharacter3Node*)this->FindFirstInstance(startNode, nCharacter3NodeClass);        
+        nCharacter3Node* firstFoundNode = (nCharacter3Node*)this->FindFirstInstance(startNode, nCharacter3NodeClass);
 
         if(firstFoundNode)
         {
@@ -131,7 +131,7 @@ nGuiSceneControlWindow::OnShow()
         // Find nSkinAnimator Class
         nClass* skinAnimatorClass = this->kernelServer->FindClass("nskinanimator");
         nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
-        this->refSkinAnimator = (nSkinAnimator*)this->FindFirstInstance(startNode, skinAnimatorClass);        
+        this->refSkinAnimator = (nSkinAnimator*)this->FindFirstInstance(startNode, skinAnimatorClass);
 
         if(this->refSkinAnimator.isvalid())
         {
@@ -153,7 +153,7 @@ nGuiSceneControlWindow::OnShow()
     const float minHeight = -90;
     const float maxHeight = 90;
     const float border = 0.005f;
-    
+
     nGuiHoriSliderGroup* slider;
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LightHori");
     slider->SetLeftText("Light Hori");
@@ -169,8 +169,8 @@ nGuiSceneControlWindow::OnShow()
     layout->AttachForm(slider, nGuiFormLayout::Left, border);
     layout->AttachForm(slider, nGuiFormLayout::Right, border);
     slider->OnShow();
-    this->refLightDirection = slider;         
-    
+    this->refLightDirection = slider;
+
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "LightVert");
     slider->SetLeftText("Light Vert");
     slider->SetRightText("%d");
@@ -250,15 +250,15 @@ nGuiSceneControlWindow::OnShow()
         textLabel->SetMinSize(textMinSize);
         textLabel->SetMaxSize(textMaxSize);
         layout->AttachWidget(textLabel, nGuiFormLayout::Top, this->refAmbientSlider, 0.025f);
-        layout->AttachForm(textLabel, nGuiFormLayout::Left, border); 
-        layout->AttachPos(textLabel, nGuiFormLayout::Right, 0.45f);        
+        layout->AttachForm(textLabel, nGuiFormLayout::Left, border);
+        layout->AttachPos(textLabel, nGuiFormLayout::Right, 0.45f);
         layout->AttachForm(textLabel, nGuiFormLayout::Bottom, border);
         textLabel->OnShow();
-        this->refStatesLabel = textLabel;     
+        this->refStatesLabel = textLabel;
 
         // create text view field for nAnimStates
         nGuiTextView* textView = (nGuiTextView*) kernelServer->New("nguitextview", "AnimStates");
-        n_assert(textView);        
+        n_assert(textView);
         textView->SetSelectionEnabled(true);
         textView->SetHighlightBrush("textentry_h");
         textView->SetDefaultBrush("list_background");
@@ -274,7 +274,7 @@ nGuiSceneControlWindow::OnShow()
         n_assert(textLabel);
         textLabel->SetText("WeightChannels:");
         textLabel->SetFont("GuiSmall");
-        textLabel->SetAlignment(nGuiTextLabel::Left);        
+        textLabel->SetAlignment(nGuiTextLabel::Left);
         textLabel->SetColor(vector4(0.0f, 0.0f, 0.0f, 1.0f));
         textLabel->SetMinSize(textMinSize);
         textLabel->SetMaxSize(textMaxSize);
@@ -285,7 +285,7 @@ nGuiSceneControlWindow::OnShow()
         textLabel->OnShow();
         this->refChnLabel = textLabel;
         // Create Channel Sliders
-        this->UpdateChnSlider();   
+        this->UpdateChnSlider();
         windowRect.set(vector2(0.0f, 0.0f), vector2(0.4f, 0.5f));
     }
 /**/
@@ -296,7 +296,7 @@ nGuiSceneControlWindow::OnShow()
 
         // create text view field for skins
         nGuiTextView* textView = (nGuiTextView*) kernelServer->New("nguitextview", "CharacterSkins");
-        n_assert(textView);        
+        n_assert(textView);
         textView->SetSelectionEnabled(true);
         textView->SetHighlightBrush("textentry_h");
         textView->SetDefaultBrush("list_background");
@@ -310,7 +310,7 @@ nGuiSceneControlWindow::OnShow()
 
         // create text view field for variations
         textView = (nGuiTextView*) kernelServer->New("nguitextview", "CharacterVariations");
-        n_assert(textView);        
+        n_assert(textView);
         textView->SetSelectionEnabled(true);
         textView->SetHighlightBrush("textentry_h");
         textView->SetDefaultBrush("list_background");
@@ -324,7 +324,7 @@ nGuiSceneControlWindow::OnShow()
 
         // create text view field for animations
         textView = (nGuiTextView*) kernelServer->New("nguitextview", "CharacterAnimations");
-        n_assert(textView);        
+        n_assert(textView);
         textView->SetSelectionEnabled(true);
         textView->SetHighlightBrush("textentry_h");
         textView->SetDefaultBrush("list_background");
@@ -342,7 +342,7 @@ nGuiSceneControlWindow::OnShow()
 
     kernelServer->PopCwd();
 
-    // set new window rect   
+    // set new window rect
     this->SetRect(windowRect);
 
     // update all layouts
@@ -413,7 +413,7 @@ nGuiSceneControlWindow::OnHide()
     {
         this->refSkyEditor->Release();
     }
-    
+
     nGuiClientWindow::OnHide();
 }
 
@@ -422,19 +422,19 @@ nGuiSceneControlWindow::OnHide()
 */
 void
 nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
-{   
+{
     if (event.GetType() == nGuiEvent::SliderChanged)
     {
-        if (this->refLightDirection.isvalid() && 
+        if (this->refLightDirection.isvalid() &&
             this->refLightHeight.isvalid() &&
-            this->refDiffuseSlider.isvalid() && 
+            this->refDiffuseSlider.isvalid() &&
             this->refSpecularSlider.isvalid() &&
             this->refAmbientSlider.isvalid())
-        {                
+        {
             if ((event.GetWidget() == this->refLightDirection) ||  (event.GetWidget() == this->refLightHeight))
             {
-                this->UpdateLightPosition();               
-            }    
+                this->UpdateLightPosition();
+            }
             if (event.GetWidget() == this->refDiffuseSlider)
             {
                 this->diffuseColor = this->refDiffuseSlider->GetColor();
@@ -473,19 +473,19 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
                         nString rightText;
                         rightText.SetFloat((((float)slider->GetValue())/100.0f));
                         rightText.TerminateAtIndex(4);
-                        slider->SetRightText(rightText.Get()); 
+                        slider->SetRightText(rightText.Get());
                         nVariableServer::Instance()->SetFloatVariable(this->chnHandles.At(countChnSlider),(float)slider->GetValue()/100.0f);
                     }
                 }
             }
         }
     }
-    
+
     // handle animation state change
     if (event.GetType() == nGuiEvent::SelectionChanged)
     {
-        if (this->refAnimStates.isvalid() && 
-            this->refSkinAnimator.isvalid() && 
+        if (this->refAnimStates.isvalid() &&
+            this->refSkinAnimator.isvalid() &&
             (event.GetWidget() == this->refAnimStates))
         {
             nVariable::Handle varHandle;
@@ -494,11 +494,11 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
             this->UpdateChnSlider();
         }
     }
-	
+
     if ( (this->refCharacter3Skins.isvalid()) &&
          (this->character3SetPtr))
     {
-        if( (event.GetType() == nGuiEvent::SelectionDblClicked) && 
+        if( (event.GetType() == nGuiEvent::SelectionDblClicked) &&
             (event.GetWidget() == this->refCharacter3Skins)
             )
 	    {
@@ -511,7 +511,7 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
             };
 	    }
 
-        if( (event.GetType() == nGuiEvent::SelectionChanged) && 
+        if( (event.GetType() == nGuiEvent::SelectionChanged) &&
             (event.GetWidget() == this->refCharacter3Animations)
             )
 	    {
@@ -525,7 +525,7 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
             };
 	    }
 
-        if( (event.GetType() == nGuiEvent::SelectionChanged) && 
+        if( (event.GetType() == nGuiEvent::SelectionChanged) &&
             (event.GetWidget() == this->refCharacter3Variations)
             )
 	    {
@@ -534,7 +534,7 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
             int selection = this->refCharacter3Variations->GetSelectionIndex();
             if( (selection >= 0) && (selection <= this->character3SetPtr->GetNumAvailableVariations()) )
             {
-                selection--; 
+                selection--;
                 this->character3SetPtr->SetCurrentVariationIndexed(selection);
                 n_printf("Switching to variation %i\n",selection);
             };
@@ -544,13 +544,13 @@ nGuiSceneControlWindow::OnEvent(const nGuiEvent& event)
     {
         this->refSkyEditor->OnEvent(event);
     }
-    
+
     nGuiClientWindow::OnEvent(event);
 }
 
 //------------------------------------------------------------------------------
 /**
-    called per frame when parent widget is visible   
+    called per frame when parent widget is visible
 */
 void
 nGuiSceneControlWindow::OnFrame()
@@ -558,7 +558,7 @@ nGuiSceneControlWindow::OnFrame()
     // Build up textview for animstate selection
     if (this->refSkinAnimator.isvalid())
     {
-        this->refAnimStates->BeginAppend();         
+        this->refAnimStates->BeginAppend();
         this->numAnimStates = this->refSkinAnimator->GetNumStates();
         for (int countAnimStates = 0; countAnimStates < this->numAnimStates; countAnimStates++)
         {
@@ -574,15 +574,15 @@ nGuiSceneControlWindow::OnFrame()
         {
             int curState = nVariableServer::Instance()->GetIntVariable(varHandle);
             this->refAnimStates->SetSelectionIndex(curState);
-        }        
+        }
      }
 
     // Build up textview for animstate selection
     if (this->refCharacter3Node.isvalid())
     {
-        this->refCharacter3Skins->BeginAppend();         
+        this->refCharacter3Skins->BeginAppend();
         nArray<nString> names = this->character3SetPtr->GetNamesOfLoadedSkins();
-        
+
         int i;
         for( i = 0; i < names.Size(); i++)
         {
@@ -598,19 +598,19 @@ nGuiSceneControlWindow::OnFrame()
         this->refCharacter3Skins->EndAppend();
 
 
-        this->refCharacter3Animations->BeginAppend();         
+        this->refCharacter3Animations->BeginAppend();
         names = this->character3SetPtr->GetNamesOfLoadedAnimations();
-        
+
         for( i = 0; i < names.Size(); i++)
         {
             this->refCharacter3Animations->AppendLine(names[i].Get());
         }
         this->refCharacter3Animations->EndAppend();
-    
 
-        this->refCharacter3Variations->BeginAppend();         
+
+        this->refCharacter3Variations->BeginAppend();
         names = this->character3SetPtr->GetNamesOfLoadedVariations();
-        
+
         this->refCharacter3Variations->AppendLine("none");
         for( i = 0; i < names.Size(); i++)
         {
@@ -620,13 +620,13 @@ nGuiSceneControlWindow::OnFrame()
     }
 
 
-    nGuiClientWindow::OnFrame();   
+    nGuiClientWindow::OnFrame();
 
-    // if nskinanimator is released because of loading a new non-animation scene, 
+    // if nskinanimator is released because of loading a new non-animation scene,
     // open a new sceneconrtrolwindow and close the old one
     if ((!this->refSkinAnimator.isvalid()) && (this->skinAnimatorLoaded))
     {
-        nGuiServer::Instance()->NewWindow("nguiscenecontrolwindow", true);        
+        nGuiServer::Instance()->NewWindow("nguiscenecontrolwindow", true);
         this->SetCloseRequested(true);
         this->skinAnimatorLoaded = false;
     }
@@ -647,12 +647,12 @@ nGuiSceneControlWindow::UpdateLightPosition()
 }
 //------------------------------------------------------------------------------
 /**
-    Recursively Find instance of nClass, used to search for lights, skin 
+    Recursively Find instance of nClass, used to search for lights, skin
     animators, etc...
 */
 nRoot*
 nGuiSceneControlWindow::FindFirstInstance(nRoot* node, nClass* classType)
-{ 
+{
     nRoot* resultNode = NULL;
     if (node == NULL)
     {
@@ -665,15 +665,15 @@ nGuiSceneControlWindow::FindFirstInstance(nRoot* node, nClass* classType)
             resultNode = node;
         }
         else
-        {       
+        {
             resultNode = FindFirstInstance(node->GetSucc(), classType);
             if (resultNode == NULL)
             {
                 resultNode = FindFirstInstance(node->GetHead(), classType);
-            }            
+            }
         }
     }
-    return resultNode;   
+    return resultNode;
 }
 
 //------------------------------------------------------------------------------
@@ -682,7 +682,7 @@ nGuiSceneControlWindow::FindFirstInstance(nRoot* node, nClass* classType)
 */
 void
 nGuiSceneControlWindow::UpdateChnSlider()
-{       
+{
     // Release old sliders before creating new one from the scratch
     for (int chnCount = 0; chnCount < this->refWeightChnListSlider.Size(); chnCount++)
     {
@@ -699,8 +699,8 @@ nGuiSceneControlWindow::UpdateChnSlider()
     const int knobSize = 60;
     const float border = 0.005f;
     const vector2 colorLabelSize(0.05f,0.02f);
-            
-    nAnimState animState;               
+
+    nAnimState animState;
     animState = this->refSkinAnimator->GetStateAt(this->refAnimStates->GetSelectionIndex());
     int numAnimClips = animState.GetNumClips();
     // Get all weight channels of current AnimState
@@ -708,7 +708,7 @@ nGuiSceneControlWindow::UpdateChnSlider()
     {
         nAnimClip& animClip = animState.GetClipAt(animClipCount);
         this->chnHandles.Append(animClip.GetWeightChannelHandle());
-    }        
+    }
 
     // create all sliders
     nGuiHoriSliderGroup* prevSlider;
@@ -718,12 +718,12 @@ nGuiSceneControlWindow::UpdateChnSlider()
         nGuiHoriSliderGroup* slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", chnName.Get());
         slider->SetLeftText(chnName.Get());
         slider->SetMinValue(0);
-        slider->SetMaxValue(100);  
+        slider->SetMaxValue(100);
         slider->SetValue(100);
         nString rightText;
         rightText.SetFloat(((float)slider->GetValue()/100.0f));
         rightText.TerminateAtIndex(4);
-        slider->SetRightText(rightText.Get());          
+        slider->SetRightText(rightText.Get());
         slider->SetKnobSize(float(knobSize));
         slider->SetLeftWidth(leftWidth);
         slider->SetRightWidth(rightWidth);
@@ -734,12 +734,12 @@ nGuiSceneControlWindow::UpdateChnSlider()
         else
         {
             layout->AttachWidget(slider, nGuiFormLayout::Top, prevSlider, border);
-        }  
-        layout->AttachWidget(slider, nGuiFormLayout::Left, this->refAnimStates, border);                
-        layout->AttachForm(slider, nGuiFormLayout::Right, border);                 
+        }
+        layout->AttachWidget(slider, nGuiFormLayout::Left, this->refAnimStates, border);
+        layout->AttachForm(slider, nGuiFormLayout::Right, border);
         slider->OnShow();
         prevSlider = slider;
-        refWeightChnListSlider.Append(slider);            
+        refWeightChnListSlider.Append(slider);
     }
     kernelServer->PopCwd();
 

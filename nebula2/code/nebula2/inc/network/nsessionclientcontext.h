@@ -9,7 +9,7 @@
     The session server object creates one nSessionClientContext object
     for each connected client. The session client context contains
     all information about the client for the server to know.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nroot.h"

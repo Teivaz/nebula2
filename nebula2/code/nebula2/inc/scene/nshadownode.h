@@ -7,7 +7,7 @@
 
     @brief A shadow node is 'visible' object that provide shadow to the scene.
 
-    It is derived from nTransformNode so it inherits transform information. 
+    It is derived from nTransformNode so it inherits transform information.
     It adds a simple shadows mesh geometry which can rendered through a
     nShadowCaster.
 

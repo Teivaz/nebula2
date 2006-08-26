@@ -40,7 +40,7 @@ void
 nDI8Server::Open()
 {
     nInputServer::Open();
-    
+
     if (!this->InitDirectInput())
     {
         n_error("nDI8Server: Could not initialize DirectInput8!\n");

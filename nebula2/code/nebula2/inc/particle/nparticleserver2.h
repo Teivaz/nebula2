@@ -8,7 +8,7 @@
     Particle subsystem server. Holds an array of all particles and all particle
     emitters in the world. Take care when updating them, the rendering is a
     function of the emitters.
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -27,7 +27,7 @@ private:
     typedef nArray<float> FloatRandomPool;
     typedef nArray<int> IntRandomPool;
 
-    enum 
+    enum
     {
         MaxParticles = 10000,       // maximum number of particles in the world
         FloatRandomCount = 65536,   // number of floats in the float random pool
@@ -158,12 +158,12 @@ vector3
 nParticleServer2::PseudoRandomVector3(int key)
 {
     // align to start of random normalized 3d vector
-    key *= 4;             
+    key *= 4;
     int k0 = key % (FloatRandomCount - 1);
     n_assert((k0 >= 0) && ((k0 + 2) < FloatRandomCount));
     return vector3(this->floatRandomPool[k0], this->floatRandomPool[k0+1], this->floatRandomPool[k0+2]);
 };
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

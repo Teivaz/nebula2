@@ -18,7 +18,7 @@ class nEnvelopeCurve
 {
 public:
     /// possible modulation functions
-    enum 
+    enum
     {
         Sine = 0,
         Cosine,
@@ -76,7 +76,7 @@ nEnvelopeCurve::nEnvelopeCurve() :
 /**
 */
 inline
-nEnvelopeCurve::nEnvelopeCurve(const float keyFrameValue0, 
+nEnvelopeCurve::nEnvelopeCurve(const float keyFrameValue0,
         const float keyFrameValue1, const float keyFrameValue2,
         const float keyFrameValue3, const float keyFramePos1,
         const float keyFramePos2, const float frequency,
@@ -135,26 +135,26 @@ void nEnvelopeCurve::SetParameters(const nEnvelopeCurve& src)
 */
 inline
 float nEnvelopeCurve::GetValue(float pos) const
-{   
+{
     pos = n_saturate(pos);
 
     float value;
     if (pos < this->keyFramePos1)
     {
-        value = this->keyFrameValues[0] + 
-            (this->keyFrameValues[1] - this->keyFrameValues[0]) * 
+        value = this->keyFrameValues[0] +
+            (this->keyFrameValues[1] - this->keyFrameValues[0]) *
             (pos / this->keyFramePos1);
     }
     else if (pos < this->keyFramePos2)
     {
-        value = this->keyFrameValues[1] + 
-            (this->keyFrameValues[2] - this->keyFrameValues[1]) * 
+        value = this->keyFrameValues[1] +
+            (this->keyFrameValues[2] - this->keyFrameValues[1]) *
             ((pos-this->keyFramePos1) / (this->keyFramePos2-this->keyFramePos1));
     }
     else
     {
-        value = this->keyFrameValues[2] + 
-            (this->keyFrameValues[3] - this->keyFrameValues[2]) * 
+        value = this->keyFrameValues[2] +
+            (this->keyFrameValues[3] - this->keyFrameValues[2]) *
             ((pos-this->keyFramePos2) / (1.0f-this->keyFramePos2));
     }
 

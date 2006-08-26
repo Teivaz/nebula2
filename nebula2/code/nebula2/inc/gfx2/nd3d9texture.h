@@ -34,19 +34,17 @@ public:
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
     /// save texture to file
-    virtual bool SaveTextureToFile(const nString &filename);
+    virtual bool SaveTextureToFile(const nString &filename, FileFormat fileFormat);
 
     /// filters mipmap levels of a texture.
     virtual void GenerateMipMaps();
-    /// convert nTexture2 format to D3D9FORMAT.
-    static D3DFORMAT FormatToD3DFormat(nTexture2::Format format);
 
 protected:
     /// load texture resource (create rendertarget if render target resource)
     virtual bool LoadResource();
     /// unload texture resource
     virtual void UnloadResource();
-    /// called when contained resource may become lost 
+    /// called when contained resource may become lost
     virtual void OnLost();
     /// called when contained resource may be restored
     virtual void OnRestored();
@@ -67,6 +65,10 @@ private:
     IDirect3DTexture9* GetTexture2D();
     /// verify pixelformat of rendertarget
     bool CheckRenderTargetFormat(IDirect3D9* d3d9, IDirect3DDevice9* d3d9Device, DWORD usage, D3DFORMAT pixelFormat);
+    /// convert file format to D3DX file format
+    static D3DXIMAGE_FILEFORMAT FileFormatToD3DX(FileFormat fileFormat);
+    /// convert nTexture2 format to D3D9FORMAT.
+    static D3DFORMAT FormatToD3DFormat(nTexture2::Format format);
 
     /// create a render target texture
     bool CreateRenderTarget();
@@ -84,7 +86,7 @@ private:
     bool LoadOGGFile();
 
     nAutoRef<nD3D9Server> refGfxServer;
-    
+
     IDirect3DBaseTexture9* baseTexture;
     IDirect3DTexture9* texture2D;
     IDirect3DCubeTexture9* textureCube;
@@ -140,4 +142,4 @@ nD3D9Texture::GetDepthStencil()
 
 //------------------------------------------------------------------------------
 #endif
- 
+

@@ -15,7 +15,7 @@
     networking, background jobs, event handling, etc - these
     operations are done by calling to the appropriate portions
     of Nebula.
- 
+
     MicroTCL does not need any external runtime environment files.
     It can be linked statically into the application and has a code
     size of about 160KB (vs. 660 KB @c tcl84.dll). Radon Labs derived
@@ -42,7 +42,7 @@
 
 //--------------------------------------------------------------------
 class nFileServer2;
-class nTclServer : public nScriptServer 
+class nTclServer : public nScriptServer
 {
 public:
     /// constructor
@@ -84,7 +84,7 @@ public:
     virtual void InitAsExtension(Tcl_Interp *);
 #endif
 
-private:    
+private:
     /// write a select object statement
     void WriteSelectStatement(nFile*, nRoot *, nRoot *);
     /// link to an existing Tcl interpreter (for Tcl extension stuff)

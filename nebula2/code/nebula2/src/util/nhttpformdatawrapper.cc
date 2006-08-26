@@ -45,7 +45,7 @@ nHttpFormDataWrapper::Begin(nHttpSession* session)
 */
 void
 nHttpFormDataWrapper::AddAttr(const nString& key, const nString& value)
-{    
+{
     this->keys.Append(key);
     this->values.Append(value);
 }

@@ -67,7 +67,7 @@ nShapeNode::LoadMesh()
         // append mesh usage to mesh resource name
         nString resourceName;
         resourceName.Format("%s_%d", this->meshName.Get(), this->GetMeshUsage());
-        
+
         // get a new or shared mesh
         nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resourceName.Get());
         n_assert(mesh);
@@ -200,7 +200,7 @@ nShapeNode::SetMeshResourceLoader(const char* resourceLoaderPath)
 //------------------------------------------------------------------------------
 /**
     Get the mesh resource loader.
-    
+
     @return resource loader name or null when there is no resource loader
 */
 const char *
@@ -214,5 +214,89 @@ nShapeNode::GetMeshResourceLoader()
     {
         return 0;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Render debugging information for this mesh (normals, tangents, binormals).
+*/
+void
+nShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix)
+{
+/*
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+
+    const float length = 0.025f;
+    const nMeshGroup& curGroup = this->refMesh->Group(this->groupIndex);
+    int firstVertex = curGroup.GetFirstVertex();
+    int numVertices = curGroup.GetNumVertices();
+    int vWidth = this->refMesh->GetVertexWidth();
+
+    float* vBuffer = this->refMesh->LockVertices() + firstVertex * vWidth;
+    gfxServer->BeginShapes();
+
+    // draw normals
+    if (this->refMesh->HasAllVertexComponents(nMesh2::Normal))
+    {
+        nFixedArray<vector3> lines(numVertices * 2);
+        const vector4 color(1.0f, 0.0f, 0.0f, 1.0f);
+        vector3 v0, v1;
+        int vOffset = this->refMesh->GetVertexComponentOffset(nMesh2::Normal);
+        int vIndex;
+        for (vIndex = 0; vIndex < numVertices; vIndex++)
+        {
+            float* vertex = vBuffer + vIndex * vWidth;
+            v0.set(vertex[0], vertex[1], vertex[2]);
+            v1.set(vertex[vOffset + 0], vertex[vOffset + 1], vertex[vOffset + 2]);
+            v1 = v0 + v1 * length;
+            lines[vIndex * 2 + 0] = v0;
+            lines[vIndex * 2 + 1] = v1;
+        }
+        gfxServer->DrawShapePrimitives(nGfxServer2::LineList, numVertices, &(lines[0]), 3, modelMatrix, color);
+    }
+
+    // draw tangents
+    if (this->refMesh->HasAllVertexComponents(nMesh2::Tangent))
+    {
+        nFixedArray<vector3> lines(numVertices * 2);
+        const vector4 color(1.0f, 1.0f, 0.0f, 1.0f);
+        vector3 v0, v1;
+        int vOffset = this->refMesh->GetVertexComponentOffset(nMesh2::Tangent);
+        int vIndex;
+        for (vIndex = 0; vIndex < numVertices; vIndex++)
+        {
+            float* vertex = vBuffer + vIndex * vWidth;
+            v0.set(vertex[0], vertex[1], vertex[2]);
+            v1.set(vertex[vOffset + 0], vertex[vOffset + 1], vertex[vOffset + 2]);
+            v1 = v0 + v1 * length;
+            lines[vIndex * 2 + 0] = v0;
+            lines[vIndex * 2 + 1] = v1;
+        }
+        gfxServer->DrawShapePrimitives(nGfxServer2::LineList, numVertices, &(lines[0]), 3, modelMatrix, color);
+    }
+
+    // draw binormals
+    if (this->refMesh->HasAllVertexComponents(nMesh2::Binormal))
+    {
+        nFixedArray<vector3> lines(numVertices * 2);
+        const vector4 color(0.0f, 0.0f, 1.0f, 1.0f);
+        vector3 v0, v1;
+        int vOffset = this->refMesh->GetVertexComponentOffset(nMesh2::Binormal);
+        int vIndex;
+        for (vIndex = 0; vIndex < numVertices; vIndex++)
+        {
+            float* vertex = vBuffer + vIndex * vWidth;
+            v0.set(vertex[0], vertex[1], vertex[2]);
+            v1.set(vertex[vOffset + 0], vertex[vOffset + 1], vertex[vOffset + 2]);
+            v1 = v0 + v1 * length;
+            lines[vIndex * 2 + 0] = v0;
+            lines[vIndex * 2 + 1] = v1;
+        }
+        gfxServer->DrawShapePrimitives(nGfxServer2::LineList, numVertices, &(lines[0]), 3, modelMatrix, color);
+    }
+
+    gfxServer->EndShapes();
+    this->refMesh->UnlockVertices();
+*/
 }
 

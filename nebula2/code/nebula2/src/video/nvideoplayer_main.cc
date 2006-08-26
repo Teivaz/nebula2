@@ -85,7 +85,7 @@ nVideoPlayer::GetTexture() const
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nVideoPlayer::DecodeNextFrame()
 {
     // empty
@@ -94,7 +94,7 @@ nVideoPlayer::DecodeNextFrame()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nVideoPlayer::Decode(nTime time)
 {
     // empty
@@ -103,7 +103,7 @@ nVideoPlayer::Decode(nTime time)
 //------------------------------------------------------------------------------
 /**
 */
-uint 
+uint
 nVideoPlayer::getWidth() const
 {
     return this->videoWidth;
@@ -112,7 +112,7 @@ nVideoPlayer::getWidth() const
 //------------------------------------------------------------------------------
 /**
 */
-uint 
+uint
 nVideoPlayer::getHeight() const
 {
     return this->videoHeight;
@@ -121,7 +121,7 @@ nVideoPlayer::getHeight() const
 //------------------------------------------------------------------------------
 /**
 */
-float 
+float
 nVideoPlayer::getFpS() const
 {
     return this->videoFpS;
@@ -130,7 +130,7 @@ nVideoPlayer::getFpS() const
 //------------------------------------------------------------------------------
 /**
 */
-uint 
+uint
 nVideoPlayer::getFrameCount() const
 {
     return this->videoFrameCount;
@@ -139,7 +139,7 @@ nVideoPlayer::getFrameCount() const
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nVideoPlayer::SetTextureUpdate(bool doUpdate)
 {
     this->doTextureUpdate = doUpdate;
@@ -148,7 +148,7 @@ nVideoPlayer::SetTextureUpdate(bool doUpdate)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nVideoPlayer::GetTextureUpdate() const
 {
     return this->doTextureUpdate;
@@ -157,13 +157,13 @@ nVideoPlayer::GetTextureUpdate() const
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nVideoPlayer::Rewind()
 {
 };
 
 /// Set Looping flag
-void 
+void
 nVideoPlayer::SetLoopType(LoopType loopType)
 {
     this->loopType=loopType;

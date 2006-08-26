@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nSQLite3Query
-    
+
     Wraps an SQL query for SQLite3 and provides access to the result.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "sqlite/sqlite3.h"

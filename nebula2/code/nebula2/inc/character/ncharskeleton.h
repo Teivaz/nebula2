@@ -41,7 +41,7 @@ public:
     int GetJointIndexByName(const nString& name) const;
     /// evaluate all character joints
     void Evaluate();
-        
+
 private:
     /// update the parent joint pointers from their indices
     void UpdateParentJointPointers();
@@ -112,7 +112,7 @@ nCharSkeleton::nCharSkeleton(const nCharSkeleton& src)
 /**
 */
 inline
-void 
+void
 nCharSkeleton::operator=(const nCharSkeleton& src)
 {
     n_assert(&src != this);

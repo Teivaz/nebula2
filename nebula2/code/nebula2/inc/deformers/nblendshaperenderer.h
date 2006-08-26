@@ -6,7 +6,7 @@
     @ingroup Deformers
     @brief A unified blend shape renderer (either blends on the CPU or in the
     vertex shader).
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"

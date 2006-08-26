@@ -236,7 +236,7 @@ nDSoundServer3::EndScene()
                     }
                 }
             }
-        }        
+        }
     }
 
     // update sound

@@ -98,7 +98,7 @@ n_getportname(void* slf, nCmd* cmd)
     @output
     s(AttrValue)
     @info
-    Get a server attribute. 
+    Get a server attribute.
 */
 static void
 n_getserverattr(void* slf, nCmd* cmd)

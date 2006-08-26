@@ -31,7 +31,7 @@ public:
     {
         //empty
     }
-    
+
     /// constuctor with initial size and grow size of the internal elements nArray
     nIpolKeyArray(int initialSize, int grow) :
         keyArray(initialSize, grow)
@@ -44,22 +44,22 @@ public:
         //empty
     }
 
-    ///get interpolated key value at time            
+    ///get interpolated key value at time
     bool SampleKey(float time, TYPE& result, const nAnimLoopType::Type loopType) const;
-    
+
     /// add a key
     void AddKey(float t, const TYPE& key)
     {
         Key newKey(t, key);
         this->keyArray.Append(newKey);
     }
-    
+
     /// get number of keys
     int  GetNumKeys() const
     {
         return this->keyArray.Size();
     }
-    
+
     /// get key at index
     void GetKeyAt(const int index, float& time, TYPE& key) const
     {
@@ -67,7 +67,7 @@ public:
         time = k.time;
         key  = k.value;
     }
-    
+
 private:
     class Key
     {
@@ -87,11 +87,11 @@ private:
         {
             //empty
         }
-        
+
         float time;
         TYPE value;
     };
-    
+
     nArray<Key> keyArray;
 };
 
@@ -141,7 +141,7 @@ nIpolKeyArray<TYPE>::SampleKey(float sampleTime, TYPE& result, const nAnimLoopTy
             float lerpVal;
             if (time1 > time0) lerpVal = (float) ((sampleTime - time0) / (time1 - time0));
             else               lerpVal = 1.0f;
-            
+
             lerp<TYPE>(result, key0.value, key1.value, lerpVal);
             return true;
         }

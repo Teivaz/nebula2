@@ -49,7 +49,7 @@ nRemoteServer::Open(const char* portName)
 #ifdef __WIN32__
     #ifdef __XBxX__
         xbNetStartup();
-    #endif    
+    #endif
     struct WSAData wsa_data;
     WSAStartup(0x101, &wsa_data);
 #endif
@@ -136,7 +136,7 @@ nRemoteServer::GetClientContext(int clientId)
     nClientContext* newContext = n_new(nClientContext(clientId, this));
     n_assert(newContext);
     newContext->SetCwd(kernelServer->GetCwd());
-    
+
     this->clientContexts.AddTail(newContext);
     return newContext;
 }

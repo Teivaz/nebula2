@@ -459,10 +459,10 @@ nKernelServer::Print(const char* str, ...)
         this->Unlock();
     }
     else
-    {   
+    {
         vprintf(str, argList);
     }
-    va_end(argList);    
+    va_end(argList);
 }
 
 //------------------------------------------------------------------------------
@@ -486,7 +486,7 @@ nKernelServer::Message(const char* str, ...)
     {
         vprintf(str, argList);
     }
-    va_end(argList);    
+    va_end(argList);
 }
 
 //------------------------------------------------------------------------------
@@ -507,10 +507,10 @@ nKernelServer::Error(const char* str, ...)
         this->Unlock();
     }
     else
-    {   
+    {
         vprintf(str, argList);
     }
-    va_end(argList);    
+    va_end(argList);
 }
 
 //------------------------------------------------------------------------------
@@ -654,7 +654,7 @@ nKernelServer::New(const char* className, const char* path)
 
 //------------------------------------------------------------------------------
 /**
-    Create a Nebula object given a class name. This method will abort the 
+    Create a Nebula object given a class name. This method will abort the
     Nebula app with a fatal error if the object couldn't be created.
 
     @param  className   Class name of the object
@@ -666,7 +666,7 @@ nKernelServer::New(const char* className)
     n_assert(className);
     this->Lock();
     nObject *obj = this->NewUnnamedObject(className);
-    if (!obj) 
+    if (!obj)
     {
         n_error("nKernelServer: Couldn't create object of class '%s'.\n", className);
     }
@@ -692,7 +692,7 @@ nKernelServer::NewNoFail(const char* className, const char *path)
     n_assert(className && path);
     this->Lock();
     nRoot *o = this->CheckCreatePath(className, path, false);
-    if (!o) 
+    if (!o)
     {
         n_printf("nKernelServer: Couldn't create object of class '%s'.\n", className);
     }

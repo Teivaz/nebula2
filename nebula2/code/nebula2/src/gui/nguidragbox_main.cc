@@ -11,7 +11,7 @@ nNebulaScriptClass(nGuiDragBox, "nguiwidget");
 //------------------------------------------------------------------------------
 /**
 */
-nGuiDragBox::nGuiDragBox() :    
+nGuiDragBox::nGuiDragBox() :
     dragThreshold(30.0f / 1024.0f),
     dragging(false),
     dragBoxValid(false),

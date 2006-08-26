@@ -5,11 +5,11 @@
     @class nFileNode
     @ingroup File
 
-    An nFileNode wraps an nFile object into an nRoot subclass, and offers 
+    An nFileNode wraps an nFile object into an nRoot subclass, and offers
     a script interface to the file. This is useful for script languages
     which don't have file system access built in (like MicroTcl).
     nFileNode should not be used from C++, use nFile directly for this.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -39,5 +39,5 @@ private:
 };
 
 //------------------------------------------------------------------------------
-#endif    
-    
+#endif
+

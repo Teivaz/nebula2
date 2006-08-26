@@ -29,7 +29,7 @@ nOggTheoraPlayer::~nOggTheoraPlayer()
 /**
     Helper; just grab some more compressed bitstream and sync it for page extraction
 */
-int 
+int
 nOggTheoraPlayer::buffer_data(nFile *in,ogg_sync_state *oy)
 {
     char *buffer=ogg_sync_buffer(oy,4096);
@@ -40,9 +40,9 @@ nOggTheoraPlayer::buffer_data(nFile *in,ogg_sync_state *oy)
 
 //------------------------------------------------------------------------------
 /**
-    helper: push a page into the steam for packetization 
+    helper: push a page into the steam for packetization
 */
-int 
+int
 nOggTheoraPlayer::queue_page(ogg_page * /*page*/)
 {
     if(theora_p)ogg_stream_pagein(&to,&og);
@@ -65,7 +65,7 @@ nOggTheoraPlayer::Rewind()
     // reset times
     currentTime = 0;
     decodedFrames = 0;
-    
+
     // initialize theora
     theora_p = 0;
     stateflag = 0;
@@ -183,16 +183,16 @@ nOggTheoraPlayer::Rewind()
         theora_info_clear(&ti);
         theora_comment_clear(&tc);
     }
-    /* Finally the main decode loop. 
+    /* Finally the main decode loop.
 
-        It's one Theora packet per frame, so this is pretty 
+        It's one Theora packet per frame, so this is pretty
         straightforward if we're not trying to maintain sync
         with other multiplexed streams.
 
         the videobuf_ready flag is used to maintain the input
         buffer in the libogg stream state. If there's no output
         frame available at the end of the decode step, we must
-        need more input data. We could simplify this by just 
+        need more input data. We could simplify this by just
         using the return code on ogg_page_packetout(), but the
         flag system extends easily to the case were you care
         about more than one multiplexed stream (like with audio
@@ -237,7 +237,7 @@ nOggTheoraPlayer::StopTheora()
 /**
     opens the player and the file set by SetFilename()
 */
-bool 
+bool
 nOggTheoraPlayer::Open()
 {
     n_assert( this->filename != "" );
@@ -250,7 +250,7 @@ nOggTheoraPlayer::Open()
     rgbBuffer = new unsigned char[ti.frame_width*ti.frame_height*4];
     memset(rgbBuffer,255,ti.frame_width*ti.frame_height*4);
     // we don't have a frame yet
-    frameNr = -1; 
+    frameNr = -1;
     nVideoPlayer::Open();
     return true;
 };
@@ -382,7 +382,7 @@ nOggTheoraPlayer::DecodeNextFrame()
 /**
     Decodes a timestep
 */
-void 
+void
 nOggTheoraPlayer::Decode(nTime deltaTime)
 {
     n_assert(this->isOpen);
@@ -401,7 +401,7 @@ nOggTheoraPlayer::Decode(nTime deltaTime)
         if(!this->isPlaying) break;
         this->DecodeNextFrame();
     };
-    // and update once    
+    // and update once
     this->SetTextureUpdate(oldTexUpdate);
     if(this->doTextureUpdate)
         this->UpdateTexture();

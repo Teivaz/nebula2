@@ -7,7 +7,7 @@
 
     @brief A wrapper object for loading and rendering a Nebula2 graphics
     object.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -153,4 +153,4 @@ nGfxObject::GetLocalBox()
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

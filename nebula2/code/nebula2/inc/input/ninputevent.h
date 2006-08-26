@@ -35,8 +35,8 @@ enum nInputType {
     N_INPUT_KEY_DOWN,           ///< Key was pressed
     N_INPUT_KEY_UP,             ///< Key was released
     N_INPUT_KEY_CHAR,           ///< ASCII Code
-    N_INPUT_MOUSE_MOVE,         ///< absolute Mouse position 
-    N_INPUT_AXIS_MOVE,          ///< A relative movement along an axis (0.0 .. 1.0) 
+    N_INPUT_MOUSE_MOVE,         ///< absolute Mouse position
+    N_INPUT_AXIS_MOVE,          ///< A relative movement along an axis (0.0 .. 1.0)
     N_INPUT_BUTTON_DOWN,        ///< A button was pressed
     N_INPUT_BUTTON_UP,          ///< A button was released
     N_INPUT_BUTTON_DBLCLCK,     ///< A button was double clicked

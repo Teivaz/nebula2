@@ -1,5 +1,5 @@
 #ifndef N_GUICOLORPICKER_H
-#define N_GUICOLORPICKER_H 
+#define N_GUICOLORPICKER_H
 //------------------------------------------------------------------------------
 /**
     @class nGuiColorPicker
@@ -32,7 +32,7 @@ public:
     /// is position inside?
     virtual bool Inside(const vector2& p);
 
-    /// get the color from last click      
+    /// get the color from last click
     const vector4& GetColor() const;
     /// set the intensity (brightness) of the hexagon
     void SetIntensity(const float& intensity);

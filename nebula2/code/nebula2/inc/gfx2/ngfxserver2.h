@@ -165,6 +165,7 @@ public:
     enum Hint
     {
         MvpOnly = (1<<0),       // only update the ModelViewProjection matrix in shaders
+        CountStats = (1<<1),    // statistics counting currently active?
     };
 
     /// constructor
@@ -246,7 +247,7 @@ public:
     virtual void SetRenderTarget(int index, nTexture2* t);
     /// get the current render target
     nTexture2* GetRenderTarget(int index) const;
-    
+
     /// start rendering the current frame
     virtual bool BeginFrame();
     /// start rendering to current render target
@@ -317,15 +318,15 @@ public:
     virtual void DrawIndexedNS(PrimitiveType primType);
     /// render non-indexed primitives without applying shader state (NS == No Shader)
     virtual void DrawNS(PrimitiveType primType);
-    /// draw text (immediately)
-    virtual void DrawText(const char* text, const vector4& color, const rectangle& rect, uint flags);
+    /// draw text (immediately, or "when the time is right")
+    virtual void DrawText(const nString& text, const vector4& color, const rectangle& rect, uint flags, bool immediate=true);
     /// get text extents
-    virtual vector2 GetTextExtent(const char* text);
+    virtual vector2 GetTextExtent(const nString& text);
     /// insert newline chars to break the text manual in lines - must be public because the ticker needs to break lines.
     void BreakLines(const nString& text, const rectangle& rect, nString& outString);
 
     /// add text to the text buffer (OLD STYLE)
-    virtual void Text(const char* text, const vector4& color, float xPos, float yPos);
+    virtual void Text(const nString& text, const vector4& color, float xPos, float yPos);
     /// draw the text buffer (OLD STYLE)
     virtual void DrawTextBuffer();
 
@@ -346,20 +347,20 @@ public:
     bool InDialogBoxMode() const;
 
     /// save a screen shot
-    virtual bool SaveScreenshot(const char* filename);    
+    virtual bool SaveScreenshot(const char* filename, nTexture2::FileFormat fileFormat);
 
     /// convert feature set string to enum
     static FeatureSet StringToFeatureSet(const char* str);
     /// convert feature set enum to string
     static const char* FeatureSetToString(FeatureSet f);
 
-    /// get a vector4 of a int shadowLightIndex to set as shaderparameter
+    /// get a vector4 of an int shadowLightIndex to set as shader parameter
     static const vector4 GetShadowLightIndexVector(int shadowLightIndex, float value);
 
     /// get the device identifier
     DeviceIdentifier GetDeviceIdentifier() const;
     /// compute a mouse ray in world space
-    line3 ComputeWorldMouseRay(const vector2& mousePos, float length);    
+    line3 ComputeWorldMouseRay(const vector2& mousePos, float length);
 
     /// set gamma value.
     void SetGamma(float g);
@@ -573,7 +574,7 @@ nGfxServer2::StringToFeatureSet(const char* str)
     {
         return DX9FLT;
     }
-    else 
+    else
     {
         return InvalidFeatureSet;
     }
@@ -636,7 +637,7 @@ nGfxServer2::GetCamera()
     Get the current render target.
 
     @param  index   render target index
-    @return         the current render target at given index, 
+    @return         the current render target at given index,
                     or 0 if no custom render target.
 */
 inline
@@ -718,7 +719,7 @@ nGfxServer2::GetTransform(TransformType type) const
     Set vertex range to render in current mesh.
 
     @param  firstVertex     index of first vertex
-    @param  numVertices     number of vertices 
+    @param  numVertices     number of vertices
 */
 inline
 void
@@ -752,7 +753,7 @@ nGfxServer2::SetIndexRange(int firstIndex, int numIndices)
      - 23-Aug-04    kims    created
 */
 inline
-void 
+void
 nGfxServer2::SetGamma(float g)
 {
     this->gamma = g;
@@ -767,7 +768,7 @@ nGfxServer2::SetGamma(float g)
      - 23-Aug-04    kims    created
 */
 inline
-void 
+void
 nGfxServer2::SetBrightness(float b)
 {
     this->brightness = b;
@@ -782,12 +783,12 @@ nGfxServer2::SetBrightness(float b)
      - 23-Aug-04    kims    created
 */
 inline
-void 
+void
 nGfxServer2::SetContrast(float c)
 {
     this->contrast = c;
 }
-  
+
 //------------------------------------------------------------------------------
 /**
     Retrieves the value of gamma.
@@ -879,7 +880,7 @@ nGfxServer2::GetScissorRect() const
     get a vector4 of a int shadowLightIndex to set as shaderparameter
 */
 inline
-const vector4 
+const vector4
 nGfxServer2::GetShadowLightIndexVector(int shadowLightIndex, float value)
 {
     // FIXME: lightIndex should be a bit field (shader must support this?),

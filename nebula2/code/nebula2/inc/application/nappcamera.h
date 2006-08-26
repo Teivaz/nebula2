@@ -7,7 +7,7 @@
 
     @brief A simple application camera object. Derive subclasses if you
     need more advanced camera behaviour.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"

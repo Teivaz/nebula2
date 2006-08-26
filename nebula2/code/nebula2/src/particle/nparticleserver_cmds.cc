@@ -11,10 +11,10 @@ static void n_isenabled(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nparticleserver
-    
+
     @cppclass
     nParticleServer
-    
+
     @superclass
     nparticleserver
 

@@ -148,7 +148,7 @@ nRpPhase::SetName(const nString& n)
 /**
 */
 inline
-const nString& 
+const nString&
 nRpPhase::GetName() const
 {
     return this->name;
@@ -184,7 +184,7 @@ nRpPhase::GetRenderPath() const
 {
     return this->renderPath;
 }
-    
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -347,4 +347,4 @@ nRpPhase::GetPass() const
 
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

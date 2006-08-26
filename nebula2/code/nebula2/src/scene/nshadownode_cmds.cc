@@ -14,10 +14,10 @@ static void n_getgroupindex(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nshadownode
-    
+
     @cppclass
     nShadowNode
-    
+
     @superclass
     ntransformnode
 

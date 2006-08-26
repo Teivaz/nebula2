@@ -9,9 +9,9 @@
     Can be posted to the nD3D9GfxServer to assign all streams to the graphics
     device, with the correct vertex declaration based on the vertex components
     of the meshes.
-    
-    Because of limits in the D3D API the different streams must be different meshes. 
-    
+
+    Because of limits in the D3D API the different streams must be different meshes.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gfx2/nmesharray.h"

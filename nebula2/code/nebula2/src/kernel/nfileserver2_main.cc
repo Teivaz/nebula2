@@ -522,6 +522,24 @@ nFileServer2::FileExists(const nString& pathName) const
 //------------------------------------------------------------------------------
 /**
 */
+int
+nFileServer2::GetFileSize(const nString& pathName) const
+{
+    n_assert(pathName.IsValid());
+    int size = 0;
+    nFile* file = this->NewFileObject();
+    if (file->Open(pathName, "r"))
+    {
+        size = file->GetSize();
+        file->Close();
+    }
+    file->Release();
+    return size;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
 bool
 nFileServer2::DirectoryExists(const nString& pathName) const
 {

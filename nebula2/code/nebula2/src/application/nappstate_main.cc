@@ -92,7 +92,7 @@ nAppState::OnFrameBefore()
 {
     // empty
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     Callback method which is called in the render loop after

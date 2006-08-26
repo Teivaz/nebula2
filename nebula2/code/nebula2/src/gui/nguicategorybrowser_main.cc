@@ -97,7 +97,7 @@ nGuiCategoryBrowser::OnShow()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiCategoryBrowser::OnHide()
 {
     nGuiServer::Instance()->UnregisterEventListener(this);
@@ -119,7 +119,7 @@ nGuiCategoryBrowser::OnHide()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiCategoryBrowser::OnEvent(const nGuiEvent& event)
 {
     if (event.GetType() == nGuiEvent::SelectionChanged)
@@ -135,7 +135,7 @@ nGuiCategoryBrowser::OnEvent(const nGuiEvent& event)
             nGuiEvent event(this, nGuiEvent::SelectionChanged);
             nGuiServer::Instance()->PutEvent(event);
         }
-    } 
+    }
     else if (event.GetType() == nGuiEvent::SelectionDblClicked)
     {
         // pass through doubleclick event

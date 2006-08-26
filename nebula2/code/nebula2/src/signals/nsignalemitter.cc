@@ -309,7 +309,7 @@ nSignalEmitter::UnbindAllSignals()
 
 //------------------------------------------------------------------------------
 /**
-    Post signal for execution at relative time <tt>relT</tt> with the provided 
+    Post signal for execution at relative time <tt>relT</tt> with the provided
     object pointer and va_list
 */
 bool
@@ -327,22 +327,22 @@ nSignalEmitter::PostSignal(nTime relT, nSignal * signal, va_list args)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nSignalEmitter::GetSignals(nHashList *signal_list) const
 {
     // for each superclass attach it's signal names to the list
     nClass *cl = static_cast<nClass *> (this->GetSignalRegistry());
-    
+
     // for each superclass...
-    do 
+    do
     {
         nHashList *cl_signals = cl->GetSignalList();
         if (cl_signals)
         {
             nSignal * signal;
-            for (signal=(nSignal *) cl_signals->GetHead(); 
-                 signal; 
-                 signal=(nSignal *) signal->GetSucc()) 
+            for (signal=(nSignal *) cl_signals->GetHead();
+                 signal;
+                 signal=(nSignal *) signal->GetSucc())
             {
                 nHashNode* node = n_new(nHashNode(signal->GetName()));
                 node->SetPtr((void*)signal);

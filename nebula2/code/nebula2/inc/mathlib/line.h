@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------
 /**
     @class line2
-    @ingroup NebulaMathDataTypes  
+    @ingroup NebulaMathDataTypes
 
     A 2-dimensional line class.
 
@@ -12,7 +12,7 @@
 #include "mathlib/vector.h"
 
 //-------------------------------------------------------------------
-class line2 
+class line2
 {
 public:
     /// constructor
@@ -126,7 +126,7 @@ line2::ipol(const float t) const
 
     A 3-dimensional line class.
 */
-class line3 
+class line3
 {
 public:
     /// constructor
@@ -261,7 +261,7 @@ line3::lensquared() const
     Returns a point on the line which is closest to a another point in space.
     This just returns the parameter t on where the point is located. If t is
     between 0 and 1, the point is on the line, otherwise not. To get the
-    actual 3d point p: 
+    actual 3d point p:
 
     p = m + b*t
 */
@@ -291,13 +291,13 @@ line3::distance(const vector3& p) const
 {
     vector3 diff(p - this->b);
     float l = (this->m % this->m);
-    if (l > 0.0f) 
+    if (l > 0.0f)
     {
         float t = (this->m % diff) / l;
         diff = diff - this->m * t;
         return diff.len();
-    } 
-    else 
+    }
+    else
     {
         // line is really a point...
         vector3 v(p - this->b);
@@ -309,7 +309,7 @@ line3::distance(const vector3& p) const
 /**
 */
 inline
-vector3 
+vector3
 line3::ipol(const float t) const
 {
     return vector3(b + m*t);

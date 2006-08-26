@@ -21,7 +21,7 @@
 //------------------------------------------------------------------------------
 class nScriptServer;
 class nConServer;
-class nInputServer : public nRoot 
+class nInputServer : public nRoot
 {
 public:
     /// constructor
@@ -32,7 +32,7 @@ public:
     static nInputServer* Instance();
     /// open the input server
     virtual void Open();
-    /// per frame trigger 
+    /// per frame trigger
     virtual void Trigger(double time);
     /// create a new input event object
     nInputEvent *NewEvent(void);
@@ -109,7 +109,7 @@ protected:
     /// finish adding script
     void EndScripts(void);
     /// check if events are identical
-    bool IsIdenticalEvent(nInputEvent* event0, nInputEvent* event1);    
+    bool IsIdenticalEvent(nInputEvent* event0, nInputEvent* event1);
     /// log a single event
     void LogSingleEvent(nInputEvent* event);
     /// log all events
@@ -133,7 +133,7 @@ private:
     static nInputServer* Singleton;
 
 protected:
-    enum 
+    enum
     {
         N_MAXNUM_SCRIPTS = 16,              // max number of script cmds per frame
     };

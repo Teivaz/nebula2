@@ -13,7 +13,7 @@
 #include "kernel/ndebug.h"
 
 //------------------------------------------------------------------------------
-class nNode 
+class nNode
 {
 public:
     /// the default constructor
@@ -49,7 +49,7 @@ private:
 //-----------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nNode::nNode(void)
 : succ(0),
   pred(0),
@@ -61,7 +61,7 @@ nNode::nNode(void)
 //-----------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nNode::nNode(void *_ptr)
 : succ(0),
   pred(0),
@@ -75,7 +75,7 @@ nNode::nNode(void *_ptr)
     The destructor will throw an assertion if the node is still linked
     into a list!
 */
-inline 
+inline
 nNode::~nNode(void)
 {
     n_assert(!this->succ);
@@ -93,9 +93,9 @@ nNode*
 nNode::GetSucc(void) const
 {
     n_assert(this->succ);
-    if (this->succ->succ) 
+    if (this->succ->succ)
         return this->succ;
-    else                  
+    else
         return 0;
 }
 
@@ -103,7 +103,7 @@ nNode::GetSucc(void) const
 /**
     Get the node before this node in the list, return 0 if there is no
     previous node.
-    
+
     @return the previous node or 0
 */
 inline
@@ -111,9 +111,9 @@ nNode*
 nNode::GetPred(void) const
 {
     n_assert(this->pred);
-    if (this->pred->pred) 
+    if (this->pred->pred)
         return this->pred;
-    else                  
+    else
         return NULL;
 }
 
@@ -121,8 +121,8 @@ nNode::GetPred(void) const
 /**
     @param succ    node in front of which this node should be inserted
 */
-inline 
-void 
+inline
+void
 nNode::InsertBefore(nNode *succ)
 {
     n_assert(succ->pred);
@@ -138,8 +138,8 @@ nNode::InsertBefore(nNode *succ)
 /**
     @param pred     the node after which this node should be inserted
 */
-inline 
-void 
+inline
+void
 nNode::InsertAfter(nNode *pred)
 {
     n_assert(pred->succ);
@@ -154,8 +154,8 @@ nNode::InsertAfter(nNode *pred)
 //-----------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nNode::Remove(void)
 {
     n_assert(this->succ);
@@ -171,8 +171,8 @@ nNode::Remove(void)
 /**
     @param p       the new user data pointer
 */
-inline 
-void 
+inline
+void
 nNode::SetPtr(void *p)
 {
     this->ptr = p;
@@ -193,11 +193,11 @@ nNode::GetPtr() const
 /**
     @return true if node is currently linked into a list
 */
-inline 
-bool 
+inline
+bool
 nNode::IsLinked(void) const
 {
-    if (this->succ) 
+    if (this->succ)
     {
         return true;
     }

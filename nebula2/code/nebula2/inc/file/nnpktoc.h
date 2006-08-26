@@ -52,7 +52,7 @@ private:
     {
         STACKSIZE = 16,
     };
-    
+
     nNpkTocEntry* rootDir;      // the top level directory
     nString rootPath;           // filesystem path to the root entry (i.e. d:/nomads)
     nNpkTocEntry* curDir;       // current directory (only valid during BeginDirEntry());
@@ -161,7 +161,7 @@ void
 nNpkToc::EndDirEntry()
 {
     n_assert(curDir);
-    
+
     // pop previous curDir from stack
     this->curDir = this->Pop();
 }

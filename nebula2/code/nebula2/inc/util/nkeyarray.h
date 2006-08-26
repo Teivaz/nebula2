@@ -76,7 +76,7 @@ nKeyArray<TYPE>::bsearch(int key) const
     int lo = 0;
     int hi = num - 1;
     int mid;
-    
+
     while (lo <= hi)
     {
         if ((half = num/2))

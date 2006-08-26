@@ -7,7 +7,7 @@
     @ingroup NebulaDataTypes
 
     @brief A thread safe variable of any type. Protects assignments with a mutex.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -112,4 +112,4 @@ nThreadVariable<TYPE>::operator=(TYPE rhs)
 //------------------------------------------------------------------------------
 #endif
 
-    
+

@@ -13,7 +13,7 @@ static void n_parsedirectory(void* slf, nCmd* cmd);
 
     @cppclass
     nNpkFileServer
-    
+
     @superclass
     nfileserver2
 

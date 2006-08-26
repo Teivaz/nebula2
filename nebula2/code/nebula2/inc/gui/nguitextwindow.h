@@ -6,7 +6,7 @@
     @ingroup Gui
 
     @brief A text viewer window which can display text from a text file.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"
@@ -63,5 +63,5 @@ nGuiTextWindow::GetFilename() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

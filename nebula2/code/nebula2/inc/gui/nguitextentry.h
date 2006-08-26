@@ -5,7 +5,7 @@
     @class nGuiTextEntry
     @ingroup Gui
     @brief A text entry widget.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gui/nguitextlabel.h"

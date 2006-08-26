@@ -1,7 +1,7 @@
 #ifndef N_PARTICLE2EMITTER_H
 #define N_PARTICLE2EMITTER_H
 //------------------------------------------------------------------------------
-/**    
+/**
     @class nParticle2Emitter
     @ingroup Particle
 
@@ -30,7 +30,7 @@ class nParticle2Emitter
 {
 public:
     // enumeration of the envelope curves
-    enum CurveType 
+    enum CurveType
     {
         EmissionFrequency = 0,
         ParticleLifeTime,
@@ -117,7 +117,7 @@ public:
 
     /// returns true if emitter is ready for emitting
     bool AreResourcesValid();
-    
+
     // Initializing, call once after setting parameters
     void Open();
 
@@ -138,7 +138,7 @@ public:
     void    SetParticleStretch(float value);
     /// set texture tiling parts
     void    SetTileTexture(int value);
-    /// set if particles should be stretched to the emission startpoint 
+    /// set if particles should be stretched to the emission startpoint
     void    SetStretchToStart(bool value);
     /// set Velocity Randomize
     void    SetParticleVelocityRandomize(float value);
@@ -156,7 +156,7 @@ public:
     void    SetViewAngleFade(bool value);
     /// set start delay
     void    SetStartDelay(float value);
-   
+
     /// called when remotecontrol (maya) changes the curves
     void    CurvesChanged();
 
@@ -179,7 +179,7 @@ protected:
     bool            loop;                     // loop emitter ?
     float           activityDistance;         // distance between viewer and emitter on witch emitter is active
     float           particleStretch;
-    float           precalcTime;             
+    float           precalcTime;
     int             tileTexture;
     bool            renderOldestFirst;         // wether to render the oldest particles first or the youngest
     bool            stretchToStart;
@@ -400,7 +400,7 @@ nParticle2Emitter::GetWind() const
 /**
 */
 inline
-void 
+void
 nParticle2Emitter::SetIsSetUp(bool isSetUp)
 {
     this->isSetUp = isSetUp;
@@ -420,7 +420,7 @@ nParticle2Emitter::IsSetUp() const
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetStaticCurvePtr(float* ptr)
 {
     this->pStaticCurve = ptr;
@@ -430,7 +430,7 @@ nParticle2Emitter::SetStaticCurvePtr(float* ptr)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetGravity(float gravity)
 {
     this->gravity = gravity;
@@ -441,7 +441,7 @@ nParticle2Emitter::SetGravity(float gravity)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetStartRotationMin(float value)
 {
     this->startRotationMin = value;
@@ -451,7 +451,7 @@ nParticle2Emitter::SetStartRotationMin(float value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetStartRotationMax(float value)
 {
     this->startRotationMax = value;
@@ -461,7 +461,7 @@ nParticle2Emitter::SetStartRotationMax(float value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetParticleStretch(float value)
 {
     this->particleStretch = value;
@@ -471,7 +471,7 @@ nParticle2Emitter::SetParticleStretch(float value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetTileTexture(int value)
 {
     this->tileTexture = value;
@@ -481,7 +481,7 @@ nParticle2Emitter::SetTileTexture(int value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetStretchToStart(bool value)
 {
     this->stretchToStart = value;
@@ -491,7 +491,7 @@ nParticle2Emitter::SetStretchToStart(bool value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetParticleVelocityRandomize(float value)
 {
     this->particleVelocityRandomize = value;
@@ -501,7 +501,7 @@ nParticle2Emitter::SetParticleVelocityRandomize(float value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetParticleRotationRandomize(float value)
 {
     this->particleRotationRandomize = value;
@@ -511,7 +511,7 @@ nParticle2Emitter::SetParticleRotationRandomize(float value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetParticleSizeRandomize(float value)
 {
     this->particleSizeRandomize = value;
@@ -520,7 +520,7 @@ nParticle2Emitter::SetParticleSizeRandomize(float value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetPrecalcTime(float value)
 {
     this->precalcTime = value;
@@ -530,7 +530,7 @@ nParticle2Emitter::SetPrecalcTime(float value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetRandomRotDir(bool value)
 {
     this->randomRotDir = value;
@@ -540,7 +540,7 @@ nParticle2Emitter::SetRandomRotDir(bool value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetStretchDetail(int value)
 {
     this->stretchDetail = value;
@@ -550,7 +550,7 @@ nParticle2Emitter::SetStretchDetail(int value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetViewAngleFade(bool value)
 {
     this->viewAngleFade = value;
@@ -560,7 +560,7 @@ nParticle2Emitter::SetViewAngleFade(bool value)
 /**
 */
 inline
-void    
+void
 nParticle2Emitter::SetStartDelay(float value)
 {
     this->startDelay = value;

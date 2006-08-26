@@ -130,7 +130,7 @@ void
 nParticle2Emitter::Trigger(nTime triggerTime)
 {
     if(!this->isSetUp) return;
-   
+
     nTime   curTime = triggerTime;
     int     triggerSteps = 1;
     float   triggerTimePitch = 0;
@@ -146,7 +146,7 @@ nParticle2Emitter::Trigger(nTime triggerTime)
     {
         // Time reset
 
-        // ok, the emitter is run for the first time or there has been a time reset. 
+        // ok, the emitter is run for the first time or there has been a time reset.
         // eventually, we need to calculate some steps in advance
 
         if(this->precalcTime!=0.0f)
@@ -167,7 +167,7 @@ nParticle2Emitter::Trigger(nTime triggerTime)
     {
         // calculate timestep
         nTime deltaTime = curTime - this->lastEmission;
-        
+
         // fdTime is manipulated by TimeManipulator
         float fdTime = (float) deltaTime;
         // apply Time - Manipulator on deltaTime
@@ -197,7 +197,7 @@ nParticle2Emitter::Trigger(nTime triggerTime)
             else
                 this->invisibleTime = 0.0f;
             // go to sleep after beeing invisible for too long
-            if((this->loop) && (this->hasLooped) && (!this->isSleeping) && (this->invisibleTime > 3.0f) )    
+            if((this->loop) && (this->hasLooped) && (!this->isSleeping) && (this->invisibleTime > 3.0f) )
             {
                 this->isSleeping = true;
                 if( 0 != this->particles) delete [] this->particles;
@@ -213,7 +213,7 @@ nParticle2Emitter::Trigger(nTime triggerTime)
         CalculateStep(fdTime);
 
         // emit new particles if we are inside the emissiontimeframe
-        if( (curTime >= this->startTime) && (lastEmission < this->startTime + this->startDelay + this->emissionDuration ) ) 
+        if( (curTime >= this->startTime) && (lastEmission < this->startTime + this->startDelay + this->emissionDuration ) )
         {
             if( curTime >= this->startTime + this->startDelay )
             {
@@ -242,7 +242,7 @@ nParticle2Emitter::Trigger(nTime triggerTime)
                     {
                         nTime   particleEmissionLifeTime = timeToDo;
                         nTime   oneDivLifeTime = 1.0f;
-                        if(0 != curCurves[ParticleLifeTime]) 
+                        if(0 != curCurves[ParticleLifeTime])
                             oneDivLifeTime = 1.0f / curCurves[ParticleLifeTime];
 
                         if(this->particleCount < this->maxParticleCount)
@@ -256,11 +256,11 @@ nParticle2Emitter::Trigger(nTime triggerTime)
                             vector3 position = this->matrix * vector3(emitterVertices[curIndex+0],
                                 emitterVertices[curIndex+1], emitterVertices[curIndex+2]);
 
-                            matrix33 m33 = matrix33(this->matrix.M11, this->matrix.M12, this->matrix.M13, 
-                                this->matrix.M21, this->matrix.M22, this->matrix.M23, 
+                            matrix33 m33 = matrix33(this->matrix.M11, this->matrix.M12, this->matrix.M13,
+                                this->matrix.M21, this->matrix.M22, this->matrix.M23,
                                 this->matrix.M31, this->matrix.M32, this->matrix.M33);
 
-                            vector3 normal = m33 * vector3(emitterVertices[curIndex+3], 
+                            vector3 normal = m33 * vector3(emitterVertices[curIndex+3],
                                 emitterVertices[curIndex+4], emitterVertices[curIndex+5]);
 
                             // find orthogonal vectors to spread normal vector
@@ -278,16 +278,16 @@ nParticle2Emitter::Trigger(nTime triggerTime)
 
                             float velocityVariation = 1.0f - ((float)rand())/((float)RAND_MAX)*this->particleVelocityRandomize;
                             float startVelocity = curCurves[ParticleStartVelocity]*velocityVariation;
-                            
+
                             // apply texture tiling
-                            // uvmax and uvmin are arranged a bit strange, because they need to be flipped 
+                            // uvmax and uvmin are arranged a bit strange, because they need to be flipped
                             // horizontally and be rotated
                             if(this->tileTexture<1) this->tileTexture = 1;
                             vector2 uvStep = vector2(0.0f,1.0f/(float)this->tileTexture);
                             int tileNr = ( rand()* this->tileTexture/(RAND_MAX+1) );
                             newParticle->uvmin = vector2(1.0f,0) + uvStep * (float) tileNr;
                             newParticle->uvmax = vector2(0.0f,newParticle->uvmin.y) + uvStep;
-                        
+
 
                             newParticle->lifeTime = (float)particleEmissionLifeTime;
                             newParticle->oneDivMaxLifeTime = (float)oneDivLifeTime;
@@ -296,7 +296,7 @@ nParticle2Emitter::Trigger(nTime triggerTime)
 
                             // calculate velocity variation
                             newParticle->rotationVariation = 1.0f - ((float)rand())/((float)RAND_MAX)*this->particleRotationRandomize;
-                            if( this->randomRotDir && (((float)rand())/((float)RAND_MAX)<0.5f)) 
+                            if( this->randomRotDir && (((float)rand())/((float)RAND_MAX)<0.5f))
                                 newParticle->rotationVariation = -newParticle->rotationVariation;
                             newParticle->velocity = normal * startVelocity;
                             newParticle->startPos = newParticle->position;
@@ -323,7 +323,7 @@ nParticle2Emitter::Trigger(nTime triggerTime)
             };
         };
         this->lastEmission = curTime;
-        
+
         curTime += triggerTimePitch;
     };
 }
@@ -388,7 +388,7 @@ int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
         myVertex.v = particle->uvmin.y;
         myVertex.rotation += PI/2.0;
         destPtr[5] = myVertex;
-        
+
         destPtr += 6;
 
 
@@ -478,7 +478,7 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
         myVertex.rotation += PI/2.0f;
         myVertex.pos = particle->position;
         destPtr[5] = myVertex;
-        
+
         curVertex += 6;
         destPtr += 6;
 
@@ -609,7 +609,7 @@ void nParticle2Emitter::Render(nTime curTime)
         // reallocate particles
         this->particles = new nParticle2[this->maxParticleCount];
         n_assert(0 != this->particles);
-        
+
         this->frameWasRendered = true;
         this->Trigger(curTime - 0.001f);    // trigger with a little difference, so that the emitter will reset
 
@@ -618,7 +618,7 @@ void nParticle2Emitter::Render(nTime curTime)
 
     if (!this->dynMesh.IsValid())
     {
-        this->dynMesh.Initialize(nGfxServer2::TriangleList, 
+        this->dynMesh.Initialize(nGfxServer2::TriangleList,
             nMesh2::Coord | nMesh2::Normal | nMesh2::Uv0 |
             nMesh2::Color , nMesh2::WriteOnly | nMesh2::NeedsVertexShader, false);
         n_assert(this->dynMesh.IsValid());
@@ -631,7 +631,7 @@ void nParticle2Emitter::Render(nTime curTime)
 
     if((this->particleStretch == 0.0f)&&(!this->stretchToStart))
         remVertices = RenderPure(dstVertices,maxVertices);
-    else 
+    else
     {
 
         if(this->stretchToStart || (this->stretchDetail == 1) )
@@ -688,7 +688,7 @@ nParticle2Emitter::Open()
 //------------------------------------------------------------------------------
 /**
 */
-void    
+void
 nParticle2Emitter::CurvesChanged()
 {
     if(this->particles != 0)

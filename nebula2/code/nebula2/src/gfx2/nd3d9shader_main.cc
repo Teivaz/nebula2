@@ -609,7 +609,7 @@ nD3D9Shader::ValidateEffect()
             // NOTE: looks like this has been fixed in the April 2005 SDK...
 
             // shader didn't validate at all, this may happen although the shader is valid
-            // on older nVidia cards if the effect has a vertex shader, thus we simply force 
+            // on older nVidia cards if the effect has a vertex shader, thus we simply force
             // the first technique in the file as crurent
             n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
 
@@ -667,7 +667,7 @@ nD3D9Shader::Begin(bool saveState)
         // start rendering the effect
         UINT numPasses;
         DWORD flags;
-        if (saveState) 
+        if (saveState)
         {
             // save all state
             flags = 0;
@@ -728,7 +728,7 @@ nD3D9Shader::EndPass()
 #if (D3D_SDK_VERSION >= 32) //summer 2004 update sdk
     n_assert(this->effect);
     n_assert(this->hasBeenValidated && !this->didNotValidate);
-    
+
     this->SetVertexProcessingMode();
     HRESULT hr = this->effect->EndPass();
     n_dxtrace(hr, "nD3D9Shader: EndPass() failed on effect");
@@ -773,7 +773,7 @@ nD3D9Shader::SetTechnique(const char* t)
 {
     n_assert(t);
     n_assert(this->effect);
-    
+
     // get handle to technique
     D3DXHANDLE hTechnique = this->effect->GetTechniqueByName(t);
     if (0 == hTechnique)
@@ -783,7 +783,7 @@ nD3D9Shader::SetTechnique(const char* t)
     }
 
     // check if technique needs software vertex processing (this is the
-    // case if the 3d device is a mixed vertex processing device, and 
+    // case if the 3d device is a mixed vertex processing device, and
     // the current technique includes a vertex shader
     this->curTechniqueNeedsSoftwareVertexProcessing = false;
     if (nGfxServer2::Instance()->AreVertexShadersEmulated())
@@ -856,7 +856,7 @@ nD3D9Shader::UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl)
     D3DXEFFECT_DESC fxDesc;
     hr = this->effect->GetDesc(&fxDesc);
     n_dxtrace(hr, "GetDesc() failed on effect");
-    
+
     // for each parameter...
     uint paramIndex;
     for (paramIndex = 0; paramIndex < fxDesc.Parameters; paramIndex++)
@@ -885,12 +885,12 @@ nD3D9Shader::UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl)
                 {
                     switch (paramDesc.Class)
                     {
-                        case D3DXPC_SCALAR:         
-                            type = nShaderState::Float; 
+                        case D3DXPC_SCALAR:
+                            type = nShaderState::Float;
                             break;
 
-                        case D3DXPC_VECTOR:         
-                            type = nShaderState::Float4; 
+                        case D3DXPC_VECTOR:
+                            type = nShaderState::Float4;
                             break;
 
                         case D3DXPC_MATRIX_ROWS:
@@ -905,7 +905,7 @@ nD3D9Shader::UpdateInstanceStreamDecl(nInstanceStream::Declaration& decl)
                         paramDesc.Name, this->GetFilename());
                     return 0;
                 }
-                
+
                 // append instance stream component (if not exists yet)
                 int i;
                 bool paramExists = false;

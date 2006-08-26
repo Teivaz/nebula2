@@ -37,10 +37,10 @@ nClippingCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix
 
     // check on witch side the position of the camera is
     vector3 camPosWorldSpace;
-    
+
     matrix44 _viewMatrix         = viewMatrix;
     _viewMatrix.pos_component()  = vector3(0.0, 0.0, 0.0);
-    
+
     _viewMatrix.invert();
     _viewMatrix.mult(viewMatrix.pos_component(), camPosWorldSpace);
 
@@ -76,7 +76,7 @@ nClippingCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix
 //------------------------------------------------------------------------------
 /**
 */
-float 
+float
 nClippingCameraNode::sgn(float a)
 {
 	if (a > 0.0F) return (1.0F);
@@ -90,7 +90,7 @@ http://www.gamedev.net/community/forums/topic.asp?topic_id=253039
 */
 matrix44
 nClippingCameraNode::ComputeProjectionMatrix(const matrix44& viewMatrix, const matrix44& projectionMatrix, const vector3& clipPlaneNormal, const vector3& clipPlanePoint)
-{    
+{
     matrix44 _viewMatrix        = viewMatrix;
     matrix44 _projectionMatrix  = projectionMatrix;
     vector4  _clipPlane;
@@ -99,8 +99,8 @@ nClippingCameraNode::ComputeProjectionMatrix(const matrix44& viewMatrix, const m
     vector3 _pp;
 
     //bring point in viewspace
-    _viewMatrix.mult(clipPlanePoint, _pp);    
-    
+    _viewMatrix.mult(clipPlanePoint, _pp);
+
     //bring plane in viewspace
     _viewMatrix.mult(vector4(clipPlaneNormal.x, clipPlaneNormal.y, clipPlaneNormal.z, 0.0), _clipPlane);
 

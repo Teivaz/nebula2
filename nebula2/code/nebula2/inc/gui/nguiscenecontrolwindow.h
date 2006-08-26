@@ -6,7 +6,7 @@
     @ingroup Gui
 
     @brief Scene Controls for adjusting stdlight, postion & color...
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"
@@ -38,13 +38,13 @@ public:
     /// called per frame when parent widget is visible
     virtual void OnFrame();
     /// notify widget of an event
-    virtual void OnEvent(const nGuiEvent& event); 
+    virtual void OnEvent(const nGuiEvent& event);
     /// set the path to working light
     void SetLightPath(const char* path);
     /// get the path from working light
     const char* GetLightPath() const;
-    
-    /// color type of light 
+
+    /// color type of light
     enum ColorType
     {
         Diffuse,
@@ -56,8 +56,8 @@ private:
     /// update Light Position
     void UpdateLightPosition();
     /// update channel slider
-    void UpdateChnSlider();    
-    /// find Instance of nClass 
+    void UpdateChnSlider();
+    /// find Instance of nClass
     nRoot* FindFirstInstance(nRoot* node, nClass* classType);
 
     // Gui elements
@@ -66,13 +66,13 @@ private:
     nRef<nGuiColorSliderGroup> refDiffuseSlider;
     nRef<nGuiColorSliderGroup> refSpecularSlider;
     nRef<nGuiColorSliderGroup> refAmbientSlider;
-    nArray<nGuiHoriSliderGroup*> refWeightChnListSlider;    
+    nArray<nGuiHoriSliderGroup*> refWeightChnListSlider;
     nRef<nGuiTextLabel> refStatesLabel;
-    nRef<nGuiTextLabel> refChnLabel;  
-    nRef<nGuiTextView> refAnimStates;  
-    nRef<nGuiTextView> refCharacter3Skins;  
-    nRef<nGuiTextView> refCharacter3Animations;  
-    nRef<nGuiTextView> refCharacter3Variations;  
+    nRef<nGuiTextLabel> refChnLabel;
+    nRef<nGuiTextView> refAnimStates;
+    nRef<nGuiTextView> refCharacter3Skins;
+    nRef<nGuiTextView> refCharacter3Animations;
+    nRef<nGuiTextView> refCharacter3Variations;
     nDynAutoRef<nTransformNode> refLightTransform;
     nDynAutoRef<nLightNode> refLight;
 
@@ -91,7 +91,7 @@ private:
     int numAnimStates;
     bool skinAnimatorLoaded;
     bool character3NodeLoaded;
-    bool sliderChanged;    
+    bool sliderChanged;
     nArray<nVariable::Handle> chnHandles;
 
     nRef<nGuiSkyEditor> refSkyEditor;

@@ -5,19 +5,19 @@
     @class nScriptableMeshBuilder
     @ingroup Tools
 
-    The purpose of this class is to allow the use of nMeshBuilder from scripting 
+    The purpose of this class is to allow the use of nMeshBuilder from scripting
     languages. Deriving from nRoot gives us this ability.
 
     @note
-    This class multiply inherits from both nRoot and nMeshBuilder. 
+    This class multiply inherits from both nRoot and nMeshBuilder.
     This causes ambiguity when both base classes have functions with the same name.
-    To let the compiler know which one we want, use scope operator with the base 
+    To let the compiler know which one we want, use scope operator with the base
     class name:
     @code
     int val = obj->BaseClass::SomeFunction(params);
     @endcode
 
-    The following lua script shows the way to add vertices and indices to the 
+    The following lua script shows the way to add vertices and indices to the
     Nebula mesh builder:
     @code
     // add vertices

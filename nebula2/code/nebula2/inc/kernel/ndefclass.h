@@ -34,7 +34,7 @@
 //------------------------------------------------------------------------------
 /**
     @ingroup NebulaObjectSystem
-    
+
     nNebulaClass() creates a simple Nebula class without script interface.
     It takes the C name of the class, and a string defining the superclass
     name:

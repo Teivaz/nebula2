@@ -8,7 +8,7 @@
 
     NOTE: this is basically a cleaned-up rippoff of DSound-Framework's
     CWaveFile class.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "audio3/naudiofile.h"
@@ -42,7 +42,7 @@ private:
     /// uninstall MMIO custom file procedures
     void UninstallMMIOProc();
 
-    static bool mmioProcInstalled;    
+    static bool mmioProcInstalled;
 
     WAVEFORMATEX* m_pwfx;        // Pointer to WAVEFORMATEX structure
     HMMIO         m_hmmio;       // MM I/O handle for the WAVE
@@ -54,4 +54,4 @@ private:
 };
 //------------------------------------------------------------------------------
 #endif
-    
+

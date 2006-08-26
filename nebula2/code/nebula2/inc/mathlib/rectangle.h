@@ -6,7 +6,7 @@
     @ingroup NebulaMathDataTypes
 
     A 2d rectangle class.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "mathlib/vector.h"
@@ -133,9 +133,9 @@ rectangle::size() const
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
-rectangle operator *(const rectangle& r0, const rectangle& r1) 
+static
+inline
+rectangle operator *(const rectangle& r0, const rectangle& r1)
 {
     float v0x, v0y, v1x, v1y;
 

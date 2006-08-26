@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     Base class for shader attribute animators.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "scene/nanimator.h"

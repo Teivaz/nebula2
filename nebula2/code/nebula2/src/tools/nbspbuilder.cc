@@ -67,7 +67,7 @@ nBspBuilder::BuildBsp(nMeshBuilder& srcMesh, float maxNodeSize, const bbox3& box
 
 //------------------------------------------------------------------------------
 /**
-    Build a bsp node and return pointer to it. Also recursively builds child 
+    Build a bsp node and return pointer to it. Also recursively builds child
     nodes if necessary.
 
     @param  mesh                the source mesh
@@ -103,7 +103,7 @@ nBspBuilder::Split(nMeshBuilder& mesh, const bbox3& box, int groupId, float maxN
     else if ((xLen > yLen) && (xLen > zLen))
     {
         // yz split plane
-        v[0].set(mid.x, box.vmin.y, box.vmin.z); 
+        v[0].set(mid.x, box.vmin.y, box.vmin.z);
         v[1].set(mid.x, box.vmin.y, box.vmax.z);
         v[2].set(mid.x, box.vmax.y, box.vmin.z);
         negBox.vmax.x = mid.x;

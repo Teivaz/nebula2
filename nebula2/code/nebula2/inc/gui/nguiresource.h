@@ -5,7 +5,7 @@
     @class nGuiResource
     @ingroup Gui
     @brief A gui resource for Nebula2's gui subsystem.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -34,7 +34,7 @@ public:
     void SetAbsUvRect(const rectangle& r);
     /// get uv rect in texture in texel coords
     const rectangle& GetAbsUvRect() const;
-    /// get relative uv rect 
+    /// get relative uv rect
     const rectangle& GetRelUvRect();
     /// set modulate color
     void SetColor(const vector4& v);

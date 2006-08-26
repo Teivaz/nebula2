@@ -43,17 +43,17 @@
     tex->Lock(nTexture2::ReadOnly, 0, surf)
     ushort *surface = (ushort*)surf.surfPointer;
     ushort color = surface[x + y*surf.surfPitch];
-    tex->Unlock(0);  
+    tex->Unlock(0);
     @endcode
 
-    The following code shows that another way of copying the image data of the memory 
+    The following code shows that another way of copying the image data of the memory
     to the created texture:
     @code
     // create an empty texture like above code.
     ...
 
     // get the surface of the texture
-    nSurface *surface; 
+    nSurface *surface;
 
     // get the surface of level 0.
     tex->GetSurfaceLevel("/tmp/surface", 0, &surface);
@@ -104,6 +104,20 @@ public:
         G32R32F,                    // 64 bit float, 32 bit red, 32 bit green
         A32B32G32R32F,              // 128 bit float, 32 bit rgba each
         A8,
+    };
+
+    // file formats
+    enum FileFormat
+    {
+        BMP,
+        JPG,
+        TGA,
+        PNG,
+        DDS,
+        PPM,
+        DIB,
+        HDR,
+        PFM,
     };
 
     // the sides of a cube map
@@ -192,8 +206,12 @@ public:
     static Format StringToFormat(const char* str);
     /// convert pixel format to string
     static const char* FormatToString(Format fmt);
-    /// save Texture to file
-    virtual bool SaveTextureToFile(const nString& filename);
+    /// convert string to type
+    static Type StringToType(const char* str);
+    /// convert type to string
+    static const char* TypeToString(Type t);
+    /// save data in texture into a file
+    virtual bool SaveTextureToFile(const nString& filename, FileFormat fileFormat);
 
     virtual void GenerateMipMaps();
 
@@ -396,7 +414,7 @@ nTexture2::GetBytesPerPixel() const
 {
     switch (this->format)
     {
-        case X8R8G8B8:  
+        case X8R8G8B8:
         case A8R8G8B8:
             return 4;
 
@@ -419,7 +437,7 @@ nTexture2::GetBytesPerPixel() const
 
         case R16F:
             return 2;
- 
+
         case G16R16:
         case G16R16F:
             return 4;
@@ -435,7 +453,7 @@ nTexture2::GetBytesPerPixel() const
 
         case A32B32G32R32F:
             return 16;
-        
+
         default:
             n_error("nTexture2::GetBytesPerPixel(): invalid pixel format!");
             return 1;
@@ -511,5 +529,5 @@ nTexture2::StringToFormat(const char* str)
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

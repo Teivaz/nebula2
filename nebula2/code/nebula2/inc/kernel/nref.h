@@ -5,10 +5,10 @@
     @class nRef
     @ingroup NebulaSmartPointers
 
-    nRef implements safe pointers to nReferenced derived objects which will 
+    nRef implements safe pointers to nReferenced derived objects which will
     invalidate themselves when the target object goes away. nAutoRef works
-    similarly to nRef but is also NOH aware and as such takes pointers to nRoot 
-    derived objects. Usage of nRef/nAutoRef helps you avoid dangling pointers and 
+    similarly to nRef but is also NOH aware and as such takes pointers to nRoot
+    derived objects. Usage of nRef/nAutoRef helps you avoid dangling pointers and
     also protects against dereferencing a null pointer.
 
     Operations:
@@ -33,7 +33,7 @@
 #include "kernel/nreferenced.h"
 
 //------------------------------------------------------------------------------
-template<class TYPE> class nRef : public nNode 
+template<class TYPE> class nRef : public nNode
 {
 public:
     /// default constructor
@@ -80,7 +80,7 @@ protected:
 //------------------------------------------------------------------------------
 /**
 */
-template<class TYPE> 
+template<class TYPE>
 inline
 nRef<TYPE>::nRef() :
     targetObject(0)
@@ -108,7 +108,7 @@ inline
 nRef<TYPE>::nRef(const nRef<TYPE>& rhs) :
     targetObject(rhs.get_unsafe())
 {
-    if (targetObject) 
+    if (targetObject)
     {
         ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
     }
@@ -121,7 +121,7 @@ template<class TYPE>
 inline
 nRef<TYPE>::~nRef()
 {
-    if (this->targetObject) 
+    if (this->targetObject)
     {
         ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced> *)this);
         this->targetObject = 0;
@@ -133,10 +133,10 @@ nRef<TYPE>::~nRef()
 */
 template<class TYPE>
 inline
-void 
+void
 nRef<TYPE>::invalidate()
 {
-    if (this->targetObject) 
+    if (this->targetObject)
     {
         ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced> *)this);
     }
@@ -153,7 +153,7 @@ nRef<TYPE>::set(TYPE* obj)
 {
     this->invalidate();
     this->targetObject = obj;
-    if (obj) 
+    if (obj)
     {
         ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
     }
@@ -166,7 +166,7 @@ template<class TYPE>
 inline
 TYPE*
 nRef<TYPE>::get() const
-{    
+{
     n_assert2(this->targetObject, "Null pointer access through nRef!");
     return (TYPE*) this->targetObject;
 }

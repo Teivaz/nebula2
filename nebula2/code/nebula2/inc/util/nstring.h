@@ -52,7 +52,7 @@ public:
     nString& operator+=(const nString& rhs);
     /// Is `a' equal to `b'?
     friend bool operator == (const nString& a, const nString& b);
-    /// Is `a' inequal to `b'?
+    /// Is `a' unequal to `b'?
     friend bool operator != (const nString& a, const nString& b);
     /// Is `a' smaller than `b'?
     friend bool operator < (const nString& a, const nString& b);
@@ -64,7 +64,7 @@ public:
     friend bool operator >= (const nString& a, const nString& b);
     /// Subscript operator (read only).
     const char operator[](int i) const;
-    /// Subscript operator (writeable).
+    /// Subscript operator (writable).
     char& operator[](int i);
     /// set as char ptr, with explicit length
     void Set(const char* ptr, int length);
@@ -134,13 +134,13 @@ public:
     const char* GetFirstToken(const char* whiteSpace);
     /// *** OBSOLETE *** get next token (this will destroy the string)
     const char* GetNextToken(const char* whiteSpace);
-    /// tokenize string into a provided nString array
+    /// tokenized string into a provided nString array
     int Tokenize(const char* whiteSpace, nArray<nString>& tokens) const;
-    /// tokenize string, keep strings within fence characters intact
+    /// tokenized string, keep strings within fence characters intact
     int Tokenize(const char* whiteSpace, uchar fence, nArray<nString>& tokens) const;
     /// extract substring
     nString ExtractRange(int from, int numChars) const;
-    /// terminate string at first occurence of character in set
+    /// terminate string at first occurrence of character in set
     void Strip(const char* charSet);
     /// Index of first appearance of `v' starting from index `startIndex'.
     int FindStringIndex(const nString& v, int startIndex) const;
@@ -158,11 +158,11 @@ public:
     nString TrimRight(const char* charSet) const;
     /// trim characters from charset at both sides of string
     nString Trim(const char* charSet) const;
-    /// substitute every occurance of a string with another string
+    /// substitute every occurrence of a string with another string
     nString Substitute(const char* str, const char* substStr) const;
-    /// substiture every occurance of a character with another character
+    /// substitute every occurrence of a character with another character
     void SubstituteCharacter(char c, char subst);
-    /// convert string inplace from UTF-8 to 8-bit ANSI
+    /// convert string in place from UTF-8 to 8-bit ANSI
     void UTF8toANSI();
     /// convert ANSI to UTF-8 in place
     void ANSItoUTF8();
@@ -193,7 +193,7 @@ public:
     void ReplaceIllegalFilenameChars(char replacement);
     /// return true if string only contains characters from charSet argument
     bool CheckValidCharSet(const nString& charSet) const;
-    /// replace characters within a srtring
+    /// replace characters within a string
     void ReplaceChars(const char* charSet, char replacement);
     /// concatenate array of strings into new string
     static nString Concatenate(const nArray<nString>& strArray, const nString& whiteSpace);

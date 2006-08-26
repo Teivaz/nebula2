@@ -6,8 +6,8 @@
     @ingroup Input
 
     @brief A generic Nebula input translates data from an API-specific input device
-    into Nebula input events. 
-    
+    into Nebula input events.
+
     (C) 2002 RadonLabs GmbH
 */
 #include "util/nnode.h"

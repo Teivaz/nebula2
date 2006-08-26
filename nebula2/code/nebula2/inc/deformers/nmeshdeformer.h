@@ -4,11 +4,11 @@
 /**
     @class nMeshDeformer
     @ingroup Deformers
-    @brief Base class for mesh deformers running on the CPU. While using vertex 
-    shaders for mesh deformation is a good thing, it is not always an option, 
+    @brief Base class for mesh deformers running on the CPU. While using vertex
+    shaders for mesh deformation is a good thing, it is not always an option,
     and may be too inflexible. Mesh deformers take one or more input meshes,
     plus deformer-specific and write their result to one output mesh.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -135,4 +135,4 @@ nMeshDeformer::GetNumVertices() const
 #endif
 
 
-    
+

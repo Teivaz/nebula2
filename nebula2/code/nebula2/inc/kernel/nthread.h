@@ -6,9 +6,9 @@
     @ingroup Threading
     @brief A thread wrapper class for Nebula.
 
-    Wraps a user defined thread function into a c++ object, 
+    Wraps a user defined thread function into a c++ object,
     additionally offers a message list for safe communication
-    with the thread function.   
+    with the thread function.
 
     (C) 2002 RadonLabs GmbH
 */
@@ -23,10 +23,10 @@
 #define N_THREADPROC __stdcall
 #else
 #define N_THREADPROC
-#endif  
+#endif
 
 //------------------------------------------------------------------------------
-class nThread 
+class nThread
 {
 public:
     /// thread priority levels
@@ -78,10 +78,10 @@ private:
     bool shutdownSignalReceived;
     int (N_THREADPROC *threadFunc)(nThread *);
     void (*wakeupFunc)(nThread *);
-        
+
     nThreadSafeList *msgList;
     bool isExtMsgList;
-    void *userData; 
+    void *userData;
 
 #   ifdef __WIN32__
     HANDLE thread;
@@ -89,12 +89,12 @@ private:
     pthread_t thread;
 #   endif
 #endif
-    
-    enum 
+
+    enum
     {
         N_DEFAULT_STACKSIZE = 4096,
     };
 };
 
 //-------------------------------------------------------------------
-#endif    
+#endif

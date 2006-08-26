@@ -11,10 +11,10 @@
 /**
     @scriptclass
     nramfileserver
-    
+
     @cppclass
     nRamFileServer
-    
+
     @superclass
     nfileserver2
 

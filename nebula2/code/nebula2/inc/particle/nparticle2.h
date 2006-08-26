@@ -1,7 +1,7 @@
 #ifndef N_PARTICLE2_H
 #define N_PARTICLE2_H
 //------------------------------------------------------------------------------
-/**    
+/**
     @class nParticle2
     @ingroup Particle
 
@@ -15,14 +15,14 @@
 
 typedef struct nParticle2
 {
-    vector3 acc;                    
-    vector3 velocity;               
+    vector3 acc;
+    vector3 velocity;
     vector3 position;
     vector3 startPos;
     float   rotation;
     float   rotationVariation;
     float   sizeVariation;
-    float   lifeTime;       
+    float   lifeTime;
     float   oneDivMaxLifeTime;
     vector2 uvmin;
     vector2 uvmax;

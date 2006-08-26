@@ -48,7 +48,7 @@ public:
     int GetNumScaleKeys(uint texLayer) const;
     /// get scale key at index
     void GetScaleKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key) const;
-    
+
 private:
     nAnimKeyArray<nAnimKey<vector2> > posArray[nGfxServer2::MaxTextureStages];
     nAnimKeyArray<nAnimKey<vector2> > eulerArray[nGfxServer2::MaxTextureStages];
@@ -83,7 +83,7 @@ nUvAnimator::AddEulerKey(uint texLayer, float time, const vector2& key)
 /**
 */
 inline
-void 
+void
 nUvAnimator::AddScaleKey(uint texLayer, float time, const vector2& key)
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);

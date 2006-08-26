@@ -41,7 +41,7 @@ static void n_isanimenabled(void* slf, nCmd* cmd);
 
     @cppclass
     nSkinAnimator
-    
+
     @superclass
     nanimator
 
@@ -142,7 +142,7 @@ n_beginjoints(void* slf, nCmd* cmd)
     @cmd
     setjoint
     @input
-    i(jointIndex), 
+    i(jointIndex),
     i(parentJointIndex),
     fff(poseTranslate)
     ffff(poseRotate)
@@ -162,7 +162,7 @@ n_setjoint(void* slf, nCmd* cmd)
 
     int jointIndex = cmd->In()->GetI();
     int parentJointIndex = cmd->In()->GetI();
-    
+
     poseTranslate.x = cmd->In()->GetF();
     poseTranslate.y = cmd->In()->GetF();
     poseTranslate.z = cmd->In()->GetF();
@@ -256,7 +256,7 @@ n_getjoint(void* slf, nCmd* cmd)
     cmd->Out()->SetF(poseScale.x);
     cmd->Out()->SetF(poseScale.y);
     cmd->Out()->SetF(poseScale.z);
-    
+
     cmd->Out()->SetS(name.Get());
 }
 
@@ -323,7 +323,7 @@ n_beginstates(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Define an animation state. 
+    Define an animation state.
 */
 static void
 n_setstate(void* slf, nCmd* cmd)
@@ -442,7 +442,7 @@ n_getstatenameat(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Begin adding animation clips to a state.    
+    Begin adding animation clips to a state.
 */
 static void
 n_beginclips(void* slf, nCmd* cmd)
@@ -738,12 +738,12 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
             cmd->In()->SetF(poseScale.x);
             cmd->In()->SetF(poseScale.y);
             cmd->In()->SetF(poseScale.z);
-            
+
             cmd->In()->SetS(name.Get());
 
             ps->PutCmd(cmd);
         }
-        
+
         //--- endjoints ---
         cmd = ps->GetCmd(this, 'EJNT');
         ps->PutCmd(cmd);

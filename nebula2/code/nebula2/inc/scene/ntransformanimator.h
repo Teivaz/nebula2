@@ -9,7 +9,7 @@
     directly defined key arrays.
 
     See also @ref N2ScriptInterface_ntransformanimator
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "scene/nanimator.h"
@@ -88,7 +88,7 @@ nTransformAnimator::AddEulerKey(float time, const vector3& key)
 /**
 */
 inline
-void 
+void
 nTransformAnimator::AddScaleKey(float time, const vector3& key)
 {
     nAnimKey<vector3> newKey(time, key);

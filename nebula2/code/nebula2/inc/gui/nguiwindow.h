@@ -86,7 +86,7 @@ protected:
     nString closeCommand;
     nString escapeCommand;
     nClass* windowClass;
-    
+
     bool modal;
     bool dismissed;
     bool closeRequested;
@@ -235,7 +235,7 @@ nGuiWindow::GetFadeOutTime() const
 /**
 
 - 07-Jun-05    kims    Added 'close', 'setclosecommand' and 'getclosecommand'
-                       to provide fading and prevent crashes when a custom 
+                       to provide fading and prevent crashes when a custom
                        nguibutton tries to close parent window.
 */
 inline
@@ -248,7 +248,7 @@ nGuiWindow::SetCloseCommand(const char* cmd)
 //------------------------------------------------------------------------------
 /**
     - 07-Jun-05    kims    Added 'close', 'setclosecommand' and 'getclosecommand'
-                           to provide fading and prevent crashes when a custom 
+                           to provide fading and prevent crashes when a custom
                            nguibutton tries to close parent window.
 */
 inline

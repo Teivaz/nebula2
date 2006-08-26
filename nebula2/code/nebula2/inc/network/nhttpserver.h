@@ -7,7 +7,7 @@
 
     A Nebula2 server object which implements a simple Http client
     (confusing I know ;).
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -41,5 +41,5 @@ private:
 };
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

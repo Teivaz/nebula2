@@ -7,7 +7,7 @@
 
     @brief This is the main class for the public consumption and how the
     programmer will interact with signals.
-    
+
     It is a mix-in class, and has been added as a parent class to nObject.
 
     In terms of data, it simply tracks the list of signal bindings that have

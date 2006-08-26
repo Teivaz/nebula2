@@ -18,7 +18,7 @@
 #include "kernel/nipcbuffer.h"
 
 //------------------------------------------------------------------------------
-class nIpcClient 
+class nIpcClient
 {
 public:
     /// connection flags
@@ -52,7 +52,7 @@ private:
     /// change blocking mode on socket internally
     void ApplyBlocking(bool b);
 
-    SOCKET sock;   
+    SOCKET sock;
     nIpcAddress serverAddr;
     bool blocking;
     bool isConnected;

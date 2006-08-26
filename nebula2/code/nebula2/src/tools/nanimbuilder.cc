@@ -35,7 +35,7 @@ nAnimBuilder::Clear()
 
 //------------------------------------------------------------------------------
 /**
-    Return the actual number of keys (not including the 'keys' in collapsed 
+    Return the actual number of keys (not including the 'keys' in collapsed
     curves).
 */
 int
@@ -155,7 +155,7 @@ nAnimBuilder::SaveNanim2(nFileServer2* fileServer, const char* filename)
             }
         }
 
-        // cleanup 
+        // cleanup
         file->Close();
     }
     file->Release();
@@ -493,9 +493,9 @@ nAnimBuilder::LoadNanim2(nFileServer2* fileServer, const char* filename)
                 n_assert(keyXString && keyYString && keyZString && keyWString);
 
                 static vector4 key;
-                key.set(float(atof(keyXString)), 
-                        float(atof(keyYString)), 
-                        float(atof(keyZString)), 
+                key.set(float(atof(keyXString)),
+                        float(atof(keyYString)),
+                        float(atof(keyZString)),
                         float(atof(keyWString)));
                 keyArray.Append(key);
             }
@@ -577,7 +577,7 @@ nAnimBuilder::LoadNax2(nFileServer2* fileServer, const char* filename)
             int loopType  = file->GetInt();
 
             Group group;
-            
+
             // add empty curve objects to the group
             Curve curve;
             int curveIndex;

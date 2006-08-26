@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nSQLite3Database
-    
+
     Database frontend for SQLite3.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "sql/nsqldatabase.h"

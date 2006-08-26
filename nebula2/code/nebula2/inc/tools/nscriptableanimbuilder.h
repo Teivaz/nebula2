@@ -5,7 +5,7 @@
     @class nScriptableAnimBuilder
     @ingroup Tools
 
-    The following lua script shows the way to add animation group to the 
+    The following lua script shows the way to add animation group to the
     Nebula animation builder:
     @verbatim
     groupIndex = animBuilder:begingroup();

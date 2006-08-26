@@ -17,7 +17,7 @@
 #elif __WIN32__
 #   ifndef _INC_WINDOWS
 #   define WIN32_LEAN_AND_MEAN
-#   include <windows.h> 
+#   include <windows.h>
 #   endif
 #else
 #include <sys/time.h>
@@ -29,7 +29,7 @@
 #include "kernel/nenv.h"
 
 //------------------------------------------------------------------------------
-class nTimeServer : public nRoot 
+class nTimeServer : public nRoot
 {
 public:
     /// constructor
@@ -80,7 +80,7 @@ private:
     LONGLONG time_stop;
 #   else
     long long int time_diff;
-    long long int time_stop; 
+    long long int time_stop;
 #   endif
 };
 

@@ -5,7 +5,7 @@
     @class nResourceServer
     @ingroup Resource
     @brief Central resource server. Creates and manages resource objects.
-    
+
     Resources are objects which provide several types of data (or data
     streams) to the application, and can unload and reload themselves
     on request.

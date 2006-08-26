@@ -343,12 +343,12 @@ nConServer::Render()
 
 //------------------------------------------------------------------------------
 /**
-    Insert a char into the input buffer, and advance cursor position. 
+    Insert a char into the input buffer, and advance cursor position.
 */
 void
 nConServer::EditInsertChar(char c)
 {
-    const int inputBufferSize = sizeof(this->inputBuffer);    
+    const int inputBufferSize = sizeof(this->inputBuffer);
     if (this->overstrike)
     {
         // overstrike mode
@@ -466,7 +466,7 @@ nConServer::EditDeleteLeft()
 
 //------------------------------------------------------------------------------
 /**
-    Return true if the given input key is in the kill set. If yes, the 
+    Return true if the given input key is in the kill set. If yes, the
     console server must "swallow" the input event, so that the application
     doesn't see it.
 */
@@ -474,9 +474,9 @@ bool
 nConServer::KeyIsInKillSet(int key)
 {
     int i = 0;
-    while (keyKillSet[i] != N_KEY_NONE) 
+    while (keyKillSet[i] != N_KEY_NONE)
     {
-        if (key == keyKillSet[i]) 
+        if (key == keyKillSet[i])
         {
             return true;
         }
@@ -609,7 +609,7 @@ nConServer::EditLine(nInputEvent* inputEvent)
             case N_KEY_DELETE:
                 this->EditDeleteRight();
                 break;
-            
+
             case N_KEY_INSERT:
                 this->overstrike = !this->overstrike;
                 break;
@@ -692,7 +692,7 @@ nConServer::ResetHistory()
 /**
     Recall the previous command from the history buffer.
 */
-void 
+void
 nConServer::RecallPrevCmd()
 {
     ++this->historyIndex;
@@ -722,7 +722,7 @@ nConServer::RecallPrevCmd()
 /**
     Recall the next command from the history buffer.
 */
-void 
+void
 nConServer::RecallNextCmd()
 {
     --this->historyIndex;
@@ -756,7 +756,7 @@ nConServer::RecallNextCmd()
 /**
     Trigger the console server. Due to a chicken-egg problem this method
     is called from inside nInputServer::Trigger().
-    Don't forget to actually render the console by calling 
+    Don't forget to actually render the console by calling
     nConServer::Render() somewhere between nGfxServer::BeginScene()/EndScene().
 */
 void

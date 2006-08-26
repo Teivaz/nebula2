@@ -113,7 +113,7 @@ nNpkBuilder::GenerateToc(nDirectory* dir, const nString& dirName)
 
 //------------------------------------------------------------------------------
 /**
-    Recursively write a toc entry (recurses if the toc entry is a 
+    Recursively write a toc entry (recurses if the toc entry is a
     directory entry.
 */
 bool
@@ -123,7 +123,7 @@ nNpkBuilder::WriteTocEntry(nNpkTocEntry* tocEntry, bool noTopLevelName)
     n_assert(tocEntry);
 
     nNpkTocEntry::Type entryType = tocEntry->GetType();
-    nString entryName; 
+    nString entryName;
     if (noTopLevelName)
     {
         entryName = "<noname>";
@@ -144,7 +144,7 @@ nNpkBuilder::WriteTocEntry(nNpkTocEntry* tocEntry, bool noTopLevelName)
         this->npkFile->PutInt(blockLen);
         this->npkFile->PutShort(entryNameLen);
         this->npkFile->Write(entryName.Get(), entryNameLen);
-    
+
         nNpkTocEntry* curSubEntry = tocEntry->GetFirstEntry();
         while (curSubEntry)
         {

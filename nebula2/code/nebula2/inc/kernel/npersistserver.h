@@ -17,10 +17,10 @@
     be saved to files. However, since the file server needs to
     know which script server to use for reading serialized object
     files, there has to be some meta information in the file
-    itself which names the class of the script server which 
+    itself which names the class of the script server which
     understands it.
 
-    Within the first 128 Bytes of a serialized object file the 
+    Within the first 128 Bytes of a serialized object file the
     following string must be embedded:
 
     @verbatim
@@ -28,7 +28,7 @@
     @endverbatim
 
     Where 'classname' is the script server's class which has
-    to be used to read that file. 
+    to be used to read that file.
 
     <h2>Folded and unfolded objects</h2>
 
@@ -68,14 +68,14 @@
 class nScriptServer;
 class nFileServer2;
 class nFile;
-class nPersistServer : public nRoot 
+class nPersistServer : public nRoot
 {
 public:
     /// Savemodes
-    enum nSaveMode 
+    enum nSaveMode
     {
         SAVEMODE_FOLD,  /// default mode
-        SAVEMODE_CLONE,  
+        SAVEMODE_CLONE,
     };
 
     /// constructor
@@ -111,9 +111,9 @@ public:
     /// load a object from persistency stream
     nObject *LoadObject(const char *fileName, const char* objName);
 
-private:   
+private:
     /// internal
-    bool BeginFoldedObject(nObject *obj, nCmd *, const char *name, bool sel_only, 
+    bool BeginFoldedObject(nObject *obj, nCmd *, const char *name, bool sel_only,
                            bool isObjNamed);
     /// internal
     bool BeginCloneObject(nObject *obj, const char *name, bool isObjNamed);
@@ -134,8 +134,8 @@ private:
     nDynAutoRef<nScriptServer> refSaver;
     nFile *file;
     nStack<nObject*> objectStack;
-    nSaveMode saveMode;     
-    
+    nSaveMode saveMode;
+
     nObject *cloneTarget;
     nRoot *origCwd;
 

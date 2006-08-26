@@ -109,9 +109,9 @@ public:
             this->z = t;
         }
     }
-    //-------------------------------------------------------------------------------- 
+    //--------------------------------------------------------------------------------
     /**
-        Convert quaternion to euler angles. 
+        Convert quaternion to euler angles.
         Thanks to http://www.euclideanspace.com/.
     */
     void Set(const quaternion& q)

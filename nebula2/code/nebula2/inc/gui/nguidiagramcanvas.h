@@ -8,7 +8,7 @@
     @brief A GuiWidget which creates a diagram canvas.
 
     (C) 2004 RadonLabs GmbH
-*/    
+*/
 
 #include "gui/nguiformlayout.h"
 
@@ -117,14 +117,14 @@ private:
         XLabel = 0,
         YLabel = 1,
         Xmin = 2,
-        Xhalf = 3, 
+        Xhalf = 3,
         Xmax = 4,
         Ymin = 5,
         Yhalf = 6,
         Ymax = 7,
 
         numTextLabels = 8
-    };  
+    };
 
     nArray< nRef < nGuiTextLabel > > refTextLabel;
     nRef<nGuiCanvas> refCanvas;

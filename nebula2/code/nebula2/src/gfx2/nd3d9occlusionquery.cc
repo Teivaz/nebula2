@@ -112,7 +112,7 @@ nD3D9OcclusionQuery::AddShapeQuery(nGfxServer2::ShapeType type, const matrix44& 
         newQuery.d3dQuery = d3dQuery;
         newQuery.userData = userData;
         this->queryArray.Append(newQuery);
-        
+
         // start the query
         hr = d3dQuery->Issue(D3DISSUE_BEGIN);
         n_assert(SUCCEEDED(hr));
@@ -197,7 +197,7 @@ nD3D9OcclusionQuery::GetOcclusionStatus(int queryIndex)
         // the z test in a DWORD
         DWORD numVisiblePixels = 0;
         n_assert(d3dQuery->GetDataSize() == sizeof(DWORD));
-        
+
         // note: this method may return S_OK, S_FALSE or D3DERR_DEVICELOST.
         // S_FALSE is not considered an error!
         HRESULT hr;

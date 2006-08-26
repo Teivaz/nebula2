@@ -131,7 +131,7 @@ nNetServer::Trigger()
                         this->HandleMessage(fromClientId, curMsg);
                     }
                 }
-            } 
+            }
             while ((curMsg = recvMsg.GetNextString()));
         }
     }
@@ -165,7 +165,7 @@ nNetServer::Trigger()
 
 //------------------------------------------------------------------------------
 /**
-    Handle a join session request message from a client. This checks if the 
+    Handle a join session request message from a client. This checks if the
     provided guid matches one of the pre-configured guid's, and if this
     is the case, a "~joinaccepted" message is returned, otherwise, a
     "~joindenied".
@@ -198,7 +198,7 @@ nNetServer::HandleJoinSessionRequest(int clientId, const char* clientGuid)
 
 //------------------------------------------------------------------------------
 /**
-    Handle a custom message. This method should be overwritten by 
+    Handle a custom message. This method should be overwritten by
     subclasses to check to process specific custom messages.
 */
 bool

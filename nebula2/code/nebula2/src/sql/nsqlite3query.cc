@@ -127,9 +127,9 @@ nSQLite3Query::Execute()
     this->Clear();
 
     // execute the query
-    int err = sqlite3_get_table(this->refDatabase->GetDatabaseHandle(), 
-                                this->sqlStatement.Get(), 
-                                &this->sqlite3Result, 
+    int err = sqlite3_get_table(this->refDatabase->GetDatabaseHandle(),
+                                this->sqlStatement.Get(),
+                                &this->sqlite3Result,
                                 &this->sqlite3ResNumRows,
                                 &this->sqlite3ResNumCols,
                                 0);

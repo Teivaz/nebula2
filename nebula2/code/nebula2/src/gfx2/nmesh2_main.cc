@@ -66,7 +66,7 @@ nMesh2::UnloadResource()
         this->groups = 0;
     }
 
-    // NOTE: do not clear numVertices, numIndices, vertexWidth, 
+    // NOTE: do not clear numVertices, numIndices, vertexWidth,
     // etc. Those values may be needed in a following call to Load()!
     this->vertexBufferByteSize = 0;
     this->indexBufferByteSize  = 0;
@@ -98,7 +98,7 @@ nMesh2::LoadResource()
     bool success = false;
     if (filename.IsEmpty())
     {
-        // no filename, just create empty vertex and/or index buffers        
+        // no filename, just create empty vertex and/or index buffers
         return this->CreateEmpty();
     }
     else if (this->refResourceLoader.isvalid())
@@ -236,15 +236,15 @@ nMesh2::CreateEdgeBuffer()
 //------------------------------------------------------------------------------
 /**
     Use the provided nMeshLoader class to read the data.
-    
+
     @param meshLoader   the meshloader to load the file.
 */
-bool 
+bool
 nMesh2::LoadFile(nMeshLoader* meshLoader)
 {
     n_assert(meshLoader);
     n_assert(this->IsUnloaded());
-    
+
     bool res;
     nString filename = this->GetFilename();
 
@@ -263,7 +263,7 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     this->SetVertexComponents(meshLoader->GetVertexComponents());
     this->SetNumIndices(meshLoader->GetNumIndices());
     this->SetNumEdges(meshLoader->GetNumEdges());
-    
+
     int groupIndex;
     int numGroups = meshLoader->GetNumGroups();
     for (groupIndex = 0; groupIndex < numGroups; groupIndex++)
@@ -343,7 +343,7 @@ nMesh2::UpdateGroupBoundingBoxes(float* vertexBufferData, ushort* indexBufferDat
 */
 int
 nMesh2::GetByteSize()
-{   
+{
     if (this->IsValid())
     {
         return this->numEdges * sizeof(Edge);
@@ -393,7 +393,7 @@ nMesh2::ConvertUsageStringToFlags(const char* usageFlagsString)
         workingString.ToLower();
         const char* flagString = workingString.GetFirstToken( "|" );
         while (flagString)
-        {   
+        {
             if (!strcmp(flagString, "writeonce"))
             {
                 usage |= nMesh2::WriteOnce;
@@ -435,8 +435,8 @@ nMesh2::ConvertUsageStringToFlags(const char* usageFlagsString)
 
 //------------------------------------------------------------------------------
 /**
-    This method is called to create uninitialized buffers, etc., for a mesh 
-    that is not to be loaded from a file. It can also be called by custom 
+    This method is called to create uninitialized buffers, etc., for a mesh
+    that is not to be loaded from a file. It can also be called by custom
     resource loaders, to do the basic preinitialization.
 
     - 06-Jun-05    kims    readded. nmap calls this method.
@@ -466,7 +466,7 @@ nMesh2::CreateEmpty()
         this->CreateEdgeBuffer();
     }
 
-    //n_printf("nMesh2::LoadResource(): initialized empty mesh %s!\n", this->GetName()); 
+    //n_printf("nMesh2::LoadResource(): initialized empty mesh %s!\n", this->GetName());
 
     this->SetState(Empty);
     return true;

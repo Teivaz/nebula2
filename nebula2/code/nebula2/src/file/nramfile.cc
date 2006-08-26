@@ -16,7 +16,7 @@ nRamFile::nRamFile() :
     filePointerPos(0),
     fallBack(false)
 {
-    // empty    
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ nRamFile::Open(const nString& fileName, const nString& accessMode)
     }
     n_assert(this->refSharedMemory.isvalid());
 
-    //for (uint i = 0; i < strlen(accessMode); i++) 
+    //for (uint i = 0; i < strlen(accessMode); i++)
     //{
     //    if (accessMode[i] == 'w')
     //    {
@@ -318,6 +318,6 @@ nRamFile::GetBaseName(const nString& n) const
     nString result = n.ExtractFileName();
 //    result.StripExtension();
     return result;
-}    
+}
 
 //------------------------------------------------------------------------------

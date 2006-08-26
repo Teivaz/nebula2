@@ -7,7 +7,7 @@
 
     A utility class which supports packing, diffing, and unpacking
     npk files.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "util/nstring.h"

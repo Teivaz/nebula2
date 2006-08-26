@@ -25,21 +25,21 @@ nNodeList::nNodeList(void):
 /**
     Initializes the List and creates a default entry for the default light
 */
-void 
+void
 nNodeList::Open ()
 {
-    if (this->isOpen) 
+    if (this->isOpen)
     {
         return;
     }
 
     n_assert(this->refScriptServer.isvalid());
-    
+
     this->timeHandle = nVariableServer::Instance()->GetVariableHandleByName("time");
-    
+
     this->Clear();
     this->AddDefaultEntry();
-    
+
     this->isOpen = true;
 }
 
@@ -47,18 +47,18 @@ nNodeList::Open ()
 /**
     Releases all Resources
 */
-void 
+void
 nNodeList::Close ()
 {
     n_assert(this->IsOpen());
 
     this->Clear(); // empty the list
-            
-    if (this->refUsrScene.isvalid()) 
+
+    if (this->refUsrScene.isvalid())
     {
         this->refUsrScene->Release();
     }
-      
+
     // if we have a character3set, we must delete it
     if(this->character3Set)
     {
@@ -77,20 +77,20 @@ nNodeList::Close ()
 /**
     Empty the Node-List and recreate /usr/scene and a default entry + light
 */
-void 
-nNodeList::Clear() 
-{        
+void
+nNodeList::Clear()
+{
     uint index;
     for (index = 0; index < numElements; index++)
     {
         this->refNodes[index]->RenderContextDestroyed(&(this->renderContexts[index]));
-    }        
+    }
     this->numElements = 0;
-    
+
     this->renderContexts.Clear();
     this->refNodes.Clear();
-    
-    if (this->refUsrScene.isvalid()) 
+
+    if (this->refUsrScene.isvalid())
     {
         this->refUsrScene->Release();
     }
@@ -104,18 +104,18 @@ nNodeList::Clear()
     {
         this->refUsrScene = (nSceneNode*) nKernelServer::Instance()->New("nscenenode", "/usr/scene");
     }
-    
+
     n_assert(this->refUsrScene.isvalid());
-} 
+}
 //------------------------------------------------------------------------------
 /**
     Creates the /usr/scene/default node with an additional light-source
 */
-void 
+void
 nNodeList::AddDefaultEntry()
 {
     this->AddEntry("default");
-            
+
     // source the light stage...
     if (this->lightStageEnabled)
     {
@@ -137,23 +137,23 @@ nNodeList::AddDefaultEntry()
 /**
     Creates new entry in /usr/scene/
 */
-void 
+void
 nNodeList::AddEntry(const nString& name)
 {
     nString nodePath = "/usr/scene/" + name;
-    
+
     // Create new node in /usr/scene
     nTransformNode* object = (nTransformNode*) nKernelServer::Instance()->New("ntransformnode", nodePath.Get());
-        
+
     refNodes.Append(object);
-    
+
     // Create new RenderContext & connect with the new Object
     nRenderContext newRenderContext;
     AddDefaultVariables(newRenderContext);
     newRenderContext.SetRootNode(object);
     renderContexts.Append(newRenderContext);
     object->RenderContextCreated(&this->renderContexts[numElements]);
-    
+
     // number of elements inside the array
     numElements++;
 }
@@ -161,9 +161,9 @@ nNodeList::AddEntry(const nString& name)
 /**
     Loads and initialized object in /usr/scene/
 */
-void 
-nNodeList::LoadObject(const nString& objPath) 
-{ 
+void
+nNodeList::LoadObject(const nString& objPath)
+{
     // load Object inside an individual Node
     nString tmpString = objPath.ExtractFileName();
     tmpString.StripExtension();
@@ -178,7 +178,7 @@ nNodeList::LoadObject(const nString& objPath)
     kernelServer->SetCwd( this->refNodes.Back() );
     kernelServer->Load(objPath.Get());
     kernelServer->PopCwd();
-    
+
     refNodes.Back()->RenderContextCreated(&this->renderContexts.Back());
 
     // reset time
@@ -189,11 +189,12 @@ nNodeList::LoadObject(const nString& objPath)
 /**
     Get Pointer to the first nCharacter2 Object from the current rendercontexts
 */
-nCharacter2*    nNodeList::getCharacter()
+nCharacter2*
+nNodeList::GetCharacter()
 {
     nVariable::Handle charHandle = nVariableServer::Instance()->GetVariableHandleByName("charPointer");
     const nVariable* charVar = 0;
-    
+
     int i;
     for( i = 0 ; i < renderContexts.Size() ; i++)
     {
@@ -213,9 +214,9 @@ nCharacter2*    nNodeList::getCharacter()
 /**
     Loads an object and attaches it to the given animator
 */
-void 
-nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex) 
-{ 
+void
+nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex)
+{
     // load Object inside an individual Node
     nString tmpString = objPath.ExtractFileName();
     tmpString.StripExtension();
@@ -230,7 +231,7 @@ nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex)
     kernelServer->SetCwd( this->refNodes.Back() );
     kernelServer->Load(objPath.Get());
     kernelServer->PopCwd();
-    
+
     refNodes.Back()->RenderContextCreated(&this->renderContexts.Back());
 
     // Add the Object to the list of objects to animate
@@ -245,11 +246,11 @@ nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex)
 /**
     Updates global varibles for all rendercontexts
 */
-void 
+void
 nNodeList::Trigger(double time, uint frameId)
-{   
+{
     n_assert ( this->refUsrScene.isvalid() )
-    
+
     // Update all Variables
     uint index;
     for( index=0 ; index < numElements ; index++ )
@@ -258,7 +259,7 @@ nNodeList::Trigger(double time, uint frameId)
     // Apply animation on the Node that was attached to a Hardpoint
     if(this->hardpointObjectsCnt > 0)
     {
-        nCharacter2* curChar = getCharacter();
+        nCharacter2* curChar = GetCharacter();
         if( 0 != curChar )
         {
             nCharSkeleton& skel = curChar->GetSkeleton();
@@ -280,16 +281,16 @@ nNodeList::Trigger(double time, uint frameId)
 /**
     Transfers globals vars for a specific rendering context
 */
-void 
+void
 nNodeList::TransferGlobalVars(nRenderContext &context,double time,uint frameId)
-{ 
+{
     context.GetVariable(timeHandle)->SetFloat((float)time);
     context.SetFrameId(frameId);
-    
+
     // Transfer global variables
     const nVariableContext& globalContext = nVariableServer::Instance()->GetGlobalVariableContext();
     int numGlobalVars = globalContext.GetNumVariables();
-    
+
     int globalVarIndex;
     for (globalVarIndex = 0; globalVarIndex < numGlobalVars; globalVarIndex++)
     {
@@ -310,7 +311,7 @@ nNodeList::TransferGlobalVars(nRenderContext &context,double time,uint frameId)
 /**
     Creates default variables for a given render context
 */
-void 
+void
 nNodeList::AddDefaultVariables(nRenderContext& context)
 {
     static const nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };

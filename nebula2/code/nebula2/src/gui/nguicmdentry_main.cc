@@ -78,7 +78,7 @@ nGuiCmdEntry::AppendCmdLine()
     nString lineText = this->editLine.GetContent();
     nString textToCursor = lineText.ExtractRange(0, cursorIndex);
     nString textFromCursor = lineText.ExtractRange(cursorIndex, lineText.Length() - cursorIndex);
-    
+
     if (!textToCursor.IsEmpty())
     {
         cmdLine.Append(textToCursor);

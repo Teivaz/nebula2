@@ -1,4 +1,4 @@
-/* 
+/*
  * tclLiteral.c --
  *
  *	Implementation of the global and ByteCode-local literal tables
@@ -12,7 +12,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -38,7 +37,7 @@ static unsigned int	HashString _ANSI_ARGS_((CONST char *bytes,
 			    int length));
 static void		RebuildLiteralTable _ANSI_ARGS_((
 			    LiteralTable *tablePtr));
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -51,7 +50,7 @@ static void		RebuildLiteralTable _ANSI_ARGS_((
  * Results:
  *	None.
  *
- * Side effects: 
+ * Side effects:
  *	The literal table is made ready for use.
  *
  *----------------------------------------------------------------------
@@ -62,11 +61,11 @@ TclInitLiteralTable(tablePtr)
     register LiteralTable *tablePtr; /* Pointer to table structure, which
 				      * is supplied by the caller. */
 {
-#if (TCL_SMALL_HASH_TABLE != 4) 
+#if (TCL_SMALL_HASH_TABLE != 4)
     panic("TclInitLiteralTable: TCL_SMALL_HASH_TABLE is %d, not 4\n",
 	    TCL_SMALL_HASH_TABLE);
 #endif
-    
+
     tablePtr->buckets = tablePtr->staticBuckets;
     tablePtr->staticBuckets[0] = tablePtr->staticBuckets[1] = 0;
     tablePtr->staticBuckets[2] = tablePtr->staticBuckets[3] = 0;
@@ -75,7 +74,7 @@ TclInitLiteralTable(tablePtr)
     tablePtr->rebuildSize = TCL_SMALL_HASH_TABLE*REBUILD_MULTIPLIER;
     tablePtr->mask = 3;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -135,7 +134,7 @@ TclDeleteLiteralTable(interp, tablePtr)
 	ckfree((char *) tablePtr->buckets);
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -153,7 +152,7 @@ TclDeleteLiteralTable(interp, tablePtr)
  *	To maximize sharing, we look up the string in the interpreter's
  *	global literal table. If not found, we create a new shared literal
  *	in the global table. We then add a reference to the shared
- *	literal in the CompileEnv's literal array. 
+ *	literal in the CompileEnv's literal array.
  *
  *	If onHeap is 1, this procedure is given ownership of the string: if
  *	an object is created then its string representation is set directly
@@ -235,7 +234,7 @@ TclRegisterLiteral(envPtr, bytes, length, onHeap)
 	     * A global literal was found. Add an entry to the CompileEnv's
 	     * local literal array.
 	     */
-	    
+
 	    if (onHeap) {
 		ckfree(bytes);
 	    }
@@ -247,7 +246,7 @@ TclRegisterLiteral(envPtr, bytes, length, onHeap)
 			globalPtr->refCount);
 	    }
 	    TclVerifyLocalLiteralTable(envPtr);
-#endif /*TCL_COMPILE_DEBUG*/ 
+#endif /*TCL_COMPILE_DEBUG*/
 	    return objIndex;
 	}
     }
@@ -279,7 +278,7 @@ TclRegisterLiteral(envPtr, bytes, length, onHeap)
 	    }
 	}
     }
-    
+
 #ifdef TCL_COMPILE_DEBUG
     if (TclLookupLiteralEntry((Tcl_Interp *) iPtr, objPtr) != NULL) {
 	panic("TclRegisterLiteral: literal \"%.*s\" found globally but shouldn't be",
@@ -326,7 +325,7 @@ TclRegisterLiteral(envPtr, bytes, length, onHeap)
 	}
     }
 #endif /*TCL_COMPILE_DEBUG*/
-#ifdef TCL_COMPILE_STATS   
+#ifdef TCL_COMPILE_STATS
     iPtr->stats.numLiteralsCreated++;
     iPtr->stats.totalLitStringBytes   += (double) (length + 1);
     iPtr->stats.currentLitStringBytes += (double) (length + 1);
@@ -334,7 +333,7 @@ TclRegisterLiteral(envPtr, bytes, length, onHeap)
 #endif /*TCL_COMPILE_STATS*/
     return objIndex;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -376,7 +375,7 @@ TclLookupLiteralEntry(interp, objPtr)
     }
     return NULL;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -440,7 +439,7 @@ TclHideLiteral(interp, envPtr, index)
 	nextPtrPtr = &entryPtr->nextPtr;
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -493,7 +492,7 @@ TclAddLiteralObj(envPtr, objPtr, litPtrPtr)
 
     return objIndex;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -525,7 +524,7 @@ AddLocalLiteralEntry(envPtr, globalPtr, localHash)
     register LiteralTable *localTablePtr = &(envPtr->localLitTable);
     LiteralEntry *localPtr;
     int objIndex;
-    
+
     objIndex = TclAddLiteralObj(envPtr, globalPtr->objPtr, &localPtr);
 
     /*
@@ -570,7 +569,7 @@ AddLocalLiteralEntry(envPtr, globalPtr, localHash)
 #endif /*TCL_COMPILE_DEBUG*/
     return objIndex;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -609,7 +608,7 @@ ExpandLocalLiteralArray(envPtr)
     register LiteralEntry *newArrayPtr =
 	    (LiteralEntry *) ckalloc((unsigned) (2 * currBytes));
     int i;
-    
+
     /*
      * Copy from the old literal array to the new, then update the local
      * literal table's bucket array.
@@ -635,7 +634,7 @@ ExpandLocalLiteralArray(envPtr)
      * Free the old literal array if needed, and mark the new literal
      * array as malloced.
      */
-    
+
     if (envPtr->mallocedLiteralArray) {
 	ckfree((char *) currArrayPtr);
     }
@@ -643,7 +642,7 @@ ExpandLocalLiteralArray(envPtr)
     envPtr->literalArrayEnd = (2 * currElems);
     envPtr->mallocedLiteralArray = 1;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -658,7 +657,7 @@ ExpandLocalLiteralArray(envPtr)
  *	None.
  *
  * Side effects:
- *	The reference count for the global LiteralTable entry that 
+ *	The reference count for the global LiteralTable entry that
  *	corresponds to the literal is decremented. If no other reference
  *	to a global literal object remains, it is freed.
  *
@@ -684,7 +683,7 @@ TclReleaseLiteral(interp, objPtr)
     index = (HashString(bytes, length) & globalTablePtr->mask);
 
     /*
-     * Check to see if the object is in the global literal table and 
+     * Check to see if the object is in the global literal table and
      * remove this reference.  The object may not be in the table if
      * it is a hidden local literal.
      */
@@ -700,7 +699,7 @@ TclReleaseLiteral(interp, objPtr)
 	     * kept alive only by a circular reference from a ByteCode
 	     * stored as its internal rep.
 	     */
-	    
+
 	    if ((entryPtr->refCount == 1)
 		    && (objPtr->typePtr == &tclByteCodeType)) {
 		codePtr = (ByteCode *) objPtr->internalRep.otherValuePtr;
@@ -722,7 +721,7 @@ TclReleaseLiteral(interp, objPtr)
 	     * If the literal is no longer being used by any ByteCode,
 	     * delete the entry then decrement the ref count of its object.
 	     */
-		
+
 	    if (entryPtr->refCount == 0) {
 		if (prevPtr == NULL) {
 		    globalTablePtr->buckets[index] = entryPtr->nextPtr;
@@ -736,7 +735,7 @@ TclReleaseLiteral(interp, objPtr)
 		globalTablePtr->numEntries--;
 
 		/*
-		 * Remove the reference corresponding to the global 
+		 * Remove the reference corresponding to the global
 		 * literal table entry.
 		 */
 
@@ -752,7 +751,7 @@ TclReleaseLiteral(interp, objPtr)
      */
     Tcl_DecrRefCount(objPtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -802,7 +801,7 @@ HashString(bytes, length)
     }
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -862,7 +861,7 @@ RebuildLiteralTable(tablePtr)
 	        entryPtr = *oldChainPtr) {
 	    bytes = Tcl_GetStringFromObj(entryPtr->objPtr, &length);
 	    index = (HashString(bytes, length) & tablePtr->mask);
-	    
+
 	    *oldChainPtr = entryPtr->nextPtr;
 	    bucketPtr = &(tablePtr->buckets[index]);
 	    entryPtr->nextPtr = *bucketPtr;
@@ -878,7 +877,7 @@ RebuildLiteralTable(tablePtr)
 	ckfree((char *) oldBuckets);
     }
 }
-
+
 #ifdef TCL_COMPILE_STATS
 /*
  *----------------------------------------------------------------------
@@ -954,7 +953,7 @@ TclLiteralStats(tablePtr)
     return result;
 }
 #endif /*TCL_COMPILE_STATS*/
-
+
 #ifdef TCL_COMPILE_DEBUG
 /*
  *----------------------------------------------------------------------
@@ -1010,7 +1009,7 @@ TclVerifyLocalLiteralTable(envPtr)
 	      count, localTablePtr->numEntries);
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *

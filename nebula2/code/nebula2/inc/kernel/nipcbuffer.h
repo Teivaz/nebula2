@@ -9,7 +9,7 @@
 
     Note that a buffer is just a raw byte pool, especially buffers used
     for receiving messages may contain more then one message!
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -79,7 +79,7 @@ nIpcBuffer::Set(const char* buf, int numBytes)
 
 //------------------------------------------------------------------------------
 /**
-    Set the buffer content as string. The string may be truncated if it 
+    Set the buffer content as string. The string may be truncated if it
     is too long. Returns the number of bytes copied (includes the
     terminating 0).
 */
@@ -146,7 +146,7 @@ nIpcBuffer::nIpcBuffer(const char* buf) :
 */
 inline
 nIpcBuffer::~nIpcBuffer()
-{   
+{
     n_assert(this->buffer);
     n_free(this->buffer);
     this->buffer = 0;
@@ -189,7 +189,7 @@ inline
 void
 nIpcBuffer::SetSize(int s)
 {
-    n_assert((s >= 0) && (s < this->bufferSize));
+    n_assert((s >= 0) && (s <= this->bufferSize));
     this->contentSize = s;
 }
 
@@ -275,4 +275,4 @@ nIpcBuffer::GetNextString()
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

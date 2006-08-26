@@ -5,7 +5,7 @@
     @class nGuiConsoleWindow
     @ingroup Gui
     @brief A complete Nebula command console window.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

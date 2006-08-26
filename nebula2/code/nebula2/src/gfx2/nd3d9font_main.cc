@@ -48,7 +48,7 @@ nD3D9Font::LoadResource()
     }
 
     int fontFlags = 0;
-    switch(this->fontDesc.GetWeight()) 
+    switch(this->fontDesc.GetWeight())
     {
         case nFontDesc::Thin:
             fontFlags |= FW_THIN;
@@ -154,6 +154,6 @@ nD3D9Font::OnRestored()
 
 
 
-            
+
 
 

@@ -44,7 +44,7 @@ nInstanceStream::LoadResource()
     n_assert(this->streamArray.Empty());
 
     // update the stream stride and component offsets from the stream declaration
-    int i; 
+    int i;
     this->streamStride = 0;
     for (i = 0; i < this->streamDecl.Size(); i++)
     {

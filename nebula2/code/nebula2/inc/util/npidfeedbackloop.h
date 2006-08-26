@@ -5,7 +5,7 @@
     @class nPIDFeedbackLoop
     @ingroup Util
 
-    A PID feedback loop (proportional integral derivative feedback loop) 
+    A PID feedback loop (proportional integral derivative feedback loop)
 
     (C) 2006 RadonLabs GmbH
 */
@@ -31,26 +31,26 @@ public:
     /// last delta of error
 	double GetLastDelta() const;
     /// update current value
-    void Update(nTime time); 
+    void Update(nTime time);
     /// reset running error
 	void ResetError();
 
 private:
-	double value;				// current value of the controller 
-	double goal;			// the value the controller is trying to achieve 
-           
-	double pConst;				// proportional constant (Kp) 
-	double iConst;				// integral constant (Ki) 
-	double dConst;				// derivative constant (Kd) 
-	double maxAcceleration;		// limits how fast the control can accelerate the value 
-           
-	double lastError;			// previous error 
-	double lastDelta;			// amount of change during last adjustment 
-	double runningError;		// summed errors (using as the integral value) 
-	bool validError;			// prevents numerical problems on the first adjustment	
-           
-	double lastDeltaTime; 
-    
+	double value;				// current value of the controller
+	double goal;			// the value the controller is trying to achieve
+
+	double pConst;				// proportional constant (Kp)
+	double iConst;				// integral constant (Ki)
+	double dConst;				// derivative constant (Kd)
+	double maxAcceleration;		// limits how fast the control can accelerate the value
+
+	double lastError;			// previous error
+	double lastDelta;			// amount of change during last adjustment
+	double runningError;		// summed errors (using as the integral value)
+	bool validError;			// prevents numerical problems on the first adjustment
+
+	double lastDeltaTime;
+
     double maxAllowableDeltaTime;	// if more time (in seconds) than this has passed, no PID adjustments will be made
 };
 
@@ -58,7 +58,7 @@ private:
 /**
 */
 inline
-nPIDFeedbackLoop::nPIDFeedbackLoop() : 
+nPIDFeedbackLoop::nPIDFeedbackLoop() :
     value(0.0),
     goal(0.0),
 	pConst(1.0),
@@ -78,33 +78,33 @@ nPIDFeedbackLoop::nPIDFeedbackLoop() :
 /**
 */
 inline
-void 
+void
 nPIDFeedbackLoop::SetValue(double value)
-{ 
-	value = value;
-	lastError = 0.0;
-	lastDelta = 0.0;
+{
+	this->value = value;
+	this->lastError = 0.0;
+	this->lastDelta = 0.0;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
+void
 nPIDFeedbackLoop::SetGoal(double wantedValue)
-{ 
-	this->goal = wantedValue; 
+{
+	this->goal = wantedValue;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
+void
 nPIDFeedbackLoop::SetConstants(double pConst, double iConst, double dConst, double acceleration)
-{ 
-	this->pConst = pConst; 
-	this->iConst = iConst; 
+{
+	this->pConst = pConst;
+	this->iConst = iConst;
 	this->dConst = dConst;
 	maxAcceleration = acceleration;
 }
@@ -113,10 +113,10 @@ nPIDFeedbackLoop::SetConstants(double pConst, double iConst, double dConst, doub
 /**
 */
 inline
-const double& 
+const double&
 nPIDFeedbackLoop::GetValue() const
 {
-	return value;
+	return this->value;
 }
 
 
@@ -124,39 +124,39 @@ nPIDFeedbackLoop::GetValue() const
 /**
 */
 inline
-double 
+double
 nPIDFeedbackLoop::GetLastError() const
 {
-	return lastError;
+	return this->lastError;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const double& 
+const double&
 nPIDFeedbackLoop::GetGoal() const
 {
-	return goal;
+	return this->goal;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-double 
+double
 nPIDFeedbackLoop::GetLastDelta() const
 {
-	return lastDelta;
+	return this->lastDelta;
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-void 
-nPIDFeedbackLoop::Update(nTime time) 
-{ 
+void
+nPIDFeedbackLoop::Update(nTime time)
+{
 	// if too much time has passed, do nothing
 	if (time != 0.0f)
     {
@@ -164,7 +164,7 @@ nPIDFeedbackLoop::Update(nTime time)
 		    time = maxAllowableDeltaTime;
 
 	    // compute the error and sum of the errors for the integral
-	    double error = (goal - value) * time;   
+	    double error = (goal - value) * time;
 	    runningError += error;
 
 	    // proportional
@@ -214,9 +214,9 @@ nPIDFeedbackLoop::Update(nTime time)
 /**
 */
 inline
-void 
+void
 nPIDFeedbackLoop::ResetError()
-{ 
+{
 	runningError = 0.0f;
 	validError = false;
 }

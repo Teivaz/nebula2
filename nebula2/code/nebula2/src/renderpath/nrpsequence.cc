@@ -70,7 +70,7 @@ nRpSequence::Validate()
             n_error("nRpSequence::Validate(): couldn't find shader alias '%s' in render path xml file!", this->shaderAlias.Get());
         }
     }
-}    
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -90,7 +90,7 @@ nRpSequence::Begin()
     nShader2* shd = this->renderPath->GetShader(this->rpShaderIndex).GetShader();
     if (this->shaderUpdatesEnabled)
     {
-        this->UpdateVariableShaderParams();        
+        this->UpdateVariableShaderParams();
         shd->SetParams(this->shaderParams);
     }
     if (!this->technique.IsEmpty())
@@ -156,7 +156,7 @@ nRpSequence::UpdateVariableShaderParams()
     for (varIndex = 0; varIndex < numVars; varIndex++)
     {
         const nVariable& paramVar = this->varContext.GetVariableAt(varIndex);
-        
+
         // get shader state from variable
         nShaderState::Param shaderParam = (nShaderState::Param) paramVar.GetInt();
 
@@ -194,7 +194,7 @@ nRpSequence::UpdateVariableShaderParams()
                 n_error("nRpPass: Invalid shader arg datatype!");
                 break;
         }
-        
+
         // update the shader parameter
         this->shaderParams.SetArg(shaderParam, shaderArg);
     }

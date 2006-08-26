@@ -132,7 +132,7 @@ nDShowServer::PlayFile(const char* filename)
         return false;
     }
 
-    // query required interfaces 
+    // query required interfaces
     hr = this->graphBuilder->QueryInterface(IID_IMediaControl, (void**)&this->mediaControl);
     n_assert(SUCCEEDED(hr));
     hr = this->graphBuilder->QueryInterface(IID_IMediaEvent, (void**)&this->mediaEvent);
@@ -335,7 +335,7 @@ nDShowServer::NewVideoPlayer(nString name)
 /**
    delete video player
 */
-void   
+void
 nDShowServer::DeleteVideoPlayer(nVideoPlayer* player)
 {
     n_assert(player);

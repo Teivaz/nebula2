@@ -5,7 +5,7 @@
     @class nConServer
     @ingroup NebulaConsoleServer
     @brief Implements the Nebula ingame console.
-    
+
     Must live under the name /sys/servers/console in the Nebula object
     hierarchy.
 
@@ -24,7 +24,7 @@ class nGfxServer2;
 class nScriptServer;
 
 //------------------------------------------------------------------------------
-class nConServer : public nRoot 
+class nConServer : public nRoot
 {
 public:
     /// constructor

@@ -7,9 +7,9 @@
 
     @brief A new style check button group which creates its check buttons and
     places them in a horizontal row.
-    
+
     (C) 2004 RadonLabs GmbH
-*/    
+*/
 #include "gui/nguiformlayout.h"
 #include "gui/nguicheckbutton.h"
 

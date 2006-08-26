@@ -6,7 +6,7 @@
     @ingroup File
 
     Encapsulate a file time stamp. See nFile class for details.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #ifdef __WIN32__

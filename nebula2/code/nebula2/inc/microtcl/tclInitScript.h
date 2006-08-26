@@ -1,4 +1,4 @@
-/* 
+/*
  * tclInitScript.h --
  *
  *	This file contains Unix & Windows common init script
@@ -79,7 +79,7 @@ tclInit";
  * is evaluated in Tcl_Init() prior to the the built-in initialization script
  * above.  This variable can be modified by the procedure below.
  */
- 
+
 static char *          tclPreInitScript = NULL;
 
 

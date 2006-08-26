@@ -7,7 +7,7 @@
 
     @brief Implements a form layout with user customizable settings widgets.
     Uses persistency server for storing the settings.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"
@@ -65,7 +65,7 @@ private:
     int FindChoiceOptionIndexByName(const nString& n) const;
     /// find slider option index by name
     int FindSliderOptionIndexByName(const nString& n) const;
-        
+
     struct ChoiceOption
     {
         nString name;
@@ -105,5 +105,5 @@ nGetter(const nString&, nGuiSettingsForm::GetOkText, okText);
 nSetter(nGuiSettingsForm::SetCancelText, const nString&, cancelText);
 nGetter(const nString&, nGuiSettingsForm::GetCancelText, cancelText);
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

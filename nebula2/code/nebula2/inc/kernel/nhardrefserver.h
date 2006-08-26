@@ -23,12 +23,12 @@ public:
     nHardRefServer();
     /// default destructor.
     ~nHardRefServer();
-    
+
     /// adds a nHardRef to internal list
     void RegisterHardRef(nKernelServer* kernelServer, nHardRef<nRoot>* hardRef);
     /// registers a potential target object
     void RegisterTargetObject(nRoot& targetObject);
-    
+
 private:
     nStrList   strList;
 };

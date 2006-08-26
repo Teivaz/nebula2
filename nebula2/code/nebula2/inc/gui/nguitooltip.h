@@ -6,7 +6,7 @@
     @ingroup Gui
     @brief A tooltip widget with text which always positions itself
     relative to the mouse.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguitextlabel.h"

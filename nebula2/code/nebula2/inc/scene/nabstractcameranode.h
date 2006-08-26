@@ -26,7 +26,7 @@ public:
     virtual bool SaveCmds(nPersistServer *ps);
     /// provides a camera
     virtual bool HasCamera() const;
-    /// render the scene from the provided camera 
+    /// render the scene from the provided camera
     virtual bool RenderCamera(const matrix44& modelWorldMatrix, const matrix44& viewMatrix, const matrix44& projectionMatrix);
     /// get the calculated view matrix
     const matrix44& GetViewMatrix() const;
@@ -37,12 +37,12 @@ public:
     /// get the render path section name
     const nString& GetRenderPathSection() const;
 
-protected:    
+protected:
     /// set the calculated view matrix
     void SetViewMatrix(const matrix44& m);
     /// set the calculated projection matrox
     void SetProjectionMatrix(const matrix44& m);
-        
+
     matrix44 viewMatrix;
     matrix44 projMatrix;
     nString renderPathSection;
@@ -72,7 +72,7 @@ nAbstractCameraNode::GetRenderPathSection() const
 /**
 */
 inline
-void 
+void
 nAbstractCameraNode::SetViewMatrix(const matrix44& m)
 {
     this->viewMatrix = m;
@@ -82,7 +82,7 @@ nAbstractCameraNode::SetViewMatrix(const matrix44& m)
 /**
 */
 inline
-const matrix44& 
+const matrix44&
 nAbstractCameraNode::GetViewMatrix() const
 {
     return this->viewMatrix;

@@ -80,7 +80,7 @@ nDSoundResource::LoadResource()
             hr = soundManager->CreateStreaming(&(this->dsStreamingSound), (LPTSTR) this->GetFilename().Get(), creationFlags,
                 DS3DALG_DEFAULT, numNotifications, blockSize);
 //        }
-            
+
         if (FAILED(hr))
         {
             n_error("nDSoundServer::LoadResource(): Creating streaming sound '%s' failed!", this->GetFilename().Get());

@@ -6,7 +6,7 @@
     @ingroup Gui
 
     @brief FadeOut the Text.
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "gui/nguitextlabel.h"

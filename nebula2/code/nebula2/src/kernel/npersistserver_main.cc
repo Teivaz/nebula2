@@ -33,7 +33,7 @@ nPersistServer::~nPersistServer()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nPersistServer::SetSaveLevel(int l)
 {
     this->saveLevel = l;
@@ -42,7 +42,7 @@ nPersistServer::SetSaveLevel(int l)
 //------------------------------------------------------------------------------
 /**
 */
-int 
+int
 nPersistServer::GetSaveLevel(void)
 {
     return this->saveLevel;
@@ -137,11 +137,11 @@ nPersistServer::GetLoader(const char* loaderClass)
      - 18-Dec-98   floh    + SAVEMODE_CLONE
      - 09-Nov-04   enlight + nObject support
 */
-bool 
+bool
 nPersistServer::BeginObject(nObject *o, const char *name, bool isObjNamed)
 {
     bool retval = false;
-    switch (this->saveMode) 
+    switch (this->saveMode)
     {
         case SAVEMODE_FOLD:
             retval = this->BeginFoldedObject(o, NULL, name, false, isObjNamed);
@@ -162,21 +162,21 @@ nPersistServer::BeginObject(nObject *o, const char *name, bool isObjNamed)
 
      - 29-Feb-00   floh    created
 */
-bool 
+bool
 nPersistServer::BeginObjectWithCmd(nRoot *o, nCmd *cmd, const char *name)
 {
     bool retval = false;
-    bool sel_only = (cmd==NULL) ? true : false;  
-    switch (this->saveMode) 
+    bool sel_only = (cmd==NULL) ? true : false;
+    switch (this->saveMode)
     {
-        case SAVEMODE_FOLD:   
+        case SAVEMODE_FOLD:
             retval = this->BeginFoldedObject(o, cmd, name, sel_only, true);
             break;
         case SAVEMODE_CLONE:
             retval = this->BeginCloneObject(o, name, true);
             break;
     }
-    if (cmd) 
+    if (cmd)
     {
         cmd->GetProto()->RelCmd(cmd);
     }
@@ -190,11 +190,11 @@ nPersistServer::BeginObjectWithCmd(nRoot *o, nCmd *cmd, const char *name)
      - 18-Dec-98   floh    + SAVEMODE_CLONE
      - 09-Nov-04   enlight + nObject support
 */
-bool 
+bool
 nPersistServer::EndObject(bool isObjNamed)
 {
     bool retval = false;
-    switch (this->saveMode) 
+    switch (this->saveMode)
     {
         case SAVEMODE_FOLD:
             retval = this->EndFoldedObject(isObjNamed);
@@ -243,24 +243,24 @@ nPersistServer::GetCmd(nObject *o, nFourCC id)
 /**
     Ignore if level is less or equal the internal save level
     defined by 'SetSaveLevel'.
-    
+
      - 16-Jun-00   floh    created
 */
-bool 
+bool
 nPersistServer::PutCmd(int level, nCmd *cmd)
 {
     bool success = false;
-    if (this->saveLevel <= level) 
+    if (this->saveLevel <= level)
     {
         n_assert(cmd);
         bool success;
-        if (SAVEMODE_CLONE == this->saveMode) 
+        if (SAVEMODE_CLONE == this->saveMode)
         {
             // in clone mode, send cmd directly to object
             n_assert(this->cloneTarget);
             success = this->cloneTarget->Dispatch(cmd);
-        } 
-        else 
+        }
+        else
         {
             success = this->refSaver->WriteCmd(this->file, cmd);
         }
@@ -278,7 +278,7 @@ nPersistServer::PutCmd(int level, nCmd *cmd)
                            per Cmd-Proto freigegeben
      - 20-Jan-00   floh    rewritten to ref_ss
 */
-bool 
+bool
 nPersistServer::PutCmd(nCmd *cmd)
 {
     return this->PutCmd(0, cmd);
@@ -288,7 +288,7 @@ nPersistServer::PutCmd(nCmd *cmd)
 /**
      - 05-Nov-98   floh    created
 */
-void 
+void
 nPersistServer::SetSaveMode(nPersistServer::nSaveMode sm)
 {
     this->saveMode = sm;
@@ -298,7 +298,7 @@ nPersistServer::SetSaveMode(nPersistServer::nSaveMode sm)
 /**
      - 05-Nov-98   floh    created
 */
-nPersistServer::nSaveMode 
+nPersistServer::nSaveMode
 nPersistServer::GetSaveMode()
 {
     return this->saveMode;

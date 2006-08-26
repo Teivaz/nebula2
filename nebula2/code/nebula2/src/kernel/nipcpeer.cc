@@ -23,7 +23,7 @@ nIpcPeer::nIpcPeer(nIpcAddress* selfAddr, int peerFlags)
 
         // configure the send socket
         int trueAsInt = 1;
-        int res = setsockopt(this->sendSocket, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt)); 
+        int res = setsockopt(this->sendSocket, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt));
         n_assert(res != -1);
 
         // enable/disable broadcast mode on sender socket
@@ -54,7 +54,7 @@ nIpcPeer::nIpcPeer(nIpcAddress* selfAddr, int peerFlags)
 
         // configure the receiver socket
         int trueAsInt = 1;
-        int res = setsockopt(this->recvSocket, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt)); 
+        int res = setsockopt(this->recvSocket, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt));
         n_assert(res != -1);
 
         // enable/disable blocking mode on the receiver socket
@@ -126,11 +126,11 @@ nIpcPeer::SendTo(nIpcAddress& toAddr, nIpcBuffer& msg)
 {
     n_assert(this->sendSocket != INVALID_SOCKET);
     int result;
-    result = sendto(this->sendSocket, 
-                    (const char*) msg.GetPointer(), 
-                    msg.GetSize(), 
-                    0, 
-                    (const sockaddr*) &(toAddr.GetAddrStruct()), 
+    result = sendto(this->sendSocket,
+                    (const char*) msg.GetPointer(),
+                    msg.GetSize(),
+                    0,
+                    (const sockaddr*) &(toAddr.GetAddrStruct()),
                     sizeof(toAddr.GetAddrStruct()));
     if (SOCKET_ERROR == result)
     {
@@ -149,7 +149,7 @@ nIpcPeer::SendTo(nIpcAddress& toAddr, nIpcBuffer& msg)
     the fromAddr will contain the address definition of the sender, and the
     number of bytes received will be returned.
 */
-bool 
+bool
 nIpcPeer::ReceiveFrom(nIpcBuffer& msg, nIpcAddress& fromAddr)
 {
     n_assert(this->recvSocket != INVALID_SOCKET);

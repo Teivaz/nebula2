@@ -102,7 +102,7 @@ nNpkFileServer::ParseDirectory(const nString& dirName, const nString& extension)
             nDirectory::EntryType entryType = dir->GetEntryType();
             if ((entryType == nDirectory::FILE) && entryName.CheckExtension(extension.Get()))
             {
-                n_printf("*** Reading npk file '%s'\n", entryName.Get());
+                n_printf("*** Reading npk file '%s'\n", entryName);
                 if (this->AddNpkFile(absPath, entryName))
                 {
                     numNpks++;
@@ -166,8 +166,8 @@ nNpkTocEntry*
 nNpkFileServer::FindTocEntry(const nString& absPath)
 {
     nNpkFileWrapper* curWrapper;
-    for (curWrapper = (nNpkFileWrapper*) this->npkFiles.GetHead(); 
-         curWrapper; 
+    for (curWrapper = (nNpkFileWrapper*) this->npkFiles.GetHead();
+         curWrapper;
          curWrapper = (nNpkFileWrapper*) curWrapper->GetSucc())
     {
         nNpkToc& toc = curWrapper->GetTocObject();
@@ -179,6 +179,28 @@ nNpkFileServer::FindTocEntry(const nString& absPath)
     }
     // not found
     return 0;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Pack a directory into new NPK file. The directory will *NOT* be removed
+    after the operation.
+    NOTE: if the "noRootName" argument is set, there will be no directory
+    name stored in the npk file for the toplevel directory, instead, the
+    current filename of the npk file (without extension) will be used
+    for the toplevel directory's name when reading from the npk file. Use
+    with care, the default should be false.
+
+    @param  rootPath        path to directory where src directory is located
+    @param  dirName         single-component-directory name inside root dir
+    @param  npkName         filename of npk file
+    @param  noTopLevelName  do not fill out the toplevel directory name when packing
+*/
+bool
+nNpkFileServer::Pack(const nString& rootPath, const nString& dirName, const nString& npkName, bool noTopLevelName)
+{
+    nNpkBuilder npkBuilder;
+    return npkBuilder.Pack(rootPath, dirName, npkName, noTopLevelName);
 }
 
 //------------------------------------------------------------------------------

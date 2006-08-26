@@ -170,7 +170,7 @@ private:
     nRef<nAudioServer3>     refAudioServer;
     nRef<nPrefServer>       refPrefServer;
     nRef<nLocaleServer>     refLocaleServer;
-    
+
     nRef<nRoot> refAppStates;
     nRef<nAppState> curState;
     nRef<nAppState> nextState;
@@ -183,7 +183,7 @@ private:
     nDisplayMode2 displayMode;
     nCamera2 gfxCamera;
     nString renderPath;
-    
+
     nTime stateTransitionTime;
     nTime time;
     nTime stateTime;
@@ -388,7 +388,7 @@ nApplication::GetQuitRequested() const
 /**
 */
 inline
-void 
+void
 nApplication::SetLocaleTable(const nString& s)
 {
     this->localeTable = s;
@@ -396,7 +396,7 @@ nApplication::SetLocaleTable(const nString& s)
 
 //------------------------------------------------------------------------------
 inline
-const nString& 
+const nString&
 nApplication::GetLocaleTable() const
 {
     return this->localeTable;
@@ -409,7 +409,7 @@ nApplication::GetLocaleTable() const
     - 08-Jun-05    kims    Added.
 */
 inline
-nAppCamera* 
+nAppCamera*
 nApplication::GetAppCamera() const
 {
     return this->appCamera;

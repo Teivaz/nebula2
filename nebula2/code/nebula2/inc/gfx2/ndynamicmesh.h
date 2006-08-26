@@ -10,19 +10,19 @@
 
     @section nDynamicMeshUsage Usage
 
-    The first thing you should do to use a @ref nDynamicMesh is that initialization  
+    The first thing you should do to use a @ref nDynamicMesh is that initialization
     of the dynamic mesh object. This can be done by calling nDynamicMesh::Initialize().
     @code
-    dynMesh.Initialize(nGfxServer2::TriangleList, 
+    dynMesh.Initialize(nGfxServer2::TriangleList,
                        nMesh2::Coord |
                        nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 |
-                       nMesh2::Color, 
-                       nMesh2::WriteOnly | nMesh2::NeedVertexShader, 
-                       false // shared mesh flag. false means a new mesh is created for this. 
+                       nMesh2::Color,
+                       nMesh2::WriteOnly | nMesh2::NeedVertexShader,
+                       false // shared mesh flag. false means a new mesh is created for this.
                       );
     @endcode
 
-    Before filling the mesh, nDynamicMesh::Begin() or nDynamicMesh::BeginIndexed() 
+    Before filling the mesh, nDynamicMesh::Begin() or nDynamicMesh::BeginIndexed()
     should be called to lock the vertex (and index buffer if you use indexed
     dynamic mesh, the case nDynamicMesh::BeginIndexed() is used).
     @code
@@ -40,8 +40,8 @@
     ...
     @endcode
 
-    During you fill vertices, you should check that the mesh is full. 
-    If it is, you should throw away aleady filled vertices by calling 
+    During you fill vertices, you should check that the mesh is full.
+    If it is, you should throw away aleady filled vertices by calling
     nDynamicMesh::Swap()(or nDynamicMesh::SwapIndexed() for indexed vertices)
     @code
     dynMesh.Swap(curVertex, dstVertices);
@@ -68,7 +68,7 @@ public:
     /// destructor
     ~nDynamicMesh();
     /// initialize the dynamic mesh
-    bool Initialize(nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering, bool shared = true);
+    bool Initialize(nGfxServer2::PrimitiveType primType, int vertexComponents, int usageFlags, bool indexedRendering, const nString& rsrcBaseName="dyn_", bool shared = true);
     /// if this returns false, call Initialize()
     bool IsValid() const;
     /// begin indexed rendering
@@ -87,7 +87,7 @@ public:
 protected:
     enum
     {
-        IndexBufferSize = 16384,                    // number of vertices
+        IndexBufferSize = 4096,                     // number of vertices
         VertexBufferSize  = 3 * IndexBufferSize,    // number of indices
     };
     bool indexedRendering;

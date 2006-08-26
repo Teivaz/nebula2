@@ -85,7 +85,7 @@ nNetClient::Close()
 
 //------------------------------------------------------------------------------
 /**
-    Per-Frame-Trigger method. If not yet connected, the client will 
+    Per-Frame-Trigger method. If not yet connected, the client will
     periodically try to connect to the server. If a connection is established,
     the client will wait for the "~start" message from the server, and
     set the IsStarted() flag to true.

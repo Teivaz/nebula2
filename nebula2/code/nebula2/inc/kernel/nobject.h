@@ -8,10 +8,10 @@
     Provides:
     - reference counting and tracking (through nReferenced)
     - Nebula RTTI, a class is identified by a string name
-    
+
     Rules for subclasses:
     - only the default constructor is allowed
-    - never use new/delete (or variants like n_new/n_delete) with nObject 
+    - never use new/delete (or variants like n_new/n_delete) with nObject
       objects
     - use nKernelServer::New() to create an object and
       the object's Release() method to destroy it
@@ -40,17 +40,17 @@ class nObject : public nReferenced, public nSignalEmitter
 public:
     /// constructor (DONT CALL DIRECTLY, USE nKernelServer::New() INSTEAD)
     nObject();
-    
+
     /// save object to persistent stream
     virtual bool SaveCmds(nPersistServer* ps);
     /// get instance size
     virtual int GetInstanceSize() const;
-        
+
     /// save object under different name
     virtual bool SaveAs(const char* name);
     /// create new object as clone of this object
     virtual nObject *Clone(const char *unused = 0);
-        
+
     /// get pointer to my class object
     nClass *GetClass() const;
     /// return true if part of class hierarchy
@@ -58,19 +58,19 @@ public:
     /// return true if part of class herarchy
     bool IsA(const char *) const;
     /// return true instance of class
-    bool IsInstanceOf(const nClass *) const; 
+    bool IsInstanceOf(const nClass *) const;
 
     /// invoke nCmd on object
     bool Dispatch(nCmd *);
     /// get cmd proto list from object
     void GetCmdProtos(nHashList *);
-    
+
     /// pointer to kernel server
     static nKernelServer* kernelServer;
 
 protected:
     friend class nClass;
-        
+
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nObject();
     /// set pointer to my class object
@@ -83,7 +83,7 @@ protected:
 /**
 */
 inline
-void 
+void
 nObject::SetClass(nClass* cl)
 {
     this->instanceClass = cl;
@@ -103,13 +103,13 @@ nObject::GetClass() const
 /**
 */
 inline
-bool 
+bool
 nObject::IsA(const nClass *cl) const
 {
     nClass *actClass = this->instanceClass;
-    do 
+    do
     {
-        if (actClass == cl) 
+        if (actClass == cl)
         {
             return true;
         }
@@ -121,7 +121,7 @@ nObject::IsA(const nClass *cl) const
 /**
 */
 inline
-bool 
+bool
 nObject::IsInstanceOf(const nClass *cl) const
 {
     return (cl == this->instanceClass);

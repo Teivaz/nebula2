@@ -7,7 +7,7 @@
 
     A specialized proportional feedback loop for rotations, using a
     quaternion representation.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -150,7 +150,7 @@ nPQuatFeedbackLoop::Update(nTime curTime)
     }
 
     while (this->time < curTime)
-    {   
+    {
         // compute angular error between state and goal
         vector3 stateVec = this->state.rotate(vector3(0.0f, 0.0f, 1.0f));
         vector3 goalVec  = this->goal.rotate(vector3(0.0f, 0.0f, 1.0f));
@@ -171,4 +171,4 @@ nPQuatFeedbackLoop::Update(nTime curTime)
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

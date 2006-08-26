@@ -34,7 +34,7 @@ private:
     {
         MAXHISTORYSIZE = 8,
     };
-    
+
     int size;
     float oneOverSize;
     float array[MAXHISTORYSIZE];
@@ -54,7 +54,7 @@ nAxisFilter::SetSize(int historySize)
     }
     this->size = historySize;
     this->oneOverSize = (1.0f / float(this->size));
-    
+
     int i;
     for (i = 0; i < this->size; i++)
     {

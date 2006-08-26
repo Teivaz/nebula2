@@ -7,7 +7,7 @@
 
     Specialized nCmdLine subclass which accepts a cmd line string
     as provided by the Win32 WinMain function.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "tools/ncmdlineargs.h"
@@ -41,17 +41,17 @@ nWinMainCmdLineArgs::nWinMainCmdLineArgs(const nString& cmdLine)
     // write a dummy executable args
     this->argc = 1;
     this->argv[0] = "invalid";
-    
+
     // tokenize command line
     this->argString = cmdLine;
-    char* ptr = (char*) argString.Get();    
+    char* ptr = (char*) argString.Get();
     char* end = ptr + strlen(ptr);
 
     while ((this->argc < MAXARGS) && (ptr < end))
     {
         char* c;
         while ((' ' == *ptr) || ('\t' == *ptr))
-            ptr++;        
+            ptr++;
         if (('"' == *ptr) && (c = strchr(++ptr, '"')))
         {
             *c++ = 0;

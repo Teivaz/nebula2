@@ -6,7 +6,7 @@
     @ingroup Gfx2
 
     Load a N3D2 mesh file into user provided vertex and index buffers.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gfx2/nmeshloader.h"
@@ -52,8 +52,8 @@ nN3d2Loader::~nN3d2Loader()
 }
 
 //------------------------------------------------------------------------------
-/** 
-    - 28-Sep-04     floh    bugfix: vertexComponents was overwritten with 0, 
+/**
+    - 28-Sep-04     floh    bugfix: vertexComponents was overwritten with 0,
                             instead of fileVertexComponents
 */
 inline
@@ -268,7 +268,7 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
                 if (0 == (this->fileVertexComponents & mask))
                 {
                     continue;
-                }                
+                }
 
                 // get width of current vertex component
                 int width = nMesh2::GetVertexWidthFromMask(mask);
@@ -294,7 +294,7 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
                     {
                         const char* curFloatStr = strtok(0, N_WHITESPACE);
                         n_assert(curFloatStr);
-                    }                        
+                    }
                 }
             }
         }
@@ -406,7 +406,7 @@ nN3d2Loader::ReadEdges(void* buffer, int bufferSize)
         ushort f1 = atoi(f1String);
         ushort v0 = atoi(v0String);
         ushort v1 = atoi(v1String);
-        
+
         edgeBuffer[index].fIndex[0] = f0;
         edgeBuffer[index].fIndex[1] = f1;
         edgeBuffer[index].vIndex[0] = v0;

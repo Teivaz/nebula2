@@ -16,7 +16,7 @@
     SetEuler().
 
     See also @ref N2ScriptInterface_ntransformnode
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "scene/nscenenode.h"
@@ -57,7 +57,7 @@ public:
     const vector3& GetPosition() const;
     /// set orientation as euler angles (rotation order is x -> y -> z, unit is RAD)
     void SetEuler(const vector3& e);
-    /// get orientation as euler angles in parent space 
+    /// get orientation as euler angles in parent space
     const vector3& GetEuler() const;
     /// set orientation as quaternion in parent space
     void SetQuat(const quaternion& q);

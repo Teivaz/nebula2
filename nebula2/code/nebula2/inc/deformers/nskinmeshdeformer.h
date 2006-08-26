@@ -12,7 +12,7 @@
     (needs identical components as input mesh, but without joint indices
     and vertex weights), set a character skeleton and a joint palette,
     and call Compute().
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "deformers/nmeshdeformer.h"

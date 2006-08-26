@@ -30,7 +30,7 @@
 #endif
 
 //------------------------------------------------------------------------------
-class nMutex 
+class nMutex
 {
 public:
     /// constructor
@@ -56,7 +56,7 @@ private:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nMutex::nMutex()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -75,7 +75,7 @@ nMutex::nMutex()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nMutex::~nMutex()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -90,8 +90,8 @@ nMutex::~nMutex()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nMutex::Lock()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -106,8 +106,8 @@ nMutex::Lock()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nMutex::Unlock()
 {
 #ifndef __NEBULA_NO_THREADS__

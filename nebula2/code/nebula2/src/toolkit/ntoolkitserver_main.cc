@@ -36,8 +36,8 @@ nToolkitServer::~nToolkitServer()
 bool
 nToolkitServer::Open()
 {
-    n_assert(!this->isOpen);   
-    
+    n_assert(!this->isOpen);
+
     this->isOpen = true;
     return this->isOpen;
 }
@@ -58,13 +58,13 @@ nToolkitServer::Close()
     This method is called by the "changeshaderparameter"-tcl-command and is used
     by the toolkit remote control to change attributes within the nviewer.
 
-    @param mayaShaderName The Maya name of the shader. It it used to identify 
-                          the nMaterialNode(s) to which the parameter changes 
+    @param mayaShaderName The Maya name of the shader. It it used to identify
+                          the nMaterialNode(s) to which the parameter changes
                           should be applied.
     @param shaderHandler Used to identify the handling function to use, can be
                          "common" or "particle2".
-    @param paramID A unique identifier for the parameter that should be 
-                   changed, does not need to be globally unique, but unique 
+    @param paramID A unique identifier for the parameter that should be
+                   changed, does not need to be globally unique, but unique
                    for one shader.
     @param paramValue A string containing the new value for the parameter.
 */
@@ -82,11 +82,11 @@ nToolkitServer::ChangeShaderParameter(const nString& mayaShaderName,
     for (i = 0; i < nodeCount; i++)
     {
         nTransformNode* node = nodeList->GetNodeAt(i);
-        result &= this->ChangeShaderParameterOnNode(node, mayaShaderName, 
-                                                    shaderHandler, paramID, 
+        result &= this->ChangeShaderParameterOnNode(node, mayaShaderName,
+                                                    shaderHandler, paramID,
                                                     paramValue);
     }
-    if (!result) 
+    if (!result)
     {
         return "false";
     }
@@ -98,7 +98,7 @@ nToolkitServer::ChangeShaderParameter(const nString& mayaShaderName,
     Recursive iteration through the node hierarchy.
 */
 bool
-nToolkitServer::ChangeShaderParameterOnNode(nRoot* node, 
+nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,
                                             const nString& mayaShaderName,
                                             const nString& shaderHandler,
                                             const nString& paramID,
@@ -128,7 +128,7 @@ nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,
          curChild;
          curChild = (nRoot*) curChild->GetSucc())
     {
-        result &= this->ChangeShaderParameterOnNode(curChild, mayaShaderName, 
+        result &= this->ChangeShaderParameterOnNode(curChild, mayaShaderName,
                                                     shaderHandler, paramID,
                                                     paramValue);
     }
@@ -138,16 +138,16 @@ nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,
 //------------------------------------------------------------------------------
 /**
 */
-bool 
-nToolkitServer::ChangeTypeCommon(nMaterialNode* node, 
-                                 const nString& paramID, 
+bool
+nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
+                                 const nString& paramID,
                                  const nString& paramValue)
 {
     bool result = true;
-    
+
     nString fileName;
 
-    n_printf("Received remote command : %s %s\n", 
+    n_printf("Received remote command : %s %s\n",
              paramID.Get(), paramValue.Get());
 
     if ("MatDiffuse" == paramID)
@@ -155,7 +155,7 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
         // Material Diffuse
         if (node->HasParam(nShaderState::MatDiffuse))
         {
-            node->SetVector(nShaderState::MatDiffuse, paramValue.AsVector4());  
+            node->SetVector(nShaderState::MatDiffuse, paramValue.AsVector4());
         }
     }
     else if ("MatEmissive" == paramID)
@@ -264,13 +264,13 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
 //------------------------------------------------------------------------------
 /**
 */
-nEnvelopeCurve 
+nEnvelopeCurve
 nToolkitServer::AsEnvelopeCurve(const nString& value)
 {
     nArray<nString> tokens;
     value.Tokenize(" ", tokens);
     n_assert(tokens.Size() == 9);
-    return nEnvelopeCurve(tokens[0].AsFloat(), tokens[1].AsFloat(), 
+    return nEnvelopeCurve(tokens[0].AsFloat(), tokens[1].AsFloat(),
                           tokens[2].AsFloat(), tokens[3].AsFloat(),
                           tokens[4].AsFloat(), tokens[5].AsFloat(),
                           tokens[6].AsFloat(), tokens[7].AsFloat(),
@@ -296,7 +296,7 @@ nToolkitServer::AsColorCurve(const nString& value)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
                                     const nString& paramValue)
 {
@@ -442,8 +442,8 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         {
             partNode->SetStartDelay(paramValue.AsFloat());
         }
-    } 
-    else 
+    }
+    else
     {
         result = false;
     }

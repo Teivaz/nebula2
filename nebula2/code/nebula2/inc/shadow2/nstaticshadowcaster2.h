@@ -6,11 +6,11 @@
     @ingroup Shadow2
 
     A shadow caster for static geometry.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "shadow2/nshadowcaster2.h"
-    
+
 //------------------------------------------------------------------------------
 class nStaticShadowCaster2 : public nShadowCaster2
 {

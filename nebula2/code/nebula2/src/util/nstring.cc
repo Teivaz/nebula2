@@ -130,7 +130,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
                     item_len = strlen(next_arg);
                     item_len = n_max(1, item_len);
                 }
-        
+
                 break;
             }
         }
@@ -188,9 +188,9 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
                     f = va_arg(argList, double);
                     sprintf( str_temp, "%*.*f", width, precision+6, f );
                     item_len = strlen(str_temp);
-                    
+
                     n_free(str_temp);
-    
+
                     break;
                 }
 
