@@ -488,6 +488,45 @@ class vstudio8:
                 projFile.write('            </Filter>\n')
             projFile.write('        </Filter>\n')
 
+        for moduleName in target.modules:
+            module = self.buildSys.modules[moduleName]
+            if module.dir:
+                continue
+            compileAsFlag = 0
+            if 'c' == module.modType:
+                compileAsFlag = 1
+            elif 'cpp' == module.modType:
+                compileAsFlag = 2
+
+            safeModName = module.GetFullNameNoColons()
+            nebSyms = 'N_INIT=n_init_' + safeModName + ';' \
+                      'N_NEW=n_new_' + safeModName + ';' \
+                      'N_INITCMDS=n_initcmds_' + safeModName
+
+            projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
+                           % module.name)
+
+            # source files
+            for fileName in module.resolvedFiles:
+                relPath = self.buildSys.FindRelPath(self.vcprojLocation,
+                                                    fileName)
+                ignore, shortFileName = os.path.split(fileName)
+                objectName, ignore = os.path.splitext(shortFileName)
+                args = { 'relPath' : relPath,
+                         'nebSyms' : nebSyms,
+                         'objectName' : ('%s_%s' % (safeModName, objectName)),
+                         'compileAsFlag' : compileAsFlag }
+                projFile.write(STR_SRC_FILE % args)
+
+            # header files
+            for fileName in module.resolvedHeaders:
+                relPath = self.buildSys.FindRelPath(self.vcprojLocation,
+                                                    fileName)
+                projFile.write('            <File RelativePath="%s"/>\n' \
+                               % relPath)
+
+            projFile.write('        </Filter>\n')
+
         # if the module definition file is set and target is dll then add it
         if ('' != target.modDefFile) and ('dll' == target.type):
             relPath = self.buildSys.FindRelPath(self.vcprojLocation,
