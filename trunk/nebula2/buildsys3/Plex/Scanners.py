@@ -32,10 +32,10 @@ class Scanner:
     position() --> (name, line, col)
       Returns the position of the last token read using the
       read() method.
-    
+
     begin(state_name)
       Causes scanner to change state.
-    
+
     produce(value [, text])
       Causes return of a token value to the caller of the
       Scanner.
@@ -134,7 +134,7 @@ class Scanner:
         if not self.cur_char or self.cur_char == EOF:
           return ('', None)
       raise Errors.UnrecognizedInput(self, self.state_name)
-  
+
   def run_machine(self):
     """
     Run the machine until no more transitions are possible.
@@ -144,7 +144,7 @@ class Scanner:
     while self.transition():
       pass
     return self.back_up()
-  
+
   def run_machine_inlined(self):
     """
     Inlined version of run_machine for speed.
@@ -231,7 +231,7 @@ class Scanner:
           print "blocked"  #TRACE#
         # Begin inlined: action = self.back_up()
         if backup_state:
-          (action, cur_pos, cur_line, cur_line_start, 
+          (action, cur_pos, cur_line, cur_line_start,
             cur_char, input_state, next_pos) = backup_state
         else:
           action = None
@@ -247,7 +247,7 @@ class Scanner:
       if action: #TRACE#
         print "Doing", action #TRACE#
     return action
-    
+
 #	def transition(self):
 #		self.save_for_backup()
 #		c = self.cur_char
@@ -264,27 +264,27 @@ class Scanner:
 #				print "Scanner: read: State %d: %s --> blocked" % (
 #					self.state.number, repr(c))
 #			return 0
-  
+
 #	def save_for_backup(self):
 #		action = self.state.get_action()
 #		if action:
 #			if self.trace:
 #				print "Scanner: read: Saving backup point at", self.cur_pos
 #			self.backup_state = (
-#				action, self.cur_pos, self.cur_line, self.cur_line_start, 
+#				action, self.cur_pos, self.cur_line, self.cur_line_start,
 #				self.cur_char, self.input_state, self.next_pos)
-  
+
 #	def back_up(self):
 #		backup_state = self.backup_state
 #		if backup_state:
-#			(action, self.cur_pos, self.cur_line, self.cur_line_start, 
+#			(action, self.cur_pos, self.cur_line, self.cur_line_start,
 #				self.cur_char, self.input_state, self.next_pos) = backup_state
 #			if self.trace:
 #				print "Scanner: read: Backing up to", self.cur_pos
 #			return action
 #		else:
 #			return None
-  
+
   def next_char(self):
     input_state = self.input_state
     if self.trace:
@@ -315,7 +315,7 @@ class Scanner:
       self.cur_char = ''
     if self.trace:
       print "--> [%d] %d %s" % (input_state, self.cur_pos, repr(self.cur_char))
-    
+
 #	def read_char(self):
 #		"""
 #    Get the next input character, filling the buffer if necessary.
@@ -334,7 +334,7 @@ class Scanner:
 #		c = self.buffer[buf_index]
 #		self.next_pos = next_pos + 1
 #		return c
-  
+
   def position(self):
     """
     Return a tuple (name, line, col) representing the location of

@@ -13,34 +13,34 @@ from types import TupleType
 class TransitionMap:
   """
   A TransitionMap maps an input event to a set of states.
-  An input event is one of: a range of character codes, 
-  the empty string (representing an epsilon move), or one 
+  An input event is one of: a range of character codes,
+  the empty string (representing an epsilon move), or one
   of the special symbols BOL, EOL, EOF.
-  
-  For characters, this implementation compactly represents 
+
+  For characters, this implementation compactly represents
   the map by means of a list:
-  
+
     [code_0, states_0, code_1, states_1, code_2, states_2,
       ..., code_n-1, states_n-1, code_n]
-    
-  where |code_i| is a character code, and |states_i| is a 
+
+  where |code_i| is a character code, and |states_i| is a
   set of states corresponding to characters with codes |c|
   in the range |code_i| <= |c| <= |code_i+1|.
-  
+
   The following invariants hold:
     n >= 1
     code_0 == -maxint
     code_n == maxint
     code_i < code_i+1 for i in 0..n-1
     states_0 == states_n-1
-  
+
   Mappings for the special events '', BOL, EOL, EOF are
   kept separately in a dictionary.
   """
-  
+
   map = None     # The list of codes and states
   special = None # Mapping for special events
-  
+
   def __init__(self, map = None, special = None):
     if not map:
       map = [-maxint, {}, maxint]
@@ -49,7 +49,7 @@ class TransitionMap:
     self.map = map
     self.special = special
     #self.check() ###
-  
+
   def add(self, event, new_state,
     TupleType = TupleType):
     """
@@ -81,13 +81,13 @@ class TransitionMap:
         i = i + 2
     else:
       self.get_special(event).update(new_set)
-  
+
   def get_epsilon(self, none = None):
     """
     Return the mapping for epsilon, or None.
     """
     return self.special.get('', none)
-  
+
   def items(self,
     len = len):
     """
@@ -111,14 +111,14 @@ class TransitionMap:
       if set:
         result.append((event, set))
     return result
-  
+
   # ------------------- Private methods --------------------
 
   def split(self, code,
     len = len, maxint = maxint):
     """
-    Search the list for the position of the split point for |code|, 
-    inserting a new split point if necessary. Returns index |i| such 
+    Search the list for the position of the split point for |code|,
+    inserting a new split point if necessary. Returns index |i| such
     that |code| == |map[i]|.
     """
     # We use a funky variation on binary search.
@@ -144,7 +144,7 @@ class TransitionMap:
       map[hi:hi] = [code, map[hi - 1].copy()]
       #self.check() ###
       return hi
-  
+
   def get_special(self, event):
     """
     Get state set for special event, adding a new entry if necessary.
@@ -157,7 +157,7 @@ class TransitionMap:
     return set
 
   # --------------------- Conversion methods -----------------------
-  
+
   def __str__(self):
     map_strs = []
     map = self.map
@@ -180,18 +180,18 @@ class TransitionMap:
     for event, set in self.special.items():
       special_strs[event] = state_set_str(set)
     return "[%s]+%s" % (
-      string.join(map_strs, ","), 
+      string.join(map_strs, ","),
       special_strs
     )
-  
+
   # --------------------- Debugging methods -----------------------
-  
+
   def check(self):
     """Check data structure integrity."""
     if not self.map[-3] < self.map[-1]:
       print self
       assert 0
-  
+
   def dump(self, file):
     map = self.map
     i = 0
@@ -204,7 +204,7 @@ class TransitionMap:
         if not event:
           event = 'empty'
         self.dump_trans(event, set, file)
-  
+
   def dump_range(self, code0, code1, set, file):
     if set:
       if code0 == -maxint:
@@ -217,19 +217,19 @@ class TransitionMap:
       elif code0 == code1 - 1:
         k = self.dump_char(code0)
       else:
-        k = "%s..%s" % (self.dump_char(code0), 
+        k = "%s..%s" % (self.dump_char(code0),
           self.dump_char(code1 - 1))
       self.dump_trans(k, set, file)
-  
+
   def dump_char(self, code):
     if 0 <= code <= 255:
       return repr(chr(code))
     else:
       return "chr(%d)" % code
-  
+
   def dump_trans(self, key, set, file):
     file.write("      %s --> %s\n" % (key, self.dump_set(set)))
-  
+
   def dump_set(self, set):
     return state_set_str(set)
 
@@ -247,6 +247,6 @@ def state_set_str(set):
   for state in state_list:
     str_list.append("S%d" % state.number)
   return "[%s]" % string.join(str_list, ",")
-  
-    
+
+
 

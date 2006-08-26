@@ -63,7 +63,7 @@ class CommonCmdPanel(wx.Panel):
         self.xrcRootItem = None
         xrcLoadPanel(self, parent, 'CommonCmdPanel')
         #self.SetSizeWH(parent.GetSize().x - 6, -1)
-    
+
         # extracting controls
         self.cmdDecl      = xrcCTRLUnpack(self, "CmdDecl") #, {EVT_CHECKBOX:self.OnUseVoid})
         self.fourCC       = xrcCTRLUnpack(self, "FourCC") #, {EVT_BUTTON:self.OnFormatClick})
@@ -92,7 +92,7 @@ class CommonCmdPanel(wx.Panel):
 
         # this does not return until the dialog is closed.
         val = dlg.ShowModal()
-    
+
 ##        if val == wx.ID_OK:
 ##            self.log.WriteText("You pressed OK\n")
 ##        else:
@@ -106,7 +106,7 @@ class CommonCmdPanel(wx.Panel):
 
         # this does not return until the dialog is closed.
         val = dlg.ShowModal()
-    
+
 ##        if val == wx.ID_OK:
 ##            self.log.WriteText("You pressed OK\n")
 ##        else:
@@ -126,7 +126,7 @@ class CmdPanel(wx.Panel):
         self.xrcRootItem = None
         xrcLoadPanel(self, parent, 'CmdPanel')
         #self.SetSizeWH(parent.GetSize().x - 6, -1)
-    
+
         # extracting controls
         self.cmdDecl      = xrcCTRLUnpack(self, "CmdDecl") #, {EVT_CHECKBOX:self.OnUseVoid})
         self.cmdName      = xrcCTRLUnpack(self, "Cmd") #, {EVT_BUTTON:self.OnFormatClick})
@@ -154,7 +154,7 @@ class ParamsEditDlg(wx.Dialog):
     def __init__(self, parent, params, title):
         self.xrcRootItem = None
         xrcLoadDialog(self, parent, 'ParamsDlg')
-    
+
         # extracting controls
         self.voidCheckBox = xrcCTRLUnpack(self, "VoidCheckBox", {EVT_CHECKBOX:self.OnUseVoid})
         self.paramList    = xrcCTRLUnpack(self, "ParamList", {EVT_LISTBOX:self.OnSelParam})
@@ -253,10 +253,10 @@ class ParamsEditDlg(wx.Dialog):
                 t = param.type
                 if t in TYPES_LIST:
                     self.paramFormat.SetSelection(TYPES_LIST.index(t))
-    
+
                 # name
                 self.paramName.SetValue(self.p[idx].name)
-    
+
                 # attributes
                 self.attrList.DeleteAllItems()
                 for a, v in param.attribute:

@@ -36,15 +36,15 @@ def xrcCTRLUnknown(self, name, wxCtrlClass, evt_pack=None):
             if sizer:
                 sizer.SetVirtualSizeHints(self)
                 self.SetAutoLayout(True)
-    
+
                 size = ctrl.GetSize()
-    
+
                 sizeBest = ctrl.GetBestSize()
                 sizeBest.width = size.width
-    
+
                 container = ctrl.GetParent()
                 sizer.SetItemMinSize(container, sizeBest.width, sizeBest.height)
-    
+
                 sizeMin = sizer.CalcMin()
                 self.SetSizeHints(sizeMin.width, sizeMin.height)
                 sizer.Fit(self)

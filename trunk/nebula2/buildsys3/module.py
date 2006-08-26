@@ -7,7 +7,7 @@
 import re, os, string
 
 class Module:
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, moduleName, bldFilename):
         self.buildSys = None
@@ -37,18 +37,18 @@ class Module:
         self.codeDir = ''
         self.baseIncDir = ''
         self.baseSrcDir = ''
-    
+
     #--------------------------------------------------------------------------
     # Get the fully qualified name of the module, but replace all :: with _
     # so the string can be safely used as part of a filename or as part of
     # a C++ identifier.
     def GetFullNameNoColons(self):
         return self.name.replace('::', '_')
-    
+
     #--------------------------------------------------------------------------
     def Clean(self):
         self.modDefFile = self.buildSys.CleanRelPath(self.modDefFile)
-    
+
     #--------------------------------------------------------------------------
     # Sort files and headers
     def Finalize(self):
@@ -64,18 +64,18 @@ class Module:
         return False
 
     #--------------------------------------------------------------------------
-    # Get the directory (relative to the Nebula home directory) that the 
-    # compiler will need to add to the list of include directories for any 
+    # Get the directory (relative to the Nebula home directory) that the
+    # compiler will need to add to the list of include directories for any
     # source file that includes headers from this module.
-    # Note that the result of os.path.join(self.GetBaseIncDir(), self.dir) is 
+    # Note that the result of os.path.join(self.GetBaseIncDir(), self.dir) is
     # the directory where the module *.h files live.
     def GetBaseIncDir(self):
         return self.baseIncDir
-        
+
     #--------------------------------------------------------------------------
     # Get the directory (relative to the Nebula home directory) that contains
     # the module source directory.
-    # Note that the result of os.path.join(self.GetBaseSrcDir(), self.dir) is 
+    # Note that the result of os.path.join(self.GetBaseSrcDir(), self.dir) is
     # the directory where the module *.cc files live.
     def GetBaseSrcDir(self):
         return self.baseSrcDir
@@ -86,7 +86,7 @@ class Module:
     def GetProjectDir(self):
         modProjectDir = ''
         for projectDir in self.buildSys.projectDirs:
-            tempDir = os.path.commonprefix([projectDir, 
+            tempDir = os.path.commonprefix([projectDir,
                           self.buildSys.GetAbsPathFromRel(self.bldFile)])
             if len(tempDir) > len(modProjectDir):
                 modProjectDir = tempDir
@@ -97,7 +97,7 @@ class Module:
     # to the Nebula home directory.
     def ResolvePaths(self):
         #print 'Resolving paths for module ' + self.name
-        
+
         projectDir = self.GetProjectDir()
         ignore, projectDirName = os.path.split(string.rstrip(projectDir, os.sep))
         mangaloreMod = False
@@ -120,29 +120,29 @@ class Module:
             if os.path.isdir(os.path.join(projectDir, 'inc', self.dir)):
                 self.codeDir = projectDirName
             elif os.path.isdir(os.path.join(projectDir, 'src', self.dir)):
-                self.codeDir = projectDirName            
+                self.codeDir = projectDirName
             # try mangalore style directory layout
             elif os.path.isdir(os.path.join(projectDir, self.dir)):
                 self.codeDir = projectDirName
                 mangaloreMod = True
-    
+
         if '' == self.codeDir:
             self.buildSys.logger.error('Failed to locate source code for '
-                                       'module %s defined in %s', 
+                                       'module %s defined in %s',
                                        self.name, self.bldFile)
-    
+
         # special case to deal with dummy.cc >:|
         if '.' == self.dir:
             self.dir = ''
             self.codeDir = 'nebula2'
-    
+
         if mangaloreMod:
             self.baseIncDir = os.path.join('code', self.codeDir)
             self.baseSrcDir = os.path.join('code', self.codeDir)
         else:
             self.baseIncDir = os.path.join('code', self.codeDir, 'inc')
             self.baseSrcDir = os.path.join('code', self.codeDir, 'src')
-    
+
         self.resolvedFiles = []
         for srcFile in self.files:
             root, ext = os.path.splitext(srcFile)
@@ -155,9 +155,9 @@ class Module:
                     resolvedPath = resolvedPath + '.cpp'
                 elif os.path.exists(resolvedPath + '.c'):
                     resolvedPath = resolvedPath + '.c'
-            
+
             self.resolvedFiles.append(resolvedPath)
-        
+
         self.resolvedHeaders = []
         for hdrFile in self.headers:
             root, ext = os.path.splitext(hdrFile)
@@ -169,12 +169,12 @@ class Module:
                 elif os.path.exists(resolvedPath + '.hpp'):
                     resolvedPath = resolvedPath + '.hpp'
             self.resolvedHeaders.append(resolvedPath)
-            
+
         #print "Resolved Files:"
         #print self.resolvedFiles
         #print "Resolved Headers:"
         #print self.resolvedHeaders
-        
+
     #--------------------------------------------------------------------------
     # Find and set the ancestor module, also figure out if we'll need to
     # generate a pack file for this module later.
@@ -193,7 +193,7 @@ class Module:
         for fileName in self.resolvedFiles:
             if not os.path.exists(fileName):
                 self.buildSys.logger.warning('%s referenced in module %s'\
-                                             ' doesn\'t exist!', fileName, 
+                                             ' doesn\'t exist!', fileName,
                                              self.name)
                 continue
             srcFile = file(fileName, 'rU')
@@ -266,9 +266,9 @@ class Module:
             #print 'Warning: module ' + self.name + ' is missing a class ' \
             #      'macro so it won\'t be added to a pkg!'
             self.putInPkg = False
-        
+
         return not detectedError
-        
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

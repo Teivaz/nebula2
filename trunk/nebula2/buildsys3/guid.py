@@ -21,5 +21,5 @@ def GenerateGUID():
     guidStr = md5.new(data).hexdigest()
     # now that we have the GUID format it to look like
     # XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
-    return '%s-%s-%s-%s-%s' % (guidStr[:8], guidStr[8:12], guidStr[12:16], 
+    return '%s-%s-%s-%s-%s' % (guidStr[:8], guidStr[8:12], guidStr[12:16],
                                guidStr[16:20], guidStr[20:])

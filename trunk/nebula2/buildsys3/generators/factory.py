@@ -11,7 +11,7 @@ from makefile import makefile
 from doxygen import doxygen
 
 class Factory:
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, buildSys):
         self.buildSys = buildSys
@@ -20,15 +20,15 @@ class Factory:
                             'vstudio8'  : vstudio8(buildSys),
                             'makefile'  : makefile(buildSys),
                             'doxygen'   : doxygen(buildSys) }
-        
+
     #--------------------------------------------------------------------------
     def GetGenerator(self, generatorName):
         return self.generators[generatorName]
-        
+
     #--------------------------------------------------------------------------
     def GetGenerators(self):
         return self.generators
-        
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

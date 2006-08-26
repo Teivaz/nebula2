@@ -16,25 +16,25 @@ import logging, string
 
 #--------------------------------------------------------------------------
 class BuildLogListCtrlHandler(logging.Handler):
-    
+
     def __init__(self, buildLogCtrl, level = logging.NOTSET):
         logging.Handler.__init__(self, level)
         self.buildLogCtrl = buildLogCtrl
-        
+
     def emit(self, logRecord):
         evt = NewBuildLogRecordEvent(record = logRecord)
         wx.PostEvent(self.buildLogCtrl, evt)
 
 #--------------------------------------------------------------------------
 class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
-    
+
     LOG_RECORD_INFO_TEXT = '''\
 [%(asctime)s] %(levelname)s
 %(message)s'''
-    
+
     [ID_CLEAR_LOG, ID_COPY_RECORDS
     ] = map(lambda init_ids: wx.NewId(), range(2))
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, parentWindow, id):
         wx.ListCtrl.__init__(self, parentWindow, id,
@@ -64,7 +64,7 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.Bind(wx.EVT_RIGHT_DOWN, self.OnRightMouseDown)
         self.Bind(wx.EVT_MENU, self.OnClearLog, id = self.ID_CLEAR_LOG)
         self.Bind(wx.EVT_MENU, self.OnCopyRecords, id = self.ID_COPY_RECORDS)
-        
+
     #--------------------------------------------------------------------------
     def RefreshRecs(self):
         self.displayedRecIndices = []
@@ -77,42 +77,42 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.displayedRecIndices.sort()
         self.SetItemCount(len(self.displayedRecIndices))
         self.Refresh()
-        
+
     #--------------------------------------------------------------------------
     def GetShowInfo(self):
         return self.showInfo
-        
+
     #--------------------------------------------------------------------------
     # TODO: turn this into an event so it can be safely called from non-gui
     # threads
     def SetShowInfo(self, show):
         self.showInfo = show
         self.RefreshRecs()
-        
+
     #--------------------------------------------------------------------------
     def GetShowWarnings(self):
         return self.showWarnings
-        
+
     #--------------------------------------------------------------------------
     # TODO: turn this into an event so it can be safely called from non-gui
     # threads
     def SetShowWarnings(self, show):
         self.showWarnings = show
         self.RefreshRecs()
-        
+
     #--------------------------------------------------------------------------
     def GetShowErrors(self):
         return self.showErrors
-        
+
     #--------------------------------------------------------------------------
     # TODO: turn this into an event so it can be safely called from non-gui
     # threads
     def SetShowErrors(self, show):
         self.showErrors = show
         self.RefreshRecs()
-        
+
     #--------------------------------------------------------------------------
-    # These 3 methods are callbacks for implementing the "virtualness" of the 
+    # These 3 methods are callbacks for implementing the "virtualness" of the
     # list.
     def OnGetItemText(self, item, col):
         assert len(self.displayedRecIndices) > 0
@@ -130,13 +130,13 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
     def OnGetItemAttr(self, item):
         # TODO ?
         return None
-        
+
     #--------------------------------------------------------------------------
     def OnRightMouseDown(self, evt):
         self.mouseX = evt.GetX()
         self.mouseY = evt.GetY()
         evt.Skip()
-        
+
     #--------------------------------------------------------------------------
     # Get the indices of all currently selected items.
     def getSelectedItems(self):
@@ -145,16 +145,16 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
             if self.GetItemState(i, wx.LIST_STATE_SELECTED):
                 selectedItems.append(i)
         return selectedItems
-        
+
     #--------------------------------------------------------------------------
     # Pop up the right click menu.
     def OnRightMouseUp(self, evt):
         menu = wx.Menu()
         hitItem, itemFlags = self.HitTest((self.mouseX, self.mouseY))
         selectedItems = self.getSelectedItems()
-        
+
         # an item is under the cursor?
-        if itemFlags & wx.LIST_HITTEST_ONITEM: 
+        if itemFlags & wx.LIST_HITTEST_ONITEM:
             if len(selectedItems) > 0:
                 if hitItem in selectedItems:
                     menu.Append(self.ID_COPY_RECORDS, 'Copy')
@@ -169,11 +169,11 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
             # deselect all
             for i in range(len(selectedItems)):
                 self.SetItemState(i, 0, wx.LIST_STATE_SELECTED)
-        
+
         menu.Append(self.ID_CLEAR_LOG, 'Clear Window')
         self.PopupMenu(menu, (self.mouseX, self.mouseY))
         menu.Destroy()
-        
+
     #--------------------------------------------------------------------------
     # Called when a new record is logged.
     def OnNewLogRecord(self, evt):
@@ -184,20 +184,20 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
             self.errorRecIndices.append(len(self.logRecs)-1)
         else:
             self.infoRecIndices.append(len(self.logRecs)-1)
-        
+
         self.RefreshRecs()
-        
+
     #--------------------------------------------------------------------------
     def AttachToLogger(self, currentHandler):
         logger = logging.getLogger('N2-BuildSystem')
         self.logHandler = BuildLogListCtrlHandler(self)
-        formatter = logging.Formatter('%(asctime)s |%(levelname)s| %(message)s', 
+        formatter = logging.Formatter('%(asctime)s |%(levelname)s| %(message)s',
                                       '%X')
         self.logHandler.setFormatter(formatter)
         #if currentHandler != None:
         #    logger.removeHandler(currentHandler)
         logger.addHandler(self.logHandler)
-    
+
     #--------------------------------------------------------------------------
     def OnClearLog(self, evt):
         self.SetItemCount(0)
@@ -209,13 +209,13 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
         self.displayedRecIndices = []
         if self.recDescTextBox != None:
             self.recDescTextBox.SetValue('')
-        
+
     #--------------------------------------------------------------------------
     # Set the TextBox that will be populated with the details of the currently
     # selected log record.
     def AttachToDescTextBox(self, textBox):
         self.recDescTextBox = textBox
-        
+
     #--------------------------------------------------------------------------
     def OnItemSelected(self, evt):
         if self.recDescTextBox != None:
@@ -226,7 +226,7 @@ class BuildLogListCtrl(wx.ListCtrl, listmix.ListCtrlAutoWidthMixin):
                      'message' : formatter.format(record) }
             text = self.LOG_RECORD_INFO_TEXT % args
             self.recDescTextBox.SetValue(text)
-        
+
     #--------------------------------------------------------------------------
     def OnCopyRecords(self, evt):
         text = ''
@@ -253,18 +253,18 @@ class BuildLogPanel(wx.Panel):
         self.Bind(wx.EVT_CHECKBOX, self.OnTickShowInfo, self.infoCheckBox)
         self.warningsCheckBox = wx.CheckBox(self, -1, 'Show Warnings')
         self.warningsCheckBox.SetValue(self.buildLogCtrl.GetShowWarnings())
-        self.Bind(wx.EVT_CHECKBOX, self.OnTickShowWarnings, 
+        self.Bind(wx.EVT_CHECKBOX, self.OnTickShowWarnings,
                   self.warningsCheckBox)
         self.errorsCheckBox = wx.CheckBox(self, -1, 'Show Errors')
         self.errorsCheckBox.SetValue(self.buildLogCtrl.GetShowErrors())
         self.Bind(wx.EVT_CHECKBOX, self.OnTickShowErrors, self.errorsCheckBox)
-        self.logRecTextBox = wx.TextCtrl(self, -1, '', 
-                                         (0, 0), (380, 50), 
+        self.logRecTextBox = wx.TextCtrl(self, -1, '',
+                                         (0, 0), (380, 50),
                                          wx.TE_MULTILINE
                                          |wx.TE_READONLY
                                          |wx.TE_LINEWRAP)
         self.buildLogCtrl.AttachToDescTextBox(self.logRecTextBox)
-        
+
         # Layout the controls...
         sizerC = wx.BoxSizer(wx.VERTICAL)
         sizerC.Add(self.infoCheckBox, 0, wx.ALIGN_LEFT)
@@ -278,17 +278,17 @@ class BuildLogPanel(wx.Panel):
         sizerA.Add(sizerB, 0, wx.EXPAND|wx.TOP|wx.BOTTOM, 4)
         sizerA.Fit(self)
         self.SetSizer(sizerA)
-        
+
     #--------------------------------------------------------------------------
     # Called when the Show Warnings check-box is ticked or unticked.
     def OnTickShowInfo(self, evt):
         self.buildLogCtrl.SetShowInfo(evt.IsChecked())
-        
+
     #--------------------------------------------------------------------------
     # Called when the Show Warnings check-box is ticked or unticked.
     def OnTickShowWarnings(self, evt):
         self.buildLogCtrl.SetShowWarnings(evt.IsChecked())
-        
+
     #--------------------------------------------------------------------------
     # Called when the Show Errors check-box is ticked or unticked.
     def OnTickShowErrors(self, evt):

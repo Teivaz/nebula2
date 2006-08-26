@@ -26,7 +26,7 @@ class BuildSys:
     platformTagDefMap = {'win32' : '__WIN32__',
                          'linux' : '__LINUX__',
                          'macosx': '__MACOSX__'}
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, homeDir, fileName, enableGUI = False):
         self.logHandler = None
@@ -58,7 +58,7 @@ class BuildSys:
 
     #--------------------------------------------------------------------------
     # Return True if the build system is running in GUI mode and thus wxPython
-    # can be used, or False if it's running in command line mode where 
+    # can be used, or False if it's running in command line mode where
     # wxPython can't be used.
     def GUIEnabled(self):
         return self.useGUI
@@ -66,7 +66,7 @@ class BuildSys:
     #--------------------------------------------------------------------------
     def SetMainFrame(self, mainFrame):
         self.mainFrame = mainFrame
-        
+
     #--------------------------------------------------------------------------
     def GetMainFrame(self):
         return self.mainFrame
@@ -74,11 +74,11 @@ class BuildSys:
     #--------------------------------------------------------------------------
     def GetBuildConfigSetting(self, settingName):
         return self.buildConfig.cfg.get(settingName, None)
-    
+
     #--------------------------------------------------------------------------
     def SetBuildConfigSetting(self, settingName, settingValue):
         self.buildConfig.cfg[settingName] = settingValue
-        
+
     #--------------------------------------------------------------------------
     def SaveBuildConfig(self):
         self.buildConfig.Write(os.path.join(self.homeDir, 'user.build.cfg.py'))
@@ -92,64 +92,64 @@ class BuildSys:
         self.logHandler.setFormatter(formatter)
         self.logger.addHandler(self.logHandler)
         self.logger.setLevel(logging.DEBUG) # log everything
-        
+
     #--------------------------------------------------------------------------
-    def AttachProgressDialog(self, createFunc, updateFunc, cancelFunc, 
+    def AttachProgressDialog(self, createFunc, updateFunc, cancelFunc,
                              destroyFunc):
         self.createProgressDlgFunc = createFunc
         self.updateProgressDlgFunc = updateFunc
         self.progressDlgCancelledFunc = cancelFunc
         self.destroyProgressDlgFunc = destroyFunc
-        
+
     #--------------------------------------------------------------------------
     # Toggle whether a progress dialog will be displayed showing the progress
     # of the build system when run in GUI mode.
     def ShowProgressDialog(self, show):
         self.showProgressDialog = show
-    
+
     #--------------------------------------------------------------------------
-    def CreateProgressDialog(self, title, message, maxVal = 100, 
+    def CreateProgressDialog(self, title, message, maxVal = 100,
                              canAbort = True):
         if self.showProgressDialog:
             if self.createProgressDlgFunc != None:
                 self.createProgressDlgFunc(title, message, maxVal, canAbort)
-                
+
     #--------------------------------------------------------------------------
     def UpdateProgressDialog(self, val, message):
         if self.showProgressDialog:
             if self.updateProgressDlgFunc != None:
                 self.updateProgressDlgFunc(val, message)
-                
+
     #--------------------------------------------------------------------------
     def ProgressDialogCancelled(self):
         if self.showProgressDialog:
             if self.progressDlgCancelledFunc != None:
                 return self.progressDlgCancelledFunc()
         return False
-        
+
     #--------------------------------------------------------------------------
     def DestroyProgressDialog(self):
         if self.showProgressDialog:
             if self.destroyProgressDlgFunc != None:
                 self.destroyProgressDlgFunc()
-    
+
     #--------------------------------------------------------------------------
     def AttachSummaryDialog(self, displayFunc):
         self.displaySummaryDlgFunc = displayFunc
-    
+
     #--------------------------------------------------------------------------
     def DisplaySummaryDialog(self, details):
         if self.displaySummaryDlgFunc != None:
             self.displaySummaryDlgFunc(details)
-    
+
     #--------------------------------------------------------------------------
     def GetGenerators(self):
         return self.generatorFactory.GetGenerators()
-        
+
     #--------------------------------------------------------------------------
     def HasGenerator(self, generatorName):
         return (generatorName in self.generatorFactory.GetGenerators())
-        
+
     #--------------------------------------------------------------------------
     # Pre-process bld files
     def Prepare(self):
@@ -159,7 +159,7 @@ class BuildSys:
                 #print self.buildConfig.bldFiles
                 for bldFileName in self.buildConfig.bldFiles:
                     # parse bld file
-                    scanner = None                
+                    scanner = None
                     try:
                         bldFile = file(bldFileName, 'r')
                     except IOError:
@@ -226,7 +226,7 @@ class BuildSys:
                 availableWorkspaces = self.workspaces.keys()
                 for workspaceName in workspacesToBuild:
                     if workspaceName not in availableWorkspaces:
-                        self.logger.error('Workspace %s is undefined!', 
+                        self.logger.error('Workspace %s is undefined!',
                                           workspaceName)
                         return
             # create the generator and get it running
@@ -238,7 +238,7 @@ class BuildSys:
     #-------------------------------------------------------------------------
     # Private Stuff
     #-------------------------------------------------------------------------
-    
+
     #--------------------------------------------------------------------------
     def findCodeDirs(self):
         #print 'Find Code Dirs:'
@@ -274,17 +274,17 @@ class BuildSys:
                 del self.contribDirs[matchIdx]
             else:
                 break;
-            
+
         #print self.projectDirs
         #print self.contribDirs
-    
+
     #--------------------------------------------------------------------------
     def addModule(self, module):
         modName = module.name
         if modName in self.modules:
             self.logger.error('Module names must be unique!\n' \
                               'The module %s from %s conflicts with a module' \
-                              ' of the same name from %s', modName, 
+                              ' of the same name from %s', modName,
                               module.bldFile, self.modules[modName].bldFile)
             return False
         else:
@@ -292,7 +292,7 @@ class BuildSys:
             module.Clean()
             self.modules[modName] = module
             return True
-        
+
     #--------------------------------------------------------------------------
     def addTarget(self, target):
         tarName = target.name
@@ -307,29 +307,29 @@ class BuildSys:
             target.Clean()
             self.targets[tarName] = target
             return True
-    
+
     #--------------------------------------------------------------------------
     def addBundle(self, bundle):
         bunName = bundle.name
         if bunName in self.bundles:
             self.logger.error('Bundle names must be unique!\n' \
                               'The bundle %s from %s conflicts with a bundle' \
-                              ' of the same name from %s', bunName, 
+                              ' of the same name from %s', bunName,
                               bundle.bldFile, self.bundles[bunName].bldFile)
             return False
         else:
             bundle.buildSys = self
             self.bundles[bunName] = bundle
             return True
-    
+
     #--------------------------------------------------------------------------
     def addWorkspace(self, workspace):
         worName = workspace.name
         if worName in self.workspaces:
             self.logger.error('Workspace names must be unique!\n' \
                               'The workspace %s from %s conflicts with a' \
-                              ' workspace of the same name from %s', worName, 
-                              workspace.bldFile, 
+                              ' workspace of the same name from %s', worName,
+                              workspace.bldFile,
                               self.workspaces[worName].bldFile)
             return False
         else:
@@ -337,7 +337,7 @@ class BuildSys:
             workspace.Clean()
             self.workspaces[worName] = workspace
             return True
-        
+
     #--------------------------------------------------------------------------
     def validateInput(self):
         dataValid = True
@@ -352,7 +352,7 @@ class BuildSys:
             if not target.Validate():
                 dataValid = False
         return dataValid
-    
+
     #--------------------------------------------------------------------------
     # Process modules, bundles, targets etc.
     def processInput(self):
@@ -389,12 +389,12 @@ class BuildSys:
             # Doing this after workspace.CollectPreprocessorDefs() means that
             # any defines for transitive targets that haven't been explicitely
             # added to the workspace will be ignored. I think that's a good
-            # thing, because transitive dependencies are supposed to be taken 
+            # thing, because transitive dependencies are supposed to be taken
             # care of by the build system, if you have to add defines to them
             # then you might as well list them in the workspace explicitely.
             workspace.CollectTransitiveTargetDependencies()
         return True
-        
+
     #--------------------------------------------------------------------------
     def CleanRelPath(self, relPath):
         if '' != relPath:
@@ -405,7 +405,7 @@ class BuildSys:
                 # now replace any / with the platform specific equivalent
                 relPath = string.replace(relPath, '/', os.sep)
         return relPath
-        
+
     #--------------------------------------------------------------------------
     # Figures out the relative path from one path in the Nebula directory
     # hierarchy to another. Input paths must be relative to root Nebula
@@ -451,11 +451,11 @@ class BuildSys:
         else:
             raise BuildSysError("Can't figure out how the hell to get from " \
                                 + fromPath + " to " + toPath)
-                                
+
     #--------------------------------------------------------------------------
     def GetAbsPathFromRel(self, relPath):
         return os.path.join(self.homeDir, relPath)
-        
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

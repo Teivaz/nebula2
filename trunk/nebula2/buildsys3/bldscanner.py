@@ -31,12 +31,12 @@ class BldScanner(Scanner):
     bundles = []
     # something to help detect faulty brace placement
     blockBraceCount = 0
-    
+
     # maps tokens to module states
     moduleStates = {'annotate'              : 'm_annotate',
                     'setdir'                : 'm_setdir',
                     'setplatform'           : 'm_setplatform',
-                    'settype'               : 'm_settype', 
+                    'settype'               : 'm_settype',
                     'setfiles'              : 'm_setfiles',
                     'setheaders'            : 'm_setheaders',
                     'setlibs_win32'         : 'm_setlibs_win32',
@@ -51,7 +51,7 @@ class BldScanner(Scanner):
     # maps tokens to target states
     targetStates = {'annotate'           : 't_annotate',
                     'settype'            : 't_settype',
-                    'setrtti'            : 't_setrtti', 
+                    'setrtti'            : 't_setrtti',
                     'setexceptions'      : 't_setexceptions',
                     'seticon'            : 't_seticon',
                     'setresource_win32'  : 't_setresource_win32',
@@ -60,22 +60,22 @@ class BldScanner(Scanner):
                     'settargetdeps'      : 't_settargetdeps',
                     'changedllextension' : 't_changedllextension'}
     # maps tokens to bundle states
-    bundleStates = {'annotate'   : 'b_annotate', 
-                    'setmodules' : 'b_setmodules', 
+    bundleStates = {'annotate'   : 'b_annotate',
+                    'setmodules' : 'b_setmodules',
                     'settargets' : 'b_settargets'}
     # maps tokens to workspace states
-    workspaceStates = {'annotate'     : 'w_annotate', 
-                       'setdir'       : 'w_setdir', 
-                       'setbinarydir' : 'w_setbinarydir', 
-                       'setlibdir'    : 'w_setlibdir', 
-                       'settargets'   : 'w_settargets', 
-                       'addglobaldef' : 'w_addglobaldef', 
+    workspaceStates = {'annotate'     : 'w_annotate',
+                       'setdir'       : 'w_setdir',
+                       'setbinarydir' : 'w_setbinarydir',
+                       'setlibdir'    : 'w_setlibdir',
+                       'settargets'   : 'w_settargets',
+                       'addglobaldef' : 'w_addglobaldef',
                        'addtargetdef' : 'w_addtargetdef'}
-                
+
     def StartBlock(self, text):
         self.blockBraceCount += 1
         #print '*** start block *** state: ' + self.state_name
-        
+
     def EndBlock(self, text):
         self.blockBraceCount -= 1
         #print '*** end block *** state before: ' + self.state_name
@@ -91,32 +91,32 @@ class BldScanner(Scanner):
         elif 'w_' == self.state_name[:2]:
             self.begin('workspace')
             #print 'switching state to workspace'
-        
+
     def InBlock(self):
         return (self.blockBraceCount > 0)
-        
+
     def CheckBraceCount(self):
         if self.blockBraceCount != 0:
             pos = self.position()
             err = 'Missing brace.\n'
             err += pos.name + ' line ' + pos.line
             raise PakScannerError(err)
-    
+
     #
     # workspace actions
     #
-    
+
     def CheckWorkspaceNameDefined(self):
         if not self.workspaceNameDefined:
             pos = self.position()
             err = 'Workspace name not defined.\n'
             err += pos.name + ' line ' + pos.line
-            raise BldScannerError(err)    
-    
+            raise BldScannerError(err)
+
     def BeginWorkspace(self, text):
         self.workspaceNameDefined = False
         self.begin('workspace')
-        
+
     def ProcessNameInWorkspace(self, text):
         if self.workspaceNameDefined:
             if 'endworkspace' == text:
@@ -127,35 +127,35 @@ class BldScanner(Scanner):
         else:
             self.workspaceNameDefined = True
             self.workspaces.append(Workspace(text, self.name))
-    
+
     def SetWorkspaceAnnotation(self, text):
         self.CheckWorkspaceNameDefined()
         self.workspaces[len(self.workspaces) - 1].annotation = text
         self.begin('workspace') # switch back to parent state
-    
+
     def SetWorkspaceDir(self, text):
         self.CheckWorkspaceNameDefined()
         self.workspaces[len(self.workspaces) - 1].dir = text
         self.begin('workspace') # switch back to parent state
-        
+
     def SetWorkspaceBinaryDir(self, text):
         self.CheckWorkspaceNameDefined()
         self.workspaces[len(self.workspaces) - 1].binaryDir = text
         self.begin('workspace') # switch back to parent state
-        
+
     def SetWorkspaceInterDir(self, text):
         self.CheckWorkspaceNameDefined()
-        self.logger.warning('setlibdir in workspace %s in %s is deprecated.', 
-                            self.workspaces[len(self.workspaces) - 1].name, 
+        self.logger.warning('setlibdir in workspace %s in %s is deprecated.',
+                            self.workspaces[len(self.workspaces) - 1].name,
                             self.name)
         self.begin('workspace') # switch back to parent state
-    
+
     def AddWorkspaceTarget(self, text):
         self.CheckWorkspaceNameDefined()
         self.workspaces[len(self.workspaces) - 1].targets.append(text)
         if not self.InBlock():
             self.begin('workspace') # switch back to parent state
-    
+
     def AddWorkspaceGlobalDef(self, text):
         self.CheckWorkspaceNameDefined()
         #print '*** globaldef: ' + text
@@ -167,7 +167,7 @@ class BldScanner(Scanner):
             raise BldScannerError(err)
         self.workspaces[len(self.workspaces) - 1].globalDefs.append(tokens)
         self.begin('workspace') # switch back to parent state
-        
+
     def AddWorkspaceTargetDef(self, text):
         self.CheckWorkspaceNameDefined()
         tokens = string.split(text)
@@ -183,11 +183,11 @@ class BldScanner(Scanner):
         else:
             defs[targetName].append(tokens[1:])
         self.begin('workspace') # switch back to parent state
-    
+
     #
     # bundle actions
     #
-    
+
     def CheckBundleNameDefined(self):
         if not self.bundleNameDefined:
             pos = self.position()
@@ -198,7 +198,7 @@ class BldScanner(Scanner):
     def BeginBundle(self, text):
         self.bundleNameDefined = False
         self.begin('bundle')
-    
+
     def ProcessNameInBundle(self, text):
         if self.bundleNameDefined:
             if 'endbundle' == text:
@@ -209,39 +209,39 @@ class BldScanner(Scanner):
         else:
             self.bundleNameDefined = True
             self.bundles.append(Bundle(text, self.name))
-        
+
     def SetBundleAnnotation(self, text):
         self.CheckBundleNameDefined()
         self.bundles[len(self.bundles) - 1].annotation = text
         self.begin('bundle') # switch back to parent state
-        
+
     def AddBundleModule(self, text):
         self.CheckBundleNameDefined()
         self.bundles[len(self.bundles) - 1].modules.append(text)
         if not self.InBlock():
             self.begin('bundle') # switch back to parent state
-        
+
     def AddBundleTarget(self, text):
         self.CheckBundleNameDefined()
         self.bundles[len(self.bundles) - 1].targets.append(text)
         if not self.InBlock():
             self.begin('bundle') # switch back to parent state
-    
+
     #
     # module actions
     #
-    
+
     def CheckModuleNameDefined(self):
         if not self.moduleNameDefined:
             pos = self.position()
             err = 'Module name not defined.\n'
             err += pos.name + ' line ' + pos.line
             raise BldScannerError(err)
-        
+
     def BeginModule(self, text):
         self.moduleNameDefined = False
         self.begin('module')
-        
+
     def ProcessNameInModule(self, text):
         if self.moduleNameDefined:
             if 'endmodule' == text:
@@ -252,84 +252,84 @@ class BldScanner(Scanner):
         else:
             self.moduleNameDefined = True
             self.modules.append(Module(text, self.name))
-    
-    def SetModuleAnnotation(self, text):    
+
+    def SetModuleAnnotation(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].annotation = text
         self.begin('module') # switch back to parent state
-        
+
     def SetModuleDir(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].dir = string.strip(text, '"')
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-    
+
     def SetModulePlatform(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].platform = text
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-            
+
     def SetModuleType(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].modType = text
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-            
+
     def AddModuleHeader(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].headers.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-    
+
     def AddModuleFile(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].files.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-            
+
     def AddModuleWin32Lib(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].libsWin32.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-    
+
     def AddModuleWin32DebugLib(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].libsWin32Debug.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-            
+
     def AddModuleWin32ReleaseLib(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].libsWin32Release.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-            
+
     def AddModuleLinuxLib(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].libsLinux.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-            
+
     def AddModuleMacOSXLib(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].libsMacOSX.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-    
+
     def AddModuleMacOSXFramework(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].frameworksMacOSX.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-    
+
     def AddModuleDependency(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].moduleDeps.append(text)
         if not self.InBlock():
             self.begin('module') # switch back to parent state
-    
+
     def SetModuleNoPkg(self, text):
         self.CheckModuleNameDefined()
         val = string.lower(text)
@@ -338,27 +338,27 @@ class BldScanner(Scanner):
         elif 'false' == val:
             self.modules[len(self.modules) - 1].putInPkg = True
         self.begin('module') # switch back to parent state
-    
+
     def SetModuleDefFile(self, text):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].modDefFile = text
         self.begin('module') # switch back to parent state
-    
+
     #
     # target actions
     #
-    
+
     def CheckTargetNameDefined(self):
         if not self.targetNameDefined:
             pos = self.position()
             err = 'Target name not defined.\n'
             err += pos.name + ' line ' + pos.line
             raise BldScannerError(err)
-            
+
     def BeginTarget(self, text):
         self.targetNameDefined = False
         self.begin('target')
-        
+
     def ProcessNameInTarget(self, text):
         if self.targetNameDefined:
             if 'endtarget' == text:
@@ -369,18 +369,18 @@ class BldScanner(Scanner):
         else:
             self.targetNameDefined = True
             self.targets.append(Target(text, self.name))
-    
+
     def SetTargetAnnotation(self, text):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].annotation = text
         self.begin('target') # switch back to parent state
-    
+
     def SetTargetType(self, text):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].type = text
         if not self.InBlock():
             self.begin('target') # switch back to parent state
-    
+
     def SetTargetRTTI(self, text):
         self.CheckTargetNameDefined()
         val = string.lower(text)
@@ -389,7 +389,7 @@ class BldScanner(Scanner):
         elif 'false' == val:
             self.targets[len(self.targets) - 1].rtti = False
         self.begin('target') # switch back to parent state
-            
+
     def SetTargetExceptions(self, text):
         self.CheckTargetNameDefined()
         val = string.lower(text)
@@ -398,7 +398,7 @@ class BldScanner(Scanner):
         elif 'false' == val:
             self.targets[len(self.targets) - 1].exceptions = False
         self.begin('target') # switch back to parent state
-            
+
     def SetTargetIcon(self, text):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].icon = string.strip(text, '"')
@@ -408,31 +408,31 @@ class BldScanner(Scanner):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].win32Resource = text
         self.begin('target') # switch back to parent state
-            
+
     def AddTargetModule(self, text):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].modules.append(text)
         if not self.InBlock():
             self.begin('target') # switch back to parent state
-            
+
     def AddTargetBundle(self, text):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].bundles.append(text)
         if not self.InBlock():
             self.begin('target') # switch back to parent state
-            
+
     def AddTargetDependency(self, text):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].depends.append(text)
         if not self.InBlock():
             self.begin('target') # switch back to parent state
-            
+
     def SetTargetExtension(self, text):
         self.CheckTargetNameDefined()
         self.targets[len(self.targets) - 1].extension = text
         self.begin('target') # switch back to parent state
-            
-        
+
+
     # lexer stuff
     letter = Range('AZaz')
     digit = Range('09')
@@ -445,14 +445,14 @@ class BldScanner(Scanner):
     targetdef = name + spaceortab + globaldef
     space = Any(' \t\n')
     comment = Str('#') + Rep(AnyBut('\n'))
-    annotation = Alt(Rep1(AnyBut('" \t\n')), 
+    annotation = Alt(Rep1(AnyBut('" \t\n')),
                      Str('"') + Rep(AnyBut('"')) + Str('"'))
-    pathname = Alt(Rep1(alphanum | Any(':_-./\\')), 
+    pathname = Alt(Rep1(alphanum | Any(':_-./\\')),
                    Str('"') + Rep1(alphanum | Any(' : _-./\\')) + Str('"'))
     boolean = NoCase(Str('true', 'false'))
-    
+
     lexicon = Lexicon([ (Str('beginworkspace'), BeginWorkspace),
-                        State('workspace', [ 
+                        State('workspace', [
                             (name, ProcessNameInWorkspace),
                             (AnyChar, IGNORE)
                         ]),
@@ -657,7 +657,7 @@ class BldScanner(Scanner):
         self.bundleNameDefined = False
         self.workspaceNameDefined = False
         Scanner.__init__(self, self.lexicon, stream, filename)
-                
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------
