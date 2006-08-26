@@ -138,7 +138,7 @@ public:
     virtual bool Inside(const vector2& p);
     /// get rectangle in screen space
     virtual rectangle GetScreenSpaceRect() const;
-    /// get locale rectangle screen space 
+    /// get locale rectangle screen space
     virtual rectangle GetScreenSpaceRect(const rectangle& src) const;
     /// get pointer to gui server
     nGuiServer* GetGuiServer();
@@ -232,7 +232,7 @@ nGuiWidget::GetClickRectBorder() const
 
 //-----------------------------------------------------------------------------
 /**
-    Set the minimum size for the widget. NOTE: this is not enforced, 
+    Set the minimum size for the widget. NOTE: this is not enforced,
     but merely a hint for layouter objects.
 */
 inline
@@ -254,7 +254,7 @@ nGuiWidget::GetMinSize() const
 
 //-----------------------------------------------------------------------------
 /**
-    Set the maximum size for the widget. NOTE: this is not enforced, 
+    Set the maximum size for the widget. NOTE: this is not enforced,
     but merely a hint for layouter objects.
 */
 inline
@@ -280,7 +280,7 @@ nGuiWidget::GetMaxSize() const
     widget, the tooltip string will be set as the global tooltip string
     in the gui server object.
 
-    @param  str     the tooltip string    
+    @param  str     the tooltip string
 */
 inline
 void
@@ -387,7 +387,7 @@ nGuiWidget::SetFrameCommand(const char* cmd)
     Get script command to execute per frame while visible.
 */
 inline
-const char* 
+const char*
 nGuiWidget::GetFrameCommand() const
 {
     return this->frameCommand.Get();

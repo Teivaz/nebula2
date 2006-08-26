@@ -8,7 +8,7 @@
     Runs a sequence of occlusion queries. Will render bounding boxes
     and check how many pixels pass the z test. If none
     of the pixels pass the test, the rectangle is occluded. Try to issue
-    as many queries as possible before getting the query results, this 
+    as many queries as possible before getting the query results, this
     maximizes GPU/CPU parallelization.
 
     This class should be subclassed by an graphics API-specific implementation.

@@ -20,7 +20,7 @@
     code true indicates that a message has been received. In non-blocking
     mode, Receive() should be called very frequently (at least once per frame)
     to prevent lost messages due to internal buffer overflow.
-    
+
     nIpcPeer uses nIpcAddress objects to identify communication points.
 
     nIpcPeers use the socket datagrams, which use the UDP protocol. This

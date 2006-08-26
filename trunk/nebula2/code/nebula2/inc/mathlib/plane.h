@@ -13,7 +13,7 @@
 #include "mathlib/line.h"
 
 //------------------------------------------------------------------------------
-class plane 
+class plane
 {
 public:
     /// default constructor
@@ -119,7 +119,7 @@ plane::plane(const vector3& v0, const vector3& v1, const vector3& v2)
 
 //------------------------------------------------------------------------------
 /**
-    Computes the distance of a point to the plane. Return 0.0 if the 
+    Computes the distance of a point to the plane. Return 0.0 if the
     point is on the plane.
 */
 inline
@@ -134,7 +134,7 @@ plane::distance(const vector3& v) const
     Returns the plane normal.
 */
 inline
-vector3 
+vector3
 plane::normal() const
 {
     return vector3(this->a, this->b, this->c);
@@ -148,7 +148,7 @@ plane::normal() const
     If the given line intersects with the plane, plugging the value <i>t</i>
     into the line equation produces the point of intersection.
 
-    The following code snippet shows the way to get the intersection point 
+    The following code snippet shows the way to get the intersection point
     between a line and a plane:
     @code
     if (p.intersect(l, t))
@@ -189,11 +189,11 @@ plane::intersect(const plane& p, line3& l) const
     float n11 = n1 % n1;
     float det = n00 * n11 - n01 * n01;
     const float tol = 1e-06f;
-    if (fabs(det) < tol) 
+    if (fabs(det) < tol)
     {
         return false;
     }
-    else 
+    else
     {
         float inv_det = 1.0f/det;
         float c0 = (n11 * this->d - n01 * p.d)    * inv_det;

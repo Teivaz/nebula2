@@ -4,7 +4,7 @@
 /**
     @class nBlendShapeAnimator
     @ingroup Scene
- 
+
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nanimator.h"

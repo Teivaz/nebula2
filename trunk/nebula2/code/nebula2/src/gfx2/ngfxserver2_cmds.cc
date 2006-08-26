@@ -186,13 +186,13 @@ n_getfeatureset(void* slf, nCmd* cmd)
     v
     @info
     Save a screenshot to the provided filename.
-    A 24 bpp BMP file will be created.
+    A JPG file will be created.
 */
 static void
 n_savescreenshot(void *slf, nCmd *cmd)
 {
     nGfxServer2 *self = (nGfxServer2*) slf;
-    self->SaveScreenshot(cmd->In()->GetS());
+    self->SaveScreenshot(cmd->In()->GetS(), nTexture2::JPG);
 }
 //------------------------------------------------------------------------------
 /**

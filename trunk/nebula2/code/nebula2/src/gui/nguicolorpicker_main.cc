@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  nguicolorpicker_main.cc
-//  (C) 2004 RadonLabs GmbH 
+//  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "gui/nguicolorpicker.h"
 
@@ -17,7 +17,7 @@ nGuiColorPicker::nGuiColorPicker():
     alpha(1.0f),
     color(1.0f, 1.0f, 1.0f, 1.0f),
     buttonPressedFlag(false),
-    sideRatio((float)141/170) 
+    sideRatio((float)141/170)
 {
     // empty
 }
@@ -73,7 +73,7 @@ nGuiColorPicker::Render()
             bool success = guiResource->Load();
             n_assert(success);
         }
-        
+
         // set the intensity and alpha value for rendering
         vector4 intensityColor(this->intensity, this->intensity, this->intensity, this->alpha);
 
@@ -91,7 +91,7 @@ bool
 nGuiColorPicker::OnButtonDown(const vector2& mousePos)
 {
     if (this->Inside(mousePos))
-    { 
+    {
         // if button is pressed first time update color and send changed
         if (!this->buttonPressedFlag)
         {
@@ -103,7 +103,7 @@ nGuiColorPicker::OnButtonDown(const vector2& mousePos)
         nGuiWidget::OnButtonDown(mousePos);
         return true;
     }
-    
+
     return false;
 }
 
@@ -159,7 +159,7 @@ nGuiColorPicker::Inside(const vector2& p)
             // calculate the relative position in the hexagontexture
             relMousePos.x=(p.x - screenSpaceRect.v0.x) / screenSpaceRect.size().x;
             relMousePos.y=(p.y - screenSpaceRect.v0.y) / screenSpaceRect.size().y;
-           
+
             // rise of the sides from the hexagon
             const float rise = (float)(n_tan(2*N_PI/3)*1/sideRatio);
 
@@ -184,7 +184,7 @@ nGuiColorPicker::CalculateColorValue(const vector2& relativeCoordinates)
 {
     const float texturWidth = 1.0f;
     const float texturHeight = 1.0f;
-    
+
     vector2 relCoor = relativeCoordinates;
     //x and y have to be between 0.0f and 1.0f
     relCoor.x = ( 0.0f > relCoor.x )? 0.0f: relCoor.x;
@@ -199,7 +199,7 @@ nGuiColorPicker::CalculateColorValue(const vector2& relativeCoordinates)
     //decide if y is over the middle or under - calculate the left offset with y coordinate
     if( texturHeight/2 >  relCoor.y ) offSetX = (texturWidth / 4) * 2 * ( texturHeight / 2-relCoor.y) / texturHeight;
     if( texturHeight/2 <= relCoor.y ) offSetX = (texturWidth / 4) * 2 * (-texturHeight / 2+relCoor.y) / texturHeight;
-  
+
     //subtract with the offset
     relCoor.x -= offSetX;
 
@@ -212,7 +212,7 @@ nGuiColorPicker::CalculateColorValue(const vector2& relativeCoordinates)
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 vector4
 nGuiColorPicker::CalculateAllColorValues(const vector2& relativeCoordinates)
@@ -229,14 +229,14 @@ nGuiColorPicker::CalculateAllColorValues(const vector2& relativeCoordinates)
     relCoor -= vector2(0.5f, 0.5f);
 
     // rotate 2pi/3 for green
-    // transforming relative coordinate system in a real coordinate system 
-    relCoor.y *= this->sideRatio;   
+    // transforming relative coordinate system in a real coordinate system
+    relCoor.y *= this->sideRatio;
     relCoor.rotate(2*N_PI/3);
     relCoor.y /= this->sideRatio;
 
     // move back from the middle
     relCoor += vector2(0.5f, 0.5f);
-  
+
     // calculate colorvalue
     _color.y = this->CalculateColorValue(relCoor);
 
@@ -245,7 +245,7 @@ nGuiColorPicker::CalculateAllColorValues(const vector2& relativeCoordinates)
     relCoor -= vector2(0.5f, 0.5f);
 
     // rotate again 2pi/3 for blue
-    // transforming relative coordinate system in a real coordinate system 
+    // transforming relative coordinate system in a real coordinate system
     relCoor.y *= this->sideRatio;
     relCoor.rotate(2*N_PI/3);
     relCoor.y /= this->sideRatio;
@@ -262,7 +262,7 @@ nGuiColorPicker::CalculateAllColorValues(const vector2& relativeCoordinates)
     // because of rounding mistakes we have to get save that one value is 1.0f
     float biggestColor  = (_color.x>_color.y)? _color.x: _color.y;
     biggestColor        = (_color.z>biggestColor)? _color.z: biggestColor;
-    
+
     _color.x *= (float)(1.0f / biggestColor);
     _color.y *= (float)(1.0f / biggestColor);
     _color.z *= (float)(1.0f / biggestColor);
@@ -271,7 +271,7 @@ nGuiColorPicker::CalculateAllColorValues(const vector2& relativeCoordinates)
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
 */
 void
 nGuiColorPicker::UpdateColor(const vector2& mousePos)

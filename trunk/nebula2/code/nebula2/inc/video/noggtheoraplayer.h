@@ -8,7 +8,7 @@
     A videoplayer for *.ogg files
     Most parts are just copied out of the decoder-example of the theora-package
     and slightly modified to match the nVideoPlayer interface
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "video/nvideoplayer.h"
@@ -27,7 +27,7 @@ public:
     virtual bool Open();
     /// close the video player
     virtual void Close();
-    
+
     /// Decode the next Frame (stores frame into the texture)
     virtual void DecodeNextFrame();
     /// Decode the next Frames if necessary (and stores frame into the texture)
@@ -78,5 +78,5 @@ protected:
     uint            decodedFrames;
 };
 
-#endif    
+#endif
 

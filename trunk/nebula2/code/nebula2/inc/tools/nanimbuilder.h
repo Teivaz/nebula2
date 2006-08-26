@@ -178,7 +178,7 @@ public:
     bool LoadNanim2(nFileServer2* fileServer, const char* filename);
     /// load nax2 file
     bool LoadNax2(nFileServer2* fileServer, const char* filename);
-    
+
     /// clear all
     void Clear();
     /// add an animation group

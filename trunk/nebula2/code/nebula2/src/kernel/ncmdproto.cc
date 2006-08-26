@@ -18,7 +18,7 @@ nCmdProto::nCmdProto(const char *proto_def, nFourCC id)
     {
         n_assert2(0, "Invalid prototype definition for nCmdProto");
     }
-    
+
     // copy prototype definition
     this->protoDef = proto_def;
     this->fourcc   = id;
@@ -118,7 +118,7 @@ nCmdProto::RelCmd(nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
-    ProtoDefInfo constructor which parses and checks validity of the prototype 
+    ProtoDefInfo constructor which parses and checks validity of the prototype
     definition. Initializes info resulting information from the parsing process.
 
     @param proto_def char array containing prototype definition to check & parse
@@ -132,7 +132,7 @@ ProtoDefInfo::ProtoDefInfo(const char * proto_def)
 
     // initialize all output strings & argument counters
     memset(this, 0, sizeof(ProtoDefInfo));
-    
+
     // check out args
     ptr = proto_def;
     while ((0 != (c = *ptr++)) && ('_' != c))
@@ -152,7 +152,7 @@ ProtoDefInfo::ProtoDefInfo(const char * proto_def)
     this->outArgs[this->numOutArgs] = 0;
 
     // check if found separator '_'
-    if ('_' != c) 
+    if ('_' != c)
     {
         return;
     }
@@ -166,7 +166,7 @@ ProtoDefInfo::ProtoDefInfo(const char * proto_def)
     this->name[i++] = 0;
 
     // check if found separator '_'
-    if ('_' != c) 
+    if ('_' != c)
     {
         return;
     }
@@ -189,7 +189,7 @@ ProtoDefInfo::ProtoDefInfo(const char * proto_def)
     this->inArgs[this->numInArgs] = 0;
 
     // check if found end of string
-    if (0 != c) 
+    if (0 != c)
     {
         return;
     }

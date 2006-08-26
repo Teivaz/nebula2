@@ -13,7 +13,7 @@
     event to get the user's reaction.
 
     (C) 2004 RadonLabs GmbH
-*/    
+*/
 #include "gui/nguiclientwindow.h"
 
 //------------------------------------------------------------------------------

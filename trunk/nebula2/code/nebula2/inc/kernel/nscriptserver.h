@@ -28,11 +28,11 @@
 
 //------------------------------------------------------------------------------
 class nFile;
-class nScriptServer : public nRoot 
+class nScriptServer : public nRoot
 {
 public:
     // the select methods (see below)
-    enum SelectMethod 
+    enum SelectMethod
     {
         SELCOMMAND,         // write a select statement after object constructor
         NOSELCOMMAND,       // don't write a select statement
@@ -43,7 +43,7 @@ public:
     /// destructor
     virtual ~nScriptServer();
     /// evaluate a script command
-    virtual bool Run(const char * cmdStr, nString& result); 
+    virtual bool Run(const char * cmdStr, nString& result);
     /// invoke a script function by name, with no parameters
     virtual bool RunFunction(const char* functionName, nString& result);
     /// evaluate a script file
@@ -56,12 +56,12 @@ public:
     virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// write object header with default constructor
     virtual bool WriteBeginNewObject(nFile* fp, nRoot *o, nRoot *owner);
-    /// write object header with constructor cmd 
-    virtual bool WriteBeginNewObjectCmd(nFile* fp, nRoot *o, nRoot *owner, nCmd *cmd);  
+    /// write object header with constructor cmd
+    virtual bool WriteBeginNewObjectCmd(nFile* fp, nRoot *o, nRoot *owner, nCmd *cmd);
     /// write object header without constructor (select only)
-    virtual bool WriteBeginSelObject(nFile* fp, nRoot *o, nRoot *owner); 
+    virtual bool WriteBeginSelObject(nFile* fp, nRoot *o, nRoot *owner);
     /// translate and write a cmd message
-    virtual bool WriteCmd(nFile*, nCmd *);   
+    virtual bool WriteCmd(nFile*, nCmd *);
     /// write object footer
     virtual bool WriteEndObject(nFile* fp, nRoot *o, nRoot *owner);
     /// finish a persistent object file
@@ -84,7 +84,7 @@ public:
 
 #ifndef __XBxX__
     /// generate a prompt string for interactive mode
-    virtual nString Prompt(); 
+    virtual nString Prompt();
 #endif
 
 protected:
@@ -161,7 +161,7 @@ nScriptServer::GetSelectMethod() const
 /**
 */
 inline
-void 
+void
 nScriptServer::SetCurrentTargetObject(nObject *obj)
 {
     nScriptServer::currentTargetObject = obj;
@@ -171,7 +171,7 @@ nScriptServer::SetCurrentTargetObject(nObject *obj)
 /**
 */
 inline
-nObject* 
+nObject*
 nScriptServer::GetCurrentTargetObject()
 {
     return nScriptServer::currentTargetObject;

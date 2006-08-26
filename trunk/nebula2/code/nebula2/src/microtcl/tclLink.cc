@@ -1,4 +1,4 @@
-/* 
+/*
  * tclLink.c --
  *
  *	This file implements linked variables (a C variable that is
@@ -13,7 +13,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -63,7 +62,7 @@ static char *		LinkTraceProc _ANSI_ARGS_((ClientData clientData,
 			    int flags));
 static char *		StringValue _ANSI_ARGS_((Link *linkPtr,
 			    char *buffer));
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -91,7 +90,7 @@ Tcl_LinkVar(interp, varName, addr, type)
     char *varName;		/* Name of a global variable in interp. */
     char *addr;			/* Address of a C variable to be linked
 				 * to varName. */
-    int type;			/* Type of C variable: TCL_LINK_INT, etc. 
+    int type;			/* Type of C variable: TCL_LINK_INT, etc.
 				 * Also may have TCL_LINK_READ_ONLY
 				 * OR'ed in. */
 {
@@ -125,7 +124,7 @@ Tcl_LinkVar(interp, varName, addr, type)
     }
     return code;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -162,7 +161,7 @@ Tcl_UnlinkVar(interp, varName)
     ckfree(linkPtr->varName);
     ckfree((char *) linkPtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -202,7 +201,7 @@ Tcl_UpdateLinkedVar(interp, varName)
 	    TCL_GLOBAL_ONLY);
     linkPtr->flags = (linkPtr->flags & ~LINK_BEING_UPDATED) | savedFlag;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -370,7 +369,7 @@ LinkTraceProc(clientData, interp, name1, name2, flags)
     Tcl_DecrRefCount(objPtr);
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *

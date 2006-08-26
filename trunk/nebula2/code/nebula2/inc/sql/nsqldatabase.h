@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nSqlDatabase
-    
+
     A database representation in the Nebula2 SQL subsystem.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "resource/nresource.h"
@@ -69,4 +69,4 @@ public:
     virtual void EndTransaction();
 };
 //------------------------------------------------------------------------------
-#endif    
+#endif

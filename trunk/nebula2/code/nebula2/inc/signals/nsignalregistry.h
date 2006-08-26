@@ -89,7 +89,7 @@ nSignalRegistry::AddSignal(nSignal & signal)
     @return the list of signals
 */
 inline
-nHashList* 
+nHashList*
 nSignalRegistry::GetSignalList() const
 {
     return this->signalList;

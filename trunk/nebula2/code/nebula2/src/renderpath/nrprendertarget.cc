@@ -42,7 +42,7 @@ nRpRenderTarget::Validate()
         int w, h;
         if ((this->width > 0) && (this->height > 0))
         {
-            // absolute size defined         
+            // absolute size defined
             w = this->width;
             h = this->height;
         }

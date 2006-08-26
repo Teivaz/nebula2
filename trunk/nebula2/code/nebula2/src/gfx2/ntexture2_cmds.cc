@@ -11,10 +11,10 @@ static void n_savetexturetofile(void* slf, nCmd* cmd);
 /**
     @scriptclass
     ntexture2
-    
+
     @cppclass
     ntexture2
-    
+
     @superclass
     nresource
 
@@ -44,5 +44,5 @@ static void
 n_savetexturetofile(void* slf, nCmd* cmd)
 {
     nTexture2* self = (nTexture2*) slf;
-    cmd->Out()->SetB(self->SaveTextureToFile(cmd->In()->GetS()));
+    cmd->Out()->SetB(self->SaveTextureToFile(cmd->In()->GetS(), nTexture2::JPG));
 }

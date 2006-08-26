@@ -13,7 +13,7 @@
 #include "util/nstrlist.h"
 
 //------------------------------------------------------------------------------
-class nHashTable 
+class nHashTable
 {
 public:
     /// constructor
@@ -33,7 +33,7 @@ private:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nHashTable::nHashTable(int size)
 {
     this->htable_size = size;
@@ -51,22 +51,22 @@ inline nHashTable::~nHashTable()
 //------------------------------------------------------------------------------
 /**
 */
-static 
-inline 
+static
+inline
 int hash(const char *str, int htable_size)
 {
     int i = 0;
     int j = 1;
     char c;
-    while ((c = *str++)) i += ((uchar)c) * j++; 
+    while ((c = *str++)) i += ((uchar)c) * j++;
     return (i % htable_size);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nHashTable::Add(nStrNode* n)
 {
     int h_index = hash(n->GetName(), this->htable_size);
@@ -76,7 +76,7 @@ nHashTable::Add(nStrNode* n)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nStrNode*
 nHashTable::Find(const char* str) const
 {

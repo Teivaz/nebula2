@@ -57,7 +57,7 @@ void
 nD3D9Server::DrawShapeNS(ShapeType type, const matrix44& model)
 {
     n_assert(0 != this->shapeMeshes[type]);
-    this->PushTransform(nGfxServer2::Model, model);  
+    this->PushTransform(nGfxServer2::Model, model);
 	this->refShader->CommitChanges();
     HRESULT hr = this->shapeMeshes[type]->DrawSubset(0);
     n_dxtrace(hr, "DrawSubset() failed in nD3D9Server::DrawShape()");
@@ -66,10 +66,10 @@ nD3D9Server::DrawShapeNS(ShapeType type, const matrix44& model)
 
 //------------------------------------------------------------------------------
 /**
-    Draw non-indexed primitives. This is slow, so it should only be used for 
+    Draw non-indexed primitives. This is slow, so it should only be used for
     debug visualizations. Vertex width is number of float's!
 */
-void 
+void
 nD3D9Server::DrawShapePrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int vertexWidth, const matrix44& model, const vector4& color)
 {
     D3DPRIMITIVETYPE d3dPrimType;
@@ -101,7 +101,7 @@ nD3D9Server::DrawShapePrimitives(PrimitiveType type, int numPrimitives, const ve
 
 //------------------------------------------------------------------------------
 /**
-    Directly Draw indexed primitives.  This is slow, so it should only be used for 
+    Directly Draw indexed primitives.  This is slow, so it should only be used for
     debug visualizations. Vertex width is number of float's!
 */
 void
@@ -165,7 +165,7 @@ nD3D9Server::EndShapes()
 {
     nGfxServer2::EndShapes();
     this->refShapeShader->End();
-    
+
     // clear current mesh, otherwise Nebula2's redundancy mechanism may be fooled!
     this->SetMesh(0, 0);
 }

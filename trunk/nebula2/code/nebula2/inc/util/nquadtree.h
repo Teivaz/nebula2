@@ -233,7 +233,7 @@ nQuadTree::GetNumNodes(uchar level) const
 
 //------------------------------------------------------------------------------
 /**
-    Computes a linear chunk index for a chunk address consisting of 
+    Computes a linear chunk index for a chunk address consisting of
     level, col and row.
 */
 inline

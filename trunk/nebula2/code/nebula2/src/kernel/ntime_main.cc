@@ -52,7 +52,7 @@ nTimeServer::~nTimeServer()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nTimeServer::ResetTime()
 {
     this->lock_time = 0;
@@ -71,7 +71,7 @@ nTimeServer::ResetTime()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nTimeServer::SetTime(double t)
 {
     this->lock_time = t;
@@ -101,14 +101,14 @@ nTimeServer::SetTime(double t)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nTimeServer::StopTime()
 {
-    if (this->stopped) 
+    if (this->stopped)
     {
         n_printf("Time already stopped!\n");
-    } 
-    else 
+    }
+    else
     {
         this->stopped = true;
 
@@ -127,17 +127,17 @@ nTimeServer::StopTime()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nTimeServer::StartTime()
 {
-    if (!this->stopped) 
+    if (!this->stopped)
     {
         n_printf("Time already started!\n");
-    } 
-    else 
+    }
+    else
     {
         this->stopped = false;
-        
+
 #   ifdef __WIN32__
         LONGLONG time,td;
         QueryPerformanceCounter((LARGE_INTEGER *)&time);
@@ -160,7 +160,7 @@ nTimeServer::StartTime()
 //------------------------------------------------------------------------------
 /**
 */
-double 
+double
 nTimeServer::GetTime()
 {
     if (this->lock_delta_t > 0.0) return this->lock_time;
@@ -174,7 +174,7 @@ nTimeServer::GetTime()
         double d_time = ((double)td) / ((double)freq);
         return d_time;
         return 0.0;
-    }    
+    }
 #   elif defined(__LINUX__) || defined(__MACOSX__)
         long long int time;
         long long int td;
@@ -197,7 +197,7 @@ nTimeServer::GetTime()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nTimeServer::LockDeltaT(double dt)
 {
     n_assert(dt >= 0.0);
@@ -215,7 +215,7 @@ nTimeServer::LockDeltaT(double dt)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nTimeServer::WaitDeltaT(double dt)
 {
     n_assert(dt >= 0.0);
@@ -225,7 +225,7 @@ nTimeServer::WaitDeltaT(double dt)
 //------------------------------------------------------------------------------
 /**
 */
-double 
+double
 nTimeServer::GetLockDeltaT()
 {
     return this->lock_delta_t;
@@ -234,7 +234,7 @@ nTimeServer::GetLockDeltaT()
 //------------------------------------------------------------------------------
 /**
 */
-double 
+double
 nTimeServer::GetWaitDeltaT()
 {
     return this->wait_delta_t;
@@ -243,18 +243,18 @@ nTimeServer::GetWaitDeltaT()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nTimeServer::Trigger()
 {
-    if (this->lock_delta_t > 0.0) 
+    if (this->lock_delta_t > 0.0)
     {
-        if (!this->stopped) 
+        if (!this->stopped)
         {
             this->lock_time += this->lock_delta_t;
         }
     }
     if (this->wait_delta_t > 0.0) n_sleep(this->wait_delta_t);
-    if (this->frame_enabled) this->frame_time = this->GetTime(); 
+    if (this->frame_enabled) this->frame_time = this->GetTime();
 }
 
 //------------------------------------------------------------------------------
@@ -286,4 +286,4 @@ double nTimeServer::GetFrameTime(void)
 //------------------------------------------------------------------------------
 //  EOF
 //------------------------------------------------------------------------------
-            
+

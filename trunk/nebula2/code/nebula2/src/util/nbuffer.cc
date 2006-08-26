@@ -13,7 +13,7 @@ const int nBuffer::InitialCapacity = 4096;
 //------------------------------------------------------------------------------
 /**
 */
-nBuffer::nBuffer() : 
+nBuffer::nBuffer() :
     capacity(InitialCapacity),
     count(0)
 {

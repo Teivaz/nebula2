@@ -1,4 +1,4 @@
-/* 
+/*
  * tclUtil.c --
  *
  *	This file contains utility procedures that are used by many Tcl
@@ -10,7 +10,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- *  RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -62,7 +61,7 @@ static char precisionFormat[10] = "%.12g";
 				 * to sprintf. */
 TCL_DECLARE_MUTEX(precisionMutex)
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -100,7 +99,7 @@ TCL_DECLARE_MUTEX(precisionMutex)
 int
 TclFindElement(interp, list, listLength, elementPtr, nextPtr, sizePtr,
 	       bracePtr)
-    Tcl_Interp *interp;		/* Interpreter to use for error reporting. 
+    Tcl_Interp *interp;		/* Interpreter to use for error reporting.
 				 * If NULL, then no error message is left
 				 * after errors. */
     CONST char *list;		/* Points to the first byte of a string
@@ -126,7 +125,7 @@ TclFindElement(interp, list, listLength, elementPtr, nextPtr, sizePtr,
     int size = 0;		/* lint. */
     int numChars;
     CONST char *p2;
-    
+
     /*
      * Skim off leading white space and check for an opening brace or
      * quote. We treat embedded NULLs in the list as bytes belonging to
@@ -191,10 +190,10 @@ TclFindElement(interp, list, listLength, elementPtr, nextPtr, sizePtr,
 		    /*
 		     * Garbage after the closing brace; return an error.
 		     */
-		    
+
 		    if (interp != NULL) {
 			char buf[100];
-			
+
 			p2 = p;
 			while ((p2 < limit)
 				&& (!isspace(UCHAR(*p2))) /* INTL: ISO space. */
@@ -254,10 +253,10 @@ TclFindElement(interp, list, listLength, elementPtr, nextPtr, sizePtr,
 		    /*
 		     * Garbage after the closing quote; return an error.
 		     */
-		    
+
 		    if (interp != NULL) {
 			char buf[100];
-			
+
 			p2 = p;
 			while ((p2 < limit)
 				&& (!isspace(UCHAR(*p2))) /* INTL: ISO space */
@@ -309,7 +308,7 @@ TclFindElement(interp, list, listLength, elementPtr, nextPtr, sizePtr,
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -357,7 +356,7 @@ TclCopyAndCollapse(count, src, dst)
     *dst = 0;
     return newCount;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -390,7 +389,7 @@ TclCopyAndCollapse(count, src, dst)
 
 int
 Tcl_SplitList(interp, list, argcPtr, argvPtr)
-    Tcl_Interp *interp;		/* Interpreter to use for error reporting. 
+    Tcl_Interp *interp;		/* Interpreter to use for error reporting.
 				 * If NULL, no error message is left. */
     CONST char *list;		/* Pointer to string with list structure. */
     int *argcPtr;		/* Pointer to location to fill in with
@@ -423,7 +422,7 @@ Tcl_SplitList(interp, list, argcPtr, argvPtr)
     for (i = 0, p = ((char *) argv) + size*sizeof(char *);
 	    *list != 0;  i++) {
 	CONST char *prevList = list;
-	
+
 	result = TclFindElement(interp, list, length, &element,
 				&list, &elSize, &brace);
 	length -= (list - prevList);
@@ -459,7 +458,7 @@ Tcl_SplitList(interp, list, argcPtr, argvPtr)
     *argcPtr = i;
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -491,7 +490,7 @@ Tcl_ScanElement(string, flagPtr)
 {
     return Tcl_ScanCountedElement(string, -1, flagPtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -533,7 +532,7 @@ Tcl_ScanCountedElement(string, length, flagPtr)
      * 1. They produce a proper list, one that will yield back the
      * argument strings when evaluated or when disassembled with
      * Tcl_SplitList.  This is the most important thing.
-     * 
+     *
      * 2. They try to produce legible output, which means minimizing the
      * use of backslashes (using braces instead).  However, there are
      * some situations where backslashes must be used (e.g. an element
@@ -628,7 +627,7 @@ Tcl_ScanCountedElement(string, length, flagPtr)
 
     return 2*(p-string) + 2;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -659,7 +658,7 @@ Tcl_ConvertElement(src, dst, flags)
 {
     return Tcl_ConvertCountedElement(src, -1, dst, flags);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -797,7 +796,7 @@ Tcl_ConvertCountedElement(src, length, dst, flags)
     *p = '\0';
     return p-dst;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -868,7 +867,7 @@ Tcl_Merge(argc, argv)
     }
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -902,7 +901,7 @@ Tcl_Backslash(src, readPtr)
     Tcl_UtfToUniChar(buf, &ch);
     return (char) ch;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -975,7 +974,7 @@ Tcl_Concat(argc, argv)
     }
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1054,7 +1053,7 @@ Tcl_ConcatObj(objc, objv)
      * is one more than the total number of characters, and so includes
      * room for the terminating NULL byte.
      */
-    
+
     concatStr = (char *) ckalloc((unsigned) allocSize);
 
     /*
@@ -1104,13 +1103,13 @@ Tcl_ConcatObj(objc, objv)
 	    *p = 0;
         }
     }
-    
+
     TclNewObj(objPtr);
     objPtr->bytes  = concatStr;
     objPtr->length = finalSize;
     return objPtr;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1138,7 +1137,7 @@ Tcl_StringMatch(string, pattern)
 {
     return Tcl_StringCaseMatch(string, pattern, 0);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1169,16 +1168,16 @@ Tcl_StringCaseMatch(string, pattern, nocase)
     int p;
     CONST char *pstart = pattern;
     Tcl_UniChar ch1, ch2;
-    
+
     while (1) {
 	p = *pattern;
-	
+
 	/*
 	 * See if we're at the end of both the pattern and the string.  If
 	 * so, we succeeded.  If we're at the end of the pattern but not at
 	 * the end of the string, we failed.
 	 */
-	
+
 	if (p == '\0') {
 	    return (*string == '\0');
 	}
@@ -1192,7 +1191,7 @@ Tcl_StringCaseMatch(string, pattern, nocase)
 	 * recursively for each postfix of string, until either we
 	 * match or we reach the end of the string.
 	 */
-	
+
 	if (p == '*') {
 	    /*
 	     * Skip all successive *'s in the pattern
@@ -1297,7 +1296,7 @@ Tcl_StringCaseMatch(string, pattern, nocase)
 	    pattern++;
 	    continue;
 	}
-    
+
 	/*
 	 * If the next pattern character is '\', just strip off the '\'
 	 * so we do exact matching on the character that follows.
@@ -1326,7 +1325,7 @@ Tcl_StringCaseMatch(string, pattern, nocase)
 	}
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1354,7 +1353,7 @@ Tcl_DStringInit(dsPtr)
     dsPtr->spaceAvl = TCL_DSTRING_STATIC_SIZE;
     dsPtr->staticSpace[0] = '\0';
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1425,7 +1424,7 @@ Tcl_DStringAppend(dsPtr, string, length)
     dsPtr->length += length;
     return dsPtr->string;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1493,7 +1492,7 @@ Tcl_DStringAppendElement(dsPtr, string)
     dsPtr->length += Tcl_ConvertElement(string, dst, flags);
     return dsPtr->string;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1558,7 +1557,7 @@ Tcl_DStringSetLength(dsPtr, length)
     dsPtr->length = length;
     dsPtr->string[length] = 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1588,7 +1587,7 @@ Tcl_DStringFree(dsPtr)
     dsPtr->spaceAvl = TCL_DSTRING_STATIC_SIZE;
     dsPtr->staticSpace[0] = '\0';
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1616,7 +1615,7 @@ Tcl_DStringResult(interp, dsPtr)
 				 * result of interp. */
 {
     Tcl_ResetResult(interp);
-    
+
     if (dsPtr->string != dsPtr->staticSpace) {
 	interp->result = dsPtr->string;
 	interp->freeProc = TCL_DYNAMIC;
@@ -1626,13 +1625,13 @@ Tcl_DStringResult(interp, dsPtr)
     } else {
 	Tcl_SetResult(interp, dsPtr->string, TCL_VOLATILE);
     }
-    
+
     dsPtr->string = dsPtr->staticSpace;
     dsPtr->length = 0;
     dsPtr->spaceAvl = TCL_DSTRING_STATIC_SIZE;
     dsPtr->staticSpace[0] = '\0';
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1660,7 +1659,7 @@ Tcl_DStringGetResult(interp, dsPtr)
 				 * result of interp. */
 {
     Interp *iPtr = (Interp *) interp;
-    
+
     if (dsPtr->string != dsPtr->staticSpace) {
 	ckfree(dsPtr->string);
     }
@@ -1698,11 +1697,11 @@ Tcl_DStringGetResult(interp, dsPtr)
 	}
 	strcpy(dsPtr->string, iPtr->result);
     }
-    
+
     iPtr->result = iPtr->resultSpace;
     iPtr->resultSpace[0] = 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1731,7 +1730,7 @@ Tcl_DStringStartSublist(dsPtr)
 	Tcl_DStringAppend(dsPtr, "{", -1);
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1757,7 +1756,7 @@ Tcl_DStringEndSublist(dsPtr)
 {
     Tcl_DStringAppend(dsPtr, "}", -1);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1812,7 +1811,7 @@ Tcl_PrintDouble(interp, value, dst)
     p[1] = '0';
     p[2] = 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1904,7 +1903,7 @@ TclPrecTraceProc(clientData, interp, name1, name2, flags)
     Tcl_MutexUnlock(&precisionMutex);
     return (char *) NULL;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1961,7 +1960,7 @@ TclNeedSpace(start, end)
     }
     return 1;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2046,7 +2045,7 @@ TclFormatInt(buffer, n)
     }
     return numFormatted;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2073,7 +2072,7 @@ TclLooksLikeInt(bytes, length)
     register char *bytes;	/* Points to first byte of the string. */
     int length;			/* Number of bytes in the string. If < 0
 				 * bytes up to the first null byte are
-				 * considered (if they may appear in an 
+				 * considered (if they may appear in an
 				 * integer). */
 {
     register char *p, *end;
@@ -2090,7 +2089,7 @@ TclLooksLikeInt(bytes, length)
     if (p == end) {
 	return 0;
     }
-    
+
     if ((*p == '+') || (*p == '-')) {
 	p++;
     }
@@ -2109,7 +2108,7 @@ TclLooksLikeInt(bytes, length)
     }
     return 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2117,7 +2116,7 @@ TclLooksLikeInt(bytes, length)
  *
  *	This procedure returns an integer corresponding to the list index
  *	held in a Tcl object. The Tcl object's value is expected to be
- *	either an integer or a string of the form "end([+-]integer)?". 
+ *	either an integer or a string of the form "end([+-]integer)?".
  *
  * Results:
  *	The return value is normally TCL_OK, which means that the index was
@@ -2138,7 +2137,7 @@ TclLooksLikeInt(bytes, length)
 
 int
 TclGetIntForIndex(interp, objPtr, endValue, indexPtr)
-    Tcl_Interp *interp;		/* Interpreter to use for error reporting. 
+    Tcl_Interp *interp;		/* Interpreter to use for error reporting.
 				 * If NULL, then no error message is left
 				 * after errors. */
     Tcl_Obj *objPtr;		/* Points to an object containing either
@@ -2189,7 +2188,7 @@ TclGetIntForIndex(interp, objPtr, endValue, indexPtr)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2209,7 +2208,7 @@ TclGetIntForIndex(interp, objPtr, endValue, indexPtr)
 
 int
 TclCheckBadOctal(interp, value)
-    Tcl_Interp *interp;		/* Interpreter to use for error reporting. 
+    Tcl_Interp *interp;		/* Interpreter to use for error reporting.
 				 * If NULL, then no error message is left
 				 * after errors. */
     char *value;		/* String to check. */
@@ -2245,7 +2244,7 @@ TclCheckBadOctal(interp, value)
     }
     return 0;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2272,7 +2271,7 @@ Tcl_GetNameOfExecutable()
 {
     return (tclExecutableName);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2303,7 +2302,7 @@ Tcl_GetNameOfExecutable()
         return TclpGetCwd(interp, cwdPtr);
     }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2315,7 +2314,7 @@ Tcl_GetNameOfExecutable()
  *	See chdir() documentation.
  *
  * Side effects:
- *	See chdir() documentation.  
+ *	See chdir() documentation.
  *
  *----------------------------------------------------------------------
  */
@@ -2328,7 +2327,7 @@ Tcl_GetNameOfExecutable()
         return TclpChdir(dirName);
     }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2354,7 +2353,7 @@ int
         return TclAccess(path, mode);
     }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *

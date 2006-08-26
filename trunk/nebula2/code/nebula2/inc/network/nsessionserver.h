@@ -10,9 +10,9 @@
     <h2>Session info broadcasting</h2>
 
     An open session server periodically broadcasts its presence
-    into the LAN approx once per second. The broadcast is sent on 
-    the nIpcAddress <tt>self:BroadcastAPPNAME</tt>, where @c APPNAME is the 
-    application name set via nSessionServer::SetAppName(). The message 
+    into the LAN approx once per second. The broadcast is sent on
+    the nIpcAddress <tt>self:BroadcastAPPNAME</tt>, where @c APPNAME is the
+    application name set via nSessionServer::SetAppName(). The message
     is a normal string of the following format:
 
 @verbatim
@@ -21,7 +21,7 @@
 
     The guid is a unique session id understood by the Nebula nGuid
     class. @c Appname and @c Appversion are the respective application
-    id strings set by nSessionServer::SetAppName() and 
+    id strings set by nSessionServer::SetAppName() and
     nSessionServer::SetAppVersion(). Potential clients which
     want to know more about the session should initiate a
     normal nIpcServer/nIpcClient connection to the session server
@@ -31,8 +31,8 @@
     <h2>Protocol spec:</h2>
 
     Once a potential client has found out about a session server by
-    listening on the above broadcast message it may establish a 
-    nIpcServer/nIpcClient connection to get a reliable communication 
+    listening on the above broadcast message it may establish a
+    nIpcServer/nIpcClient connection to get a reliable communication
     channel with the server and implement the following protocol:
 
 @verbatim
@@ -52,9 +52,9 @@
 @endverbatim
 
     This message is sent by the server to all connected clients
-    as soon as a refresh of one or more server attributes is necessary. 
-    Server attributes are Name/Value string pairs which contain info such 
-    as current number of players, max number of players, etc... It 
+    as soon as a refresh of one or more server attributes is necessary.
+    Server attributes are Name/Value string pairs which contain info such
+    as current number of players, max number of players, etc... It
     is totally up to the application which server attributes it defines.
     The server does not expect an answer from the clients.
 
@@ -113,7 +113,7 @@
     get automatically distributed to all clients. The server will prefix
     the client attribute's name with a @c ClientX_ prefix, where X is a
     number from 0 to (MaxClients - 1).
-    
+
 @verbatim
     ---
     server: "~kick"
@@ -123,7 +123,7 @@
     This message is sent by the server to a joined client which has
     been kicked from the session by the host player. The client
     should simply reply with a <tt>~leavesession clientGuid</tt> message.
-    
+
 @verbatim
     ---
     client: "~leavesession clientGuid"

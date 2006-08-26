@@ -15,7 +15,7 @@ nNpkFile::nNpkFile() :
     tocEntry(0),
     filePos(0)
 {
-    // empty    
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -207,7 +207,7 @@ bool
 nNpkFile::Seek(int byteOffset, nSeekType origin)
 {
     n_assert(this->IsOpen());
-    
+
     if (!this->isNpkFile)
     {
         return nFile::Seek(byteOffset, origin);

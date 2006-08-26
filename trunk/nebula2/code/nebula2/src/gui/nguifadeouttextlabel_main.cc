@@ -55,7 +55,7 @@ void
 nGuiFadeOutTextLabel::RenderText(bool pressed)
 {
     nTime curTime = nTimeServer::Instance()->GetTime();
-    
+
     // update color
     if (curTime > this->startTime + this->fadeOutTime)
     {

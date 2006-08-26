@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  nscriptablemeshbuilder_cmds.cc
 //
-//  (C)2005 James Mastro / Kim, Hyoun Woo 
+//  (C)2005 James Mastro / Kim, Hyoun Woo
 //------------------------------------------------------------------------------
 #include "kernel/ncmdproto.h"
 #include "kernel/nkernelserver.h"
@@ -32,7 +32,7 @@ static void n_createedges(void* slf, nCmd* cmd);
 static void n_append(void* slf, nCmd* cmd);
 static void n_clear(void* slf, nCmd* cmd);
 static void n_checkforgeometryerror(void* slf, nCmd* cmd);
-    
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -57,7 +57,7 @@ n_initcmds(nClass* cl)
 
     // triangle adding
     cl->AddCmd("b_addtriangle_iiii",  'ADDT', n_addtriangle);
-    
+
     cl->AddCmd("v_transform_ffffffffffffffff",  'XFRM', n_transform);
     cl->AddCmd("v_flipuvs_v",  'FLIP', n_flipuvs);
 
@@ -65,11 +65,11 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_buildtrianglenormals_v",  'BDTN', n_buildtrianglenormals);
     cl->AddCmd("v_buildvertexnormals_v",    'BDVN', n_buildvertexnormals);
     cl->AddCmd("v_buildvertextangents_b",   'BDVT', n_buildvertextangents);
-    
+
     cl->AddCmd("v_cleanup_v",  'CLUP', n_cleanup);
     cl->AddCmd("v_optimize_v",  'OPTI', n_optimize);
     cl->AddCmd("v_createedges_v",  'CRED', n_createedges);
-    
+
     cl->AddCmd("i_append_o", 'APND', n_append);
     cl->AddCmd("v_clear_v",  'CLEA', n_clear);
 
@@ -83,21 +83,21 @@ n_initcmds(nClass* cl)
 */
 static void
 n_save(void* slf, nCmd* cmd)
-{    
+{
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
     void* server = cmd->In()->GetO();
     const char* filename = cmd->In()->GetS();
     nFileServer2*   fileServer = static_cast<nFileServer2*>(server);
-    
+
     bool    ret = self->nMeshBuilder::Save(fileServer, filename);
- 
+
     cmd->Out()->SetB(ret);
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_beginaddvertex(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -109,7 +109,7 @@ void n_beginaddvertex(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addcoord(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -124,7 +124,7 @@ void n_addcoord(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addnormal(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -139,7 +139,7 @@ void n_addnormal(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addcolor(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -155,7 +155,7 @@ void n_addcolor(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_adduv(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -170,7 +170,7 @@ void n_adduv(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addtangent(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -185,7 +185,7 @@ void n_addtangent(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addbinormal(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -200,7 +200,7 @@ void n_addbinormal(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addjointindices(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -216,7 +216,7 @@ void n_addjointindices(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_addweights(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -232,7 +232,7 @@ void n_addweights(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-static 
+static
 void n_endaddvertex(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
@@ -247,16 +247,16 @@ n_addtriangle(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
     int     group = cmd->In()->GetI();
-    
+
     int     vert0 = cmd->In()->GetI();
     int     vert1 = cmd->In()->GetI();
     int     vert2 = cmd->In()->GetI();
-    
+
     nMeshBuilder::Triangle    t;
-    
+
     t.SetGroupId(group);
     t.SetVertexIndices(vert0, vert1, vert2);
-    
+
     self->AddTriangle(t);
 }
 
@@ -267,9 +267,9 @@ static void
 n_transform(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
-    
+
     matrix44    worldMat;
-    
+
     worldMat.m[0][0] = cmd->In()->GetF();
     worldMat.m[0][1] = cmd->In()->GetF();
     worldMat.m[0][2] = cmd->In()->GetF();
@@ -337,9 +337,9 @@ static void
 n_append(void* slf, nCmd* cmd)
 {
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
-    
+
     nScriptableMeshBuilder* src = static_cast<nScriptableMeshBuilder*>(cmd->In()->GetO());
-    
+
     int index = self->Append(*src);
     cmd->Out()->SetI(index);
 }
@@ -349,7 +349,7 @@ n_append(void* slf, nCmd* cmd)
 */
 static void
 n_cleanup(void* slf, nCmd* cmd)
-{    
+{
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
     self->Cleanup(NULL);
 }
@@ -359,7 +359,7 @@ n_cleanup(void* slf, nCmd* cmd)
 */
 static void
 n_optimize(void* slf, nCmd* cmd)
-{    
+{
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
     self->Optimize();
 }
@@ -369,7 +369,7 @@ n_optimize(void* slf, nCmd* cmd)
 */
 static void
 n_createedges(void* slf, nCmd* cmd)
-{    
+{
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
     self->CreateEdges();
 }
@@ -379,7 +379,7 @@ n_createedges(void* slf, nCmd* cmd)
 */
 static void
 n_clear(void* slf, nCmd* cmd)
-{    
+{
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
     self->Clear();
 }
@@ -389,11 +389,11 @@ n_clear(void* slf, nCmd* cmd)
 */
 static void
 n_checkforgeometryerror(void* slf, nCmd* cmd)
-{    
+{
     nScriptableMeshBuilder* self = static_cast<nScriptableMeshBuilder*>(slf);
 
     nArray<nString> results = self->CheckForGeometryError();
-    
+
     for (int x = 0; x < results.Size(); x++)
     {
         nString msg = results[x];

@@ -578,7 +578,7 @@ n_getvector4attr(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nSceneNode::SaveCmds(nPersistServer* ps)
 {
     if (nRoot::SaveCmds(ps))

@@ -21,7 +21,7 @@ static void n_getneedsvertexshader(void* slf, nCmd* cmd);
 
     @cppclass
     nShapeNode
-    
+
     @superclass
     nmaterialnode
 

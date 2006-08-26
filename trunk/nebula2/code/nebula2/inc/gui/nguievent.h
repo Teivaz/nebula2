@@ -9,7 +9,7 @@
     Gui events are fired through the nGuiServer::PutEvent() method. Widgets
     can register with the nGuiServer to be notified through the
     nGuiWidget::OnEvent() method when events occur.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -197,7 +197,7 @@ nGuiEvent::StringToType(const char* str)
     if( strcmp(str, "KeyUp") == 0)               return KeyUp;
     else
     if( strcmp(str, "Show") == 0)                return Show;
-    else  
+    else
     if( strcmp(str, "Action") == 0)              return Action;
     else
     if( strcmp(str, "Enabled") == 0)             return Enabled;

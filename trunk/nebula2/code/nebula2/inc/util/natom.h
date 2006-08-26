@@ -6,7 +6,7 @@
     @ingroup Util
 
     Atoms are shared read-only strings which only require 2 bytes of
-    memory per instance and have extremly fast compare and copy operations. 
+    memory per instance and have extremly fast compare and copy operations.
 
     (C) 2004 RadonLabs GmbH
 */
@@ -38,7 +38,7 @@ public:
     bool operator!=(const char* rhs) const;
     /// return string as const char*
     const char* AsChar() const;
-    /// return string as const nString& 
+    /// return string as const nString&
     const nString& AsString() const;
     /// cast to nString
     const nString& operator*() const;
@@ -186,5 +186,5 @@ nAtom::operator*() const
 }
 
 //------------------------------------------------------------------------------
-#endif        
+#endif
 

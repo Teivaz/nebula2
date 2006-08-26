@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 /**
     Some platform specific wrapper defs for sockets.
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -33,6 +33,7 @@
 #ifdef __WIN32__
 #define N_SOCKET_LAST_ERROR    WSAGetLastError()
 #define N_EWOULDBLOCK          WSAEWOULDBLOCK
+#define N_ECONNRESET           WSAECONNRESET
 typedef int socklen_t;
 #else
 typedef int SOCKET;

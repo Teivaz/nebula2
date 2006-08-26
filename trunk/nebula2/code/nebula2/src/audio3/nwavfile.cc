@@ -11,7 +11,7 @@ bool nWavFile::mmioProcInstalled = false;
 //------------------------------------------------------------------------------
 /**
     This is a custom file access hook for the Win32 MMIO subsystem. It
-    redirects all file accesses to the Nebula2 file server, and thus 
+    redirects all file accesses to the Nebula2 file server, and thus
     makes audio files inside an NPK archive accessible for the MMIO subsystem
 */
 
@@ -87,7 +87,7 @@ mmioProc(LPSTR lpstr, UINT uMsg, LPARAM lParam1, LPARAM lParam2)
                     case SEEK_END: seekType = nFile::END; break;
                     default:       seekType = nFile::START; break;
                 }
-                
+
                 if (file->Seek((LONG)lParam1, seekType))
                 {
                     lpMMIOInfo->lDiskOffset = file->Tell();
@@ -296,7 +296,7 @@ nWavFile::ReadMMIO()
             return false;
         }
     }
-    
+
     // ascend the input file out of the 'fmt ' chunk
     if (0 != mmioAscend(this->m_hmmio, &ckIn, 0))
     {
@@ -377,4 +377,4 @@ nWavFile::Read(void* buffer, uint bytesToRead)
 
 
 
-    
+

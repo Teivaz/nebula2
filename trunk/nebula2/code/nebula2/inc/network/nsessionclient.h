@@ -11,7 +11,7 @@
 
     When the session is started by the session server, the session client
     will configure and open the local game client object.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -65,7 +65,7 @@ public:
     nSessionServerContext* GetServerAt(int index) const;
     /// return pointer to joined session server context, or 0
     nSessionServerContext* GetJoinedServer() const;
-    /// join a session, will not go into joined state until answer arrives 
+    /// join a session, will not go into joined state until answer arrives
     bool JoinSession(const char* sessionGuid);
     /// leave a session, will not go into joined state until answer arrives
     bool LeaveSession();

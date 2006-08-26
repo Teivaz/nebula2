@@ -4,14 +4,14 @@
 /**
     @class nGuiDockWindow
     @ingroup Gui
-    @brief The global dock window which replaces the old scripting console as 
+    @brief The global dock window which replaces the old scripting console as
     Nebula's default ingame console.
-    
+
     FIXME:
     Offered tools are currently hardcoded. Some sort of scriptable
-    plugin mechanism should be implemented to add additional 
+    plugin mechanism should be implemented to add additional
     tools to the dock.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

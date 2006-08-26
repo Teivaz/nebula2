@@ -427,13 +427,13 @@ nInputServer::Trigger(double time)
         {
             const char *cmd_str = im->GetCmdString();
             nInputState *is     = im->GetInputState();
-            if (cmd_str) 
+            if (cmd_str)
             {
                 if (im->IsActive()) this->AddScript(cmd_str);
             }
-            if (is) 
+            if (is)
             {
-                if (im->IsActive()) 
+                if (im->IsActive())
                 {
                     is->SetButton(true);
                     is->AddSlider(1.0f);

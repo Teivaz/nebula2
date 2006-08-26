@@ -7,12 +7,12 @@
 
     @brief A shape node is the simplest actually visible object in the
     scene node class hierarchy.
-    
+
     It is derived from nMaterialNode, and thus inherits transform and
     shader information. It adds a simple mesh which it can render.
 
     See also @ref N2ScriptInterface_nshapenode
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "scene/nmaterialnode.h"
@@ -40,6 +40,8 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// render debug information
+    virtual void RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix);
     /// set the mesh usage flags required by this shape node
     void SetMeshUsage(int usage);
     /// get the mesh usage flags required by this shape node

@@ -34,6 +34,8 @@ public:
     void Set(uint x, uint y, const TYPE& elm);
     /// is index <i, j> inside bounds?
     bool ValidIndex(uint x, uint y) const;
+    /// clear with given value
+    void Clear(const TYPE& elm);
 
 private:
     /// allocate empty array
@@ -203,6 +205,24 @@ nArray2<TYPE>::Set(uint x, uint y, const TYPE& elm)
     n_assert(this->ValidIndex(x, y));
     n_assert(this->elements);
     this->elements[y * this->width + x] = elm;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+void
+nArray2<TYPE>::Clear(const TYPE& elm)
+{
+    uint y;
+    for (y = 0; y < this->height; y++)
+    {
+        uint x;
+        for (x = 0; x < this->width; x++)
+        {
+            this->Set(x, y, elm);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

@@ -7,7 +7,7 @@
     @brief User-derivable anim event handler class. Derive your own subclass
     and register it with an anim state array object to listen to
     animation events.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/nnode.h"

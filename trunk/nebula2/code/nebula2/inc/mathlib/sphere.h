@@ -15,11 +15,11 @@
 #include "mathlib/rectangle.h"
 
 //------------------------------------------------------------------------------
-class sphere 
+class sphere
 {
 public:
     /// clip status
-    enum ClipStatus 
+    enum ClipStatus
     {
         Outside,
         Inside,
@@ -50,7 +50,7 @@ public:
     rectangle project_screen_rh(const matrix44& modelView, const matrix44& projection, float nearZ) const;
     /// get clip status of box against sphere
     ClipStatus clipstatus(const bbox3& box) const;
-        
+
     vector3 p;  // position
     float   r;  // radius
 };
@@ -124,8 +124,8 @@ sphere::set(float _x, float _y, float _z, float _r)
 /**
 */
 inline
-bool 
-sphere::intersects(const sphere& s) const 
+bool
+sphere::intersects(const sphere& s) const
 {
     vector3 d(s.p - p);
     float rsum = s.r + r;
@@ -241,47 +241,47 @@ sphere::intersect_sweep(const vector3& va, const sphere&  sb, const vector3& vb,
     float rab = r + sb.r;
 
     // check if spheres are currently overlapping...
-    if ((ab % ab) <= (rab * rab)) 
+    if ((ab % ab) <= (rab * rab))
     {
         u0 = 0.0f;
         u1 = 0.0f;
         return true;
-    } 
-    else 
+    }
+    else
     {
         // check if they hit each other
         float a = vab % vab;
-        if ((a < -TINY) || (a > +TINY)) 
+        if ((a < -TINY) || (a > +TINY))
         {
             // if a is '0' then the objects don't move relative to each other
             float b = (vab % ab) * 2.0f;
             float c = (ab % ab) - (rab * rab);
             float q = b*b - 4*a*c;
-            if (q >= 0.0f) 
+            if (q >= 0.0f)
             {
                 // 1 or 2 contacts
                 float sq = (float) sqrt(q);
                 float d  = 1.0f / (2.0f*a);
                 float r1 = (-b + sq) * d;
                 float r2 = (-b - sq) * d;
-                if (r1 < r2) 
+                if (r1 < r2)
                 {
                     u0 = r1;
                     u1 = r2;
-                } 
-                else 
+                }
+                else
                 {
                     u0 = r2;
                     u1 = r1;
                 }
                 return true;
-            } 
-            else 
+            }
+            else
             {
                 return false;
             }
-        } 
-        else 
+        }
+        else
         {
             return false;
         }
@@ -290,7 +290,7 @@ sphere::intersect_sweep(const vector3& va, const sphere&  sb, const vector3& vb,
 
 //------------------------------------------------------------------------------
 /**
-    Project the sphere (defined in global space) to a screen space rectangle, 
+    Project the sphere (defined in global space) to a screen space rectangle,
     given the current View and Projection matrices. The method assumes that
     the sphere is at least partially visible.
 */
@@ -314,7 +314,7 @@ sphere::project_screen_rh(const matrix44& view, const matrix44& projection, floa
         frontZ = -nearZ;
     }
     vector3 screenSize = projection.mult_divw(vector3(this->r, this->r, frontZ));
-    screenSize.y = -screenSize.y;        
+    screenSize.y = -screenSize.y;
     float left   = n_saturate(0.5f * (1.0f + (screenPos.x - screenSize.x)));
     float right  = n_saturate(0.5f * (1.0f + (screenPos.x + screenSize.x)));
     float top    = n_saturate(0.5f * (1.0f + (screenPos.y + screenSize.y)));

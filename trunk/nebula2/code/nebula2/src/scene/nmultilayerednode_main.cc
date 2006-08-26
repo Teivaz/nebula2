@@ -30,7 +30,7 @@ nMultiLayeredNode::~nMultiLayeredNode()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nMultiLayeredNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     // build uv-value-matrix for dx9 shader

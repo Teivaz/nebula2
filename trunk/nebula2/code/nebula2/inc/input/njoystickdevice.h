@@ -12,7 +12,7 @@
     x hardware axis:
        - -x          -> negative axis (0 .. +1.0)
        - +x          -> positive axis (0 .. +1.0)
-       - -xbtn       -> negative axis button 
+       - -xbtn       -> negative axis button
        - +xbtn       -> positive axis button
 
     Each pov translates to 2 "hardware axes", resulting in 4 Nebula axis and
@@ -48,13 +48,13 @@ protected:
     /// low level event emitting for analog axes
     void ProcessAnalogAxis(int axisNum, float val);
 
-    enum 
+    enum
     {
         NUMFILTEREDAXIS = 4,
     };
     bool axisMoved[NUMFILTEREDAXIS];
     nAxisFilter filterArray[NUMFILTEREDAXIS];
-};  
+};
 //------------------------------------------------------------------------------
 #endif
 

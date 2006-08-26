@@ -6,7 +6,7 @@
     @ingroup Gfx2
 
     Load a NVX2 mesh file into user provided vertex and index buffers.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gfx2/nmeshloader.h"
@@ -163,7 +163,7 @@ nNvx2Loader::ReadVertices(void* buffer, int bufferSize)
                 {
                     continue;
                 }
-                
+
                 // get width of current vertex component
                 int width = nMesh2::GetVertexWidthFromMask(mask);
                 n_assert(width > 0);
@@ -185,7 +185,7 @@ nNvx2Loader::ReadVertices(void* buffer, int bufferSize)
         }
         n_delete_array(readBuffer);
     }
-    return true;    
+    return true;
 }
 
 //------------------------------------------------------------------------------

@@ -9,7 +9,7 @@
     An nIpcServer object opens a named public message port, and
     waits for connection requests from nIpcClient objects. One
     nIpcServer can handle any number of nIpcClients.
-  
+
     (C) 2002 RadonLabs GmbH
 */
 
@@ -21,7 +21,7 @@
 
 //------------------------------------------------------------------------------
 class nThread;
-class nIpcServer 
+class nIpcServer
 {
 public:
     /// constructor
@@ -42,6 +42,7 @@ public:
     int uniqueMiniServerId;
     nThreadSafeList miniServerList;
     nThreadSafeList msgList;
+    nArray<int> ClientsReseted;
     SOCKET sock;
 };
 //--------------------------------------------------------------------

@@ -4,7 +4,7 @@
 /**
     @class nLightNode
     @ingroup Scene
-    @brief Scene node which provides lighting information. 
+    @brief Scene node which provides lighting information.
 
     NOTE: nLightNode is derived from nAbstractShaderNode, and holds most
     light parameters inside shader params. This is in order to enable
@@ -70,7 +70,7 @@ nLightNode::GetType() const
 /**
 */
 inline
-void 
+void
 nLightNode::SetCastShadows(bool b)
 {
     this->light.SetCastShadows(b);
@@ -80,7 +80,7 @@ nLightNode::SetCastShadows(bool b)
 /**
 */
 inline
-bool 
+bool
 nLightNode::GetCastShadows() const
 {
     return this->light.GetCastShadows();

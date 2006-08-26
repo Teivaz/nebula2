@@ -6,7 +6,7 @@
     @ingroup NebulaDataTypes
 
     @brief Implement a doubly linked list.
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -14,7 +14,7 @@
 #include "util/nnode.h"
 
 //------------------------------------------------------------------------------
-class nList 
+class nList
 {
 public:
     /// constructor
@@ -41,11 +41,11 @@ private:
     nNode* tail;
     nNode* tailpred;
 };
-    
+
 //-----------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nList::nList()
 {
     this->head     = (nNode *) &(this->tail);
@@ -67,8 +67,8 @@ inline nList::~nList()
 /**
     @return true if list is empty.
 */
-inline 
-bool 
+inline
+bool
 nList::IsEmpty() const
 {
     return (this->head->succ == 0);
@@ -78,15 +78,15 @@ nList::IsEmpty() const
 /**
     @return return first node in list, or 0 if list is empty
 */
-inline 
+inline
 nNode*
 nList::GetHead() const
 {
-    if (this->head->succ) 
+    if (this->head->succ)
     {
         return this->head;
     }
-    else                  
+    else
     {
         return 0;
     }
@@ -96,7 +96,7 @@ nList::GetHead() const
 /**
     @return return last node in list, or 0 if list is empty
 */
-inline 
+inline
 nNode*
 nList::GetTail() const
 {
@@ -104,7 +104,7 @@ nList::GetTail() const
     {
         return this->tailpred;
     }
-    else                      
+    else
     {
         return NULL;
     }
@@ -114,8 +114,8 @@ nList::GetTail() const
 /**
     @param n the node to be added
 */
-inline 
-void 
+inline
+void
 nList::AddHead(nNode *n)
 {
     n->InsertAfter((nNode *) &(this->head));
@@ -125,8 +125,8 @@ nList::AddHead(nNode *n)
 /**
     @param n the node to be added
 */
-inline 
-void 
+inline
+void
 nList::AddTail(nNode *n)
 {
     n->InsertBefore((nNode *) &(this->tail));
@@ -142,12 +142,12 @@ nList::AddTail(nNode *n)
 inline nNode *nList::RemHead()
 {
     nNode *n = this->head;
-    if (n->succ) 
+    if (n->succ)
     {
         n->Remove();
         return n;
-    } 
-    else 
+    }
+    else
     {
         return 0;
     }
@@ -163,12 +163,12 @@ inline nNode *nList::RemHead()
 inline nNode *nList::RemTail()
 {
     nNode *n = this->tailpred;
-    if (n->pred) 
+    if (n->pred)
     {
         n->Remove();
         return n;
-    } 
-    else 
+    }
+    else
     {
         return 0;
     }

@@ -6,7 +6,7 @@
     @ingroup Gui
 
     @brief To edit nSkyNode on the fly...
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "scene/nskynode.h"
@@ -33,7 +33,7 @@ public:
     /// called per frame when parent widget is visible
     virtual void OnFrame();
     /// notify widget of an event
-    virtual void OnEvent(const nGuiEvent& event); 
+    virtual void OnEvent(const nGuiEvent& event);
     /// set the path to nSkyNode
     void SetSkyPath(const char* path);
     /// get the path from nSkyNode
@@ -96,7 +96,7 @@ private:
     void UpdateColorSliderFromElement(nGuiColorSliderGroup* slider,nShaderState::Param param, float max);
 
 
-    // Gui elements  
+    // Gui elements
     nRef<nGuiTextButton> refRefreshButton;
     nRef<nGuiTextButton> refSaveButton;
     /*nRef<nGuiTextButton> refDeleteStateButton;      //FIXME: Not implemented
@@ -111,7 +111,7 @@ private:
     nRef<nGuiTextLabel> refElementLabel;
 
     //Cloud
-    nRef<nGuiHoriSliderGroup> refCloudAddSlider;      
+    nRef<nGuiHoriSliderGroup> refCloudAddSlider;
     nRef<nGuiHoriSliderGroup> refCloudMulSlider;
     nRef<nGuiHoriSliderGroup> refCloudGlowSlider;
     nRef<nGuiHoriSliderGroup> refCloudRangeSlider;
@@ -123,7 +123,7 @@ private:
     nRef<nGuiHoriSliderGroup> refCloudMapSpeedSlider;
     nRef<nGuiHoriSliderGroup> refCloudStrucSpeedSlider;
     nRef<nGuiHoriSliderGroup> refCloudWeightSlider;
-    
+
     //Skycolor
     nRef<nGuiColorSliderGroup> refSkyTopColSlider;
     nRef<nGuiColorSliderGroup> refSkyBotColSlider;
@@ -134,22 +134,22 @@ private:
     nRef<nGuiHoriSliderGroup> refSkySunRangeSlider;
     nRef<nGuiHoriSliderGroup> refSkySunIntensSlider;
     nRef<nGuiHoriSliderGroup> refSkySunFlatSlider;
-    
+
     //Sun
     nRef<nGuiColorSliderGroup> refSunColSlider;
     nRef<nGuiHoriSliderGroup> refSunScaleSlider;
-    
+
     //Sunlight
     nRef<nGuiColorSliderGroup> refSunLightDiffuseColSlider;
     nRef<nGuiColorSliderGroup> refSunLightDiffuse1ColSlider;
     nRef<nGuiColorSliderGroup> refSunLightAmbientColSlider;
     nRef<nGuiColorSliderGroup> refSunLightSpecularColSlider;
-    
+
     //Stars
     // FIXME: Not implemented
-    
-                
-    nDynAutoRef<nSkyNode> refSky;     
+
+
+    nDynAutoRef<nSkyNode> refSky;
     nRef<nAbstractShaderNode> refElement;
     int oldElement;
     int activeElement;
@@ -163,7 +163,7 @@ private:
     nSkyNode::ElementType activeType;
 
     nString skyPath;
-                        
+
     bool sliderChanged;    // ???
 };
 
@@ -192,7 +192,7 @@ nGuiSkyEditor::GetSkyPath() const
 
 //------------------------------------------------------------------------------
 /**
-    
+
 */
 inline
 bool

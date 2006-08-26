@@ -5,7 +5,7 @@
     @class nGuiDirLister
     @ingroup Gui
     @brief A complete directory listing widget.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguitextview.h"

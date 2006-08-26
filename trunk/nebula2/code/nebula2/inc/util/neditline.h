@@ -215,7 +215,7 @@ inline
 int
 nEditLine::GetMaxValidCursorPos() const
 {
-    return strlen(this->buffer);
+    return (int) strlen(this->buffer);
 }
 
 //------------------------------------------------------------------------------

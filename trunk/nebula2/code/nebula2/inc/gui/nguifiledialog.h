@@ -7,7 +7,7 @@
     @brief A file dialog base class.
 
     Implement OnOk() and OnCancel() behaviour in a derived subclass.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

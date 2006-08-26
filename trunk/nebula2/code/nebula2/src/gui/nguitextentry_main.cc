@@ -86,7 +86,7 @@ nGuiTextEntry::GetEmptyText() const
 /**
 */
 void
-nGuiTextEntry::SetOverstrike(bool overstrike) 
+nGuiTextEntry::SetOverstrike(bool overstrike)
 {
     this->overstrikeDefault = overstrike;
     this->lineEditor->SetOverstrike( overstrike );
@@ -185,9 +185,9 @@ nGuiTextEntry::SetActive(bool b)
             {
                 case Left:  this->lineEditor->CursorHome(); break;
                 case Right: this->lineEditor->CursorEnd(); break;
-                default: 
-                    n_error( "Invalid initialCursorPos: %d", 
-                             this->initialCursorPos );                
+                default:
+                    n_error( "Invalid initialCursorPos: %d",
+                             this->initialCursorPos );
             }
         }
     }
@@ -391,10 +391,10 @@ nGuiTextEntry::Render()
             this->refFont = (nFont2*) nResourceServer::Instance()->FindResource(this->fontName.Get(), nResource::Font);
             if (!this->refFont.isvalid())
             {
-                n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get()); 
+                n_error("nGuiTextLabel %s: Unknown font '%s'!", this->GetName(), this->fontName.Get());
             }
         }
-        
+
         // compute the text position
         nGfxServer2::Instance()->SetFont(this->refFont.get());
         uint renderFlags = nFont2::VCenter;
@@ -420,7 +420,7 @@ nGuiTextEntry::Render()
             char charUnderCursor[2];
             charUnderCursor[0] = (lineText.Get()[cursorIndex] == 0) ? ' ' : lineText.Get()[cursorIndex];
             charUnderCursor[1] = 0;
-            
+
             // get text extents
             vector2 cursorSize = nGfxServer2::Instance()->GetTextExtent(charUnderCursor);
 
@@ -440,15 +440,15 @@ nGuiTextEntry::Render()
                     leftMargin = (screenSpaceRect.v1.x - screenSpaceRect.v0.x - totalTextSize.x) * 0.5f;
                     // fallthrough!
                 }
-                case Left:  
-                {  
+                case Left:
+                {
                     nString textToCursor = lineText.ExtractRange(0, cursorIndex);
                     vector2 textToCursorSize = nGfxServer2::Instance()->GetTextExtent(textToCursor.Get());
                     leftMargin += screenSpaceRect.v0.x + textToCursorSize.x;
                     break;
                 }
                 case Right:
-                {   
+                {
                     nString textAfterCursor = lineText.ExtractRange(cursorIndex, lineText.Length() - cursorIndex);
                     vector2 textAfterCursorSize = nGfxServer2::Instance()->GetTextExtent(textAfterCursor.Get());
                     leftMargin = screenSpaceRect.v1.x - textAfterCursorSize.x;
@@ -457,9 +457,9 @@ nGuiTextEntry::Render()
             }
 
             // prepare matrix to render cursor resource
-            rectangle cursorRect(vector2(leftMargin, 
+            rectangle cursorRect(vector2(leftMargin,
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() - cursorSize.y) * 0.5f),
-                                 vector2(leftMargin + cursorSize.x, 
+                                 vector2(leftMargin + cursorSize.x,
                                          screenSpaceRect.v0.y + (screenSpaceRect.height() + cursorSize.y) * 0.5f));
 
             nGuiServer::Instance()->DrawBrush(cursorRect, this->cursorBrush);
@@ -479,7 +479,7 @@ nGuiTextEntry::Render()
     and the cursor itself unblinking or in the "on" phase of a blink.
 */
 bool nGuiTextEntry::IsCursorVisible() const
-{   
+{
     bool retVal = false;
     if( this->active )
     {

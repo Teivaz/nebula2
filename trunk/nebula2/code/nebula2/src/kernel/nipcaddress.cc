@@ -37,6 +37,20 @@ nIpcAddress::nIpcAddress(const char* hostName, const char* portName) :
 //------------------------------------------------------------------------------
 /**
 */
+nIpcAddress::nIpcAddress(const char* hostName, short portNum) :
+    addrStructValid(false),
+    ipAddrValid(false),
+    portNumValid(true)
+{
+    memset(&(this->addrStruct), 0, sizeof(this->addrStruct));
+    memset(&(this->ipAddr), 0, sizeof(this->ipAddr));
+    this->SetHostName(hostName);
+    this->SetPortNum(portNum);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
 nIpcAddress::~nIpcAddress()
 {
     // empty
@@ -93,7 +107,7 @@ nIpcAddress::GetPortName() const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if an ip address is an "internet" address (not a 
+    Return true if an ip address is an "internet" address (not a
     Class A, B or C network address). If a machine is both connected
     to a LAN and the Internet, this method can be used to find the ip
     address that is visible from outside the LAN.
@@ -139,7 +153,7 @@ nIpcAddress::IsInternetAddress(const in_addr& addr)
 
 //------------------------------------------------------------------------------
 /**
-    This updates the ip address field by converting the host name to 
+    This updates the ip address field by converting the host name to
     an ip address.
 */
 bool
@@ -175,9 +189,9 @@ nIpcAddress::ValidateIpAddr()
         {
             // could not resolve own host name(!)
             return false;
-        }        
-        
-        // initialize with the default address 
+        }
+
+        // initialize with the default address
         this->ipAddr = *((struct in_addr *)he->h_addr);
         if (this->hostName == "inetself")
         {
@@ -255,7 +269,7 @@ nIpcAddress::ValidateAddrStruct()
             return false;
         }
     }
-    
+
     // fill the address struct
     this->addrStruct.sin_family = AF_INET;
     this->addrStruct.sin_port   = htons(this->portNum);
@@ -315,6 +329,18 @@ nIpcAddress::GetIpAddrString()
     return this->ipAddrString.Get();
 }
 
+
+
+//------------------------------------------------------------------------------
+/**
+    Sets the port num in host byte order.
+*/
+void
+nIpcAddress::SetPortNum(short portnum)
+{
+    this->portNum = portnum;
+    this->portNumValid = true;
+}
 //------------------------------------------------------------------------------
 /**
     Get the port num in host byte order.

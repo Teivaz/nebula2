@@ -8,10 +8,10 @@
     A container for shader parameters. A shader parameter block
     can be applied to a shader with one call (instead of issuing dozens
     of method calls to set parameters).
-    
+
     Note that only simple datatypes (not arrays) can be kept in shader
     parameter blocks.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gfx2/nshaderstate.h"
@@ -209,7 +209,7 @@ nShaderParams::ClearParam(nShaderState::Param p)
 {
     n_assert(p >= 0 && p < nShaderState::NumParameters);
     char index = this->paramIndex[p];
-    
+
     if (-1 != index)
     {
         // remove arg

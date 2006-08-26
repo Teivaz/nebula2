@@ -41,7 +41,7 @@ public:
     void SetCharacterSetIndexHandle(int handle);
 
 private:
-        
+
     nArray<nString> LoadAnimationsFromFolder(nString path,nArray<nRef<nMemoryAnimation> > &animArray);
     nArray<nCharJoint> EvaluteVariation(nRef<nMemoryAnimation> variation);
 

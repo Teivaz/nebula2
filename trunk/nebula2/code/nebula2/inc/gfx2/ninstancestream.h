@@ -11,13 +11,13 @@
     The Nebula2 Stream Renderer
     ===========================
     Using instance streams one can render many instances of one mesh
-    with one call into nGfxServer2. This makes instance rendering 
+    with one call into nGfxServer2. This makes instance rendering
     more efficient even with current graphics cards, and provides maximum
     efficiency for shader model 3.0 capable cards and DX 9.0c where
     instancing can happen entirely on the GPU.
 
     A stream element in the instance stream contains the shader parameters
-    needed for rendering a new instance of the current mesh with the 
+    needed for rendering a new instance of the current mesh with the
     current shader.
 
     The simplest possible instance stream provides just a modelview

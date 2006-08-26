@@ -8,7 +8,7 @@
     Holds an array of up to nGfxServer2::MaxVertexStreams meshes.
     Can be posted to the nGfxServer to assign all streams to the graphics
     device.
-    
+
     nMeshArray is normally a superclass for Gfx API specific derived classes, like
     Direct3D or OpenGL.
 

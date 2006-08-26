@@ -55,7 +55,7 @@ nSessionServer::SetServerAttr(const char* name, const char* val)
 
 //------------------------------------------------------------------------------
 /**
-    Get a server attribute by name. Returns 0 if server attribute doesn't 
+    Get a server attribute by name. Returns 0 if server attribute doesn't
     exist.
 
     @param  name    an attribute name
@@ -205,7 +205,7 @@ nSessionServer::Trigger()
                 {
                     if (0 == strcmp(cmd, "~queryserverattrs"))
                     {
-                        // send server attributes to client 
+                        // send server attributes to client
                         this->SendServerAttrs(fromClientId);
                     }
                     else if (0 == strcmp(cmd, "~joinsession"))
@@ -227,7 +227,7 @@ nSessionServer::Trigger()
                         this->HandleClientAttribute(fromClientId, clientGuid, attrName, attrValue);
                     }
                 }
-            } 
+            }
             while ((curMsg = recvMsg.GetNextString()));
         }
     }
@@ -241,7 +241,7 @@ nSessionServer::Trigger()
         this->KickClient(this->GetNumClients() - 1);
     }
 
-    // if server attributes dirty, send them to 
+    // if server attributes dirty, send them to
     // all connected clients
     if (this->serverAttrsDirty)
     {
@@ -353,7 +353,7 @@ nSessionServer::Start()
     // configure the local server
     netServer->SetPortName(gamePortName);
     netServer->BeginClients(numClients + 1);
-    
+
     // note: the first game client is always the local client
     netServer->SetClientGuid(0, localClientGuid.Get());
     netServer->SetClientPlayerName(0, this->GetServerAttr("PlayerName"));
@@ -379,7 +379,7 @@ nSessionServer::Start()
 /**
     This broadcasts a server info message into the LAN (once per second
     or so). Interested clients use this info to connect to potential hosts
-    in order to receive more detailed infos about the session in the 
+    in order to receive more detailed infos about the session in the
     form of server attributes.
 */
 void
@@ -394,7 +394,7 @@ nSessionServer::BroadcastIdentity()
 
         // build the broadcast message
         char msg[512];
-        sprintf(msg, "~session %s %s %s %s %s", 
+        sprintf(msg, "~session %s %s %s %s %s",
                 this->sessionGuid.Get(),
                 this->GetAppName(),
                 this->GetAppVersion(),
@@ -466,7 +466,7 @@ nSessionServer::UpdateNumPlayersAttr()
 
 //------------------------------------------------------------------------------
 /**
-    Handle a join session request. This checks first if the join can be 
+    Handle a join session request. This checks first if the join can be
     accepted (the only reason for not accepting is a full session). If the
     join is accepted, a new session client context will be created.
 */

@@ -6,7 +6,7 @@
     @ingroup Application
 
     @brief A wrapper object for Nebula2 sounds.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"

@@ -22,7 +22,7 @@ public:
     nNpkFileWrapper();
     /// destructor
     ~nNpkFileWrapper();
-    /// open the file and parse it 
+    /// open the file and parse it
     bool Open(nFileServer2* fs, const char* path, const char* filename);
     /// close the file
     void Close();
@@ -42,7 +42,7 @@ private:
     bool ReadHeader(nFile* file);
     /// read the table of content entries
     bool ReadTocEntries(nFile* file);
-    
+
     nString absPath;            // absolute pathname of npk file
     nNpkToc toc;                // the table of contents of this npk file
     int dataOffset;             // start of the raw data in the npk file

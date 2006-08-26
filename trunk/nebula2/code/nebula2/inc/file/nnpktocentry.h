@@ -272,7 +272,7 @@ nNpkTocEntry::GetFullName()
 {
     const int maxDepth = 16;
     nNpkTocEntry* traceStack[maxDepth];
-    
+
     // fill trace stack with path to parent...
     int depth = 0;
     nNpkTocEntry* curEntry = this;

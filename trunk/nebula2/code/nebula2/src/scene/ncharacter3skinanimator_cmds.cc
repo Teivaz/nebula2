@@ -12,7 +12,7 @@
 
     @cppclass
     nCharacter3SkinAnimator
-    
+
     @superclass
     nanimator
 

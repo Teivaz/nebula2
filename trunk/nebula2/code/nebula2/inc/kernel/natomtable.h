@@ -5,13 +5,13 @@
     @class nAtomTable
     @ingroup Kernel
 
-    An atom table is where atoms store their strings. 
-        
+    An atom table is where atoms store their strings.
+
     FIXME: hmm, the table can not shrink, is this even desireable???
     (shrinking the table would invalidate all nAtoms out there!).
 
     May be manually, expensive garbage collection pass would help? But in this
-    case Atoms would need to become invalid some (and need to be able to 
+    case Atoms would need to become invalid some (and need to be able to
     revalidate themselves). This is only possible if the atom table
     stores pointers to all its atoms.... hmm hmm hmm...
 
@@ -76,4 +76,4 @@ nAtomTable::KeyToString(ushort key) const
 
 //------------------------------------------------------------------------------
 #endif
- 
+

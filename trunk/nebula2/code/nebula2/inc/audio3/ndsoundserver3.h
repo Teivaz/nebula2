@@ -36,7 +36,7 @@ public:
     /// update a sound
     virtual void UpdateSound(nSound3* s);
     /// stop a sound
-    virtual void StopSound(nSound3* s);    
+    virtual void StopSound(nSound3* s);
     /// end the audio frame
     virtual void EndScene();
     /// create a non-shared sound object

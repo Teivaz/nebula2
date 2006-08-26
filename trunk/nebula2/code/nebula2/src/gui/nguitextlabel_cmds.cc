@@ -115,7 +115,7 @@ n_setalignment(void* slf, nCmd* cmd)
     if (strcmp("left", str) == 0)        align = nGuiTextLabel::Left;
     else if (strcmp("right", str) == 0)  align = nGuiTextLabel::Right;
     else if (strcmp("center", str) == 0) align = nGuiTextLabel::Center;
-    else 
+    else
     {
         align = nGuiTextLabel::Center;
         n_error("nguitextlabel.setalign: Invalid align string '%s'", str);

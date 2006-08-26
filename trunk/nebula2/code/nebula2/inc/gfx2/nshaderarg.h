@@ -4,11 +4,11 @@
 /**
     @class nShaderArg
     @ingroup Gfx2
-    
-    Encapsulates an argument for a shader parameter. This is similar 
+
+    Encapsulates an argument for a shader parameter. This is similar
     to an nArg, but does only handle argument types which are
     relevant for a shader.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -81,7 +81,7 @@ public:
     nTexture2* GetTexture() const;
     /// clear the memory and set type to void
     void Clear();
-    
+
 private:
     nShaderState::Type type;
     union
@@ -146,9 +146,9 @@ nShaderArg::operator==(const nShaderArg& rhs) const
     {
         switch (this->type)
         {
-            case nShaderState::Void:  
+            case nShaderState::Void:
                 return true;
-            
+
             case nShaderState::Bool:
                 return (this->b == rhs.b);
 
@@ -496,4 +496,4 @@ nShaderArg::nShaderArg(nTexture2* val) :
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

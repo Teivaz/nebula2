@@ -39,22 +39,22 @@ public:
     /// return true if scene server open
     bool IsOpen() const;
     /// change Maya Shader Parameter (called by remoteControl)
-    nString ChangeShaderParameter(const nString& mayaShaderName, 
+    nString ChangeShaderParameter(const nString& mayaShaderName,
                                   const nString& shaderHandling,
-                                  const nString& paramID, 
+                                  const nString& paramID,
                                   const nString& paramValue);
 
 private:
-    /// @name Toolkit Remote Shader-Parameter-Change-Functions 
+    /// @name Toolkit Remote Shader-Parameter-Change-Functions
     /// @{
     /// recursively called to apply changes
-    bool ChangeShaderParameterOnNode(nRoot* node, 
+    bool ChangeShaderParameterOnNode(nRoot* node,
                                      const nString& mayaShaderName,
                                      const nString& shaderHandler,
                                      const nString& paramID,
                                      const nString& paramValue);
     /// attribute handler 0 (Common Attributes)
-    bool ChangeTypeCommon(nMaterialNode* node, const nString& paramID, 
+    bool ChangeTypeCommon(nMaterialNode* node, const nString& paramID,
                           const nString& paramValue);
     /// attribute handler 1 (Particle2)
     bool ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,

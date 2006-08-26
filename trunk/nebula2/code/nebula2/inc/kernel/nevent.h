@@ -9,7 +9,7 @@
 
     THERE MAY BE DIFFERENCES IN BEHAVIOUR IF AN EVENT IS SIGNALLED
     WITHOUT ANY THREADS WAITING FOR IT. THE EVENT MAY OR MAY NOT
-    REMAIN SIGNALLED BASED ON THE PLATFORM. 
+    REMAIN SIGNALLED BASED ON THE PLATFORM.
 
     (C) 2002 RadonLabs GmbH
 */
@@ -32,7 +32,7 @@
 #endif
 
 //------------------------------------------------------------------------------
-class nEvent 
+class nEvent
 {
 public:
     /// constructor
@@ -60,7 +60,7 @@ private:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nEvent::nEvent()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -76,7 +76,7 @@ nEvent::nEvent()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nEvent::~nEvent()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -91,8 +91,8 @@ nEvent::~nEvent()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nEvent::Signal()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -107,8 +107,8 @@ nEvent::Signal()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nEvent::Wait()
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -123,8 +123,8 @@ nEvent::Wait()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 nEvent::TimedWait(int ms)
 {
 #ifndef __NEBULA_NO_THREADS__
@@ -133,9 +133,9 @@ nEvent::TimedWait(int ms)
         return (WAIT_TIMEOUT == r) ? false : true;
     #else
         // HACK
-        while(ms > 0) 
+        while(ms > 0)
         {
-            if (0 == sem_trywait(&(this->sem))) 
+            if (0 == sem_trywait(&(this->sem)))
             {
                 return true;
             }

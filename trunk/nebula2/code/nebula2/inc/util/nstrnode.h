@@ -6,7 +6,7 @@
     @ingroup NebulaDataTypes
 
     @brief A node in a nStrList.
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include <string.h>
@@ -15,7 +15,7 @@
 #include "util/nstring.h"
 
 //------------------------------------------------------------------------------
-class nStrNode: public nNode 
+class nStrNode: public nNode
 {
 public:
     /// default constructor

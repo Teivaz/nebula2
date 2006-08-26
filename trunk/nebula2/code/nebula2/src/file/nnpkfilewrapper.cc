@@ -17,7 +17,7 @@ nNpkFileWrapper::nNpkFileWrapper() :
 {
 
 }
-    
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -87,7 +87,7 @@ nNpkFileWrapper::Open(nFileServer2* fs, const char* rootPath, const char* absFil
         this->asciiFile = 0;
         return 0;
     }
-  
+
     this->isOpen = true;
     return true;
 }

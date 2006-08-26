@@ -1,15 +1,14 @@
-/* 
+/*
  * tclCompCmds.c --
  *
  *	This file contains compilation procedures that compile various
- *	Tcl commands into a sequence of instructions ("bytecodes"). 
+ *	Tcl commands into a sequence of instructions ("bytecodes").
  *
  * Copyright (c) 1997-1998 Sun Microsystems, Inc.
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -32,7 +31,7 @@ AuxDataType tclForeachInfoType = {
     DupForeachInfo,				/* dupProc */
     FreeForeachInfo				/* freeProc */
 };
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -78,7 +77,7 @@ TclCompileBreakCmd(interp, parsePtr, envPtr)
     envPtr->maxStackDepth = 0;
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -155,7 +154,7 @@ TclCompileBreakCmd(interp, parsePtr, envPtr)
 		    return TCL_OUT_LINE_COMPILE;
 	        }
 	        localIndex = TclFindCompiledLocal(nameTokenPtr[1].start,
-		        nameTokenPtr[1].size, /*create*/ 1, 
+		        nameTokenPtr[1].size, /*create*/ 1,
 		        /*flags*/ VAR_SCALAR, envPtr->procPtr);
 	    } else {
 	       return TCL_OUT_LINE_COMPILE;
@@ -168,7 +167,7 @@ TclCompileBreakCmd(interp, parsePtr, envPtr)
          */
 
         maxDepth = 0;
-    
+
         envPtr->exceptDepth++;
         envPtr->maxExceptDepth =
 	    TclMax(envPtr->exceptDepth, envPtr->maxExceptDepth);
@@ -190,7 +189,7 @@ TclCompileBreakCmd(interp, parsePtr, envPtr)
         maxDepth = envPtr->maxStackDepth;
         envPtr->exceptArrayPtr[range].numCodeBytes =
 	        (envPtr->codeNext - envPtr->codeStart) - startOffset;
-		        
+
         /*
          * The "no errors" epilogue code: store the body's result into the
          * variable (if any), push "0" (TCL_OK) as the catch's "no error"
@@ -299,7 +298,7 @@ TclCompileContinueCmd(interp, parsePtr, envPtr)
     envPtr->maxStackDepth = 0;
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -344,7 +343,7 @@ TclCompileExprCmd(interp, parsePtr, envPtr)
     return TclCompileExprWords(interp, firstWordPtr, (parsePtr->numWords-1),
 	    envPtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -430,7 +429,7 @@ TclCompileForCmd(interp, parsePtr, envPtr)
     }
     maxDepth = envPtr->maxStackDepth;
     TclEmitOpcode(INST_POP, envPtr);
-    
+
     /*
      * Compile the test then emit the conditional jump that exits the for.
      */
@@ -493,7 +492,7 @@ TclCompileForCmd(interp, parsePtr, envPtr)
 	    (envPtr->codeNext - envPtr->codeStart)
 	    - envPtr->exceptArrayPtr[nextRange].codeOffset;
     TclEmitOpcode(INST_POP, envPtr);
-	
+
     /*
      * Jump back to the test at the top of the loop. Generate a 4 byte jump
      * if the distance to the test is > 120 bytes. This is conservative and
@@ -539,7 +538,7 @@ TclCompileForCmd(interp, parsePtr, envPtr)
 	    TclUpdateInstInt1AtPc(INST_JUMP1, -jumpBackDist, jumpPc);
 	}
     }
-    
+
     /*
      * Set the loop's break target.
      */
@@ -547,7 +546,7 @@ TclCompileForCmd(interp, parsePtr, envPtr)
     envPtr->exceptArrayPtr[bodyRange].breakOffset =
             envPtr->exceptArrayPtr[nextRange].breakOffset =
 	    (envPtr->codeNext - envPtr->codeStart);
-    
+
     /*
      * The for command's result is an empty string.
      */
@@ -563,7 +562,7 @@ TclCompileForCmd(interp, parsePtr, envPtr)
     envPtr->exceptDepth--;
     return code;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -637,7 +636,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
     }
 
     maxDepth = 0;
-    
+
     numWords = parsePtr->numWords;
     if ((numWords < 4) || (numWords%2 != 0)) {
 	Tcl_ResetResult(interp);
@@ -659,10 +658,10 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
         varcList[loopIndex] = 0;
         varvList[loopIndex] = (char **) NULL;
     }
-    
+
     /*
      * Set the exception stack depth.
-     */ 
+     */
 
     envPtr->exceptDepth++;
     envPtr->maxExceptDepth =
@@ -732,7 +731,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
     }
     loopCtTemp = TclFindCompiledLocal(NULL, /*nameChars*/ 0,
 	    /*create*/ 1, /*flags*/ VAR_SCALAR, procPtr);
-    
+
     /*
      * Create and initialize the ForeachInfo and ForeachVarList data
      * structures describing this command. Then create a AuxData record
@@ -765,7 +764,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
      */
 
     range = TclCreateExceptRange(LOOP_EXCEPTION_RANGE, envPtr);
-    
+
     loopIndex = 0;
     for (i = 0, tokenPtr = parsePtr->tokenPtr;
 	    i < numWords-1;
@@ -795,7 +794,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
      */
 
     TclEmitInstInt4(INST_FOREACH_START4, infoIndex, envPtr);
-    
+
     /*
      * Top of loop code: assign each loop variable and check whether
      * to terminate the loop.
@@ -805,7 +804,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
 	    (envPtr->codeNext - envPtr->codeStart);
     TclEmitInstInt4(INST_FOREACH_STEP4, infoIndex, envPtr);
     TclEmitForwardJump(envPtr, TCL_FALSE_JUMP, &jumpFalseFixup);
-    
+
     /*
      * Inline compile the loop body.
      */
@@ -827,7 +826,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
 	    (envPtr->codeNext - envPtr->codeStart)
 	    - envPtr->exceptArrayPtr[range].codeOffset;
     TclEmitOpcode(INST_POP, envPtr);
-	
+
     /*
      * Jump back to the test at the top of the loop. Generate a 4 byte jump
      * if the distance to the test is > 120 bytes. This is conservative and
@@ -878,7 +877,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
 
     envPtr->exceptArrayPtr[range].breakOffset =
 	    (envPtr->codeNext - envPtr->codeStart);
-    
+
     /*
      * The foreach command's result is an empty string.
      */
@@ -902,7 +901,7 @@ TclCompileForeachCmd(interp, parsePtr, envPtr)
     envPtr->exceptDepth--;
     return code;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -934,13 +933,13 @@ DupForeachInfo(clientData)
     register ForeachVarList *srcListPtr, *dupListPtr;
     int numLists = srcPtr->numLists;
     int numVars, i, j;
-    
+
     dupPtr = (ForeachInfo *) ckalloc((unsigned)
 	    (sizeof(ForeachInfo) + (numLists * sizeof(ForeachVarList *))));
     dupPtr->numLists = numLists;
     dupPtr->firstValueTemp = srcPtr->firstValueTemp;
     dupPtr->loopCtTemp = srcPtr->loopCtTemp;
-    
+
     for (i = 0;  i < numLists;  i++) {
 	srcListPtr = srcPtr->varLists[i];
 	numVars = srcListPtr->numVars;
@@ -954,7 +953,7 @@ DupForeachInfo(clientData)
     }
     return (ClientData) dupPtr;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -990,7 +989,7 @@ FreeForeachInfo(clientData)
     }
     ckfree((char *) infoPtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1044,7 +1043,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
 
     /*
      * Each iteration of this loop compiles one "if expr ?then? body"
-     * or "elseif expr ?then? body" clause. 
+     * or "elseif expr ?then? body" clause.
      */
 
     tokenPtr = parsePtr->tokenPtr;
@@ -1082,7 +1081,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
 	 * around the "then" part. If the expression word isn't simple,
 	 * we back off and compile the if command out-of-line.
 	 */
-	
+
 	testTokenPtr = tokenPtr;
 	code = TclCompileExprWords(interp, testTokenPtr, 1, envPtr);
 	if (code != TCL_OK) {
@@ -1100,7 +1099,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
 	jumpFalseFixupArray.next++;
 	TclEmitForwardJump(envPtr, TCL_FALSE_JUMP,
 		&(jumpFalseFixupArray.fixup[jumpIndex]));
-	
+
 	/*
 	 * Skip over the optional "then" before the then clause.
 	 */
@@ -1191,7 +1190,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
 	/*
 	 * There is an else clause. Skip over the optional "else" word.
 	 */
-	
+
 	word = tokenPtr[1].start;
 	numBytes = tokenPtr[1].size;
 	if ((numBytes == 4) && (strncmp(word, "else", 4) == 0)) {
@@ -1209,7 +1208,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
 	/*
 	 * Compile the else command body.
 	 */
-	
+
 	code = TclCompileCmdWord(interp, tokenPtr+1,
 		tokenPtr->numComponents, envPtr);
 	if (code != TCL_OK) {
@@ -1225,7 +1224,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
 	/*
 	 * Make sure there are no words after the else clause.
 	 */
-	
+
 	wordIdx++;
 	if (wordIdx < numWords) {
 	    Tcl_ResetResult(interp);
@@ -1246,7 +1245,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
     /*
      * Fix the unconditional jumps to the end of the "if" command.
      */
-    
+
     for (j = jumpEndFixupArray.next;  j > 0;  j--) {
 	jumpIndex = (j - 1);	/* i.e. process the closest jump first */
 	jumpDist = (envPtr->codeNext - envPtr->codeStart)
@@ -1274,7 +1273,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
 	    }
 	}
     }
-	
+
     /*
      * Free the jumpFixupArray array if malloc'ed storage was used.
      */
@@ -1285,7 +1284,7 @@ TclCompileIfCmd(interp, parsePtr, envPtr)
     envPtr->maxStackDepth = maxDepth;
     return code;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1334,7 +1333,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	        "wrong # args: should be \"incr varName ?increment?\"", -1);
 	return TCL_ERROR;
     }
-    
+
     name = NULL;
     elName = NULL;
     elNameChars = 0;
@@ -1357,13 +1356,13 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	 * A simple variable name. Divide it up into "name" and "elName"
 	 * strings. If it is not a local variable, look it up at runtime.
 	 */
-	
+
 	name = varTokenPtr[1].start;
 	nameChars = varTokenPtr[1].size;
 	for (i = 0, p = name;  i < nameChars;  i++, p++) {
 	    if (*p == '(') {
 		char *openParen = p;
-		p = (name + nameChars-1);	
+		p = (name + nameChars-1);
 		if (*p == ')') { /* last char is ')' => array reference */
 		    nameChars = (openParen - name);
 		    elName = openParen+1;
@@ -1388,12 +1387,12 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	/*
 	 * Compile the element script, if any.
 	 */
-	
+
 	if (elName != NULL) {
 	    /*
 	     * Temporarily replace the '(' and ')' by '"'s.
 	     */
-	    
+
 	    *(elName-1) = '"';
 	    *(elName+elNameChars) = '"';
 	    code = Tcl_ParseCommand(interp, elName-1, elNameChars+2,
@@ -1424,7 +1423,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	/*
 	 * Not a simple variable name. Look it up at runtime.
 	 */
-	
+
 	code = TclCompileTokens(interp, varTokenPtr+1,
 	        varTokenPtr->numComponents, envPtr);
 	if (code != TCL_OK) {
@@ -1432,7 +1431,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	}
 	maxDepth = envPtr->maxStackDepth;
     }
-    
+
     /*
      * If an increment is given, push it, but see first if it's a small
      * integer.
@@ -1447,7 +1446,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	    int numBytes = incrTokenPtr[1].size;
 	    char savedChar = word[numBytes];
 	    long n;
-	
+
 	    /*
 	     * Note there is a danger that modifying the string could have
 	     * undesirable side effects.  In this case, TclLooksLikeInt and
@@ -1470,7 +1469,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 		maxDepth += 1;
 	    }
 	} else {
-	    code = TclCompileTokens(interp, incrTokenPtr+1, 
+	    code = TclCompileTokens(interp, incrTokenPtr+1,
 	            incrTokenPtr->numComponents, envPtr);
 	    if (code != TCL_OK) {
 		if (code == TCL_ERROR) {
@@ -1485,7 +1484,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	haveImmValue = 1;
 	immValue = 1;
     }
-    
+
     /*
      * Emit the instruction to increment the variable.
      */
@@ -1533,7 +1532,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
 	    TclEmitOpcode(INST_INCR_STK, envPtr);
 	}
     }
-	
+
     done:
     if (gotElemParse) {
         Tcl_FreeParse(&elemParse);
@@ -1541,7 +1540,7 @@ TclCompileIncrCmd(interp, parsePtr, envPtr)
     envPtr->maxStackDepth = maxDepth;
     return code;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1577,7 +1576,7 @@ TclCompileReturnCmd(interp, parsePtr, envPtr)
 {
     Tcl_Token *varTokenPtr;
     int code;
-    
+
     /*
      * If we're not in a procedure, don't compile.
      */
@@ -1646,7 +1645,7 @@ TclCompileReturnCmd(interp, parsePtr, envPtr)
     TclEmitOpcode(INST_DONE, envPtr);
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1706,7 +1705,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
      * need to emit code to compute and push the name at runtime. We use a
      * frame slot (entry in the array of local vars) if we are compiling a
      * procedure body and if the name is simple text that does not include
-     * namespace qualifiers. 
+     * namespace qualifiers.
      */
 
     simpleVarName = 0;
@@ -1763,7 +1762,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
         /*
 	 * Check for parentheses inside first token
 	 */
-        for (i = 0, p = varTokenPtr[1].start; 
+        for (i = 0, p = varTokenPtr[1].start;
 	     i < varTokenPtr[1].size; i++, p++) {
             if (*p == '(') {
                 simpleVarName = 1;
@@ -1803,7 +1802,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
 		break;
 	    }
 	}
-	
+
 	/*
 	 * Look up the var name's index in the array of local vars in the
 	 * proc frame. If retrieving the var's value and it doesn't already
@@ -1827,7 +1826,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
 	/*
 	 * Compile the element script, if any.
 	 */
-	
+
 	if (elName != NULL) {
 	    /*
 	     * Temporarily replace the '(' and ')' by '"'s.
@@ -1872,11 +1871,11 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
 	}
 	maxDepth += envPtr->maxStackDepth;
     }
-	
+
     /*
      * If we are doing an assignment, push the new value.
      */
-    
+
     if (isAssignment) {
 	valueTokenPtr = varTokenPtr + (varTokenPtr->numComponents + 1);
 	if (valueTokenPtr->type == TCL_TOKEN_SIMPLE_WORD) {
@@ -1892,7 +1891,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
 	    maxDepth += envPtr->maxStackDepth;
 	}
     }
-	
+
     /*
      * Emit instructions to set/get the variable.
      */
@@ -1935,7 +1934,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
 	TclEmitOpcode((isAssignment? INST_STORE_STK : INST_LOAD_STK),
 	        envPtr);
     }
-	
+
     done:
     if (gotElemParse) {
         Tcl_FreeParse(&elemParse);
@@ -1943,7 +1942,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
     envPtr->maxStackDepth = maxDepth;
     return code;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1979,7 +1978,7 @@ TclCompileStringCmd(interp, parsePtr, envPtr)
     Tcl_Obj *opObj;
     int index;
     int code;
-    
+
     static char *options[] = {
 	"bytelength",	"compare",	"equal",	"first",
 	"index",	"is",		"last",		"length",
@@ -1995,7 +1994,7 @@ TclCompileStringCmd(interp, parsePtr, envPtr)
 	STR_REPLACE,	STR_TOLOWER,	STR_TOUPPER,	STR_TOTITLE,
 	STR_TRIM,	STR_TRIMLEFT,	STR_TRIMRIGHT,
 	STR_WORDEND,	STR_WORDSTART
-    };	  
+    };
 
     /*
      * If we're not in a procedure, don't compile.
@@ -2020,7 +2019,7 @@ TclCompileStringCmd(interp, parsePtr, envPtr)
     }
 
     varTokenPtr = opTokenPtr + (opTokenPtr->numComponents + 1);
-    
+
     switch ((enum options) index) {
 	case STR_BYTELENGTH:
 	case STR_FIRST:
@@ -2043,7 +2042,7 @@ TclCompileStringCmd(interp, parsePtr, envPtr)
 	     */
 	    return TCL_OUT_LINE_COMPILE;
 
-	case STR_COMPARE: 
+	case STR_COMPARE:
 	case STR_EQUAL: {
 	    int i, depth;
 	    /*
@@ -2200,7 +2199,7 @@ TclCompileStringCmd(interp, parsePtr, envPtr)
 
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2291,7 +2290,7 @@ TclCompileWhileCmd(interp, parsePtr, envPtr)
     }
     maxDepth = envPtr->maxStackDepth;
     TclEmitForwardJump(envPtr, TCL_FALSE_JUMP, &jumpFalseFixup);
-    
+
     /*
      * Compile the loop body.
      */
@@ -2314,7 +2313,7 @@ TclCompileWhileCmd(interp, parsePtr, envPtr)
 	    (envPtr->codeNext - envPtr->codeStart)
 	    - envPtr->exceptArrayPtr[range].codeOffset;
     TclEmitOpcode(INST_POP, envPtr);
-	
+
     /*
      * Jump back to the test at the top of the loop. Generate a 4 byte jump
      * if the distance to the test is > 120 bytes. This is conservative and
@@ -2331,7 +2330,7 @@ TclCompileWhileCmd(interp, parsePtr, envPtr)
     }
 
     /*
-     * Fix the target of the jumpFalse after the test. 
+     * Fix the target of the jumpFalse after the test.
      */
 
     jumpDist = (envPtr->codeNext - envPtr->codeStart)
@@ -2364,7 +2363,7 @@ TclCompileWhileCmd(interp, parsePtr, envPtr)
 
     envPtr->exceptArrayPtr[range].breakOffset =
 	    (envPtr->codeNext - envPtr->codeStart);
-    
+
     /*
      * The while command's result is an empty string.
      */

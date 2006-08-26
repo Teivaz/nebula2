@@ -17,7 +17,7 @@ nParticleServer::nParticleServer() :
     enabled(true),
     #ifdef __NEBULA_STATS__
     numEmitters("parNumEmitters", nArg::Int),
-    numActiveEmitters("parNumActiveEmitters", nArg::Int),   
+    numActiveEmitters("parNumActiveEmitters", nArg::Int),
     numParticles("parNumParticles", nArg::Int),
     numDrawnParticles("parNumDrawnParticles", nArg::Int),
     numDrawnPrimitives("parNumDrawnPrimitives", nArg::Int),
@@ -57,7 +57,7 @@ nParticleServer::nParticleServer() :
         float f1 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
         float f2 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
         float f3 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
- 
+
         float l = n_sqrt(f0*f0 + f1*f1 + f2*f2);
         if (l > 0.0f)
         {
@@ -142,7 +142,7 @@ void nParticleServer::Trigger()
     this->numDrawnParticles->SetI(0);
     this->numDrawnPrimitives->SetI(0);
     #endif
-    
+
     // Trigger active emitters and delete unused
     if (!this->emitterPool.Empty())
     {
@@ -172,6 +172,6 @@ void nParticleServer::Trigger()
     //update stats
     this->numEmitters->SetI(numEmitters);
     this->numParticles->SetI(numParticles);
-    #endif 
+    #endif
 }
 

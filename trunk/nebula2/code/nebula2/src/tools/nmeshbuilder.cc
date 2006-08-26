@@ -25,8 +25,8 @@ nMeshBuilder::~nMeshBuilder()
 
 //------------------------------------------------------------------------------
 /**
-    Count the number of triangles matching a group id and material id starting 
-    at a given triangle index. Will stop on first triangle which doesn't 
+    Count the number of triangles matching a group id and material id starting
+    at a given triangle index. Will stop on first triangle which doesn't
     match the group id.
 */
 int
@@ -72,7 +72,7 @@ nMeshBuilder::GetFirstGroupTriangle(int groupId, int materialId, int usageFlags)
 
 //------------------------------------------------------------------------------
 /**
-    Build a group map. The triangle array must be sorted for this method 
+    Build a group map. The triangle array must be sorted for this method
     to work. For each distinctive group id, a map entry will be
     created which contains the group id, the first triangle and
     the number of triangles in the group.
@@ -103,7 +103,7 @@ nMeshBuilder::BuildGroupMap(nArray<Group>& groupArray)
 
 //------------------------------------------------------------------------------
 /**
-    Update the triangle group id's, material id's and usage flags 
+    Update the triangle group id's, material id's and usage flags
     from an existing group map.
 */
 void
@@ -172,14 +172,14 @@ nMeshBuilder::Transform(const matrix44& m44)
     1 - create TempEdge data, 2 vertexIndex + faceIndex, where vertexIndex1 < vertexIndex2
         for every face and store in array for sorting.
         [tempMEM: numFaces * 3 * 3 * ushort]
-    
+
     2 - sort TempEdge data by: groupID vertexIndex1 vertexIndex2 (TempEdgeSorter)
-    
+
     3 - create GroupedEdges, divided by groupedID, merge the 2 tempEdge halfs to a complete edge, or
         marke border edges with a face index of -1;
 
     4 - sort GroupedEdges by: GroupID faceIndex1 faceIndex2 (GroupedEdgeSorter)
-    
+
     5 - copy all edges to the edge array, skip identical edges (groupID/face).
 */
 void
@@ -187,7 +187,7 @@ nMeshBuilder::CreateEdges()
 {
     n_assert(0 == this->GetNumEdges());
     n_assert(this->GetNumTriangles() > 0);
-    
+
     // sort the triangles, to work with the same data that is written later.
     this->SortTriangles();
 
@@ -236,23 +236,23 @@ nMeshBuilder::CreateEdges()
     // create array for the sorted edges
     GroupedEdge* groupedEdgeArray = n_new_array(GroupedEdge, numEdges);
     int groupedEdgeIndex = 0;
-    
+
     // create the sorted edges array
     for(i = 0; i < numEdges - 1; i++)
     {
         const TempEdge& currEdge = tempEdgeArray[i];
         const TempEdge& nextEdge = tempEdgeArray[i+1];
-        
+
         if ( currEdge.vIndex[0] == nextEdge.vIndex[1] && currEdge.vIndex[1] == nextEdge.vIndex[0] && currEdge.GroupID == nextEdge.GroupID)
         {
             //current edge and next edge share the same vertex indices (cross compare) - copy only once
             GroupedEdge& edge =  groupedEdgeArray[groupedEdgeIndex++];
-            edge.GroupID   = currEdge.GroupID; 
+            edge.GroupID   = currEdge.GroupID;
             edge.vIndex[0] = currEdge.vIndex[0];
             edge.vIndex[1] = currEdge.vIndex[1];
             edge.fIndex[0] = currEdge.fIndex;
             edge.fIndex[1] = nextEdge.fIndex;
-            
+
             //skip next element becauce we handled it already
             i++;
         }
@@ -267,7 +267,7 @@ nMeshBuilder::CreateEdges()
             edge.fIndex[1] = nMesh2::InvalidIndex;
         }
     }
-    
+
     //fix last element
     const TempEdge& prevEdge = tempEdgeArray[numEdges-2];
     const TempEdge& currEdge = tempEdgeArray[numEdges-1];
@@ -282,7 +282,7 @@ nMeshBuilder::CreateEdges()
         edge.fIndex[0] = currEdge.fIndex;
         edge.fIndex[1] = nMesh2::InvalidIndex;
     }
-    
+
     // cleanup done data
     n_delete_array(tempEdgeArray);
 
@@ -292,7 +292,7 @@ nMeshBuilder::CreateEdges()
     // all edges that are use from triangles with the same groupID are now in continious chunks
     // remove duplicate edges when in the same group
     // don't skip duplicate edges when they are used from triangles with different groups
-    
+
     //do the 1st element
     this->edgeArray.PushBack(groupedEdgeArray[0]);
     for (i = 1; i < groupedEdgeIndex; i++)
@@ -317,11 +317,11 @@ nMeshBuilder::CreateEdges()
                 }
             }
         }
-        
+
         //fall through - e0 and e1 are different
         this->edgeArray.PushBack(e1);
     }
-    n_delete_array(groupedEdgeArray); 
+    n_delete_array(groupedEdgeArray);
 }
 
 //------------------------------------------------------------------------------
@@ -360,7 +360,7 @@ nMeshBuilder::TempEdgeSorter(const void* elm0, const void* elm1)
         {
             e0i0 = e0.vIndex[1]; e0i1 = e0.vIndex[0];
         }
-        
+
         if (e1.vIndex[0] < e1.vIndex[1])
         {
             e1i0 = e1.vIndex[0]; e1i1 = e1.vIndex[1];
@@ -375,7 +375,7 @@ nMeshBuilder::TempEdgeSorter(const void* elm0, const void* elm1)
         else
         {
             if (e0i1 < e1i1)        return -1;
-            else if (e0i1 > e1i1)   return +1;        
+            else if (e0i1 > e1i1)   return +1;
             else
             {
                 // force lower index be first
@@ -418,7 +418,7 @@ nMeshBuilder::GroupedEdgeSorter(const void* elm0, const void* elm1)
         {
             e0i0 = e0.vIndex[1]; e0i1 = e0.vIndex[0];
         }
-        
+
         if (e1.vIndex[0] < e1.vIndex[1])
         {
             e1i0 = e1.vIndex[0]; e1i1 = e1.vIndex[1];
@@ -433,7 +433,7 @@ nMeshBuilder::GroupedEdgeSorter(const void* elm0, const void* elm1)
         else
         {
             if (e0i1 < e1i1)        return -1;
-            else if (e0i1 > e1i1)   return +1;        
+            else if (e0i1 > e1i1)   return +1;
             else
             {
                 // sort by 1st face index
@@ -597,14 +597,14 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapseMap)
 
     // generate a sorted index map (sort by X coordinate)
     qsortData = this;
-    qsort(sortMap, numVertices, sizeof(int), nMeshBuilder::VertexSorter);    
+    qsort(sortMap, numVertices, sizeof(int), nMeshBuilder::VertexSorter);
 
     // search sorted array for redundant vertices
     int baseIndex = 0;
     for (baseIndex = 0; baseIndex < (numVertices - 1);)
     {
         int nextIndex = baseIndex + 1;
-        while ((nextIndex < numVertices) && 
+        while ((nextIndex < numVertices) &&
                (this->vertexArray[sortMap[baseIndex]] == this->vertexArray[sortMap[nextIndex]]))
         {
             // mark the vertex as invalid
@@ -649,7 +649,7 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapseMap)
 
     // initialize the collaps map so that for each new (collapsed)
     // index it contains a list of old vertex indices which have been
-    // collapsed into the new vertex 
+    // collapsed into the new vertex
     if (collapseMap)
     {
         for (i = 0; i < numVertices; i++)
@@ -701,9 +701,9 @@ nMeshBuilder::TriangleGroupSorter(const void* elm0, const void* elm1)
     int usageDiff = t0->GetUsageFlags() - t1->GetUsageFlags();
     if (0 != usageDiff)
     {
-        return usageDiff;    
+        return usageDiff;
     }
-    
+
     // make the sort order definitive
     int t0i0, t0i1, t0i2, t1i0, t1i1, t1i2;
     t0->GetVertexIndices(t0i0, t0i1, t0i2);
@@ -861,7 +861,7 @@ nMeshBuilder::GetGroupEdgeRange(int groupId, int& minEdgeIndex, int& maxEdgeInde
     bool foundGroupEnd = false;
     int edgeIndex;
     int numEdges = this->GetNumEdges();
-    
+
     //find first edge with this groupID
     for (edgeIndex = 0; edgeIndex < numEdges; edgeIndex++)
     {
@@ -962,7 +962,7 @@ nMeshBuilder::CopyVertexComponents(Vertex::Component from, Vertex::Component to)
 
 //------------------------------------------------------------------------------
 /**
-    Does an inflated component copy from a cleaned up source mesh to 
+    Does an inflated component copy from a cleaned up source mesh to
     this mesh.
 */
 void
@@ -1056,14 +1056,14 @@ nMeshBuilder::CountVerticesInBBox(const bbox3& box) const
 /**
     Clip a triangle group by a plane. All positive side triangles will
     remain in the group, a new group will be created which contains
-    all negative side triangles. 
+    all negative side triangles.
     Please make sure that all triangles have a correct group index set
     before calling this method!
 
     NOTE: new triangles will be created at the end of the triangle array.
     Although this method does not depend on correct triangle ordering,
     other will. It is recommended to do a PackTrianglesByGroup() and
-    to update all existing group triangle ranges with GetNumTrianglesInGroup() 
+    to update all existing group triangle ranges with GetNumTrianglesInGroup()
     and GetFirstTriangleInGroup().
 
     Please note also that groups can become empty! At the end of the split
@@ -1077,9 +1077,9 @@ nMeshBuilder::CountVerticesInBBox(const bbox3& box) const
     @param  numNegTriangles     [out] resulting num of triangles in negative group
 */
 void
-nMeshBuilder::Split(const plane& clipPlane, 
-                    int groupId, 
-                    int posGroupId, 
+nMeshBuilder::Split(const plane& clipPlane,
+                    int groupId,
+                    int posGroupId,
                     int negGroupId,
                     int& numPosTriangles,
                     int& numNegTriangles)
@@ -1128,7 +1128,7 @@ nMeshBuilder::Split(const plane& clipPlane,
         {
             // triangle is clipped by clipPlane, this is a bit tricky...
             // the clip operation will introduce 2 new vertices, which
-            // will be appended to the end of the vertex array, 
+            // will be appended to the end of the vertex array,
             // it will also add 2 new triangles which will be appended
             // to the end of the triangle array
             int posVertexIndices[4];
@@ -1152,7 +1152,7 @@ nMeshBuilder::Split(const plane& clipPlane,
                 posVertexIndices[numPosVertexIndices++] = this->vertexArray.Size() - 1;
                 negVertexIndices[numNegVertexIndices++] = this->vertexArray.Size() - 1;
             }
-                
+
             if (posCode == v1Code) posVertexIndices[numPosVertexIndices++] = i1;
             else                   negVertexIndices[numNegVertexIndices++] = i1;
             if ((v1Code & v2Code) == 0)
@@ -1192,14 +1192,14 @@ nMeshBuilder::Split(const plane& clipPlane,
                 {
                     // reuse the existing triangle (but only the
                     // first positive triangle may do this!)
-                    this->GetTriangleAt(triangleIndex).SetVertexIndices(posVertexIndices[0], 
-                                                                        posVertexIndices[i + 1], 
+                    this->GetTriangleAt(triangleIndex).SetVertexIndices(posVertexIndices[0],
+                                                                        posVertexIndices[i + 1],
                                                                         posVertexIndices[i + 2]);
                 }
                 else
                 {
-                    newTri.SetVertexIndices(posVertexIndices[0], 
-                                            posVertexIndices[i + 1], 
+                    newTri.SetVertexIndices(posVertexIndices[0],
+                                            posVertexIndices[i + 1],
                                             posVertexIndices[i + 2]);
                     this->AddTriangle(newTri);
                 }
@@ -1208,8 +1208,8 @@ nMeshBuilder::Split(const plane& clipPlane,
             newTri.SetGroupId(negGroupId);
             for (i = 0; i < (numNegVertexIndices - 2); i++)
             {
-                newTri.SetVertexIndices(negVertexIndices[0], 
-                                        negVertexIndices[i + 1], 
+                newTri.SetVertexIndices(negVertexIndices[0],
+                                        negVertexIndices[i + 1],
                                         negVertexIndices[i + 2]);
                 this->AddTriangle(newTri);
                 numNegTriangles++;
@@ -1222,7 +1222,7 @@ nMeshBuilder::Split(const plane& clipPlane,
 /**
     Build a vertex/triangle map. Lookup the map with the vertex index,
     and find an array of indices of all triangles using that vertex.
-    You want to make sure to clean up the mesh before to ensure 
+    You want to make sure to clean up the mesh before to ensure
     correct vertex sharing behaviour.
 
     @param  vertexTriangleMap   2D-array to be filled with resulting map
@@ -1387,7 +1387,7 @@ nMeshBuilder::CheckForGeometryError()
 /**
     checks the mesh for duplicated faces
 */
-nArray<nString> 
+nArray<nString>
 nMeshBuilder::CheckForDuplicatedFaces()
 {
     nArray<nString> emptyArray;
@@ -1424,7 +1424,7 @@ nMeshBuilder::CheckForDuplicatedFaces()
 /**
     searches the mesh for duplicated faces
 */
-nArray<int> 
+nArray<int>
 nMeshBuilder::SearchDuplicatedFaces()
 {
     nArray<int> result;
@@ -1433,9 +1433,9 @@ nMeshBuilder::SearchDuplicatedFaces()
     // an array which holds 1 list for each vertex. 1 lists contains references to all faces that the vertice
     // belongs to
     nArray<nArray<Triangle*> > triangleReferences;
-    
+
     // initialize lists
-    nArray<Triangle*> emptyDummy;    
+    nArray<Triangle*> emptyDummy;
     triangleReferences.SetFixedSize(this->vertexArray.Size());
 
     // now insert face references
@@ -1444,7 +1444,7 @@ nMeshBuilder::SearchDuplicatedFaces()
         int index0 = this->triangleArray[i].vertexIndex[0];
         int index1 = this->triangleArray[i].vertexIndex[1];
         int index2 = this->triangleArray[i].vertexIndex[2];
-        
+
         // now we check if there is a triangle in the list at index0 that equals the one we are currently working on
         // the size of the list at index0 should be low for the average case
         int k;
@@ -1462,7 +1462,7 @@ nMeshBuilder::SearchDuplicatedFaces()
             // ok, we found a triangle that is equal to the current
             result.Append(i);
         }
-        else 
+        else
         {
             // otherwise we store a reference to this triangle in the lists at the indices
             triangleReferences[index0].PushBack(&this->triangleArray[i]);

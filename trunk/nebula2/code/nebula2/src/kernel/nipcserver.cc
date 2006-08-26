@@ -26,22 +26,22 @@ ListenerThreadFunc(nThread *thread)
     do
     {
         // this loop waits for a new client to connect, for each
-        // new client, an nIpcMiniServer object is created 
+        // new client, an nIpcMiniServer object is created
         n_printf("nIpcServer: listening on port %d...\n", ipcServer->selfAddr.GetPortNum());
         nIpcMiniServer* ipcMiniServer = n_new(nIpcMiniServer(ipcServer));
-        if (ipcMiniServer->Listen()) 
+        if (ipcMiniServer->Listen())
         {
             // Some sort of connection has been established. This
-            // could also come from the Wakeup function of 
+            // could also come from the Wakeup function of
             // nIpcMiniServer if it wants to shutdown the thread.
             // If this is the case, the ThreadStopRequested flag
             // should be set in the thread object.
-            if (thread->ThreadStopRequested()) 
+            if (thread->ThreadStopRequested())
             {
                 ipcMiniServer->Ignore();
                 n_printf("nIpcServer: woke up for shutting down.\n");
-            } 
-            else 
+            }
+            else
             {
                 n_printf("nIpcServer: a client has connected.\n");
             }
@@ -58,7 +58,7 @@ ListenerThreadFunc(nThread *thread)
 /**
     The wakeup func for the thread object.
     This creates a dummy connection to the current ipcMiniServer object
-    in the listener thread in order to wakeup the thread because it is 
+    in the listener thread in order to wakeup the thread because it is
     going to shut down.
 */
 static
@@ -94,7 +94,7 @@ nIpcServer::nIpcServer(nIpcAddress& addr) :
 
     // configure the socket
     int trueAsInt = 1;
-    int res = setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt)); 
+    int res = setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, (const char *)&trueAsInt, sizeof(trueAsInt));
     n_assert(res != -1);
 
     // bind address to socket
@@ -151,8 +151,8 @@ nIpcServer::~nIpcServer()
 
 //------------------------------------------------------------------------------
 /**
-    Poll the mini servers for new messages. 
-    
+    Poll the mini servers for new messages.
+
     @return true if there are any to process
 */
 bool
@@ -169,6 +169,7 @@ nIpcServer::Poll()
         {
             // this ipc mini server has a closed connection, delete it
             cur->Remove();
+            this->ClientsReseted.Append(cur->GetClientId());
             n_delete(cur);
             cur = 0;
         }

@@ -57,7 +57,7 @@ public:
     /// destructor
     ~nResourceCompiler();
     /// set a path
-    void SetPath(PathIdentifier pathId, const char* name);
+    void SetPath(PathIdentifier pathId, const nString& name);
     /// get a path
     const char* GetPath(PathIdentifier pathId) const;
     /// set binary save flag
@@ -309,7 +309,7 @@ nResourceCompiler::ResEntry::GetFlags() const
 */
 inline
 void
-nResourceCompiler::SetPath(PathIdentifier pathId, const char* name)
+nResourceCompiler::SetPath(PathIdentifier pathId, const nString& name)
 {
     n_assert(pathId < NumPathIdentifiers);
     this->pathArray[pathId] = name;

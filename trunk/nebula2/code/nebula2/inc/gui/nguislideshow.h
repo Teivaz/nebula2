@@ -8,7 +8,7 @@
     @class nGuiSlideShow
     @ingroup Gui
     @brief A widget which implements a picture slideshow.
-    
+
     (C) 2005 RadonLabs GmbH
 */
 

@@ -34,7 +34,7 @@ public:
     void SetColor(const vector4& color);
     /// get color
     const vector4& GetColor() const;
-    
+
 private:
     /// Adjusts the color to the brightness
     void UpdateColor();

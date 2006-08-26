@@ -6,7 +6,7 @@
     @ingroup Shadow2
 
     A shadow caster for skinned geometry.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "shadow2/nshadowcaster2.h"

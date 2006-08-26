@@ -76,13 +76,15 @@ public:
     virtual int ParseDirectory(const nString& dirName, const nString& extension);
     /// release npk file wrappers matching pattern
     virtual void ReleaseNpkFiles(const nString& pattern);
+    /// pack a directory into a new NPK file
+    virtual bool Pack(const nString& rootPath, const nString& dirName, const nString& npkName, bool noTopLevelName);
 
 private:
     /// add one npk file to the internal list
     bool AddNpkFile(const nString& rootPath, const nString& filename);
     /// find a toc entry by name in the included npk file wrappers
     nNpkTocEntry* FindTocEntry(const nString& absPath);
-    
+
     nList npkFiles;         // list of nNpkFileWrapper objects
 };
 

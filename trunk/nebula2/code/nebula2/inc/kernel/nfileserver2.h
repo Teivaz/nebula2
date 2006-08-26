@@ -70,6 +70,8 @@ public:
     virtual nArray<nString> ListMatchingDirectories(const nString& dirName, const nString& pattern);
     /// check if file exists
     virtual bool FileExists(const nString& pathName) const;
+    /// get file size
+    virtual int GetFileSize(const nString& pathName) const;
     /// check if directory exists
     virtual bool DirectoryExists(const nString& pathName) const;
     /// return the time stamp when file was last written to
@@ -84,7 +86,7 @@ public:
 
     /// reset statistics
     void ResetStatistics();
-    /// add read bytes 
+    /// add read bytes
     void AddBytesRead(int b);
     /// add written bytes
     void AddBytesWritten(int b);
@@ -100,7 +102,7 @@ public:
 protected:
     /// cleanup a path name in place
     void CleanupPathName(nString& str);
-    
+
 private:
     /// Initialize assign repository.
     void InitAssigns();

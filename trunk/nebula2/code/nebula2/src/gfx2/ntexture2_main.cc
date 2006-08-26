@@ -64,7 +64,7 @@ nTexture2::Unlock(int /*level*/)
 /**
     Locks a single surface of a cube texture.
 */
-bool 
+bool
 nTexture2::LockCubeFace(LockType /*lockType*/, CubeFace /*face*/, int /*level*/, LockInfo& /*lockInfo*/)
 {
     return false;
@@ -87,7 +87,7 @@ nTexture2::UnlockCubeFace(CubeFace /*face*/, int /*level*/)
     Saves the texture to a file
 */
 bool
-nTexture2::SaveTextureToFile(const nString &filename)
+nTexture2::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
 {
     return false;
 };

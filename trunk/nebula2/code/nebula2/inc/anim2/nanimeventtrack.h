@@ -8,7 +8,7 @@
     with a matrix. These events are triggered when the playback cursor
     of an anim clip goes over an anim event. Anim event tracks are
     usually added to anim clips.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"

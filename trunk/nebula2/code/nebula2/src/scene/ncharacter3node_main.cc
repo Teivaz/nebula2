@@ -33,7 +33,7 @@ nCharacter3Node::~nCharacter3Node()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nCharacter3Node::RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix)
 {
     bool success = true;
@@ -60,7 +60,7 @@ nCharacter3Node::RenderTransform(nSceneServer* sceneServer, nRenderContext* rend
                     node->SetActive( isVisible );
                 };
             };
- 
+
             // set animation
             nCharacter3SkinAnimator* animator = this->FindMySkinAnimator();
             const char* stateChannel = animator->GetStateChannel();
@@ -121,7 +121,7 @@ nCharacter3Node::RenderContextCreated(nRenderContext* renderContext)
 /**
 */
 /*
-bool 
+bool
 nCharacter3Node::RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext)
 {
     return nSceneNode::RenderGeometry(sceneServer, renderContext);
@@ -131,7 +131,7 @@ nCharacter3Node::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rende
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nCharacter3Node::LoadResources()
 {
     bool result = true;
@@ -166,7 +166,7 @@ nCharacter3Node::LoadResources()
                     if(numTokens == 3)
                     {
                         for(k = 0; k < skin.Size(); k += 3)
-                        {   
+                        {
                             if( (skin[k] == nameTokens[0]) &&
                                 (skin[k+1] == nameTokens[1]) &&
                                 (skin[k+2] == nameTokens[2]) )
@@ -187,7 +187,7 @@ nCharacter3Node::LoadResources()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nCharacter3Node::UnloadResources()
 {
     if(this->AreResourcesValid())
@@ -234,12 +234,12 @@ nCharacter3Node::GetFullNamesOfLoadedSkins() const
 //------------------------------------------------------------------------------
 /**
 */
-nCharacter3SkinAnimator* 
+nCharacter3SkinAnimator*
 nCharacter3Node::FindMySkinAnimator()
 {
     // Find nCharacter3SkinAnimator Class
     nClass* nCharacter3SkinAnimatorClass = this->kernelServer->FindClass("ncharacter3skinanimator");
-    nCharacter3SkinAnimator* firstFoundNode = (nCharacter3SkinAnimator*)this->FindFirstInstance(this, nCharacter3SkinAnimatorClass);        
+    nCharacter3SkinAnimator* firstFoundNode = (nCharacter3SkinAnimator*)this->FindFirstInstance(this, nCharacter3SkinAnimatorClass);
     n_assert(firstFoundNode);
     return firstFoundNode;
 };
@@ -269,7 +269,7 @@ nCharacter3Node::GetNamesOfLoadedVariations()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nCharacter3Node::LoadSkinsFromSubfolder(nString path)
 {
     nDirectory* dir = nFileServer2::Instance()->NewDirectoryObject();
@@ -326,12 +326,12 @@ nCharacter3Node::LoadSkinsFromSubfolder(nString path)
 
 //------------------------------------------------------------------------------
 /**
-    Recursively Find instance of nClass, used to search for lights, skin 
+    Recursively Find instance of nClass, used to search for lights, skin
     animators, etc...
 */
 nRoot*
 nCharacter3Node::FindFirstInstance(nRoot* node, nClass* classType)
-{ 
+{
     nRoot* resultNode = NULL;
     if (node == NULL)
     {
@@ -344,15 +344,15 @@ nCharacter3Node::FindFirstInstance(nRoot* node, nClass* classType)
             resultNode = node;
         }
         else
-        {       
+        {
             resultNode = FindFirstInstance(node->GetSucc(), classType);
             if (resultNode == NULL)
             {
                 resultNode = FindFirstInstance(node->GetHead(), classType);
-            }            
+            }
         }
     }
-    return resultNode;   
+    return resultNode;
 }
 
 //------------------------------------------------------------------------------
@@ -389,7 +389,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
         {
             nString current = stream.GetCurrentNodeName();
             skins += current + nString(" ");
-            
+
             if(!stream.SetToFirstChild())
             {
                 // something went wrong, return
@@ -404,7 +404,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
                 // something went wrong, return
                 return false;
             };
-            
+
             current = stream.GetCurrentNodeName();
             skins += current + nString(" ");
 
@@ -424,7 +424,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
     };
 
     stream.Close();
-   
+
     resultSkinList = skins;
 
     return true;

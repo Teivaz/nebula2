@@ -13,8 +13,8 @@ nNebulaScriptClass(nLodNode, "ntransformnode");
 /**
 */
 nLodNode::nLodNode() :
-    minDistance(-100.0f),
-    maxDistance(100.0f)
+    minDistance(-5000.0f),
+    maxDistance(5000.0f)
 {
     this->transformNodeClass = kernelServer->FindClass("ntransformnode");
 }
@@ -61,7 +61,7 @@ nLodNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
 
         if ((distance > this->minDistance) && (distance < this->maxDistance))
         {
-            
+
             // get number of child nodes
             int num = 0;
             nSceneNode* curChild;
@@ -76,7 +76,7 @@ nLodNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
             }
 
             // if there are not enough thresholds, set some default values
-            if (!this->thresholds.Size()) 
+            if (!this->thresholds.Size())
             {
                 thresholds.Append(100.0f);
             }
@@ -89,7 +89,7 @@ nLodNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
             int index = 0;
             if (this->GetHead())
             {
-                nSceneNode* childToAttach = (nSceneNode*) this->GetHead(); 
+                nSceneNode* childToAttach = (nSceneNode*) this->GetHead();
                 for (curChild = (nSceneNode*) childToAttach->GetSucc();
                     curChild;
                     curChild = (nSceneNode*) curChild->GetSucc(), index++)
@@ -101,7 +101,7 @@ nLodNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
                             childToAttach = curChild;
                         }
                     }
-                }     
+                }
                 childToAttach->Attach(sceneServer, renderContext);
             }
         }

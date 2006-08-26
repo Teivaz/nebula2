@@ -63,7 +63,7 @@ nTextureAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 
 void
 nTextureAnimator::AddTexture(const char* path)
-{ 
+{
     nRef<nTexture2> refTexture(this->refGfxServer->NewTexture(path));
     refTexture->SetFilename(path);
     refTexture->Load();

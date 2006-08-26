@@ -136,7 +136,7 @@ nGuiTexBrowserWindow::OnHide()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiTexBrowserWindow::OnEvent(const nGuiEvent& event)
 {
     if (event.GetType() == nGuiEvent::ButtonUp)

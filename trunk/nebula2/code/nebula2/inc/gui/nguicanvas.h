@@ -8,7 +8,7 @@
     @brief A GuiWidget which enables the user to draw lines and text.
 
     (C) 2004 RadonLabs GmbH
-*/    
+*/
 
 #include "gui/nguiwidget.h"
 #include "mathlib/vector.h"
@@ -59,7 +59,7 @@ public:
     /// Get number of textlabels on canvas
     int GetLabelCount() const;
 
-    
+
     // Embedded class, represents a textlabel on the canvas
     class Text
     {
@@ -124,7 +124,7 @@ public:
         nArray<line2> curve;
         vector4 color;
     };
-        
+
 
 protected:
     /// Update the Canvas
@@ -189,7 +189,7 @@ nGuiCanvas::GetCurveCount() const
 /**
 */
 inline
-void 
+void
 nGuiCanvas::AppendLineToCurve(line2 line)
 {
     this->isDirty = true;

@@ -306,7 +306,7 @@ n_getrow(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Insert a new row into the database and initialize it with the given 
+    Insert a new row into the database and initialize it with the given
     space-separated values.
 */
 static void
@@ -382,7 +382,7 @@ n_deleterow(void* slf, nCmd* cmd)
     @output
     s(Result)
     @info
-    Execute an SQL statement and return the result as a string (see 
+    Execute an SQL statement and return the result as a string (see
     nSqlResult::ToString() for information how this is structured).
 */
 static void

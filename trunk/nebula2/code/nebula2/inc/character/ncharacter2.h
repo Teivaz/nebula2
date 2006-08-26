@@ -94,7 +94,7 @@ private:
         float GetStateOffset() const;
         /// is valid?
         bool IsValid() const;
-            
+
         int stateIndex;
         float stateStarted;
         float stateOffset;
@@ -111,7 +111,7 @@ private:
     static vector4 scratchKeyArray[MaxCurves];
     static vector4 keyArray[MaxCurves];
     static vector4 transitionKeyArray[MaxCurves];
-    
+
     bool animEnabled;
     uint lastEvaluationFrameId;
 };
@@ -352,7 +352,7 @@ nCharacter2::GetAnimEventHandler() const
 /**
 */
 inline
-void 
+void
 nCharacter2::ResetCurrentState()
 {
     this->curStateInfo.SetStateIndex(-1);

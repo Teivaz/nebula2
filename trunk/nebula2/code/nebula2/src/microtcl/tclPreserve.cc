@@ -1,4 +1,4 @@
-/* 
+/*
  * tclPreserve.c --
  *
  *	This file contains a collection of procedures that are used
@@ -12,7 +12,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -72,7 +71,7 @@ typedef struct HandleStruct {
 
 static void	PreserveExitProc _ANSI_ARGS_((ClientData clientData));
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -103,7 +102,7 @@ PreserveExitProc(clientData)
     }
     Tcl_MutexUnlock(&preserveMutex);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -182,7 +181,7 @@ Tcl_Preserve(clientData)
     inUse += 1;
     Tcl_MutexUnlock(&preserveMutex);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -255,7 +254,7 @@ Tcl_Release(clientData)
 
     panic("Tcl_Release couldn't find reference for 0x%x", clientData);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -314,14 +313,14 @@ Tcl_EventuallyFree(clientData, freeProc)
 	(*freeProc)((char *)clientData);
     }
 }
-
+
 /*
  *---------------------------------------------------------------------------
  *
  * TclHandleCreate --
  *
  *	Allocate a handle that contains enough information to determine
- *	if an arbitrary malloc'd block has been deleted.  This is 
+ *	if an arbitrary malloc'd block has been deleted.  This is
  *	used to avoid the more time-expensive algorithm of Tcl_Preserve().
  *
  * Results:
@@ -357,7 +356,7 @@ TclHandleCreate(ptr)
     handlePtr->refCount = 0;
     return (TclHandle) handlePtr;
 }
-
+
 /*
  *---------------------------------------------------------------------------
  *
@@ -402,14 +401,14 @@ TclHandleFree(handle)
 	ckfree((char *) handlePtr);
     }
 }
-
+
 /*
  *---------------------------------------------------------------------------
  *
  * TclHandlePreserve --
  *
  *	Declare an interest in the arbitrary malloc'd block associated
- *	with the handle.  
+ *	with the handle.
  *
  * Results:
  *	The return value is the handle argument, with its ref count
@@ -445,7 +444,7 @@ TclHandlePreserve(handle)
 
     return handle;
 }
-
+
 /*
  *---------------------------------------------------------------------------
  *
@@ -464,7 +463,7 @@ TclHandlePreserve(handle)
  *
  *---------------------------------------------------------------------------
  */
- 
+
 void
 TclHandleRelease(handle)
     TclHandle handle;		/* Unregister interest in the block of
@@ -488,4 +487,4 @@ TclHandleRelease(handle)
 	ckfree((char *) handlePtr);
     }
 }
-    
+

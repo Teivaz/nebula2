@@ -19,7 +19,7 @@
 #include "character/ncharacter3set.h"
 
 //------------------------------------------------------------------------------
-class nNodeList 
+class nNodeList
 {
 public:
     /// the default constructor
@@ -50,7 +50,7 @@ public:
     void LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex);
     /// update vars
     void Trigger(double time, uint frameId);
-    
+
     /// check rendercontext, global vars, etc
     void TransferGlobalVars(nRenderContext &context,double time,uint frameId);
     /// add Default Variables
@@ -74,22 +74,22 @@ private:
     // Created Structure
     //
     // -scene+-default-light1
-    //       +-loaded.obj.bla.1- ... 
-    //       +-loaded.obj.bli.2- ... 
+    //       +-loaded.obj.bla.1- ...
+    //       +-loaded.obj.bli.2- ...
     //       +-loaded.obj.blu.3- ...
 
     /// Get Pointer to the first nCharacter2 Object from the current rendercontexts
-    nCharacter2*    getCharacter();
+    nCharacter2*    GetCharacter();
     nCharacter3Set* character3Set;
 
     static nNodeList* Singleton;
     uint numElements;
     nArray<nRenderContext> renderContexts;
-    nArray< nRef<nTransformNode> >  refNodes;    
+    nArray< nRef<nTransformNode> >  refNodes;
     nAutoRef<nScriptServer> refScriptServer;
     nRef<nSceneNode> refUsrScene;
     bool isOpen;
-    nVariable::Handle timeHandle;    
+    nVariable::Handle timeHandle;
     bool lightStageEnabled;
     nString stageScript;
     // FIXME: Quick and dirty
@@ -127,7 +127,7 @@ nNodeList::Instance()
 inline
 nRenderContext*
 nNodeList::GetRenderContextAt(uint index) const
-{        
+{
     n_assert( index < numElements);
     return &renderContexts[index];
 }

@@ -41,7 +41,7 @@ private:
 /**
 */
 template<class TYPE>
-void 
+void
 nThreadSafeArray<TYPE>::SignalEvent()
 {
     this->event.Signal();
@@ -51,7 +51,7 @@ nThreadSafeArray<TYPE>::SignalEvent()
 /**
 */
 template<class TYPE>
-void 
+void
 nThreadSafeArray<TYPE>::WaitEvent()
 {
     this->event.Wait();
@@ -61,7 +61,7 @@ nThreadSafeArray<TYPE>::WaitEvent()
 /**
 */
 template<class TYPE>
-void 
+void
 nThreadSafeArray<TYPE>::TimedWaitEvent(int ms)
 {
     this->event.TimedWait(ms);
@@ -71,7 +71,7 @@ nThreadSafeArray<TYPE>::TimedWaitEvent(int ms)
 /**
 */
 template<class TYPE>
-void 
+void
 nThreadSafeArray<TYPE>::Lock()
 {
     this->mutex.Lock();
@@ -81,7 +81,7 @@ nThreadSafeArray<TYPE>::Lock()
 /**
 */
 template<class TYPE>
-void 
+void
 nThreadSafeArray<TYPE>::Unlock()
 {
     this->mutex.Unlock();

@@ -6,7 +6,7 @@
     @ingroup Gui
     @brief Groups child check buttons so that only one is selected at any time.
     (OBSOLETE)
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "gui/nguiwidget.h"

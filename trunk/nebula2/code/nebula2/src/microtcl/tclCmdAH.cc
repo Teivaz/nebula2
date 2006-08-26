@@ -1,4 +1,4 @@
-/* 
+/*
  * tclCmdAH.c --
  *
  *	This file contains the top-level command routines for most of
@@ -11,7 +11,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -37,7 +36,7 @@ static int		StoreStatData _ANSI_ARGS_((Tcl_Interp *interp,
 			    char *varName, struct stat *statPtr));
 static char **		StringifyObjects _ANSI_ARGS_((int objc,
 			    Tcl_Obj *CONST objv[]));
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -73,7 +72,7 @@ Tcl_BreakObjCmd(dummy, interp, objc, objv)
     }
     return TCL_BREAK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -131,7 +130,7 @@ Tcl_CaseObjCmd(dummy, interp, objc, objv)
 
     if (caseObjc == 1) {
 	Tcl_Obj **newObjv;
-	
+
 	Tcl_ListObjGetElements(interp, caseObjv[0], &caseObjc, &newObjv);
 	caseObjv = newObjv;
     }
@@ -199,7 +198,7 @@ Tcl_CaseObjCmd(dummy, interp, objc, objv)
 	result = Tcl_EvalObjEx(interp, caseObjv[body], 0);
 	if (result == TCL_ERROR) {
 	    char msg[100 + TCL_INTEGER_SPACE];
-	    
+
 	    arg = Tcl_GetString(armPtr);
 	    sprintf(msg,
 		    "\n    (\"%.50s\" arm line %d)", arg,
@@ -215,13 +214,13 @@ Tcl_CaseObjCmd(dummy, interp, objc, objv)
 
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
  * Tcl_CatchObjCmd --
  *
- *	This object-based procedure is invoked to process the "catch" Tcl 
+ *	This object-based procedure is invoked to process the "catch" Tcl
  *	command. See the user documentation for details on what it does.
  *
  * Results:
@@ -255,18 +254,18 @@ Tcl_CaseObjCmd(dummy, interp, objc, objv)
          * Tcl_EvalObj reallocates the bytecode interpreter's evaluation
          * stack rendering objv invalid.
          */
-    
+
         if (objc == 3) {
 	    varNamePtr = objv[2];
         }
 
         result = Tcl_EvalObjEx(interp, objv[1], 0);
-    
+
         if (objc == 3) {
 	    if (Tcl_ObjSetVar2(interp, varNamePtr, NULL,
 		    Tcl_GetObjResult(interp), 0) == NULL) {
 	        Tcl_ResetResult(interp);
-	        Tcl_AppendToObj(Tcl_GetObjResult(interp),  
+	        Tcl_AppendToObj(Tcl_GetObjResult(interp),
 	                "couldn't save command result in variable", -1);
 	        return TCL_ERROR;
 	    }
@@ -371,7 +370,7 @@ Tcl_ConcatObjCmd(dummy, interp, objc, objv)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -407,7 +406,7 @@ Tcl_ContinueObjCmd(dummy, interp, objc, objv)
     }
     return TCL_CONTINUE;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -470,7 +469,7 @@ Tcl_ContinueObjCmd(dummy, interp, objc, objv)
 		    Tcl_WrongNumArgs(interp, 2, objv, "?encoding? data");
 		    return TCL_ERROR;
 	        }
-	        
+
 	        encoding = Tcl_GetEncoding(interp, name);
 	        if (!encoding) {
 		    return TCL_ERROR;
@@ -500,7 +499,7 @@ Tcl_ContinueObjCmd(dummy, interp, objc, objv)
 		    string = Tcl_GetStringFromObj(data, &length);
 		    Tcl_UtfToExternalDString(encoding, string, length, &ds);
 		    resultPtr = Tcl_GetObjResult(interp);
-		    Tcl_SetByteArrayObj(resultPtr, 
+		    Tcl_SetByteArrayObj(resultPtr,
 			    (unsigned char *) Tcl_DStringValue(&ds),
 			    Tcl_DStringLength(&ds));
 		    Tcl_DStringFree(&ds);
@@ -569,7 +568,7 @@ Tcl_ContinueObjCmd(dummy, interp, objc, objv)
 	    Tcl_WrongNumArgs(interp, 1, objv, "message ?errorInfo? ?errorCode?");
 	    return TCL_ERROR;
         }
-    
+
         if (objc >= 3) {		/* process the optional info argument */
 	    info = Tcl_GetStringFromObj(objv[2], &infoLen);
 	    if (*info != 0) {
@@ -577,12 +576,12 @@ Tcl_ContinueObjCmd(dummy, interp, objc, objv)
 	        iPtr->flags |= ERR_ALREADY_LOGGED;
 	    }
         }
-    
+
         if (objc == 4) {
 	    Tcl_SetVar2Ex(interp, "errorCode", NULL, objv[3], TCL_GLOBAL_ONLY);
 	    iPtr->flags |= ERROR_CODE_SET;
         }
-    
+
         Tcl_SetObjResult(interp, objv[1]);
         return TCL_ERROR;
     }
@@ -593,7 +592,7 @@ Tcl_ContinueObjCmd(dummy, interp, objc, objv)
  *
  * Tcl_EvalObjCmd --
  *
- *	This object-based procedure is invoked to process the "eval" Tcl 
+ *	This object-based procedure is invoked to process the "eval" Tcl
  *	command. See the user documentation for details on what it does.
  *
  * Results:
@@ -620,7 +619,7 @@ Tcl_EvalObjCmd(dummy, interp, objc, objv)
 	Tcl_WrongNumArgs(interp, 1, objv, "arg ?arg ...?");
 	return TCL_ERROR;
     }
-    
+
     if (objc == 2) {
 	result = Tcl_EvalObjEx(interp, objv[1], TCL_EVAL_DIRECT);
     } else {
@@ -640,7 +639,7 @@ Tcl_EvalObjCmd(dummy, interp, objc, objv)
     }
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -673,7 +672,7 @@ Tcl_EvalObjCmd(dummy, interp, objc, objv)
 	    Tcl_WrongNumArgs(interp, 1, objv, "?returnCode?");
 	    return TCL_ERROR;
         }
-    
+
         if (objc == 1) {
 	    value = 0;
         } else if (Tcl_GetIntFromObj(interp, objv[1], &value) != TCL_OK) {
@@ -716,7 +715,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
     Tcl_Interp *interp;		/* Current interpreter. */
     int objc;			/* Number of arguments. */
     Tcl_Obj *CONST objv[];	/* Argument objects. */
-{	 
+{
     register Tcl_Obj *objPtr;
     Tcl_Obj *resultPtr;
     register char *bytes;
@@ -762,11 +761,11 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
     /*
      * Free allocated resources.
      */
-    
+
     Tcl_DecrRefCount(objPtr);
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -894,7 +893,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	        result = TclFileCopyCmd(interp, objc, argv);
 	        ckfree((char *) argv);
 	        return result;
-	    }	    
+	    }
 	    case FILE_DELETE: {
 	        int result;
 	        char **argv;
@@ -980,7 +979,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
     	    case FILE_ISFILE: {
 	        int value;
 	        struct stat buf;
-	        
+
     	        if (objc != 3) {
     	    	    goto only3Args;
     	        }
@@ -1094,14 +1093,14 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	    case FILE_OWNED: {
 	        int value;
 	        struct stat buf;
-	        
+
 	        if (objc != 3) {
 		    goto only3Args;
 	        }
 	        value = 0;
 	        if (GetStatBuf(NULL, objv[2], TclStat, &buf) == TCL_OK) {
 		    /*
-		     * For Windows and Macintosh, there are no user ids 
+		     * For Windows and Macintosh, there are no user ids
 		     * associated with a file, so we always return 1.
 		     */
 
@@ -1110,7 +1109,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
     #else
 		    value = (geteuid() == buf.st_uid);
     #endif
-	        }	    
+	        }
 	        Tcl_SetBooleanObj(resultPtr, value);
 	        return TCL_OK;
 	    }
@@ -1143,11 +1142,11 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	    case FILE_READLINK: {
 	        char *fileName, *contents;
 	        Tcl_DString name, link;
-		    
+
 	        if (objc != 3) {
 		    goto only3Args;
 	        }
-	        
+
 	        fileName = Tcl_GetString(objv[2]);
 	        fileName = Tcl_TranslateFileName(interp, fileName, &name);
 	        if (fileName == NULL) {
@@ -1171,8 +1170,8 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 
 	        Tcl_DStringFree(&name);
 	        if (contents == NULL) {
-	    	    Tcl_AppendResult(interp, "could not readlink \"", 
-	    		    Tcl_GetString(objv[2]), "\": ", 
+	    	    Tcl_AppendResult(interp, "could not readlink \"",
+	    		    Tcl_GetString(objv[2]), "\": ",
 	    		    Tcl_PosixError(interp), (char *) NULL);
 	    	    return TCL_ERROR;
 	        }
@@ -1191,7 +1190,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	    case FILE_ROOTNAME: {
 	        int length;
 	        char *fileName, *extension;
-	        
+
 	        if (objc != 3) {
 		    goto only3Args;
 	        }
@@ -1207,7 +1206,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	    }
 	    case FILE_SIZE: {
 	        struct stat buf;
-	        
+
 	        if (objc != 3) {
 		    goto only3Args;
 	        }
@@ -1222,7 +1221,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	        char **argv;
 	        char *fileName;
 	        Tcl_Obj *objPtr;
-	        
+
 	        if (objc != 3) {
 		    goto only3Args;
 	        }
@@ -1238,7 +1237,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	    case FILE_STAT: {
 	        char *varName;
 	        struct stat buf;
-	        
+
 	        if (objc != 4) {
 	    	    Tcl_WrongNumArgs(interp, 1, objv, "stat name varName");
 		    return TCL_ERROR;
@@ -1283,7 +1282,7 @@ Tcl_ExprObjCmd(dummy, interp, objc, objv)
 	        if (GetStatBuf(interp, objv[2], TclpLstat, &buf) != TCL_OK) {
 		    return TCL_ERROR;
 	        }
-	        Tcl_SetStringObj(resultPtr, 
+	        Tcl_SetStringObj(resultPtr,
 		        GetTypeFromMode((unsigned short) buf.st_mode), -1);
 	        return TCL_OK;
 	    }
@@ -1354,7 +1353,7 @@ SplitPath(interp, objPtr, argcPtr, argvPtr)
     Tcl_SplitPath(fileName, argcPtr, argvPtr);
     if ((*argcPtr == 1) && (fileName[0] == '~')) {
 	Tcl_DString ds;
-	
+
 	ckfree((char *) *argvPtr);
 	fileName = Tcl_TranslateFileName(interp, fileName, &ds);
 	if (fileName == NULL) {
@@ -1366,7 +1365,7 @@ SplitPath(interp, objPtr, argcPtr, argvPtr)
     return TCL_OK;
 }
 #endif
-
+
 /*
  *---------------------------------------------------------------------------
  *
@@ -1397,7 +1396,7 @@ CheckAccess(interp, objPtr, mode)
     int value;
     char *fileName;
     Tcl_DString ds;
-    
+
     fileName = Tcl_GetString(objPtr);
     fileName = Tcl_TranslateFileName(interp, fileName, &ds);
     if (fileName == NULL) {
@@ -1445,7 +1444,7 @@ GetStatBuf(interp, objPtr, statProc, statPtr)
     char *fileName;
     Tcl_DString ds;
     int status;
-    
+
     fileName = Tcl_GetString(objPtr);
     fileName = Tcl_TranslateFileName(interp, fileName, &ds);
     if (fileName == NULL) {
@@ -1454,7 +1453,7 @@ GetStatBuf(interp, objPtr, statProc, statPtr)
 
     status = (*statProc)(Tcl_DStringValue(&ds), statPtr);
     Tcl_DStringFree(&ds);
-    
+
     if (status < 0) {
 	if (interp != NULL) {
 	    Tcl_AppendResult(interp, "could not read \"",
@@ -1466,7 +1465,7 @@ GetStatBuf(interp, objPtr, statProc, statPtr)
     return TCL_OK;
 }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1547,13 +1546,13 @@ StoreStatData(interp, varName, statPtr)
 	return TCL_ERROR;
     }
     if (Tcl_SetVar2(interp, varName, "type",
-	    GetTypeFromMode((unsigned short) statPtr->st_mode), 
+	    GetTypeFromMode((unsigned short) statPtr->st_mode),
 	    TCL_LEAVE_ERR_MSG) == NULL) {
 	return TCL_ERROR;
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1596,7 +1595,7 @@ GetTypeFromMode(mode)
     }
     return "unknown";
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1684,7 +1683,7 @@ Tcl_ForObjCmd(dummy, interp, objc, objv)
     }
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1723,11 +1722,11 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
      * the evaluation stack and that stack might be grown and reallocated
      * if the loop body requires a large amount of stack space.
      */
-    
+
 #define NUM_ARGS 9
     Tcl_Obj *(argObjStorage[NUM_ARGS]);
     Tcl_Obj **argObjv = argObjStorage;
-    
+
 #define STATIC_LIST_SIZE 4
     int indexArray[STATIC_LIST_SIZE];	  /* Array of value list indices */
     int varcListArray[STATIC_LIST_SIZE];  /* # loop variables per list */
@@ -1800,13 +1799,13 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
 	    result = TCL_ERROR;
 	    goto done;
 	}
-	
+
 	result = Tcl_ListObjGetElements(interp, argObjv[2+i*2],
 	        &argcList[i], &argvList[i]);
 	if (result != TCL_OK) {
 	    goto done;
 	}
-	
+
 	j = argcList[i] / varcList[i];
 	if ((argcList[i] % varcList[i]) != 0) {
 	    j++;
@@ -1820,7 +1819,7 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
      * Iterate maxj times through the lists in parallel
      * If some value lists run out of values, set loop vars to ""
      */
-    
+
     bodyPtr = argObjv[objc-1];
     for (j = 0;  j < maxj;  j++) {
 	for (i = 0;  i < numLists;  i++) {
@@ -1844,12 +1843,12 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
 		    panic("Tcl_ForeachObjCmd: could not reconvert value list %d to a list object\n", i);
 		}
 	    }
-	    
+
 	    for (v = 0;  v < varcList[i];  v++) {
 		int k = index[i]++;
 		Tcl_Obj *valuePtr, *varValuePtr;
 		int isEmptyObj = 0;
-		
+
 		if (k < argcList[i]) {
 		    valuePtr = argvList[i][k];
 		} else {
@@ -1911,7 +1910,7 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
 #undef STATIC_LIST_SIZE
 #undef NUM_ARGS
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1966,10 +1965,10 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
     #   define DOUBLE_VALUE 3
     #   define STRING_VALUE 4
     #   define MAX_FLOAT_SIZE 320
-    
+
         Tcl_Obj *resultPtr;  	/* Where result is stored finally. */
         char staticBuf[MAX_FLOAT_SIZE + 1];
-                                    /* A static buffer to copy the format results 
+                                    /* A static buffer to copy the format results
 				     * into */
         char *dst = staticBuf;      /* The buffer that sprintf writes into each
 				     * time the format processes a specifier */
@@ -2317,7 +2316,7 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
 			    }
 		        }
 
-		        size = Tcl_UtfAtIndex(ptrValue, stringLen) - ptrValue; 
+		        size = Tcl_UtfAtIndex(ptrValue, stringLen) - ptrValue;
 		        if (size) {
 			    memcpy(ptr, ptrValue, (size_t) size);
 			    ptr += size;
@@ -2345,16 +2344,16 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
         return TCL_OK;
 
         mixedXPG:
-        Tcl_SetResult(interp, 
+        Tcl_SetResult(interp,
                 "cannot mix \"%\" and \"%n$\" conversion specifiers", TCL_STATIC);
         goto fmtError;
 
         badIndex:
         if (gotXpg) {
-            Tcl_SetResult(interp, 
+            Tcl_SetResult(interp,
                     "\"%n$\" argument index out of range", TCL_STATIC);
         } else {
-            Tcl_SetResult(interp, 
+            Tcl_SetResult(interp,
                     "not enough arguments for all format specifiers", TCL_STATIC);
         }
 
@@ -2374,7 +2373,7 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
  *
  *	Helper function to bridge the gap between an object-based procedure
  *	and an older string-based procedure.
- * 
+ *
  *	Given an array of objects, allocate an array that consists of the
  *	string representations of those objects.
  *
@@ -2398,7 +2397,7 @@ StringifyObjects(objc, objv)
 {
     int i;
     char **argv;
-    
+
     argv = (char **) ckalloc((objc + 1) * sizeof(char *));
     for (i = 0; i < objc; i++) {
     	argv[i] = Tcl_GetString(objv[i]);

@@ -3,10 +3,10 @@
 //------------------------------------------------------------------------------
 /**
     @class nSqlQuery
-    
+
     The nSqlQuery class represents a query into an SQL database and provides
     simple access to the query's result.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/nrefcounted.h"

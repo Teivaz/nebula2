@@ -6,7 +6,7 @@
     @ingroup Scene
 
     See also @ref N2ScriptInterface_nblendshapenode
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nmaterialnode.h"
@@ -57,7 +57,7 @@ public:
     int GetNumShapes() const;
 
     /// max number of shapes
-    enum 
+    enum
     {
         MaxShapes = 7,
     };
@@ -66,7 +66,7 @@ protected:
     /// update shader state with new weights
     void UpdateShaderState();
 
-    class Shape 
+    class Shape
     {
     public:
         /// constructor
@@ -78,7 +78,7 @@ protected:
         bbox3 localBox;
         float weight;
     };
-    
+
     int numShapes;
     int groupIndex;
     nFixedArray<Shape> shapeArray;

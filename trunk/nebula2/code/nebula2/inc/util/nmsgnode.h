@@ -14,7 +14,7 @@
 #include "util/nnode.h"
 
 //------------------------------------------------------------------------------
-class nMsgNode : public nNode 
+class nMsgNode : public nNode
 {
 public:
     /// constructor
@@ -34,7 +34,7 @@ private:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nMsgNode::nMsgNode(void *buf, int size)
 {
     n_assert(buf);
@@ -48,16 +48,16 @@ nMsgNode::nMsgNode(void *buf, int size)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nMsgNode::~nMsgNode()
 {
     n_free(this->msgBuf);
-}     
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 void*
 nMsgNode::GetMsgPtr() const
 {
@@ -67,8 +67,8 @@ nMsgNode::GetMsgPtr() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-int 
+inline
+int
 nMsgNode::GetMsgSize() const
 {
     return this->msgSize;

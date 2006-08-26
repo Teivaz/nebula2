@@ -8,11 +8,11 @@
     Base class for specific mesh loaders. Mesh loaders load mesh data
     from a specific file format into user-provided memory blocks
     for vertex and index data.
-    
+
     nMeshLoader is a non-functional base class. Use the specialized
     classes nN3d2Loader and nNvx2Loader to load mesh files of those
     formats.
-    
+
     The following shows that how to read vertices and indices from .n3d2 file.
 
     @code
@@ -42,7 +42,7 @@
         v.x = vbuf[idx];
         v.y = vbuf[idx + 1];
         v.z = vbuf[idx + 2];
-  
+
         // Do some task whatever you want
         // ...
 
@@ -52,7 +52,7 @@
 
     // read indices.
     ushort ibufSize = meshLoader->GetNumIndices() * sizeof(ushort);
-    ushort* ibuf = n_new_array(ushort, ibufSize); 
+    ushort* ibuf = n_new_array(ushort, ibufSize);
 
     meshLoader->ReadIndices(ibuf, ibufSize);
 
@@ -259,11 +259,11 @@ nMeshLoader::Open()
     n_assert(0 != this->fileVertexWidth);
     n_assert(0 != this->fileVertexComponents);
     n_assert(0 != this->validVertexComponents);
-    
+
     // create the real vertex components
     this->vertexComponents = (this->validVertexComponents & this->fileVertexComponents);
     this->vertexWidth = nMesh2::GetVertexWidthFromMask(this->vertexComponents);
-    
+
     return true;
 }
 
@@ -291,7 +291,7 @@ nMeshLoader::GetNumGroups() const
 /**
 */
 inline
-const nMeshGroup& 
+const nMeshGroup&
 nMeshLoader::GetGroupAt(int index) const
 {
     return this->groupArray[index];

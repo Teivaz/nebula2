@@ -7,7 +7,7 @@
 
     FIXME FIXME FIMXE
 
-    This class implements experimental stacktracing under Win32, and 
+    This class implements experimental stacktracing under Win32, and
     hasn't been integrated so far with the rest of the code. Should be
     unified with Bruce's Linux stacktracer (can we use a similar approach
     like the nLogHandler class? One base class with platform specific
@@ -48,7 +48,7 @@ protected:
 
     static char CharBuffer[1<<15];
 	HANDLE process;
-	struct Params 
+	struct Params
     {
 		nWin32StackTrace* self;
 		DWORD64 base;

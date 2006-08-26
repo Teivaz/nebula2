@@ -101,7 +101,7 @@ nCombinedAnimation::EndAnims()
         {
             nAnimation::Group &srcGroup = this->animPtrs[i]->GetGroupAt(k);
             nAnimation::Group &dstGroup = this->GetGroupAt(currentGroup);
-            
+
             dstGroup.SetNumCurves( srcGroup.GetNumCurves() );
             dstGroup.SetStartKey( srcGroup.GetStartKey());
             dstGroup.SetNumKeys( srcGroup.GetNumKeys() );

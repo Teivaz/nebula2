@@ -75,7 +75,7 @@ nGuiMessageBox::OnShow()
         n_assert(iconButton);
 
         iconButton->SetDisabledBrush(this->iconBrush.Get());
-        
+
         iconButton->SetMinSize(iconSize);
         iconButton->SetMaxSize(iconSize);
         iconButton->Disable();  // use it as a icon - so disable it.
@@ -89,11 +89,11 @@ nGuiMessageBox::OnShow()
         layout->AttachWidget(textLabel, nGuiFormLayout::Left, iconButton, 0.0f);
     }
     else
-    {    
+    {
         //textfield layout
         layout->AttachForm(textLabel, nGuiFormLayout::Left, 0.0f);
     }
-  
+
     vector2 buttonSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("button_n");
     // create ok button
 

@@ -10,10 +10,10 @@
     sample a weight-blended result from them. Each anim clip is associated
     with a weight value between 0 and 1 which defines how much that anim
     clip influences the resulting animation.
-    
+
     An nAnimation object connected to the nAnimState object delivers
     the actual animation data.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -62,7 +62,7 @@ private:
     void AddEmitEvent(const nAnimEventTrack& track, const nAnimEvent& event, float weight);
     /// finish defining blended anim events, emit the events
     void EndEmitEvents(nAnimEventHandler* handler);
-        
+
     nArray<nAnimClip> clipArray;
     nString name;
     int animGroupIndex;

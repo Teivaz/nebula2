@@ -5,7 +5,7 @@
     @class nSessionAttrPool
     @ingroup Network
     @brief An attribute pool class for the network subsystem.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/nautoref.h"
@@ -64,7 +64,7 @@ nSessionAttrPool::SetAttr(const char* name, const char* val)
 
     // get a handle for the variable name
     nVariable::Handle varHandle = this->refVarServer->GetVariableHandleByName(name);
-   
+
     // update existing variable or create new one
     nVariable* var = this->attrs.GetVariable(varHandle);
     if (var)
@@ -121,5 +121,5 @@ nSessionAttrPool::GetAttrAt(int index, const char*& name, const char*& val)
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

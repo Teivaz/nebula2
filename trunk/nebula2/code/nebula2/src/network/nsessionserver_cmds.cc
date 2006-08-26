@@ -139,7 +139,7 @@ n_getappversion(void* slf, nCmd* cmd)
     @output
     v
     @info
-    Set max number of clients which may join a session.    
+    Set max number of clients which may join a session.
 */
 static void
 n_setmaxnumclients(void* slf, nCmd* cmd)

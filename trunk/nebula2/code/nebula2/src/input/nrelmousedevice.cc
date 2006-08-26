@@ -19,7 +19,7 @@ nRelMouseDevice::nRelMouseDevice(nKernelServer* ks, nInputServer* is, int devNum
         this->SetStoreSize(this->numAxes * 2);
     }
 
-    // initialize axis filter 
+    // initialize axis filter
     int i;
     for (i = 0; i < NUMFILTEREDAXIS; i++)
     {
@@ -78,7 +78,7 @@ nRelMouseDevice::Export(nRoot* dir)
             case 6: axisName = "u"; break;
             case 7: axisName = "v"; break;
             case 8: axisName = "w"; break;
-            default: 
+            default:
                 continue;
         }
 
@@ -109,9 +109,9 @@ nRelMouseDevice::Export(nRoot* dir)
         char chnName[N_MAXNAMELEN];
         sprintf(chnName, "btn%d", curBtn);
         this->ExportButton(devId, chnName, curBtn);
-    } 
+    }
 
-    kernelServer->PopCwd();        
+    kernelServer->PopCwd();
     kernelServer->PopCwd();
     kernelServer->PopCwd();
 }
@@ -134,7 +134,7 @@ void
 nRelMouseDevice::EmitAxisMovedEvents(int axisNum, int value)
 {
     int devId = N_INPUT_RELMOUSE(this->deviceNum);
-    
+
     // touch the axis moved flags
     if (0 == axisNum)
     {
@@ -209,7 +209,7 @@ nRelMouseDevice::EmitAxisMovedEvents(int axisNum, int value)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nRelMouseDevice::EmitButtonEvents(int btnNum, bool pressed)
 {
     n_assert((btnNum >= 0) && (btnNum < this->numButtons));
@@ -239,7 +239,7 @@ nRelMouseDevice::ResetAxis(int axisNum)
 
     float oldNegAxisVal = this->GetStoreValue(negAxisIndex);
     float oldPosAxisVal = this->GetStoreValue(posAxisIndex);
-    
+
     // generate positive/negative axis move events
     this->PutAxisEvent(devId, negAxisIndex, 0.0f);
     this->PutAxisEvent(devId, posAxisIndex, 0.0f);

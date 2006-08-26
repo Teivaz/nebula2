@@ -28,7 +28,7 @@ nAbstractCameraNode::~nAbstractCameraNode()
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nAbstractCameraNode::HasCamera() const
 {
     return true;

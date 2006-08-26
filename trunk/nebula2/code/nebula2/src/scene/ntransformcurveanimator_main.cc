@@ -11,7 +11,7 @@ nNebulaScriptClass(nTransformCurveAnimator, "nanimator");
 //------------------------------------------------------------------------------
 /**
 */
-nTransformCurveAnimator::nTransformCurveAnimator() : 
+nTransformCurveAnimator::nTransformCurveAnimator() :
     refAnimationServer("/sys/servers/anim"),
     animationGroup(0)
 {
@@ -144,10 +144,10 @@ nTransformCurveAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 
     // sample curves and manipulate target object
     vector4 keyArray[3];
-    this->refAnimation->SampleCurves(curTime, this->animationGroup, 0, 3, &keyArray[0]); 
-    
+    this->refAnimation->SampleCurves(curTime, this->animationGroup, 0, 3, &keyArray[0]);
+
     targetNode->SetPosition(vector3(keyArray[0].x, keyArray[0].y, keyArray[0].z));
     targetNode->SetQuat(quaternion(keyArray[1].x, keyArray[1].y, keyArray[1].z, keyArray[1].w));
     targetNode->SetScale(vector3(keyArray[2].x, keyArray[2].y, keyArray[2].z));
-    
+
 }

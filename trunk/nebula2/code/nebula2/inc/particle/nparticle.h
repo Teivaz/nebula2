@@ -1,7 +1,7 @@
 #ifndef N_PARTICLE_H
 #define N_PARTICLE_H
 //------------------------------------------------------------------------------
-/**    
+/**
     @class nParticle
     @ingroup NebulaParticleSystem
     @brief This class represents a single particle in a particle system.
@@ -18,7 +18,7 @@ class nParticleEmitter;
 class nParticle
 {
 public:
-    enum State 
+    enum State
     {
         Unborn,
         Living,
@@ -69,7 +69,7 @@ protected:
 /**
 */
 inline
-void 
+void
 nParticle::SetState(State state)
 {
     this->state = state;
@@ -79,7 +79,7 @@ nParticle::SetState(State state)
 /**
 */
 inline
-nParticle::State 
+nParticle::State
 nParticle::GetState() const
 {
     return this->state;
@@ -89,7 +89,7 @@ nParticle::GetState() const
 /**
 */
 inline
-void 
+void
 nParticle::SetBirthTime(float time)
 {
     this->birthTime = time;
@@ -109,7 +109,7 @@ nParticle::GetBirthTime() const
 /**
 */
 inline
-void 
+void
 nParticle::SetLifeTime(float time)
 {
     this->lifeTime = time;
@@ -149,7 +149,7 @@ nParticle::GetVelocity() const
 /**
 */
 inline
-float 
+float
 nParticle::GetRotation()
 {
     return this->rotation;
@@ -170,7 +170,7 @@ nTime nParticle::GetAge() const
 /**
 */
 inline
-float 
+float
 nParticle::GetRelativeAge(float curTime) const
 {
     return n_saturate(((curTime - this->birthTime) / this->lifeTime));

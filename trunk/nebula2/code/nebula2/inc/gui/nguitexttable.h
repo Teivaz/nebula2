@@ -6,7 +6,7 @@
     @ingroup Gui
 
     @brief A table layout which implements a grid of texts.
-   
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"
@@ -147,5 +147,5 @@ nGuiTextTable::GetNumCols() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

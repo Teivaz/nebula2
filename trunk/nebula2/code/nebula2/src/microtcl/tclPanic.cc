@@ -1,4 +1,4 @@
-/* 
+/*
  * tclPanic.c --
  *
  *	Source code for the "Tcl_Panic" library procedure for Tcl;
@@ -12,7 +12,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -23,7 +22,7 @@
  */
 
 void (*panicProc) _ANSI_ARGS_(TCL_VARARGS(char *,format)) = NULL;
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -46,7 +45,7 @@ Tcl_SetPanicProc(proc)
 {
     panicProc = proc;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -81,7 +80,7 @@ Tcl_PanicVA (format, argList)
     arg6 = va_arg(argList, char *);
     arg7 = va_arg(argList, char *);
     arg8 = va_arg(argList, char *);
-    
+
     if (panicProc != NULL) {
 	(void) (*panicProc)(format, arg1, arg2, arg3, arg4,
 		arg5, arg6, arg7, arg8);
@@ -93,7 +92,7 @@ Tcl_PanicVA (format, argList)
 	abort();
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *

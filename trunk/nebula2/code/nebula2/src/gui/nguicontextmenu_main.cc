@@ -60,7 +60,7 @@ nGuiContextMenu::OnShow()
     float maxWidth = 0.0f;
     nGuiTextButton* prevBtn = 0;
     int i = 0;
-    int num = this->entryArray.Size(); 
+    int num = this->entryArray.Size();
     for (i = 0; i < num; i++)
     {
         char uniqueObjName[N_MAXPATH];
@@ -138,11 +138,11 @@ nGuiContextMenu::OnHide()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiContextMenu::OnEvent(const nGuiEvent& event)
 {
 	// handle button ups
-	if (event.GetType() == nGuiEvent::RButtonUp) 
+	if (event.GetType() == nGuiEvent::RButtonUp)
     {
         const vector2& mousePos = nGuiServer::Instance()->GetMousePos();
 

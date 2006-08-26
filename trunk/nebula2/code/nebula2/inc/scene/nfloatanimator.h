@@ -24,7 +24,7 @@ public:
     virtual bool SaveCmds(nPersistServer* ps);
     /// called by scene node objects which wish to be animated by this object
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
-    /// add a key 
+    /// add a key
     void AddKey(float time, float key);
     /// get number of keys
     int GetNumKeys() const;

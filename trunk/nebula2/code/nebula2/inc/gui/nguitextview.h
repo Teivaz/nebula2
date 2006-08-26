@@ -6,10 +6,10 @@
     @ingroup Gui
     @brief A multiline text viewing widgets, which can display lines of
     text.
-    
+
     This is the basis for more advanced widgets which need to display text
     in multiple lines.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"
@@ -55,7 +55,7 @@ public:
     const nString& GetLineAt(int i) const;
     /// set the line offset (the index of the first visible line)
     void SetLineOffset(int i);
-    /// get the line offset 
+    /// get the line offset
     int GetLineOffset() const;
     /// enable/disable selection handling
     void SetSelectionEnabled(bool b);
@@ -80,7 +80,7 @@ public:
     /// called when widget is becoming invisible
     virtual void OnHide();
     /// called when widget position or size changes
-    virtual void OnRectChange(const rectangle& newRect);   
+    virtual void OnRectChange(const rectangle& newRect);
     /// called per frame when parent widget is visible
     virtual void OnFrame();
     /// notify widget of an event
@@ -409,5 +409,5 @@ nGuiTextView::GetCalculateTextAlwaysWithSlider() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

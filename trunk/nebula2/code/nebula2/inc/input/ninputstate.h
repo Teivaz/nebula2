@@ -30,7 +30,7 @@ class nInputState : public nHashNode
     float val;
 
 public:
-    nInputState(const char* name) 
+    nInputState(const char* name)
         : nHashNode(name),
           refCount(0),
           btn(false),
@@ -85,7 +85,7 @@ public:
 */
 //-------------------------------------------------------------------
 class nInputServer;
-class nInputMapping : public nHashNode 
+class nInputMapping : public nHashNode
 {
     nInputServer *iserv;    ///< pointer to input server
     nInputEvent *ie;        ///< input event itself

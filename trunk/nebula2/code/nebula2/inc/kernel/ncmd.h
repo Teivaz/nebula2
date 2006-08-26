@@ -6,8 +6,8 @@
     @ingroup NebulaObjectSystem
     @ingroup NebulaScriptServices
 
-    Encapsulates a function call into a C++ object. 
-    
+    Encapsulates a function call into a C++ object.
+
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -16,7 +16,7 @@
 
 //------------------------------------------------------------------------------
 class nCmdProto;
-class nCmd 
+class nCmd
 {
 public:
     /// constructor
@@ -46,20 +46,20 @@ public:
     int GetInArgIndex() const;
 
 private:
-    enum 
+    enum
     {
         N_MAXNUM_ARGS = 16,
     };
-    nCmdProto *cmdProto;           
+    nCmdProto *cmdProto;
     int outArgIndex;
     int inArgIndex;
-    nArg args[N_MAXNUM_ARGS];   
+    nArg args[N_MAXNUM_ARGS];
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nCmd::nCmd(nCmdProto* proto)
 {
     n_assert(proto);
@@ -71,7 +71,7 @@ nCmd::nCmd(nCmdProto* proto)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nCmd::nCmd(const nCmd& rhs)
 {
     this->cmdProto    = rhs.cmdProto;
@@ -88,8 +88,8 @@ nCmd::nCmd(const nCmd& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-int 
+inline
+int
 nCmd::GetNumInArgs() const
 {
     return this->cmdProto->GetNumInArgs();
@@ -98,8 +98,8 @@ nCmd::GetNumInArgs() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-int 
+inline
+int
 nCmd::GetNumOutArgs() const
 {
     return this->cmdProto->GetNumOutArgs();
@@ -108,7 +108,7 @@ nCmd::GetNumOutArgs() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nCmdProto*
 nCmd::GetProto() const
 {
@@ -118,19 +118,19 @@ nCmd::GetProto() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-nFourCC 
+inline
+nFourCC
 nCmd::GetId() const
-{ 
+{
     return this->cmdProto->GetId();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
-nCmd::Rewind() 
+inline
+void
+nCmd::Rewind()
 {
     this->inArgIndex  = this->cmdProto->GetNumOutArgs();
     this->outArgIndex = 0;
@@ -139,7 +139,7 @@ nCmd::Rewind()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nArg*
 nCmd::In()
 {
@@ -150,7 +150,7 @@ nCmd::In()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nArg*
 nCmd::Out()
 {
@@ -161,7 +161,7 @@ nCmd::Out()
 
 //------------------------------------------------------------------------------
 inline
-void 
+void
 nCmd::CopyInArgsFrom(va_list marker)
 {
     va_list markerCopy;
@@ -185,7 +185,7 @@ nCmd::CopyInArgsFrom(nCmd * cmd)
     cmd->Rewind();
     this->Rewind();
 
-    // copy the arguments from the cmd provided 
+    // copy the arguments from the cmd provided
     for(int i = 0;i < cmd->GetNumInArgs();i++)
     {
         nArg * argSrc = cmd->In();
@@ -203,10 +203,10 @@ nCmd::CopyInArgsFrom(nCmd * cmd)
                              custom attribute of a function in-arg.
 */
 inline
-int 
+int
 nCmd::GetInArgIndex() const
 {
     return this->inArgIndex;
 }
 //------------------------------------------------------------------------------
-#endif    
+#endif

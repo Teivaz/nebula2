@@ -236,7 +236,7 @@ nGuiDockWindow::OnHide()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nGuiDockWindow::OnEvent(const nGuiEvent& event)
 {
     if (event.GetType() == nGuiEvent::ButtonUp)

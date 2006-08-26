@@ -46,7 +46,7 @@ nGuiMouseCursor::OnShow()
     this->UpdateRect();
     this->openFirstFrame = true;
     this->fadeinRequested = true;
-    
+
     nGuiLabel::OnShow();
 }
 
@@ -66,7 +66,7 @@ nGuiMouseCursor::OnMouseMoved(const vector2& mousePos)
 */
 void
 nGuiMouseCursor::SetBrush(const nString& brush)
-{    
+{
     this->SetDefaultBrush(brush.Get());
     this->brushSizeIsDirty = true;
     this->openFirstFrame = true;
@@ -83,7 +83,7 @@ nGuiMouseCursor::Render()
     if (this->IsShown())
     {
         nGuiServer* guiServer = nGuiServer::Instance();
-       
+
         this->UpdateColor();
 
         vector4 globalColor = guiServer->GetGlobalColor();
@@ -112,7 +112,7 @@ nGuiMouseCursor::Render()
 */
 void
 nGuiMouseCursor::UpdateColor()
-{    
+{
     this->windowColor = vector4(1.0f, 1.0f, 1.0f, 1.0f);
 
     // NOTE: the use on nTimeServer is intentional, as the current
@@ -152,18 +152,18 @@ nGuiMouseCursor::UpdateRect()
 {
     // get current mouse pos directly from input server
     const vector2& mousePos = nGuiServer::Instance()->GetMousePos();
-    
+
     if (this->brushSizeIsDirty && !this->lockBrushSize)
     {
         this->brushSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize(this->GetDefaultBrush());
         this->brushSizeIsDirty = false;
     }
-    
+
     // update screen space rectangle
     vector2 absHotSpot(this->hotSpot.x * this->brushSize.x, this->hotSpot.y * this->brushSize.y);
     rectangle r(mousePos - absHotSpot, mousePos + this->brushSize - absHotSpot);
     //nGuiServer::Instance()->MoveRectToVisibleArea(r);
-    
+
     this->SetRect(r);
 }
 

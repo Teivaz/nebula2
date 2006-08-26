@@ -27,13 +27,13 @@ void
 nCharacter3Set::Init(nCharacter3Node* characterNode)
 {
     n_assert(characterNode);
-    
+
     this->selectedSkins.Clear();
     this->skinNames.Clear();
     this->animationNames.Clear();
 
     this->skinNames = characterNode->GetNamesOfLoadedSkins();
-    this->variationNames = characterNode->GetNamesOfLoadedVariations(); 
+    this->variationNames = characterNode->GetNamesOfLoadedVariations();
     this->numAvailableSkins = this->skinNames.Size();
     this->animationNames = characterNode->GetNamesOfLoadedAnimations();
     this->numAvailableAnimations = this->animationNames.Size();
@@ -54,7 +54,7 @@ nCharacter3Set::Init(nCharacter3Node* characterNode)
 //------------------------------------------------------------------------------
 /**
 */
-bool 
+bool
 nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nString& fileName)
 {
     n_assert(this->IsValid());
@@ -85,7 +85,7 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
             if(numTokens == 3)
             {
                 for(k = 0; k < skin.Size(); k += 3)
-                {   
+                {
                     if( (skin[k] == nameTokens[0]) &&
                         (skin[k+1] == nameTokens[1]) &&
                         (skin[k+2] == nameTokens[2]) )
@@ -97,6 +97,6 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
             this->selectedSkins[i] = visible;
         };
         return true;
-    };    
+    };
     return false;
 };

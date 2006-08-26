@@ -5,7 +5,7 @@
     @class nMesh2
     @ingroup Gfx2
 
-    - 25-Sep-04     floh    I have removed the refill buffers mode, see 
+    - 25-Sep-04     floh    I have removed the refill buffers mode, see
                             the nResource class for proper handling of externally
                             filled resource objects
 
@@ -13,21 +13,21 @@
     Vertices in a mesh are simply an array of floats.
     Edges are stored in a system memory array with the Edge type.
     Meshes are generally static and loaded from mesh resource files.
-    
+
     nMesh2 is normally a superclass for Gfx API specific derived classes, like
     Direct3D(see @ref nD3D9Mesh) or OpenGL.
 
     <h2>Mesh Group</h2>
 
-    A mesh can be consist of several groups. If a mesh has more than one group, 
-    you need a shapenode for each mesh group you want to render. 
-    The reason for this is that if you've split a mesh into groups then 
+    A mesh can be consist of several groups. If a mesh has more than one group,
+    you need a shapenode for each mesh group you want to render.
+    The reason for this is that if you've split a mesh into groups then
     you must have some reason for doing that such as rendering them with different
-    materials/shaders/textures or transforming them differently and doing that 
+    materials/shaders/textures or transforming them differently and doing that
     requires seperate shapenodes.
 
-    If you have one mesh file <tt>mymesh.n3d2</tt> and the mesh file has two groups 
-    due to it has different textures for each group then you need two shapenode to 
+    If you have one mesh file <tt>mymesh.n3d2</tt> and the mesh file has two groups
+    due to it has different textures for each group then you need two shapenode to
     render it. The following script illustarates it:
     @verbatim
     new nshapenode shape0
@@ -53,7 +53,7 @@
     @verbatim
     type n3d2
     numgroups [numGroups]
-    numvertices [numVertices] 
+    numvertices [numVertices]
     vertexwidth [vertexWidth]
     numtris [numTriangles]
     numedges [numEdges] - could be 0
@@ -72,9 +72,9 @@
     ....
     @endverbatim
 
-    Binary Mesh Fileformat(.nvx2): 
+    Binary Mesh Fileformat(.nvx2):
 
-    @verbatim   
+    @verbatim
     uint magic = 'NVX2'
     int numGroups;
     int numVertices;
@@ -151,7 +151,7 @@ public:
         // patch types (mutually exclusive)
         NPatch  = (1<<4),
         RTPatch = (1<<5),
-        
+
         // use as point sprite buffer?
         PointSprite = (1<<6),
 
@@ -166,7 +166,7 @@ public:
 
     struct Edge
     {
-        ushort fIndex[2];  // face indicies - the 2nd face index could be = InvalidIndex when the edge is a geometry border 
+        ushort fIndex[2];  // face indicies - the 2nd face index could be = InvalidIndex when the edge is a geometry border
         ushort vIndex[2];  // vertex indices
     };
 
@@ -215,7 +215,7 @@ public:
     void SetNumEdges(int num);
     /// get num edges in mesh
     int GetNumEdges() const;
-    /// set vertex components 
+    /// set vertex components
     void SetVertexComponents(int compMask);
     /// get vertex components
     int GetVertexComponents() const;
@@ -469,7 +469,7 @@ inline
 int
 nMesh2::GetVertexComponentOffset(VertexComponent component) const
 {
-    int ret = 0; 
+    int ret = 0;
     if ((Coord == component) || (Coord4 == component)) return ret;
     if (this->vertexComponentMask & Coord) ret += 3;
     else if (this->vertexComponentMask & Coord4) ret += 4;
@@ -498,7 +498,7 @@ nMesh2::GetVertexComponentOffset(VertexComponent component) const
     if (Binormal == component) return ret;
     if (this->vertexComponentMask & Binormal) ret += 3;
 
-    if (Weights == component) return ret;    
+    if (Weights == component) return ret;
     if (this->vertexComponentMask & Weights) ret += 4;
 
     if (JIndices == component) return ret;
@@ -625,7 +625,7 @@ nMesh2::CreateVertexBuffer()
 //------------------------------------------------------------------------------
 /**
 */
-inline    
+inline
 void
 nMesh2::CreateIndexBuffer()
 {

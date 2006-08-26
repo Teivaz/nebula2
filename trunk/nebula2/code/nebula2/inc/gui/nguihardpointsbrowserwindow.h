@@ -5,10 +5,10 @@
     @class nGuiHardpointsBrowserWindow
     @ingroup Gui
 
-    A client window which browses the proj:export/gfxlib directory, and loads 
+    A client window which browses the proj:export/gfxlib directory, and loads
     graphics objects under /usr/scene. The objects are attached to a selected hard-
     point
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"

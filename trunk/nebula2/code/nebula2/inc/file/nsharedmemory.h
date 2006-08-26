@@ -46,7 +46,7 @@ public:
 
     /// Write contents of `v' into memory starting from index `start' until index `end'.
     void Write(const char* v, int start, int end);
-    /// Read contents of memory starting from index `start' until index `end' into 
+    /// Read contents of memory starting from index `start' until index `end' into
     /// temporary buffer. Make result available in `LastRead'.
     void Read(int start, int end);
     /// Result of last call to `Read'.

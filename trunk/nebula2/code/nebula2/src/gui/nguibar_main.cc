@@ -12,7 +12,7 @@ nNebulaClass(nGuiBar, "nguiwidget");
 //-----------------------------------------------------------------------------
 /**
 */
-nGuiBar::nGuiBar() : 
+nGuiBar::nGuiBar() :
     fillMode(LeftToRight),
     fillState(0.0f),
     fillStateSegments(0)

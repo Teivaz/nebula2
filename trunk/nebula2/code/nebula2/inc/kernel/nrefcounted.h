@@ -7,7 +7,7 @@
 
     A simplest possible refcounted super class, if you need refcounting but
     don't want the nRoot overhead.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -22,7 +22,7 @@ public:
     void AddRef();
     /// release object (call instead of destructor)
     int Release();
-   
+
 protected:
     /// destructor
     virtual ~nRefCounted();

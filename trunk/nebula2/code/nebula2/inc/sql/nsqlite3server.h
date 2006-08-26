@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nSQLite3Server
-    
+
     Offers access to SQLite3 databases.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "sql/nsqlserver.h"

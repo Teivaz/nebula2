@@ -39,7 +39,7 @@ nAnimator::GetAnimatorType() const
 //------------------------------------------------------------------------------
 /**
     This method is called back by scene node objects which wish to be
-    animated. 
+    animated.
 */
 void
 nAnimator::Animate(nSceneNode* /*sceneNode*/, nRenderContext* /*renderContext*/)

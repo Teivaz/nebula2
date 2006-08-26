@@ -352,8 +352,8 @@ typedef float *TCHAR;
 
 /*
  *---------------------------------------------------------------------------
- * The following macros and declarations represent the interface between 
- * generic and windows-specific parts of Tcl.  Some of the macros may 
+ * The following macros and declarations represent the interface between
+ * generic and windows-specific parts of Tcl.  Some of the macros may
  * override functions declared in tclInt.h.
  *---------------------------------------------------------------------------
  */
@@ -404,7 +404,7 @@ typedef float *TCHAR;
 */
 
 /*
- * The following macros have trivial definitions, allowing generic code to 
+ * The following macros have trivial definitions, allowing generic code to
  * address platform-specific issues.
  */
 
@@ -413,7 +413,7 @@ typedef float *TCHAR;
 */
 
 /*
- * The following macros and declarations wrap the C runtime library 
+ * The following macros and declarations wrap the C runtime library
  * functions.
  */
 
@@ -428,7 +428,7 @@ typedef float *TCHAR;
 /*
 EXTERN Tcl_Channel  TclWinOpenSerialChannel _ANSI_ARGS_((HANDLE handle,
                         char *channelName, int permissions));
-					 
+
 EXTERN Tcl_Channel  TclWinOpenConsoleChannel _ANSI_ARGS_((HANDLE handle,
                         char *channelName, int permissions));
 

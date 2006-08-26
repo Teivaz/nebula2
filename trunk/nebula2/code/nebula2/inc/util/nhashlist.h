@@ -14,7 +14,7 @@
 #include "util/nhashnode.h"
 
 //------------------------------------------------------------------------------
-class nHashList : public nList 
+class nHashList : public nList
 {
 public:
     // default constructor
@@ -37,7 +37,7 @@ public:
     nHashNode* Find(const char* name) const;
 
 private:
-    enum 
+    enum
     {
         N_DEFAULT_HASHSIZE = 16,
     };
@@ -88,7 +88,7 @@ nHashList::GetTail() const
 /**
 */
 inline
-void 
+void
 nHashList::AddHead(nHashNode* n)
 {
     n_assert(n);
@@ -118,7 +118,7 @@ nHashNode*
 nHashList::RemHead()
 {
     nHashNode *n = (nHashNode *) nList::RemHead();
-    if (n) 
+    if (n)
     {
         n->str_node.Remove();
         n->SetHashTable(0);
@@ -134,7 +134,7 @@ nHashNode*
 nHashList::RemTail()
 {
     nHashNode *n = (nHashNode *) nList::RemTail();
-    if (n) 
+    if (n)
     {
         n->str_node.Remove();
         n->SetHashTable(0);
@@ -150,15 +150,15 @@ nHashNode*
 nHashList::Find(const char *name) const
 {
     nStrNode *sn = this->h_table.Find(name);
-    if (sn) 
+    if (sn)
     {
         return (nHashNode *) sn->GetPtr();
     }
-    else    
+    else
     {
         return 0;
     }
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

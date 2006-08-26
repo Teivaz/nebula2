@@ -2,9 +2,9 @@
 #define N_SQLROW_H
 //------------------------------------------------------------------------------
 /**
-    A wrapper object for a row of data. Used to set and get data in/from 
+    A wrapper object for a row of data. Used to set and get data in/from
     a database.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/nstring.h"

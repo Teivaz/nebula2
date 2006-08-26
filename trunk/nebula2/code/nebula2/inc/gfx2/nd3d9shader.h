@@ -83,7 +83,7 @@ private:
     virtual bool LoadResource();
     /// unload shader resources
     virtual void UnloadResource();
-    /// called when contained resource may become lost 
+    /// called when contained resource may become lost
     virtual void OnLost();
     /// called when contained resource may be restored
     virtual void OnRestored();

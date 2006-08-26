@@ -23,19 +23,19 @@ static void n_unwatch(void *, nCmd *);
     nroot
 
     @classinfo
-    The console server can be found at "/sys/servers/console", it 
-    implements an interactive console in the actual graphics mode. 
-    For the console server to be functioning, the following objects 
-    have to exist: 
+    The console server can be found at "/sys/servers/console", it
+    implements an interactive console in the actual graphics mode.
+    For the console server to be functioning, the following objects
+    have to exist:
 
-    /sys/servers/input 
-    /sys/servers/gfx 
-    /sys/servers/script 
+    /sys/servers/input
+    /sys/servers/gfx
+    /sys/servers/script
 
-    The console server is activated via the "esc (escape)" key and 
-    from there on it intercepts all key events. If activated the complete 
-    key input will be interpreted as command line input ans the 
-    resulting commands will be passed to the scrip server. 
+    The console server is activated via the "esc (escape)" key and
+    from there on it intercepts all key events. If activated the complete
+    key input will be interpreted as command line input ans the
+    resulting commands will be passed to the scrip server.
 */
 void n_initcmds(nClass* cl)
 {
@@ -74,7 +74,7 @@ static void n_open(void* o, nCmd* /*cmd*/)
     @output
     v
     @info
-    Closes the console. 
+    Closes the console.
 */
 static void n_close(void* o, nCmd* /*cmd*/)
 {
@@ -91,7 +91,7 @@ static void n_close(void* o, nCmd* /*cmd*/)
     @output
     v
     @info
-    Toggles the console state. 
+    Toggles the console state.
 */
 static void n_toggle(void* o, nCmd* /*cmd*/)
 {
@@ -108,10 +108,10 @@ static void n_toggle(void* o, nCmd* /*cmd*/)
     @output
     v
     @info
-    Hereby you can monitor diverse status variables 
-    under '/sys/var'. By pattern matching it is possible 
-    to decide which variables will be shown after the 
-    console itself has been closed. 
+    Hereby you can monitor diverse status variables
+    under '/sys/var'. By pattern matching it is possible
+    to decide which variables will be shown after the
+    console itself has been closed.
 */
 static void n_watch(void* o, nCmd* cmd)
 {
@@ -128,7 +128,7 @@ static void n_watch(void* o, nCmd* cmd)
     @output
     v
     @info
-    Closes the with 'watch' activated watchmode. 
+    Closes the with 'watch' activated watchmode.
 */
 static void n_unwatch(void* o, nCmd* /*cmd*/)
 {

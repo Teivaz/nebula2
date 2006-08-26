@@ -5,11 +5,11 @@
     @class nStartupChecker
     @ingroup Util
 
-    The nStartupChecker class checks if the host system meets all 
-    preconditions to start the application (correct D3D version, 
+    The nStartupChecker class checks if the host system meets all
+    preconditions to start the application (correct D3D version,
     working sound, run-once check). There should be exactly one nStartupChecker
     object alive while the application is running.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/ntypes.h"

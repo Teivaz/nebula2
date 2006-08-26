@@ -8,12 +8,12 @@
     @brief Provide an animated joint skeleton for a nSkinShapeNode.
 
     On Animate() invocation, the nSkinAnimator will update its joint
-    skeleton and invoke SetCharSkeleton() on the calling 
+    skeleton and invoke SetCharSkeleton() on the calling
     scene node (which must be a nSkinShapeNode) with a pointer
     to an uptodate nCharSkeleton object.
 
     See also @ref N2ScriptInterface_nskinanimator
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "scene/nanimator.h"
@@ -61,7 +61,7 @@ public:
 
     /// set channel name which delivers the current anim state index
     void SetStateChannel(const char* name);
-    /// get anim state channel name 
+    /// get anim state channel name
     const char* GetStateChannel();
 
     /// begin anim state definition

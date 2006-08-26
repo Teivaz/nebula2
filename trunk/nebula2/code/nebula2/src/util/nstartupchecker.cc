@@ -46,7 +46,7 @@ nStartupChecker::~nStartupChecker()
     application.
 
     If the application is already running it will do a FindWindow() on the
-    provided window name, and if successful, bring the window to front. 
+    provided window name, and if successful, bring the window to front.
     If not, the application is running in a different desktop session and
     in this case, the provided error message will be displayed to the user.
 
@@ -57,7 +57,7 @@ nStartupChecker::~nStartupChecker()
     @param errorMsg         the error message itself
 */
 bool
-nStartupChecker::CheckAlreadyRunning(const nString& vendorName, 
+nStartupChecker::CheckAlreadyRunning(const nString& vendorName,
                                      const nString& appName,
                                      const nString& appWindowTitle,
                                      const nString& errorTitle,
@@ -146,7 +146,7 @@ nStartupChecker::CheckDirect3D(const nString& errorTitle, const nString& errorMs
 bool
 nStartupChecker::CheckDirectSound(const nString& errorTitle, const nString& errorMsg)
 {
-    LPDIRECTSOUND8 ds8;    
+    LPDIRECTSOUND8 ds8;
     HRESULT hr = DirectSoundCreate8(NULL, &ds8, NULL);
     if (SUCCEEDED(hr))
     {

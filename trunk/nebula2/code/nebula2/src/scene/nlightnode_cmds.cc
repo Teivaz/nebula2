@@ -14,10 +14,10 @@ static void n_getcastshadows(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nlightnode
-    
+
     @cppclass
     nLightNode
-    
+
     @superclass
     ntransformnode
 

@@ -16,7 +16,7 @@ static void n_puts(void* slf, nCmd* cmd);
 
     @cppclass
     nFileNode
-    
+
     @superclass
     nroot
 
@@ -39,16 +39,16 @@ n_initcmds(nClass* cl)
 /**
     @cmd
     open
-    
+
     @input
     s(Filename), s(AccessMode)
-    
+
     @output
     v
-    
+
     @info
-    Open a file. Filename can be a Nebula filename using path assigns. 
-    AccessMode is a string containing an "r" for read-mode, and/or 
+    Open a file. Filename can be a Nebula filename using path assigns.
+    AccessMode is a string containing an "r" for read-mode, and/or
     "w" for write-mode.
 */
 static void
@@ -64,13 +64,13 @@ n_open(void* slf, nCmd* cmd)
 /**
     @cmd
     close
-    
+
     @input
     v
-    
+
     @output
     v
-    
+
     @info
     Closes a file.
 */
@@ -85,13 +85,13 @@ n_close(void* slf, nCmd* /*cmd*/)
 /**
     @cmd
     isopen
-    
+
     @input
     v
-    
+
     @output
     b(IsOpen)
-    
+
     @info
     Return "true" if file is open.
 */
@@ -106,13 +106,13 @@ n_isopen(void* slf, nCmd* cmd)
 /**
     @cmd
     puts
-    
+
     @input
     s(String)
-    
+
     @output
     b(Success)
-    
+
     @info
     Put a string into the file.
 */

@@ -9,7 +9,7 @@
 
     After the session server has collected information about the network clients
     and the player has hit the start button, the session server should
-    configure the net server object with the clients which are expected to 
+    configure the net server object with the clients which are expected to
     join (with "localclient" being a special shortcut connection to the
     local nnetclient object). After the configuration the game server should
     be opened, after which the server will wait for the clients to connect.
@@ -18,7 +18,7 @@
 
     The net server is a simple message distributor. It either sends messages
     to all clients, or replicates messages from one client to all other clients.
-    Specific communication protocols and behaviour should be implemented in 
+    Specific communication protocols and behaviour should be implemented in
     subclasses.
 
     This is the net client/server protocol:
@@ -30,7 +30,7 @@
 @endverbatim
 
     A client requestes to join the server. A client must send a guid
-    to the server for authentification. This must be one of the 
+    to the server for authentification. This must be one of the
     guids set by nNetServer::SetClientGuid(). This guid is usually
     the result of the session setup process. The server answers with
     a <tt>~joinaccepted</tt> or <tt>~joindenied</tt>.
@@ -359,7 +359,7 @@ nNetServer::GetClientGuidAt(int index) const
 /**
 */
 inline
-const char* 
+const char*
 nNetServer::GetClientPlayerNameAt(int index) const
 {
     return this->clientArray[index].GetPlayerName();

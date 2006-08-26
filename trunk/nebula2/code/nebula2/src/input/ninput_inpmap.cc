@@ -45,12 +45,12 @@ nInputMapping::~nInputMapping(void)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputMapping::ReleaseInputState(void)
 {
     n_assert(this->is);
     this->is->Release();
-    if (this->is->GetRefCount() <= 0) 
+    if (this->is->GetRefCount() <= 0)
     {
         this->is->Remove();
         n_delete(this->is);
@@ -61,7 +61,7 @@ nInputMapping::ReleaseInputState(void)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputMapping::ReleaseCmdString(void)
 {
     n_assert(this->cmd);
@@ -75,7 +75,7 @@ nInputMapping::ReleaseCmdString(void)
     that no input events 'get lost or get stuck' during a
     input remapping operation.
 */
-void 
+void
 nInputMapping::SetInputState(nInputState *_is)
 {
     n_assert(_is);
@@ -84,24 +84,24 @@ nInputMapping::SetInputState(nInputState *_is)
     if (this->cmd) this->ReleaseCmdString();
 
     // previously mapped to an input state?
-    if (this->is) 
+    if (this->is)
     {
         // identical input state? in that case, nothing changes,
         // including our own internal state
-        if (this->is == _is) 
+        if (this->is == _is)
         {
             return;
         }
-        else 
+        else
         {
             // mapped to a different input state, in that case,
             // our own internal state may change, so that we dont
             // get stuck...
-            if (this->state & N_IMSTATE_PRESSED) 
+            if (this->state & N_IMSTATE_PRESSED)
             {
                 this->SetButtonUp();
             }
-            this->ReleaseInputState();            
+            this->ReleaseInputState();
         }
     }
     n_assert(NULL == this->is);
@@ -112,11 +112,11 @@ nInputMapping::SetInputState(nInputState *_is)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputMapping::SetCmdString(const char *_cmd)
 {
     n_assert(_cmd);
-    if (this->cmd) 
+    if (this->cmd)
     {
         this->ReleaseCmdString();
     }
@@ -124,7 +124,7 @@ nInputMapping::SetCmdString(const char *_cmd)
     this->cmd = n_strdup(_cmd);
 
     // previousely mapped to an input state?
-    if (this->is) 
+    if (this->is)
     {
         this->ReleaseInputState();
     }
@@ -133,22 +133,22 @@ nInputMapping::SetCmdString(const char *_cmd)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputMapping::PreTrigger(double tstamp)
 {
     this->state_valid = false;
     this->cur_tstamp  = tstamp;
-    
+
     // deactivate our input state
-    if (this->is) 
+    if (this->is)
     {
         this->is->SetButton(false);
         this->is->SetSlider(0.0f);
     }
 
-    // kill our own 'one-frame' state (everything expt pressed) 
+    // kill our own 'one-frame' state (everything expt pressed)
     this->state &= (N_IMSTATE_PRESSED|N_IMSTATE_LONGPRESSED);
-    
+
     // check for long pressed status
     if ((this->state & N_IMSTATE_PRESSED) &&
         ((this->cur_tstamp - this->down_tstamp) > this->longpressed_dt))
@@ -165,12 +165,12 @@ nInputMapping::PreTrigger(double tstamp)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 nInputMapping::PostTrigger(void)
 {
     if (this->flags & N_IMF_BTN_DOWN)
     {
-        // down will only be accepted if the mapping is not already 
+        // down will only be accepted if the mapping is not already
         // in pressed state!
         if (0 == (this->state & N_IMSTATE_PRESSED))
         {

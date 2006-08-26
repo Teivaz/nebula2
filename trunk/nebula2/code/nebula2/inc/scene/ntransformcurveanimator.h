@@ -9,7 +9,7 @@
     an animation curve of the Animation Subsystem.
 
     See also @ref N2ScriptInterface_ntransformcurveanimator
- 
+
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nanimator.h"
@@ -30,7 +30,7 @@ public:
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
-  
+
     /// set the animation resource name
     void SetAnimation(const char* name);
     /// get the animation resource name

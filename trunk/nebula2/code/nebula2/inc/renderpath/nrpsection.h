@@ -9,7 +9,7 @@
     scene camera nodes to render their view before that actual default
     section is rendered which may need to access render targets prepared
     by the cameras.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "renderpath/nrppass.h"

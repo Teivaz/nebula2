@@ -440,7 +440,7 @@ nFile::GetS(char* buf, int bufSize)
     {
         return false;
     }
-    
+
     // make room for final terminating 0
     bufSize--;
 

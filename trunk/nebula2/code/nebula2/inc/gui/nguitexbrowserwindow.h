@@ -6,7 +6,7 @@
     @ingroup Gui
     @brief A window to browse the currently loaded textures and display
     information about them.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiclientwindow.h"
@@ -53,5 +53,5 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-#endif    
+#endif
 

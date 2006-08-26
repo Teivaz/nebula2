@@ -8,7 +8,7 @@
 */
 #ifdef __XBxX__
     // temporarly disabled because of bugs in SSE math classes
-    #define __USE_SSE__ (0)   
+    #define __USE_SSE__ (0)
 #endif
 
 #define __NEBULA_STATS__ (1)
@@ -69,7 +69,7 @@
 //------------------------------------------------------------------------------
 #ifdef __VC__
 #pragma warning( disable : 4251 )       // class XX needs DLL interface to be used...
-#pragma warning( disable : 4355 )       // initialization list uses 'this' 
+#pragma warning( disable : 4355 )       // initialization list uses 'this'
 #pragma warning( disable : 4275 )       // base class has not dll interface...
 #pragma warning( disable : 4786 )       // symbol truncated to 255 characters
 #pragma warning( disable : 4530 )       // C++ exception handler used, but unwind semantics not enabled

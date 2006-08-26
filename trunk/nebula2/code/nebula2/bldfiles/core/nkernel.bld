@@ -104,6 +104,7 @@ beginmodule nutil
         nbitstream
         nbucket
         nbuffer
+        ndictionary
         ndie
         neditline
         nfixedarray
@@ -117,8 +118,10 @@ beginmodule nutil
         nhttpsession
         nipolkeyarray
         nkeyarray
+        nkeyvaluepair
         nlinebuffer
         nlist
+        nmd5
         nmsgnode
         nnode
         nobjectlist
@@ -143,6 +146,7 @@ beginmodule nutil
         nbuffer
         nhttpformdatawrapper
         nhttpsession
+        nmd5
         nquadtree
         nstartupchecker
         nstream

@@ -25,6 +25,7 @@ nRpPass::nRpPass() :
     occlusionQuery(false),
     drawFullscreenQuad(false),
     drawGui(false),
+    statsEnabled(true),
     shadowEnabledCondition(false),
     renderTargetNames(nGfxServer2::MaxRenderTargets)
 #if __NEBULA_STATS__
@@ -185,6 +186,9 @@ nRpPass::Begin()
     {
         return 0;
     }
+
+    // gfx stats enabled?
+    gfxServer->SetHint(nGfxServer2::CountStats, this->statsEnabled);
 
     // set render targets
     int i;

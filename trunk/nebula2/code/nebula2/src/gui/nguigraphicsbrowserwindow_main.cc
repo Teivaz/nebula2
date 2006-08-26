@@ -177,14 +177,14 @@ void
 nGuiGraphicsBrowserWindow::LoadObject(const nString& objPath)
 {
     n_assert(!objPath.IsEmpty());
-    
+
     nNodeList* nodeList = nNodeList::Instance();
     n_assert( nodeList != 0 );
-    
+
     nodeList->Clear();
     nodeList->AddDefaultEntry();
     nodeList->LoadObject(objPath);
-    
+
     // reset time
     nTimeServer::Instance()->ResetTime();
 }
@@ -198,7 +198,7 @@ nGuiGraphicsBrowserWindow::AddObject(const nString& objPath)
     n_assert(!objPath.IsEmpty());
 
     n_assert( nNodeList::Instance() != 0 );
-    
+
     // Load Object in /usr/scene
     nNodeList::Instance()->LoadObject(objPath);
 

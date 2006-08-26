@@ -18,7 +18,7 @@ public:
     nCharacter3Set();
     /// destructor
     virtual ~nCharacter3Set();
-    
+
     /// reads the available skins and animations from a character3 node
     void Init(nCharacter3Node* characterNode);
 
@@ -260,11 +260,11 @@ nCharacter3Set::SetCurrentVariation(const nString& name)
 /**
 */
 inline
-int 
+int
 nCharacter3Set::ConvertSkinNameToIndex(const nString& name)
 {
     int result = -1;
-    
+
     int i;
     for( i = 0; i < this->skinNames.Size(); i++)
     {
@@ -282,11 +282,11 @@ nCharacter3Set::ConvertSkinNameToIndex(const nString& name)
 /**
 */
 inline
-int 
+int
 nCharacter3Set::ConvertVariationNameToIndex(const nString& name)
 {
     int result = -1;
-    
+
     int i;
     for( i = 0; i < this->variationNames.Size(); i++)
     {
@@ -304,11 +304,11 @@ nCharacter3Set::ConvertVariationNameToIndex(const nString& name)
 /**
 */
 inline
-int 
+int
 nCharacter3Set::ConvertAnimationNameToIndex(const nString& name)
 {
     int result = -1;
-    
+
     int i;
     for( i = 0; i < this->animationNames.Size(); i++)
     {

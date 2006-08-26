@@ -18,11 +18,11 @@
 #include "mathlib/matrix.h"
 
 //------------------------------------------------------------------------------
-class nArg 
+class nArg
 {
 public:
-    enum Type 
-    { 
+    enum Type
+    {
         Void,
         Int,
         Float,
@@ -45,7 +45,7 @@ public:
     void Delete();
     /// copy content
     void Copy(const nArg& rhs);
-    /// copy from va_list 
+    /// copy from va_list
     void Copy(va_list * marker);
     /// the equals operator
     bool operator==(const nArg& rhs) const;
@@ -105,7 +105,7 @@ public:
 
 private:
     Type type;
-    union 
+    union
     {
         int i;
         bool b;
@@ -170,17 +170,17 @@ nArg::Copy(const nArg& rhs)
         this->Delete();
     }
     this->type = rhs.type;
-    switch(this->type) 
+    switch(this->type)
     {
         case Void:
             break;
 
-        case Int: 
-            this->i = rhs.i; 
+        case Int:
+            this->i = rhs.i;
             break;
-            
-        case Float:    
-            this->f = rhs.f; 
+
+        case Float:
+            this->f = rhs.f;
             break;
 
         case String:
@@ -188,13 +188,13 @@ nArg::Copy(const nArg& rhs)
             // Delete() resets the type back to Void so need to set it again
             this->type = rhs.type;
             if (rhs.s)
-            {   
+            {
                 this->s = n_strdup(rhs.s);
-            } 
+            }
             break;
 
-        case Bool:     
-            this->b = rhs.b; 
+        case Bool:
+            this->b = rhs.b;
             break;
 
         case Object:
@@ -239,7 +239,7 @@ nArg::Copy(const nArg& rhs)
     }
 }
 
- 
+
 //-----------------------------------------------------------------------------
 /**
     Copy contents from variable argument list marker. The type of the variable
@@ -248,21 +248,21 @@ nArg::Copy(const nArg& rhs)
     @param marker va_list parameter
 */
 inline
-void 
+void
 nArg::Copy(va_list * marker)
 {
-    switch(this->type) 
+    switch(this->type)
     {
         case Void:
             break;
 
-        case Int: 
-            this->i = va_arg(*marker, int); 
+        case Int:
+            this->i = va_arg(*marker, int);
             break;
-            
-        case Float:    
-            // Compiler passes floats as double to variable argument functions 
-            this->f = float(va_arg(*marker, double)); 
+
+        case Float:
+            // Compiler passes floats as double to variable argument functions
+            this->f = float(va_arg(*marker, double));
             break;
 
         case String:
@@ -270,13 +270,13 @@ nArg::Copy(va_list * marker)
                 this->Delete();
                 const char * str = va_arg(*marker, char *);
                 if (str)
-                {   
+                {
                     this->s = n_strdup(str);
-                } 
+                }
             }
             break;
 
-        case Bool:     
+        case Bool:
             // bool is promoted to int when passed through ...
             {
                 int tmp = va_arg(*marker, int);
@@ -323,7 +323,7 @@ nArg::Copy(va_list * marker)
 /**
     The default constructor will initialize the arg type to Void
 */
-inline 
+inline
 nArg::nArg() :
     type(Void),
     s(0),
@@ -338,7 +338,7 @@ nArg::nArg() :
 
     @param rhs reference to nArg object to be copied
 */
-inline 
+inline
 nArg::nArg(const nArg& rhs) :
     type(Void),
     s(0),
@@ -346,7 +346,7 @@ nArg::nArg(const nArg& rhs) :
 {
     this->Copy(rhs);
 }
-        
+
 //-----------------------------------------------------------------------------
 /**
 */
@@ -381,18 +381,18 @@ nArg::operator==(const nArg& rhs) const
             case Void:
                 return true;
 
-            case Int: 
-                return (this->i == rhs.i); 
+            case Int:
+                return (this->i == rhs.i);
 
-            case Float:    
-                return (this->f == rhs.f); 
+            case Float:
+                return (this->f == rhs.f);
 
             case String:
                 n_assert(this->s && rhs.s);
                 return (0 == strcmp(this->s, rhs.s));
 
-            case Bool:     
-                return (this->b == rhs.b); 
+            case Bool:
+                return (this->b == rhs.b);
 
             case Object:
                 return (this->o == rhs.o);
@@ -417,19 +417,19 @@ nArg::operator==(const nArg& rhs) const
             case Matrix44:
                 n_error("nArg::operator==(): Cannot compare matrix44 objects!");
                 return false;
-        }        
+        }
     }
     return false;
-}    
- 
+}
+
 //-----------------------------------------------------------------------------
 /**
     Sets the contents to an integer, and sets the arg type to Int.
 
     @param _i the integer
 */
-inline 
-void 
+inline
+void
 nArg::SetI(int _i)
 {
     n_assert((Void == this->type) || (Int == this->type));
@@ -442,8 +442,8 @@ nArg::SetI(int _i)
 
     @param _b the bool value
 */
-inline 
-void 
+inline
+void
 nArg::SetB(bool _b)
 {
     n_assert((Void == this->type) || (Bool == this->type));
@@ -457,8 +457,8 @@ nArg::SetB(bool _b)
 
     @param _f the float value
 */
-inline 
-void 
+inline
+void
 nArg::SetF(float _f)
 {
     n_assert((Void == this->type) || (Float == this->type));
@@ -473,8 +473,8 @@ nArg::SetF(float _f)
 
     @param _s the string
 */
-inline 
-void 
+inline
+void
 nArg::SetS(const char *_s)
 {
     n_assert((Void == this->type) || (String == this->type));
@@ -495,8 +495,8 @@ nArg::SetS(const char *_s)
 
     @param _o the object pointer
 */
-inline 
-void 
+inline
+void
 nArg::SetO(void *_o)
 {
     n_assert((Void == this->type) || (Object == this->type));
@@ -506,7 +506,7 @@ nArg::SetO(void *_o)
 
 //-----------------------------------------------------------------------------
 /**
-    Sets the contents to an array of other nArgs, and sets the arg type 
+    Sets the contents to an array of other nArgs, and sets the arg type
     to List.
     The array is NOT duplicated.
 
@@ -522,7 +522,7 @@ inline void nArg::SetL(nArg* _l, int len)
     {
         this->l = _l;
         this->listLen = len;
-    } 
+    }
     else
     {
         this->l = 0;
@@ -605,7 +605,7 @@ nArg::SetM44(const matrix44& _m44)
 
     @return the arg type
 */
-inline 
+inline
 nArg::Type
 nArg::GetType() const
 {
@@ -619,8 +619,8 @@ nArg::GetType() const
 
     @return the integer value
 */
-inline 
-int 
+inline
+int
 nArg::GetI() const
 {
     n_assert(Int == this->type);
@@ -634,8 +634,8 @@ nArg::GetI() const
 
     @return the bool value
 */
-inline 
-bool 
+inline
+bool
 nArg::GetB() const
 {
     n_assert(Bool == this->type);
@@ -649,8 +649,8 @@ nArg::GetB() const
 
     @return the float value
 */
-inline 
-float 
+inline
+float
 nArg::GetF() const
 {
     n_assert(Float == this->type);
@@ -664,12 +664,12 @@ nArg::GetF() const
 
     @return the string pointer
 */
-inline 
+inline
 const char*
 nArg::GetS() const
 {
     n_assert(String == this->type);
-    return this->s;    
+    return this->s;
 }
 
 //-----------------------------------------------------------------------------
@@ -679,7 +679,7 @@ nArg::GetS() const
 
     @return the object pointer
 */
-inline 
+inline
 void*
 nArg::GetO() const
 {
@@ -696,7 +696,7 @@ nArg::GetO() const
 
     @return the length of the array
 */
-inline 
+inline
 int
 nArg::GetL(nArg*& _l) const
 {
@@ -758,7 +758,7 @@ nArg::GetM44() const
 /**
 */
 inline
-bool 
+bool
 nArg::IsValidArg(char c)
 {
     switch (c)
@@ -780,7 +780,7 @@ nArg::IsValidArg(char c)
 /**
 */
 inline
-bool 
+bool
 nArg::IsVoid(char c)
 {
     if ('v' == c)
@@ -794,10 +794,10 @@ nArg::IsVoid(char c)
 /**
 */
 inline
-void 
+void
 nArg::Reset(char c)
 {
-    switch (c) 
+    switch (c)
     {
         case 'i':   this->SetI(0);      break;
         case 'f':   this->SetF(0.0f);   break;
@@ -806,7 +806,7 @@ nArg::Reset(char c)
         case 'o':   this->SetO(0);      break;
         case 'l':   this->SetL(0,0);    break;
         default:    break;
-    } 
+    }
 }
 
 //--------------------------------------------------------------------

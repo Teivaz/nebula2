@@ -8,7 +8,7 @@
     @brief A horizontal slider group consisting of a label, a horizontal slider,
     and a text label which displays the current slider's numerical value
     as a printf-formatted string.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"
@@ -361,7 +361,7 @@ nGuiHoriSliderGroup::GetKnobSize() const
 /**
 */
 inline
-void 
+void
 nGuiHoriSliderGroup::SetLeftTextAlignment(nGuiTextLabel::Alignment a)
 {
     this->leftTextAlignment = a;
@@ -370,8 +370,8 @@ nGuiHoriSliderGroup::SetLeftTextAlignment(nGuiTextLabel::Alignment a)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nGuiHoriSliderGroup::SetRightTextAlignment(nGuiTextLabel::Alignment a)
 {
     this->rightTextAlignment = a;
@@ -379,4 +379,4 @@ nGuiHoriSliderGroup::SetRightTextAlignment(nGuiTextLabel::Alignment a)
 
 //------------------------------------------------------------------------------
 #endif
-    
+

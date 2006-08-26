@@ -6,7 +6,7 @@
     @ingroup Scene
 
     @brief A smooth skinned shape node.
-    
+
     Requires that a nSkinAnimator is attached as an animator which is
     called back by the skin shape before rendering to provide a valid
     joint palette.
@@ -145,7 +145,7 @@ nSkinShapeNode::Fragment::GetJointPalette()
 /**
 */
 inline
-void 
+void
 nSkinShapeNode::SetChar3VariationFlag(bool value)
 {
     this->isChar3AndBoundToVariation = value;
@@ -156,7 +156,7 @@ nSkinShapeNode::SetChar3VariationFlag(bool value)
 /**
 */
 inline
-bool 
+bool
 nSkinShapeNode::GetChar3VariationFlag() const
 {
     return this->isChar3AndBoundToVariation;

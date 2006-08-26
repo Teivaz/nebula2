@@ -4,9 +4,9 @@
 /**
     @class nGuiCmdEntry
     @ingroup Gui
-    @brief A specialized text view widget which displays the current 
+    @brief A specialized text view widget which displays the current
     kernel server's line buffer and lets the user enter script commands.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguitextview.h"
@@ -65,7 +65,7 @@ protected:
 
 //------------------------------------------------------------------------------
 /**
-    Set the local cwd. A null pointer is valid (this means the global root 
+    Set the local cwd. A null pointer is valid (this means the global root
     object).
 */
 inline
@@ -87,4 +87,4 @@ nGuiCmdEntry::GetCwd() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

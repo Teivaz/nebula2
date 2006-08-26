@@ -6,7 +6,7 @@
     @ingroup NebulaGraphicsSystemTools
 
     Nebula mesh builder helper class. This class is useful for writing mesh exporters.
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -42,7 +42,7 @@ public:
             TANGENT  = (1<<7),
             BINORMAL = (1<<8),
             WEIGHTS  = (1<<9),
-            JINDICES = (1<<10), 
+            JINDICES = (1<<10),
 
             NUM_VERTEX_COMPONENTS = 11,
         };
@@ -235,12 +235,12 @@ public:
         ushort fIndex[2];
         int GroupID;
     };
-    
+
     /// constructor
     nMeshBuilder();
     /// destructor
     ~nMeshBuilder();
-    
+
     /// @name loading / saving
     /// @{
 
@@ -298,9 +298,9 @@ public:
     /// count number of triangles matching group and material id starting at index
     int GetNumGroupTriangles(int groupId, int materialId, int usageFlags, int startTriangleIndex) const;
     /// get the minimum vertex index referenced by a group
-    bool GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVertexIndex) const; 
+    bool GetGroupVertexRange(int groupId, int& minVertexIndex, int& maxVertexIndex) const;
     /// get the minimum edge index referenced by a group
-    bool GetGroupEdgeRange(int groupId, int& minEdgeIndex, int& maxEdgeIndex) const; 
+    bool GetGroupEdgeRange(int groupId, int& minEdgeIndex, int& maxEdgeIndex) const;
     /// build a group mapping array
     void BuildGroupMap(nArray<Group>& groupMap);
     /// update triangle group ids from a group map
@@ -1273,7 +1273,7 @@ nMeshBuilder::GetEdgeAt(int index) const
     initialized with -1. The copy method will record any copied vertices
     into the index map, so that it can find out at a later iteration if
     the vertex has already been copied. This method makes an extra cleanup
-    pass unnecessary, since not redundant vertex data will be generated 
+    pass unnecessary, since not redundant vertex data will be generated
     during the copy.
 */
 inline

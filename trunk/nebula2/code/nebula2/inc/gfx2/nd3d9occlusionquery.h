@@ -6,7 +6,7 @@
     @ingroup Gfx2
 
     Direct3D9 version of nOcclusionQuery.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "gfx2/nocclusionquery.h"

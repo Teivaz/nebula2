@@ -6,7 +6,7 @@
     @ingroup Video
 
     An abstract player for videos
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
@@ -41,7 +41,7 @@ public:
     void SetTexture(nTexture2* texturePtr);
     /// Get texture to render to
     nTexture2* GetTexture() const;
-    /// Enable/Disable updating of texture    
+    /// Enable/Disable updating of texture
     void SetTextureUpdate(bool doUpdate);
     /// Get TextureUpdate Status
     bool GetTextureUpdate() const;
@@ -64,7 +64,7 @@ protected:
     bool        isOpen;
     nString     filename;
     nTexture2*  texturePtr;
-    
+
     uint        videoWidth;
     uint        videoHeight;
     float       videoFpS;
@@ -83,5 +83,5 @@ nVideoPlayer::IsOpen() const
     return this->isOpen;
 }
 
-#endif    
+#endif
 

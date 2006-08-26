@@ -98,7 +98,7 @@ nVideoServer::NewVideoPlayer(nString name)
 /**
    delete video player
 */
-void   
+void
 nVideoServer::DeleteVideoPlayer(nVideoPlayer* player)
 {
 };

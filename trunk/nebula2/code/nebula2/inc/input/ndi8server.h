@@ -45,7 +45,7 @@ private:
     void GetDeviceObjectData(nDI8Device::DeviceType devType, DIDEVICEOBJECTDATA& data, bool& isAxis, bool& isButton, bool& isPov, int& index);
 
     // NOTE: public because some enum function need access
-public: 
+public:
     /// convert error code to string
     const char* Error(HRESULT hr);
 

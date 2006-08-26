@@ -11,7 +11,7 @@ nNebulaScriptClass(nBlendShapeAnimator, "nanimator");
 //------------------------------------------------------------------------------
 /**
 */
-nBlendShapeAnimator::nBlendShapeAnimator() : 
+nBlendShapeAnimator::nBlendShapeAnimator() :
     refAnimationServer("/sys/servers/anim"),
     animationGroup(0)
 {
@@ -134,7 +134,7 @@ nBlendShapeAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContex
     // sample curves and manipulate target object
     vector4 keyArray[nBlendShapeNode::MaxShapes];
     int numCurves = this->refAnimation->GetGroupAt(0).GetNumCurves();
-    this->refAnimation->SampleCurves(curTime, this->animationGroup, 0, numCurves, keyArray); 
+    this->refAnimation->SampleCurves(curTime, this->animationGroup, 0, numCurves, keyArray);
     int curveIndex;
     for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
     {

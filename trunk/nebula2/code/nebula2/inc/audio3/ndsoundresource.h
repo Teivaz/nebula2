@@ -5,7 +5,7 @@
     @class nDSoundResource
     @ingroup Audio3
     @brief An implementation of the nSoundResource class on top of DirectSound.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "audio3/nsoundresource.h"

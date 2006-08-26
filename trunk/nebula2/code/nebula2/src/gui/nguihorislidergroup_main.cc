@@ -157,7 +157,7 @@ nGuiHoriSliderGroup::OnFrame()
             this->refLeftLabel->SetText(buf);
             snprintf(buf, sizeof(buf), this->rightText.Get(), this->curValue);
             this->refRightLabel->SetText(buf);
-        }            
+        }
     }
     nGuiFormLayout::OnFrame();
 }

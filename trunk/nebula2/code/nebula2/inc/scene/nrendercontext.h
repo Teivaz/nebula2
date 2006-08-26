@@ -8,7 +8,7 @@
     @brief A nRenderContext object holds frame persistent data for nSceneNode
     hierarchies and serves as the central communication point between
     the client app and nSceneNode hierarchies.
-    
+
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/nref.h"
@@ -234,7 +234,7 @@ nRenderContext::GetLinkAt(int index) const
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
 */
 inline
 nShaderParams&
@@ -244,7 +244,7 @@ nRenderContext::GetShaderOverrides()
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
 */
 inline
 int
@@ -255,7 +255,7 @@ nRenderContext::AddLocalVar(const nVariable& value)
 }
 
 //------------------------------------------------------------------------------
-/**    
+/**
 */
 inline
 nVariable&

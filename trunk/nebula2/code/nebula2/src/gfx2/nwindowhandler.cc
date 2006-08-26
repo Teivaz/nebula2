@@ -63,7 +63,7 @@ nWindowHandler::CloseWindow()
 */
 void
 nWindowHandler::AdjustWindowForChange()
-{   
+{
     n_assert(this->windowOpen);
     n_assert(this->windowMinimized);
 
@@ -109,4 +109,4 @@ nWindowHandler::Trigger()
 
 
 
-    
+

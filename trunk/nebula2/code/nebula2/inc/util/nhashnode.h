@@ -14,7 +14,7 @@
 #include "util/nhashtable.h"
 
 //------------------------------------------------------------------------------
-class nHashNode : public nNode 
+class nHashNode : public nNode
 {
 public:
     /// default constructor
@@ -66,7 +66,7 @@ nHashNode::nHashNode(const char* name) :
 /**
 */
 inline
-void 
+void
 nHashNode::SetHashTable(nHashTable* t)
 {
     // t can be 0!
@@ -119,17 +119,17 @@ nHashNode::GetName() const
 /**
 */
 inline
-void 
-nHashNode::SetName(const char* name) 
+void
+nHashNode::SetName(const char* name)
 {
-    if (this->IsLinked()) 
+    if (this->IsLinked())
     {
         n_assert(this->h_table);
         this->str_node.Remove();
         this->str_node.SetName(name);
         this->h_table->Add(&(this->str_node));
-    } 
-    else 
+    }
+    else
     {
         this->str_node.SetName(name);
     }

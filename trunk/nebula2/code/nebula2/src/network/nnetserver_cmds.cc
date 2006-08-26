@@ -212,7 +212,7 @@ n_getclientstatusat(void* slf, nCmd* cmd)
     @output
     b(Success)
     @info
-    Open the server. The server expects the configured clients to connect, 
+    Open the server. The server expects the configured clients to connect,
     once all configured clients have connected, the isstarted command
     will return true.
 */

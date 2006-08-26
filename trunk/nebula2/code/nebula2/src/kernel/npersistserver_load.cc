@@ -33,50 +33,50 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
         file->Close();
         file->Release();
         file = 0;
-        
+
         if (num_bytes > 0) {
 
             // suche nach $
             char *str = header_buf;
             char *end_str = str + num_bytes;
-            while (str < end_str) 
+            while (str < end_str)
             {
-                if (*str == '$') 
+                if (*str == '$')
                 {
                     char *tmp;
                     char *end = 0;
                     *str++ = 0;
 
                     // liegt das Ende im Buffer?
-                    if ((end = strchr(str,'$'))) 
+                    if ((end = strchr(str,'$')))
                     {
                         *end++ = 0;
                         // Trennzeichen ':'
-                        if ((tmp = strchr(str,':'))) 
+                        if ((tmp = strchr(str,':')))
                         {
                             *tmp++ = 0;
                             // korrektes Keyword?
-                            if (strcmp(str,keyword)==0) 
+                            if (strcmp(str,keyword)==0)
                             {
                                 n_strncpy2(buf, tmp, buf_size);
                                 return buf;
                             }
-                        } 
-                        else 
+                        }
+                        else
                         {
-                            kernelServer->Message("$...$ definition in object file broken!"); 
+                            kernelServer->Message("$...$ definition in object file broken!");
                             return 0;
                         }
                         // Scan-Pointer auf Ende des $..$ Blocks
                         str = end;
-                    } 
+                    }
                     else
                     {
                         kernelServer->Message("$...$ definition in object file outside first 256 bytes!");
                         return 0;
-                    }            
-                } 
-                else 
+                    }
+                }
+                else
                 {
                     str++;
                 }
@@ -88,7 +88,7 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
         file->Release();
         file = 0;
     }
-    
+
     // $..$ Block not found, or File unreadable
     return 0;
 }
@@ -109,10 +109,10 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
                                  const char* parserClass, const char* objClass)
 {
     nObject *obj = 0;
-    
+
     n_assert(parserClass);
     n_assert(objClass);
-    
+
     // create object and parse script
     if (objName)
     {
@@ -122,13 +122,13 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
     {
         obj = nKernelServer::Instance()->New(objClass);
     }
-    
-    if (obj) 
+
+    if (obj)
     {
         bool isRoot = obj->IsA("nroot");
         nString result;
         nScriptServer* loader = this->GetLoader(parserClass);
-        
+
         if (isRoot)
         {
             nKernelServer::Instance()->PushCwd((nRoot *)obj);
@@ -137,9 +137,9 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
         {
             nScriptServer::SetCurrentTargetObject(obj);
         }
-        
+
         loader->RunScript(fname, result);
-        
+
         if (isRoot)
         {
             nKernelServer::Instance()->PopCwd();
@@ -148,8 +148,8 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
         {
             nScriptServer::SetCurrentTargetObject(0);
         }
-    } 
-    return obj; 
+    }
+    return obj;
 }
 
 //------------------------------------------------------------------------------
@@ -160,12 +160,12 @@ nObject*
 nPersistServer::LoadObject(const char* fileName, const char* objName)
 {
     n_assert(fileName);
-    
+
     char parserBuf[128];
     char objBuf[128];
     const char* parserClass;
     const char* objClass;
-    
+
     // read parser and object class meta data from file
     parserClass = this->ReadEmbeddedString(fileName, "parser", parserBuf, sizeof(parserBuf));
     objClass = this->ReadEmbeddedString(fileName, "class", objBuf, sizeof(objBuf));
@@ -173,10 +173,10 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
         return 0;
     if (!objClass)
         return 0;
-        
+
     nObject *obj = 0;
     nString tmpName;
-        
+
     // if we need to create an nRoot make sure it will have a valid name
     if (nKernelServer::Instance()->FindClass(objClass)->IsA("nroot"))
     {
@@ -199,12 +199,12 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
         obj = kernelServer->Lookup(objName);
         if (obj)
         {
-            n_error("nPersistServer: trying to overwrite existing object '%s'!\n", 
+            n_error("nPersistServer: trying to overwrite existing object '%s'!\n",
                     ((nRoot *)obj)->GetFullName().Get());
             return 0;
         }
     }
-    
+
     // try to load object as folded object, if that fails try unfolded
     obj = this->LoadFoldedObject(fileName, objName, parserClass, objClass);
     if (!obj)
@@ -215,7 +215,7 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
         if (!obj) // couldn't load object!
             n_message("nPersistServer: Could not load object '%s'!\n", fileName);
     }
-           
+
     return obj;
 }
 

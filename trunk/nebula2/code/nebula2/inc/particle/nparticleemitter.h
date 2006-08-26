@@ -28,7 +28,7 @@ class nParticleEmitter
 {
 public:
     // enumeration of the envelope curves (not including the color)
-    enum CurveType 
+    enum CurveType
     {
         EmissionFrequency = 0,
         ParticleLifeTime,
@@ -134,7 +134,7 @@ public:
 
     /// initializes particle ring buffer; may only be called once
     void SetParticleCount(int count);
-    /// return true if particle buffer has elements 
+    /// return true if particle buffer has elements
     bool HasParticles() const;
 
     /// Set the mesh that emittes particles
@@ -157,7 +157,7 @@ public:
 
     /// returns true if emitter is ready for emitting
     bool AreResourcesValid();
-    
+
     /// Shall the emitter still emit particles?
     void SetEmitting(bool emit);
 
@@ -170,10 +170,10 @@ protected:
     nFloat4 wind;
 
     matrix44 matrix;                // the world space matrix
- 
+
     bool alive;                     // is alive ?
     bool active;                    // still emitting ?
-    bool fatalException;            // a fatal exception occured (emitter will be removed)                 
+    bool fatalException;            // a fatal exception occured (emitter will be removed)
     int  lastEmissionVertex;        // last vertex that emitted
     int  randomKey;                 // random number key
 
@@ -185,7 +185,7 @@ protected:
     nTime emissionDuration;         // how long shall be emitted ?
     bool  loop;                     // loop emitter ?
     float activityDistance;         // distance between viewer and emitter on witch emitter is active
-    float spreadAngle;              // angle of emitted particle cone   
+    float spreadAngle;              // angle of emitted particle cone
     float birthDelay;               // maximum delay until particle starts to live
     float startRotation;            // maximum start rotation angle of a new particle
     bool renderOldestFirst;         // wether to render the oldest particles first or the youngest
@@ -227,7 +227,7 @@ nParticleEmitter::GetFatalException() const
 /**
 */
 inline
-void 
+void
 nParticleEmitter::SetAlive(bool b)
 {
     this->alive = b;
@@ -237,7 +237,7 @@ nParticleEmitter::SetAlive(bool b)
 /**
 */
 inline
-bool 
+bool
 nParticleEmitter::IsAlive() const
 {
     return this->alive;
@@ -644,7 +644,7 @@ nParticleEmitter::GetWind() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 void
 nParticleEmitter::SetEmitting(bool emit)
 {

@@ -147,7 +147,7 @@ void nGuiSlideShow::OnFrame()
             {
                 this->nextPicIndex += 1;
             }
-            
+
             this->UpdatePictureColor();
 
             // Flip the brushes, if needed

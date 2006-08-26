@@ -1,4 +1,4 @@
-/* 
+/*
  * tclListObj.c --
  *
  *	This file contains procedures that implement the Tcl list object
@@ -10,7 +10,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -38,7 +37,7 @@ Tcl_ObjType tclListType = {
     UpdateStringOfList,			/* updateStringProc */
     SetListFromAny			/* setFromAnyProc */
 };
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -87,31 +86,31 @@ Tcl_NewListObj(objc, objv)
     register Tcl_Obj **elemPtrs;
     register List *listRepPtr;
     int i;
-    
+
     TclNewObj(listPtr);
-    
+
     if (objc > 0) {
 	Tcl_InvalidateStringRep(listPtr);
-	
+
 	elemPtrs = (Tcl_Obj **)
 	    ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
 	for (i = 0;  i < objc;  i++) {
 	    elemPtrs[i] = objv[i];
 	    Tcl_IncrRefCount(elemPtrs[i]);
 	}
-	
+
 	listRepPtr = (List *) ckalloc(sizeof(List));
 	listRepPtr->maxElemCount = objc;
 	listRepPtr->elemCount    = objc;
 	listRepPtr->elements     = elemPtrs;
-	
+
 	listPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
 	listPtr->typePtr = &tclListType;
     }
     return listPtr;
 }
 #endif /* if TCL_MEM_DEBUG */
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -156,24 +155,24 @@ Tcl_DbNewListObj(objc, objv, file, line)
     register Tcl_Obj **elemPtrs;
     register List *listRepPtr;
     int i;
-    
+
     TclDbNewObj(listPtr, file, line);
-    
+
     if (objc > 0) {
 	Tcl_InvalidateStringRep(listPtr);
-	
+
 	elemPtrs = (Tcl_Obj **)
 	    ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
 	for (i = 0;  i < objc;  i++) {
 	    elemPtrs[i] = objv[i];
 	    Tcl_IncrRefCount(elemPtrs[i]);
 	}
-	
+
 	listRepPtr = (List *) ckalloc(sizeof(List));
 	listRepPtr->maxElemCount = objc;
 	listRepPtr->elemCount    = objc;
 	listRepPtr->elements     = elemPtrs;
-	
+
 	listPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
 	listPtr->typePtr = &tclListType;
     }
@@ -194,7 +193,7 @@ Tcl_DbNewListObj(objc, objv, file, line)
     return Tcl_NewListObj(objc, objv);
 }
 #endif /* TCL_MEM_DEBUG */
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -231,7 +230,7 @@ Tcl_SetListObj(objPtr, objc, objv)
     if (Tcl_IsShared(objPtr)) {
 	panic("Tcl_SetListObj called with shared object");
     }
-    
+
     /*
      * Free any old string rep and any internal rep for the old type.
      */
@@ -241,7 +240,7 @@ Tcl_SetListObj(objPtr, objc, objv)
     }
     objPtr->typePtr = NULL;
     Tcl_InvalidateStringRep(objPtr);
-        
+
     /*
      * Set the object's type to "list" and initialize the internal rep.
      * However, if there are no elements to put in the list, just give
@@ -255,19 +254,19 @@ Tcl_SetListObj(objPtr, objc, objv)
 	    elemPtrs[i] = objv[i];
 	    Tcl_IncrRefCount(elemPtrs[i]);
 	}
-	
+
 	listRepPtr = (List *) ckalloc(sizeof(List));
 	listRepPtr->maxElemCount = objc;
 	listRepPtr->elemCount    = objc;
 	listRepPtr->elements     = elemPtrs;
-	
+
 	objPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
 	objPtr->typePtr = &tclListType;
     } else {
 	objPtr->bytes = tclEmptyStringRep;
     }
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -321,7 +320,7 @@ Tcl_ListObjGetElements(interp, listPtr, objcPtr, objvPtr)
     *objvPtr = listRepPtr->elements;
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -379,10 +378,10 @@ Tcl_ListObjAppendList(interp, listPtr, elemListPtr)
      * Insert objc new elements starting after the lists's last element.
      * Delete zero existing elements.
      */
-    
+
     return Tcl_ListObjReplace(interp, listPtr, listLen, 0, objc, objv);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -401,7 +400,7 @@ Tcl_ListObjAppendList(interp, listPtr, elemListPtr)
  *	result if interp is not NULL.
  *
  * Side effects:
- *	The ref count of objPtr is incremented since the list now refers 
+ *	The ref count of objPtr is incremented since the list now refers
  *	to it. listPtr will be converted, if necessary, to a list object.
  *	Also, appending the new element may cause listObj's array of element
  *	pointers to grow. listPtr's old string representation, if any,
@@ -419,7 +418,7 @@ Tcl_ListObjAppendElement(interp, listPtr, objPtr)
     register List *listRepPtr;
     register Tcl_Obj **elemPtrs;
     int numElems, numRequired;
-    
+
     if (Tcl_IsShared(listPtr)) {
 	panic("Tcl_ListObjAppendElement called with shared object");
     }
@@ -434,7 +433,7 @@ Tcl_ListObjAppendElement(interp, listPtr, objPtr)
     elemPtrs = listRepPtr->elements;
     numElems = listRepPtr->elemCount;
     numRequired = numElems + 1 ;
-    
+
     /*
      * If there is no room in the current array of element pointers,
      * allocate a new, larger array and copy the pointers to it.
@@ -444,7 +443,7 @@ Tcl_ListObjAppendElement(interp, listPtr, objPtr)
 	int newMax = (2 * numRequired);
 	Tcl_Obj **newElemPtrs = (Tcl_Obj **)
 	    ckalloc((unsigned) (newMax * sizeof(Tcl_Obj *)));
-	
+
 	memcpy((VOID *) newElemPtrs, (VOID *) elemPtrs,
 	       (size_t) (numElems * sizeof(Tcl_Obj *)));
 
@@ -471,7 +470,7 @@ Tcl_ListObjAppendElement(interp, listPtr, objPtr)
     Tcl_InvalidateStringRep(listPtr);
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -506,7 +505,7 @@ Tcl_ListObjIndex(interp, listPtr, index, objPtrPtr)
     Tcl_Obj **objPtrPtr;	/* The resulting Tcl_Obj* is stored here. */
 {
     register List *listRepPtr;
-    
+
     if (listPtr->typePtr != &tclListType) {
 	int result = SetListFromAny(interp, listPtr);
 	if (result != TCL_OK) {
@@ -520,10 +519,10 @@ Tcl_ListObjIndex(interp, listPtr, index, objPtrPtr)
     } else {
 	*objPtrPtr = listRepPtr->elements[index];
     }
-    
+
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -553,7 +552,7 @@ Tcl_ListObjLength(interp, listPtr, intPtr)
     register int *intPtr;	/* The resulting int is stored here. */
 {
     register List *listRepPtr;
-    
+
     if (listPtr->typePtr != &tclListType) {
 	int result = SetListFromAny(interp, listPtr);
 	if (result != TCL_OK) {
@@ -565,14 +564,14 @@ Tcl_ListObjLength(interp, listPtr, intPtr)
     *intPtr = listRepPtr->elemCount;
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
  * Tcl_ListObjReplace --
- * 
+ *
  *	This procedure replaces zero or more elements of the list referenced
- *	by listPtr with the objects from an (objc,objv) array. 
+ *	by listPtr with the objects from an (objc,objv) array.
  *	The objc elements of the array referenced by objv replace the
  *	count elements in listPtr starting at first.
  *
@@ -599,7 +598,7 @@ Tcl_ListObjLength(interp, listPtr, intPtr)
  *	the resulting list now refers to them. Similarly, the ref counts for
  *	replaced objects are decremented. listPtr is converted, if
  *	necessary, to a list object. listPtr's old string representation, if
- *	any, is freed. 
+ *	any, is freed.
  *
  *----------------------------------------------------------------------
  */
@@ -619,7 +618,7 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
     Tcl_Obj *victimPtr;
     int numElems, numRequired, numAfterLast;
     int start, shift, newMax, i, j, result;
-     
+
     if (Tcl_IsShared(listPtr)) {
 	panic("Tcl_ListObjReplace called with shared object");
     }
@@ -642,7 +641,7 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
     if (count < 0) {
 	count = 0;
     }
-    
+
     numRequired = (numElems - count + objc);
     if (numRequired <= listRepPtr->maxElemCount) {
 	/*
@@ -696,7 +695,7 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
     } else {
 	/*
 	 * Not enough room in the current array. Allocate a larger array and
-	 * insert elements into it. 
+	 * insert elements into it.
 	 */
 
 	newMax = (2 * numRequired);
@@ -733,7 +732,7 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
 		    (VOID *) &(elemPtrs[start]),
 		    (size_t) (numAfterLast * sizeof(Tcl_Obj *)));
 	}
-	
+
 	/*
 	 * Insert the new elements before "first" and update the
 	 * count of elements.
@@ -749,7 +748,7 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
 	listRepPtr->elements = newPtrs;
 	ckfree((char *) elemPtrs);
     }
-    
+
     /*
      * Invalidate and free any old string representation since it no longer
      * reflects the list's internal representation.
@@ -758,7 +757,7 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
     Tcl_InvalidateStringRep(listPtr);
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -787,7 +786,7 @@ FreeListInternalRep(listPtr)
     register Tcl_Obj *objPtr;
     int numElems = listRepPtr->elemCount;
     int i;
-    
+
     for (i = 0;  i < numElems;  i++) {
 	objPtr = elemPtrs[i];
 	Tcl_DecrRefCount(objPtr);
@@ -795,14 +794,14 @@ FreeListInternalRep(listPtr)
     ckfree((char *) elemPtrs);
     ckfree((char *) listRepPtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
  * DupListInternalRep --
  *
  *	Initialize the internal representation of a list Tcl_Obj to a
- *	copy of the internal representation of an existing list object. 
+ *	copy of the internal representation of an existing list object.
  *
  * Results:
  *	None.
@@ -836,23 +835,23 @@ DupListInternalRep(srcPtr, copyPtr)
      * objects. Increment the ref counts for those (now shared) element
      * objects.
      */
-    
+
     copyElemPtrs = (Tcl_Obj **)
 	ckalloc((unsigned) maxElems * sizeof(Tcl_Obj *));
     for (i = 0;  i < numElems;  i++) {
 	copyElemPtrs[i] = srcElemPtrs[i];
 	Tcl_IncrRefCount(copyElemPtrs[i]);
     }
-    
+
     copyListRepPtr = (List *) ckalloc(sizeof(List));
     copyListRepPtr->maxElemCount = maxElems;
     copyListRepPtr->elemCount    = numElems;
     copyListRepPtr->elements     = copyElemPtrs;
-    
+
     copyPtr->internalRep.otherValuePtr = (VOID *) copyListRepPtr;
     copyPtr->typePtr = &tclListType;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -952,7 +951,7 @@ SetListFromAny(interp, objPtr)
 	} else {
 	    elemSize = TclCopyAndCollapse(elemSize, elemStart, s);
 	}
-	
+
 	TclNewObj(elemPtr);
         elemPtr->bytes  = s;
         elemPtr->length = elemSize;
@@ -979,7 +978,7 @@ SetListFromAny(interp, objPtr)
     objPtr->typePtr = &tclListType;
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -987,7 +986,7 @@ SetListFromAny(interp, objPtr)
  *
  *	Update the string representation for a list object.
  *	Note: This procedure does not invalidate an existing old string rep
- *	so storage will be lost if this has not already been done. 
+ *	so storage will be lost if this has not already been done.
  *
  * Results:
  *	None.

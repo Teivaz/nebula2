@@ -6,14 +6,14 @@
     @ingroup Anim2
 
     @brief A streaming animation streams its animation data from disk into
-    a small memory buffer. They can generally not be shared like 
+    a small memory buffer. They can generally not be shared like
     nMemoryAnimation objects (since animations with different sample
     times would thrash their stream buffers all the time). The advantage
     is of course that stream animations can be very long (only limited
-    by available disk space). 
+    by available disk space).
 
-    Streaming animations are generally created through the 
-    nAnimationServer::NewStreamingAnimation() method. 
+    Streaming animations are generally created through the
+    nAnimationServer::NewStreamingAnimation() method.
 
     See the nAnimation class documentation for more information.
 

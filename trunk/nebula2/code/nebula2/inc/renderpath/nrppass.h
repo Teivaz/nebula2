@@ -53,7 +53,7 @@ public:
     /// set optional technique
     void SetTechnique(const nString& n);
     /// get optional technique
-    const nString& GetTechnique() const;    
+    const nString& GetTechnique() const;
     /// set the render target's name (0 for default render target)
     void SetRenderTargetName(int index, const nString& n);
     /// get the render target's name
@@ -82,6 +82,10 @@ public:
     void SetDrawShadows(ShadowTechnique t);
     /// get the "draw shadow volumes" technique
     ShadowTechnique GetDrawShadows() const;
+    /// enable/disable statistics counter in this pass
+    void SetStatsEnabled(bool b);
+    /// get statistics counter flag for this spass
+    bool GetStatsEnabled() const;
     /// set the occlusion query technique
     void SetOcclusionQuery(bool b);
     /// get the occlusion query technique
@@ -112,7 +116,7 @@ public:
     void End();
     /// convert shadow technique string to enum
     static ShadowTechnique StringToShadowTechnique(const nString& s);
-    /// draw a fullscreen quad 
+    /// draw a fullscreen quad
     void DrawFullScreenQuad();
 
 #if __NEBULA_STATS__
@@ -166,7 +170,8 @@ private:
     bool drawFullscreenQuad;        // true if pass should render a fullscreen quad
     bool drawGui;                   // true if this pass should render the gui
     bool shadowEnabledCondition;
-    bool occlusionQuery;            // special flag for occlusion query 
+    bool occlusionQuery;            // special flag for occlusion query
+    bool statsEnabled;
 
     #if __NEBULA_STATS__
     nProfiler prof;
@@ -200,6 +205,7 @@ nRpPass::operator=(const nRpPass& rhs)
     this->clearStencil              = rhs.clearStencil;
     this->shadowTechnique           = rhs.shadowTechnique;
     this->occlusionQuery            = rhs.occlusionQuery;
+    this->statsEnabled              = rhs.statsEnabled;
     this->drawFullscreenQuad        = rhs.drawFullscreenQuad;
     this->drawGui                   = rhs.drawGui;
     this->shadowEnabledCondition    = rhs.shadowEnabledCondition;
@@ -210,6 +216,26 @@ nRpPass::operator=(const nRpPass& rhs)
     #if __NEBULA_STATS__
     this->section                   = rhs.section;
     #endif
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nRpPass::SetStatsEnabled(bool b)
+{
+    this->statsEnabled = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nRpPass::GetStatsEnabled() const
+{
+    return this->statsEnabled;
 }
 
 //------------------------------------------------------------------------------
@@ -450,7 +476,7 @@ inline
 const nString&
 nRpPass::GetRenderTargetName(const int index) const
 {
-    return this->renderTargetNames[index];        
+    return this->renderTargetNames[index];
 }
 
 //------------------------------------------------------------------------------
@@ -603,4 +629,4 @@ nRpPass::GetSection() const
 //------------------------------------------------------------------------------
 #endif
 
-    
+

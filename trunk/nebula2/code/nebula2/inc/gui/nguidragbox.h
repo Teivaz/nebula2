@@ -17,7 +17,7 @@
 
     If the drag box is smaller then the size threshold, no drag box will
     be rendered.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiwidget.h"
@@ -128,5 +128,5 @@ nGuiDragBox::GetDragBox2D() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
- 
+#endif
+

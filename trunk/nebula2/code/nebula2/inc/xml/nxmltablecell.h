@@ -7,11 +7,11 @@
 
     A single cell in an XML table. The primary representation is as string,
     but converted data types can be returned as well (such as int, float, etc...).
-    
+
     If the XML table cell is empty, the method IsEmpty() returns true, and
     all IsValidXXX() method return false. This differs from the previous
     behaviour, where the string "<invalid>" was returned.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
@@ -78,7 +78,7 @@ nXmlTableCell::~nXmlTableCell()
 
 //------------------------------------------------------------------------------
 /**
-    Sets the value of the cell. NOTE: an automatic UTF8-conversion happens 
+    Sets the value of the cell. NOTE: an automatic UTF8-conversion happens
     automatically on the new content of the cell.
 */
 inline

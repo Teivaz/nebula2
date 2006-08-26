@@ -1,4 +1,4 @@
-/* 
+/*
  * tclCmdMZ.c --
  *
  *      This file contains the top-level command routines for most of
@@ -13,7 +13,6 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * RCS: @(#) $Id$
  */
 
 #include "microtcl/tclInt.h"
@@ -72,7 +71,7 @@ typedef int (Tcl_TraceTypeObjCmd) _ANSI_ARGS_((Tcl_Interp *interp,
 // Tcl_TraceTypeObjCmd TclTraceVariableObjCmd;
 // Tcl_TraceTypeObjCmd TclTraceCommandObjCmd;
 
-/* 
+/*
  * Each subcommand has a number of 'types' to which it can apply.
  * Currently 'command' and 'variable' are the only
  * types supported.  These two arrays MUST be kept in sync!
@@ -137,7 +136,7 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
         return TCL_OK;
     }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -187,7 +186,7 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
         offset  = 0;
         all             = 0;
         doinline        = 0;
-    
+
         for (i = 1; i < objc; i++) {
             char *name;
             int index;
@@ -317,7 +316,7 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
          * we can do the termination test for -all matches.
          */
         stringLength = Tcl_GetCharLength(objPtr);
-    
+
         /*
          * The following loop is to handle multiple matches within the
          * same source string;  each iteration handles one match.  If "-all"
@@ -458,7 +457,7 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
         return TCL_OK;
     }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -510,7 +509,7 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
         for (idx = 1; idx < objc; idx++) {
             char *name;
             int index;
-            
+
             name = Tcl_GetString(objv[idx]);
             if (name[0] != '-') {
                 break;
@@ -716,9 +715,9 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
         } else {
             /*
              * Set the interpreter's object result to an integer object
-             * holding the number of matches. 
+             * holding the number of matches.
              */
-            
+
             Tcl_SetIntObj(Tcl_GetObjResult(interp), numMatches);
         }
 
@@ -727,7 +726,7 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
         return result;
     }
 #endif
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -754,7 +753,7 @@ Tcl_RenameObjCmd(dummy, interp, objc, objv)
     Tcl_Obj *CONST objv[];      /* Argument objects. */
 {
     char *oldName, *newName;
-    
+
     if (objc != 3) {
         Tcl_WrongNumArgs(interp, 1, objv, "oldName newName");
         return TCL_ERROR;
@@ -764,7 +763,7 @@ Tcl_RenameObjCmd(dummy, interp, objc, objv)
     newName = Tcl_GetString(objv[2]);
     return TclRenameCommand(interp, oldName, newName);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -802,11 +801,11 @@ Tcl_ReturnObjCmd(dummy, interp, objc, objv)
         iPtr->errorCode = NULL;
     }
     code = TCL_OK;
-    
+
     for (objv++, objc--;  objc > 1;  objv += 2, objc -= 2) {
         char *option = Tcl_GetStringFromObj(objv[0], &optionLen);
         char *arg = Tcl_GetStringFromObj(objv[1], &argLen);
-        
+
         if (strcmp(option, "-code") == 0) {
             register int c = arg[0];
             if ((c == 'o') && (strcmp(arg, "ok") == 0)) {
@@ -848,7 +847,7 @@ Tcl_ReturnObjCmd(dummy, interp, objc, objv)
             return TCL_ERROR;
         }
     }
-    
+
     if (objc == 1) {
         /*
          * Set the interpreter's object result. An inline version of
@@ -860,7 +859,7 @@ Tcl_ReturnObjCmd(dummy, interp, objc, objv)
     iPtr->returnCode = code;
     return TCL_RETURN;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -888,7 +887,7 @@ Tcl_SourceObjCmd(dummy, interp, objc, objv)
 {
     char *bytes;
     int result;
-    
+
     if (objc != 2) {
         Tcl_WrongNumArgs(interp, 1, objv, "fileName");
         return TCL_ERROR;
@@ -898,7 +897,7 @@ Tcl_SourceObjCmd(dummy, interp, objc, objv)
     result = Tcl_EvalFile(interp, bytes);
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -943,7 +942,7 @@ Tcl_SplitObjCmd(dummy, interp, objc, objv)
     string = Tcl_GetStringFromObj(objv[1], &stringLen);
     end = string + stringLen;
     listPtr = Tcl_GetObjResult(interp);
-    
+
     if (stringLen == 0) {
         /*
          * Do nothing.
@@ -962,7 +961,7 @@ Tcl_SplitObjCmd(dummy, interp, objc, objv)
         char *element, *p, *splitEnd;
         int splitLen;
         Tcl_UniChar splitChar;
-        
+
         /*
          * Normal case: split on any of a given set of characters.
          * Discard instances of the split characters.
@@ -987,7 +986,7 @@ Tcl_SplitObjCmd(dummy, interp, objc, objv)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -1034,13 +1033,13 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
         STR_REPLACE,    STR_TOLOWER,    STR_TOUPPER,    STR_TOTITLE,
         STR_TRIM,       STR_TRIMLEFT,   STR_TRIMRIGHT,
         STR_WORDEND,    STR_WORDSTART
-    };    
+    };
 
     if (objc < 2) {
         Tcl_WrongNumArgs(interp, 1, objv, "option arg ?arg ...?");
         return TCL_ERROR;
     }
-    
+
     if (Tcl_GetIndexFromObj(interp, objv[1], options, "option", 0,
             &index) != TCL_OK) {
         return TCL_ERROR;
@@ -1265,7 +1264,7 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
              * The UniChar comparison function
              */
 
-            int (*chcomp)_ANSI_ARGS_((int)) = NULL; 
+            int (*chcomp)_ANSI_ARGS_((int)) = NULL;
             int i, failat = 0, result = 1, strict = 0;
             Tcl_Obj *objPtr, *failVarObj = NULL;
 
@@ -2012,7 +2011,7 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
 
                 for (p = string1; p < end; p += offset) {
                     offset = Tcl_UtfToUniChar(p, &ch);
-                    
+
                     for (check = string2; ; ) {
                         if (check >= checkEnd) {
                             p = end;
@@ -2071,7 +2070,7 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
             Tcl_UniChar ch;
             char *p, *end;
             int numChars;
-            
+
             if (objc != 4) {
                 Tcl_WrongNumArgs(interp, 2, objv, "string index");
                 return TCL_ERROR;
@@ -2109,7 +2108,7 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
             Tcl_UniChar ch;
             char *p;
             int numChars;
-            
+
             if (objc != 4) {
                 Tcl_WrongNumArgs(interp, 2, objv, "string index");
                 return TCL_ERROR;
@@ -2144,7 +2143,7 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2294,7 +2293,7 @@ Tcl_SubstObjCmd(dummy, interp, objc, objv)
     Tcl_DStringResult(interp, &result);
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2324,7 +2323,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
     char *string, *pattern;
     Tcl_Obj *stringObj;
     static char *options[] = {
-        "-exact",       "-glob",        "-regexp",      "--", 
+        "-exact",       "-glob",        "-regexp",      "--",
         NULL
     };
     enum options {
@@ -2337,7 +2336,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
         if (string[0] != '-') {
             break;
         }
-        if (Tcl_GetIndexFromObj(interp, objv[i], options, "option", 0, 
+        if (Tcl_GetIndexFromObj(interp, objv[i], options, "option", 0,
                 &index) != TCL_OK) {
             return TCL_ERROR;
         }
@@ -2411,8 +2410,8 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
         }
 
         matched = 0;
-        if ((i == objc - 2) 
-                && (*pattern == 'd') 
+        if ((i == objc - 2)
+                && (*pattern == 'd')
                 && (strcmp(pattern, "default") == 0)) {
             matched = 1;
         } else {
@@ -2466,7 +2465,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
     }
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2511,7 +2510,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
             Tcl_WrongNumArgs(interp, 1, objv, "command ?count?");
             return TCL_ERROR;
         }
-    
+
         objPtr = objv[1];
         i = count;
         TclpGetTime(&start);
@@ -2522,7 +2521,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
             }
         }
         TclpGetTime(&stop);
-    
+
         totalMicroSec =
             (stop.sec - start.sec)*1000000 + (stop.usec - start.usec);
         sprintf(buf, "%.0f microseconds per iteration",
@@ -2540,9 +2539,9 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
  *
  *      This procedure is invoked to process the "trace" Tcl command.
  *      See the user documentation for details on what it does.
- *      
+ *
  *      Standard syntax as of Tcl 8.4 is
- *      
+ *
  *       trace {add|remove|list} {command|variable} name ops cmd
  *
  *
@@ -2569,15 +2568,15 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
         size_t length;
         /* Main sub commands to 'trace' */
         static char *traceOptions[] = {
-            "add", "list", "remove", 
+            "add", "list", "remove",
     #ifndef TCL_REMOVE_OBSOLETE_TRACES
-            "variable", "vdelete", "vinfo", 
+            "variable", "vdelete", "vinfo",
     #endif
             (char *) NULL
         };
         /* 'OLD' options are pre-Tcl-8.4 style */
         enum traceOptions {
-            TRACE_ADD, TRACE_LIST, TRACE_REMOVE, 
+            TRACE_ADD, TRACE_LIST, TRACE_REMOVE,
     #ifndef TCL_REMOVE_OBSOLETE_TRACES
             TRACE_OLD_VARIABLE, TRACE_OLD_VDELETE, TRACE_OLD_VINFO
     #endif
@@ -2593,10 +2592,10 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
             return TCL_ERROR;
         }
         switch ((enum traceOptions) optionIndex) {
-            case TRACE_ADD: 
+            case TRACE_ADD:
             case TRACE_REMOVE:
             case TRACE_LIST: {
-                /* 
+                /*
                  * All sub commands of trace add/remove must take at least
                  * one more argument.  Beyond that we let the subcommand itself
                  * control the argument structure.
@@ -2641,7 +2640,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
                     goto badVarOps;
                 }
                 flags |= TCL_TRACE_OLD_STYLE;
-                
+
                 command = Tcl_GetStringFromObj(objv[4], &commandLength);
                 length = (size_t) commandLength;
                 tvarPtr = (TraceVarInfo *) ckalloc((unsigned)
@@ -2781,7 +2780,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
     }
 #endif
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2815,9 +2814,9 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
         enum traceOptions { TRACE_ADD, TRACE_LIST, TRACE_REMOVE };
         static char *opStrings[] = { "delete", "rename", (char *) NULL };
         enum operations { TRACE_CMD_DELETE, TRACE_CMD_RENAME };
-    
+
         switch ((enum traceOptions) optionIndex) {
-            case TRACE_ADD: 
+            case TRACE_ADD:
             case TRACE_REMOVE: {
                 int flags = 0;
                 int i, listLen, result;
@@ -2879,7 +2878,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
                      * see if there's one with the given command.  If so, then
                      * delete the first one that matches.
                      */
-                    
+
                     TraceCommandInfo *tcmdPtr;
                     ClientData clientData;
                     clientData = 0;
@@ -2953,7 +2952,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
     }
 #endif
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -2989,9 +2988,9 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
                                          (char *) NULL };
         enum operations { TRACE_VAR_ARRAY, TRACE_VAR_READ, TRACE_VAR_UNSET,
                               TRACE_VAR_WRITE };
-        
+
         switch ((enum traceOptions) optionIndex) {
-            case TRACE_ADD: 
+            case TRACE_ADD:
             case TRACE_REMOVE: {
                 int flags = 0;
                 int i, listLen, result;
@@ -3060,7 +3059,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
                      * see if there's one with the given command.  If so, then
                      * delete the first one that matches.
                      */
-                    
+
                     TraceVarInfo *tvarPtr;
                     ClientData clientData = 0;
                     name = Tcl_GetString(objv[3]);
@@ -3139,7 +3138,7 @@ Tcl_SwitchObjCmd(dummy, interp, objc, objv)
     }
 #endif
 
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -3182,7 +3181,7 @@ Tcl_CommandTraceInfo(interp, cmdName, flags, proc, prevClientData)
     Command *cmdPtr;
     register CommandTrace *tracePtr;
 
-    cmdPtr = (Command*)Tcl_FindCommand(interp, cmdName, 
+    cmdPtr = (Command*)Tcl_FindCommand(interp, cmdName,
                 NULL, TCL_LEAVE_ERR_MSG);
     if (cmdPtr == NULL) {
         return NULL;
@@ -3209,7 +3208,7 @@ Tcl_CommandTraceInfo(interp, cmdName, flags, proc, prevClientData)
     }
     return NULL;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -3262,7 +3261,7 @@ Tcl_TraceCommand(interp, cmdName, flags, proc, clientData)
     cmdPtr->tracePtr = tracePtr;
     return TCL_OK;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -3296,7 +3295,7 @@ Tcl_UntraceCommand(interp, cmdName, flags, proc, clientData)
     Interp *iPtr = (Interp *) interp;
     ActiveCommandTrace *activePtr;
 
-    cmdPtr = (Command*)Tcl_FindCommand(interp, cmdName, 
+    cmdPtr = (Command*)Tcl_FindCommand(interp, cmdName,
                 NULL, TCL_LEAVE_ERR_MSG);
     if (cmdPtr == NULL) {
         return;
@@ -3333,7 +3332,7 @@ Tcl_UntraceCommand(interp, cmdName, flags, proc, clientData)
     }
     ckfree((char *) tracePtr);
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -3399,7 +3398,7 @@ TraceCommandProc(clientData, interp, oldName, newName, flags)
         Tcl_SaveResult(interp, &state);
 
         code = Tcl_Eval(interp, Tcl_DStringValue(&cmd));
-        if (code != TCL_OK) {        
+        if (code != TCL_OK) {
             /* We ignore errors in these traced commands */
         }
 
@@ -3415,7 +3414,7 @@ TraceCommandProc(clientData, interp, oldName, newName, flags)
     }
     return;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -3460,7 +3459,7 @@ TraceVarProc(clientData, interp, name1, name2, flags)
         if (tvarPtr->length != (size_t) 0) {
             /*
              * Generate a command to execute by appending list elements
-             * for the two variable names and the operation. 
+             * for the two variable names and the operation.
              */
 
             if (name2 == NULL) {
@@ -3495,7 +3494,7 @@ TraceVarProc(clientData, interp, name1, name2, flags)
 #ifndef TCL_REMOVE_OBSOLETE_TRACES
             }
 #endif
-            
+
             /*
              * Execute the command.  Save the interp's result used for
              * the command. We discard any object result the command returns.
@@ -3507,7 +3506,7 @@ TraceVarProc(clientData, interp, name1, name2, flags)
             if (code != TCL_OK) {            /* copy error msg to result */
                 char *string;
                 int length;
-                
+
                 string = Tcl_GetStringFromObj(Tcl_GetObjResult(interp), &length);
                 tvarPtr->errMsg = (char *) ckalloc((unsigned) (length + 1));
                 memcpy(tvarPtr->errMsg, string, (size_t) (length + 1));
@@ -3528,7 +3527,7 @@ TraceVarProc(clientData, interp, name1, name2, flags)
     }
     return result;
 }
-
+
 /*
  *----------------------------------------------------------------------
  *

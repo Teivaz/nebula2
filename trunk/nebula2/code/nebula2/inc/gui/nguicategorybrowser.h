@@ -5,7 +5,7 @@
     @class nGuiCategoryBrowser
     @ingroup Gui
     @brief A category/file browser widget.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiformlayout.h"

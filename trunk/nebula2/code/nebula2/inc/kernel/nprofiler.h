@@ -27,7 +27,7 @@ public:
     void Initialize(const char* name);
     /// return true if profiler has been initialized
     bool IsValid() const;
-    /// start one-shot profiling 
+    /// start one-shot profiling
     void Start();
     /// return true if profiler has been started
     bool IsStarted() const;
@@ -49,6 +49,23 @@ private:
     nTime accumTime;
 };
 
+#if __NEBULA_STATS__
+#define PROFILER_DECLARE(prof) nProfiler prof;
+#define PROFILER_INIT(prof,name) prof.Initialize(name);
+#define PROFILER_START(prof) prof.Start();
+#define PROFILER_STOP(prof)  prof.Stop();
+#define PROFILER_RESET(prof) prof.ResetAccum();
+#define PROFILER_STARTACCUM(prof) prof.StartAccum();
+#define PROFILER_STOPACCUM(prof)  prof.StopAccum();
+#else
+#define PROFILER_DECLARE(prof)
+#define PROFILER_INIT(prof,name)
+#define PROFILER_START(prof)
+#define PROFILER_STOP(prof)
+#define PROFILER_RESET(prof)
+#define PROFILER_STARTACCUM(prof)
+#define PROFILER_STOPACCUM(prof)
+#endif
 //------------------------------------------------------------------------------
 /**
 */
@@ -84,7 +101,7 @@ nProfiler::nProfiler() :
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nProfiler::nProfiler(const char* name)
 {
     this->Initialize(name);
@@ -93,7 +110,7 @@ nProfiler::nProfiler(const char* name)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nProfiler::~nProfiler()
 {
     // empty
@@ -122,9 +139,9 @@ nProfiler::IsStarted() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
-nProfiler::Start() 
+inline
+void
+nProfiler::Start()
 {
     if (this->isStarted)
     {
@@ -137,9 +154,9 @@ nProfiler::Start()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
-nProfiler::Stop() 
+inline
+void
+nProfiler::Stop()
 {
     if (this->isStarted)
     {

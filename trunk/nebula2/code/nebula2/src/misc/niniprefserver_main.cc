@@ -64,9 +64,9 @@ bool nIniPrefServer::WriteGeneric(const nString& key, const nString& value)
     n_assert(!this->fileName.IsEmpty());
     n_assert(!key.IsEmpty());
 
-    return WritePrivateProfileString(this->sectionName.Get(), 
-                                     key.Get(), 
-                                     value.Get(), 
+    return WritePrivateProfileString(this->sectionName.Get(),
+                                     key.Get(),
+                                     value.Get(),
                                      this->fileName.Get()) ? true : false;
 }
 
@@ -99,7 +99,7 @@ nString nIniPrefServer::ReadGeneric(const nString& key)
 */
 bool nIniPrefServer::DeleteSection(const nString& section)
 {
-    return WritePrivateProfileString(section.Get(), NULL, NULL, 
+    return WritePrivateProfileString(section.Get(), NULL, NULL,
                                      this->fileName.Get()) ? true : false;
 }
 
@@ -108,6 +108,6 @@ bool nIniPrefServer::DeleteSection(const nString& section)
 */
 bool nIniPrefServer::DeleteKey(const nString& section, const nString& key)
 {
-    return WritePrivateProfileString(section.Get(), key.Get(), NULL, 
+    return WritePrivateProfileString(section.Get(), key.Get(), NULL,
                                      this->fileName.Get()) ? true : false;
 }

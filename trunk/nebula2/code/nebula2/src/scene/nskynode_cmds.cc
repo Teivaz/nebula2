@@ -23,10 +23,10 @@ static void n_gettimeperiode(void* slf, nCmd* cmd);
 /**
     @scriptclass
     nskynode
-    
+
     @cppclass
     nSkyNode
-    
+
     @superclass
     ntransformnode
 
@@ -313,17 +313,17 @@ nSkyNode::SaveCmds(nPersistServer* ps)
     if (nTransformNode::SaveCmds(ps))
     {
         nCmd* cmd;
-        
+
         //--- TimeFactor ---
         cmd = ps->GetCmd(this, 'STFA');
         cmd->In()->SetF(this->GetTimeFactor());
         ps->PutCmd(cmd);
-        
+
         //--- TimePeriode ---
         cmd = ps->GetCmd(this, 'STPD');
         cmd->In()->SetF(this->GetTimePeriode());
         ps->PutCmd(cmd);
-        
+
         //--- StartTime ---
         cmd = ps->GetCmd(this, 'SSTT');
         cmd->In()->SetF(this->GetSkyTime());
@@ -334,46 +334,46 @@ nSkyNode::SaveCmds(nPersistServer* ps)
         for (i=0; i < this->elements.Size(); i++)
         {
             cmd = ps->GetCmd(this, 'ADDE');
-            cmd->In()->SetS(this->TypeToString(this->elements[i].type).Get()); 
+            cmd->In()->SetS(this->TypeToString(this->elements[i].type).Get());
             cmd->In()->SetS(this->elements[i].refElement->GetName());
             ps->PutCmd(cmd);
         }
-        
+
         //--- linkto ---
         int k;
         for (i=0; i < this->elements.Size(); i++)
         {
             for(k=0; k < this->elements[i].linkTo.Size(); k++)
             {
-                cmd = ps->GetCmd(this, 'LKSL'); 
+                cmd = ps->GetCmd(this, 'LKSL');
                 cmd->In()->SetS(this->elements[i].refElement->GetName());
                 cmd->In()->SetS(this->elements[this->elements[i].linkTo[k]].refElement->GetName());
-                ps->PutCmd(cmd);  
+                ps->PutCmd(cmd);
             }
         }
-        
+
         //--- addState ---
         for (i=0; i < this->elements.Size(); i++)
         {
             for(k=0; k < this->elements[i].states.Size(); k++)
             {
-                cmd = ps->GetCmd(this, 'ADDS'); 
+                cmd = ps->GetCmd(this, 'ADDS');
                 cmd->In()->SetS(this->elements[i].refElement->GetName());
                 cmd->In()->SetS(this->elements[i].states[k].refState->GetName());
                 cmd->In()->SetF(this->elements[i].states[k].time);
-                ps->PutCmd(cmd);  
+                ps->PutCmd(cmd);
             }
         }
-        
+
         ////--- refreshTime ---
         //for (i=0; i < this->elements.Size(); i++)
         //{
-        //    cmd = ps->GetCmd(this, 'SRFT'); 
+        //    cmd = ps->GetCmd(this, 'SRFT');
         //    cmd->In()->SetS(this->elements[i].refElement->GetName());
         //    cmd->In()->SetF(this->elements[i].refreshTime);
-        //    ps->PutCmd(cmd);  
+        //    ps->PutCmd(cmd);
         //}
-        
+
         return true;
     }
     return false;

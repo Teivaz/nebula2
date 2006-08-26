@@ -1,12 +1,12 @@
 #ifndef N_ANGULARPFEEDBACKLOOP_H
 #define N_ANGULARPFEEDBACKLOOP_H
 //------------------------------------------------------------------------------
-/** 
+/**
     @class nAngularPFeedbackLoop
     @ingroup Util
 
     A proportional feedback loop with correct angular interpolation.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"

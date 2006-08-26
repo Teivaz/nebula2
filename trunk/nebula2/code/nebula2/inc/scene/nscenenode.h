@@ -88,6 +88,8 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// render debug information
+    virtual void RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix);
     /// perform pre-instancing rending of shader
     virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
@@ -100,7 +102,7 @@ public:
     virtual bool ApplyShadow(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shadow
     virtual bool RenderShadow(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix);
-    /// render the scene from the provided camera 
+    /// render the scene from the provided camera
     virtual bool RenderCamera(const matrix44& modelWorldMatrix, const matrix44& viewMatrix, const matrix44& projectionMatrix);
     /// set the local bounding box
     void SetLocalBox(const bbox3& b);
@@ -140,7 +142,7 @@ public:
     void SetStringAttr(const nString& name, const nString& val);
     /// get string custom attribute
     nString GetStringAttr(const nString& name) const;
-    /// set vector3 custom attribute 
+    /// set vector3 custom attribute
     void SetVector3Attr(const nString& name, const vector3& val);
     /// get vector3 custom attribute
     const vector3& GetVector3Attr(const nString& name) const;

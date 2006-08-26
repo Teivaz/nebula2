@@ -35,7 +35,7 @@ static void n_setf4(void*, nCmd*);
 
     @classinfo
     The nenv class is similar to an environment variable.
-    Just create, set the type and value, and query it 
+    Just create, set the type and value, and query it
 */
 void n_initcmds(nClass *cl)
 {
@@ -65,8 +65,8 @@ void n_initcmds(nClass *cl)
     @output
     s (Type = [void int float bool string object float4])
     @info
-    Returns the datatype the variable is set to. If void 
-    is returned the variable is empty. 
+    Returns the datatype the variable is set to. If void
+    is returned the variable is empty.
 */
 static void n_gettype(void *o, nCmd *cmd)
 {
@@ -97,8 +97,8 @@ static void n_gettype(void *o, nCmd *cmd)
     i (Value)
 
     @info
-    Returns the content of the variable if it is an int 
-    variable. If it's not an int variable, 0 is returned and 
+    Returns the content of the variable if it is an int
+    variable. If it's not an int variable, 0 is returned and
     an error message is printed.
 */
 static void n_geti(void *o, nCmd *cmd)
@@ -119,7 +119,7 @@ static void n_geti(void *o, nCmd *cmd)
     f (Value)
 
     @info
-    Returns the content of the variable if it is a float 
+    Returns the content of the variable if it is a float
     variable. If it's not a float variable, 0.0 is returned
     and an error message is printed.
 */
@@ -141,7 +141,7 @@ static void n_getf(void *o, nCmd *cmd)
     b (Value)
 
     @info
-    Returns the content of the variable if it is a bool 
+    Returns the content of the variable if it is a bool
     variable. If it's not a bool, false is returned and an
     error message is printed.
 */
@@ -163,7 +163,7 @@ static void n_getb(void *o, nCmd *cmd)
     s (Value)
 
     @info
-    Returns the content of the variable if it is a string 
+    Returns the content of the variable if it is a string
     variable. If it's not a string variable, "" is returned
     and an error message is printed.
 */
@@ -198,13 +198,13 @@ static void n_geto(void *o, nCmd *cmd)
 /**
     @cmd
     getf4
-    
+
     @input
     v
-    
+
     @output
     f(X), f(Y), f(Z), f(W)
-    
+
     @info
     Return content as 4D vector.
 */
@@ -230,7 +230,7 @@ static void n_getf4(void* slf, nCmd* cmd)
     v
 
     @info
-    Sets the content of the variable to the passed integer value. 
+    Sets the content of the variable to the passed integer value.
 */
 static void n_seti(void *o, nCmd *cmd)
 {
@@ -250,7 +250,7 @@ static void n_seti(void *o, nCmd *cmd)
     v
 
     @info
-    Sets the content of the variable to the passed float value. 
+    Sets the content of the variable to the passed float value.
 */
 static void n_setf(void *o, nCmd *cmd)
 {
@@ -270,7 +270,7 @@ static void n_setf(void *o, nCmd *cmd)
     v
 
     @info
-    Sets the content of the variable to the passed boolean value. 
+    Sets the content of the variable to the passed boolean value.
 */
 static void n_setb(void *o, nCmd *cmd)
 {
@@ -290,7 +290,7 @@ static void n_setb(void *o, nCmd *cmd)
     v
 
     @info
-    Sets the content of the variable to the passed string. 
+    Sets the content of the variable to the passed string.
 */
 static void n_sets(void *o, nCmd *cmd)
 {
@@ -310,7 +310,7 @@ static void n_sets(void *o, nCmd *cmd)
     v
 
     @info
-    Sets the content of the variable to the passed object handle. 
+    Sets the content of the variable to the passed object handle.
 */
 static void n_seto(void *o, nCmd *cmd)
 {
@@ -322,13 +322,13 @@ static void n_seto(void *o, nCmd *cmd)
 /**
     @cmd
     setf4
-    
+
     @input
     f(X), f(Y), f(Z), f(W)
-    
+
     @output
     v
-    
+
     @info
     Sets the content of the variable to a 4D vector.
 */
@@ -350,10 +350,10 @@ static void n_setf4(void* slf, nCmd* cmd)
 bool nEnv::SaveCmds(nPersistServer *fs)
 {
     bool retval = false;
-    if (nRoot::SaveCmds(fs)) 
+    if (nRoot::SaveCmds(fs))
     {
         nCmd *cmd;
-        switch (this->GetType()) 
+        switch (this->GetType())
         {
             case nArg::Int:
                 cmd = fs->GetCmd(this, 'SETI');

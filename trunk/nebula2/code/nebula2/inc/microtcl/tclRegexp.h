@@ -1,4 +1,4 @@
-/* 
+/*
  * tclRegexp.h --
  *
  * 	This file contains definitions used internally by Henry

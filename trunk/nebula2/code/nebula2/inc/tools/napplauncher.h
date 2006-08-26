@@ -4,7 +4,7 @@
 /**
     @class nAppLauncher
     @ingroup Tools
-    
+
     Launch a command line utility and wait for its termination.
 
     This is an example of how to use the @ref nAppLauncher class.
@@ -24,8 +24,8 @@
     // execute the application.
     appLauncher.Launch();
     @endcode
-    
-    FIXME: operating system specific subclasses should be created.   
+
+    FIXME: operating system specific subclasses should be created.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -49,7 +49,7 @@ public:
     void SetNoConsoleWindow(bool b);
     /// set the command line args (just the arg string, without the executable)
     void SetArguments(const nString& args);
-    /// launch app and wait 
+    /// launch app and wait
     bool LaunchWait() const;
     /// launch app and return
     bool Launch() const;

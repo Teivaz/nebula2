@@ -12,7 +12,7 @@ static void n_getkeyat(void* slf, nCmd* cmd);
 //------------------------------------------------------------------------------
 /**
     @scriptclass
-    nintanimator    
+    nintanimator
 
     @cppclass
     nIntAnimator

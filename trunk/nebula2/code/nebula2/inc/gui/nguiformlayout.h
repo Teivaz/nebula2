@@ -7,7 +7,7 @@
     @brief Lays out size and position of child widgets based on own position.
 
     This works similar to a MEL formLayout.
-    
+
     Relations between child widgets and the form layout are defined
     by connecting their edges either to the form, to other widgets,
     or to a (relative) position:

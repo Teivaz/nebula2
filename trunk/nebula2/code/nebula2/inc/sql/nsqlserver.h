@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class nSqlServer
-    
+
     The server object of the Nebula2 SQL subsystem
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "kernel/nroot.h"

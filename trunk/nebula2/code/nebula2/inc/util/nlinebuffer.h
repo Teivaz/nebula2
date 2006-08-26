@@ -12,7 +12,7 @@
 #include "kernel/ntypes.h"
 
 //------------------------------------------------------------------------------
-class nLineBuffer 
+class nLineBuffer
 {
 public:
     /// constructor
@@ -53,21 +53,21 @@ private:
         void Reset();
         /// append string to line
         const char* Append(const char* s);
-        
+
         int line_len;
         int act_pos;
         char *line;
     };
 
-    enum 
+    enum
     {
         N_LINE_LEN  = 80,
         N_NUM_LINES = 256,
     };
-    char *c_buf;        
+    char *c_buf;
     nLine line_array[N_NUM_LINES];
     int tail_line;
-    int head_line;      
+    int head_line;
 
 };
 
@@ -115,46 +115,46 @@ nLineBuffer::nLine::Reset()
 
     If new line, a pointer to the next char is returned, otherwise NULL.
     A '\r' in the string rewinds the cursor to the start of the line. If
-    the string buffer is full, a 0 is appended in any case. Newlines are 
+    the string buffer is full, a 0 is appended in any case. Newlines are
     not copied.
 */
 inline
 const char*
-nLineBuffer::nLine::Append(const char *s) 
+nLineBuffer::nLine::Append(const char *s)
 {
     n_assert(s);
 
     char c;
     bool running = true;
-    do 
+    do
     {
         // Zeile voll?
         c = *s++;
-        if (act_pos >= (line_len-1)) 
+        if (act_pos >= (line_len-1))
         {
             line[line_len - 1] = 0;
             running = false;
             s--;
-        } 
-        else 
+        }
+        else
         {
-            if (c == '\n') 
+            if (c == '\n')
             {
                 line[act_pos] = 0;
                 running = false;
-            } 
-            else if (c == '\r') 
+            }
+            else if (c == '\r')
             {
                 act_pos       = 0;
                 line[act_pos] = 0;
-            } 
-            else if (c == 0) 
+            }
+            else if (c == 0)
             {
                 line[act_pos] = 0;
                 s = NULL;
                 running = false;
-            } 
-            else 
+            }
+            else
             {
                 line[act_pos++] = c;
             }
@@ -166,13 +166,13 @@ nLineBuffer::nLine::Append(const char *s)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nLineBuffer::nLineBuffer()
 {
     int i;
     this->c_buf = (char *) n_calloc(N_LINE_LEN, N_NUM_LINES);
     n_assert(this->c_buf);
-    for (i = 0; i < N_NUM_LINES; i++) 
+    for (i = 0; i < N_NUM_LINES; i++)
     {
         this->line_array[i].Set((this->c_buf + i*N_LINE_LEN), N_LINE_LEN);
     }
@@ -183,10 +183,10 @@ nLineBuffer::nLineBuffer()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 nLineBuffer::~nLineBuffer()
 {
-    if (this->c_buf) 
+    if (this->c_buf)
     {
         n_free(this->c_buf);
     }
@@ -195,7 +195,7 @@ nLineBuffer::~nLineBuffer()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 int nLineBuffer::nextLine(int l) const
 {
     l++;
@@ -206,7 +206,7 @@ int nLineBuffer::nextLine(int l) const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 int nLineBuffer::prevLine(int l) const
 {
     l--;
@@ -217,16 +217,16 @@ int nLineBuffer::prevLine(int l) const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nLineBuffer::Put(const char *s)
 {
     const char *cont = s;
-    while (cont && (*cont) && (cont = this->line_array[this->head_line].Append(cont))) 
+    while (cont && (*cont) && (cont = this->line_array[this->head_line].Append(cont)))
     {
         // Line ends with a newline (\n) so switch to next line
         this->head_line = this->nextLine(this->head_line);
-        if (this->head_line == this->tail_line) 
+        if (this->head_line == this->tail_line)
         {
             this->tail_line = this->nextLine(this->tail_line);
         }
@@ -237,7 +237,7 @@ nLineBuffer::Put(const char *s)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 const char*
 nLineBuffer::GetLine(int l) const
 {
@@ -249,8 +249,8 @@ nLineBuffer::GetLine(int l) const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-int 
+inline
+int
 nLineBuffer::GetHeadLine() const
 {
     return this->head_line;
@@ -259,8 +259,8 @@ nLineBuffer::GetHeadLine() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-int 
+inline
+int
 nLineBuffer::GetTailLine() const
 {
     return this->tail_line;
@@ -269,8 +269,8 @@ nLineBuffer::GetTailLine() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-int 
+inline
+int
 nLineBuffer::GetNextLine(int l) const
 {
     if (l == this->head_line) return -1;
@@ -280,8 +280,8 @@ nLineBuffer::GetNextLine(int l) const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-int 
+inline
+int
 nLineBuffer::GetPrevLine(int l) const
 {
     if (l == this->tail_line) return -1;
@@ -290,7 +290,7 @@ nLineBuffer::GetPrevLine(int l) const
 
 //------------------------------------------------------------------------------
 /**
-    Fills the user provided char pointer array with pointers to the N 
+    Fills the user provided char pointer array with pointers to the N
     latest lines in the line buffer. Return number of valid lines.
 
     @param  array       an char pointer array to fill with pointers
@@ -308,10 +308,10 @@ nLineBuffer::GetLines(const char** array, int arraySize) const
          i = this->GetPrevLine(i))
     {
         const char *l = this->GetLine(i);
-        if (l) 
+        if (l)
         {
             if (*l) array[numLines++] = l;
-        } 
+        }
         else break;
     }
     return numLines;

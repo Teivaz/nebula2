@@ -15,9 +15,9 @@
 #include "util/nstrnode.h"
 
 //------------------------------------------------------------------------------
-class nStrList: public nList 
+class nStrList: public nList
 {
-public:    
+public:
     /// return first element of list
     nStrNode* GetHead() const;
     /// return last element of list
@@ -78,11 +78,11 @@ nStrNode*
 nStrList::Find(const char* str) const
 {
     nStrNode* n;
-    for (n = this->GetHead(); n; n = n->GetSucc()) 
+    for (n = this->GetHead(); n; n = n->GetSucc())
     {
         const char* nodeName = n->GetName();
         n_assert(nodeName);
-        if (strcmp(str, nodeName) == 0) 
+        if (strcmp(str, nodeName) == 0)
         {
             return n;
         }

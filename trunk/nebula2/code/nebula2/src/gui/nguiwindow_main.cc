@@ -371,7 +371,7 @@ nGuiWindow::UpdateWindowColor()
         activeWindowColor = curSkin->GetActiveWindowColor();
         inactiveWindowColor = curSkin->GetInactiveWindowColor();
     }
-    
+
     // NOTE: the use on nTimeServer is intentional, as the current
     // frame time stamp is useless (would give fade delays when
     // resources are loaded)

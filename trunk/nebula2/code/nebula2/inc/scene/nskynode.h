@@ -8,7 +8,7 @@
     The SkyNode represents a skybox with sun, clouds and other celestial elements,
     each represented by a shapenode. The parameters can be set for different
     points of time (states), to potentiate a course of a day by interpolation.
-    
+
     (C) 2005 RadonLabs GmbH
 */
 #include "scene/nmaterialnode.h"
@@ -71,7 +71,7 @@ typedef struct
     /// Attaches a state to a sky element and defines a point of time
     int AddState(const nString& destName, const nString& stateName, float time);
     /// Detaches a state from a sky element
-    void RemoveState(const nString& destName, const nString& stateName);    
+    void RemoveState(const nString& destName, const nString& stateName);
     /// Creates a new sky element
     void NewElement(nSkyNode::ElementType type, const nString& name);
     /// Adds an existing Object as an element
@@ -80,7 +80,7 @@ typedef struct
     void DeleteElement(const nString& name);
     /// attaches one element to an other
     void LinkTo(const nString& fromName, const nString& toName);
-    
+
     /// set the variable handle which drives this animator object (e.g. time)
     void SetChannel(const char* name);
     /// get the variable which drives this animator object
@@ -103,7 +103,7 @@ typedef struct
     float GetTimePeriode();
     /// get actual sky time
     float GetSkyTime();
-    
+
     /// Changes a statetime
     int SetStateTime(const nString& elementName, const nString& stateName, float time);
     /// Changes a statetime
@@ -128,13 +128,13 @@ typedef struct
     nSkyNode::ElementType GetElementType(const nString& name);
     /// Get element type (by number)
     nSkyNode::ElementType GetElementType(int elementNr);
-    
+
     /// converts enum type to string
     nString TypeToString(nSkyNode::ElementType type) const;
     /// converts a string to enum type
     nSkyNode::ElementType StringToType(const nString& str) const;
-    
-    
+
+
 protected:
     /// Adds all params from nShaderparams to paramlist
     void CollectParams(nShaderParams params, ParamList& paramList);

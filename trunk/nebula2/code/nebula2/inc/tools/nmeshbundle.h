@@ -8,10 +8,10 @@
     A mesh bundle splits a single input nMeshBuilder object into several
     internal mesh builder objects based on common attributes and maximum
     number of vertices in a single meshbuilder object.
-    nMeshBundle is useful when a single nMeshBuilder object is bigger then 
-    the recommended or possible vertex buffer size of a target system 
+    nMeshBundle is useful when a single nMeshBuilder object is bigger then
+    the recommended or possible vertex buffer size of a target system
     (e.g. 16 bit indices restrict vertex buffer to 65536 unique vertices).
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "tools/nmeshbuilder.h"

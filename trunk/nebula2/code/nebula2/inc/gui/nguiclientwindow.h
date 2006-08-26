@@ -6,7 +6,7 @@
     @ingroup Gui
     @brief A window with optional titlebar, close button, size handles and a
     client area.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "gui/nguiwindow.h"
@@ -92,7 +92,7 @@ protected:
     nRef<nGuiTextButton> refTitleBar;
     nRef<nGuiFormLayout> refFormLayout;
     bool dragging;
-    bool resizing;    
+    bool resizing;
     vector2 startMousePos;
     rectangle startRect;
     float titleHeight;
@@ -218,7 +218,7 @@ nGuiClientWindow::SetBorder(const rectangle& b)
     this->hasBorder = true;
     this->border = b;
 }
-    
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -247,4 +247,4 @@ nGuiClientWindow::GetFormLayout() const
 }
 
 //------------------------------------------------------------------------------
-#endif    
+#endif

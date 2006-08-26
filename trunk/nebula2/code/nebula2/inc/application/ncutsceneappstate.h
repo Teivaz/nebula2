@@ -7,7 +7,7 @@
 
     @brief An application state which will playback a video and then proceed
     to the next configured application state.
-    
+
     (C) 2004 RadonLabs GmbH
 */
 #include "application/nappstate.h"
@@ -24,7 +24,7 @@ public:
     virtual void OnStateEnter(const nString& prevState);
     /// called when state is becoming inactive
     virtual void OnStateLeave(const nString& nextState);
-    /// called on state to perform state logic 
+    /// called on state to perform state logic
     virtual void OnFrame();
     /// set filename of video file
     void SetVideoFilename(const nString& n);
@@ -107,4 +107,4 @@ nCutSceneAppState::GetNextState() const
 
 //------------------------------------------------------------------------------
 #endif
-    
+

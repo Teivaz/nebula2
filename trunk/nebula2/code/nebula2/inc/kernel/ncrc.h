@@ -5,8 +5,8 @@
     @class nCRC
     @ingroup Kernel
 
-    A CRC checker class. 
-    
+    A CRC checker class.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"

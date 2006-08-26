@@ -12,7 +12,8 @@ nStream::nStream() :
     mode(InvalidMode),
     fileCreated(false),
     xmlDocument(0),
-    curNode(0)
+    curNode(0),
+    utf8Coding(false)
 {
     // empty
 }
@@ -24,7 +25,8 @@ nStream::nStream(const nString& fname) :
     filename(fname),
     mode(InvalidMode),
     xmlDocument(0),
-    curNode(0)
+    curNode(0),
+    utf8Coding(false)
 {
     // empty
 }
@@ -38,6 +40,24 @@ nStream::~nStream()
     {
         this->Close();
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nStream::SetAutomaticUTF8Coding(bool b)
+{
+    this->utf8Coding = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nStream::GetAutomaticUTF8Coding() const
+{
+    return this->utf8Coding;
 }
 
 //------------------------------------------------------------------------------
@@ -76,6 +96,164 @@ nStream::FileCreated() const
     return this->fileCreated;
 }
 
+
+
+//------------------------------------------------------------------------------
+/**
+    Generates a string from the document
+*/
+void
+nStream::GetDocumentAsString(nString& rsString)
+{
+    rsString = "";
+    AddNode2String(rsString,this->xmlDocument->FirstChild());
+}
+
+
+//------------------------------------------------------------------------------
+/**
+    helper function , to generate a string
+*/
+
+void
+nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndention)
+ {
+      const char* pcValue = pNode->Value();
+
+      /*
+      for(int i=0; i<iIndention; ++i)
+      {
+           rsString += "\t";
+      } */
+
+      switch(pNode->Type())
+      {
+      case TiXmlNode::COMMENT:
+           //assert(pNode->NoChildren()  &&  "Node Type COMMENT should not have children");
+           rsString += "<!-- ";
+           rsString += pcValue;
+           rsString += " -->";
+           break;
+
+      case TiXmlNode::DECLARATION:
+           //assert(pNode->NoChildren()  &&  "Node Type DECLARATION should not have children");
+           rsString += "<?";
+           rsString += pcValue;
+           rsString += "?>";
+           break;
+
+      case TiXmlNode::DOCUMENT:
+          // assert (false && "No Documents should be passed into this function; pass the root element instead");
+           return;
+
+      case TiXmlNode::ELEMENT:
+           rsString += "<";
+           rsString += pcValue;
+
+           for(const TiXmlAttribute* pAttr = pNode->ToElement()->FirstAttribute(); pAttr!= 0; pAttr = pAttr->Next())
+           {
+                rsString += " ";
+                rsString += pAttr->Name();
+                rsString += "=\"";
+                rsString += pAttr->Value();
+                rsString += "\"";
+           }
+
+           if(pNode->FirstChild()  &&  pNode->FirstChild()->NextSibling() == 0  &&
+              pNode->FirstChild()->Type() == TiXmlNode::TEXT)
+           {
+                rsString += ">";
+                rsString += pNode->FirstChild()->ToText()->Value();
+                rsString += "</";
+                rsString += pcValue;
+                rsString += ">";
+
+                return;
+           }
+
+           if(pNode->NoChildren())
+           {
+                rsString += "/>";
+           }
+           else
+           {
+                rsString += ">";
+           }
+           break;
+
+      case TiXmlNode::TEXT:
+           //assert(pNode->NoChildren()  &&  "Node Type TEXT should not have children");
+           rsString += pcValue;
+           break;
+
+      case TiXmlNode::UNKNOWN:
+           //assert(pNode->NoChildren()  &&  "Node Type UNKNOWN should not have children");
+           rsString += "<";
+           rsString += pcValue;
+           rsString += ">";
+           break;
+
+      default:
+           //assert (false && "Unknown Node type");
+           return;
+      }
+
+      if(pNode->Type() == TiXmlNode::ELEMENT  &&  !pNode->NoChildren())
+      {
+           for(const TiXmlNode* pChild = pNode->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
+           {
+                AddNode2String(rsString, pChild, iIndention + 1);
+           }
+
+
+           /*
+           for(int i=0; i<iIndention; ++i)
+           {
+                rsString += "\t";
+           } */
+
+           rsString += "</";
+           rsString += pcValue;
+           rsString += ">";
+      }
+ }
+
+//------------------------------------------------------------------------------
+/**
+    Opens a string for parsing
+*/
+bool
+nStream::OpenString(const nString& n)
+{
+    n_assert(!this->IsOpen());
+    n_assert(this->filename.IsValid());
+    n_assert(0 == this->curNode);
+    this->fileCreated = false;
+    this->mode = String;
+
+    // create xml document object
+    this->xmlDocument = n_new(TiXmlDocument(this->filename.Get()));
+
+    if (!n.IsEmpty())
+    {
+        // parse the string
+        this->xmlDocument->Parse(n.Get());
+        if (this->xmlDocument->Error())
+        {
+            //n_error("nStream::OpenString() Failed to parse string !");
+            return false;
+        }
+
+        // set the current node to the root node
+        this->curNode = this->xmlDocument->RootElement();
+    }
+    else
+    {
+        // no empty string allowed
+        return false;
+    }
+    return true;
+}
 //------------------------------------------------------------------------------
 /**
     Open the stream in read, write or read/write mode. In Read mode the
@@ -458,6 +636,27 @@ nStream::SetToParent()
 
 //------------------------------------------------------------------------------
 /**
+*/
+void
+nStream::SetToNodeByAttribute(const nString& nodeName, const nString& attribute, const nString& value)
+{
+    n_assert(this->IsOpen());
+    n_assert(nodeName.IsValid());
+    n_assert(attribute.IsValid());
+    n_assert(value.IsValid());
+
+    this->SetToNode(nodeName);
+    while(this->GetString(attribute) != value)
+    {
+        if(this->SetToNextChild() == false)
+        {
+            return;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Return true if an attribute of the given name exists on the current
     node.
 */
@@ -490,6 +689,10 @@ nStream::GetString(const nString& name) const
     else
     {
         str = val;
+        if (this->utf8Coding)
+        {
+            str.UTF8toANSI();
+        }
     }
     return str;
 }
@@ -709,8 +912,17 @@ nStream::SetString(const nString& name, const nString& value)
     n_assert(this->curNode);
     n_assert(name.IsValid());
     n_assert(value.IsValid());
-    n_assert((Write == this->mode) || (ReadWrite == this->mode));
-    this->curNode->SetAttribute(name.Get(), value.Get());
+    n_assert((Write == this->mode) || (ReadWrite == this->mode || (String == this->mode)));
+    if (this->utf8Coding)
+    {
+        nString utf8 = value;
+        utf8.UTF8toANSI();
+        this->curNode->SetAttribute(name.Get(), utf8.Get());
+    }
+    else
+    {
+        this->curNode->SetAttribute(name.Get(), value.Get());
+    }
 }
 
 //------------------------------------------------------------------------------

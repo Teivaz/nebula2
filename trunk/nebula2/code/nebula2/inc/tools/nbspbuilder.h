@@ -5,9 +5,9 @@
     @class nBspBuilder
     @ingroup NebulaGraphicsSystemTools
 
-    A simple BSP builder. Recursively splits a mesh along the world axes 
+    A simple BSP builder. Recursively splits a mesh along the world axes
     until a defined recursion depth has been reached.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "tools/nmeshbuilder.h"

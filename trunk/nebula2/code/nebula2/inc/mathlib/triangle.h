@@ -24,11 +24,11 @@ public:
     vector3 b,e0,e1;
 
     triangle() {};
-    triangle(const vector3& v0, const vector3& v1, const vector3& v2) 
+    triangle(const vector3& v0, const vector3& v1, const vector3& v2)
         : b(v0), e0(v1-v0), e1(v2-v0) {};
-    triangle(const triangle& t) 
-        : b(t.b), e0(t.e0), e1(t.e1) {}; 
-    
+    triangle(const triangle& t)
+        : b(t.b), e0(t.e0), e1(t.e1) {};
+
     void set(const vector3& v0, const vector3& v1, const vector3& v2) {
         b  = v0;
         e0 = v1-v0;
@@ -90,7 +90,7 @@ public:
 
         // The line is X(t) = line.b + t*line.m.  Compute line parameter t for
         // intersection of line and plane of triangle.  Substitute in the plane
-        // equation to get Dot(normal,line.b-tri.b) + t*Dot(normal,line.m)   
+        // equation to get Dot(normal,line.b-tri.b) + t*Dot(normal,line.m)
         vector3 kDiff0(line.b - b);
         float fTime = -(norm % kDiff0) / fDenominator;
         if ((fTime<-fTolerance) || (fTime>(1.0f+fTolerance))) return false;
@@ -146,7 +146,7 @@ public:
 
         // The line is X(t) = line.b + t*line.m.  Compute line parameter t for
         // intersection of line and plane of triangle.  Substitute in the plane
-        // equation to get Dot(normal,line.b-tri.b) + t*Dot(normal,line.m)   
+        // equation to get Dot(normal,line.b-tri.b) + t*Dot(normal,line.m)
         vector3 kDiff0(line.b - b);
         float fTime = -(norm % kDiff0) / fDenominator;
         if ((fTime<-fTolerance) || (fTime>(1.0f+fTolerance))) return false;

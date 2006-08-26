@@ -29,7 +29,7 @@ nRenderPath2::~nRenderPath2()
     Open the XML document. This will just load the XML document and
     initialize the shader path. The rest of the initialization happens
     inside nRenderPath2::Open(). This 2-step approach is necessary to
-    prevent a shader initialization chicken/egg problem 
+    prevent a shader initialization chicken/egg problem
 */
 bool
 nRenderPath2::OpenXml()

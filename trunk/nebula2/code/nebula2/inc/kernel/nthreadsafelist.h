@@ -17,7 +17,7 @@
 #include "kernel/nevent.h"
 
 //------------------------------------------------------------------------------
-class nThreadSafeList : public nList 
+class nThreadSafeList : public nList
 {
 public:
     /// signal event object
@@ -39,8 +39,8 @@ private:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nThreadSafeList::SignalEvent()
 {
     this->event.Signal();
@@ -49,8 +49,8 @@ nThreadSafeList::SignalEvent()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nThreadSafeList::WaitEvent()
 {
     this->event.Wait();
@@ -59,8 +59,8 @@ nThreadSafeList::WaitEvent()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nThreadSafeList::TimedWaitEvent(int ms)
 {
     this->event.TimedWait(ms);
@@ -69,8 +69,8 @@ nThreadSafeList::TimedWaitEvent(int ms)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nThreadSafeList::Lock()
 {
     this->mutex.Lock();
@@ -79,8 +79,8 @@ nThreadSafeList::Lock()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 nThreadSafeList::Unlock()
 {
     this->mutex.Unlock();

@@ -61,7 +61,7 @@ void
 nD3D9WindowHandler::OnPaint()
 {
     n_assert(this->d3d9Server);
-    if ((this->GetDisplayMode().GetType() != nDisplayMode2::Fullscreen) && this->d3d9Server->d3d9Device) 
+    if ((this->GetDisplayMode().GetType() != nDisplayMode2::Fullscreen) && this->d3d9Server->d3d9Device)
     {
         if (!this->d3d9Server->InDialogBoxMode())
         {

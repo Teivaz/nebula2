@@ -340,7 +340,7 @@ nParticleShapeNode::GetRGBCurve() const
 /**
     @brief Tells the effect to begin at the beginning again.
 
-    Note that if the effect has been stopped with 
+    Note that if the effect has been stopped with
     nParticleShape::SetActive(false), it must be reactivated as well.
 */
 inline
@@ -352,7 +352,7 @@ nParticleShapeNode::Reset()
 
 //------------------------------------------------------------------------------
 /**
-    Returns true iff the nParticleShapeNode::Reset method has been called, but 
+    Returns true iff the nParticleShapeNode::Reset method has been called, but
     not yet taken effect (in the next frame).  This is really only intended for
     use by SaveCmds.
 */
@@ -366,8 +366,8 @@ nParticleShapeNode::IsResetting() const
 //------------------------------------------------------------------------------
 /**
     @brief Turns the effect on or off.
-    
-    When an effect is turned off, particles already born get to live out 
+
+    When an effect is turned off, particles already born get to live out
     their lives, but no new particles are created.
 */
 inline
@@ -380,7 +380,7 @@ nParticleShapeNode::SetEffectActive(bool b)
 //------------------------------------------------------------------------------
 /**
     Returns true iff the effect is active (the Stop method has not been called).
-    Note that a one-shot effect may be finished, and hence have no further 
+    Note that a one-shot effect may be finished, and hence have no further
     visible effect, but still be active!  An inactive effect is suppressed --
     it isn't allowed to create particles during the time that it normally
     would.

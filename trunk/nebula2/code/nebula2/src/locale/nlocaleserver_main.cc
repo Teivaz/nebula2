@@ -74,7 +74,7 @@ nLocaleServer::GetLocaleText(const char* id)
 {
     static nString msg;
     n_assert(this->IsOpen());
-    
+
     if (this->idHashMap.Exists(id))
     {
         const ushort key = this->idHashMap[id];
@@ -144,7 +144,7 @@ nLocaleServer::AddLocaleTable(const char* filename)
     for(row = 1; row < numRows; row++)
     {
         nString ID = table.Cell(row, "ID").AsString();
-        
+
         if (this->idHashMap.Exists(ID.Get()))
         {
             n_error("nLocaleServer::Open(): ID '%s' is not unique!\n", ID.Get());

@@ -6,8 +6,8 @@
     @ingroup Misc
 
     @brief A class for reading/writing INI file on win32 platform.
-    
-    A INI file consists of sections and each section has a pair of key and value 
+
+    A INI file consists of sections and each section has a pair of key and value
     like the following:
     @verbatim
     [section]
@@ -60,11 +60,11 @@ public:
     void SetFileName(const nString& filename);
     /// get .ini filename
     const nString& GetFileName() const;
-    // set a section name 
+    // set a section name
     void SetSection(const nString& section);
     /// get a section name
     const nString& GetSection() const;
-    /// delete specified section.   
+    /// delete specified section.
     bool DeleteSection(const nString& section);
     /// delete specified key in a section
     bool DeleteKey(const nString& section, const nString& key);

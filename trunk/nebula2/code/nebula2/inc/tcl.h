@@ -28,7 +28,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
 /*
  * The following defines are used to indicate the various release levels.
  */
@@ -117,7 +117,7 @@ extern "C" {
 #   ifndef NO_STRERROR
 #	define NO_STRERROR 1
 #   endif
-#   define INLINE 
+#   define INLINE
 #endif
 
 /*
@@ -173,8 +173,8 @@ extern "C" {
 #define Tcl_ConditionFinalize(condPtr)
 #endif /* TCL_THREADS */
 
-/* 
- * A special definition used to allow this header file to be included 
+/*
+ * A special definition used to allow this header file to be included
  * in resource files so that they can get obtain version information from
  * this file.  Resource compilers don't like all the C stuff, like typedefs
  * and procedure declarations, that occur below.
@@ -352,7 +352,7 @@ typedef long LONG;
 #ifndef TCL_PRESERVE_BINARY_COMPATABILITY
 #define TCL_PRESERVE_BINARY_COMPATABILITY 1
 #endif
-    
+
 /*
  * Data structures defined opaquely in this module. The definitions below
  * just provide dummy types. A few fields are made visible in Tcl_Interp
@@ -363,7 +363,7 @@ typedef long LONG;
  * directly. Programmers should use either the procedure Tcl_GetObjResult()
  * or Tcl_GetStringResult() to read the interpreter's result. See the
  * SetResult man page for details.
- * 
+ *
  * Note: any change to the Tcl_Interp definition below must be mirrored
  * in the "real" definition in tclInt.h.
  *
@@ -434,7 +434,7 @@ typedef void (Tcl_ThreadCreateProc) _ANSI_ARGS_((ClientData clientData));
 #   define TCL_THREAD_CREATE_RETURN	return 0
 #else
 #   define Tcl_ThreadCreateType		void
-#   define TCL_THREAD_CREATE_RETURN	
+#   define TCL_THREAD_CREATE_RETURN
 #endif
 
 
@@ -517,7 +517,7 @@ typedef struct stat *Tcl_Stat_;
  * command. Programmers are strongly encouraged to use one of the
  * procedures Tcl_GetObjResult() or Tcl_GetStringResult() to read the
  * interpreter's result. See the SetResult man page for details. Besides
- * this result, the command procedure returns an integer code, which is 
+ * this result, the command procedure returns an integer code, which is
  * one of the following:
  *
  * TCL_OK		Command completed normally; the interpreter's
@@ -555,7 +555,7 @@ typedef struct Tcl_Value {
 
 /*
  * Forward declaration of Tcl_Obj to prevent an error when the forward
- * reference to Tcl_Obj is encountered in the procedure types declared 
+ * reference to Tcl_Obj is encountered in the procedure types declared
  * below.
  */
 
@@ -576,7 +576,7 @@ typedef int (Tcl_CmdProc) _ANSI_ARGS_((ClientData clientData,
 typedef void (Tcl_CmdTraceProc) _ANSI_ARGS_((ClientData clientData,
 	Tcl_Interp *interp, int level, char *command, Tcl_CmdProc *proc,
 	ClientData cmdClientData, int argc, char *argv[]));
-typedef void (Tcl_DupInternalRepProc) _ANSI_ARGS_((struct Tcl_Obj *srcPtr, 
+typedef void (Tcl_DupInternalRepProc) _ANSI_ARGS_((struct Tcl_Obj *srcPtr,
         struct Tcl_Obj *dupPtr));
 typedef int (Tcl_EncodingConvertProc)_ANSI_ARGS_((ClientData clientData,
 	CONST char *src, int srcLen, int flags, Tcl_EncodingState *statePtr,
@@ -714,7 +714,7 @@ int		Tcl_IsShared _ANSI_ARGS_((Tcl_Obj *objPtr));
 
 /*
  * Macros and definitions that help to debug the use of Tcl objects.
- * When TCL_MEM_DEBUG is defined, the Tcl_New declarations are 
+ * When TCL_MEM_DEBUG is defined, the Tcl_New declarations are
  * overridden to call debugging versions of the object creation procedures.
  */
 
@@ -757,7 +757,7 @@ typedef struct Tcl_SavedResult {
 /*
  * The following definitions support Tcl's namespace facility.
  * Note: the first five fields must match exactly the fields in a
- * Namespace structure (see tclInt.h). 
+ * Namespace structure (see tclInt.h).
  */
 
 typedef struct Tcl_Namespace {
@@ -787,7 +787,7 @@ typedef struct Tcl_Namespace {
  * the namespace in which the command's code should execute. The
  * Tcl_CallFrame structures exist only while procedures or namespace
  * eval/inscope's are being executed, and provide a Tcl call stack.
- * 
+ *
  * A call frame is initialized and pushed using Tcl_PushCallFrame and
  * popped using Tcl_PopCallFrame. Storage for a Tcl_CallFrame must be
  * provided by the Tcl_PushCallFrame caller, and callers typically allocate
@@ -828,7 +828,7 @@ typedef struct Tcl_CallFrame {
  * does string-to-object or object-to-string argument conversions then
  * calls the other procedure.
  */
-     
+
 typedef struct Tcl_CmdInfo {
     int isNativeObjectProc;	 /* 1 if objProc was registered by a call to
 				  * Tcl_CreateObjCommand; 0 otherwise.
@@ -878,7 +878,7 @@ typedef struct Tcl_DString {
  * be specified in the "tcl_precision" variable, and the number of
  * bytes of buffer space required by Tcl_PrintDouble.
  */
- 
+
 #define TCL_MAX_PREC 17
 #define TCL_DOUBLE_SPACE (TCL_MAX_PREC+10)
 
@@ -952,7 +952,7 @@ typedef struct Tcl_DString {
 #define TCL_TRACE_DELETE 0x4000
 
 /*
- * The TCL_PARSE_PART1 flag is deprecated and has no effect. 
+ * The TCL_PARSE_PART1 flag is deprecated and has no effect.
  * The part1 is now always parsed whenever the part2 is NULL.
  * (This is to avoid a common error when converting code to
  *  use the new object based APIs and forgetting to give the
@@ -980,7 +980,7 @@ typedef struct Tcl_DString {
 typedef struct Tcl_HashKeyType Tcl_HashKeyType;
 typedef struct Tcl_HashTable Tcl_HashTable;
 typedef struct Tcl_HashEntry Tcl_HashEntry;
-    
+
 typedef unsigned int (Tcl_HashKeyProc) _ANSI_ARGS_((Tcl_HashTable *tablePtr,
 	VOID *keyPtr));
 typedef int (Tcl_CompareHashKeysProc) _ANSI_ARGS_((VOID *keyPtr,
@@ -1052,7 +1052,7 @@ struct Tcl_HashEntry {
  *				N bits as the index into the table.
  */
 #define TCL_HASH_KEY_RANDOMIZE_HASH 0x1
-    
+
 /*
  * Structure definition for the methods associated with a hash table
  * key type.
@@ -1062,11 +1062,11 @@ struct Tcl_HashKeyType {
     int version;		/* Version of the table. If this structure is
 				 * extended in future then the version can be
 				 * used to distinguish between different
-				 * structures. 
+				 * structures.
 				 */
 
     int flags;			/* Flags, see above for details. */
-    
+
     /* Calculates a hash value for the key. If this is NULL then the pointer
      * itself is used as a hash value.
      */
@@ -1095,7 +1095,7 @@ struct Tcl_HashKeyType {
      */
     Tcl_FreeHashEntryProc *freeEntryProc;
 };
-    
+
 /*
  * Structure definition for a hash table.  Must be in tcl.h so clients
  * can allocate space for these structures, but clients should never
@@ -1121,7 +1121,7 @@ struct Tcl_HashTable {
 					 * order bits of randomized keys. */
     int mask;				/* Mask value used in hashing
 					 * function. */
-    int keyType;			/* Type of keys used in this table. 
+    int keyType;			/* Type of keys used in this table.
 					 * It's either TCL_CUSTOM_KEYS,
 					 * TCL_STRING_KEYS, TCL_ONE_WORD_KEYS,
 					 * or an integer giving the number of
@@ -1219,7 +1219,7 @@ typedef struct Tcl_HashSearch {
  */
 #define Tcl_InitHashTable(tablePtr, keyType) \
 	Tcl_InitHashTableEx(tablePtr, keyType, NULL)
-    
+
 /*
  * Flag values to pass to Tcl_DoOneEvent to disable searches
  * for some kinds of events:
@@ -1293,7 +1293,7 @@ typedef int (Tcl_WaitForEventProc) _ANSI_ARGS_((Tcl_Time *timePtr));
  * are also used in Tcl_GetStdChannel.
  */
 
-#define TCL_STDIN		(1<<1)	
+#define TCL_STDIN		(1<<1)
 #define TCL_STDOUT		(1<<2)
 #define TCL_STDERR		(1<<3)
 #define TCL_ENFORCE_MODE	(1<<4)
@@ -1368,7 +1368,7 @@ typedef int	(Tcl_DriverHandlerProc) _ANSI_ARGS_((
 #else /* !TCL_MEM_DEBUG */
 
 /*
- * If we are not using the debugging allocator, we should call the 
+ * If we are not using the debugging allocator, we should call the
  * Tcl_Alloc, et al. routines in order to guarantee that every module
  * is using the same memory allocator both inside and outside of the
  * Tcl library.
@@ -1505,7 +1505,7 @@ typedef struct Tcl_EncodingType {
 				 * number is used to determine the source
 				 * string length when the srcLen argument is
 				 * negative.  Must be 1 or 2. */
-} Tcl_EncodingType;    
+} Tcl_EncodingType;
 
 /*
  * The following definitions are used as values for the conversion control
@@ -1528,7 +1528,7 @@ typedef struct Tcl_EncodingType {
  *				reset to an initial state.  If the source
  *				buffer contains the entire input stream to be
  *				converted, this flag should be set.
- *				
+ *
  * TCL_ENCODING_STOPONERROR:	If set, then the converter will return
  *				immediately upon encountering an invalid
  *				byte sequence or a source character that has
@@ -1577,7 +1577,7 @@ typedef struct Tcl_Token {
  *				from the first non-blank character of
  *				the word (which may be " or {) up to but
  *				not including the space, semicolon, or
- *				bracket that terminates the word. 
+ *				bracket that terminates the word.
  *				NumComponents counts the total number of
  *				sub-tokens that make up the word.  This
  *				includes, for example, sub-tokens of
@@ -1587,14 +1587,14 @@ typedef struct Tcl_Token {
  *				consist of a single TCL_TOKEN_TEXT
  *				sub-token.
  * TCL_TOKEN_TEXT -		The token describes a range of literal
- *				text that is part of a word. 
+ *				text that is part of a word.
  *				NumComponents is always 0.
  * TCL_TOKEN_BS -		The token describes a backslash sequence
  *				that must be collapsed.	 NumComponents
  *				is always 0.
  * TCL_TOKEN_COMMAND -		The token describes a command whose result
  *				must be substituted into the word.  The
- *				token includes the enclosing brackets. 
+ *				token includes the enclosing brackets.
  *				NumComponents is always 0.
  * TCL_TOKEN_VARIABLE -		The token describes a variable
  *				substitution, including the dollar sign,
@@ -1618,7 +1618,7 @@ typedef struct Tcl_Token {
  *				expression, from the first non-blank
  *				character of the subexpression up to but not
  *				including the space, brace, or bracket
- *				that terminates the subexpression. 
+ *				that terminates the subexpression.
  *				NumComponents counts the total number of
  *				following subtokens that make up the
  *				subexpression; this includes all subtokens
@@ -1756,7 +1756,7 @@ typedef struct Tcl_Parse {
  *				encoding method was misidentified.  This error
  *				is reported only if TCL_ENCODING_STOPONERROR
  *				was specified.
- * 
+ *
  * TCL_CONVERT_UNKNOWN:		The source string contained a character
  *				that could not be represented in the target
  *				encoding.  This error is reported only if
@@ -1776,7 +1776,7 @@ typedef struct Tcl_Parse {
 #define TCL_UTF_MAX		3
 
 /*
- * This represents a Unicode character.  
+ * This represents a Unicode character.
  */
 
 typedef unsigned short Tcl_UniChar;
@@ -1879,9 +1879,9 @@ EXTERN int		Tcl_AppInit _ANSI_ARGS_((Tcl_Interp *interp));
 /*
  * end block for C++
  */
-    
+
 #ifdef __cplusplus
 }
 #endif
-    
+
 #endif /* _TCL */

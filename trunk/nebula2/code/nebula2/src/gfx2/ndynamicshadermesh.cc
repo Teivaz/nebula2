@@ -57,7 +57,7 @@ nDynamicShaderMesh::IsValid() const
 
 //------------------------------------------------------------------------------
 /**
-    Begin non-indexed rendering to the dynamic mesh. 
+    Begin non-indexed rendering to the dynamic mesh.
 
     @param  vertexPointer   [out] will be filled with a pointer to the vertex buffer
     @param  maxNumVertices  [out] max number of vertices before calling Swap() or End()
@@ -83,7 +83,7 @@ void
 nDynamicShaderMesh::Swap(int numVertices, float*& vertexPointer)
 {
     n_assert(!this->indexedRendering);
-    
+
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
     nShader2* shader = this->refShader;
@@ -106,7 +106,7 @@ nDynamicShaderMesh::Swap(int numVertices, float*& vertexPointer)
 
 //------------------------------------------------------------------------------
 /**
-    Finish non-indexed rendering. 
+    Finish non-indexed rendering.
 
     @param  numVertices     number of valid vertices in the vertex buffer
 */
@@ -114,7 +114,7 @@ void
 nDynamicShaderMesh::End(int numVertices)
 {
     n_assert(!this->indexedRendering);
-    
+
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
     nShader2* shader = this->refShader;

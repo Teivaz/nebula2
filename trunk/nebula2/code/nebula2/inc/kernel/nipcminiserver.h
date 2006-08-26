@@ -15,7 +15,7 @@
 //------------------------------------------------------------------------------
 class nIpcServer;
 class nThread;
-class nIpcMiniServer : public nNode 
+class nIpcMiniServer : public nNode
 {
 public:
     /// constructor
@@ -40,9 +40,9 @@ private:
 
     /// close the internal receiver socket
     void CloseRcvrSocket();
-   
+
     nIpcServer* ipcServer;    // the master server
-    int clientId;                                      
+    int clientId;
     SOCKET rcvrSocket;
     nIpcBuffer msgBuffer;
     bool isConnected;         // valid connection established (including handshake)

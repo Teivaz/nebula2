@@ -5,14 +5,14 @@
     @class nSkinPartitioner
     @ingroup NebulaGraphicsSystemTools
 
-    Partitions a skin for a given joint palette size. The initial skin is 
+    Partitions a skin for a given joint palette size. The initial skin is
     represented by a nMeshBuilder object.
 
     @note
     Do not partition a skinned mesh which is used for shadow.
     If you do, it does not work correctly. See @ref Shadow2 section for
     more details about how to the shadow system of Nebula2 works.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "tools/nmeshbuilder.h"
@@ -147,7 +147,7 @@ nSkinPartitioner::Partition::AddUniqueJointIndex(nArray<int>& intArray, int inde
 
 //------------------------------------------------------------------------------
 /**
-    Fills the provided int array with the unique joint indices in the 
+    Fills the provided int array with the unique joint indices in the
     triangle.
 */
 inline
@@ -212,7 +212,7 @@ nSkinPartitioner::Partition::CheckAddTriangle(int triangleIndex)
 {
     n_assert(this->sourceMesh);
     const nMeshBuilder::Triangle& tri = this->sourceMesh->GetTriangleAt(triangleIndex);
-    
+
     // get the unique joints in the triangle
     nArray<int> triJoints;
     this->GetTriangleJoints(tri, triJoints);
@@ -297,7 +297,7 @@ nSkinPartitioner::GetNumPartitions() const
 /**
 */
 inline
-const nArray<int>& 
+const nArray<int>&
 nSkinPartitioner::GetJointPalette(int partitionIndex) const
 {
     return this->partitionArray[partitionIndex].GetJointPalette();
@@ -307,7 +307,7 @@ nSkinPartitioner::GetJointPalette(int partitionIndex) const
 /**
 */
 inline
-const nArray<int>& 
+const nArray<int>&
 nSkinPartitioner::GetTriangleIndices(int partitionIndex) const
 {
     return this->partitionArray[partitionIndex].GetTriangleIndices();

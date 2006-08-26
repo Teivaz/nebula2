@@ -6,7 +6,7 @@
     @ingroup Util
     @brief A specialized nArray for working with sparsely set animation keys
     (no fixed frame rate). Note: TYPE must be a version of nAnimKey!
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/narray.h"
@@ -89,7 +89,7 @@ nAnimKeyArray<TYPE>::Sample(float sampleTime, nAnimLoopType::Type loopType, TYPE
 
             result.Lerp(key0.GetValue(), key1.GetValue(), lerpTime);
             result.SetTime(sampleTime);
-            return true; 
+            return true;
         }
     }
     return false;

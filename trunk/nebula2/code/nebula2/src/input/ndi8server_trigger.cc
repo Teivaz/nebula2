@@ -29,23 +29,23 @@ nDI8Server::GetDeviceObjectData(nDI8Device::DeviceType devType,
     isButton = false;
     isPov    = false;
     index = 0;
-    
+
     // get input event type and element number
     switch (devType)
     {
         case nDI8Device::MOUSE:
             switch (data.dwOfs)
             {
-                case DIMOFS_X: 
-                    isAxis = true; index = 0; 
+                case DIMOFS_X:
+                    isAxis = true; index = 0;
                     break;
 
-                case DIMOFS_Y: 
-                    isAxis = true; index = 1; 
+                case DIMOFS_Y:
+                    isAxis = true; index = 1;
                     break;
 
-                case DIMOFS_Z: 
-                    isAxis = true; index = 2; 
+                case DIMOFS_Z:
+                    isAxis = true; index = 2;
                     break;
 
                 case DIMOFS_BUTTON0:
@@ -166,8 +166,8 @@ nDI8Server::Trigger(double time)
 
     // query devices and generate Nebula input events...
     nDI8Device* di8Dev;
-    for (di8Dev = (nDI8Device*) this->di8DevList.GetHead(); 
-         di8Dev; 
+    for (di8Dev = (nDI8Device*) this->di8DevList.GetHead();
+         di8Dev;
          di8Dev = (nDI8Device*) di8Dev->GetSucc())
     {
         IDirectInputDevice8* diDev = di8Dev->GetDevice();
@@ -205,10 +205,10 @@ nDI8Server::Trigger(double time)
                 {
                     bool isAxis, isButton, isPov;
                     int index;
-        
+
                     // classify current device object data element
                     this->GetDeviceObjectData(devType, objData[i], isAxis, isButton, isPov, index);
-        
+
                     // generate input events
                     if (isAxis)
                     {

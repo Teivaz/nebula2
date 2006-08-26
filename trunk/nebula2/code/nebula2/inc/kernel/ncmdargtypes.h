@@ -87,31 +87,31 @@ struct n_remove_modifiers_and_reference
     typedef T Type;
 };
 
-template<typename T> 
+template<typename T>
 struct n_remove_modifiers_and_reference<T const>
 {
     typedef typename n_remove_modifiers_and_reference<T>::Type Type;
 };
 
-template<typename T> 
+template<typename T>
 struct n_remove_modifiers_and_reference<T &>
 {
     typedef typename n_remove_modifiers_and_reference<T>::Type Type;
 };
 
-template<typename T> 
+template<typename T>
 struct n_remove_modifiers_and_reference<T volatile>
 {
     typedef typename n_remove_modifiers_and_reference<T>::Type Type;
 };
 
-template<typename T> 
+template<typename T>
 struct n_remove_modifiers_and_reference<const T* >
 {
     typedef typename n_remove_modifiers_and_reference<T*>::Type Type;
 };
 
-template<typename T> 
+template<typename T>
 struct n_remove_modifiers_and_reference<volatile T* >
 {
     typedef typename n_remove_modifiers_and_reference<T*>::Type Type;
@@ -194,7 +194,7 @@ nGetCmdArg( nCmd * cmd, T & ret )
 template <typename T>
 inline
 void
-nSetCmdArg( nCmd * cmd, T const & val ) 
+nSetCmdArg( nCmd * cmd, T const & val )
 {
     cmd->Out()->SetO(static_cast<nObject *> (val));
 };
