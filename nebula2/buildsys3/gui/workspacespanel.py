@@ -42,25 +42,25 @@ GENERATOR_SETTINGS_DLG = { 'doxygen' : DoxygenGeneratorSettingsDialog }
 
 #--------------------------------------------------------------------------
 class WorkspacesPanel(wx.Panel):
-    
+
     def __init__(self, parentWindow, buildSys, generatorName, workspaceNames):
         wx.Panel.__init__(self, parentWindow)
         self.buildSys = buildSys
         self.defaultGeneratorName = generatorName
         self.defaultWorkspaceNames = workspaceNames
         self.workspaceLoaderThreadDone = False
-        
+
         self.progressDialog = None
         self.cancelProgressDlg = False
         self.externalOutputDialog = None
-        
+
         # Generator controls
         self.generatorStaticBox = wx.StaticBox(self, -1, 'Generator')
         generators = buildSys.GetGenerators()
         self.generatorDesc = {}
         for generatorName, generator in generators.items():
             self.generatorDesc[generatorName] = string.replace(
-                                                    generator.description, 
+                                                    generator.description,
                                                     '&', '&&')
         generatorComboBoxVal = ''
         generatorDescBoxVal = 'Please select a generator.'
@@ -69,52 +69,52 @@ class WorkspacesPanel(wx.Panel):
             generatorDescBoxVal = self.generatorDesc[self.defaultGeneratorName]
         generatorNames = self.generatorDesc.keys()
         generatorNames.sort()
-        self.generatorComboBox = wx.ComboBox(self, -1, 
-                                             generatorComboBoxVal, 
+        self.generatorComboBox = wx.ComboBox(self, -1,
+                                             generatorComboBoxVal,
                                              (0, 0), (166, 20),
-                                             generatorNames, 
+                                             generatorNames,
                                              wx.CB_READONLY)
-        self.Bind(wx.EVT_COMBOBOX, self.OnSelectGenerator, 
+        self.Bind(wx.EVT_COMBOBOX, self.OnSelectGenerator,
                   self.generatorComboBox)
-        self.generatorDescBox = wx.StaticText(self, -1, 
-                                              generatorDescBoxVal, 
+        self.generatorDescBox = wx.StaticText(self, -1,
+                                              generatorDescBoxVal,
                                               (0, 0), (300, 40),
                                               wx.ST_NO_AUTORESIZE)
         self.generatorSettingsBtn = wx.Button(self, -1, 'Settings')
-        self.Bind(wx.EVT_BUTTON, self.OnGeneratorSettingsBtn, 
+        self.Bind(wx.EVT_BUTTON, self.OnGeneratorSettingsBtn,
                   self.generatorSettingsBtn)
         self.generatorSettingsBtn.Disable()
-        
+
         # Workspace controls
         self.workspacesStaticBox = wx.StaticBox(self, -1, 'Workspaces')
         self.workspaceListBox = wx.CheckListBox(self, -1,
-                                                (0, 0), (150, 200), 
+                                                (0, 0), (150, 200),
                                                 [],
                                                 style = wx.LB_SINGLE)
-        self.Bind(wx.EVT_LISTBOX, self.OnSelectWorkspace, 
+        self.Bind(wx.EVT_LISTBOX, self.OnSelectWorkspace,
                   self.workspaceListBox)
-        self.Bind(wx.EVT_CHECKLISTBOX, self.OnTickWorkspace, 
+        self.Bind(wx.EVT_CHECKLISTBOX, self.OnTickWorkspace,
                   self.workspaceListBox)
-        self.selectAllWorkspacesBtn = wx.Button(self, -1, 
+        self.selectAllWorkspacesBtn = wx.Button(self, -1,
                                                 'All')
-        self.Bind(wx.EVT_BUTTON, self.OnSelectAllWorkspaces, 
+        self.Bind(wx.EVT_BUTTON, self.OnSelectAllWorkspaces,
                   self.selectAllWorkspacesBtn)
         self.deselectAllWorkspacesBtn = wx.Button(self, -1,
                                                   'None')
         self.Bind(wx.EVT_BUTTON, self.OnDeselectAllWorkspaces,
                   self.deselectAllWorkspacesBtn)
         self.workspaceDescBox = wx.StaticText(self, -1,
-                                              STR_WORKSPACE_LIST_LOADING, 
+                                              STR_WORKSPACE_LIST_LOADING,
                                               (0, 0), (150, 50),
                                               wx.ST_NO_AUTORESIZE)
         self.bldFilenameBox = wx.StaticText(self, -1, '',
                                             (0, 0), (150, 50),
                                             wx.ST_NO_AUTORESIZE)
-        
+
         # Run button
         self.runBtn = wx.Button(self, -1, 'Run', (0, 0))
         self.Bind(wx.EVT_BUTTON, self.OnRun, self.runBtn)
-        
+
         # Disable controls that shouldn't be messed with until we have a list
         # of available workspaces
         self.selectAllWorkspacesBtn.Disable()
@@ -125,13 +125,13 @@ class WorkspacesPanel(wx.Panel):
         self.Bind(EVT_CREATE_PROGRESS_DLG, self.OnCreateProgressDialog)
         self.Bind(EVT_UPDATE_PROGRESS_DLG, self.OnUpdateProgressDialog)
         self.Bind(EVT_DESTROY_PROGRESS_DLG, self.OnDestroyProgressDialog)
-        
+
         # Bind Summary Dialog Event
         self.Bind(EVT_DISPLAY_SUMMARY_DLG, self.OnDisplaySummaryDialog)
-        
+
         # Bind Workspace List Loaded Event
         self.Bind(EVT_WORKSPACE_LIST_LOADED, self.OnWorkspaceListLoaded)
-        
+
         # Layout the controls...
         # generators area sizers
         sizerG = wx.BoxSizer(wx.HORIZONTAL)
@@ -187,7 +187,7 @@ class WorkspacesPanel(wx.Panel):
     def OnSelectWorkspace(self, evt):
         workspace = self.buildSys.workspaces[
                         self.workspaceListBox.GetStringSelection()]
-        self.workspaceDescBox.SetLabel(string.replace(workspace.annotation, 
+        self.workspaceDescBox.SetLabel(string.replace(workspace.annotation,
                                                       '&', '&&'))
         #self.bldFilenameBox.SetLabel('Found in: ' \
         #    + self.buildSys.GetAbsPathFromRel(workspace.bldFile))
@@ -202,19 +202,19 @@ class WorkspacesPanel(wx.Panel):
         # have to do this manually, SetSelection() above doesn't seem to call
         # OnSelectWorkspace
         self.OnSelectWorkspace(None)
-        
+
     #--------------------------------------------------------------------------
     # Called when the All button is clicked in the workspace area.
     def OnSelectAllWorkspaces(self, evt):
         for i in range(self.workspaceListBox.GetCount()):
             self.workspaceListBox.Check(i, True)
-        
+
     #--------------------------------------------------------------------------
     # Called when the None button is clicked in the workspace area.
     def OnDeselectAllWorkspaces(self, evt):
         for i in range(self.workspaceListBox.GetCount()):
             self.workspaceListBox.Check(i, False)
-    
+
     #--------------------------------------------------------------------------
     # Run the build system for the specified generator and workspaces.
     def RunBuildSys(self, generatorName, workspaceNames):
@@ -225,7 +225,7 @@ class WorkspacesPanel(wx.Panel):
         self.buildSys.ShowProgressDialog(True)
         self.buildSys.AttachSummaryDialog(self.DisplaySummaryDialog)
         self.buildSys.Run(generatorName, workspaceNames)
-            
+
     #--------------------------------------------------------------------------
     # Called when the Run button is clicked.
     def OnRun(self, evt):
@@ -237,22 +237,22 @@ class WorkspacesPanel(wx.Panel):
             dlg.ShowModal()
             dlg.Destroy()
             return
-            
+
         workspaceNames = []
         for i in range(self.workspaceListBox.GetCount()):
             if self.workspaceListBox.IsChecked(i):
                 workspaceNames.append(self.workspaceListBox.GetString(i))
         if len(workspaceNames) < 1:
-            dlg = wx.MessageDialog(self, 
+            dlg = wx.MessageDialog(self,
                                    'Please select at least one workspace.',
                                    'Insufficient Parameters',
                                    wx.ICON_EXCLAMATION|wx.OK)
             dlg.ShowModal()
             dlg.Destroy()
             return
-            
+
         # run the build system in a separate thread
-        thread.start_new_thread(self.RunBuildSys, (generatorName, 
+        thread.start_new_thread(self.RunBuildSys, (generatorName,
                                                    workspaceNames))
 
     #--------------------------------------------------------------------------
@@ -261,31 +261,31 @@ class WorkspacesPanel(wx.Panel):
         if evt.listLoaded:
             workspaceNames = self.buildSys.workspaces.keys()
             workspaceNames.sort()
-        
+
             # populate the list box
             if len(workspaceNames) > 0:
                 self.workspaceListBox.InsertItems(workspaceNames, 0)
                 self.workspaceListBox.SetSelection(0)
                 self.OnSelectWorkspace(None)
-            
+
             # tick the workspaces passed in via cmd line args
             workspaceIdx = 0
             for workspaceName in workspaceNames:
                 if workspaceName in self.defaultWorkspaceNames:
                     self.workspaceListBox.Check(workspaceIdx, True)
                 workspaceIdx += 1
-            
+
             # re-enable controls we disabled previously
             self.selectAllWorkspacesBtn.Enable(True)
             self.deselectAllWorkspacesBtn.Enable(True)
             self.runBtn.Enable(True)
         else:
             self.workspaceDescBox.SetLabel(STR_WORKSPACE_LIST_NOT_LOADED)
-            
+
         self.workspaceLoaderThreadDone = True
-        
+
     #--------------------------------------------------------------------------
-    # Return True if the workspace list loader thread has finished doing it's 
+    # Return True if the workspace list loader thread has finished doing it's
     # thing (and died), or False if it's still doing stuff.
     def WorkspaceLoaderThreadDone(self):
         return self.workspaceLoaderThreadDone
@@ -295,7 +295,7 @@ class WorkspacesPanel(wx.Panel):
     def DisplaySummaryDialog(self, evtDetails):
         evt = DisplaySummaryDialogEvent(details = evtDetails)
         wx.PostEvent(self, evt)
-        
+
     #--------------------------------------------------------------------------
     # This will always be called in the GUI thread's context.
     def OnDisplaySummaryDialog(self, evt):
@@ -303,11 +303,11 @@ class WorkspacesPanel(wx.Panel):
         dlg.CenterOnParent()
         dlg.ShowModal()
         dlg.Destroy()
-        
+
     #--------------------------------------------------------------------------
     # Create and show the progress dialog.
     # This can be safely called from any thread.
-    def CreateProgressDialog(self, title, message, maxVal = 100, 
+    def CreateProgressDialog(self, title, message, maxVal = 100,
                              canAbort = True):
         assert None == self.progressDialog
         style = wx.PD_AUTO_HIDE|wx.PD_APP_MODAL
@@ -316,30 +316,30 @@ class WorkspacesPanel(wx.Panel):
         evt = CreateProgressDialogEvent(dlgTitle = title, dlgMsg = message,
                                         dlgMaxVal = maxVal, dlgStyle = style)
         wx.PostEvent(self, evt)
-        # TODO: block a non-gui thread until the dialog has actually been 
+        # TODO: block a non-gui thread until the dialog has actually been
         # created? Using threading.Event
-        
+
     #--------------------------------------------------------------------------
     # This will always be called in the GUI thread's context.
     def OnCreateProgressDialog(self, evt):
         assert None == self.progressDialog
         self.progressDialog = wx.ProgressDialog(evt.dlgTitle, evt.dlgMsg,
-                                                evt.dlgMaxVal, None, 
+                                                evt.dlgMaxVal, None,
                                                 evt.dlgStyle)
         self.cancelProgressDlg = False
-                                                
+
     #--------------------------------------------------------------------------
     # Update the progress dialog.
     # This can be safely called from any thread.
     def UpdateProgressDialog(self, val, message):
         evt = UpdateProgressDialogEvent(dlgVal = val, dlgMsg = message)
         wx.PostEvent(self, evt)
-    
+
     #--------------------------------------------------------------------------
     # This will always be called in the GUI thread's context.
     def OnUpdateProgressDialog(self, evt):
         if self.progressDialog != None:
-            self.cancelProgressDlg = not self.progressDialog.Update(evt.dlgVal, 
+            self.cancelProgressDlg = not self.progressDialog.Update(evt.dlgVal,
                                                                     evt.dlgMsg)
 
     #--------------------------------------------------------------------------
@@ -354,7 +354,7 @@ class WorkspacesPanel(wx.Panel):
     def DestroyProgressDialog(self):
         evt = DestroyProgressDialogEvent()
         wx.PostEvent(self, evt)
-        
+
     #--------------------------------------------------------------------------
     # This will always be called in the GUI thread's context.
     def OnDestroyProgressDialog(self, evt):
@@ -365,7 +365,7 @@ class WorkspacesPanel(wx.Panel):
 #--------------------------------------------------------------------------
 class BuildSummaryDialog(wx.Dialog):
     def __init__(self, parentWindow, id, title, details,
-                 pos = wx.DefaultPosition, size = wx.DefaultSize, 
+                 pos = wx.DefaultPosition, size = wx.DefaultSize,
                  style = wx.DEFAULT_DIALOG_STYLE):
         wx.Dialog.__init__(self, parentWindow, id, title, pos, size, style)
         line1 = wx.StaticText(self, -1, SUMMARY_DLG_TEXT % details,

@@ -18,7 +18,7 @@ import os, string
 
 #--------------------------------------------------------------------------
 class makefile:
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, buildSys):
         self.buildSys = buildSys
@@ -27,22 +27,22 @@ class makefile:
         self.incDirStr = ''
         self.libDirStr = ''
         self.workspacePath = ''
-    
+
     #--------------------------------------------------------------------------
     def HasSettings(self):
         return False
-    
+
     #--------------------------------------------------------------------------
-    # Gets basenames of all module sources     
+    # Gets basenames of all module sources
     def getModuleSources(self, module):
         retSources = ""
         for source in module.resolvedFiles:
             retSources += "$(N_INTERDIR)%s$(OBJ) " % string.join(string.split(os.path.split(source)[-1], '.')[0:-1])
         return retSources
-        
+
     #--------------------------------------------------------------------------
     # Entrypoint
-    def Generate(self, workspaceNames):  
+    def Generate(self, workspaceNames):
         defaultLocation = os.path.join('build', 'makefile')
         releaseObjLocation = os.path.join('build', 'makefile', 'inter', 'linux')
         debugObjLocation = os.path.join('build', 'makefile', 'inter', 'linuxd')
@@ -54,36 +54,36 @@ class makefile:
             os.makedirs(debugObjLocation)
         except OSError:
             pass # in case the dir already exists
-        
+
         progressVal = 0
-        self.buildSys.CreateProgressDialog('Generating Makefiles', '', 
+        self.buildSys.CreateProgressDialog('Generating Makefiles', '',
                                            len(workspaceNames))
-                                           
+
         try:
             makeFile = file(os.path.join(defaultLocation, 'Makefile'), "w")
-            
+
             makeFile.write("# Makefile for nebula\n")
             makeFile.write("include ../../buildsys3/config.mak\n\n")
-            
+
             for workspaceName in workspaceNames:
                 workspace = self.buildSys.workspaces[workspaceName]
-                
+
                 # calculate these once for the workspace
                 self.workspacePath = workspace.GetWorkspacePath(defaultLocation)
                 self.incDirStr = workspace.GetIncSearchDirsString(defaultLocation)
                 self.libDirStr = workspace.GetLibSearchDirsString('win32_vc_i386',
                                                                   defaultLocation)
-                
+
                 # make sure the workspace/projects directory exists
                 absPath = os.path.join(self.buildSys.homeDir, self.workspacePath)
                 if not os.path.exists(absPath):
                     os.makedirs(absPath)
-                
+
                 self.buildSys.UpdateProgressDialog(progressVal,
                     'Generating %s...' % workspaceName)
                 if self.buildSys.ProgressDialogCancelled():
                     break
-                
+
                 # spit out the target
                 makeFile.write("%s: \n" % workspaceName)
                 makeFile.write("\t@$(MAKE) -f ./%s.mak EXTRA_CFLAGS=\"" % workspaceName)
@@ -92,64 +92,64 @@ class makefile:
                 for lib in string.split(self.libDirStr, ';'):
                     makeFile.write("$(LPATH_OPT)%s " % lib)
                 makeFile.write("\"\n\n")
-                
+
                 # spit out the files
                 self.generateWorkspace(workspace)
-                                        
+
                 progressVal += 1
-            
+
             # generic targets
             makeFile.write("all: ")
             for workspaceName in workspaceNames:
                 makeFile.write("%s " % workspaceName)
             makeFile.write("\n\n")
-            
+
             # spring clean
             makeFile.write("clean: \n")
             makeFile.write("\t$(RM) $(N_TARGETDIR)*\n")
             makeFile.write("\t$(RM) $(N_INTERDIR)\n")
-            
+
             makeFile.write("default: all\n")
-            
+
             # none of these are real
             makeFile.write(".PHONY: all ")
             for workspaceName in workspaceNames:
                 makeFile.write("%s " % workspaceName)
             makeFile.write("\n\n")
-            
+
             makeFile.close()
         except:
             self.buildSys.logger.exception('Exception in makefile.Generate()')
-        
+
         self.buildSys.DestroyProgressDialog()
-        
+
         summaryDetails = { 'numOfWorkspacesBuilt' : progressVal,
                            'totalNumOfWorkspaces' : len(workspaceNames) }
         self.buildSys.DisplaySummaryDialog(summaryDetails)
-    
+
     #--------------------------------------------------------------------------
     # Private Stuff
     #--------------------------------------------------------------------------
-       
+
     #--------------------------------------------------------------------------
     # Writes each module section
     def writeModule(self, module, makeFile):
         safeModName = module.GetFullNameNoColons()
         more_syms = "$(SYM_OPT)N_INIT=n_init_%s $(SYM_OPT)N_NEW=n_new_%s $(SYM_OPT)N_INITCMDS=n_initcmds_%s" % (safeModName, safeModName, safeModName)
-        
+
         if module.modType == "c":
             makeFile.write("DO_COMPILE_%s = $(CC) $(NOLINK_OPT) $(CFLAGS) %s $< $(OBJ_OPT) $@\n" % (safeModName, more_syms))
         elif module.modType == "cpp":
             makeFile.write("DO_COMPILE_%s = $(CXX) $(NOLINK_OPT) $(CXXFLAGS) %s $< $(OBJ_OPT) $@\n" % (safeModName, more_syms))
         else:
             makeFile.write("DO_COMPILE_%s = @echo ""Warning: Dummy Target for %s!""\n" % safeModName)
-            
+
         for fileName in module.resolvedFiles:
             base_name = string.join(string.split(os.path.split(fileName)[-1], '.')[0:-1])
             relPath = self.buildSys.FindRelPath(self.workspacePath, fileName)
             makeFile.write("$(N_INTERDIR)%s$(OBJ): %s\n\t$(DO_COMPILE_%s)\n" % (base_name, relPath, safeModName))
         makeFile.write("\n")
-    
+
     #--------------------------------------------------------------------------
     # Writes each target section
     def writeTarget(self, target, makeFile):
@@ -166,12 +166,12 @@ class makefile:
             elif target.SupportsPlatform("macosx"):
                 makeFile.write("ifeq ($(N_PLATFORM),__MACOSX__)\n")
             needsEnd = True
-            
+
         targetType = target.type
         filesWin32  = ""
         filesLinux  = ""
         filesMacOSX = ""
-        
+
         # Add modules we need to the files line
         for moduleName in target.modules:
             module = self.buildSys.modules[moduleName]
@@ -200,14 +200,14 @@ class makefile:
                                                 os.path.join('build',
                                                              'pkg')), "res_%s.rc" % target.name)
             resourceFiles += "./pkg/res_%s.res " % relPath
-            
+
             # add any custom resource files
             if target.win32Resource != "":
                 resourceFiles += self.buildSys.FindRelPath(self.workspacePath,
                                                            target.win32Resource) + " "
-            
+
             makeFile.write("\n")
-        
+
         # Get a list of libs to plonk on command
         libsWin32  = ""
         libsLinux  = ""
@@ -219,7 +219,7 @@ class makefile:
             libsLinux  += "$(LIB_OPT)%s$(LIB_OPT_POST) " % lib
         for lib in target.libsMacOSX:
             libsMacOSX += "$(LIB_OPT)%s$(LIB_OPT_POST) " % lib
-    
+
         # generate list of target dependencies for that target
         depsWin32 = ""
         depsLinux = ""
@@ -238,7 +238,7 @@ class makefile:
                 depsWin32  += " %s" % dep
                 depsLinux  += " %s" % dep
                 depsMacOSX += " %s" % dep
-    
+
         makeFile.write("# Linking targets\n")
 
         # compile target itself
@@ -256,7 +256,7 @@ class makefile:
             else:
                 vccDef = ""
                 #gccDef = ""
-            
+
             # Generate target lines
             endTarget = "$(N_TARGETDIR)$(DLL_PRE)%s$(DLL_POST)" % target.name
             makeFile.write("ifeq ($(N_COMPILER),__VC__)\n")
@@ -302,7 +302,7 @@ class makefile:
         elif targetType == "lib":
             # our static lib; previously known as a "package"
             # TODO: need to fix the MACOSX options...
-            
+
             endTarget = "$(N_TARGETDIR)$(LIB_PRE)%s$(LIB_POST)" % target.name
             makeFile.write("ifeq ($(N_COMPILER),__VC__)\n")
             makeFile.write("%s : %s %s\n" % (target.name, depsWin32, endTarget))
@@ -325,14 +325,14 @@ class makefile:
         # Put the end on if we are platform specific
         if needsEnd:
             makeFile.write("endif\n")
-    
+
     #--------------------------------------------------------------------------
     # Writes each workspace makefile
     def generateWorkspace(self, workspace):
-    
-        makeFile = file("%s.mak" % os.path.join(self.buildSys.homeDir, self.workspacePath, 
+
+        makeFile = file("%s.mak" % os.path.join(self.buildSys.homeDir, self.workspacePath,
                                 workspace.name), 'w')
-        
+
         # Generate all possible lists of targets
         targetsWin32  = ""
         targetsLinux  = ""
@@ -352,12 +352,12 @@ class makefile:
                 targetsWin32  += " %s" % targetName
                 targetsLinux  += " %s" % targetName
                 targetsMacOSX += " %s" % targetName
-             
+
              # Add this target's modules to a temp list
             for moduleName in self.buildSys.targets[targetName].modules:
                  module = self.buildSys.modules[moduleName]
                  modulesList.append(module)
-    
+
         # Header...
         makeFile.write("#--------------------------------------------------------------------\n")
         makeFile.write("#    %s.mak\n" % workspace.name)
@@ -375,26 +375,26 @@ class makefile:
         makeFile.write("ifeq ($(N_PLATFORM),__MACOSX__)\n")
         makeFile.write("%s: %s\n" % (workspace.name, targetsMacOSX))
         makeFile.write("endif\n\n")
-    
+
         # Modules...
         makeFile.write("# Modules\n")
         for module in modulesList:
             self.writeModule(module, makeFile)
-        
+
         # Targets...
         for targetName in workspace.targets:
             makeFile.write("# Targets\n\n")
             self.writeTarget(self.buildSys.targets[targetName], makeFile)
-        
+
         makeFile.write("\n# Errata\n")
         # All base targets need to be .PHONY
         makeFile.write(".PHONY: ")
         for targetName in workspace.targets:
             makeFile.write("%s " % targetName)
         makeFile.write("\n\n")
-        
+
         makeFile.close()
-    
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

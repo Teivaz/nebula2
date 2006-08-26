@@ -5,7 +5,7 @@
 #--------------------------------------------------------------------------
 
 class Bundle:
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, bundleName, bldFilename):
         self.buildSys = None
@@ -15,7 +15,7 @@ class Bundle:
         self.modules = []
         self.targets = []
         self.bldFile = bldFilename
-    
+
     #--------------------------------------------------------------------------
     def Validate(self):
         dataValid = True
@@ -23,18 +23,18 @@ class Bundle:
         for moduleName in self.modules:
             if moduleName not in self.buildSys.modules:
                 self.buildSys.logger.error('Undefined module %s referenced' \
-                                           ' in bundle %s from %s', moduleName, 
+                                           ' in bundle %s from %s', moduleName,
                                            self.name, self.bldFile)
                 dataValid = False
         # check bundle targets are defined
         for targetName in self.targets:
             if targetName not in self.buildSys.targets:
                 self.buildSys.logger.error('Undefined target %s referenced' \
-                                           ' in bundle %s from %s', targetName, 
+                                           ' in bundle %s from %s', targetName,
                                            self.name, self.bldFile)
                 dataValid = False
         return dataValid
-    
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

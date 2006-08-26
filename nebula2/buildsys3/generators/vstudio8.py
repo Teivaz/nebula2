@@ -32,23 +32,23 @@ STR_PROJECT_FOOTER = '''\
 '''
 
 STR_SRC_FILE = '''\
-            <File
-                RelativePath="%(relPath)s">
-                <FileConfiguration Name="Debug|Win32">
-                    <Tool
-                        Name="VCCLCompilerTool"
-                        PreprocessorDefinitions="%(nebSyms)s"
-                        ObjectFile="$(IntDir)/%(objectName)s.obj"
-                        CompileAs="%(compileAsFlag)i"/>
-                </FileConfiguration>
-                <FileConfiguration Name="Release|Win32">
-                    <Tool
-                        Name="VCCLCompilerTool"
-                        PreprocessorDefinitions="%(nebSyms)s"
-                        ObjectFile="$(IntDir)/%(objectName)s.obj"
-                        CompileAs="%(compileAsFlag)i"/>
-                </FileConfiguration>
-            </File>
+                <File
+                    RelativePath="%(relPath)s">
+                    <FileConfiguration Name="Debug|Win32">
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            PreprocessorDefinitions="%(nebSyms)s"
+                            ObjectFile="$(IntDir)/%(objectName)s.obj"
+                            CompileAs="%(compileAsFlag)i"/>
+                    </FileConfiguration>
+                    <FileConfiguration Name="Release|Win32">
+                        <Tool
+                            Name="VCCLCompilerTool"
+                            PreprocessorDefinitions="%(nebSyms)s"
+                            ObjectFile="$(IntDir)/%(objectName)s.obj"
+                            CompileAs="%(compileAsFlag)i"/>
+                    </FileConfiguration>
+                </File>
 '''
 
 STR_SLN_PROJECT_CONFIGS = '''\
@@ -173,7 +173,7 @@ STR_PROJ_CONFIG_TOOL_RES_COMPILER = '''\
 
 #--------------------------------------------------------------------------
 class vstudio8:
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, buildSys):
         self.buildSys = buildSys
@@ -183,63 +183,63 @@ class vstudio8:
         self.vcprojLocation = ''
         self.incDirStr = ''
         self.libDirStr = ''
-        
+
     #--------------------------------------------------------------------------
     def HasSettings(self):
         return False
-        
+
     #--------------------------------------------------------------------------
     def Generate(self, workspaceNames):
         defaultLocation = os.path.join('build', 'vstudio8')
-        
+
         progressVal = 0
         solutionAbsDirs = []
-        self.buildSys.CreateProgressDialog('Generating Solutions', '', 
+        self.buildSys.CreateProgressDialog('Generating Solutions', '',
                                            len(workspaceNames))
-        
+
         try:
             for workspaceName in workspaceNames:
                 workspace = self.buildSys.workspaces[workspaceName]
-                
+
                 # calculate these once for the workspace
                 self.vcprojLocation = workspace.GetWorkspacePath(defaultLocation)
                 self.incDirStr = workspace.GetIncSearchDirsString(defaultLocation)
                 self.libDirStr = workspace.GetLibSearchDirsString('win32_vc_i386',
                                                                   defaultLocation)
-                
+
                 # make sure the workspace/projects directory exists
                 absPath = os.path.join(self.buildSys.homeDir, self.vcprojLocation)
                 if not os.path.exists(absPath):
                     os.makedirs(absPath)
-                
+
                 self.buildSys.UpdateProgressDialog(progressVal,
                     'Generating %s...' % workspaceName)
                 if self.buildSys.ProgressDialogCancelled():
                     break
-                
+
                 # spit out the files
                 self.GenerateSolution(workspace)
                 for targetName in workspace.targets:
                     self.GenerateProject(self.buildSys.targets[targetName],
                                          workspace)
-                                        
+
                 absPath = absPath.lower()
                 if absPath not in solutionAbsDirs:
                     solutionAbsDirs.append(absPath)
-                                        
+
                 progressVal += 1
         except:
             self.buildSys.logger.exception('Exception in vstudio8.Generate()')
-        
+
         self.buildSys.DestroyProgressDialog()
-        
+
         summaryDetails = { 'numOfWorkspacesBuilt' : progressVal,
                            'totalNumOfWorkspaces' : len(workspaceNames) }
         self.buildSys.DisplaySummaryDialog(summaryDetails)
-        
+
         for absPath in solutionAbsDirs:
             os.startfile(absPath)
-        
+
     #--------------------------------------------------------------------------
     # .sln files aren't in XML, they require the use of tabs instead of spaces.
     def GenerateSolution(self, workspace):
@@ -247,12 +247,12 @@ class vstudio8:
                                   workspace.name)
 
         # write .sln file
-        solutionPath = os.path.join(self.buildSys.homeDir, self.vcprojLocation, 
+        solutionPath = os.path.join(self.buildSys.homeDir, self.vcprojLocation,
                                     workspace.name + '.sln')
         try:
             slnFile = file(solutionPath, 'w')
         except IOError:
-            self.buildSys.logger.error("Couldn't open %s for writing.", 
+            self.buildSys.logger.error("Couldn't open %s for writing.",
                                        solutionPath)
         else:
             # header
@@ -266,7 +266,7 @@ class vstudio8:
                     if target.SupportsPlatform('win32'):
                         #print 'Target ' + target.name + ' supports win32.'
                         target.uuid = self.GenerateUUID()
-    
+
             # now with the UUIDs we can write the targets
             for targetName in workspace.targets:
                 target = self.buildSys.targets[targetName]
@@ -280,7 +280,7 @@ class vstudio8:
                                       % (targetDep.uuid, targetDep.uuid))
                 slnFile.write('\tEndProjectSection\n')
                 slnFile.write('EndProject\n')
-    
+
             slnFile.write(STR_SLN_GLOBAL_HEADER)
             # configurations
             for targetName in workspace.targets:
@@ -291,18 +291,18 @@ class vstudio8:
             slnFile.write(STR_SLN_GLOBAL_FOOTER)
 
             slnFile.close()
-        
+
     #--------------------------------------------------------------------------
     def GenerateProject(self, target, workspace):
         print 'Generating VS.NET 2005 project: ' + target.name
 
         # write .vcproj file
-        projPath = os.path.join(self.buildSys.homeDir, self.vcprojLocation, 
+        projPath = os.path.join(self.buildSys.homeDir, self.vcprojLocation,
                                 target.name + '.vcproj')
         try:
             projFile = file(projPath, 'w')
         except IOError:
-            self.buildSys.logger.error('Failed to open %s for writing!', 
+            self.buildSys.logger.error('Failed to open %s for writing!',
                                        projPath)
         else:
             self.writeProjectHeader(target, projFile)
@@ -315,7 +315,7 @@ class vstudio8:
             self.writeProjectFiles(target, projFile)
             self.writeProjectFooter(projFile)
             projFile.close()
-    
+
     #--------------------------------------------------------------------------
     # Generates and returns a UUID (a string).
     # If an error occured the return value will be an empty string.
@@ -324,11 +324,11 @@ class vstudio8:
         if uuidStr != '':
             uuidStr = string.upper(string.strip(uuidStr))
         return uuidStr
-        
+
     #--------------------------------------------------------------------------
     # Private Stuff
     #--------------------------------------------------------------------------
-        
+
     #--------------------------------------------------------------------------
     def writeProjectHeader(self, target, projFile):
         args = { 'targetName' : target.name,
@@ -359,14 +359,14 @@ class vstudio8:
             defStr = 'N_STATIC;'
 
         defStr += workspace.GetTargetDefsStringForTarget(target.name)
-        
+
         interDir = 'inter'
         binaryDir = workspace.GetBinaryOutputPath('bin')
         binaryDir = self.buildSys.FindRelPath(self.vcprojLocation, binaryDir)
-        
+
         configName = ''
         win32Libs = ''
-        
+
         if debugMode:
             configName = 'Debug|Win32'
             interDir = os.path.join(interDir, 'win32d')
@@ -409,13 +409,13 @@ class vstudio8:
             args = { 'exceptions' : exceptions,
                      'rtti'       : string.lower(str(target.rtti)) }
             projFile.write(STR_PROJ_CONFIG_S2_RELEASE % args)
-    
+
         projFile.write('            <Tool Name="VCCustomBuildTool"/>\n')
 
         # now either the linker or the librarian
         if 'lib' == target.type:
             projFile.write(STR_PROJ_CONFIG_LIBRARIAN_TOOL \
-                           % os.path.join(interDir, 
+                           % os.path.join(interDir,
                                  prefix + target.name + '.' + extension))
         else:
             args = { 'win32Libs'  : win32Libs,
@@ -427,7 +427,7 @@ class vstudio8:
                                % os.path.join(interDir, target.name + '.pdb'))
             else:
                 projFile.write(STR_PROJ_CONFIG_LINKER_TOOL_S2_RELEASE)
-            
+
             args = { 'libDirs' : interDir + ';' + self.libDirStr,
                      'modDef'  : modDefFileName }
             projFile.write(STR_PROJ_CONFIG_LINKER_TOOL_S3 % args)
@@ -441,46 +441,51 @@ class vstudio8:
             projFile.write(STR_PROJ_CONFIG_TOOL_RES_COMPILER)
 
         projFile.write('        </Configuration>\n')
-        
+
     #--------------------------------------------------------------------------
     def writeProjectFiles(self, target, projFile):
         projFile.write('    <Files>\n')
-
-        for moduleName in target.modules:
-            module = self.buildSys.modules[moduleName]
-            compileAsFlag = 0
-            if 'c' == module.modType:
-                compileAsFlag = 1
-            elif 'cpp' == module.modType:
-                compileAsFlag = 2
-            
-            safeModName = module.GetFullNameNoColons()
-            nebSyms = 'N_INIT=n_init_' + safeModName + ';' \
-                      'N_NEW=n_new_' + safeModName + ';' \
-                      'N_INITCMDS=n_initcmds_' + safeModName
-                    
+        for dir in target.dirs:
             projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
-                           % module.name)
+                           % dir)
+            for moduleName in target.modules:
+                module = self.buildSys.modules[moduleName]
+                if module.dir != dir:
+                    continue
+                compileAsFlag = 0
+                if 'c' == module.modType:
+                    compileAsFlag = 1
+                elif 'cpp' == module.modType:
+                    compileAsFlag = 2
 
-            # source files
-            for fileName in module.resolvedFiles:
-                relPath = self.buildSys.FindRelPath(self.vcprojLocation, 
-                                                    fileName)
-                ignore, shortFileName = os.path.split(fileName)
-                objectName, ignore = os.path.splitext(shortFileName)
-                args = { 'relPath' : relPath,
-                         'nebSyms' : nebSyms,
-                         'objectName' : ('%s_%s' % (safeModName, objectName)),
-                         'compileAsFlag' : compileAsFlag }
-                projFile.write(STR_SRC_FILE % args)
+                safeModName = module.GetFullNameNoColons()
+                nebSyms = 'N_INIT=n_init_' + safeModName + ';' \
+                          'N_NEW=n_new_' + safeModName + ';' \
+                          'N_INITCMDS=n_initcmds_' + safeModName
 
-            # header files
-            for fileName in module.resolvedHeaders:
-                relPath = self.buildSys.FindRelPath(self.vcprojLocation, 
-                                                    fileName)
-                projFile.write('            <File RelativePath="%s"/>\n' \
-                               % relPath)
+                projFile.write('            <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
+                               % module.name)
 
+                # source files
+                for fileName in module.resolvedFiles:
+                    relPath = self.buildSys.FindRelPath(self.vcprojLocation,
+                                                        fileName)
+                    ignore, shortFileName = os.path.split(fileName)
+                    objectName, ignore = os.path.splitext(shortFileName)
+                    args = { 'relPath' : relPath,
+                             'nebSyms' : nebSyms,
+                             'objectName' : ('%s_%s' % (safeModName, objectName)),
+                             'compileAsFlag' : compileAsFlag }
+                    projFile.write(STR_SRC_FILE % args)
+
+                # header files
+                for fileName in module.resolvedHeaders:
+                    relPath = self.buildSys.FindRelPath(self.vcprojLocation,
+                                                        fileName)
+                    projFile.write('                <File RelativePath="%s"/>\n' \
+                                   % relPath)
+
+                projFile.write('            </Filter>\n')
             projFile.write('        </Filter>\n')
 
         # if the module definition file is set and target is dll then add it
@@ -510,13 +515,13 @@ class vstudio8:
                 projFile.write('            <File RelativePath="%s"/>\n' \
                                % relPath)
             projFile.write('        </Filter>\n')
-            
+
         projFile.write('    </Files>\n')
-        
+
     #--------------------------------------------------------------------------
     def writeProjectFooter(self, projFile):
         projFile.write(STR_PROJECT_FOOTER)
-    
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

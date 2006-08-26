@@ -30,7 +30,7 @@ def TerminateChildProcess(proc):
 # it's completion. When the build system is run in GUI mode a dialog will
 # pop up to display standard output/errors from the external program.
 class ExternalTask:
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, taskName, cmdLine, workingDir = None, mainFrame = None):
         self.taskName = taskName
@@ -43,7 +43,7 @@ class ExternalTask:
         self.proc = None
         self.userCancelled = False
         self.firstRun = True
-        
+
     #--------------------------------------------------------------------------
     # Run the task (blocks until task terminates).
     # Return True if the task completed successfuly, or False if it didn't run
@@ -57,11 +57,11 @@ class ExternalTask:
             else:
                 return self.runWithoutGUI()
         return False
-    
+
     #--------------------------------------------------------------------------
     # Private Stuff
     #--------------------------------------------------------------------------
-    
+
     #--------------------------------------------------------------------------
     # Will be called by self.mainFrame when the dialog proxy associated with
     # this task is created.
@@ -70,30 +70,30 @@ class ExternalTask:
         self.dialogProxy = dlgProxy
         # wake up any threads waiting for the dialog proxy to be set
         self.evtDialogCreated.set()
-    
+
     #--------------------------------------------------------------------------
     def createDialogProxy(self):
         self.mainFrame.CreateExternalTaskDialogProxy(self.taskName + ' Output',
                                                      self.OnCreateDialogProxy,
-                                                     self.OnOkBtn, 
+                                                     self.OnOkBtn,
                                                      self.OnCancelBtn)
         # block until the dialog is created
         self.evtDialogCreated.wait()
-        
+
     #--------------------------------------------------------------------------
     def destroyDialogProxy(self):
         # block until the user closes the dialog
         self.evtDialogClosed.wait()
         self.mainFrame.DestroyExternalTaskDialogProxy(self.dialogProxy)
         self.dialogProxy = None
-    
+
     #--------------------------------------------------------------------------
     # This will be called after the user presses the OK button to close the
     # dialog associated with this task.
     def OnOkBtn(self):
         # wake up any threads waiting for the dialog to close
         self.evtDialogClosed.set()
-        
+
     #--------------------------------------------------------------------------
     # This will be called after the user presses the Cancel button to close the
     # dialog associated with this task.
@@ -103,21 +103,21 @@ class ExternalTask:
             TerminateChildProcess(self.proc)
         # wake up any threads waiting for the dialog to close
         self.evtDialogClosed.set()
-    
+
     #--------------------------------------------------------------------------
     def runWithGUI(self):
         oldPath = os.getcwd()
         if self.workingDir != None:
             os.chdir(self.workingDir)
-            
+
         self.createDialogProxy()
         self.dialogProxy.Display()
-        
+
         try:
             self.proc = subprocess.Popen(self.cmdLine,
-                                         shell = True, 
-                                         stdin = None, 
-                                         stdout = subprocess.PIPE, 
+                                         shell = True,
+                                         stdin = None,
+                                         stdout = subprocess.PIPE,
                                          stderr = subprocess.STDOUT)
         except:
             os.chdir(oldPath)
@@ -127,17 +127,17 @@ class ExternalTask:
             while outLine != '':
                 self.dialogProxy.AppendText(outLine)
                 outLine = self.proc.stdout.readline()
-            
+
             if not self.userCancelled:
                 # enable OK button and disable Cancel button
                 self.dialogProxy.EnableButtons(True, False)
-        
+
             self.proc.stdout.close()
-            
+
         self.destroyDialogProxy()
         os.chdir(oldPath)
         return not self.userCancelled
-        
+
     #--------------------------------------------------------------------------
     def runWithoutGUI(self):
         oldPath = os.getcwd()

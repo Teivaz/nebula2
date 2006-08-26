@@ -46,7 +46,7 @@ buildSysCfg['doxygen']['autoRunDoxygen'] = %r
 
 STR_CFG_DOXYGEN_DIR = """
 # OPTIONAL SETTING
-# Specify the directory where the doxygen binary resides, if this setting is 
+# Specify the directory where the doxygen binary resides, if this setting is
 # not supplied the Doxygen Generator will try to use whatever the OS can find
 # (i.e. if you have the doxygen directory in your PATH it will use that).
 buildSysCfg['doxygen']['doxygenDir'] = %r
@@ -55,7 +55,7 @@ buildSysCfg['doxygen']['doxygenDir'] = %r
 STR_CFG_GENERATE_CHM = """
 # OPTIONAL SETTING
 # Set to True if you want the Doxygen Generator to generate a single CHM file
-# with all the documentation. CHMs can only be generated on Windows if you 
+# with all the documentation. CHMs can only be generated on Windows if you
 # have the Microsoft HTML Help Workshop installed.
 buildSysCfg['doxygen']['autoGenerateCHM'] = %r
 """
@@ -63,7 +63,7 @@ buildSysCfg['doxygen']['autoGenerateCHM'] = %r
 STR_CFG_HTML_HELP_WORKSHOP_DIR = """
 # OPTIONAL SETTING
 # Specify the directory where the HTML Help Compiler (hhc.exe) that comes
-# with the Microsoft HTML Help Workshop resides, if this setting is 
+# with the Microsoft HTML Help Workshop resides, if this setting is
 # not supplied the Doxygen Generator will try to use whatever the OS can find
 # (i.e. if you have the HTML Help Workshop directory in your PATH it will use
 # that).
@@ -73,12 +73,12 @@ buildSysCfg['doxygen']['htmlHelpWorkshopDir'] = %r
 class BuildConfig:
     # The latest version of the build config file format
     CUR_VERSION = 1
-        
+
     #--------------------------------------------------------------------------
     def __init__(self):
         self.bldFiles = []
         self.cfg = None
-            
+
     #--------------------------------------------------------------------------
     def Read(self, filename):
         if os.path.exists(filename):
@@ -108,7 +108,7 @@ class BuildConfig:
                                 self.bldFiles.append(match)
                     return True
         return False
-            
+
     #--------------------------------------------------------------------------
     def Write(self, filename):
         try:
@@ -118,7 +118,7 @@ class BuildConfig:
             traceback.print_exc()
         else:
             # NOTE: instead of writing every setting one at a time with
-            # comments for the user we could just do a single 
+            # comments for the user we could just do a single
             # cfgFile.write(repr(self.cfg))... but that all ends up in a
             # single line and as such isn't very easy to modify by hand :|
             cfgFile.write(STR_CFG_HEADER)
@@ -155,7 +155,7 @@ class BuildConfig:
                 if setting != None:
                     cfgFile.write(STR_CFG_HTML_HELP_WORKSHOP_DIR % setting)
             cfgFile.close()
-        
+
 #--------------------------------------------------------------------------
 # EOF
 #--------------------------------------------------------------------------

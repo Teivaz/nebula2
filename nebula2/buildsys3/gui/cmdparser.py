@@ -42,12 +42,12 @@ class CmdFileHeader:
                     if isinstance(e, StringType): self.includes.append(e)
                     else: self.includes.append("")
             if isinstance(cn, StringType): self.className = cn
-  
+
     def clear(self):
         self.generalInfo = ""
         self.includes = []
         self.className = ""
-  
+
     def __repr__(self):
         res = COMMENT_LINE + "\n"
         res += "//  " + self.className + "_cmds.cc\n"
@@ -57,7 +57,7 @@ class CmdFileHeader:
         for incl in self.includes:
             res += "#include \"" + incl + "\"\n"
         return res
-  
+
     def setFrom(self, hdr):
         if isinstance(hdr, CmdFileHeader):
             self.generalInfo = hdr.generalInfo[:]
@@ -65,7 +65,7 @@ class CmdFileHeader:
             for e in hdr.includes:
                 self.includes.append(e[:])
             self.className = hdr.className[:]
-  
+
     def __cmp__(self, c):
         if not isinstance(c, CmdFileHeader): return 1
         if not (self.generalInfo == c.generalInfo and \
@@ -87,13 +87,13 @@ class CmdClassInfo:
             if isinstance(spcl, StringType): self.superClass = spcl
             if isinstance(cli, StringType): self.info = cli
             if isinstance(scrcl, StringType): self.scriptClass = scrcl
-  
+
     def clear(self):
         self.cppClass
         self.superClass
         self.info
         self.scriptClass = "", "", "", "", ""
-  
+
     def __repr__(self):
         if not self.scriptClass:
             self.scriptClass = self.cppClass.lower()
@@ -136,7 +136,7 @@ class CmdParam:
             self.setFrom(t)
         else:
             if isinstance(t, StringType) and re.match(r'^[' + TYPE_CHARS + r']+$', t): self.type = t
-            
+
             # type cleanning
             self.type = self.type.replace('v', '')
             if self.type == '':
@@ -154,7 +154,7 @@ class CmdParam:
                             self.attribute[k] = v_
                         else: self.attribute[k] = "<unknown>"
                 if isinstance(c, StringType): self.comment = c
-  
+
     def __repr__(self):
         res = self.type
         if self.type != 'v':
@@ -183,7 +183,7 @@ class CmdParam:
                     self.attribute[k] = v_
                 else: self.attribute[k] = "<unknown>"
             self.comment = c.comment[:]
-  
+
     def __cmp__(self, c):
         if not isinstance(c, CmdParam): return 1
         if not (self.type == c.type and\
@@ -219,7 +219,7 @@ class CmdProperty:
                         else: break
             else: self.params.append(CmdParam())
         if isinstance(i, StringType): self.info = i
-  
+
     def __repr__(self):
         res = COMMENT_LINE + "\n"
         res += "/**\n"
@@ -237,7 +237,7 @@ class CmdProperty:
             self.params = []
             for e in c.params: self.params.append(CmdParam(e))
             self.info = c.info[:]
-  
+
     def __cmp__(self, c):
         if not isinstance(c, CmdProperty): return 1
         if not (self.name == c.name and\
@@ -250,7 +250,7 @@ class BaseCmd:
     CMD_DECLARED = 1 << 0
     CMD_ADDED    = 1 << 1
     CMD_DEFINED  = 1 << 2
-  
+
     def __init__(self, fn, cn = "", out_f = "", in_f = "", fcc = "", i = "", cb = ""):
         self.funcName = "<unknown>"
         self.cmdName = "<unknown>"
@@ -270,23 +270,23 @@ class BaseCmd:
             self.cmdBody = fn.cmdBody[:]
             self.status = fn.status
         else:
-            if isinstance(fn, StringType): self.funcName = fn            
+            if isinstance(fn, StringType): self.funcName = fn
             if isinstance(cn, StringType): self.cmdName = cn
-            else: self.cmdName = self.funcName[:]            
+            else: self.cmdName = self.funcName[:]
             if isinstance(out_f, StringType) and re.match(r'^[' + TYPE_CHARS + r']+$', out_f):
-                self.outFormat = out_f            
+                self.outFormat = out_f
             if isinstance(in_f, StringType) and re.match(r'^[' + TYPE_CHARS + r']+$', in_f):
-                self.inFormat = in_f            
-            if isinstance(fcc, StringType): self.fourCC = fcc            
-            if isinstance(i, StringType): self.info = i            
+                self.inFormat = in_f
+            if isinstance(fcc, StringType): self.fourCC = fcc
+            if isinstance(i, StringType): self.info = i
             if isinstance(cb, StringType): self.cmdBody = cb
-  
+
     def setStatus(self, st):
         if st == BaseCmd.CMD_DECLARED or st == BaseCmd.CMD_ADDED or st == BaseCmd.CMD_DEFINED:
             self.status |= st
-  
+
     def _specific_str(self): return ""
-  
+
     def __repr__(self):
         res = COMMENT_LINE + "\n"
         res += "/**\n"
@@ -312,7 +312,7 @@ class BaseCmd:
             self.info = c.info[:]
             self.cmdBody = c.cmdBody[:]
             self.status = c.status
-  
+
     def __cmp__(self, c):
         if not issubclass(c.__class__, BaseCmd): return 1
         if not (self.funcName == c.funcName and\
@@ -328,9 +328,9 @@ class BaseCmd:
 class Cmd(BaseCmd):
     T_GETTER, T_SETTER = 0, 1
     M_NONE, M_COUNT, M_BEGIN, M_ADD, M_END = 0, 1, 2, 3, 4
-  
+
     def __init__(self, common_cmd, t, st = M_NONE, p = ""):
-        self.type = Cmd.T_GETTER 
+        self.type = Cmd.T_GETTER
         self.subType = Cmd.M_NONE
         self.propertyName = ""
         # default base initialization
@@ -359,7 +359,7 @@ class Cmd(BaseCmd):
                 self.type = c.type
                 self.subType = c.subType
                 self.propertyName = c.propertyName[:]
-  
+
     def __cmp__(self, c):
         if not isinstance(c, Cmd): return 1
         if BaseCmd.__cmp__(self, c): return 1
@@ -460,10 +460,10 @@ class SaveCmdsFunction:
             if isinstance(cd, StringType): self.classDef = cd
             if isinstance(cb, StringType): self.cmdBody = cb
             if isinstance(c, StringType): self.comment = c
-  
+
     def clear(self):
         self.classDef, self.cmdBody, self.comment = "", "", ""
-  
+
     def __repr__(self):
         res = COMMENT_LINE + "\n"
         res += "/**\n"
@@ -487,7 +487,7 @@ class SaveCmdsFunction:
         if not (self.classDef == c.classDef and\
                 self.cmdBody == c.cmdBody and\
                 self.comment == c.comment):
-            return 1        
+            return 1
         return 0
 
 #---------------------------------------------------------------------------------------
@@ -511,7 +511,7 @@ class CmdFileConfig:
                     if issubclass(e.__class__, BaseCmd): self.cmds.append(e)
                     else: self.cmds.append(BaseCmd(None))
             if isinstance(scf, SaveCmdsFunction): self.saveCmdsFunc = scf
-  
+
     def findProperty(self, name):
         for p in self.properties:
             if p.name == name: return p
@@ -528,20 +528,20 @@ class CmdFileConfig:
         for c in self.cmds:
             if c.funcName == name: return c
         return None
-  
+
     def setCmdAt(self, idx, cmd):
         if idx < len(self.cmds):
             self.cmds[idx] = cmd
         else:
             self.cmds.append(cmd)
-  
+
     def clear(self):
         self.header.clear()
         self.classInfo.clear()
         self.properties = []
         self.cmds = []
         self.saveCmdsFunc = None
-  
+
     def sortCmds(self):
         self.properties.sort(lambda p1, p2: cmp(p1.name, p2.name))
         self.cmds.sort(self._cmdsSortFunc)
@@ -558,7 +558,7 @@ class CmdFileConfig:
         else:
             if isinstance(c2, Cmd): return -1
             else: return cmp(c1.cmdName, c2.cmdName)
-  
+
     def __repr__(self):
         size = 0
         res = repr(self.header)
@@ -580,7 +580,7 @@ class CmdFileConfig:
                 "\'" + cmd.fourCC + "\', n_" + cmd.funcName + ");\n"
         res += TABSPACES + "cl->EndCmds();\n"
         res += "}\n"
-        
+
         printed_prop = {}
         for cmd in self.cmds:
             if isinstance(cmd, Cmd) and not printed_prop.has_key(cmd.propertyName):
@@ -588,11 +588,11 @@ class CmdFileConfig:
                 res += '\n' + repr(prop)
                 printed_prop[cmd.propertyName] = None
             res += '\n' + repr(cmd)
-        
-        if self.saveCmdsFunc: res += '\n' + repr(self.saveCmdsFunc)        
-        res += "\n"        
+
+        if self.saveCmdsFunc: res += '\n' + repr(self.saveCmdsFunc)
+        res += "\n"
         return res
-  
+
     def saveTo(self, fileName):
         f = open(fileName, "wb")
         #for l in self.__repr__().splitlines(): f.write(l)
@@ -677,9 +677,9 @@ def dispatchDoc(docStr):
                     atBlocks[fbNum] = ""
             else:
                 atBlocks[fbNum] = ""
-  
+
 ##    if atBlocks["?" + freeBlockIdx] == "":
-##        atBlocks.delete("?" + freeBlockIdx.to_s) 
+##        atBlocks.delete("?" + freeBlockIdx.to_s)
     for v in atBlocks.values(): v = v.strip()
     return atBlocks
 
@@ -690,20 +690,20 @@ class CmdFileProcessor:
         self.config = None #CmdFileConfig()
         self.processed = False
         if self.codeDir[-1] != "/": self.codeDir += "/"
-  
+
     def setCmdFile(self, is_contrib, mod_name, pkg_name, file_name):
         if is_contrib != self.isContrib or mod_name != self.modName or pkg_name != self.pkgName or file_name != self.fileName:
             self.isContrib, self.modName, self.pkgName, self.fileName = is_contrib, mod_name, pkg_name, file_name
             self.config = CmdFileConfig() #.clear
             self.processed = False
-  
+
     def dispatchParam(self, paramDesc):
         param = None
         if paramDesc == 'v': param = CmdParam('v')
         else:
             g = PARAMDESC_REGEX.search(paramDesc)
             if g:
-                param = CmdParam(g.group(1), g.group(2))              
+                param = CmdParam(g.group(1), g.group(2))
                 if g.group(4):
                     param.comment = g.group(4)
                 if g.group(3):
@@ -715,7 +715,7 @@ class CmdFileProcessor:
                             if g.group(3): param.attribute[attrName] = g.group(2).split(',')
                             else: param.attribute[attrName] = g.group(2)
         return param
-  
+
     def extractBody(self, file, startBracket):
         res = ""
         endBracket = False
@@ -736,14 +736,14 @@ class CmdFileProcessor:
                 l = line[1:-1].strip()
                 if l: res += TABSPACES + l + "\n"
             line = file.readline()
-    
+
         if not endBracket:
             res = ""
             file.seek(curFilePos)
             print "Error: can't found bracket }"
 
         return res.rstrip()
-    
+
     def _parseBaseInfo(self, g, baseInfo):
         s = g.group(1).strip()
         if not re.search(r'^-+$', s):
@@ -763,7 +763,7 @@ class CmdFileProcessor:
     def _parseCmdFunctionDecl(self, g, baseInfo):
         if baseInfo:
             self.config.header.generalInfo = baseInfo
-            baseInfo = None              
+            baseInfo = None
         cmd = BaseCmd(g.group(1))
         cmd.setStatus(BaseCmd.CMD_DECLARED)
         self.config.cmds.append(cmd)
@@ -834,21 +834,21 @@ class CmdFileProcessor:
             self.config.cmds.append(cmd)
         cmd.setStatus(BaseCmd.CMD_DEFINED)
         cmd_idx = self.config.cmds.index(cmd)
-          
+
         if not commentBlock:
             print "WARNING: There is no comment block for n_" + cmdName + "."
             commentBlock = " @cmd " + cmdName + "\n @output\n  " + cmd.outFormat + "(outName)\n @input\n  " +cmd.inFormat + "(inName) -- Name of target joint\n @info <No information>"
-          
+
         atBlocks = dispatchDoc(commentBlock)
         commentBlock = None
-          
+
         if atBlocks.has_key("info"): cmd.info = atBlocks["info"].strip()
         else: cmd.info = "<no info>"
-          
+
         if atBlocks["cmd"] != cmdName:
             atBlocks["cmd"] = cmdName
             # send error msg
-          
+
         if atBlocks.has_key("property"): # getter/setter command
             tt = atBlocks["cmdtype"].split("|")
             type_s = tt[0].strip()
@@ -938,15 +938,15 @@ class CmdFileProcessor:
         if not pkg_name: pkg_name = self.pkgName
         if not file_name: file_name = self.fileName
         self.setCmdFile(is_contrib, mod_name, pkg_name, file_name)
-        
+
         if self.processed: return self.config
-        
+
         #print "Start processing: " + self.fileName
-        
+
         s = ""
         if self.isContrib: s = "contrib/"
         file_path = self.codeDir + s + self.modName + "/src/" + self.pkgName + "/" + self.fileName
-        
+
         className = ""
         #processing
         g = re.search(r'^(.+)_cmds.cc$', self.fileName)
@@ -954,13 +954,13 @@ class CmdFileProcessor:
             className = g.group(1)
             self.config.header.className = g.group(1)
         else: return None
-        
+
         ccFile = open(file_path, "rb")
         #tmpFile = open(fileName + ".new", "wb")
-        
+
         baseInfo = None
         commentBlock = None
-        
+
         line = ccFile.readline()
         while line:
             g = BASEINFO_REGEX.search(line)
@@ -993,7 +993,7 @@ class CmdFileProcessor:
                                         #else: pass
             line = ccFile.readline() #read next line from file
         ccFile.close()
-        
+
         #self.config.sortCmds()
         self.processed = True
         return self.config
@@ -1001,10 +1001,10 @@ class CmdFileProcessor:
 ### testing
 ##p = CmdFileProcessor("D:\\Projects\\VisualC\\nebula2\\code\\")
 ##
-### D:\Projects\VisualC\nebula2\code\contrib\bombsquadbruce\src\BombsquadBruce\bbcamera_cmds.cc 
+### D:\Projects\VisualC\nebula2\code\contrib\bombsquadbruce\src\BombsquadBruce\bbcamera_cmds.cc
 ###p.setCmdFile(True, "bombsquadbruce", "BombsquadBruce", "bbcamera_cmds.cc")
 ##
-### D:\Projects\VisualC\nebula2\code\nebula2\src\scene\nabstractshadernode_cmds.cc 
+### D:\Projects\VisualC\nebula2\code\nebula2\src\scene\nabstractshadernode_cmds.cc
 ##p.setCmdFile(False, "nebula2", "scene", "nabstractshadernode_cmds.cc")
 ##
 ##p.process().saveTo("test.log")

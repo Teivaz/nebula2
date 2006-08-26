@@ -56,7 +56,7 @@ class Call(Action):
 class Begin(Action):
   """
   Begin(state_name) is a Plex action which causes the Scanner to
-  enter the state |state_name|. See the docstring of Plex.Lexicon 
+  enter the state |state_name|. See the docstring of Plex.Lexicon
   for more information.
   """
 
@@ -78,7 +78,7 @@ class Begin(Action):
 class Ignore(Action):
   """
   IGNORE is a Plex action which causes its associated token
-  to be ignored. See the docstring of Plex.Lexicon  for more 
+  to be ignored. See the docstring of Plex.Lexicon  for more
   information.
   """
   def perform(self, token_stream, text):
@@ -93,7 +93,7 @@ IGNORE.__doc__ = Ignore.__doc__
 class Text(Action):
   """
   TEXT is a Plex action which causes the text of a token to
-  be returned as the value of the token. See the docstring of 
+  be returned as the value of the token. See the docstring of
   Plex.Lexicon  for more information.
   """
 

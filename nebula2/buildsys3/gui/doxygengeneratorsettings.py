@@ -16,27 +16,27 @@ Please supply a valid directory.
 """
 
 STR_DOXYGEN_NOT_FOUND = """\
-Doxygen was not found in %s 
+Doxygen was not found in %s
 Please specify the directory where the doxygen binary resides.
 """
 
 STR_HTML_HELP_WORKSHOP_NOT_FOUND = """\
 HTML Help Workshop (hhc.exe) was not found in %s
-Please specify the directory where the HTML Help Workshop 
+Please specify the directory where the HTML Help Workshop
 compiler binary (hhc) resides.
 """
 
 #--------------------------------------------------------------------------
 class DoxygenGeneratorSettingsDialog(wx.Dialog):
-    
+
     #--------------------------------------------------------------------------
     def __init__(self, parentWindow, generator, pos = wx.DefaultPosition,
                  size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE):
-        wx.Dialog.__init__(self, parentWindow, -1, 
+        wx.Dialog.__init__(self, parentWindow, -1,
                            'Doxygen Generator Settings', pos, size, style)
         self.generator = generator
         generatorSettings = generator.GetSettings()
-                        
+
         autoRunStaticBox = wx.StaticBox(self, -1, 'Automatically')
         self.autoRunDoxygenCheckBox = wx.CheckBox(self, -1, 'Run Doxygen')
         self.autoRunDoxygenCheckBox.SetValue(generatorSettings['autoRunDoxygen'])
@@ -44,15 +44,15 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         self.autoGenerateChmCheckBox.SetValue(generatorSettings['autoGenerateCHM'])
         locationsStaticBox = wx.StaticBox(self, -1, 'Program Directories')
         doxygenDirLabel = wx.StaticText(self, -1, 'Doxygen')
-        self.doxygenDirTextBox = wx.TextCtrl(self, -1, 
-                                             generatorSettings['doxygenDir'], 
+        self.doxygenDirTextBox = wx.TextCtrl(self, -1,
+                                             generatorSettings['doxygenDir'],
                                              (0, 0), (310, 21))
         self.doxygenDirBtn = wx.Button(self, -1, 'Browse...')
         self.Bind(wx.EVT_BUTTON, self.OnDoxygenDirBtn, self.doxygenDirBtn)
-        htmlHelpWorkshopDirLabel = wx.StaticText(self, -1, 
+        htmlHelpWorkshopDirLabel = wx.StaticText(self, -1,
                                                  'HTML Help Workshop')
-        self.htmlHelpWorkshopDirTextBox = wx.TextCtrl(self, -1, 
-                                              generatorSettings['htmlHelpWorkshopDir'], 
+        self.htmlHelpWorkshopDirTextBox = wx.TextCtrl(self, -1,
+                                              generatorSettings['htmlHelpWorkshopDir'],
                                               (0, 0), (310, 21))
         self.htmlHelpWorkshopDirBtn = wx.Button(self, -1, 'Browse...')
         self.Bind(wx.EVT_BUTTON, self.OnHtmlHelpWorkshopDirBtn, self.htmlHelpWorkshopDirBtn)
@@ -60,7 +60,7 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.OnOkBtn, okBtn)
         cancelBtn = wx.Button(self, wx.ID_CANCEL, 'Cancel')
         okBtn.SetDefault()
-        
+
         # layout
 
         # autorun area sizer
@@ -70,14 +70,14 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         # locations area sizers
         sizerB = wx.GridBagSizer(4, 10)
         # row 0
-        sizerB.Add(doxygenDirLabel, (0, 0), 
+        sizerB.Add(doxygenDirLabel, (0, 0),
                    flag = wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.doxygenDirTextBox, (0, 1),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.doxygenDirBtn, (0, 2),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         # row 1
-        sizerB.Add(htmlHelpWorkshopDirLabel, (1, 0), 
+        sizerB.Add(htmlHelpWorkshopDirLabel, (1, 0),
                    flag = wx.ALIGN_LEFT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.htmlHelpWorkshopDirTextBox, (1, 1),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
@@ -97,7 +97,7 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         sizerE.Fit(self)
         self.SetSizer(sizerE)
         self.Fit()
-        
+
     #--------------------------------------------------------------------------
     def VerifyDirContainsDoxygen(self, doxygenDir, displayMsg = True):
         doxygenPath = os.path.join(doxygenDir, 'doxygen')
@@ -106,15 +106,15 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         cmdPipe.close()
         if '' == helpStr:
             if displayMsg:
-                dlg = wx.MessageDialog(self, 
+                dlg = wx.MessageDialog(self,
                                        STR_DOXYGEN_NOT_FOUND % doxygenDir,
-                                       'Doxygen Generator Settings', 
+                                       'Doxygen Generator Settings',
                                        wx.ICON_EXCLAMATION|wx.OK)
                 dlg.ShowModal()
                 dlg.Destroy()
             return False
         return True
-    
+
     #--------------------------------------------------------------------------
     def VerifyDirContainsHHC(self, htmlHelpWorkshopDir, displayMsg = True):
         hhcPath = os.path.join(htmlHelpWorkshopDir, 'hhc')
@@ -123,18 +123,18 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         cmdPipe.close()
         if '' == helpStr:
             if displayMsg:
-                dlg = wx.MessageDialog(self, 
+                dlg = wx.MessageDialog(self,
                           STR_HTML_HELP_WORKSHOP_NOT_FOUND % htmlHelpWorkshopDir,
-                          'Doxygen Generator Settings', 
+                          'Doxygen Generator Settings',
                           wx.ICON_EXCLAMATION|wx.OK)
                 dlg.ShowModal()
                 dlg.Destroy()
             return False
         return True
-    
+
     #--------------------------------------------------------------------------
     def OnDoxygenDirBtn(self, evt):
-        dlg = wx.DirDialog(self, 'Specify the directory where doxygen is installed:', 
+        dlg = wx.DirDialog(self, 'Specify the directory where doxygen is installed:',
                            self.doxygenDirTextBox.GetValue().strip())
         if dlg.ShowModal() == wx.ID_OK:
             if self.VerifyDirContainsDoxygen(dlg.GetPath(), False):
@@ -147,16 +147,16 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
                 if self.VerifyDirContainsDoxygen(binDir):
                     self.doxygenDirTextBox.SetValue(binDir)
         dlg.Destroy()
-        
+
     #--------------------------------------------------------------------------
     def OnHtmlHelpWorkshopDirBtn(self, evt):
-        dlg = wx.DirDialog(self, 'Specify the directory where HTML Help Workshop is installed:', 
+        dlg = wx.DirDialog(self, 'Specify the directory where HTML Help Workshop is installed:',
                            self.htmlHelpWorkshopDirTextBox.GetValue().strip())
         if dlg.ShowModal() == wx.ID_OK:
             if self.VerifyDirContainsHHC(dlg.GetPath()):
                 self.htmlHelpWorkshopDirTextBox.SetValue(dlg.GetPath())
         dlg.Destroy()
-        
+
     #--------------------------------------------------------------------------
     def OnOkBtn(self, evt):
         # get data from the GUI
@@ -164,34 +164,34 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
         autoGenerateCHM = self.autoGenerateChmCheckBox.IsChecked()
         doxygenDir = self.doxygenDirTextBox.GetValue().strip()
         htmlHelpWorkshopDir = self.htmlHelpWorkshopDirTextBox.GetValue().strip()
-        
+
         # validate
         if '' != doxygenDir:
             if os.path.isdir(doxygenDir):
                 if not self.VerifyDirContainsDoxygen(doxygenDir):
                     return
             else:
-                dlg = wx.MessageDialog(self, 
+                dlg = wx.MessageDialog(self,
                                        STR_INVALID_DIR % doxygenDir,
-                                       'Doxygen Generator Settings', 
+                                       'Doxygen Generator Settings',
                                        wx.ICON_EXCLAMATION|wx.OK)
                 dlg.ShowModal()
                 dlg.Destroy()
                 return
-            
+
         if '' != htmlHelpWorkshopDir:
             if os.path.isdir(htmlHelpWorkshopDir):
                 if not self.VerifyDirContainsHHC(htmlHelpWorkshopDir):
                     return
             else:
-                dlg = wx.MessageDialog(self, 
+                dlg = wx.MessageDialog(self,
                           STR_INVALID_DIR % htmlHelpWorkshopDir,
                           'Doxygen Generator Settings',
                           wx.ICON_EXCLAMATION|wx.OK)
                 dlg.ShowModal()
                 dlg.Destroy()
                 return
-        
+
         # copy back the new data and save to disk
         generatorSettings = { 'doxygenDir'          : doxygenDir,
                               'autoRunDoxygen'      : autoRunDoxygen,
@@ -199,7 +199,7 @@ class DoxygenGeneratorSettingsDialog(wx.Dialog):
                               'autoGenerateCHM'     : autoGenerateCHM }
         self.generator.SetSettings(generatorSettings)
         self.generator.SaveSettings()
-                
+
         # close the dialog
         if self.IsModal():
             self.EndModal(wx.ID_OK)

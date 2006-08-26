@@ -11,7 +11,7 @@ import wx.lib.newevent
 import glob, os.path, time
 
 STR_MISSING_PARAMS = """\
-Please ensure you've selected the output directory 
+Please ensure you've selected the output directory
 and entered a class name and a superclass name.
 """
 
@@ -27,7 +27,7 @@ STR_HEADER_S1 = '''\
     @class %(className)s
     @ingroup %(docGroup)s
     @brief %(briefDoc)s
-    
+
     (c) %(curYear)s    %(author)s
 */
 //----------------------------------------------------------------------------
@@ -114,7 +114,7 @@ STR_CMDS_S1 = '''\
 
     @cppclass
     %(className)s
-    
+
     @superclass
     %(superClassNameL)s
 
@@ -145,7 +145,7 @@ bool
     {
         //nCmd* cmd = ps->GetCmd(this, 'XXXX');
         //ps->PutCmd(cmd);
-            
+
         return true;
     }
     return false;
@@ -161,18 +161,18 @@ STR_CMDS_S3 = '''\
 
 #--------------------------------------------------------------------------
 class ClassBuilderPanel(wx.Panel):
-    
+
     def __init__(self, parentWindow, buildSys):
         wx.Panel.__init__(self, parentWindow)
         self.buildSys = buildSys
         defaultOutputDir = buildSys.GetAbsPathFromRel('code')
         self.outputDirLabel = wx.StaticText(self, -1, 'Output Dir')
-        self.outputDirTextBox = wx.TextCtrl(self, -1, defaultOutputDir, 
+        self.outputDirTextBox = wx.TextCtrl(self, -1, defaultOutputDir,
                                             (0, 0), (310, 21))
         self.outputDirBtn = wx.Button(self, -1, 'Browse...')
         self.Bind(wx.EVT_BUTTON, self.OnOutputDirBtn, self.outputDirBtn)
         self.moduleSubdirLabel = wx.StaticText(self, -1, 'Module Subdir')
-        self.moduleSubdirTextBox = wx.TextCtrl(self, -1, '', 
+        self.moduleSubdirTextBox = wx.TextCtrl(self, -1, '',
                                                (0, 0), (200, 21))
         self.classPrefixLabel = wx.StaticText(self, -1, 'Class Prefix')
         self.classPrefixTextBox = wx.TextCtrl(self, -1, 'n', (0, 0), (200, 21))
@@ -189,8 +189,8 @@ class ClassBuilderPanel(wx.Panel):
         self.docGroupLabel = wx.StaticText(self, -1, 'Doxygen Group')
         self.docGroupTextBox = wx.TextCtrl(self, -1, '', (0, 0), (200, 21))
         self.briefDocLabel = wx.StaticText(self, -1, 'Brief Description')
-        self.briefDocTextBox = wx.TextCtrl(self, -1, 
-                                           'a brief description of the class', 
+        self.briefDocTextBox = wx.TextCtrl(self, -1,
+                                           'a brief description of the class',
                                            (0, 0), (200, 80),
                                            wx.TE_MULTILINE|wx.TE_WORDWRAP)
         self.runBtn = wx.Button(self, -1, 'Run')
@@ -199,22 +199,22 @@ class ClassBuilderPanel(wx.Panel):
         # Layout
         sizerB = wx.GridBagSizer(4, 10)
         # row 0
-        sizerB.Add(self.outputDirLabel, (0, 0), 
+        sizerB.Add(self.outputDirLabel, (0, 0),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.outputDirTextBox, (0, 1),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.outputDirBtn, (0, 2),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         # row 1
-        sizerB.Add(self.moduleSubdirLabel, (1, 0), 
+        sizerB.Add(self.moduleSubdirLabel, (1, 0),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.moduleSubdirTextBox, (1, 1), flag = wx.EXPAND)
         # row 2
-        sizerB.Add(self.classPrefixLabel, (2, 0), 
+        sizerB.Add(self.classPrefixLabel, (2, 0),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.classPrefixTextBox, (2, 1), flag = wx.EXPAND)
         # row 3
-        sizerB.Add(self.classNameLabel, (3, 0), 
+        sizerB.Add(self.classNameLabel, (3, 0),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.classTextBox, (3, 1), flag = wx.EXPAND)
         # row 4
@@ -222,11 +222,11 @@ class ClassBuilderPanel(wx.Panel):
         # row 5
         sizerB.Add(self.persistentCheckBox, (5, 1))
         # row 6
-        sizerB.Add(self.superClassLabel, (6, 0), 
+        sizerB.Add(self.superClassLabel, (6, 0),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.superClassTextBox, (6, 1), flag = wx.EXPAND)
         # row 7
-        sizerB.Add(self.authorLabel, (7, 0), 
+        sizerB.Add(self.authorLabel, (7, 0),
                    flag = wx.ALIGN_RIGHT|wx.ALIGN_CENTER_VERTICAL)
         sizerB.Add(self.authorTextBox, (7, 1), flag = wx.EXPAND)
         # row 8
@@ -249,13 +249,13 @@ class ClassBuilderPanel(wx.Panel):
     #--------------------------------------------------------------------------
     # Called when the Browse... button is clicked.
     def OnOutputDirBtn(self, evt):
-        dlg = wx.DirDialog(self, "Choose output directory:", 
+        dlg = wx.DirDialog(self, "Choose output directory:",
                            self.outputDirTextBox.GetValue().strip(),
                            style=wx.DD_DEFAULT_STYLE|wx.DD_NEW_DIR_BUTTON)
         if dlg.ShowModal() == wx.ID_OK:
             self.outputDirTextBox.SetValue(dlg.GetPath())
         dlg.Destroy()
-        
+
     #--------------------------------------------------------------------------
     # Called when the Run button is clicked.
     def OnRunBtn(self, evt):
@@ -287,7 +287,7 @@ class ClassBuilderPanel(wx.Panel):
             valid = False
         if not valid:
             dlg = wx.MessageDialog(self, STR_MISSING_PARAMS,
-                                   'Class Builder', 
+                                   'Class Builder',
                                    wx.ICON_EXCLAMATION|wx.OK )
             dlg.ShowModal()
             dlg.Destroy()
@@ -295,7 +295,7 @@ class ClassBuilderPanel(wx.Panel):
         if len(classPrefix) >= len(className):
             valid = False
             dlg = wx.MessageDialog(self, STR_INVALID_CLASS_PREFIX,
-                                   'Class Builder', 
+                                   'Class Builder',
                                    wx.ICON_EXCLAMATION|wx.OK )
             dlg.ShowModal()
             dlg.Destroy()
@@ -311,10 +311,10 @@ class ClassBuilderPanel(wx.Panel):
         incDirPath = os.path.join(outputDir, 'inc', subdir)
         filePaths.append(os.path.join(incDirPath, className.lower() + '.h'))
         srcDirPath = os.path.join(outputDir, 'src', subdir)
-        filePaths.append(os.path.join(srcDirPath, 
+        filePaths.append(os.path.join(srcDirPath,
                                       className.lower() + '_main.cc'))
         if self.scriptableCheckBox.IsChecked():
-            filePaths.append(os.path.join(srcDirPath, 
+            filePaths.append(os.path.join(srcDirPath,
                                           className.lower() + '_cmds.cc'))
         confirmDlg = ConfirmationDialog(self, filePaths)
         if wx.ID_OK == confirmDlg.ShowModal():
@@ -328,23 +328,23 @@ class ClassBuilderPanel(wx.Panel):
                         success = False
             except:
                 self.buildSys.logger.exception('ClassBuilderPanel.writeFiles()')
-            
+
             if success:
-                dlg = wx.MessageDialog(self, 
+                dlg = wx.MessageDialog(self,
                                        'All files were generated successfuly.',
-                                       'Class Builder', 
+                                       'Class Builder',
                                        wx.ICON_INFORMATION|wx.OK)
                 dlg.ShowModal()
                 dlg.Destroy()
             else:
-                dlg = wx.MessageDialog(self, 
+                dlg = wx.MessageDialog(self,
                                        'Some errors occured, please check the log.',
                                        'Class Builder',
                                        wx.ICON_EXCLAMATION|wx.OK)
                 dlg.ShowModal()
                 dlg.Destroy()
         confirmDlg.Destroy()
-        
+
     #--------------------------------------------------------------------------
     # Write out the xxx.h
     def writeHeader(self):
@@ -356,25 +356,25 @@ class ClassBuilderPanel(wx.Panel):
         authorName = self.authorTextBox.GetValue().strip()
         docGroup = self.docGroupTextBox.GetValue()
         briefDoc = self.briefDocTextBox.GetValue()
-        
+
         # try to find the superclass header
         superPath = ''
         # first look in the core and user projects
         basePath = os.path.join(self.buildSys.homeDir, 'code', '*', 'inc')
-        paths = glob.glob(os.path.join(basePath, '*', 
+        paths = glob.glob(os.path.join(basePath, '*',
                                        superClassName.lower() + '.h'))
         if len(paths) < 1:
             # still haven't found it, so look in contrib
-            basePath = os.path.join(self.buildSys.homeDir, 'code', 'contrib', 
+            basePath = os.path.join(self.buildSys.homeDir, 'code', 'contrib',
                                     '*', 'inc')
-            paths = glob.glob(os.path.join(basePath, '*', 
+            paths = glob.glob(os.path.join(basePath, '*',
                                            superClassName.lower() + '.h'))
         if len(paths) > 0:
             # extract the last 2 path components
             incDir, incName = os.path.split(paths[0])
             incDir, superPath = os.path.split(incDir)
             superPath += '/' + incName
-        
+
         # write the class header
         incDirPath = os.path.join(outputDir, 'inc', subdir)
         if not os.path.exists(incDirPath):
@@ -383,7 +383,7 @@ class ClassBuilderPanel(wx.Panel):
         try:
             f = file(headerPath, 'w')
         except IOError:
-            self.buildSys.logger.exception("Couldn't open %s for writing.", 
+            self.buildSys.logger.exception("Couldn't open %s for writing.",
                                            headerPath)
         else:
             args = { 'classPrefixU' : classPrefix.upper(),
@@ -404,9 +404,9 @@ class ClassBuilderPanel(wx.Panel):
             f.write(STR_HEADER_S5 % args)
             f.close()
             return True
-        
+
         return False
-            
+
     #--------------------------------------------------------------------------
     # Write out the xxx_main.cc
     def writeMain(self):
@@ -416,16 +416,16 @@ class ClassBuilderPanel(wx.Panel):
         className = self.classTextBox.GetValue().strip()
         superClassName = self.superClassTextBox.GetValue().strip()
         authorName = self.authorTextBox.GetValue().strip()
-        
+
         srcDirPath = os.path.join(outputDir, 'src', subdir)
         if not os.path.exists(srcDirPath):
             os.makedirs(srcDirPath)
         mainPath = os.path.join(srcDirPath, className.lower() + '_main.cc')
-        
+
         try:
             f = file(mainPath, 'w')
         except IOError:
-            self.buildSys.logger.exception("Couldn't open %s for writing.", 
+            self.buildSys.logger.exception("Couldn't open %s for writing.",
                                            mainPath)
         else:
             args = { 'curYear' : time.strftime('%Y', time.localtime()),
@@ -435,15 +435,15 @@ class ClassBuilderPanel(wx.Panel):
                      'superClassNameL' : superClassName.lower() }
             f.write(STR_MAIN_S1 % args)
             if self.scriptableCheckBox.IsChecked():
-                f.write(STR_MAIN_S2 % args) 
+                f.write(STR_MAIN_S2 % args)
             else:
                 f.write(STR_MAIN_S3 % args)
             f.write(STR_MAIN_S4 % args)
             f.close()
             return True
-            
+
         return False
-            
+
     #--------------------------------------------------------------------------
     # Write out the xxx_cmds.cc
     def writeCmds(self):
@@ -454,16 +454,16 @@ class ClassBuilderPanel(wx.Panel):
         superClassName = self.superClassTextBox.GetValue().strip()
         authorName = self.authorTextBox.GetValue().strip()
         briefDoc = self.briefDocTextBox.GetValue()
-        
+
         srcDirPath = os.path.join(outputDir, 'src', subdir)
         if not os.path.exists(srcDirPath):
             os.makedirs(srcDirPath)
         cmdsPath = os.path.join(srcDirPath, className.lower() + '_cmds.cc')
-        
+
         try:
             f = file(cmdsPath, 'w')
         except IOError:
-            self.buildSys.logger.exception("Couldn't open %s for writing.", 
+            self.buildSys.logger.exception("Couldn't open %s for writing.",
                                            cmdsPath)
         else:
             args = { 'curYear' : time.strftime('%Y', time.localtime()),
@@ -480,15 +480,15 @@ class ClassBuilderPanel(wx.Panel):
             f.write(STR_CMDS_S3 % args)
             f.close()
             return True
-            
+
         return False
-        
+
 #--------------------------------------------------------------------------
 class ConfirmationDialog(wx.Dialog):
     def __init__(self, parentWindow, filePaths):
-        wx.Dialog.__init__(self, parentWindow, -1, 'Confirmation', 
+        wx.Dialog.__init__(self, parentWindow, -1, 'Confirmation',
                            style = wx.DEFAULT_DIALOG_STYLE)
-        self.textLabel = wx.StaticText(self, -1, 
+        self.textLabel = wx.StaticText(self, -1,
                                        'The following files will be generated:')
         text = ''
         for filePath in filePaths:
@@ -499,7 +499,7 @@ class ConfirmationDialog(wx.Dialog):
         self.okBtn = wx.Button(self, wx.ID_OK, 'OK')
         self.okBtn.SetDefault()
         self.cancelBtn = wx.Button(self, wx.ID_CANCEL, 'Cancel')
-        
+
         # Layout
         sizerA = wx.BoxSizer(wx.VERTICAL)
         sizerA.Add(self.textLabel, 0, wx.ALIGN_LEFT|wx.ALL, 5)
