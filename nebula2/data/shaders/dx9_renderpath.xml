@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <!-- render path for DX9 with 2.0 shaders -->
-<RenderPath name="dx9" shaderPath="home:data/shaders/2.0">
-
+<RenderPath name="dx9" shaderPath="renderpath:2.0">
     <!-- declare shaders and technique aliases -->
-    <Shader name="passes" file="shaders:passes.fx" />
-    <Shader name="phases" file="shaders:phases.fx" />
-    <Shader name="compose" file="shaders:shaders.fx" />
-    <Shader name="static" file="shaders:shaders.fx" />
-    <Shader name="static_atest" file="shaders:shaders.fx" />
-    <Shader name="environment" file="shaders:shaders.fx" />
-    <Shader name="lightmapped" file="shaders:shaders.fx" />
-    <Shader name="lightmapped2" file="shaders:shaders.fx" />
-    <Shader name="radiosity_normalmapped" file="shaders:shaders.fx" />
-    <Shader name="skinned" file="shaders:shaders.fx" />
-    <Shader name="blended" file="shaders:shaders.fx" />
-    <Shader name="alpha" file="shaders:shaders.fx" />
-    <Shader name="alpha_uvanimation" file="shaders:shaders.fx" />
-    <Shader name="alpha_soft" file="shaders:shaders.fx" />
-    <Shader name="skinned_alpha" file="shaders:shaders.fx" />
-    <Shader name="alpha2" file="shaders:shaders.fx" />
-    <Shader name="environment_alpha" file="shaders:shaders.fx" />
-    <Shader name="ocean" file="shaders:ocean.fx" />
-    <Shader name="leaf" file="shaders:shaders.fx" />
-    <Shader name="tree" file="shaders:shaders.fx" />
-    <Shader name="grass" file="shaders:shaders.fx" />
-    <Shader name="grass_lightmapped" file="shaders:shaders.fx" />
-    <Shader name="skybox" file="shaders:shaders.fx" />
-    <Shader name="particle" file="shaders:shaders.fx" />
-    <Shader name="particle2" file="shaders:shaders.fx" />
-    <Shader name="layered" file="shaders:shaders.fx" />
-    <Shader name="multilayered" file="shaders:shaders.fx" />
-    <Shader name="copy_stencil" file="shaders:shadow_copy.fx" />
-    <Shader name="gui3d" file="shaders:shaders.fx" />
-    <Shader name="water" file="shaders:shaders.fx" />
-    <Shader name="waterdepthcompose" file="shaders:shaders.fx" />
-
+	<Shaders>
+        <!-- declare shaders and technique aliases -->
+        <Shader name="passes" file="shaders:passes.fx" />
+        <Shader name="phases" file="shaders:phases.fx" />
+        <Shader name="compose" file="shaders:shaders.fx" />
+        <Shader name="static" file="shaders:shaders.fx" />
+        <Shader name="static_atest" file="shaders:shaders.fx" />
+        <Shader name="environment" file="shaders:shaders.fx" />
+        <Shader name="lightmapped" file="shaders:shaders.fx" />
+        <Shader name="lightmapped2" file="shaders:shaders.fx" />
+        <Shader name="radiosity_normalmapped" file="shaders:shaders.fx" />
+        <Shader name="skinned" file="shaders:shaders.fx" />
+        <Shader name="blended" file="shaders:shaders.fx" />
+        <Shader name="alpha" file="shaders:shaders.fx" />
+        <Shader name="alpha_uvanimation" file="shaders:shaders.fx" />
+        <Shader name="alpha_soft" file="shaders:shaders.fx" />
+        <Shader name="skinned_alpha" file="shaders:shaders.fx" />
+        <Shader name="alpha2" file="shaders:shaders.fx" />
+        <Shader name="environment_alpha" file="shaders:shaders.fx" />
+        <Shader name="ocean" file="shaders:ocean.fx" />
+        <Shader name="leaf" file="shaders:shaders.fx" />
+        <Shader name="tree" file="shaders:shaders.fx" />
+        <Shader name="grass" file="shaders:shaders.fx" />
+        <Shader name="grass_lightmapped" file="shaders:shaders.fx" />
+        <Shader name="skybox" file="shaders:shaders.fx" />
+        <Shader name="particle" file="shaders:shaders.fx" />
+        <Shader name="particle2" file="shaders:shaders.fx" />
+        <Shader name="layered" file="shaders:shaders.fx" />
+        <Shader name="multilayered" file="shaders:shaders.fx" />
+        <Shader name="copy_stencil" file="shaders:shadow_copy.fx" />
+        <Shader name="gui3d" file="shaders:shaders.fx" />
+        <Shader name="water" file="shaders:shaders.fx" />
+        <Shader name="waterdepthcompose" file="shaders:shaders.fx" />
+    </Shaders>
     <!-- define render targets -->
     <RenderTarget name="Scene" format="X8R8G8B8" relSize="1.0" />
     <RenderTarget name="Shadow" format="A8R8G8B8" relSize="1.0" />

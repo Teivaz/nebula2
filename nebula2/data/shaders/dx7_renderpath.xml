@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <!-- render path for DX7 fixed function pipeline -->
-<RenderPath name="dx7" shaderPath="home:data/shaders/fixed">
-
+<RenderPath name="dx7" shaderPath="renderpath:fixed">
     <!-- declare shaders and technique aliases -->
-    <Shader name="passes" file="shaders:passes.fx" />
-    <Shader name="phases" file="shaders:phases.fx" />
-    <Shader name="stencil_plane" file="shaders:stencil_plane.fx" />
-    <Shader name="static" file="shaders:shaders.fx" />
-    <Shader name="static_atest" file="shaders:shaders.fx" />
-    <Shader name="environment" file="shaders:shaders.fx" />
-    <Shader name="lightmapped" file="shaders:shaders.fx" />
-    <Shader name="lightmapped2" file="shaders:shaders.fx" />
-    <Shader name="unlightedlightmapped2" file="shaders:shaders.fx" />
-    <Shader name="unlightedalphalightmapped2" file="shaders:shaders.fx" />
-    <Shader name="skinned" file="shaders:shaders.fx" />
-    <Shader name="multitexskinned" file="shaders:shaders.fx" />
-    <Shader name="blended" file="shaders:shaders.fx" />
-    <Shader name="alpha" file="shaders:shaders.fx" />
-    <Shader name="alpha_uvanimation" file="shaders:shaders.fx" />
-    <Shader name="alpha_soft" file="shaders:shaders.fx" />
-    <Shader name="skinned_alpha" file="shaders:shaders.fx" />
-    <Shader name="alpha2" file="shaders:shaders.fx" />
-    <Shader name="environment_alpha" file="shaders:shaders.fx" />
-    <Shader name="ocean" file="shaders:shaders.fx" />
-    <Shader name="leaf" file="shaders:shaders.fx" />
-    <Shader name="tree" file="shaders:shaders.fx" />
-    <Shader name="grass" file="shaders:shaders.fx" />
-    <Shader name="grass_lightmapped" file="shaders:shaders.fx" />
-    <Shader name="cubeskybox" file="shaders:shaders.fx" />
-    <Shader name="skybox" file="shaders:shaders.fx"/>
-    <Shader name="default_nolight_nofog" file="shaders:shaders.fx" />
-    <Shader name="layered" file="shaders:shaders.fx" />
-    <Shader name="multilayered" file="shaders:shaders.fx" />
-    <Shader name="particle" file="shaders:shaders.fx" />
-    <Shader name="particle2" file="shaders:shaders.fx" />
-    <Shader name="gui3d" file="shaders:shaders.fx" />
-    <Shader name="water" file="shaders:water.fx" />
-    <!-- ASIM -->
-    <Shader name="underwaterground" file ="shaders:asim.fx" />
-    <Shader name="underwater" file ="shaders:asim.fx" />
-
+	<Shaders>
+        <!-- declare shaders and technique aliases -->
+        <Shader name="passes" file="shaders:passes.fx" />
+        <Shader name="phases" file="shaders:phases.fx" />
+        <Shader name="stencil_plane" file="shaders:stencil_plane.fx" />
+        <Shader name="static" file="shaders:shaders.fx" />
+        <Shader name="static_atest" file="shaders:shaders.fx" />
+        <Shader name="environment" file="shaders:shaders.fx" />
+        <Shader name="lightmapped" file="shaders:shaders.fx" />
+        <Shader name="lightmapped2" file="shaders:shaders.fx" />
+        <Shader name="unlightedlightmapped2" file="shaders:shaders.fx" />
+        <Shader name="unlightedalphalightmapped2" file="shaders:shaders.fx" />
+        <Shader name="skinned" file="shaders:shaders.fx" />
+        <Shader name="multitexskinned" file="shaders:shaders.fx" />
+        <Shader name="blended" file="shaders:shaders.fx" />
+        <Shader name="alpha" file="shaders:shaders.fx" />
+        <Shader name="alpha_uvanimation" file="shaders:shaders.fx" />
+        <Shader name="alpha_soft" file="shaders:shaders.fx" />
+        <Shader name="skinned_alpha" file="shaders:shaders.fx" />
+        <Shader name="alpha2" file="shaders:shaders.fx" />
+        <Shader name="environment_alpha" file="shaders:shaders.fx" />
+        <Shader name="ocean" file="shaders:shaders.fx" />
+        <Shader name="leaf" file="shaders:shaders.fx" />
+        <Shader name="tree" file="shaders:shaders.fx" />
+        <Shader name="grass" file="shaders:shaders.fx" />
+        <Shader name="grass_lightmapped" file="shaders:shaders.fx" />
+        <Shader name="cubeskybox" file="shaders:shaders.fx" />
+        <Shader name="skybox" file="shaders:shaders.fx"/>
+        <Shader name="default_nolight_nofog" file="shaders:shaders.fx" />
+        <Shader name="layered" file="shaders:shaders.fx" />
+        <Shader name="multilayered" file="shaders:shaders.fx" />
+        <Shader name="particle" file="shaders:shaders.fx" />
+        <Shader name="particle2" file="shaders:shaders.fx" />
+        <Shader name="gui3d" file="shaders:shaders.fx" />
+        <Shader name="water" file="shaders:water.fx" />
+        <!-- ASIM -->
+        <Shader name="underwaterground" file ="shaders:asim.fx" />
+        <Shader name="underwater" file ="shaders:asim.fx" />
+</Shaders>
     <!-- declare variables -->
     <Float4 name="ShadowColor" value="0.0 0.0 0.0 0.25" />
     <Float4 name="FogDistances" value="10.0 100.0 0.0 0.0" />
