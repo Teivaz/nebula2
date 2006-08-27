@@ -29,7 +29,7 @@ proc OnStartup {} {
     .setassign "data"     "$home/data/"
     .setassign "export"   "$proj/export/"
 
-    .setassign "shaders"    "data:shaders"
+    .setassign "renderpath" "data:shaders"
     .setassign "scripts"    "data:scripts"
     .setassign "physics"    "export:physics/"
     .setassign "meshes"     "export:meshes/"
@@ -38,7 +38,7 @@ proc OnStartup {} {
     .setassign "gfxlib"     "export:gfxlib/"
     .setassign "lights"     "export:lightlib/"
     .setassign "db"         "export:db/"
-    .setassign "levels"     "export:levels/"    
+    .setassign "levels"     "export:levels/"
     .setassign "sound"      "export:audio/"
     .setassign "cegui"      "export:cegui/"
     .setassign "charlib"    "gfxlib:characters/"
@@ -70,10 +70,10 @@ proc OnGraphicsStartup {} {
         if {($featureSet == "dx9") || ($featureSet == "dx9flt")} {
             # use HDR renderer for dx9 graphics cards (the current
             # HDR renderer doesn't use float render targets anymore)
-            /sys/servers/scene.setrenderpathfilename "shaders:dx9hdr_renderpath.xml"
+            /sys/servers/scene.setrenderpathfilename "renderpath:dx9hdr_renderpath.xml"
         } else {
             # non-DX9 hardware, use fixed function render path
-            /sys/servers/scene.setrenderpathfilename "shaders:dx7_renderpath.xml"
+            /sys/servers/scene.setrenderpathfilename "renderpath:dx7_renderpath.xml"
         }
     }
     sel $oldCwd
