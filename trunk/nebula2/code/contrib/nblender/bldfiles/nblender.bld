@@ -11,7 +11,7 @@ endmodule
 #-----------------------------------------------------------------------------
 begintarget nblender
     annotate "Accessing Nebula in from Python scripts in Blender "
-    settype dll    
+    settype dll
     setmodules { nblender }
     settargetdeps {
         nkernel
@@ -21,8 +21,7 @@ begintarget nblender
         nnetwork
         npythonserver
         ngui
-	    ntoollib
-	    nscriptabletools
+        ntoollib
     }
 endtarget
 
@@ -32,14 +31,13 @@ beginworkspace nblender
         nshpython
         nkernel
         nnebula
-        ndirect3d9 
+        ndirect3d9
         nnetwork
-        ndinput8 
+        ndinput8
         microtcl
         npythonserver
         nblender
         ntoollib
-	    nscriptabletools
         ndshow
         ngui
     }
