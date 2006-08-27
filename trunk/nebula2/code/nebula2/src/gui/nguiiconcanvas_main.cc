@@ -44,7 +44,7 @@ nGuiIconCanvas::OnButtonDown(const vector2& mousePos)
 
         if (this->Inside(mousePos))
         {
-            this->refGuiServer->RunCommand(this, this->buttonDownCommand);
+            nGuiServer::Instance()->RunCommand(this, this->buttonDownCommand);
         }
     }
     return retval;
@@ -113,7 +113,7 @@ nGuiIconCanvas::Render()
     if (this->IsShown())
     {
         // render the background resource
-        this->refGuiServer->DrawRect(this->GetScreenSpaceRect(), this->GetUvs(), &this->defaultResource);
+        nGuiServer::Instance()->DrawBrush(this->GetScreenSpaceRect(), this->defaultBrush);
 
         // render contained widgets
         nGuiWidget::Render();

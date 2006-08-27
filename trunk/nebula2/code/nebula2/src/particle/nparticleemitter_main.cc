@@ -60,13 +60,9 @@ nParticleEmitter::~nParticleEmitter()
 /**
 */
 void
-nParticleEmitter::Trigger(nTime curTime)
+nParticleEmitter::Trigger(float curTime)
 {
     nParticleServer* particleServer = nParticleServer::Instance();
-    if (!particleServer->IsEnabled())
-    {
-        return;
-    }
 
     const vector3& globalAccel = particleServer->GetGlobalAccel();
     this->SetAlive(true);
@@ -130,9 +126,6 @@ nParticleEmitter::Trigger(nTime curTime)
         float distance = emitterViewer.len();
         if (distance < this->activityDistance)
         {
-            #ifdef __NEBULA_STATS__
-            particleServer->numActiveEmitters->SetI(particleServer->numActiveEmitters->GetI() + 1);
-            #endif
             if ((curTime - this->startTime) < this->emissionDuration) // check if endTime is reached
             {
                 float *emitterVertices = this->refEmitterMesh->LockVertices();
@@ -228,24 +221,17 @@ nParticleEmitter::Trigger(nTime curTime)
 //------------------------------------------------------------------------------
 /**
 */
-void nParticleEmitter::Render(nTime curTime)
+void nParticleEmitter::Render(float curTime)
 {
     nParticleServer* particleServer = nParticleServer::Instance();
-    if (!particleServer->IsEnabled())
-    {
-        return;
-    }
 
-    #ifdef __NEBULA_STATS__
-    int numDrawnParticles  = particleServer->numDrawnParticles->GetI();
-    int numDrawnPrimitives = particleServer->numDrawnPrimitives->GetI();
-    #endif
-
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
     if (!this->dynMesh.IsValid())
     {
         this->dynMesh.Initialize(nGfxServer2::TriangleList,
-            nMesh2::Coord  | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 |
-            nMesh2::Color, nMesh2::WriteOnly | nMesh2::NeedsVertexShader, false);
+            nMesh2::Coord | nMesh2::Uv0 | nMesh2::Uv1 | nMesh2::Uv2 | nMesh2::Color,
+            nMesh2::WriteOnly | nMesh2::NeedsVertexShader,
+            false, "particle_", true);
         n_assert(this->dynMesh.IsValid());
     }
 
@@ -402,16 +388,10 @@ void nParticleEmitter::Render(nTime curTime)
             if (curVertex > maxVertices-6)
             {
                 this->dynMesh.Swap(curVertex, dstVertices);
-                #ifdef __NEBULA_STATS__
-                numDrawnPrimitives += curVertex / 3;
-                #endif
                 curIndex  = 0;
                 curVertex = 0;
             }
         }
-        #ifdef __NEBULA_STATS__
-        numDrawnParticles++;
-        #endif
         if (this->renderOldestFirst)
         {
             curParticlePtr = this->particleBuffer.GetNext(curParticlePtr);
@@ -424,10 +404,6 @@ void nParticleEmitter::Render(nTime curTime)
 
     // Draw
     this->dynMesh.End(curVertex);
-    #ifdef __NEBULA_STATS__
-    particleServer->numDrawnParticles->SetI(numDrawnParticles);
-    particleServer->numDrawnPrimitives->SetI(numDrawnPrimitives + curVertex/3);
-    #endif
 }
 
 //------------------------------------------------------------------------------

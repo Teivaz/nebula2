@@ -1,7 +1,8 @@
 //------------------------------------------------------------------------------
-//  ninput_inpmap.cc
+//  input/ninputmappping.cc
 //  (C) 2002 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "input/ninputmapping.h"
 #include "input/ninputserver.h"
 
 //------------------------------------------------------------------------------
@@ -164,6 +165,8 @@ nInputMapping::PreTrigger(double tstamp)
 
 //------------------------------------------------------------------------------
 /**
+    08-Mar-06   floh    if time was stopped, each click would register as
+                        a double click
 */
 void
 nInputMapping::PostTrigger(void)
@@ -177,7 +180,8 @@ nInputMapping::PostTrigger(void)
             this->state |= (N_IMSTATE_DOWN | N_IMSTATE_PRESSED);
 
             // check for double click
-            if ((this->cur_tstamp - this->down_tstamp) < this->doubleclick_dt)
+            double timeDiff = this->cur_tstamp - this->down_tstamp;
+            if ((timeDiff > 0.0) && (timeDiff < this->doubleclick_dt))
             {
                 this->state |= N_IMSTATE_DOUBLECLICKED;
             }

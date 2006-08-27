@@ -8,6 +8,7 @@
 #include "gui/nguievent.h"
 #include "gui/nguitextureview.h"
 #include "gui/nguiserver.h"
+#include "gui/nguitextentry.h"
 
 nNebulaClass(nGuiTexBrowserWindow, "nguiclientwindow");
 
@@ -15,7 +16,8 @@ nNebulaClass(nGuiTexBrowserWindow, "nguiclientwindow");
 /**
 */
 nGuiTexBrowserWindow::nGuiTexBrowserWindow() :
-    refTextureRoot("/sys/share/rsrc/tex")
+    refTextureRoot("/sys/share/rsrc/tex"),
+        curTexturePosition(0)
 {
     // empty
 }
@@ -71,6 +73,22 @@ nGuiTexBrowserWindow::OnShow()
     layout->AttachWidget(nextBtn, nGuiFormLayout::Left, prevBtn, 0.0f);
     nextBtn->OnShow();
     this->refNextButton = nextBtn;
+
+    // texture index entry field
+    nGuiTextEntry* entry = (nGuiTextEntry*) kernelServer->New("nguitextentry", "textureindexentry");
+    n_assert(entry);
+    entry->SetText("0");
+    vector2 size = entry->GetTextExtent();
+    size.x *= 5;
+    entry->SetMinSize(size);
+    entry->SetMaxSize(size);
+    entry->SetDefaultBrush("textentry_n");
+    entry->SetPressedBrush("textentry_p");
+    entry->SetHighlightBrush("textentry_h");
+    layout->AttachForm(entry, nGuiFormLayout::Top, 0.0f);
+    layout->AttachWidget(entry, nGuiFormLayout::Left, nextBtn, 0.01f);
+    entry->OnShow();
+    this->refTextureIndexEntry = entry;
 
     // info field
     nGuiTextView* infoField = (nGuiTextView*) kernelServer->New("nguitextview", "InfoField");
@@ -128,9 +146,37 @@ nGuiTexBrowserWindow::OnHide()
     {
         this->refTexView->Release();
     }
+    if(this->refTextureIndexEntry.isvalid())
+    {
+        this->refTextureIndexEntry->Release();
+    }
 
     // call parent class
     nGuiClientWindow::OnHide();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGuiTexBrowserWindow::OnKeyUp(nKey key)
+{
+    if(key == N_KEY_RETURN)
+    {
+        nString str = this->refTextureIndexEntry->GetText();
+
+        int index = str.AsInt();
+
+        if(index >= 0)
+        {
+            this->SetTextureByIndex(index);
+        }
+        else
+        {
+            this->refTextureIndexEntry->SetText(0);
+            this->SetTextureByIndex(0);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -150,6 +196,25 @@ nGuiTexBrowserWindow::OnEvent(const nGuiEvent& event)
             this->SetNextTexture();
         }
     }
+    /*if(event.GetType() == nGuiEvent::KeyUp)
+    {
+        if(event.GetWidget() == this->refTextureIndexEntry.get())
+        {
+            nString str = this->refTextureIndexEntry->GetText();
+
+            int index = str.AsInt();
+
+            if(index >= 0)
+            {
+                this->SetTextureByIndex(index);
+            }
+            else
+            {
+                this->refTextureIndexEntry->SetText(0);
+                this->SetTextureByIndex(0);
+            }
+        }
+    }*/
 
     // call parent class
     nGuiClientWindow::OnEvent(event);
@@ -161,6 +226,44 @@ nGuiTexBrowserWindow::OnEvent(const nGuiEvent& event)
 */
 void
 nGuiTexBrowserWindow::SetNextTexture()
+{
+    int numTextures = this->CountTextures();
+    if((this->curTexturePosition+1) <= numTextures)
+    {
+        this->SetTextureByIndex(this->curTexturePosition+1);
+    }
+
+    return;
+
+    //nTexture2* tex = 0;
+    //if (this->refCurrentTexture.isvalid())
+    //{
+    //    tex = (nTexture2*) this->refCurrentTexture->GetSucc();
+    //    // if there is no next texture, we just stop at the last texture
+    //    // (we don't wrap around)
+    //}
+    //else if (0 == tex)
+    //{
+    //    // exception: rewind to first texture
+    //    tex = (nTexture2*) this->refTextureRoot->GetHead();
+    //}
+    //if (tex)
+    //{
+    //    this->refCurrentTexture = tex;
+
+    //    // update texture dependend stuff
+    //    this->UpdateTitle();
+    //    this->UpdateInfoField();
+    //    this->UpdateTextureView();
+    //}
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set internal texture pointer to preview texture.
+*/
+void
+nGuiTexBrowserWindow::SetTextureByIndex(int index)
 {
     nTexture2* tex = 0;
     if (this->refCurrentTexture.isvalid())
@@ -174,15 +277,60 @@ nGuiTexBrowserWindow::SetNextTexture()
         // exception: rewind to first texture
         tex = (nTexture2*) this->refTextureRoot->GetHead();
     }
-    if (tex)
-    {
-        this->refCurrentTexture = tex;
 
-        // update texture dependend stuff
-        this->UpdateTitle();
-        this->UpdateInfoField();
-        this->UpdateTextureView();
+    int numTextures = this->CountTextures();
+
+    if(index > numTextures)
+    {
+        char text[16];
+        sprintf(text, "%d", numTextures);
+        this->refTextureIndexEntry->SetText(text);
+        index = numTextures;
     }
+
+    nTexture2* curTexture = this->refCurrentTexture.isvalid() ? this->refCurrentTexture.get() : 0;
+
+    int counter = 0;
+    nRoot* child;
+    for (child = this->refTextureRoot->GetHead(); child; child = child->GetSucc())
+    {
+        counter++;
+        if(counter == index)
+        {
+            this->refCurrentTexture = (nTexture2*) child;
+            break;
+        }
+    }
+
+    this->curTexturePosition = index;
+    char text[32];
+    sprintf(text, "%d", this->curTexturePosition);
+    this->refTextureIndexEntry->SetText(text);
+    this->UpdateTitle();
+    this->UpdateInfoField();
+    this->UpdateTextureView();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Count number of textures
+*/
+int
+nGuiTexBrowserWindow::CountTextures()
+{
+    nTexture2* curTexture = this->refCurrentTexture.isvalid() ? this->refCurrentTexture.get() : 0;
+    int numTextures = 0;
+    nRoot* child;
+    for (child = this->refTextureRoot->GetHead(); child; child = child->GetSucc())
+    {
+        if (curTexture == child)
+        {
+            this->curTexturePosition = numTextures+1;
+        }
+        numTextures++;
+    }
+
+    return numTextures;
 }
 
 //------------------------------------------------------------------------------
@@ -192,27 +340,35 @@ nGuiTexBrowserWindow::SetNextTexture()
 void
 nGuiTexBrowserWindow::SetPrevTexture()
 {
-    nTexture2* tex = 0;
-    if (this->refCurrentTexture.isvalid())
+    int numTextures = this->CountTextures();
+    if((this->curTexturePosition-1) > 0)
     {
-        tex = (nTexture2*) this->refCurrentTexture->GetPred();
-        // if there is no previous texture, we just stop at the first texture
-        // (we don't wrap around)
+        this->SetTextureByIndex(this->curTexturePosition-1);
     }
-    else if (0 == tex)
-    {
-        // exception: rewind to first texture
-        tex = (nTexture2*) this->refTextureRoot->GetHead();
-    }
-    if (tex)
-    {
-        this->refCurrentTexture = tex;
 
-        // update texture dependend stuff
-        this->UpdateTitle();
-        this->UpdateInfoField();
-        this->UpdateTextureView();
-    }
+    return;
+
+    //nTexture2* tex = 0;
+    //if (this->refCurrentTexture.isvalid())
+    //{
+    //    tex = (nTexture2*) this->refCurrentTexture->GetPred();
+    //    // if there is no previous texture, we just stop at the first texture
+    //    // (we don't wrap around)
+    //}
+    //else if (0 == tex)
+    //{
+    //    // exception: rewind to first texture
+    //    tex = (nTexture2*) this->refTextureRoot->GetHead();
+    //}
+    //if (tex)
+    //{
+    //    this->refCurrentTexture = tex;
+
+    //    // update texture dependend stuff
+    //    this->UpdateTitle();
+    //    this->UpdateInfoField();
+    //    this->UpdateTextureView();
+    //}
 }
 
 //------------------------------------------------------------------------------
@@ -222,21 +378,24 @@ nGuiTexBrowserWindow::SetPrevTexture()
 void
 nGuiTexBrowserWindow::UpdateTitle()
 {
-    // count loaded textures
-    nTexture2* curTexture = this->refCurrentTexture.isvalid() ? this->refCurrentTexture.get() : 0;
-    int numTextures = 0;
-    int curTexturePosition = 0;
-    nRoot* child;
-    for (child = this->refTextureRoot->GetHead(); child; child = child->GetSucc())
-    {
-        numTextures++;
-        if (curTexture == child)
-        {
-            curTexturePosition = numTextures;
-        }
-    }
+    //// count loaded textures
+    //nTexture2* curTexture = this->refCurrentTexture.isvalid() ? this->refCurrentTexture.get() : 0;
+    //int numTextures = 0;
+    //int curTexturePosition = 0;
+    //nRoot* child;
+    //for (child = this->refTextureRoot->GetHead(); child; child = child->GetSucc())
+    //{
+    //    numTextures++;
+    //    if (curTexture == child)
+    //    {
+    //        curTexturePosition = numTextures;
+    //    }
+    //}
+
+    int numTextures = this->CountTextures();
+
     char title[128];
-    sprintf(title, "Texture Browser (%d / %d)", curTexturePosition, numTextures);
+    sprintf(title, "Texture Browser (%d / %d)", this->curTexturePosition, numTextures);
     this->SetTitle(title);
 }
 

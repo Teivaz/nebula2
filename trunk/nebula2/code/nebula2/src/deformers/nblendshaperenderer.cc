@@ -3,6 +3,8 @@
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "deformers/nblendshaperenderer.h"
+#include "deformers/nblendshapedeformer.h"
+#include "gfx2/nmesharray.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -27,13 +29,13 @@ nBlendShapeRenderer::~nBlendShapeRenderer()
     This initializes the blend shape renderer either for shader-based or
     cpu-based blending.
 */
-void
+bool
 nBlendShapeRenderer::Initialize(bool cpuBlending, nMeshArray* srcMeshArray)
 {
     n_assert(!this->initialized);
     n_assert(srcMeshArray);
 
-    this->isInitialized = true;
+    this->initialized = true;
     this->useCpuBlending = cpuBlending;
     this->refSrcMeshArray = srcMeshArray;
 
@@ -57,9 +59,9 @@ nBlendShapeRenderer::Setup()
     if (this->useCpuBlending)
     {
         // create a destination mesh as clone of the first mesh in the src mesh array
-        nMeshArray* srcMesh = this->refSrcMeshArray->GetMeshAt(0);
+        nMesh2* srcMesh = this->refSrcMeshArray->GetMeshAt(0);
 
-        n_assert(srcMesh->GetMeshUsage() & nMesh2::ReadOnly);
+        n_assert(srcMesh->GetUsage() & nMesh2::ReadOnly);
         nString dstMeshName = srcMesh->GetName();
         dstMeshName.Append("_bsr");
 
@@ -135,8 +137,5 @@ nBlendShapeRenderer::RenderCpuBlending(int meshGroupIndex, const nArray<float>& 
 {
     // setup a blendshape deformer
     nBlendShapeDeformer blendShapeDeformer;
-    blendShapeDeformer.SetInputMeshArray
-
-
-
-
+    //blendShapeDeformer.SetInputMeshArray();
+}

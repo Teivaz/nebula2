@@ -4,13 +4,11 @@
 /**
     @class nParticleEmitter
     @ingroup NebulaParticleSystem
-    @brief Emit particles.
 
-    This class manages and renders particles which represented by nParticle.
+    The particle emitter class.
 
     (C) 2003 RadonLabs GmbH
 */
-
 #include "particle/nparticleserver.h"
 #include "particle/nparticle.h"
 #include "gfx2/nmesh2.h"
@@ -54,11 +52,11 @@ public:
     void SetTransform(const matrix44& transform);
 
     /// set the start time
-    void SetStartTime(nTime time);
+    void SetStartTime(float time);
     /// set the end time
-    void SetEmissionDuration(nTime time);
+    void SetEmissionDuration(float time);
     /// get the emission duration
-    nTime GetEmissionDuration() const;
+    float GetEmissionDuration() const;
     /// set if loop emitter or not
     void SetLoop(bool b);
     /// is it a loop emitter ?
@@ -79,9 +77,9 @@ public:
     void SetStartRotation(float f);
     /// get the maximum particle start rotation angle
     float GetStartRotation() const;
-    /// set whether to render oldest or youngest particles first
+    /// set wether to render oldest or youngest particles first
     void SetRenderOldestFirst(bool b);
-    /// get whether to render oldest or youngest particles first
+    /// get wether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
 
     /// set one of the envelope curves
@@ -128,9 +126,9 @@ public:
     bool GetFatalException() const;
 
     /// erase dead particles, create new
-    virtual void Trigger(nTime curTime);
+    virtual void Trigger(float curTime);
     /// called by particle server
-    void Render(nTime curTime);
+    void Render(float curTime);
 
     /// initializes particle ring buffer; may only be called once
     void SetParticleCount(int count);
@@ -177,12 +175,12 @@ protected:
     int  lastEmissionVertex;        // last vertex that emitted
     int  randomKey;                 // random number key
 
-    nTime startTime;                // timestamp of creation
-    nTime lastEmission;             // timestamp of last emission in visual time frame
-    nTime prevTime;                 // timestamp of preview frame
+    float startTime;                // timestamp of creation
+    float lastEmission;             // timestamp of last emission in visual time frame
+    float prevTime;                 // timestamp of preview frame
 
     // emitter settings
-    nTime emissionDuration;         // how long shall be emitted ?
+    float emissionDuration;         // how long shall be emitted ?
     bool  loop;                     // loop emitter ?
     float activityDistance;         // distance between viewer and emitter on witch emitter is active
     float spreadAngle;              // angle of emitted particle cone
@@ -247,7 +245,8 @@ nParticleEmitter::IsAlive() const
 /**
 */
 inline
-void nParticleEmitter::SetTransform(const matrix44& transform)
+void
+nParticleEmitter::SetTransform(const matrix44& transform)
 {
     this->matrix.set(transform);
 }
@@ -256,7 +255,8 @@ void nParticleEmitter::SetTransform(const matrix44& transform)
 /**
 */
 inline
-void nParticleEmitter::SetStartTime(nTime time)
+void
+nParticleEmitter::SetStartTime(float time)
 {
     this->startTime = time;
 }
@@ -265,7 +265,8 @@ void nParticleEmitter::SetStartTime(nTime time)
 /**
 */
 inline
-void nParticleEmitter::SetParticleCount(int count)
+void
+nParticleEmitter::SetParticleCount(int count)
 {
     this->particleBuffer.Initialize(count);
 }
@@ -274,7 +275,8 @@ void nParticleEmitter::SetParticleCount(int count)
 /**
 */
 inline
-bool nParticleEmitter::HasParticles() const
+bool
+nParticleEmitter::HasParticles() const
 {
     return (!this->particleBuffer.IsEmpty());
 }
@@ -283,7 +285,8 @@ bool nParticleEmitter::HasParticles() const
 /**
 */
 inline
-void nParticleEmitter::SetEmitterMesh(nMesh2* newMesh)
+void
+nParticleEmitter::SetEmitterMesh(nMesh2* newMesh)
 {
     this->refEmitterMesh = newMesh;
 }
@@ -292,7 +295,8 @@ void nParticleEmitter::SetEmitterMesh(nMesh2* newMesh)
 /**
 */
 inline
-nMesh2* nParticleEmitter::GetEmitterMesh() const
+nMesh2*
+nParticleEmitter::GetEmitterMesh() const
 {
     return this->refEmitterMesh.get();
 }
@@ -301,7 +305,8 @@ nMesh2* nParticleEmitter::GetEmitterMesh() const
 /**
 */
 inline
-int nParticleEmitter::GetKey() const
+int
+nParticleEmitter::GetKey() const
 {
     return this->key;
 }
@@ -310,7 +315,8 @@ int nParticleEmitter::GetKey() const
 /**
 */
 inline
-nTime nParticleEmitter::GetEmissionDuration() const
+float
+nParticleEmitter::GetEmissionDuration() const
 {
     return this->emissionDuration;
 }
@@ -320,7 +326,8 @@ nTime nParticleEmitter::GetEmissionDuration() const
 /**
 */
 inline
-bool nParticleEmitter::GetLoop() const
+bool
+nParticleEmitter::GetLoop() const
 {
     return this->loop;
 }
@@ -330,7 +337,8 @@ bool nParticleEmitter::GetLoop() const
 /**
 */
 inline
-float nParticleEmitter::GetActivityDistance() const
+float
+nParticleEmitter::GetActivityDistance() const
 {
     return this->activityDistance;
 }
@@ -340,7 +348,8 @@ float nParticleEmitter::GetActivityDistance() const
 /**
 */
 inline
-float nParticleEmitter::GetSpreadAngle() const
+float
+nParticleEmitter::GetSpreadAngle() const
 {
     return this->spreadAngle;
 }
@@ -349,7 +358,8 @@ float nParticleEmitter::GetSpreadAngle() const
 /**
 */
 inline
-float nParticleEmitter::GetBirthDelay() const
+float
+nParticleEmitter::GetBirthDelay() const
 {
     return this->birthDelay;
 }
@@ -358,7 +368,8 @@ float nParticleEmitter::GetBirthDelay() const
 /**
 */
 inline
-float nParticleEmitter::GetStartRotation() const
+float
+nParticleEmitter::GetStartRotation() const
 {
     return this->startRotation;
 }
@@ -367,7 +378,8 @@ float nParticleEmitter::GetStartRotation() const
 /**
 */
 inline
-float nParticleEmitter::GetParticleLifeTime() const
+float
+nParticleEmitter::GetParticleLifeTime() const
 {
     return this->ParticleLifeTime;
 }
@@ -375,7 +387,8 @@ float nParticleEmitter::GetParticleLifeTime() const
 /**
 */
 inline
-void nParticleEmitter::SetEmissionDuration(nTime time)
+void
+nParticleEmitter::SetEmissionDuration(float time)
 {
     this->emissionDuration = time;
 }
@@ -385,7 +398,8 @@ void nParticleEmitter::SetEmissionDuration(nTime time)
 /**
 */
 inline
-void nParticleEmitter::SetLoop(bool b)
+void
+nParticleEmitter::SetLoop(bool b)
 {
     this->loop = b;
 }
@@ -394,7 +408,8 @@ void nParticleEmitter::SetLoop(bool b)
 /**
 */
 inline
-void nParticleEmitter::SetActivityDistance(float f)
+void
+nParticleEmitter::SetActivityDistance(float f)
 {
     this->activityDistance = f;
 }
@@ -404,7 +419,8 @@ void nParticleEmitter::SetActivityDistance(float f)
 /**
 */
 inline
-void nParticleEmitter::SetSpreadAngle(float f)
+void
+nParticleEmitter::SetSpreadAngle(float f)
 {
     this->spreadAngle = f;
 }
@@ -414,7 +430,8 @@ void nParticleEmitter::SetSpreadAngle(float f)
 /**
 */
 inline
-void nParticleEmitter::SetBirthDelay(float f)
+void
+nParticleEmitter::SetBirthDelay(float f)
 {
     this->birthDelay = f;
 }
@@ -423,7 +440,8 @@ void nParticleEmitter::SetBirthDelay(float f)
 /**
 */
 inline
-void nParticleEmitter::SetStartRotation(float f)
+void
+nParticleEmitter::SetStartRotation(float f)
 {
     this->startRotation = f;
 }

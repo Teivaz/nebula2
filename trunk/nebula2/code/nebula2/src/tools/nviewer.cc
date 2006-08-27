@@ -274,7 +274,7 @@ main(int argc, const char** argv)
 
     viewerApp.SetStageScript(stageArg);
 
-    //set viewer propherties
+    //set viewer properties
     viewerApp.GetCamControl().SetDefaultCenterOfInterest(eyeCoi);
     viewerApp.GetCamControl().SetDefaultEyePos(eyePos);
     viewerApp.GetCamControl().SetDefaultUpVec(eyeUp);

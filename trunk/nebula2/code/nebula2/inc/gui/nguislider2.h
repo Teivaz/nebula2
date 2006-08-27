@@ -77,7 +77,7 @@ public:
 
 private:
     /// updates the layout attachment offsets of the knob
-    void UpdateKnobLayout(const rectangle& newSliderRect);
+    void UpdateKnobLayout(const rectangle& newSliderRect, bool putEvent=true);
     /// begin dragging the slider
     void BeginSliderDrag();
     /// end dragging the slider

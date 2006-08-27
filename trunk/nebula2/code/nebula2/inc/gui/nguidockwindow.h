@@ -44,6 +44,8 @@ protected:
     nRef<nGuiButton> refHideButton;
     nRef<nGuiButton> refQuitButton;
     nRef<nGuiButton> refHardpointButton;
+    nRef<nGuiButton> refSettingsManagementButton;
+    nRef<nGuiButton> refCharacterControlButton;
 };
 
 //------------------------------------------------------------------------------

@@ -58,11 +58,11 @@ main(int argc, const char** argv)
     bool helpArg   = args.GetBoolArg("-help");
     bool binaryArg = args.GetBoolArg("-binary");
     bool waitArg   = args.GetBoolArg("-waitforkey");
-    const char* inArg                   = args.GetStringArg("-in", 0);
-    const char* outArg                  = args.GetStringArg("-out", 0);
-    const char* projDirArg              = args.GetStringArg("-projdir", 0);
-    const char* scratchDirArg           = args.GetStringArg("-scratchdir", "c:/temp");
-    const char* scriptServerClassArg    = args.GetStringArg("-scriptserver", "ntclserver");
+    nString inArg                   = args.GetStringArg("-in", 0);
+    nString outArg                  = args.GetStringArg("-out", 0);
+    nString projDirArg              = args.GetStringArg("-projdir", 0);
+    nString scratchDirArg           = args.GetStringArg("-scratchdir", "c:/temp");
+    nString scriptServerClassArg    = args.GetStringArg("-scriptserver", "ntclserver");
 
     // display help?
     if (helpArg)
@@ -102,7 +102,7 @@ main(int argc, const char** argv)
     nKernelServer kernelServer;
     kernelServer.AddPackage(nnebula);
 
-    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerClassArg, "/sys/servers/script");
+    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerClassArg.Get(), "/sys/servers/script");
     kernelServer.New("nvariableserver", "/sys/servers/variable");
     kernelServer.New("nanimationserver", "/sys/servers/anim");
     kernelServer.New("nresourceserver", "/sys/servers/resource");
@@ -116,7 +116,7 @@ main(int argc, const char** argv)
     {
         return 10;
     }
-    const char* result;
+    nString result;
     if (!scriptServer->RunScript("home:bin/startup.tcl", result))
     {
         n_printf("Error: Could not execute 'home:bin/startup.tcl'!\n");
@@ -125,7 +125,7 @@ main(int argc, const char** argv)
 
     // get list of objects
     nArray<nString> objectArray;
-    if (!loadObjectList(&kernelServer, inArg, objectArray))
+    if (!loadObjectList(&kernelServer, inArg.Get(), objectArray))
     {
         n_printf("Error: could not open file %s\n", inArg);
         return 10;

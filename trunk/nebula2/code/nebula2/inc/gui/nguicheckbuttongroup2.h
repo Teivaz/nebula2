@@ -46,7 +46,7 @@ public:
     /// append an tooltip
     void AppendTooltip(const char* str);
     /// set current selection
-    void SetSelection(int index);
+    virtual void SetSelection(int index);
     /// get current selection
     int GetSelection() const;
     /// called when widget is becoming visible
@@ -63,9 +63,11 @@ public:
 protected:
 
     /// update the child check button status
-    void UpdateCheckButtons();
+    virtual void UpdateCheckButtons();
 
     int selIndex;
+    nString font;
+
     nArray<nString> options;
     nArray<nString> tooltips;
     nArray<nRef<nGuiCheckButton> > refCheckButtons;
@@ -73,7 +75,7 @@ protected:
 private:
 
     float buttonSpacing;
-    nString font;
+
     nArray<nString> defaultBrushes;
     nArray<nString> pressedBrushes;
     nArray<nString> highlightBrushes;

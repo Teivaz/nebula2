@@ -13,6 +13,8 @@
 #include "gfx2/ndynamicmesh.h"
 #include "particle/nparticle2emitter.h"
 #include "particle/nparticleserver2.h"
+#include "mathlib/envelopecurve.h"
+#include "mathlib/vector3envelopecurve.h"
 
 class nRenderContext;
 //------------------------------------------------------------------------------
@@ -43,9 +45,9 @@ public:
     /// set if invisible or not
     void SetInvisible(bool value);
     /// set the end time
-    void SetEmissionDuration(nTime time);
+    void SetEmissionDuration(float time);
     /// get the emission duration
-    nTime GetEmissionDuration() const;
+    float GetEmissionDuration() const;
     /// set if loop emitter or not
     void SetLoop(bool b);
     /// is loop emitter ?
@@ -99,7 +101,7 @@ protected:
     nAutoRef<nParticleServer2> refParticleServer;
 
     int emitterVarIndex;            // index of the emitter in the rendercontext
-    nTime emissionDuration;         // how long shall be emitted ?
+    float emissionDuration;         // how long shall be emitted ?
     bool loop;                      // loop emitter ?
 
     float activityDistance;         // distance between viewer and emitter on witch emitter is active
@@ -127,13 +129,13 @@ protected:
     nVariable::Handle windHandle;
 
     bool        curvesValid;
-    float       staticCurve[PARTICLE_TIME_DETAIL][nParticle2Emitter::CurveTypeCount];
+    float staticCurve[nParticle2Emitter::ParticleTimeDetail][nParticle2Emitter::CurveTypeCount];
 };
 
 //------------------------------------------------------------------------------
 /**
 */
-inline void nParticleShapeNode2::SetEmissionDuration(nTime time)
+inline void nParticleShapeNode2::SetEmissionDuration(float time)
 {
     this->emissionDuration = time;
 }
@@ -141,7 +143,7 @@ inline void nParticleShapeNode2::SetEmissionDuration(nTime time)
 //------------------------------------------------------------------------------
 /**
 */
-inline nTime nParticleShapeNode2::GetEmissionDuration() const
+inline float nParticleShapeNode2::GetEmissionDuration() const
 {
     return this->emissionDuration;
 }

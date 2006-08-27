@@ -115,9 +115,9 @@ protected:
     /// log all events
     void LogEvents();
     /// find input state object by name
-    nInputState *GetInputState(const char* state);
+    nInputState* GetInputState(const char* state);
     /// add a named input state
-    nInputState *AddInputState(const char* state);
+    nInputState* AddInputState(const char* state);
 
 #ifndef __XBxX__
     /// export the default keyboard

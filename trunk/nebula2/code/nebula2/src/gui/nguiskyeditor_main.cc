@@ -27,7 +27,9 @@ nNebulaClass(nGuiSkyEditor, "nguiformlayout");
 /**
 */
 nGuiSkyEditor::nGuiSkyEditor():
-    sliderChanged(false),
+    sliderChanged(false),	// ???
+    skyPath("/usr/scene"),
+    refSky("/usr/scene"),
     layoutChanged(false),
     elementReady(true),
     activeElement(-1),
@@ -39,8 +41,7 @@ nGuiSkyEditor::nGuiSkyEditor():
     updateSkyTime(true),
     activeType(nSkyNode::InvalidElement)
 {
-    nAutoRef<nRoot> sceneRoot = "/usr/scene";
-	this->FindSkyNode(sceneRoot);
+	this->FindSkyNode(refSky);
 }
 
 
@@ -147,12 +148,8 @@ nGuiSkyEditor::ShowSky()
         slider->SetRightText("%f");
         slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
         slider->SetMinValue(0.0f);
-        if (this->refSky.isvalid()) {
-            slider->SetMaxValue(this->refSky->GetTimePeriode());
-        }
-        if (this->refSky.isvalid()) {
-            slider->SetValue(this->refSky->GetSkyTime());
-        }
+        slider->SetMaxValue(this->refSky->GetTimePeriode());
+        slider->SetValue(this->refSky->GetSkyTime());
         slider->SetKnobSize(this->refSky->GetTimePeriode()/10);
         slider->SetIncrement(1.0f);
         slider->SetLeftWidth(leftWidth);
@@ -169,9 +166,7 @@ nGuiSkyEditor::ShowSky()
         slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
         slider->SetMinValue(-1000.0f);
         slider->SetMaxValue(1000.0f);
-        if (this->refSky.isvalid()) {
-            slider->SetValue(this->refSky->GetTimeFactor());
-        }
+        slider->SetValue(this->refSky->GetTimeFactor());
         slider->SetKnobSize(200);
         slider->SetKnobSize(100.0f);
         slider->SetIncrement(1.0f);
@@ -187,9 +182,7 @@ nGuiSkyEditor::ShowSky()
         slider->SetLeftText("Sky Element");
         slider->SetRightText("%d");
         slider->SetMinValue(0);
-        if (this->refSky.isvalid()) {
-            slider->SetMaxValue((float)this->refSky->GetNumElements());
-        }
+        slider->SetMaxValue((float)this->refSky->GetNumElements());
         slider->SetValue(0);
         slider->SetKnobSize(1);
         slider->SetIncrement(1);
