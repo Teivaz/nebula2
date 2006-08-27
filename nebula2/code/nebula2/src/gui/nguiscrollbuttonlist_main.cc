@@ -219,10 +219,9 @@ nGuiScrollButtonList::UpdateVisibleListButtons()
     btnSize.x *= this->buttonScale.x;
     btnSize.y *= this->buttonScale.y;
     // initialize buttons
-    int i;
     nGuiCheckButton* prevBtn = 0;
     int numVisBtns = this->btnIndex + n_min(this->visibleButtons, this->options.Size());
-    for (i = this->btnIndex; i < numVisBtns; i++)
+    for (int i = this->btnIndex; i < numVisBtns; i++)
     {
         nString name = "Button";
         name.AppendInt(i);
