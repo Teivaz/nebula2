@@ -1,12 +1,10 @@
 #-------------------------------------------------------------------------------
-# vfx.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/vfx.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::vfx
+beginmodule vfx
     setdir vfx
-    settype cpp
-    setfiles { 
+    setheaders {
         bank
         effect
         effecthandler
@@ -14,7 +12,15 @@ beginmodule mangalore::vfx
         shakeeffect
         shakeeffecthelper
     }
-    setheaders { 
+        #animeffect
+        #attachmenteffect
+        #graphicseffect
+        #guieffect
+        #lighteffect
+        #sendmessageeffect
+        #soundeffect
+        #texteffect
+    setfiles {
         bank
         effect
         effecthandler
@@ -22,5 +28,12 @@ beginmodule mangalore::vfx
         shakeeffect
         shakeeffecthelper
     }
+        #animeffect
+        #attachmenteffect
+        #graphicseffect
+        #guieffect
+        #lighteffect
+        #sendmessageeffect
+        #soundeffect
+        #texteffect
 endmodule
-#-------------------------------------------------------------------------------

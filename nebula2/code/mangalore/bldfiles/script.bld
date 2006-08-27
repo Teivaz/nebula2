@@ -1,18 +1,15 @@
 #-------------------------------------------------------------------------------
-# script.bld
+#  bldfiles/script.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::script
+beginmodule script
     setdir script
-    settype cpp
-    setfiles { 
+    setheaders {
         command
-        echo
         server
     }
-    setheaders { 
+    setfiles {
         command
-        echo
         server
     }
 endmodule
-#-------------------------------------------------------------------------------

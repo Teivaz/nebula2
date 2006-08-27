@@ -1,9 +1,15 @@
 #-------------------------------------------------------------------------------
-#   viewer.bld
-#
-#   (C) 2005 Vadim Macagon
+#  bldfiles/viewer.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::viewerapp
+beginmodule viewer
+    setdir viewer
+    setfiles {
+        viewer
+    }
+endmodule
+
+beginmodule viewerapp
     setdir viewer
     setfiles {
         viewerapp
@@ -12,22 +18,3 @@ beginmodule mangalore::viewerapp
         viewerapp
     }
 endmodule
-#-------------------------------------------------------------------------------
-beginmodule mangalore::viewer
-    setdir viewer
-    setfiles {
-        viewer
-    }
-endmodule
-#-------------------------------------------------------------------------------
-begintarget mviewer
-    settype exe
-    setmodules {
-        mangalore::viewer
-        mangalore::viewerapp
-    }
-    settargetdeps {
-        mangalorelib
-    }
-endtarget
-#--------------------------------------------------------------------------------

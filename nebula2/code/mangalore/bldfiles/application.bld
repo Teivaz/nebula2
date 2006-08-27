@@ -1,21 +1,19 @@
 #-------------------------------------------------------------------------------
-# application.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/application.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::application
+beginmodule application
     setdir application
-    settype cpp
-    setfiles { 
-        app 
+    setheaders {
+        app
         gamestatehandler
         guieventhandler
         guistatehandler
         playvideohandler
         statehandler
     }
-    setheaders { 
-        app 
+    setfiles {
+        app
         gamestatehandler
         guieventhandler
         guistatehandler
@@ -23,4 +21,3 @@ beginmodule mangalore::application
         statehandler
     }
 endmodule
-#-------------------------------------------------------------------------------

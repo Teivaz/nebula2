@@ -1,11 +1,19 @@
 #-------------------------------------------------------------------------------
-# loader.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/loader.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::loader
+beginmodule loader
     setdir loader
-    settype cpp
+    setheaders {
+        entityloader
+        entityloaderbase
+        environmentloader
+        levelloader
+        navmaploader
+        server
+        userprofile
+    }
+        #characterprofile
     setfiles {
         entityloader
         entityloaderbase
@@ -15,14 +23,5 @@ beginmodule mangalore::loader
         server
         userprofile
     }
-    setheaders { 
-        entityloader
-        entityloaderbase
-        environmentloader
-        levelloader
-        navmaploader
-        server
-        userprofile
-    }
+        #characterprofile
 endmodule
-#-------------------------------------------------------------------------------

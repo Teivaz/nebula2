@@ -1,22 +1,19 @@
 #-------------------------------------------------------------------------------
-# foundation.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/foundation.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::foundation
+beginmodule foundation
     setdir foundation
-    settype cpp
-    setfiles { 
-        factory
-        refcounted
-        server
-    }
-    setheaders { 
+    setheaders {
         factory
         ptr
         refcounted
         rtti
         server
     }
+    setfiles {
+        factory
+        refcounted
+        server
+    }
 endmodule
-#-------------------------------------------------------------------------------

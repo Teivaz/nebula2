@@ -1,0 +1,46 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/mangalorelibs.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginworkspace mangalorelibs
+    settargets {
+        mangalore
+        mcegui
+    }
+endworkspace
+#-------------------------------------------------------------------------------
+begintarget mangalore
+    settype lib
+    setmodules {
+        application
+        attr
+        audio
+        db
+        foundation
+        fsm
+        game
+        graphics
+        input
+        loader
+        managers
+        message
+        msg
+        navigation
+        physics
+        properties
+        script
+        ui
+        util
+        vfx
+    }
+        #game::time
+        #msg::ui
+endtarget
+
+begintarget mcegui
+    settype lib
+    setexceptions true
+    setmodules {
+        ceui
+    }
+endtarget

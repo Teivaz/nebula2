@@ -1,42 +1,10 @@
 #-------------------------------------------------------------------------------
-# physics.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/physics.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::physics
+beginmodule physics
     setdir physics
-    settype cpp
-    setfiles {
-        amotor
-        areaimpulse
-        balljoint
-        boxshape
-        capsuleshape
-        charentity
-        composite
-        compositeloader
-        contactpoint
-        entity
-        explosionareaimpulse
-        filterset
-        hinge2joint
-        hingejoint
-        joint
-        level
-        materialtable
-        meshshape
-        mousegripper
-        physicsutil
-        ragdoll
-        ray
-        rigidbody
-        server
-        shape
-        sliderjoint
-        sphereshape
-        universaljoint
-    }
-    setheaders { 
+    setheaders {
         amotor
         areaimpulse
         balljoint
@@ -67,15 +35,43 @@ beginmodule mangalore::physics
         sliderjoint
         sphereshape
         universaljoint
-        
     }
-    setlibs_win32_debug {
-        ode_d.lib 
-        OPCODE_d.lib
+    setfiles {
+        amotor
+        areaimpulse
+        balljoint
+        boxshape
+        capsuleshape
+        charentity
+        composite
+        compositeloader
+        contactpoint
+        entity
+        explosionareaimpulse
+        filterset
+        hinge2joint
+        hingejoint
+        joint
+        level
+        materialtable
+        meshshape
+        mousegripper
+        physicsutil
+        ragdoll
+        ray
+        rigidbody
+        server
+        shape
+        sliderjoint
+        sphereshape
+        universaljoint
     }
     setlibs_win32_release {
-        ode.lib 
+        ode.lib
         OPCODE.lib
-    }    
+    }
+    setlibs_win32_debug {
+        ode_d.lib
+        OPCODE_d.lib
+    }
 endmodule
-#-------------------------------------------------------------------------------
