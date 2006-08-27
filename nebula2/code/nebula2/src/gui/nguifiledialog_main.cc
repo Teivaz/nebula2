@@ -395,7 +395,6 @@ nGuiFileDialog::HandleDelete()
         msgBox->SetCancelText(this->GetText(DeleteCancel));
         msgBox->SetType(nGuiMessageBox::OkCancel);
         msgBox->SetTitleBar(false);
-        msgBox->SetDefaultBrush("bg300x150");
         msgBox->SetModal(true);
         this->refDeleteMessageBox = msgBox;
         msgBox->Show();

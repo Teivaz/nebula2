@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "kernel/nenv.h"
 #include "input/ninputserver.h"
+#include "input/ninputmapping.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -327,6 +328,12 @@ void nInputServer::ObtainFocus(void)
         im->SetButtonUp();
         im->SetSlider(0.0f);
     }
+
+    // create a obtain focus event
+    nInputEvent *ie = this->NewEvent();
+    n_assert(ie);
+    ie->SetType(N_INPUT_OBTAIN_FOCUS);
+    this->LinkEvent(ie);
 }
 
 //------------------------------------------------------------------------------
@@ -346,5 +353,11 @@ void nInputServer::LoseFocus(void)
         }
         im->SetSlider(0.0f);
     }
+
+    // create a lose focus event
+    nInputEvent *ie = this->NewEvent();
+    n_assert(ie);
+    ie->SetType(N_INPUT_LOSE_FOCUS);
+    this->LinkEvent(ie);
 }
 

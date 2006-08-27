@@ -6,7 +6,6 @@
 #include "variable/nvariableserver.h"
 #include "scene/nrendercontext.h"
 #include "scene/nsceneserver.h"
-#include "kernel/ntimeserver.h"
 #include "scene/nanimator.h"
 
 nNebulaScriptClass(nParticleShapeNode2, "nshapenode");
@@ -64,25 +63,29 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
     {
         int c,s;
         for( c = 0; c < nParticle2Emitter::CurveTypeCount ; c++)
-            for( s = 0; s < PARTICLE_TIME_DETAIL ; s++)
-                staticCurve[s][c] = curves[c].GetValue((float)s / (float)PARTICLE_TIME_DETAIL);
+            for( s = 0; s < nParticle2Emitter::ParticleTimeDetail; s++)
+                staticCurve[s][c] = curves[c].GetValue((float)s / (float)nParticle2Emitter::ParticleTimeDetail);
         // encode colors
-        for( s = 0; s < PARTICLE_TIME_DETAIL ; s++)
+        for( s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
         {
-            vector3 col = rgbCurve.GetValue((float)s / (float)PARTICLE_TIME_DETAIL);
+            vector3 col = rgbCurve.GetValue((float)s / (float)nParticle2Emitter::ParticleTimeDetail);
             staticCurve[s][nParticle2Emitter::StaticRGBCurve] = (float)((((uint)(col.x*255.0f)) << 16) |
                                                     (((uint)(col.y*255.0f)) << 8) |
                                                     (((uint)(col.z*255.0f)) )) ;
         };
 
         // encode alpha values from [0,1] to [0,255]
-        for( s = 0; s < PARTICLE_TIME_DETAIL ; s++)
+        for( s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
             staticCurve[s][nParticle2Emitter::ParticleAlpha] = (float)(((int)(staticCurve[s][nParticle2Emitter::ParticleAlpha] * 255.0f)));
 
-        emitter->SetStaticCurvePtr((float*)&this->staticCurve);
-        emitter->CurvesChanged();
         this->curvesValid = true;
     };
+
+    if (!emitter->IsStaticCurvePtrValid())
+    {
+        emitter->SetStaticCurvePtr((float*)&this->staticCurve);
+        emitter->NotifyCurvesChanged();
+    }
 
     nVariable* windVar = renderContext->GetVariable(this->windHandle);
     n_assert2(windVar, "No 'wind' variable provided by application!");
@@ -90,7 +93,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
     emitter->SetWind(windVar->GetFloat4());
 
     // setup emitter
-    emitter->SetMeshGroupIndex(this->groupIndex);
+    emitter->SetEmitterMeshGroupIndex(this->groupIndex);
     emitter->SetEmitterMesh(this->refMesh.get());
     emitter->SetGravity(this->gravity);
     emitter->SetTileTexture(this->tileTexture);
@@ -109,12 +112,12 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
 
     // set emitter settings
     emitter->SetEmissionDuration(this->emissionDuration);
-    emitter->SetLoop(this->loop);
+    emitter->SetLooping(this->loop);
     emitter->SetActivityDistance(this->activityDistance);
     emitter->SetRenderOldestFirst(this->renderOldestFirst);
-    emitter->SetIsSetUp(true);
+    emitter->SetIsSetup(true);
 
-    sceneServer->SetModelTransform(matrix44::identity);
+    sceneServer->SetModelTransform(matrix44());
     return true;
 }
 

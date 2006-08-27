@@ -7,6 +7,7 @@
 //
 //  (C) 2004 RadonLabs GmbH
 //------------------------------------------------------------------------------
+#include "kernel/nkernelserver.h"
 #include "kernel/nfileserver2.h"
 #include "tools/ncmdlineargs.h"
 #include "kernel/ndirectory.h"

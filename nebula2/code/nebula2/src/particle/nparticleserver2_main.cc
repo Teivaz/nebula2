@@ -14,47 +14,34 @@ nParticleServer2* nParticleServer2::Singleton = 0;
 /**
 */
 nParticleServer2::nParticleServer2() :
-    enabled(true),
-    floatRandomPool(FloatRandomCount, 0, 0.0f),
-    intRandomPool(IntRandomCount, 0, 0),
-    globalAccel(0.0f, -1.0f, 0.0f)
+    floatRandomPool(FloatRandomCount),
+    intRandomPool(IntRandomCount),
+    globalAccel(0.0f, -1.0f, 0.0f),
+    time(0.0)
 {
     n_assert(0 == Singleton);
     Singleton = this;
 
-    srand((unsigned int) time(NULL));
+    srand((unsigned int) ::time(NULL));
 
-    IntRandomPool::iterator intRandomIter = this->intRandomPool.Begin();
-    while (intRandomIter != this->intRandomPool.End())
+    // fill the random number pools
+    int i;
+    for (i = 0; i < this->intRandomPool.Size(); i++)
     {
-        *intRandomIter = rand();
-        intRandomIter ++;
-     }
-
-    FloatRandomPool::iterator floatRandomIter = this->floatRandomPool.Begin();
-    while (floatRandomIter != this->floatRandomPool.End())
+        this->intRandomPool[i] = rand();
+    }
+    for (i = 0; i < this->floatRandomPool.Size();)
     {
-        // get a random number between -1.0f and 1.0f
-        float f0 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
-        float f1 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
-        float f2 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
-        float f3 = (2.0f*((float)rand())/((float)RAND_MAX))-1.0f;
-
-        float l = n_sqrt(f0*f0 + f1*f1 + f2*f2);
-        if (l > 0.0f)
-        {
-            f0/=l; f1/=l; f2/=l;
-        }
-
-        *floatRandomIter = f0;
-        floatRandomIter++;
-        *floatRandomIter = f1;
-        floatRandomIter++;
-        *floatRandomIter = f2;
-        floatRandomIter++;
-        *floatRandomIter = f3;
-        floatRandomIter++;
-     }
+        // get a random number between -1.0f and 1.0f, organized
+        // into 3 normalized vector components, and one w component
+        vector3 v(n_rand(-1.0f, 1.0f), n_rand(-1.0f, 1.0f), n_rand(-1.0f, 1.0f));
+        float w = n_rand(-1.0f, 1.0f);
+        v.norm();
+        this->floatRandomPool[i++] = v.x;
+        this->floatRandomPool[i++] = v.y;
+        this->floatRandomPool[i++] = v.z;
+        this->floatRandomPool[i++] = w;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -62,8 +49,7 @@ nParticleServer2::nParticleServer2() :
 */
 nParticleServer2::~nParticleServer2()
 {
-    // delete emitters
-    n_assert(emitters.Empty());
+    n_assert(0 == emitters.Size());
     n_assert(Singleton);
     Singleton = 0;
 }
@@ -77,7 +63,7 @@ nParticleServer2::NewParticleEmitter()
 {
     nParticle2Emitter* particleEmitter = n_new(nParticle2Emitter);
     this->emitters.PushBack(particleEmitter);
-    // n_printf("nParticleServer: particle emitter created!\n");
+    n_printf("nParticleServer2: particle emitter created!\n");
     return particleEmitter;
 }
 
@@ -86,33 +72,24 @@ nParticleServer2::NewParticleEmitter()
 */
 void nParticleServer2::Trigger()
 {
-
-    nTime currentTime = nTimeServer::Instance()->GetTime();
-
-    // trigger emitters
-    nArray<nParticle2Emitter*>::iterator emitterIter = this->emitters.Begin();
-    while(emitterIter != emitters.End())
+    int i;
+    int num = this->emitters.Size();
+    for (i = 0; i < num; i++)
     {
-        (*emitterIter)->Trigger(currentTime);
-        emitterIter++;
-    };
-
-};
+        this->emitters[i]->Update(float(this->time));
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
 */
 void nParticleServer2::DeleteParticleEmitter(nParticle2Emitter* emitter)
 {
-    nArray<nParticle2Emitter*>::iterator emitterIter = this->emitters.Begin();
-    while(emitterIter != emitters.End())
+    n_assert(0 != emitter);
+    int index = this->emitters.FindIndex(emitter);
+    if (-1 != index)
     {
-        if(*emitterIter == emitter)
-        {
-            delete emitter;
-            emitters.Erase(emitterIter);
-            return;
-        };
-        emitterIter++;
-    };
-};
+        n_delete(this->emitters[index]);
+        this->emitters.Erase(index);
+    }
+}

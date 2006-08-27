@@ -18,6 +18,9 @@ class nGuiTextButton;
 //------------------------------------------------------------------------------
 class nGuiAdjustDisplayWindow : public nGuiClientWindow
 {
+    // friend defined for access for reading and assigning sliders on load and safe throug nGuiSettingsManagment
+    friend class nGuiSettingsManagementWindow;
+
 public:
     /// constructor
     nGuiAdjustDisplayWindow();
@@ -37,8 +40,6 @@ private:
     void UpdateSlidersFromValues();
     /// update values from sliders
     void UpdateValuesFromSliders();
-    /// reset to defaults
-    void ResetValues();
 
     nRef<nGuiHoriSliderGroup>  refSaturateSlider;
     nRef<nGuiColorSliderGroup> refBalanceSlider;
@@ -53,7 +54,6 @@ private:
     nRef<nGuiHoriSliderGroup>  refNoiseIntensitySlider;
     nRef<nGuiHoriSliderGroup>  refNoiseScaleSlider;
     nRef<nGuiHoriSliderGroup>  refNoiseFrequencySlider;
-    nRef<nGuiTextButton>       refResetButton;
 
     nVariable::Handle saturationHandle;
     nVariable::Handle balanceHandle;

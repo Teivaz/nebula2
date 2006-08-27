@@ -297,24 +297,11 @@ nGuiAdjustDisplayWindow::OnShow()
     slider->OnShow();
     this->refNoiseFrequencySlider = slider;
 
-    // reset button
-    nGuiTextButton* btn = (nGuiTextButton*) kernelServer->New("nguitextbutton", "ResetButton");
-    btn->SetText("Reset");
-    btn->SetDefaultBrush("button_n");
-    btn->SetPressedBrush("button_p");
-    btn->SetHighlightBrush("button_h");
-    btn->SetMinSize(buttonSize);
-    btn->SetMaxSize(buttonSize);
-    layout->AttachWidget(btn, nGuiFormLayout::Top, this->refNoiseFrequencySlider, border);
-    layout->AttachForm(btn, nGuiFormLayout::Left, border);
-    btn->OnShow();
-    this->refResetButton = btn;
-
     kernelServer->PopCwd();
     this->UpdateSlidersFromValues();
 
     // set new window rect
-    float vSize = 13 * (border + this->refSaturateSlider->GetMinSize().y) + 2 * buttonSize.y + 4 * border;
+    float vSize = 15 * (border + this->refSaturateSlider->GetMinSize().y);
     rectangle rect(vector2(0.0f, 0.0f), vector2(0.5f, vSize));
     this->SetRect(rect);
 
@@ -328,22 +315,86 @@ nGuiAdjustDisplayWindow::OnShow()
 void
 nGuiAdjustDisplayWindow::OnHide()
 {
-    this->refSaturateSlider->Release();
-    this->refBalanceSlider->Release();
-    this->refHdrBloomIntensitySlider->Release();
-    this->refHdrBrightPassOffsetSlider->Release();
-    this->refHdrBrightPassThresholdSlider->Release();
-    this->refFogColorSlider->Release();
-    this->refFogNearSlider->Release();
-    this->refFogFarSlider->Release();
-    this->refFocusDistSlider->Release();
-    this->refFocusLengthSlider->Release();
-    this->refNoiseIntensitySlider->Release();
-    this->refNoiseScaleSlider->Release();
-    this->refNoiseFrequencySlider->Release();
-    this->refResetButton->Release();
-
-    nGuiClientWindow::OnHide();
+    if(this->refSaturateSlider.isvalid())
+    {
+        this->refSaturateSlider->Release();
+    }
+    if(this->refBalanceSlider.isvalid())
+    {
+        this->refBalanceSlider->Release();
+    }
+    if(this->refHdrBloomIntensitySlider.isvalid())
+    {
+         this->refHdrBloomIntensitySlider->Release();
+    }
+    if(this->refHdrBrightPassOffsetSlider.isvalid())
+    {
+        this->refHdrBrightPassOffsetSlider->Release();
+    }
+    if(this->refHdrBrightPassThresholdSlider.isvalid())
+    {
+        this->refHdrBrightPassThresholdSlider->Release();
+    }
+    if(this->refFogColorSlider.isvalid())
+    {
+        this->refFogColorSlider->Release();
+    }
+    if(this->refFogNearSlider.isvalid())
+    {
+        this->refFogNearSlider->Release();
+    }
+    if(this->refFogFarSlider.isvalid())
+    {
+        this->refFogFarSlider->Release();
+    }
+    if(this->refFocusDistSlider.isvalid())
+    {
+        this->refFocusDistSlider->Release();
+    }
+    if(this->refFocusLengthSlider.isvalid())
+    {
+        this->refFocusLengthSlider->Release();
+    }
+    if(this->refNoiseIntensitySlider.isvalid())
+    {
+        this->refNoiseIntensitySlider->Release();
+    }
+    if(this->refNoiseScaleSlider.isvalid())
+    {
+        this->refNoiseScaleSlider->Release();
+    }
+    if(this->refNoiseFrequencySlider.isvalid())
+    {
+        this->refNoiseFrequencySlider->Release();
+    }
+/*    if(this->refResetButton.isvalid())
+    {
+        this->refResetButton->Release();
+    }
+    if(this->refSaveButton.isvalid())
+    {
+        this->refSaveButton->Release();
+    }
+    if(this->refLoadButton.isvalid())
+    {
+        this->refLoadButton->Release();
+    }
+    if(this->refMessageBox.isvalid())
+    {
+        this->refMessageBox->Release();
+    }
+    if(this->refBrowseButton.isvalid())
+    {
+        this->refBrowseButton->Release();
+    }
+    if(this->refFilenameEntry.isvalid())
+    {
+        this->refFilenameEntry->Release();
+    }
+    if(this->refSetDefaultButton.isvalid())
+    {
+        this->refSetDefaultButton->Release();
+    }*/
 }
 
 //------------------------------------------------------------------------------
@@ -383,11 +434,37 @@ nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
         {
             this->UpdateValuesFromSliders();
         }
-        else if ((event.GetType() == nGuiEvent::ButtonUp) &&
+/*        else if ((event.GetType() == nGuiEvent::ButtonUp) &&
                 (event.GetWidget() == this->refResetButton))
         {
             this->ResetValues();
         }
+        else if ((event.GetType() == nGuiEvent::ButtonUp) &&
+                (event.GetWidget() == this->refBrowseButton))
+        {
+            this->CreateFileDialog();
+        }
+        else if ((event.GetType() == nGuiEvent::ButtonUp) &&
+                (event.GetWidget() == this->refLoadButton))
+        {
+            if(!strlen(refFilenameEntry->GetText()) == 0)
+            {
+                this->LoadValuesFromFile(refFilenameEntry->GetText());
+            }
+        }
+        else if ((event.GetType() == nGuiEvent::ButtonUp) &&
+                (event.GetWidget() == this->refSaveButton))
+        {
+            if(!strlen(refFilenameEntry->GetText()) == 0)
+            {
+                this->SaveValuesToFile(refFilenameEntry->GetText());
+            }
+        }
+        else if ((event.GetType() == nGuiEvent::ButtonUp) &&
+                (event.GetWidget() == this->refSetDefaultButton))
+        {
+            this->SaveValuesAsDefault();
+        }*/
     }
     nGuiClientWindow::OnEvent(event);
 }
@@ -503,24 +580,3 @@ nGuiAdjustDisplayWindow::UpdateValuesFromSliders()
     varServer->SetFloatVariable(this->noiseFrequencyHandle, this->refNoiseFrequencySlider->GetValue());
 }
 
-//------------------------------------------------------------------------------
-/**
-    Reset display adjustment values.
-*/
-void
-nGuiAdjustDisplayWindow::ResetValues()
-{
-    nVariableServer* varServer = nVariableServer::Instance();
-    varServer->SetFloatVariable(this->saturationHandle, this->resetSaturation);
-    varServer->SetVectorVariable(this->balanceHandle, this->resetBalance);
-    varServer->SetFloatVariable(this->hdrBloomIntensityHandle, this->resetBloomIntensity);
-    varServer->SetFloatVariable(this->hdrBrightPassThresholdHandle, this->resetBrightPassThreshold);
-    varServer->SetFloatVariable(this->hdrBrightPassOffsetHandle, this->resetBrightPassOffset);
-    varServer->SetVectorVariable(this->fogColorHandle, this->resetFogColor);
-    varServer->SetVectorVariable(this->fogDistancesHandle, this->resetFogDistances);
-    varServer->SetVectorVariable(this->focusHandle, this->resetFocus);
-    varServer->SetFloatVariable(this->noiseIntensityHandle, this->resetNoiseIntensity);
-    varServer->SetFloatVariable(this->noiseScaleHandle, this->resetNoiseScale);
-    varServer->SetFloatVariable(this->noiseFrequencyHandle, this->resetNoiseFrequency);
-    this->UpdateSlidersFromValues();
-}
