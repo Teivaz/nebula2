@@ -1,0 +1,97 @@
+#-------------------------------------------------------------------------------
+#  nnetwork/network.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnetwork::network
+    setmodules {
+        nhttpserver
+        nnetclient
+        nnetserver
+        nsessionclient
+        nsessionclientcontext
+        nsessionserver
+        nsessionservercontext
+    }
+endbundle
+
+beginmodule nhttpserver
+    setdir network
+    setheaders {
+        nhttpserver
+    }
+    setfiles {
+        nhttpserver_main
+        nhttpserver_cmds
+    }
+    setlibs_win32 {
+        wininet.lib
+        rpcrt4.lib
+    }
+endmodule
+
+beginmodule nnetclient
+    setdir network
+    setheaders {
+        nnetclient
+    }
+    setfiles {
+        nnetclient_main
+        nnetclient_cmds
+    }
+endmodule
+
+beginmodule nnetserver
+    setdir network
+    setheaders {
+        nnetserver
+    }
+    setfiles {
+        nnetserver_main
+        nnetserver_cmds
+    }
+endmodule
+
+beginmodule nsessionclient
+    setdir network
+    setheaders {
+        nsessionattrpool
+        nsessionclient
+    }
+    setfiles {
+        nsessionclient_main
+        nsessionclient_cmds
+    }
+endmodule
+
+beginmodule nsessionclientcontext
+    setdir network
+    setheaders {
+        nsessionclientcontext
+    }
+    setfiles {
+        nsessionclientcontext_main
+        nsessionclientcontext_cmds
+    }
+endmodule
+
+beginmodule nsessionserver
+    setdir network
+    setheaders {
+        nsessionserver
+    }
+    setfiles {
+        nsessionserver_main
+        nsessionserver_cmds
+    }
+endmodule
+
+beginmodule nsessionservercontext
+    setdir network
+    setheaders {
+        nsessionservercontext
+    }
+    setfiles {
+        nsessionservercontext_main
+        nsessionservercontext_cmds
+    }
+endmodule

@@ -1,0 +1,73 @@
+#-------------------------------------------------------------------------------
+#  nnebula/sql.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::sql
+    setmodules {
+        nsqldatabase
+        nsqlite3database
+        nsqlite3query
+        nsqlite3server
+        nsqlserver
+    }
+endbundle
+
+beginmodule nsqldatabase
+    setdir sql
+    setheaders {
+        nsqldatabase
+        nsqlquery
+        nsqlrow
+    }
+    setfiles {
+        nsqldatabase_main
+        nsqldatabase_cmds
+    }
+endmodule
+
+beginmodule nsqlite3database
+    setdir sql
+    setheaders {
+        nsqlite3database
+    }
+    setfiles {
+        nsqlite3database_main
+    }
+    setlibs_win32_release {
+        sqlite.lib
+    }
+    setlibs_win32_debug {
+        sqlite_d.lib
+    }
+endmodule
+
+beginmodule nsqlite3query
+    setdir sql
+    setheaders {
+        nsqlite3query
+    }
+    setfiles {
+        nsqlite3query
+    }
+endmodule
+
+beginmodule nsqlite3server
+    setdir sql
+    setheaders {
+        nsqlite3server
+    }
+    setfiles {
+        nsqlite3server_main
+    }
+endmodule
+
+beginmodule nsqlserver
+    setdir sql
+    setheaders {
+        nsqlserver
+    }
+    setfiles {
+        nsqlserver_main
+        nsqlserver_cmds
+    }
+endmodule

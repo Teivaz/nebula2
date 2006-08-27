@@ -1,0 +1,31 @@
+#-------------------------------------------------------------------------------
+#  nnebula/script.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::script
+    setmodules {
+        nbinscriptserver
+        ntclserver
+    }
+endbundle
+
+beginmodule nbinscriptserver
+    setdir script
+    setheaders {
+        nbinscriptserver
+    }
+    setfiles {
+        nbinscriptserver_main
+    }
+endmodule
+
+beginmodule ntclserver
+    setdir script
+    setheaders {
+        ntclserver
+    }
+    setfiles {
+        ntclserver_main
+        ntclserver_commands
+    }
+endmodule
