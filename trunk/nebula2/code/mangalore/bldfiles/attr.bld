@@ -1,16 +1,9 @@
 #-------------------------------------------------------------------------------
-# attr.bld
-#
-# 2006 James Mastro
+#  bldfiles/attr.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::attr
+beginmodule attr
     setdir attr
-    settype cpp
-    setfiles {
-        _attridtyped
-        attributeid
-        attributes
-    }
     setheaders {
         _attrid
         _attridtyped
@@ -26,5 +19,9 @@ beginmodule mangalore::attr
         vector4attributeid
         voidattributeid
     }
+    setfiles {
+        _attridtyped
+        attributeid
+        attributes
+    }
 endmodule
-#-------------------------------------------------------------------------------

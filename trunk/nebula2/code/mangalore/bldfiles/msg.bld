@@ -1,12 +1,10 @@
 #-------------------------------------------------------------------------------
-# msg.bld
-#
-# (C) 2006 James Mastro
+#  bldfiles/application.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::msg
+beginmodule msg
     setdir msg
-    settype cpp
-    setfiles { 
+    setheaders {
         animplay
         animrewind
         animstop
@@ -31,7 +29,9 @@ beginmodule mangalore::msg
         settransform
         updatetransform
     }
-    setheaders { 
+        #gfxsetcharacterset
+        #gfxsetvisible
+    setfiles {
         animplay
         animrewind
         animstop
@@ -56,5 +56,22 @@ beginmodule mangalore::msg
         settransform
         updatetransform
     }
+        #gfxsetcharacterset
+        #gfxsetvisible
 endmodule
-#-------------------------------------------------------------------------------
+
+#beginmodule msg::ui
+#    setdir msg/ui
+#    setheaders {
+#        dragboxcancelled
+#        dragboxready
+#        dragboxstarted
+#        dragboxupdated
+#    }
+#    setfiles {
+#        dragboxcancelled
+#        dragboxready
+#        dragboxstarted
+#        dragboxupdated
+#    }
+#endmodule

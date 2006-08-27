@@ -1,20 +1,10 @@
 #-------------------------------------------------------------------------------
-#  bldfiles/message.bld
+#  bldfiles/tools.bld
 #  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule message
-    setdir message
-    setheaders {
-        dispatcher
-        id
-        msg
-        port
-        server
-    }
+beginmodule mangalore
+    setdir tools
     setfiles {
-        dispatcher
-        msg
-        port
-        server
+        mangalore
     }
 endmodule

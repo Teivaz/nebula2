@@ -1,11 +1,21 @@
 #-------------------------------------------------------------------------------
-# graphics.bld
-#
-# (C) 2005 Vadim Macagon, 2006 James Mastro
+#  bldfiles/graphics.bld
+#  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginmodule mangalore::graphics
+beginmodule graphics
     setdir graphics
-    settype cpp
+    setheaders {
+        animtable
+        cameraentity
+        cell
+        charanimeventhandler
+        charentity
+        entity
+        level
+        lightentity
+        resource
+        server
+    }
     setfiles {
         animtable
         cameraentity
@@ -18,17 +28,4 @@ beginmodule mangalore::graphics
         resource
         server
     }
-    setheaders { 
-        animtable
-        cameraentity
-        cell
-        charanimeventhandler
-        charentity
-        entity
-        level
-        lightentity
-        resource
-        server
-    }
 endmodule
-#-------------------------------------------------------------------------------
