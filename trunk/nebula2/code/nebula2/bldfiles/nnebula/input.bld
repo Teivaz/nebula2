@@ -54,7 +54,7 @@ beginmodule ninputserver
         ninputserver
     }
     setfiles {
-        ninput_main      
+        ninput_main
         ninput_cmds
         ninput_log
         ninput_states

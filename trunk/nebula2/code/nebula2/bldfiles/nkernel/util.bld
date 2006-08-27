@@ -69,6 +69,9 @@ beginmodule nhttpsession
     setfiles {
         nhttpsession
     }
+    setlibs_win32 {
+        wininet.lib
+    }
 endmodule
 
 beginmodule nlist
@@ -118,6 +121,11 @@ beginmodule nstartupchecker
     }
     setfiles {
         nstartupchecker
+    }
+    setlibs_win32 {
+        d3d9.lib
+        dsound.lib
+        winmm.lib
     }
 endmodule
 
