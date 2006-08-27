@@ -188,9 +188,9 @@ nGuiDockWindow::OnShow()
     // character control button
     btn = (nGuiButton*) kernelServer->New("nguibutton", "CharacterControlButton");
     n_assert(btn);
-    btn->SetDefaultBrush("charwindow_n");
-    btn->SetPressedBrush("charwindow_p");
-    btn->SetHighlightBrush("charwindow_h");
+    btn->SetDefaultBrush("hidegui_n");
+    btn->SetPressedBrush("hidegui_p");
+    btn->SetHighlightBrush("hidegui_h");
     btn->SetMinSize(btnSize);
     btn->SetMaxSize(btnSize);
     btn->SetTooltip("Control Characters");
@@ -237,8 +237,9 @@ nGuiDockWindow::OnShow()
     rectangle rect;
     const float width  = 12 * btnSize.x;
     const float height = btnSize.y;
-    rect.v0.set(0.5f - (width * 0.5f), 1.0f - height);
-    rect.v1.set(0.5f + (width * 0.5f), 1.0f);
+    
+    rect.v0.set(0.5f - (width * 0.5f), 0.0f);
+    rect.v1.set(0.5f + (width * 0.5f), height);
     this->SetRect(rect);
 }
 
