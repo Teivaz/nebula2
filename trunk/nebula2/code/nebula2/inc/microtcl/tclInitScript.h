@@ -8,7 +8,6 @@
  * Copyright (c) 1999 by Scriptics Corporation.
  * All rights reserved.
  *
- * RCS: @(#) $Id$
  */
 
 /*

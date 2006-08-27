@@ -113,7 +113,7 @@ private:
 
     nRef<nGuiButton> forwardbutton;
     nRef<nGuiButton> backwardbutton;
-    nArray<nRef<nGuiButton>> emptyBtns;
+    nArray<nRef<nGuiButton> > emptyBtns;
     nArray<float> btnOffsets;
     nArray<nString> btnTexts;
 };
