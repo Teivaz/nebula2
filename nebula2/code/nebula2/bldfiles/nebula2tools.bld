@@ -48,6 +48,9 @@ begintarget nanimtool
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -59,6 +62,9 @@ begintarget nbumprev
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -84,6 +90,9 @@ begintarget ngetcrc
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -109,6 +118,9 @@ begintarget nimagetool
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -120,6 +132,9 @@ begintarget nmakepatch
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -131,6 +146,9 @@ begintarget nmeshtool
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -143,6 +161,8 @@ begintarget nnpktool
     settargetdeps {
         nkernel
         nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -154,6 +174,9 @@ begintarget nremoteshell
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -165,6 +188,9 @@ begintarget nsetpath
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
+        ngui
         ntoollib
     }
 endtarget
@@ -191,6 +217,8 @@ begintarget nstub
     }
     settargetdeps {
         nkernel
+        nnebula
+        microtcl
         ngui
         ntoollib
     }

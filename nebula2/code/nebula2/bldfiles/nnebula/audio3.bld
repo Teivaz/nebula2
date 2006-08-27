@@ -81,6 +81,9 @@ beginmodule nwavfile
     setfiles {
         nwavfile
     }
+    setlibs_win32 {
+        winmm.lib
+    }
 endmodule
 #-------------------------------------------------------------------------------
 beginbundle ndsound::audio3

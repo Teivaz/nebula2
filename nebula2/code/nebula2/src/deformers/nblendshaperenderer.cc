@@ -130,7 +130,7 @@ nBlendShapeRenderer::Render(int meshGroupIndex, const nArray<float>& weights)
 
 //------------------------------------------------------------------------------
 /**
-    Perform rendering with cpu based blending...
+    Perform rendering with CPU based blending...
 */
 void
 nBlendShapeRenderer::RenderCpuBlending(int meshGroupIndex, const nArray<float>& weights)
@@ -142,7 +142,7 @@ nBlendShapeRenderer::RenderCpuBlending(int meshGroupIndex, const nArray<float>& 
 
 //------------------------------------------------------------------------------
 /**
-Perform rendering with cpu based blending...
+    Perform rendering with GPU based blending...
 */
 void
 nBlendShapeRenderer::RenderShaderBlending(int meshGroupIndex, const nArray<float>& weights)
