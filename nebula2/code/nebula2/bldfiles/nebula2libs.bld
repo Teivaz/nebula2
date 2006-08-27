@@ -1,0 +1,120 @@
+#-------------------------------------------------------------------------------
+#  bldfiles/nebula2libs.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginworkspace nebula2libs
+    settargets {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ndshow
+        ngui
+        nnetwork
+        ntoollib
+        napplication
+    }
+endworkspace
+
+begintarget nkernel
+    settype lib
+    setbundles {
+        kernel::kernel
+        kernel::mathlib
+        kernel::signals
+        kernel::util
+    }
+endtarget
+
+begintarget nnebula
+    settype lib
+    setbundles {
+        nnebula::anim2
+        nnebula::audio3
+        nnebula::character
+        nnebula::deformers
+        nnebula::file
+        nnebula::gfx2
+        nnebula::input
+        nnebula::locale
+        nnebula::misc
+        nnebula::nature
+        nnebula::particle
+        nnebula::renderpath
+        nnebula::resource
+        nnebula::scene
+        nnebula::script
+        nnebula::shadow2
+        nnebula::sql
+        nnebula::tinyxml
+        nnebula::toolkit
+        nnebula::variable
+        nnebula::video
+        nnebula::xml
+    }
+endtarget
+
+begintarget microtcl
+    settype lib
+    setbundles {
+        microtcl::microtcl
+    }
+endtarget
+
+begintarget ndinput8
+    settype lib
+    setbundles {
+       ndinput8::input
+    }
+endtarget
+
+begintarget ndirect3d9
+    settype lib
+    setbundles {
+        ndirect3d9::gfx2
+    }
+endtarget
+
+begintarget ndsound
+    settype lib
+    setbundles {
+        ndsound::audio3
+    }
+endtarget
+
+begintarget ndshow
+    settype lib
+    setbundles {
+        ndshow::video
+    }
+endtarget
+
+begintarget ngui
+    settype lib
+    setbundles {
+        ngui::ngui
+    }
+endtarget
+
+begintarget nnetwork
+    settype lib
+    setbundles {
+        nnetwork::network
+    }
+endtarget
+
+begintarget ntoollib
+    settype lib
+    setbundles {
+        ntoollib::tools
+    }
+endtarget
+
+begintarget napplication
+    settype lib
+    setbundles {
+       napplication::application
+    }
+endtarget

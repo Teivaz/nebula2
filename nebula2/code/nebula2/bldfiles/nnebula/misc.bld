@@ -1,0 +1,74 @@
+#-------------------------------------------------------------------------------
+#  nnebula/misc.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::misc
+    setmodules {
+        ncaptureserver
+        nconserver
+        niniprefserver
+        nprefserver
+        nwatched
+        nwin32prefserver
+    }
+endbundle
+
+beginmodule ncaptureserver
+    setdir misc
+    setheaders {
+        ncaptureserver
+    }
+    setfiles {
+        ncaptureserver_main
+        ncaptureserver_cmds
+    }
+endmodule
+
+beginmodule nconserver
+    setdir misc
+    setheaders {
+        nconserver
+    }
+    setfiles {
+        ncsrv_main
+        ncsrv_cmds
+    }
+endmodule
+
+beginmodule niniprefserver
+    setdir misc
+    setheaders {
+        niniprefserver
+    }
+    setfiles {
+        niniprefserver_main
+    }
+endmodule
+
+beginmodule nprefserver
+    setdir misc
+    setheaders {
+        nprefserver
+    }
+    setfiles {
+        nprefserver_main
+        nprefserver_cmds
+    }
+endmodule
+
+beginmodule nwatched
+    setdir misc
+    setheaders {
+        nwatched
+    }
+endmodule
+
+beginmodule nwin32prefserver
+    setdir misc
+    setheaders {
+        nwin32prefserver
+    }
+    setfiles {
+        nwin32prefserver_main
+    }
+endmodule

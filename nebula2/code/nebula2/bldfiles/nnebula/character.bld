@@ -1,0 +1,45 @@
+#-------------------------------------------------------------------------------
+#  nnebula/character.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::character
+    setmodules {
+        ncharacter2
+        ncharacter3set
+        ncharskinrenderer
+    }
+endbundle
+
+beginmodule ncharacter2
+    setdir character
+    setheaders {
+        ncharacter2
+        ncharjoint
+        ncharjointpalette
+        ncharskeleton
+    }
+    setfiles {
+        ncharacter2
+    }
+endmodule
+
+beginmodule ncharacter3set
+    setdir character
+    setheaders {
+        ncharacter2set
+        ncharacter3set
+    }
+    setfiles {
+        ncharacter3set
+    }
+endmodule
+
+beginmodule ncharskinrenderer
+    setdir character
+    setheaders {
+        ncharskinrenderer
+    }
+    setfiles {
+        ncharskinrenderer
+    }
+endmodule

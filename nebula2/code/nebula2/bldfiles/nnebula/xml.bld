@@ -1,0 +1,21 @@
+#-------------------------------------------------------------------------------
+#  nnebula/xml.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle nnebula::xml
+    setmodules {
+        nxmlspreadsheet
+    }
+endbundle
+
+beginmodule nxmlspreadsheet
+    setdir xml
+    setheaders {
+        nxmlspreadsheet
+        nxmltable
+        nxmltablecell
+    }
+    setfiles {
+        nxmlspreadsheet
+    }
+endmodule

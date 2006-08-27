@@ -1,0 +1,165 @@
+#-------------------------------------------------------------------------------
+#  nkernel/util.bld
+#  (c) 2006 Nebula2 Community
+#-------------------------------------------------------------------------------
+beginbundle kernel::util
+    setmodules {
+        nbuffer
+        nhttpformdatawrapper
+        nhttpsession
+        nmd5
+        nquadtree
+        nstartupchecker
+        nstream
+        nstring
+        utils
+    }
+endbundle
+
+beginmodule narray
+    setdir util
+    setheaders {
+        narray2
+        narray
+        nfixedarray
+        nipolkeyarray
+        nkeyarray
+        npriorityarray
+    }
+endmodule
+
+beginmodule nbuffer
+    setdir util
+    setheaders {
+        nbuffer
+        nlinebuffer
+        nringbuffer
+    }
+    setfiles {
+        nbuffer
+    }
+endmodule
+
+beginmodule nhash
+    setdir util
+    setheaders {
+        nhashlist
+        nhashmap2
+        nhashmap
+        nhashtable
+    }
+endmodule
+
+beginmodule nhttpformdatawrapper
+    setdir util
+    setheaders {
+        nhttpformdatawrapper
+        nhttpresponsecracker
+    }
+    setfiles {
+        nhttpformdatawrapper
+    }
+endmodule
+
+beginmodule nhttpsession
+    setdir util
+    setheaders {
+        nhttpsession
+    }
+    setfiles {
+        nhttpsession
+    }
+endmodule
+
+beginmodule nlist
+    setdir util
+    setheaders {
+        nlist
+        nobjectlist
+        nstrlist
+    }
+endmodule
+
+beginmodule nmd5
+    setdir util
+    setheaders {
+        nmd5
+    }
+    setfiles {
+        nmd5
+    }
+endmodule
+
+beginmodule nnode
+    setdir util
+    setheaders {
+        nhashnode
+        nmsgnode
+        nnode
+        nobjectnode
+        nstrnode
+    }
+endmodule
+
+beginmodule nquadtree
+    setdir util
+    setheaders {
+        nquadtree
+    }
+    setfiles {
+        nquadtree
+    }
+endmodule
+
+beginmodule nstartupchecker
+    setdir util
+    setheaders {
+        nstartupchecker
+    }
+    setfiles {
+        nstartupchecker
+    }
+endmodule
+
+beginmodule nstream
+    setdir util
+    setheaders {
+        nstream
+    }
+    setfiles {
+        nstream
+    }
+endmodule
+
+beginmodule nstring
+    setdir util
+    setheaders {
+        nstring
+    }
+    setfiles {
+        nstring
+    }
+endmodule
+
+beginmodule utils
+    setdir util
+    setheaders {
+        nangularpfeedbackloop
+        nanimkey
+        nanimkeyarray
+        nanimlooptype
+        natom
+        nattr
+        nbitstream
+        nbucket
+        ndictionary
+        ndie
+        neditline
+        nkeyvaluepair
+        npfeedbackloop
+        nstack
+        ntabcomplete
+        nthreadvariable
+        nvariant
+    }
+endmodule
