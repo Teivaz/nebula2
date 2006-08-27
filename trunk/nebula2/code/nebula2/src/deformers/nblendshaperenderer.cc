@@ -139,3 +139,13 @@ nBlendShapeRenderer::RenderCpuBlending(int meshGroupIndex, const nArray<float>& 
     nBlendShapeDeformer blendShapeDeformer;
     //blendShapeDeformer.SetInputMeshArray();
 }
+
+//------------------------------------------------------------------------------
+/**
+Perform rendering with cpu based blending...
+*/
+void
+nBlendShapeRenderer::RenderShaderBlending(int meshGroupIndex, const nArray<float>& weights)
+{
+    // TODO: implementation
+}

@@ -426,6 +426,9 @@ beginmodule nwin32stacktrace
     setfiles {
         nwin32stacktrace
     }
+    setlibs_win32 {
+        dbghelp.lib
+    }
 endmodule
 
 beginmodule nwin32wrapper

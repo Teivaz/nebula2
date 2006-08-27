@@ -124,6 +124,7 @@ STR_PROJ_CONFIG_LIBRARIAN_TOOL = '''\
 STR_PROJ_CONFIG_LINKER_TOOL_S1 = '''\
             <Tool
                 Name="VCLinkerTool"
+                UseLibraryDependencyInputs="true"
                 AdditionalDependencies="%(win32Libs)s"
                 GenerateManifest="false"
                 OutputFile="%(outputFile)s"
