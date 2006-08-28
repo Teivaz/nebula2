@@ -41,6 +41,9 @@ beginmodule napplauncher
     setfiles {
         napplauncher
     }
+    setlibs_win32 {
+        shell32.lib
+    }
 endmodule
 
 beginmodule nbspbuilder
