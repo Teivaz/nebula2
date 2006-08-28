@@ -235,18 +235,18 @@ class AppWizFrame(wx.Frame):
                     }
 
         # napplication derived module
-        strAppHeader = self.readTemplate('napp.sh')
+        strAppHeader = self.readTemplate('mnapp.sh')
         self.writeTemplate(self.subdir, self.className, '.h', strAppHeader, self.args)
-        strAppMain = self.readTemplate('napp_main.sc')
+        strAppMain = self.readTemplate('mnapp_main.sc')
         #self.writeTemplate(self.subdir, self.className, '_main.cc', strAppMain, self.args)
         self.writeTemplate(self.subdir, self.className, '.cc', strAppMain, self.args)
         # strAppCmds = self.readTemplate('napp_cmds.sc')
         # self.writeTemplate('src', self.className, '_cmds.cc', strAppCmds, self.args)
 
         # nappstate derived module
-        strAppStateHeader = self.readTemplate('nappstate.sh')
+        strAppStateHeader = self.readTemplate('mnappstate.sh')
         self.writeTemplate(self.subdir, self.appStateName, '.h', strAppStateHeader, self.args)
-        strAppStateMain = self.readTemplate('nappstate_main.sc')
+        strAppStateMain = self.readTemplate('mnappstate_main.sc')
         #self.writeTemplate(self.subdir, self.appStateName, '_main.cc', strAppStateMain, self.args)
         self.writeTemplate(self.subdir, self.appStateName, '.cc', strAppStateMain, self.args)
 
@@ -254,11 +254,11 @@ class AppWizFrame(wx.Frame):
         # self.writeTemplate('src', self.appStateName, '_cmds.cc', strAppStateCmds, self.args)
 
         # main
-        strMain = self.readTemplate('app.sc')
+        strMain = self.readTemplate('mapp.sc')
         self.writeTemplate(self.subdir, appName, '.cc', strMain, self.args)
 
         # bld file
-        strBld = self.readTemplate('app.sbld')
+        strBld = self.readTemplate('mapp.sbld')
         self.writeBld(strBld)
 
         # all things done.
