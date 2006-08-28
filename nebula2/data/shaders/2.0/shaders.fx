@@ -1662,7 +1662,7 @@ color4 psEnvironmentAlphaColor(const vsOutputEnvironmentColor psIn, uniform bool
     }
     color4 diffColor = tex2D(DiffSampler, psIn.uv0 + uvOffset);
     float3 tangentSurfaceNormal = (tex2D(BumpSampler, psIn.uv0 + uvOffset).rgb * 2.0f) - 1.0f;
-    color4 reflectColor = tex2D(EnvironmentSampler, psIn.worldReflect);
+    color4 reflectColor = texCUBE(EnvironmentSampler, psIn.worldReflect);
 
     // FIXME: this throws a compiler error that the target and source
     // of a lerp() cannot be the same...
