@@ -178,23 +178,44 @@ void nMaxMesh::UnlockMesh()
 
     @return 
 */
-bool nMaxMesh::GetCustAttrib(INode* inode)
+bool nMaxMesh::GetCustAttrib(Animatable* obj)
 {
     // xml document which created xml elements are linked.
     TiXmlDocument xmlDoc;
 
-    Object* obj = nMaxUtil::GetBaseObject(inode, 0);
-    if (!obj)
+    if (obj && obj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
     {
-        n_maxlog(Medium, "The node %s has no object.", inode->GetName());
-        return false;
+        IDerivedObject* derivedObj = (IDerivedObject*) obj;
+        for (int i = 0; i < derivedObj->NumModifiers(); i++)
+        {
+            Modifier* mod = derivedObj->GetModifier(i);
+            if (mod)
+            {            
+                GetCustAttrib(mod);
+            }
+        }
+
+        Object* refObj = derivedObj->GetObjRef();
+        if (refObj != obj)
+        {            
+            GetCustAttrib(refObj);
+        }
+
+        BaseObject* baseObj = derivedObj->FindBaseObject();
+        if (baseObj != obj && baseObj != refObj)
+        {            
+            GetCustAttrib(baseObj);
+        }
     }
+
+    if (!obj)
+        return false;
 
     // convert node custom attributes to xml data.
     nMaxCustAttrib custAttrib;
     if (!custAttrib.Convert(obj, xmlDoc))
     {
-        n_maxlog(High, "The node %s has no custom attribute.", inode->GetName());
+        //n_maxlog(High, "The node %s has no custom attribute.", inode->GetName());
         return false;
     }
 
@@ -290,12 +311,13 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
         }
     }
 
-    // parameter name for mesh directory setting.
+    // parameter block name for mesh directory setting.
     const char* dirParamName = "MeshDirSetting";
 
     e = xmlHandle.FirstChild(dirParamName).Element();
     if (e)
     {
+        // find parameter with the given its name.
         TiXmlElement* child;
         child = xmlHandle.FirstChild(dirParamName).FirstChild("meshDir").Child("", 0).Element();
         if (child)
@@ -304,6 +326,14 @@ bool nMaxMesh::GetCustAttrib(INode* inode)
             if (meshPath)
             {
                 this->meshPath = meshPath;
+
+                //HACK: if the path has "<<NULL>>" for its value,
+                //      we convert it to the default mesh export directory.
+                //      See nMaxCustAttrib::StringToXml() function in the nmaxcustattrib.cc file.
+                if (this->meshPath == "<<NULL>>")
+                {
+                    this->meshPath = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetMeshesAssign());
+                }
             }
         }
     }
@@ -382,9 +412,18 @@ nSceneNode* nMaxMesh::Export(INode* inode)
     nSceneNode* createdNode = 0;
 
     // get custom attributes of the node if it exist.
-    if (GetCustAttrib(inode))
+    Object* obj = nMaxUtil::GetBaseObject(inode, 0);
+    if (GetCustAttrib(obj))
     {
         n_maxlog(Medium, "%s node has custom attributes.", inode->GetName());
+    }
+
+    GetCustAttrib(inode);
+
+    // this is needes for an object which is any modifier is applied.
+    if(inode->GetObjectRef() != obj)
+    {
+        GetCustAttrib(inode->GetObjectRef());
     }
 
     // check for that this mesh is skinned(or physique). 

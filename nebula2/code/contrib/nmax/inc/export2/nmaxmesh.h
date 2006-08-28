@@ -144,7 +144,8 @@ protected:
     ///@}
 
     ///
-    bool GetCustAttrib(INode* inode);
+    //bool GetCustAttrib(INode* inode);
+    bool GetCustAttrib(Animatable* obj);
     ///
     nSceneNode* CreateShapeNode(INode* inode, nString &name);
 

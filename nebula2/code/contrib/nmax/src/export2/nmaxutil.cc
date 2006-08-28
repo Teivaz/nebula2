@@ -19,16 +19,19 @@
 /**
     Retrieves Object from the given node.
     It checkes the returned object is derived object and if it is, 
-    tri to get its referenced object until it is not a derived object.
+    tries to get its referenced object until it is not a derived object.
 */
 Object* nMaxUtil::GetBaseObject(INode* inode, TimeValue time)
 {
     ObjectState objState = inode->EvalWorldState(time);
     Object* obj = objState.obj;
 
-    while( obj->SuperClassID() == GEN_DERIVOB_CLASS_ID )
+    SClass_ID sID;
+    sID = obj->SuperClassID();
+    while( sID == GEN_DERIVOB_CLASS_ID )
     {
         obj = ((IDerivedObject*)obj)->GetObjRef();
+        sID = obj->SuperClassID();
     }
 
     return obj;
