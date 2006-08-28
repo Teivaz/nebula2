@@ -156,6 +156,8 @@ bool nMaxCustAttrib::Convert(Animatable* obj, TiXmlDocument& xmlDoc)
 //-----------------------------------------------------------------------------
 /**
     Retrieves 'string' type of the param and link it to the given XML document.
+
+    -28-Aug-06  kims  Changed to assign "<<NULL>>" if the string value has no data.
 */
 void nMaxCustAttrib::StringToXml(IParamBlock2* pBlock, int index, TiXmlDocument& xmlDoc)
 {
@@ -169,7 +171,7 @@ void nMaxCustAttrib::StringToXml(IParamBlock2* pBlock, int index, TiXmlDocument&
 
     // get the index'th value.
     BOOL result;
-    TCHAR* strValue;
+    TCHAR* strValue = NULL;
     Interval interval;
     result = pBlock->GetValue(index, 0, strValue, interval);
 
@@ -204,6 +206,12 @@ void nMaxCustAttrib::StringToXml(IParamBlock2* pBlock, int index, TiXmlDocument&
         TiXmlElement* elmVal;
 
         elmVal = n_new(TiXmlElement(""));
+
+        // HACK: passing null-pointer causes internal error.
+        //       So, just assigned any default value not to causes that.
+        if (!strValue)
+            strValue = "<<NULL>>";
+
         elmVal->SetAttribute("value", strValue);
 
         elm->LinkEndChild(elmVal);
