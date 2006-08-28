@@ -215,7 +215,7 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
     nMaxCustAttrib custAttrib;
     if (!custAttrib.Convert(obj, xmlDoc))
     {
-        //n_maxlog(High, "The node %s has no custom attribute.", inode->GetName());
+        n_maxlog(High, "The node has no custom attributes.");
         return false;
     }
 
@@ -411,6 +411,8 @@ nSceneNode* nMaxMesh::Export(INode* inode)
 
     nSceneNode* createdNode = 0;
 
+    n_maxlog(High, "Start to retrieve custom attributes from the node %s.", inode->GetName());
+
     // get custom attributes of the node if it exist.
     Object* obj = nMaxUtil::GetBaseObject(inode, 0);
     if (GetCustAttrib(obj))
@@ -425,6 +427,8 @@ nSceneNode* nMaxMesh::Export(INode* inode)
     {
         GetCustAttrib(inode->GetObjectRef());
     }
+
+    n_maxlog(High, "End to retrieve custom attributes from the node %s.", inode->GetName());
 
     // check for that this mesh is skinned(or physique). 
     // if it does, do some initializations to acess max skin(or physique) interface 
