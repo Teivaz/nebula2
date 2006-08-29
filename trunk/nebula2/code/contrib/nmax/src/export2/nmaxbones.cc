@@ -235,8 +235,8 @@ bool nMaxBoneManager::BuildBones(INode* node)
             this->noteTracksArray[i].GetAnimState(boneNode);
         }
 
-        // if there are no animation states, we add default one.
-        // (skin animator needs it at least one)
+        // if there are no animation states, we add a default one.
+        // (skin animator needs to have at least one)
         if (this->noteTracksArray[i].GetNumStates() <= 0) {
             //FIXME: fix to get proper first frame.
             int firstframe   = 0;

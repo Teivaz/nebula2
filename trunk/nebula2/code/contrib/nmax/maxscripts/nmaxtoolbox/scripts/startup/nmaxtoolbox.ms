@@ -19,7 +19,7 @@ fn startUp =
     -- Load 'Nebula2' menu
     nLoadMenu()
     
-    -- Generate Nebula2 custom material script pugin script and evaluate. 
+    -- Generate Nebula2 custom material script plugin script and evaluate. 
     nCreateCustomMaterialPlugin()
 )
 
