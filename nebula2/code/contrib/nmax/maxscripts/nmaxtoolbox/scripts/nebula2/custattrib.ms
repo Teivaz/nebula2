@@ -43,10 +43,11 @@ fn AddCustomAttributes obj ca =
         )
     )
 		
-    -- add a new custom attribute, if the object has not any one.
+    -- add a new custom attribute, if the object has none.
     if foundIndex <= 0 do
     (
         custAttributes.add obj ca
     )
 )
+
 
