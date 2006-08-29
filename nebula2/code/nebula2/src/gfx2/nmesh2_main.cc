@@ -104,7 +104,28 @@ nMesh2::LoadResource()
     else if (this->refResourceLoader.isvalid())
     {
         // if the resource loader reference is valid, let it take a stab at the file
-        success = this->refResourceLoader->Load(filename.Get(), this);
+        success = this->refResourceLoader->InitResource(filename.Get(), this);
+        if (success) {
+            if (this->GetNumVertices() > 0)
+            {
+                int verticesByteSize = this->GetNumVertices() * this->GetVertexWidth() * sizeof(float);
+                this->SetVertexBufferByteSize(verticesByteSize);
+                this->CreateVertexBuffer();
+            }
+            if (this->GetNumIndices() > 0)
+            {
+                int indicesByteSize  = this->GetNumIndices() * sizeof(ushort);
+                this->SetIndexBufferByteSize(indicesByteSize);
+                this->CreateIndexBuffer();
+            }
+            if (this->GetNumEdges() > 0)
+            {
+                int edgesByteSize = this->GetNumEdges() * sizeof(Edge);
+                this->SetEdgeBufferByteSize(edgesByteSize);
+                this->CreateEdgeBuffer();
+            }
+            success = this->refResourceLoader->Load(filename.Get(), this);
+        }
         if (success)
         {
             this->SetState(Valid);
@@ -136,8 +157,6 @@ nMesh2::LoadResource()
             // with HW T&L.
             if (0 == (this->vertexUsage & NeedsVertexShader))
             {
-                // FIXME: this should be replaced by a new nGfxServer2 method which indicates
-                // whether vertex shaders run in emulation, or not!!!
                 if (nGfxServer2::Instance()->AreVertexShadersEmulated())
                 {
                     // set valid DX7 vertex components before loading, all others will be removed from the loaded data
