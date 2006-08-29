@@ -113,6 +113,8 @@ protected:
 
     void AddBoneToNode(INode* inode, INode* bone);
 
+    bool GetCustAttrib(Animatable* obj);
+
 protected:
     /// array for collected bones of the scene.
     typedef nArray<Bone>  Skeleton;
@@ -123,6 +125,9 @@ protected:
 
     /// note track object which we retrieves states and clips.
     nArray<nMaxNoteTrack> noteTracksArray;
+
+    /// A directory where exported animation for bones will be put.
+    nString animPath;
 
 private:
     // @name Singleton

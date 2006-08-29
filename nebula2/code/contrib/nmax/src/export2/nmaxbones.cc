@@ -10,11 +10,14 @@
 #include "export2/nmaxutil.h"
 #include "export2/nmaxtransform.h"
 #include "export2/nmaxcontrol.h"
+#include "export2/nmaxcustattrib.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
 #include "kernel/nkernelserver.h"
+#include "kernel/nfileserver2.h"
 #include "tools/nanimbuilder.h"
+#include "tinyxml/tinyxml.h"
 
 nMaxBoneManager* nMaxBoneManager::Singleton = 0;
 
@@ -359,7 +362,20 @@ int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArra
     {
         if (boneLevelArray[i].depth == depth) 
         {
-            rootBonesNodeArray.Append(boneLevelArray[i].node);
+            // check the root bone has any custom attributes.
+            INode* inode = boneLevelArray[i].node; 
+            Object* obj = nMaxUtil::GetBaseObject(inode, 0);
+
+            if(inode->GetObjectRef() != obj)
+            {
+                if (GetCustAttrib(inode->GetObjectRef()))
+                {
+                    n_maxlog(High, "The root bone %s has custom attributes.", inode->GetName());
+                }
+            }
+
+            // add the root bone to the array.
+            rootBonesNodeArray.Append(inode);
         }
     }
     return rootBonesNodeArray.Size();
@@ -369,7 +385,9 @@ int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArra
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode* node, nArray<INode*> &boneNodeArray) {
+void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode* node, 
+                                               nArray<INode*> &boneNodeArray) 
+{
     Bone bone;
 
     bone.localTransform = nMaxTransform::GetLocalTM(node, 0);
@@ -735,7 +753,8 @@ INode* nMaxBoneManager::FindBoneNodeByIndex(int index)
 
     @param animFileName .nanim2(or .nax2) file name
 */
-bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) {
+bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) 
+{
     n_assert(animFileName);
     n_assert(skelIndex >= 0);
 
@@ -869,6 +888,83 @@ bool nMaxBoneManager::Export(int skelIndex, const char* animFileName) {
     {
         n_maxlog(Error, "Failed to save '%s' animation file.", animFileName);
         return false;
+    }
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+bool nMaxBoneManager::GetCustAttrib(Animatable* obj)
+{
+    // xml document which created xml elements are linked.
+    TiXmlDocument xmlDoc;
+
+    if (obj && obj->SuperClassID() == GEN_DERIVOB_CLASS_ID)
+    {
+        IDerivedObject* derivedObj = (IDerivedObject*) obj;
+        for (int i = 0; i < derivedObj->NumModifiers(); i++)
+        {
+            Modifier* mod = derivedObj->GetModifier(i);
+            if (mod)
+            {            
+                GetCustAttrib(mod);
+            }
+        }
+
+        Object* refObj = derivedObj->GetObjRef();
+        if (refObj != obj)
+        {            
+            GetCustAttrib(refObj);
+        }
+
+        BaseObject* baseObj = derivedObj->FindBaseObject();
+        if (baseObj != obj && baseObj != refObj)
+        {            
+            GetCustAttrib(baseObj);
+        }
+    }
+
+    if (!obj)
+        return false;
+
+    // convert node custom attributes to xml data.
+    nMaxCustAttrib custAttrib;
+    if (!custAttrib.Convert(obj, xmlDoc))
+    {
+        n_maxlog(High, "The node has no custom attributes.");
+        return false;
+    }
+
+    TiXmlHandle xmlHandle(&xmlDoc);
+    TiXmlElement* e;
+
+    // parameter block name for mesh directory setting.
+    const char* dirParamName = "AnimDirSetting";
+
+    e = xmlHandle.FirstChild(dirParamName).Element();
+    if (e)
+    {
+        // find parameter with the given its name.
+        TiXmlElement* child;
+        child = xmlHandle.FirstChild(dirParamName).FirstChild("animDir").Child("", 0).Element();
+        if (child)
+        {
+            const char* path = child->Attribute("value");
+            if (path)
+            {
+                this->animPath = path;
+
+                //HACK: if the path has "<<NULL>>" for its value,
+                //      we convert it to the default mesh export directory.
+                //      See nMaxCustAttrib::StringToXml() function in the nmaxcustattrib.cc file.
+                if (this->animPath == "<<NULL>>")
+                {
+                    this->animPath = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetAnimAssign());
+                }
+            }
+        }
     }
 
     return true;
