@@ -217,7 +217,8 @@ bool nMaxBoneManager::BuildBones(INode* node)
     nArray<INode*> rootBonesNodeArray;
     this->GetRootBones(sceneRoot, boneNodeArray, rootBonesNodeArray);
 
-    for (int i=0; i<rootBonesNodeArray.Size(); i++) {
+    for (int i=0; i<rootBonesNodeArray.Size(); i++) 
+    {
         this->skeletonsArray.Append(Skeleton());
         this->noteTracksArray.Append(nMaxNoteTrack());
         // build bone array.
@@ -250,9 +251,11 @@ bool nMaxBoneManager::BuildBones(INode* node)
 
     std::map<INode*, INode*>::iterator iter = nodeToBone.begin();
     std::map<INode*, int>::iterator fj;
-    for (; iter != nodeToBone.end(); ++iter) {
+    for (; iter != nodeToBone.end(); ++iter) 
+    {
         fj = boneToSkel.find(iter->second);
-        if (fj != boneToSkel.end()) {
+        if (fj != boneToSkel.end()) 
+        {
             nodeToSkel[iter->first] = fj->second;
         }
     }
@@ -270,27 +273,34 @@ int nMaxBoneManager::GetSkelForNode(INode* inode) {
     }
     return -1;
 }
+
 //-----------------------------------------------------------------------------
+/**
+    @struct BoneLevel
+    @ingroup nMaxBoneManager
+
+    @brief It is used for a temporary to find root bones.
+*/
 struct BoneLevel
 {
     INode *node;
     int   depth;
 };
 
-
-
 //-----------------------------------------------------------------------------
 /**
 */
-int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArray, nArray<INode*> &rootBonesNodeArray) {
+int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArray, 
+                                  nArray<INode*> &rootBonesNodeArray) 
+{
     int i, j, k;
 
-    #ifdef _DEBUG
-        //for (i=0; i<boneNodeArray.Size(); i++)
-        //{
-        //    n_maxlog(Medium, "Before Sort: %s", boneNodeArray[i]->GetName());
-        //}
-    #endif
+#ifdef _DEBUG
+    //for (i=0; i<boneNodeArray.Size(); i++)
+    //{
+    //    n_maxlog(Medium, "Before Sort: %s", boneNodeArray[i]->GetName());
+    //}
+#endif
 
     nArray<BoneLevel> boneLevelArray;
     
@@ -336,17 +346,19 @@ int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArra
         boneLevelArray[k] = tmp;
     }
 
-    #ifdef _DEBUG
-        //for (i=0; i<boneLevelArray.Size(); i++)
-        //{
-        //    n_maxlog(Medium, "After Sort: %s %d", boneLevelArray[i].node->GetName(), boneLevelArray[i].depth);
-        //}
-    #endif
+#ifdef _DEBUG
+    //for (i=0; i<boneLevelArray.Size(); i++)
+    //{
+    //    n_maxlog(Medium, "After Sort: %s %d", boneLevelArray[i].node->GetName(), boneLevelArray[i].depth);
+    //}
+#endif
 
     // the first node in boneLevelArray is the root bone node.
     depth = boneLevelArray[0].depth;
-    for (int i=0; i<boneLevelArray.Size(); i++) {
-        if (boneLevelArray[i].depth == depth) {
+    for (int i=0; i<boneLevelArray.Size(); i++) 
+    {
+        if (boneLevelArray[i].depth == depth) 
+        {
             rootBonesNodeArray.Append(boneLevelArray[i].node);
         }
     }
@@ -367,9 +379,11 @@ void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode
     bone.node           = node;
 
     // add only known bone.
-    if (boneNodeArray.Find(node)) {
+    if (boneNodeArray.Find(node)) 
+    {
         this->skeletonsArray[skeleton].Append(bone);
-        if (this->boneToSkel.find(bone.node) == this->boneToSkel.end()) {
+        if (this->boneToSkel.find(bone.node) == this->boneToSkel.end()) 
+        {
             this->boneToSkel[bone.node] = skeleton;
         }
     }
@@ -384,10 +398,12 @@ void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode
 //-----------------------------------------------------------------------------
 /**
 */
-void nMaxBoneManager::AddBoneToNode(INode* inode, INode* bone) {
+void nMaxBoneManager::AddBoneToNode(INode* inode, INode* bone) 
+{
     n_assert(inode);
     n_assert(bone);
-    if (this->nodeToBone.find(inode) == this->nodeToBone.end()) {
+    if (this->nodeToBone.find(inode) == this->nodeToBone.end()) 
+    {
         this->nodeToBone[inode] = bone;
     }
 }
