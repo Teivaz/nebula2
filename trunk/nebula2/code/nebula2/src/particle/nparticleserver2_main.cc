@@ -72,9 +72,10 @@ nParticleServer2::NewParticleEmitter()
 */
 void nParticleServer2::Trigger()
 {
-    int i;
+    this->time = nTimeServer::Instance()->GetTime();
+    
     int num = this->emitters.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->emitters[i]->Update(float(this->time));
     }
