@@ -94,6 +94,25 @@ tooltip:"Specify Mesh Options"
 )
 
 ---------------------------------------------------------------------------------
+-- macro script for 'Anim Options' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_AnimOptions
+category:"nmaxtoolbox" 
+buttonText:"Anim Options"
+tooltip:"Specify Animation Options" 
+( 	
+    include "nebula2/animoptions_fn.ms"
+	
+    on execute do
+    (
+        AddAnimOptionsCustomAttributes()
+		
+        -- Sets Modify command mode activate.
+        max modify mode
+    )
+)
+
+---------------------------------------------------------------------------------
 -- macro script for 'LOD' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_LOD
@@ -270,6 +289,7 @@ fn AddMenu =
         append ItemsTemp (menuMan.createSeparatorItem())
 
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_MeshOptions" "nmaxtoolbox")
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_AnimOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_LOD" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Attach" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())	
