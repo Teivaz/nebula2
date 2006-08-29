@@ -13,7 +13,7 @@ nAnimOptionsCA = attributes "nAnimOptions"
 (
     parameters AnimDirSetting rollout:rOptions
     (
-        animDir type:#string ui:edtAnimDirSetting
+        animDir type:#string default:"" ui:edtAnimDirSetting
     )
 
     rollout rOptions "Nebula2 Anim Options"
