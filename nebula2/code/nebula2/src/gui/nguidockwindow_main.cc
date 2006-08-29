@@ -188,9 +188,9 @@ nGuiDockWindow::OnShow()
     // character control button
     btn = (nGuiButton*) kernelServer->New("nguibutton", "CharacterControlButton");
     n_assert(btn);
-    btn->SetDefaultBrush("hidegui_n");
-    btn->SetPressedBrush("hidegui_p");
-    btn->SetHighlightBrush("hidegui_h");
+    btn->SetDefaultBrush("charwindow_n");
+    btn->SetPressedBrush("charwindow_p");
+    btn->SetHighlightBrush("charwindow_h");
     btn->SetMinSize(btnSize);
     btn->SetMaxSize(btnSize);
     btn->SetTooltip("Control Characters");
