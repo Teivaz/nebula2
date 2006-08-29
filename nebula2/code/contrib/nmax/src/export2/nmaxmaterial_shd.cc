@@ -617,6 +617,7 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
         strParamBlock += " ";
 
         strParamBlock += "type:#string ";
+        strParamBlock += "default:\"\" ";
         strParamBlock += "ui:";
         strParamBlock += "edtFld";
         strParamBlock += paramName;
