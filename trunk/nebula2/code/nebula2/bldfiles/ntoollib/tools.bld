@@ -8,6 +8,7 @@ beginbundle ntoollib::tools
         napplauncher
         nbspbuilder
         ncmdlineargs
+        nexportanalyzer
         nmayacamcontrol
         nmeshbuilder
         nmeshbundle
@@ -21,7 +22,6 @@ beginbundle ntoollib::tools
         nwinmaincmdlineargs
     }
 endbundle
-#       nexportanalyzer
 
 beginmodule nanimbuilder
     setdir tools
@@ -63,15 +63,15 @@ beginmodule ncmdlineargs
     }
 endmodule
 
-#beginmodule nexportanalyzer
-#    setdir tools
-#    setheaders {
-#        nexportanalyzer
-#    }
-#    setfiles {
-#        nexportanalyzer
-#    }
-#endmodule
+beginmodule nexportanalyzer
+    setdir tools
+    setheaders {
+        nexportanalyzer
+    }
+    setfiles {
+        nexportanalyzer
+    }
+endmodule
 
 beginmodule nmayacamcontrol
     setdir tools
