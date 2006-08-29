@@ -30,7 +30,7 @@ nMeshOptionsCA = attributes "nMeshOptions"
 
     parameters MeshDirSetting rollout:rOptions
     (
-        meshDir type:#string ui:edtDirSetting
+        meshDir type:#string default:"" ui:edtDirSetting
     )
     
     rollout rOptions "Nebula2 Mesh Options"
