@@ -4,8 +4,8 @@
 --  3DS Max script for Nebula2 characer animation state dialog.
 --
 --  - Create animation states from clips of Motion Flow.
---  - Create note track and its keys for root node of biped object. 
---    The exporter refers created note track when it exports character. 
+--  - Create note track and its keys for root node of biped object.
+--    The exporter refers created note track when it exports character.
 --
 --  (c)2005 Kim, Hyoun Woo
 -------------------------------------------------------------------------------
@@ -14,7 +14,7 @@ include "nebula2/moflow.ms"
 
 -------------------------------------------------------------------------------
 --  animation state rollout
---  
+--
 -------------------------------------------------------------------------------
 rollout rAnimStateEditor "Nebula2 Animation State Dialog" width:439 height:312
 (
@@ -30,15 +30,15 @@ rollout rAnimStateEditor "Nebula2 Animation State Dialog" width:439 height:312
     edittext edtFadeinTime "" pos:[338,102] width:70 height:20
     button btnCreateNoteTrack "Create Note Track" pos:[253,219] width:159 height:27
     button btnOk "Ok" pos:[348,270] width:80 height:30
-	
+
     local animStateArray = #()
-	
-    fn initTreeView tv = 
+
+    fn initTreeView tv =
     (
-        tv.LineStyle = #tvwTreeLines 
+        tv.LineStyle = #tvwTreeLines
     )
-	
-    fn addChildren tv node children = 
+
+    fn addChildren tv node children =
     (
         for c in children do
         (
@@ -46,8 +46,8 @@ rollout rAnimStateEditor "Nebula2 Animation State Dialog" width:439 height:312
             addChildren tv newNode c.children
         )
     )
-	
-    fn fillInTreeView tv animStates = 
+
+    fn fillInTreeView tv animStates =
     (
         theRootNode = tv.Nodes.add()
         theRootNode.text = "Animation States"
@@ -58,38 +58,38 @@ rollout rAnimStateEditor "Nebula2 Animation State Dialog" width:439 height:312
             newNode = tv.Nodes.add theRootNode.index 4 "" o.stateName 0
         )
     )
-		
+
     on rAnimStateEditor open do
-    (	    
+    (
         -- retrieves animation state array from motion flow
         animStateArray = createAnimStatesFromMotionFlow()
 
         if animStateArray.count > 0 then
         (
             -- initialize tree view
-	    initTreeView animStateTreeView
-		
+            initTreeView animStateTreeView
+
             -- fill tree view with retrieved animation states
             fillInTreeView animStateTreeView animStateArray
         )
     )
-	
+
     on animStateTreeView nodeClick theNode do
     (
         for o in animStateArray where o.stateName == theNode.text do
         (
             edtFirstFrame.text  = o.startFrame as string
-            edtFrameLength.text = o.duration as string 
+            edtFrameLength.text = o.duration as string
             edtFadeinTime.text  = o.fadeinTime as string
-            --edtChannelName 
-        )	
+            --edtChannelName
+        )
     )
-	
+
     -- create note track and add it to biped root node
     on btnCreateNoteTrack pressed  do
     (
         print animStateArray
-		
+
         bipedRoot = getBipedRootNode()
         if bipedRoot == undefined then
         (
@@ -103,16 +103,16 @@ rollout rAnimStateEditor "Nebula2 Animation State Dialog" width:439 height:312
                 existNoteTrack = getNoteTrack bipedRoot 1
                 deleteNoteTrack bipedRoot existNoteTrack
             )
-            
-            -- create note track 
+
+            -- create note track
             newNoteTrack = notetrack "note track"
-            
+
             -- add the created note track to biped root node
             addNoteTrack bipedRoot newNoteTrack
-            
+
             -- create note key array
             ntKeys = newNoteTrack.keys
-            
+
             -- create note track keys
             i = 1
             for a in animStateArray do
@@ -127,6 +127,7 @@ rollout rAnimStateEditor "Nebula2 Animation State Dialog" width:439 height:312
     on btnOk pressed do
     (
         destroyDialog rAnimStateEditor
-    )	
+    )
 )
+
 
