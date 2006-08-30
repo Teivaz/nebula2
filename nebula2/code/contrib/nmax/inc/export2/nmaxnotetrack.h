@@ -46,7 +46,7 @@ public:
 
 //---------------------------------------------------------------------------
 /**
-    @class nMaxNoteTack
+    @class nMaxNoteTrack
     @ingroup NebulaMaxExport2Contrib
 
     @brief Collect animation states and clips in note track of a max node.
@@ -73,10 +73,6 @@ public:
 protected:
     ///
     int GetNextFrame(int index, DefNoteTrack* n);
-    ///
-    nString ExtractNoteName(nString& rhs);
-    ///
-    nString ExtractLoopType(nString& rhs);
 
 protected:
     /// array for animation states which collected from note track.
