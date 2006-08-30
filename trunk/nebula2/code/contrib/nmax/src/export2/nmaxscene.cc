@@ -341,19 +341,30 @@ bool nMaxScene::CloseNebula()
 /**
     Do any postprocessing for this scene. 
     This is called after the scene is exported.
+
+    @note
+    A static model object are exported to separate mesh files(.n3d2 or .nvx2 file) 
+    rather than a skinned model objects are exported to one mesh file.
+
+    -30-Aug-06  kims  Changed to make it possible to export multiple meshes which 
+                      have different vertex components at once.
 */
 bool nMaxScene::Postprocess()
 {
     //this->UnInitializeNodes(this->sceneRoot);
 
+    // all meshes which have no joint indicies are collected to this storage.
+    nArray<nMaxMesh*> nonSkinnedMeshArray;
+
+    // a directory which mesh is exported.
     nString globalMeshPath;
 
     // append meshes to one master mesh
     int nummeshes = this->meshArray.Size();
     if ( nummeshes > 0)
     {
-        if (!nMaxOptions::Instance()->UseIndivisualMesh())
-        {
+        //if (!nMaxOptions::Instance()->UseIndivisualMesh())
+        //{
             nMaxMesh* mesh;
 
             for (int i=0; i<nummeshes; i++)
@@ -367,14 +378,22 @@ bool nMaxScene::Postprocess()
                     globalMeshPath = mesh->GetMeshPath();
                 }
 
-                //TODO: check the mesh has same vertex component.
-                //...
+                nMeshBuilder& meshBuilder = mesh->GetMeshBuilder();
 
-                // append retrieved meshes to a global mesh.
-                int baseGroupIndex = this->globalMeshBuilder.Append(mesh->GetMeshBuilder());
-                mesh->SetBaseGroupIndex(baseGroupIndex);
+                // assume that if the given mesh has joint indicies, it is skinned mesh
+                if (meshBuilder.HasVertexComponent(nMeshBuilder::Vertex::Component::JINDICES))
+                {
+                    // append retrieved meshes to a global mesh.
+                    // we need it to do skin partitioning.
+                    int baseGroupIndex = this->globalMeshBuilder.Append(meshBuilder);
+                    mesh->SetBaseGroupIndex(baseGroupIndex);
+                }
+                else
+                {
+                    nonSkinnedMeshArray.PushBack(mesh);
+                }
             }
-        }
+        //}
     }
 
     // we assume any one of the meshes are shadow type, consider it to a shadow mesh.
@@ -391,8 +410,8 @@ bool nMaxScene::Postprocess()
     }
 
     // if the global mesh has skinned animation, it might be needed to be partitioning. 
-    if (!nMaxOptions::Instance()->UseIndivisualMesh())
-    {
+    //if (!nMaxOptions::Instance()->UseIndivisualMesh())
+    //{
         if (!isShadowMesh)
         {
             if (this->globalMeshBuilder.GetNumVertices())
@@ -404,73 +423,51 @@ bool nMaxScene::Postprocess()
                 }
             }
         }
-    }
+    //}
 
     bbox3 rootBBox;
 
-    if (!nMaxOptions::Instance()->UseIndivisualMesh())
+    //if (!nMaxOptions::Instance()->UseIndivisualMesh())
     {
         if (this->globalMeshBuilder.GetNumVertices())
         {
-            nString filename;
-            filename = this->GetMeshFileNameToSave(globalMeshPath);
+            nString meshFileName;
+            meshFileName = this->GetMeshFileNameToSave(globalMeshPath);
 
-            // remove redundant vertices.
-            this->globalMeshBuilder.Cleanup(0);
-
-            //FIXME: no need for shadow node
-            if (!isShadowMesh)
-            {
-                // build mesh tangents and normals (also vertex normal if it does not exist)
-                nMaxMesh::BuildMeshTangentNormals(globalMeshBuilder);
-            }
-            else
-            {
-                // shadow mesh needs to call CreateEdges() which should be called after Cleanup()
-                this->globalMeshBuilder.CreateEdges();
-            }
-                       
-            // check the mesh for geometry error.
-            nMaxMesh::CheckGeometryErrors(this->globalMeshBuilder, filename.Get());
-
-            // do geometry scaling.
-            float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
-            if (geomScale != 0.0f)
-            {
-                vector3 scale;
-                matrix44 m;
-
-                scale.set(geomScale, geomScale, geomScale);
-                if (scale.len() != 1.0f)
-                {
-                    m.scale(scale);
-                    this->globalMeshBuilder.Transform(m);
-                }
-            }
+            ProcessOnMeshBuilder(this->globalMeshBuilder, isShadowMesh, meshFileName);
 
             // specifies bounding box.
             rootBBox = globalMeshBuilder.GetBBox();
 
             // save mesh data.
-            this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), filename.Get());
+            this->globalMeshBuilder.Save(nKernelServer::Instance()->GetFileServer(), meshFileName.Get());
         }
     }
-    else
+    //else
+
+    if (nonSkinnedMeshArray.Size())
     {
-        // save meshses to each of specified direcotry.
+        // save meshses to each of its specified direcotry.
 
         nMaxMesh* mesh = 0;
         nString meshFileName;
 
         // save for each mehses.
-        for (int i=0; i<meshArray.Size(); i++)
+        for (int i=0; i<nonSkinnedMeshArray.Size(); i++)
         {
-            mesh = this->meshArray[i];
+            mesh = nonSkinnedMeshArray[i];
 
-            nMeshBuilder& mehsBuilder = mesh->GetMeshBuilder();
-            meshFileName = GetMeshFileNameToSave(mesh->GetMeshPath());
+            nMeshBuilder& meshBuilder = mesh->GetMeshBuilder();
 
-            mehsBuilder.Save(nKernelServer::Instance()->GetFileServer(), meshFileName.Get());
+            // use a 3dsmax's node name for a mesh file name.
+            nString meshname, meshFileName;
+            meshname = mesh->GetNodeName();
+            meshFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Mesh, mesh->GetMeshPath(), meshname);
+            meshFileName += nMaxOptions::Instance()->GetMeshFileType();
+
+            ProcessOnMeshBuilder(meshBuilder, (mesh->GetType() == nMaxMesh::Shadow ? true : false), meshFileName);
+
+            meshBuilder.Save(nKernelServer::Instance()->GetFileServer(), meshFileName.Get());
         }
     }
 
@@ -482,9 +479,11 @@ bool nMaxScene::Postprocess()
             // export .anim2 and skin animator, if the exported scene has skinned mesh.
             nString animFilename = this->GetAnimFileNameToSave(skelIndex);
 
-            //FIXME: we should add error handling code.
             if (!nMaxBoneManager::Instance()->Export(skelIndex, animFilename.Get()))
+            {
+                n_maxlog(Error, "Failed to export animation %s", animFilename.Get());
                 return false;
+            }
 
             nSkinAnimator* createdAnimator = NULL;
 
@@ -915,4 +914,111 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     }
 }
 
+//-----------------------------------------------------------------------------
+/**
+    Do some processing on the meshbuilder object as the followings:
+      - cleanup mesh data
+      - build tangent normal
+      - check geometry errors
+      - scale a mesh
 
+    @param meshBuilder
+    @param isShadowMesh
+
+*/
+void nMaxScene::ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName)
+{
+    // remove redundant vertices.
+    meshBuilder.Cleanup(0);
+
+    if (!isShadowMesh)
+    {
+        //
+        // build mesh tangents and normals (also vertex normal if it does not exist)
+        //
+        const nMeshBuilder::Vertex& v = meshBuilder.GetVertexAt(0);
+
+        if (nMaxOptions::Instance()->ExportNormals() || nMaxOptions::Instance()->ExportTangents())
+        {
+            // build triangle normals, vertex normals and tangents.
+            n_maxlog(Low, "Build tangents and normals...");
+
+            if (false == v.HasComponent(nMeshBuilder::Vertex::UV0))
+            {
+                n_maxlog(Error, "The tangents require a valid uv-mapping in texcoord layer 0.");
+            }
+            n_maxlog(Low, "  - Build triangle normals, tangents, and binormals...");
+            meshBuilder.BuildTriangleNormals();
+
+            if (false == v.HasComponent(nMeshBuilder::Vertex::NORMAL))
+            {
+                // build vertex normals by averaging triangle normals.
+                n_maxlog(Low, "  - Build vertex normals...");
+                meshBuilder.BuildVertexNormals();
+            }
+            if (nMaxOptions::Instance()->ExportTangents())
+            {
+                n_maxlog(Low, "  - Build vertex tangents...");
+                // XXX: One day, we may want to make this configurable so that blendshape export can pass false.
+                meshBuilder.BuildVertexTangents(true);
+            }
+            n_maxlog(Low, "Building mesh tangents and normals done.");
+        }
+    }
+    else
+    {
+        // shadow mesh needs to call CreateEdges() which should be called after Cleanup()
+        meshBuilder.CreateEdges();
+    }
+
+    //
+    // check the mesh for geometry error.
+    //
+    nArray<nString> geomErrorMsgArray;
+    geomErrorMsgArray = meshBuilder.CheckForGeometryError();
+    if (geomErrorMsgArray.Size())
+    {
+        nString errlogfilename;
+        errlogfilename = meshName;
+        errlogfilename.StripExtension();
+        errlogfilename += ".error";
+
+        n_maxlog(Warning, "Warning: The exported mesh file has geometry errors.");
+        n_maxlog(Warning, "    - See the file '%s' for the details.", errlogfilename.Get());
+
+        nFile* errFile = nFileServer2::Instance()->NewFileObject();
+        if (errFile->Open(errlogfilename.Get(), "w"))
+        {
+            // put the geometry error message to log dialog.
+            for (int i=0; i<geomErrorMsgArray.Size(); i++)
+            {
+                errFile->PutS(geomErrorMsgArray[i].Get());
+            }
+
+            errFile->Close();
+            errFile->Release();
+        }
+        else
+        {
+            n_maxlog(Error, "Error: Failed to open error log file '%s for the geometry errrs.", errlogfilename.Get());
+            errFile->Release();
+        }
+    }
+
+    //
+    // do geometry scaling.
+    //
+    float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+    if (geomScale != 0.0f)
+    {
+        vector3 scale;
+        matrix44 m;
+
+        scale.set(geomScale, geomScale, geomScale);
+        if (scale.len() != 1.0f)
+        {
+            m.scale(scale);
+            meshBuilder.Transform(m);
+        }
+    }
+}

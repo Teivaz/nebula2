@@ -41,8 +41,7 @@ nMaxMesh::nMaxMesh() :
     beginSkin(false),
     isSkinned(false),
     isPhysique(false),
-    meshType (Shape)/*,
-    shapeNode(0)*/
+    meshType (Shape)
 {
     vertexFlag = VertexNormal | VertexColor | VertexUvs;
 }
@@ -448,7 +447,9 @@ nSceneNode* nMaxMesh::Export(INode* inode)
      
         nString nodename(inode->GetName());
 
-        //FIXME: in case of the shadow node, add '_shadow' postfix.
+        this->nodeName = inode->GetName();
+
+        // In case of the shadow node, add '_shadow' postfix.
         if (this->meshType == Shadow)
             nodename += "_shadow";
 
@@ -474,7 +475,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
             GetMaterial(inode, (nShapeNode*)createdNode, 0);
 
         // save mesh file and specifies it to the shape node.
-        SetMeshFile((nShapeNode*)createdNode, nodename);
+        SetMeshFile(createdNode);
     }
     else
     {
@@ -540,7 +541,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
                 GetMaterial(inode, (nShapeNode*)createdNode, matIdx);
 
             // save mesh file and specifies it to the shape node.
-            SetMeshFile((nShapeNode*)createdNode, nodename);
+            SetMeshFile(createdNode);
             
             // set cwd to the parent to put the shape in the same hierarchy.
             // (cause all these shapes belong to same mesh)
@@ -1281,15 +1282,19 @@ void nMaxMesh::SetBaseGroupIndex(int baseGroupIndex)
                      The face that nshadownode and nshapenode is not derived 
                      from the same parent, ugly type casting was needed. Better idea?
 */
-void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName)
+void nMaxMesh::SetMeshFile(nSceneNode* createdNode)
 {
     if (createdNode)
     {
         // specify shape node's name.
         nString meshname, meshFileName;
+        //nString meshFileName;
 
         // use a scene name for a mesh name.
-        meshname = nMaxOptions::Instance()->GetSaveFileName(); 
+        if (IsSkinned() ||  IsPhysique())
+            meshname = nMaxOptions::Instance()->GetSaveFileName();
+        else
+            meshname = this->nodeName;
 
         meshFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Mesh, this->meshPath, meshname);
         meshFileName += nMaxOptions::Instance()->GetMeshFileType();
@@ -1311,94 +1316,6 @@ void nMaxMesh::SetMeshFile(nSceneNode* createdNode, nString &nodeName)
         {
             nShapeNode* shapeNode = static_cast<nShapeNode*>(createdNode);
             shapeNode->SetMesh(meshFileName.Get());
-        }
-    }
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Build tangents for the given mesh.
-
-    Triangle normals, tangents and binormals will be built for the mesh. If vertex
-    are not present, they are built from the triangle normals.
-
-    Be sure that the given mesh has uv0 texture coordinate.
-
-    @param meshBuilder input to build its tangents.
-    @return true, if it success.
-*/
-bool nMaxMesh::BuildMeshTangentNormals(nMeshBuilder &meshBuilder)
-{
-    const nMeshBuilder::Vertex& v = meshBuilder.GetVertexAt(0);
-
-    if (nMaxOptions::Instance()->ExportNormals() || nMaxOptions::Instance()->ExportTangents())
-    {
-        // build triangle normals, vertex normals and tangents.
-        n_maxlog(Low, "Build tangents and normals...");
-
-        if (false == v.HasComponent(nMeshBuilder::Vertex::UV0))
-        {
-            n_maxlog(Error, "The tangents require a valid uv-mapping in texcoord layer 0.");
-            return false;
-        }
-        n_maxlog(Low, "  - Build triangle normals, tangents, and binormals...");
-        meshBuilder.BuildTriangleNormals();
-
-        if (false == v.HasComponent(nMeshBuilder::Vertex::NORMAL))
-        {
-            // build vertex normals by averaging triangle normals.
-            n_maxlog(Low, "  - Build vertex normals...");
-            meshBuilder.BuildVertexNormals();
-        }
-        if (nMaxOptions::Instance()->ExportTangents())
-        {
-            n_maxlog(Low, "  - Build vertex tangents...");
-            // XXX: One day, we may want to make this configurable so that blendshape export can pass false.
-            meshBuilder.BuildVertexTangents(true);
-        }
-        n_maxlog(Low, "Building mesh tangents and normals done.");
-    }
-    return true;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    Check the validation of the given mesh builder and put the error log to
-    log file if any of it exist.
-
-    @param meshBuilder the mesh builder which to check the geometry errors.
-    @param filename .n3d2 (or .nvx2) mesh file name which to be saved.
-*/
-void nMaxMesh::CheckGeometryErrors(nMeshBuilder& meshBuilder, const char* filename)
-{
-    nArray<nString> geomErrorMsgArray;
-    geomErrorMsgArray = meshBuilder.CheckForGeometryError();
-    if (geomErrorMsgArray.Size())
-    {
-        nString errlogfilename;
-        errlogfilename += nMaxOptions::Instance()->GetMeshesAssign();
-        errlogfilename += nMaxOptions::Instance()->GetSaveFileName();
-        errlogfilename += ".error";
-
-        n_maxlog(Warning, "Warning: The exported mesh file '%s' has geometry errors.", filename);
-        n_maxlog(Warning, "    - See the file '%s' for the details.", errlogfilename.Get());
-
-        nFile* errFile = nFileServer2::Instance()->NewFileObject();
-        if (errFile->Open(errlogfilename.Get(), "w"))
-        {
-            // put the geometry error message to log dialog.
-            for (int i=0; i<geomErrorMsgArray.Size(); i++)
-            {
-                errFile->PutS(geomErrorMsgArray[i].Get());
-            }
-
-            errFile->Close();
-            errFile->Release();
-        }
-        else
-        {
-            n_maxlog(Error, "Error: Failed to open error log file '%s for the geometry errrs.", errlogfilename.Get());
-            errFile->Release();
         }
     }
 }
