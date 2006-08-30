@@ -495,16 +495,16 @@ nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
         //       so we append the trailing shash to remove the first slash
         manglePath += "/";
         ret += path.Substitute(manglePath.Get(), "");
+        ret += "/";
     }
     else
     {
-        n_maxlog(Warning, "The file %s directory is not under %s.", 
+        n_maxlog(Warning, "A directory for the file %s is not specified. So it is exported to %s.", 
             fileName.ExtractFileName().Get(), assign.Get());
 
-        ret += assign;
+        ret += GetPathFromType(type);
     }
 
-    ret += "/";
     ret += fileName.ExtractFileName();
 
     return ret;
