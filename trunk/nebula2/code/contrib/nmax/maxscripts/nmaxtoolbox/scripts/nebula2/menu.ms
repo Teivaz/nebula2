@@ -132,24 +132,6 @@ tooltip:"Specify LOD Options"
 )
 
 ---------------------------------------------------------------------------------
--- macro script for 'Attachment Node' menu item.
----------------------------------------------------------------------------------
-macroScript NebulaToolBox_Attach
-category:"nmaxtoolbox" 
-buttonText:"Attachment Node"
-tooltip:"Specify Attachment Node Options" 
-( 	
-    include "nebula2/attach_fn.ms"
-    on execute do
-    (
-        nAddAttachCustomAttributes()
-
-        -- Sets Modify command mode activate.
-        max modify mode
-    )
-)
-
----------------------------------------------------------------------------------
 -- macro script for 'Animation' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_Animation
@@ -291,7 +273,6 @@ fn AddMenu =
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_MeshOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_AnimOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_LOD" "nmaxtoolbox")
-        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Attach" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())	
 
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_TerrainEditor" "nmaxtoolbox")
