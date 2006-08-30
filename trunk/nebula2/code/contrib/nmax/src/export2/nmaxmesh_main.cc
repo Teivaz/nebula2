@@ -24,7 +24,6 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 #include "tinyxml/tinyxml.h"
-#include "scene/nattachmentnode.h"
 #include "scene/nskinshapenode.h"
 #include "scene/nshadowskinshapenode.h"
 #include "scene/nshadownode.h"

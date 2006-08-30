@@ -13,7 +13,6 @@
 
 #include "scene/ntransformnode.h"
 #include "scene/nlodnode.h"
-#include "scene/nattachmentnode.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -96,11 +95,6 @@ nSceneNode*  nMaxDummy::CreateNodeFromCustAttrib(INode* inode)
         createdNode = ExportLODNode(inode, xmlHandle, "LodParam");
     }
     else
-    if (e = xmlHandle.FirstChild("AttachParam").Element())
-    {
-        createdNode = ExportAttachmentNode(inode, xmlHandle, "AttachParam");
-    }
-    else
     {
         // the given node has unknown custom attribute.
         n_maxlog(Warning, "Warning: The dummy node '%s' has unknown custom attributes.", inode->GetName());
@@ -158,66 +152,4 @@ nSceneNode* nMaxDummy::ExportLODNode(INode *inode, TiXmlHandle &xmlHandle, const
     }
 
     return lodNode;
-}
-
-//-----------------------------------------------------------------------------
-/**
-    The given node has custom attributes for attachment node so, create 
-    nAttachmentNode from its custom attributes.
-*/
-nSceneNode* nMaxDummy::ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName)
-{
-    nSceneNode* createdNode = NULL;
-
-    TiXmlElement* child;
-    if (child = xmlHandle.FirstChild(paramName).FirstChild("attachmentjoint").Child("", 0).Element())
-    {
-        nString boneName = child->Attribute("value");
-
-        if (!boneName.IsEmpty())
-        {
-            nString objectname;
-            objectname += nMaxUtil::CorrectName(inode->GetName());
-
-            nAttachmentNode* attachNode = static_cast<nAttachmentNode*>(CreateNebulaObject("nattachmentnode",
-                objectname.Get()));
-            if (attachNode)
-            {
-                INode* parent = inode->GetParentNode();
-                if (parent)
-                {
-
-                    int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
-                    if (boneID >= 0)
-                    {
-                        //specifies a joint of the attachment node.
-                        attachNode->SetJointByIndex(boneID);
-                    }
-                    else
-                    {
-                        n_maxlog(Warning, "Warning:  The attachment node %s should be child node of any other bone node.",
-                            inode->GetName());
-
-                        nKernelServer::Instance()->PopCwd();
-                        attachNode->Release();
-                    }
-                }
-                else
-                {
-                    n_maxlog(Medium, "The attachment node %s has no parent node. It is deleted.", inode->GetName());
-
-                    nKernelServer::Instance()->PopCwd();
-                    attachNode->Release();
-                    attachNode = 0;
-                }
-                createdNode = attachNode;
-            }
-        }
-        else
-        {
-            n_maxlog(Error, "Error: Any bone node is not selected. You should select one of the bones for joint of the attachment node '%s'.", inode->GetName());
-        }
-    }
-
-    return createdNode;
 }

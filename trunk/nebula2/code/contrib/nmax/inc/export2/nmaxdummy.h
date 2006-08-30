@@ -29,7 +29,6 @@ public:
 protected:
     nSceneNode* CreateNodeFromCustAttrib(INode* inode);
 
-    nSceneNode* ExportAttachmentNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName);
     nSceneNode* ExportLODNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName);
 
 protected:
