@@ -26,6 +26,7 @@ begintarget mangalore
         managers
         message
         msg
+        msg::ui
         navigation
         physics
         properties
@@ -34,7 +35,6 @@ begintarget mangalore
         util
         vfx
     }
-        #msg::ui
 endtarget
 
 begintarget mcegui

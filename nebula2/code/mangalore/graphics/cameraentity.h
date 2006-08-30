@@ -49,6 +49,8 @@ public:
     nCamera2& GetCamera();
     /// return the current view projection matrix
     const matrix44& GetViewProjection();
+    /// get the inverse transform (== view matrix)
+    const matrix44& GetView();
 
 private:
     /// update the view projection matrix
@@ -56,6 +58,7 @@ private:
 
     nCamera2 camera;            // the Nebula2 camera definition
     matrix44 viewProjMatrix;    // the current view projection matrix
+    matrix44 viewMatrix;        // the current view matrix
     bool viewProjDirty;         // dirty flag for view projection matrix
 };
 
@@ -73,7 +76,7 @@ CameraEntity::GetCamera()
 
 //------------------------------------------------------------------------------
 /**
-    Updates the view projection matrix and clears the viewProjDirty flag.
+    Updates the view and view projection matrix and clears the viewProjDirty flag.
 */
 inline
 void
@@ -81,8 +84,9 @@ CameraEntity::UpdateViewProjection()
 {
     n_assert(this->viewProjDirty);
     this->viewProjDirty = false;
-    this->viewProjMatrix = this->GetTransform();
-    this->viewProjMatrix.invert_simple();
+    this->viewMatrix = this->GetTransform();
+    this->viewMatrix.invert_simple();
+    this->viewProjMatrix = this->viewMatrix;
     this->viewProjMatrix *= this->camera.GetProjection();
 }
 

@@ -8,7 +8,7 @@
 
     (C) 2005 Radon Labs GmbH
 */
-#include "foundation/refcounted.h"
+#include "message/port.h"
 #include "foundation/ptr.h"
 #include "util/narray.h"
 #include "graphics/lightentity.h"
@@ -19,15 +19,19 @@ namespace Message
     class Port;
 }
 
+namespace Input
+{
+    class Mapping;
+}
+
 namespace UI
 {
-class UIEntity;
-class Canvas;
 class EventHandler;
 class FactoryManager;
 class Window;
+class Event;
 
-class Server : public Foundation::RefCounted
+class Server : public Message::Port
 {
     DeclareRtti;
 	DeclareFactory(Server);
@@ -48,15 +52,13 @@ public:
     /// return the active window (can return 0)
     Window* GetActiveWindow() const;
 
-    /// *** OBSOLETE *** create and display a user interface
-    void DisplayGui(const nString& resName, Message::Port* eventHandler);
-    /// *** OBSOLETE *** get pointer to currently displayed canvas, can be 0!
-    Canvas* GetToplevelCanvas() const;
-    /// *** OBSOLETE *** hide the current user interface
-    void HideGui();
+    /// listen to mouse inputs
+    virtual bool Accepts(Message::Msg* msg);
+    /// handle mouse inputs
+    virtual void HandleMessage(Message::Msg* msg);
 
     /// send a gui event to the UI
-    void PutEvent(const nString& eventName);
+    void PutEvent(Event* guiEvent);
     /// set current time
     void SetTime(nTime t);
     /// get current time
@@ -78,6 +80,12 @@ public:
     const vector2& GetMousePosition() const;
     /// is mouse over a UI element
     bool IsMouseOverGui() const;
+    /// convert a 2D screen space position into a position in view space
+    vector3 ScreenSpacePosToViewSpace(const vector2& screenSpacePos);
+    /// return the projection matrix used by gui elements
+    const matrix44& GetGuiProjectionMatrix() const;
+    /// return the inverse of the gui projection matrix
+    const matrix44& GetInvGuiProjectionMatrix() const;
 
 private:
     friend class Window;
@@ -97,13 +105,31 @@ private:
     Ptr<Graphics::LightEntity> lightEntity;
     nArray<Ptr<Window> > windows;
 
-    // *** OBSOLETE ***
-    Ptr<Canvas> curCanvas;              // pointer to current root GUI element
     Ptr<Message::Port> curEventHandler;  // pointer to current event handler
     bool inTrigger;
+    matrix44 guiProjMatrix;
+    matrix44 invGuiProjMatrix;
 };
 
-RegisterFactory(Server);
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const matrix44&
+Server::GetGuiProjectionMatrix() const
+{
+    return this->guiProjMatrix;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const matrix44&
+Server::GetInvGuiProjectionMatrix() const
+{
+    return this->invGuiProjMatrix;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -113,9 +139,14 @@ Window*
 Server::GetActiveWindow() const
 {
     // FIXME!
-    if (this->windows.Size() > 0)
+    // find the first valid window
+    int i;
+    for (i = 0; i < this->windows.Size(); i++)
     {
-        return this->windows[0];
+        if (this->windows[i].isvalid())
+        {
+            return this->windows[i];
+        }
     }
     return 0;
 }
@@ -139,16 +170,6 @@ Graphics::LightEntity*
 Server::GetLightEntity() const
 {
     return this->lightEntity;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-Canvas*
-Server::GetToplevelCanvas() const
-{
-    return this->curCanvas.get_unsafe();
 }
 
 //------------------------------------------------------------------------------

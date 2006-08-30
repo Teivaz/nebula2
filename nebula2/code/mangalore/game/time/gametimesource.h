@@ -24,6 +24,8 @@ public:
     virtual ~GameTimeSource();
     /// get instance pointer
     static GameTimeSource* Instance();
+    /// update current time (called by time manager)
+    virtual void UpdateTime(nTime frameTime);
 private:
     static GameTimeSource* Singleton;
 };

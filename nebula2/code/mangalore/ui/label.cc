@@ -25,4 +25,18 @@ Label::~Label()
     // empty
 }
 
+//------------------------------------------------------------------------------
+/**
+    Called before rendering happens. This updates the visibility of our
+    Nebula2 visual nodes.
+*/
+void
+Label::OnRender()
+{
+    // render only if element is visible
+    this->gfxNode->SetActive(this->IsVisible());
+
+    Element::OnRender();
+}
+
 } // namespace UI

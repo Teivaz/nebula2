@@ -8,38 +8,38 @@ beginmodule ui
         button
         canvas
         control
+        dragbox
+        dragboxdisplay
+        dynamiclabel
         element
         event
         eventhandler
         factorymanager
+        frame
         label
+        progressbarwindow
         server
+        textbutton
         window
         windoweventhandler
     }
-        #dragbox
-        #dragboxdisplay
-        #dynamiclabel
-        #frame
-        #progressbarwindow
-        #textbutton
     setfiles {
         button
         canvas
         control
+        dragbox
+        dragboxdisplay
+        dynamiclabel
         element
         event
         eventhandler
         factorymanager
+        frame
         label
+        progressbarwindow
         server
+        textbutton
         window
         windoweventhandler
     }
-        #dragbox
-        #dragboxdisplay
-        #dynamiclabel
-        #frame
-        #progressbarwindow
-        #textbutton
 endmodule

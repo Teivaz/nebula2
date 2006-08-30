@@ -29,4 +29,17 @@ GameTimeSource::~GameTimeSource()
     Singleton = 0;
 }
 
+
+//--------------------------------------------------------------------
+/**
+    Called by TimeManager when time is updated. This will update our
+    own time and distribute the time to all lowlevel subsystems.
+*/
+void
+GameTimeSource::UpdateTime(nTime fTime)
+{
+    // update own time
+    TimeSource::UpdateTime(fTime);
+}
+
 }; // namespace Game
