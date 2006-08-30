@@ -10,7 +10,8 @@
     @class nMaxDummy
     @ingroup NebulaMaxExport2Contrib
 
-    @brief
+    @brief A class for a dummy max object.
+
 */
 #include "export2/nmaxnode.h"
 #include "tinyxml/tinyxml.h"
