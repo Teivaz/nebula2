@@ -12,11 +12,13 @@
 #include "particle/nparticleserver2.h"
 #include "vfx/server.h"
 #include "managers/setupmanager.h"
+#include "managers/timemanager.h"
 
 namespace Application
 {
 ImplementRtti(Application::GuiStateHandler, Application::StateHandler);
 ImplementFactory(Application::GuiStateHandler);
+using namespace Managers;
 
 //------------------------------------------------------------------------------
 /**
@@ -53,7 +55,14 @@ GuiStateHandler::OnEvent(UI::Event* event)
 void
 GuiStateHandler::OnStateEnter(const nString& prevState)
 {
-    Managers::SetupManager::Instance()->SetupEmptyWorld();
+    // reset time
+    TimeManager::Instance()->ResetAll();
+    TimeManager::Instance()->Update();
+
+    // setup empty world
+    SetupManager::Instance()->SetupEmptyWorld();
+
+    // setup event handler
     this->eventHandler = GuiEventHandler::Create();
     this->eventHandler->SetGuiStateHandler(this);
     UI::Server::Instance()->DisplayGui(this->resName, this->eventHandler);
@@ -75,8 +84,11 @@ GuiStateHandler::OnStateLeave(const nString& nextState)
 #ifdef MANGALORE_USE_CEGUI
     CEUI::Server::Instance()->HideGui();
 #endif
+    // release event handler
     this->eventHandler = 0;
-    Managers::SetupManager::Instance()->CleanupWorld();
+
+    // cleanup world
+    SetupManager::Instance()->CleanupWorld();
 }
 
 //------------------------------------------------------------------------------
@@ -89,19 +101,8 @@ GuiStateHandler::OnFrame()
     nScriptServer* scriptServer = Foundation::Server::Instance()->GetScriptServer();
     bool running = true;
 
-    // distribute timestamps to interested subsystems
-    nTime time = App::Instance()->GetTime();
-    nTime frameTime = App::Instance()->GetFrameTime();
-    Input::Server::Instance()->SetTime(time);
-    VFX::Server::Instance()->SetTime(time);
-    Audio::Server::Instance()->SetTime(time);
-    UI::Server::Instance()->SetTime(time);
-    UI::Server::Instance()->SetFrameTime(frameTime);
-#ifdef MANGALORE_USE_CEGUI
-    CEUI::Server::Instance()->SetTime(time);
-    CEUI::Server::Instance()->SetFrameTime(frameTime);
-#endif
-    nGuiServer::Instance()->SetTime(time);
+    // let the time manager update its time
+    TimeManager::Instance()->Update();
 
     // trigger subsystem and Nebula servers
     nVideoServer::Instance()->Trigger();
@@ -113,6 +114,7 @@ GuiStateHandler::OnFrame()
     VFX::Server::Instance()->BeginScene();
     nParticleServer::Instance()->Trigger();
     nParticleServer2::Instance()->Trigger();
+    UI::Server::Instance()->Trigger();
 
     running &= Graphics::Server::Instance()->Trigger();
     if (Graphics::Server::Instance()->BeginRender())

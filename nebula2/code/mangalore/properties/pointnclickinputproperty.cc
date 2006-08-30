@@ -15,6 +15,7 @@
 #include "game/entity.h"
 #include "managers/envquerymanager.h"
 #include "managers/timemanager.h"
+#include "game/time/inputtimesource.h"
 
 namespace Properties
 {
@@ -96,7 +97,7 @@ PointNClickInputProperty::SendMoveGoto()
         GetEntity()->SendAsync(msg);
 
         // record the current time for the HandleLMBPressed() method
-        this->moveGotoTime = TimeManager::Instance()->GetTime();
+        this->moveGotoTime = InputTimeSource::Instance()->GetTime();
     }
 }
 
@@ -120,7 +121,7 @@ PointNClickInputProperty::OnLmbDown()
 void
 PointNClickInputProperty::OnLmbPressed()
 {
-    nTime curTime = TimeManager::Instance()->GetTime();
+    nTime curTime = InputTimeSource::Instance()->GetTime();
     if ((curTime - this->moveGotoTime) > 0.25f)
     {
         this->SendMoveGoto();

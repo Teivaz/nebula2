@@ -29,9 +29,14 @@ public:
     void SetPosition(const vector3& p);
     /// get the target position
     const vector3& GetPosition() const;
+    /// set the distance to target in which entity stops
+    void SetDistance(float f);
+    /// get the distance to target in which entity stops
+    float GetDistance() const;
 
 private:
     vector3 pos;
+    float distance;
 };
 
 RegisterFactory(MoveGoto);
@@ -40,7 +45,8 @@ RegisterFactory(MoveGoto);
 /**
 */
 inline
-MoveGoto::MoveGoto()
+MoveGoto::MoveGoto():
+    distance(0.5f)
 {
     // empty
 }
@@ -63,6 +69,25 @@ const vector3&
 MoveGoto::GetPosition() const
 {
     return this->pos;
+}
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+MoveGoto::SetDistance(float f)
+{
+    this->distance = f;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+MoveGoto::GetDistance() const
+{
+    return this->distance;
 }
 
 } // namespace Message

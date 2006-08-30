@@ -19,6 +19,7 @@
 #include "gfx2/nmesh2.h"
 #include "gfx2/ntexture2.h"
 #include "gfx2/nshader2.h"
+#include "kernel/nprofiler.h"
 
 //------------------------------------------------------------------------------
 namespace Application
@@ -59,7 +60,7 @@ public:
     void SetSaveGame(const nString& n);
     /// get save game name
     const nString& GetSaveGame() const;
-    /// configure followup state when Alt-F4 or Windows close button is pressed (default: App::Exit)
+    /// configure follow up state when Alt-F4 or Windows close button is pressed (default: App::Exit)
     void SetExitState(const nString& state);
     /// get Alt-F4 state
     const nString& GetExitState() const;
@@ -71,9 +72,6 @@ public:
     virtual nString OnFrame();
 
 protected:
-    /// update timestamps for subsystems
-    virtual void UpdateSubsystemTimes();
-
     SetupMode setupMode;
     nString exitState;
     nString dbName;
@@ -81,7 +79,11 @@ protected:
     nString saveGame;
     bool physicsVisualizationEnabled;
     bool graphicsVisualizationEnabled;
+    bool gameEntityVisualizationEnabled;
     bool fovVisualization;
+    PROFILER_DECLARE(profCompleteFrame);
+    PROFILER_DECLARE(profParticleUpdates);
+    PROFILER_DECLARE(profRender);
 };
 
 RegisterFactory(GameStateHandler);

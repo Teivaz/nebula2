@@ -7,13 +7,14 @@
 #include "attr/attributes.h"
 #include "physics/server.h"
 #include "physics/level.h"
-#include "managers/timemanager.h"
+#include "game/time/gametimesource.h"
 #include "mathlib/polar.h"
 #include "graphics/server.h"
 #include "graphics/cameraentity.h"
 #include "managers/entitymanager.h"
 #include "navigation/server.h"
 #include "msg/movesetvelocity.h"
+#include "gfx2/ngfxserver2.h"
 
 namespace Properties
 {
@@ -29,9 +30,10 @@ using namespace Managers;
 */
 ActorPhysicsProperty::ActorPhysicsProperty() :
     followTargetDist(4.0f),
+    gotoTargetDist(0.2f),
     curGotoSegment(0),
     gotoTimeStamp(0.0),
-    headingGain(-4.0f),
+    headingGain(-6.0f),
     positionGain(-25.0f)
 {
     // empty
@@ -86,12 +88,12 @@ ActorPhysicsProperty::EnablePhysics()
     this->Stop();
 
     // initialize feedback loops for motion smoothing
-    nTime time = TimeManager::Instance()->GetTime();
+    nTime time = GameTimeSource::Instance()->GetTime();
     const matrix44& entityMatrix = GetEntity()->GetMatrix44(Attr::Transform);
-    this->smoothedPosition.Reset(time, 0.0001f, this->positionGain, entityMatrix.pos_component());
+    this->smoothedPosition.Reset(time, 0.001f, this->positionGain, entityMatrix.pos_component());
 
     polar2 headingAngle(entityMatrix.z_component());
-    this->smoothedHeading.Reset(time, 0.0001f, this->headingGain, headingAngle.rho);
+    this->smoothedHeading.Reset(time, 0.001f, this->headingGain, headingAngle.rho);
 
     // call parrent
     AbstractPhysicsProperty::EnablePhysics();
@@ -116,7 +118,7 @@ ActorPhysicsProperty::DisablePhysics()
     // cleanup resource
     this->charPhysicsEntity = 0;
 
-    // call parrent
+    // call parent
     AbstractPhysicsProperty::DisablePhysics();
 }
 
@@ -229,7 +231,7 @@ ActorPhysicsProperty::OnMoveAfter()
         this->smoothedHeading.SetGoal(headingAngles.rho);
 
         // evaluate the feedback loops
-        nTime time = TimeManager::Instance()->GetTime();
+            nTime time = GameTimeSource::Instance()->GetTime();
         this->smoothedPosition.Update(time);
         this->smoothedHeading.Update(time);
 
@@ -264,6 +266,7 @@ ActorPhysicsProperty::SendStop()
     Immediately stop the entity.
 
     26-Jan-06   floh    bugfix: also cancelled MoveFollow
+    14-Feb-06   nico    bugfix: now really cancelled MoveFollow ;)
 */
 void
 ActorPhysicsProperty::Stop()
@@ -271,6 +274,7 @@ ActorPhysicsProperty::Stop()
     this->charPhysicsEntity->SetDesiredVelocity(vector3(0.0f, 0.0f, 0.0f));
     this->gotoPath = 0;
     GetEntity()->SetBool(Attr::Moving, false);
+    GetEntity()->SetBool(Attr::Following, false);
     GetEntity()->SetVector3(Attr::VelocityVector, vector3(0.0f, 0.0f, 0.0f));
 }
 
@@ -311,9 +315,6 @@ void
 ActorPhysicsProperty::HandleMoveTurn(MoveTurn* msg)
 {
     n_assert(msg);
-
-    this->SendStop();
-
     vector3 dir = msg->GetDirection();
     if (msg->GetCameraRelative())
     {
@@ -357,8 +358,9 @@ ActorPhysicsProperty::HandleMoveGoto(MoveGoto* msg)
     const vector3& to = msg->GetPosition();
     this->gotoPath = Navigation::Server::Instance()->MakePath(from, to);
     this->curGotoSegment = 0;
+    this->gotoTargetDist = msg->GetDistance();
 
-    this->gotoTimeStamp = TimeManager::Instance()->GetTime();
+    this->gotoTimeStamp = GameTimeSource::Instance()->GetTime();
     GetEntity()->SetBool(Attr::Moving, true);
 }
 
@@ -371,6 +373,11 @@ ActorPhysicsProperty::HandleSetTransform(SetTransform* msg)
 {
     n_assert(msg);
     this->charPhysicsEntity->SetTransform(msg->GetMatrix());
+    // reset the feedback loops
+    nTime time = GameTimeSource::Instance()->GetTime();
+    this->smoothedPosition.Reset(time, 0.001f, this->positionGain, msg->GetMatrix().pos_component());
+    polar2 headingAngle(-msg->GetMatrix().z_component());
+    this->smoothedHeading.Reset(time, 0.001f, this->headingGain, headingAngle.rho);
 }
 
 //------------------------------------------------------------------------------
@@ -460,7 +467,7 @@ ActorPhysicsProperty::ContinueFollow()
     }
 
     // continue following target position if not stopped.
-    if ((this->gotoTimeStamp + 1.0) < TimeManager::Instance()->GetTime())
+    else if ((this->gotoTimeStamp + 1.0) < GameTimeSource::Instance()->GetTime())
     {
         // continue moving towards our target entity
 		Ptr<MoveGoto> moveGoto = MoveGoto::Create();
@@ -476,6 +483,28 @@ Physics::Entity*
 ActorPhysicsProperty::GetPhysicsEntity() const
 {
     return this->charPhysicsEntity;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Render a debug visualization of the current 3d navigation path.
+*/
+void
+ActorPhysicsProperty::OnRenderDebug()
+{
+    if (this->gotoPath.isvalid())
+    {
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
+        const nArray<vector3>& points = this->gotoPath->GetPoints();
+        int i;
+        for (i = 0; i < points.Size(); i++)
+        {
+            matrix44 m;
+            m.scale(vector3(0.1f, 0.1f, 0.1f));
+            m.translate(points[i] + vector3(0.0f, 0.1f, 0.0f));
+            gfxServer->DrawShape(nGfxServer2::Box, m, vector4(1.0f, 0.0f, 0.0f, 0.5f));
+        }
+    }
 }
 
 } // namespace Properties

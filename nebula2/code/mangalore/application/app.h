@@ -34,6 +34,13 @@
 #include "script/server.h"
 #include "tools/ncmdlineargs.h"
 #include "util/nstartupchecker.h"
+#include "managers/entitymanager.h"
+#include "managers/envquerymanager.h"
+#include "managers/factorymanager.h"
+#include "managers/focusmanager.h"
+#include "managers/savegamemanager.h"
+#include "managers/setupmanager.h"
+#include "managers/timemanager.h"
 
 #define MANGALORE_USE_CEGUI
 
@@ -73,6 +80,8 @@ public:
     virtual nString GetVendorName() const;
     /// return true if this is a pure fullscreen app (override in subclass)
     virtual bool GetForceFullscreen() const;
+    /// get path to startup.tcl
+    virtual nString GetStartupPath() const;
 
     /// get project directory
     const nString& GetProjectDirectory() const;
@@ -106,21 +115,6 @@ public:
     /// request a new state which will be applied at the end of the frame
     void RequestState(const nString& stateName);
 
-    /// get the current time
-    nTime GetTime() const;
-    /// get the current frame time
-    nTime GetFrameTime() const;
-    /// get the current state time
-    nTime GetStateTime() const;
-    /// set time factor
-    void SetTimeFactor(float f);
-    /// get time factor
-    float GetTimeFactor() const;
-    /// pause the game
-    virtual void SetPaused(bool b);
-    /// return paused state
-    bool IsPaused() const;
-
     /// start capturing
     void StartFrameCapture();
     /// stop capturing
@@ -139,6 +133,8 @@ protected:
     virtual void SetupFromCmdLineArgs();
     /// setup the application from a user profile
     virtual void SetupFromProfile();
+    /// setup the app's time sources (called by SetupGameSubsystem)
+    virtual void SetupTimeSources();
     /// setup the app's input mapping (called in SetupSubsystems())
     virtual void SetupDefaultInputMapping();
     /// setup the Game subsystem
@@ -157,8 +153,6 @@ protected:
     virtual void DoStateTransition();
     /// set an application state
     void SetState(const nString& s);
-    /// update times
-    void UpdateTimes();
     /// set project directory
     void SetProjectDirectory(const nString& dir);
     /// set display mode
@@ -193,6 +187,13 @@ protected:
 #endif
     Ptr<Script::Server> scriptServer;
 
+    Ptr<Managers::EntityManager> entityManager;
+    Ptr<Managers::EnvQueryManager> envQueryManager;
+    Ptr<Managers::FocusManager> focusManager;
+    Ptr<Managers::SaveGameManager> saveGameManager;
+    Ptr<Managers::SetupManager> setupManager;
+    Ptr<Managers::FactoryManager> factoryManager;
+
     nStartupChecker startupChecker;
     nCmdLineArgs cmdLineArgs;
     nString projDir;
@@ -204,16 +205,6 @@ protected:
     nDisplayMode2 displayMode;
     bool isOpen;
     bool isRunning;
-    bool isPaused;
-
-    nTime time;                         // current time
-    nTime stateTime;                    // time since in state
-    nTime frameTime;                    // current frame time
-    nTime pauseTime;                    // time stamp when pause has started
-    nTime stateTransitionTimeStamp;     // time stamp of last state transition
-    nTime lastRealTime;                 // last realtime stamp
-
-    float timeFactor;                   // the time factor, to slow down or speed up gametime
 
     nString requestedState;
     nString curState;
@@ -232,15 +223,6 @@ App::Instance()
     return App::Singleton;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-bool
-App::IsPaused() const
-{
-    return this->isPaused;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -354,57 +336,6 @@ App::GetStartupLevel() const
     return this->startupLevel;
 }
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTime
-App::GetTime() const
-{
-    return this->time;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTime
-App::GetFrameTime() const
-{
-    return this->frameTime;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTime
-App::GetStateTime() const
-{
-    return this->stateTime;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-float
-App::GetTimeFactor() const
-{
-    return this->timeFactor;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-App::SetTimeFactor(float f)
-{
-    if (f < 0.125f) f = 0.125f; // 1/8
-    else if (f > 4.0f) f = 4.0f;
-    this->timeFactor = f;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -494,6 +425,16 @@ const nCmdLineArgs&
 App::GetCmdLineArgs() const
 {
     return this->cmdLineArgs;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nString
+App::GetStartupPath() const
+{
+    return "";
 }
 
 };
