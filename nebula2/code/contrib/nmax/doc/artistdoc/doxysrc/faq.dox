@@ -83,5 +83,17 @@
       </dd>
     </dl>
 
+    <dl>
+      <dt><b>Q:</b> How can I export only selected objects?</dt>
+      <dd>
+        <b>A:</b> The nmaxtoolkit does not export the objects which are hidden. So you can export only selected 
+        objects by hidding objects which you don't want to be exported as followings:
+          -# Select what you want to export.
+          -# Invert that.
+          -# Hide selected objects.
+          -# Now, you have only objects what you want to export.
+          -# Export it! The nmaxtoolbox only exports visible objects.
+      </dd>
+    </dl>
 */
 
