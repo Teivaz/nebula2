@@ -36,6 +36,7 @@ class Target:
         self.frameworksMacOSX = []
         self.libsWin32DebugAll = [] # libsWin32Debug + libsWin32
         self.libsWin32ReleaseAll = [] # libsWin32Release + libsWin32
+	self.PkgTarget = False
         # platforms this target can be built on
         self.platforms = {'win32'  : False,
                           'linux'  : False,
@@ -228,7 +229,9 @@ class Target:
                 pkgMods.append(curModule)
         # if there are no modules to put in the pkg no point going on
         if len(pkgMods) == 0:
+            self.PkgTarget = False
             return
+        self.PkgTarget = True
         # sort the collected modules by ancestor
         sortedMods = []
         # step 1: find modules without ancestors
