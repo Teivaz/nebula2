@@ -65,7 +65,13 @@ GuiStateHandler::OnStateEnter(const nString& prevState)
     // setup event handler
     this->eventHandler = GuiEventHandler::Create();
     this->eventHandler->SetGuiStateHandler(this);
-    UI::Server::Instance()->DisplayGui(this->resName, this->eventHandler);
+
+    // create window and attach event handler
+    this->window = UI::Window::Create();
+    this->window->SetResource(this->GetGuiResource());
+    this->window->SetEventHandler(this->eventHandler);
+    this->window->Open();
+
 #ifdef MANGALORE_USE_CEGUI
     CEUI::Server::Instance()->LoadWindowLayout(this->resName);
     CEUI::Server::Instance()->DisplayGui();
@@ -80,10 +86,14 @@ GuiStateHandler::OnStateEnter(const nString& prevState)
 void
 GuiStateHandler::OnStateLeave(const nString& nextState)
 {
-    UI::Server::Instance()->HideGui();
 #ifdef MANGALORE_USE_CEGUI
     CEUI::Server::Instance()->HideGui();
 #endif
+
+    // release window
+    this->window->Close();
+    this->window = 0;
+
     // release event handler
     this->eventHandler = 0;
 

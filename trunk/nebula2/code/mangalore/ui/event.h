@@ -13,6 +13,7 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
+#include "ui/element.h"
 
 //------------------------------------------------------------------------------
 namespace UI
@@ -30,9 +31,14 @@ public:
     void SetEventName(const nString& n);
     /// get event name
     const nString& GetEventName() const;
+    /// set pointer to element which emitted the event
+    void SetElement(Element* e);
+    /// get pointer to element which emitted the event
+    Element* GetElement() const;
 
 private:
     nString eventName;
+    Ptr<Element> element;
 };
 
 RegisterFactory(Event);
@@ -64,6 +70,26 @@ const nString&
 Event::GetEventName() const
 {
     return this->eventName;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Event::SetElement(Element* e)
+{
+    this->element = e;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+Element*
+Event::GetElement() const
+{
+    return this->element;
 }
 
 } // namespace UI

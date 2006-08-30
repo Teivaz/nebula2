@@ -9,7 +9,7 @@
 
     (C) 2005 Radon Labs GmbH
 */
-#include "foundation/refcounted.h"
+#include "message/port.h"
 #include "foundation/ptr.h"
 #include "input/ninputevent.h"
 #include "mathlib/rectangle.h"
@@ -18,7 +18,7 @@
 //------------------------------------------------------------------------------
 namespace UI
 {
-class Element : public Foundation::RefCounted
+class Element : public Message::Port
 {
     DeclareRtti;
 public:
@@ -34,6 +34,10 @@ public:
     void SetDismissed(bool b);
     /// get dismissed flag of the element
     bool IsDismissed() const;
+    /// set visible flag of the element
+    void SetVisible(bool b);
+    /// get visible flag of the element
+    bool IsVisible() const;
     /// set Nebula node associated with the element
     void SetGfxNode(nTransformNode* n);
     /// get Nebula node associated with the element
@@ -48,18 +52,18 @@ public:
     Element* FindElement(const nString& i);
     /// get pointer to parent element (can be 0)
     Element* GetParent() const;
+    /// get my own view space matrix
+    virtual matrix44 GetViewSpaceTransform() const;
+    /// set view space transform
+    virtual void SetViewSpaceTransform(const matrix44& m);
     /// get current screen space rectangle (0.0 .. 1.0)
     const rectangle& GetScreenSpaceRect() const;
     /// emit a gui event
     void PutEvent(const nString& eventName);
-    /// set optional tooltip string
-    void SetTooltip(const nString& tooltip);
-    /// get optional tooltip string
-    const nString& GetTooltip() const;
-    /// set delay until tooltip will be shown
-    void SetTooltipDelay(nTime delay);
-    /// get delay until tooltip will be shown
-    nTime GetTooltipDelay() const;
+    /// set user data
+    void SetUserData(void* d);
+    /// get user data
+    void* GetUserData() const;
 
     /// called when gui hierarchy is created
     virtual void OnCreate(Element* parent);
@@ -67,22 +71,7 @@ public:
     virtual void OnDestroy();
     /// return true if element is valid (between OnCreate() and OnDestroy())
     bool IsValid() const;
-    /// called when mouse is moved
-    virtual void OnMouseMove(const vector2& mousePos);
-    /// called when left mouse button is pressed over element
-    virtual void OnLeftButtonDown(const vector2& mousePos);
-    /// called when left mouse button is released over element
-    virtual void OnLeftButtonUp(const vector2& mousePos);
-    /// called when right mouse button is pressed over element
-    virtual void OnRightButtonDown(const vector2& mousePos);
-    /// called when right mouse button is released over element
-    virtual void OnRightButtonUp(const vector2& mousePos);
-    /// called when a character is input
-    virtual void OnChar(uchar charCode);
-    /// called when a key is pressed
-    virtual void OnKeyDown(nKey key);
-    /// called when a key is released
-    virtual void OnKeyUp(nKey key);
+
     /// called once per frame after input has been delivered
     virtual void OnFrame();
     /// called before the gui hierarchy is rendered
@@ -98,18 +87,35 @@ protected:
 protected:
     nString id;
     bool dismissed;
+    bool isVisible;
     rectangle screenSpaceRect;
     nClass* transformNodeClass;
     Element* parentElement;
     nRef<nTransformNode> gfxNode;
     nArray<Ptr<Element> > childElements;
-
-    nTime tooltipDelay;
-    nString tooltip;
-    nTime mouseWithinTime;
-    bool mouseWithin;
     bool isValid;
+    void* userData;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+Element::SetUserData(void* d)
+{
+    this->userData = d;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void*
+Element::GetUserData() const
+{
+    return this->userData;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -119,6 +125,16 @@ bool
 Element::IsValid() const
 {
     return this->isValid;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+Element::IsVisible() const
+{
+    return this->isVisible;
 }
 
 //------------------------------------------------------------------------------
@@ -204,48 +220,6 @@ Element::GetGfxNode() const
 {
     return this->gfxNode;
 }
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-Element::SetTooltip(const nString& tooltip)
-{
-    this->tooltip = tooltip;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-Element::GetTooltip() const
-{
-    return this->tooltip;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-Element::SetTooltipDelay(nTime delay)
-{
-    n_assert(delay >= 0.0);
-    this->tooltipDelay = delay;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nTime
-Element::GetTooltipDelay() const
-{
-    return this->tooltipDelay;
-}
-
 
 } // namespace UI
 //------------------------------------------------------------------------------

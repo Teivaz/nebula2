@@ -1,32 +1,29 @@
-#ifndef UI_LABEL_H
-#define UI_LABEL_H
+#ifndef UI_FRAME_H
+#define UI_FRAME_H
 //------------------------------------------------------------------------------
 /**
-    A simple GUI label.
+    @class UI::Frame
 
-    (C) 2005 Radon Labs GmbH
+    A frame is used to group UI elements together.
+
+    (C) 2006 Radon Labs GmbH
 */
 #include "ui/element.h"
 
 //------------------------------------------------------------------------------
 namespace UI
 {
-class Label : public Element
+class Frame : public Element
 {
     DeclareRtti;
-	DeclareFactory(Label);
-
+    DeclareFactory(Frame);
 public:
     /// constructor
-    Label();
+    Frame();
     /// destructor
-    virtual ~Label();
-    /// called before the gui hierarchy is rendered
-    virtual void OnRender();
+    virtual ~Frame();
 };
 
-RegisterFactory(Label);
-
-} // namespace UI
+};
 //------------------------------------------------------------------------------
 #endif

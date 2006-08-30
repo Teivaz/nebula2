@@ -326,10 +326,10 @@ void Server::DragDropSelect(const vector3& lookAt, float angleOfView, float aspe
         dragDropCameraEntity->SetTransform(transform);
         dragDropCameraEntity->SetCamera(camera);
 
-        this->curLevel->GetRootCell()->ClearLinks(Entity::SelectLink);
-        this->curLevel->GetRootCell()->UpdateLinks(dragDropCameraEntity, Entity::Shape, Entity::SelectLink);
-        for (int i = 0; i < dragDropCameraEntity->GetNumLinks(Entity::SelectLink); i++) {
-            entities.PushBack(dragDropCameraEntity->GetLinkAt(Entity::SelectLink, i));
+        this->curLevel->GetRootCell()->ClearLinks(Entity::PickupLink);
+        this->curLevel->GetRootCell()->UpdateLinks(dragDropCameraEntity, Entity::Shape, Entity::PickupLink);
+        for (int i = 0; i < dragDropCameraEntity->GetNumLinks(Entity::PickupLink); i++) {
+            entities.PushBack(dragDropCameraEntity->GetLinkAt(Entity::PickupLink, i));
         }
     }
 }

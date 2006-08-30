@@ -5,6 +5,7 @@
 #include "ui/element.h"
 #include "ui/factorymanager.h"
 #include "ui/server.h"
+#include "ui/event.h"
 
 namespace UI
 {
@@ -15,11 +16,10 @@ ImplementRtti(UI::Element, Foundation::RefCounted);
 */
 Element::Element() :
     dismissed(false),
+    isVisible(true),
     parentElement(0),
-    tooltipDelay(0.1),
-    mouseWithin(false),
-    mouseWithinTime(0.0),
-    isValid(false)
+    isValid(false),
+    userData(0)
 {
     this->transformNodeClass = nKernelServer::Instance()->FindClass("ntransformnode");
 }
@@ -126,10 +126,6 @@ Element::OnCreate(Element* parent)
             }
         }
     }
-
-    // send an initial mouse move (so that highlights etc... will be switched
-    // on if the mouse is already over the element)
-    this->OnMouseMove(Server::Instance()->GetMousePosition());
 }
 
 //------------------------------------------------------------------------------
@@ -139,145 +135,22 @@ Element::OnCreate(Element* parent)
 void
 Element::OnDestroy()
 {
-    n_assert(this->IsValid());
-
-    // destroy all children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
+    if (this->IsValid())
     {
-        this->childElements[i]->OnDestroy();
-    }
-    this->childElements.Clear();
+        // destroy all children
+        int i;
+        for (i = 0; i < this->childElements.Size(); i++)
+        {
+            this->childElements[i]->OnDestroy();
+        }
+        this->childElements.Clear();
 
-    // clear own parent pointer
-    this->parentElement = 0;
-    this->isValid = false;
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called when the mouse has been moved over the area
-    of the element (this is indicated by the Inside() method).
-*/
-void
-Element::OnMouseMove(const vector2& mousePos)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnMouseMove(mousePos);
+        // clear own parent pointer
+        this->parentElement = 0;
+        this->isValid = false;
     }
 }
 
-//------------------------------------------------------------------------------
-/**
-    This method is called when the left mouse button is pressed over the
-    element (this is indicated by the Inside() method.
-*/
-void
-Element::OnLeftButtonDown(const vector2& mousePos)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnLeftButtonDown(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called when the left mouse button is released over the
-    element (this is indicated by the Inside() method.
-*/
-void
-Element::OnLeftButtonUp(const vector2& mousePos)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnLeftButtonUp(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called when the left mouse button is pressed over the
-    element (this is indicated by the Inside() method.
-*/
-void
-Element::OnRightButtonDown(const vector2& mousePos)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnRightButtonDown(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called when the left mouse button is released over the
-    element (this is indicated by the Inside() method.
-*/
-void
-Element::OnRightButtonUp(const vector2& mousePos)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnRightButtonUp(mousePos);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called when a character has been input.
-*/
-void
-Element::OnChar(uchar charCode)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnChar(charCode);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called when a raw key has been pressed.
-*/
-void
-Element::OnKeyDown(nKey key)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnKeyDown(key);
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called when a raw key has been released.
-*/
-void
-Element::OnKeyUp(nKey key)
-{
-    // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
-    {
-        this->childElements[i]->OnKeyUp(key);
-    }
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -288,30 +161,13 @@ void
 Element::OnFrame()
 {
     // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
+    if (this->IsVisible())
     {
-        this->childElements[i]->OnFrame();
-    }
-
-    // activate tooltip after mouse was over element for a while
-    Server* uiServer = Server::Instance();
-    if (this->GetTooltip().IsValid() && this->Inside(uiServer->GetMousePosition()))
-    {
-        nTime time = uiServer->GetTime();
-        if(!this->mouseWithin)
+        int i;
+        for (i = 0; i < this->childElements.Size(); i++)
         {
-            this->mouseWithinTime = time;
-            this->mouseWithin = true;
+            this->childElements[i]->OnFrame();
         }
-        else if(time > this->mouseWithinTime + this->GetTooltipDelay())
-        {
-            uiServer->ShowToolTip(this->GetTooltip());
-        }
-    }
-    else
-    {
-        this->mouseWithin = false;
     }
 }
 
@@ -332,14 +188,11 @@ Element::OnRender()
 
 //------------------------------------------------------------------------------
 /**
-    Update the screen space rectangle. This gets the bounding box from
-    our Nebula2 node, resolves the hierarchy transforms, and transforms
-    the result to screen space.
+    Returns the view space transform of the element.
 */
-void
-Element::UpdateScreenSpaceRect()
+matrix44
+Element::GetViewSpaceTransform() const
 {
-    // compute flattened transformation matrix
     matrix44 m = this->gfxNode->GetTransform();
     nTransformNode* parentNode = (nTransformNode*) this->gfxNode->GetParent();
     while (parentNode && parentNode->IsA(this->transformNodeClass))
@@ -347,14 +200,46 @@ Element::UpdateScreenSpaceRect()
         m = m * parentNode->GetTransform();
         parentNode = (nTransformNode*) parentNode->GetParent();
     }
+    return m;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set the position of the element as view space transformation.
+*/
+void
+Element::SetViewSpaceTransform(const matrix44& m)
+{
+    // get the inverse exclusive matrix for moving the
+    // view space matrix into parent space
+    matrix44 invParent;
+    nTransformNode* parentNode = (nTransformNode*) this->gfxNode->GetParent();
+    while (parentNode && parentNode->IsA(this->transformNodeClass))
+    {
+        invParent = invParent * parentNode->GetTransform();
+        parentNode = (nTransformNode*) parentNode->GetParent();
+    }
+    invParent.invert_simple();
+    matrix44 localMatrix = m * invParent;
+    this->gfxNode->SetTransform(localMatrix);
+    this->UpdateScreenSpaceRect();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Update the screen space rectangle. This gets the bounding box from
+    our Nebula2 node, resolves the hierarchy transforms, and transforms
+    the result to screen space.
+*/
+void
+Element::UpdateScreenSpaceRect()
+{
+    // compute flattened transformation matrix, this is
+    matrix44 m = this->GetViewSpaceTransform();
 
     // multiply by orthogonal projection matrix, this must be the same
     // as used by the GUI shader!
-    const static matrix44 orthoProj(0.5f, 0.0f,    0.0f, 0.0f,
-                                    0.0f, 0.6667f, 0.0f, 0.0f,
-                                    0.0f, 0.0f,   -0.5f, 0.0f,
-                                    0.0f, 0.0f,    0.5f, 1.0f);
-    m = m * orthoProj;
+    m = m * Server::Instance()->GetGuiProjectionMatrix();
 
     // get local bounding box and transform to screen space
     bbox3 box = this->gfxNode->GetLocalBox();
@@ -381,7 +266,16 @@ Element::UpdateScreenSpaceRect()
 bool
 Element::Inside(const vector2& mousePos)
 {
-    return this->screenSpaceRect.inside(mousePos);
+    if (this->IsVisible() && this->IsValid())
+    {
+        // hmm, we could be animated...
+        this->UpdateScreenSpaceRect();
+        return this->screenSpaceRect.inside(mousePos);
+    }
+    else
+    {
+        return false;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -391,7 +285,28 @@ Element::Inside(const vector2& mousePos)
 void
 Element::PutEvent(const nString& eventName)
 {
-    Server::Instance()->PutEvent(eventName);
+    Ptr<Event> guiEvent = Event::Create();
+    guiEvent->SetEventName(eventName);
+    guiEvent->SetElement(this);
+    Server::Instance()->PutEvent(guiEvent);
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Element::SetVisible(bool b)
+{
+    this->isVisible = b;
+
+    // distribute to children
+    int i;
+    for (i = 0; i < this->childElements.Size(); i++)
+    {
+        this->childElements[i]->SetVisible(b);
+    }
+}
+
+
 
 } // namespace

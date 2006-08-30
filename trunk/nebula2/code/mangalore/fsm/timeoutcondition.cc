@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "fsm/timeoutcondition.h"
 
-#include "kernel/ntimeserver.h"
+#include "game/time/gametimesource.h"
 
 namespace FSM
 {
@@ -54,7 +54,7 @@ TimeOutCondition::SetTimeOut(nTime timeout)
 void
 TimeOutCondition::Reset()
 {
-    this->started = nTimeServer::Instance()->GetTime();
+    this->started = Game::GameTimeSource::Instance()->GetTime();
 }
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ TimeOutCondition::Reset()
 float
 TimeOutCondition::Check()
 {
-    return (nTimeServer::Instance()->GetTime() - this->started) > this->timeout
+    return (Game::GameTimeSource::Instance()->GetTime() - this->started) > this->timeout
         ? 1.0f
         : 0.0f;
 }

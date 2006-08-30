@@ -60,18 +60,18 @@ beginmodule msg
         #gfxsetvisible
 endmodule
 
-#beginmodule msg::ui
-#    setdir msg/ui
-#    setheaders {
-#        dragboxcancelled
-#        dragboxready
-#        dragboxstarted
-#        dragboxupdated
-#    }
-#    setfiles {
-#        dragboxcancelled
-#        dragboxready
-#        dragboxstarted
-#        dragboxupdated
-#    }
-#endmodule
+beginmodule msg::ui
+    setdir msg/ui
+    setheaders {
+        dragboxcancelled
+        dragboxready
+        dragboxstarted
+        dragboxupdated
+    }
+    setfiles {
+        dragboxcancelled
+        dragboxready
+        dragboxstarted
+        dragboxupdated
+    }
+endmodule
