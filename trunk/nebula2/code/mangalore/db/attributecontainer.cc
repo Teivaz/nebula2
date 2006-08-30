@@ -43,7 +43,7 @@ AttributeContainer::FindAttrIndex(const Attr::AttributeID& attrId) const
         {
             return i;
         }
-    } 
+    }
     return -1;
 }
 

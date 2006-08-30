@@ -13,7 +13,7 @@
 
 namespace Attr
 {
-    
+
 class Matrix44AttributeID : public AttributeID
 {
 public:
@@ -33,8 +33,8 @@ public:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator==(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
@@ -43,8 +43,8 @@ operator==(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator!=(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
@@ -53,7 +53,7 @@ operator!=(const Matrix44AttributeID& lhs, const Matrix44AttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 Matrix44AttributeID::Matrix44AttributeID(const _attridTyped<attr::Matrix44T>* aip) :
     AttributeID(aip)
 {
@@ -62,7 +62,7 @@ Matrix44AttributeID::Matrix44AttributeID(const _attridTyped<attr::Matrix44T>* ai
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 Matrix44AttributeID::Matrix44AttributeID() :
     AttributeID()
 {
@@ -73,11 +73,11 @@ Matrix44AttributeID::Matrix44AttributeID() :
     Gives the AttributeID "name".
     Will fail hard if AttributeID doesn't exist.
 */
-inline 
+inline
 Matrix44AttributeID::Matrix44AttributeID(const nString& name)
 {
     const Matrix44AttributeID& existingID = Matrix44AttributeID::FindMatrix44AttributeID(name);
-    
+
     if (!existingID.IsValid())
     {
         n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
@@ -89,7 +89,7 @@ Matrix44AttributeID::Matrix44AttributeID(const nString& name)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 Matrix44AttributeID::~Matrix44AttributeID()
 {
 }

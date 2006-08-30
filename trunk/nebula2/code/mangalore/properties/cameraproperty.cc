@@ -42,7 +42,7 @@ CameraProperty::~CameraProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     This property makes only sense for live entities.
 */
 int
@@ -92,7 +92,7 @@ CameraProperty::OnDeactivate()
 //------------------------------------------------------------------------------
 /**
     This method is called by the FocusManager when our entity gains the
-    camera focus. Override this method if your subclass needs to do 
+    camera focus. Override this method if your subclass needs to do
     some initialization when gaining the camera focus.
 */
 void
@@ -122,7 +122,7 @@ CameraProperty::OnLoseFocus()
 
 //------------------------------------------------------------------------------
 /**
-    This method returns true if our entity has the camera focus. This 
+    This method returns true if our entity has the camera focus. This
     implementation makes sure that 2 properties cannot report that they
     have the camera focus by accident.
 */

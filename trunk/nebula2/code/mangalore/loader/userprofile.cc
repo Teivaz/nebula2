@@ -168,6 +168,16 @@ UserProfile::Close()
     this->stream.Close();
 }
 
+//------------------------------------------------------------------------------
+/**
+    return true if attribute exists in the profile
+*/
+bool
+UserProfile::HasAttr(const nString& name) const
+{
+	return this->stream.HasAttr(name);
+}
+
 } // namespace Loader
 
 

@@ -26,7 +26,7 @@ void
 ShakeEffectHelper::Update()
 {
     // only update displace and tumble at some relatively low frame rate
-    // this prevents the shake effect from "flickering" if the 
+    // this prevents the shake effect from "flickering" if the
     // frame rate is very high
     nTime curTime = VFX::Server::Instance()->GetTime();
     if ((0.0 == this->lastTime) || ((curTime - this->lastTime) > 0.01))
@@ -34,14 +34,14 @@ ShakeEffectHelper::Update()
         this->lastTime = curTime;
 
         // compute a random displacement vector
-        this->curDisplace.set(((n_rand() * 2.0f) - 1.0f) * this->maxDisplacement.x, 
-                              ((n_rand() * 2.0f) - 1.0f) * this->maxDisplacement.y, 
+        this->curDisplace.set(((n_rand() * 2.0f) - 1.0f) * this->maxDisplacement.x,
+                              ((n_rand() * 2.0f) - 1.0f) * this->maxDisplacement.y,
                               ((n_rand() * 2.0f) - 1.0f) * this->maxDisplacement.z);
 
 
         // compute random tumble angles
-        this->curTumble.set(((n_rand() * 2.0f) - 1.0f) * this->maxTumble.x, 
-                            ((n_rand() * 2.0f) - 1.0f) * this->maxTumble.y, 
+        this->curTumble.set(((n_rand() * 2.0f) - 1.0f) * this->maxTumble.x,
+                            ((n_rand() * 2.0f) - 1.0f) * this->maxTumble.y,
                             ((n_rand() * 2.0f) - 1.0f) * this->maxTumble.z);
     }
 

@@ -2,14 +2,14 @@
 #define ATTR__ATTRID_TYPED_H
 //------------------------------------------------------------------------------
 /**
-    @brief Template class to add compile time type information to the _attrid 
+    @brief Template class to add compile time type information to the _attrid
            class
 
     Template class to add compile time type information to the _attrid class.
     while all type data is stored in the base class objects, functionality for
-    storing the objects in a global registry (one for each id type) is provided 
+    storing the objects in a global registry (one for each id type) is provided
     in here.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "attr/_attrid.h"
@@ -31,7 +31,7 @@ public:
 protected:
     /// default constructor is protected
     _attridTyped();
-    
+
     /// add the id to the (given) registry
     void AddToRegistry();
     /// remove the id from the (given) registry
@@ -42,7 +42,7 @@ protected:
 
 //------------------------------------------------------------------------------
 
-#define _DeclareAttribute( id, type )   extern const type id ## Data; extern const type* id 
+#define _DeclareAttribute( id, type )   extern const type id ## Data; extern const type* id
 
 #define _DefineAttribute( id, typeConstant, type )\
     const type id ## Data (#id, typeConstant, _attrid::Read|_attrid::Write);\
@@ -88,7 +88,7 @@ protected:
 /**
 */
 template <class _AttrIdType>
-_attridTyped<_AttrIdType>::_attridTyped() : 
+_attridTyped<_AttrIdType>::_attridTyped() :
     _attrid()
 {
     // empty
@@ -164,8 +164,8 @@ _attridTyped<_AttrIdType>::RemoveFromRegistry()
 //------------------------------------------------------------------------------
 /**
     Find an _id object by its name. Returns 0 if not found. This is a static
-    method. 
-    
+    method.
+
     FIXME: currently this is a slow method.
     NOTE:  implemented this way (with all registries in base class, template function) to
            let implementation reside in base class (here) and avoid type casts

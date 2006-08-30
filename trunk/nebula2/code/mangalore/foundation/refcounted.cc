@@ -15,7 +15,7 @@ ImplementRootRtti(Foundation::RefCounted);
 RefCounted::RefCounted() : refCount(0)
 {
     // add object to global ref counted list
-    Server::refCountedList.AddTail(this);    
+    Server::refCountedList.AddTail(this);
 }
 
 //------------------------------------------------------------------------------

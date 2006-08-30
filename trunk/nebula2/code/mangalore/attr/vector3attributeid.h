@@ -13,7 +13,7 @@
 
 namespace Attr
 {
-    
+
 class Vector3AttributeID : public AttributeID
 {
 public:
@@ -33,8 +33,8 @@ public:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator==(const Vector3AttributeID& lhs, const Vector3AttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
@@ -43,8 +43,8 @@ operator==(const Vector3AttributeID& lhs, const Vector3AttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator!=(const Vector3AttributeID& lhs, const Vector3AttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
@@ -53,7 +53,7 @@ operator!=(const Vector3AttributeID& lhs, const Vector3AttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 Vector3AttributeID::Vector3AttributeID(const _attridTyped<attr::Vector3T>* aip) :
     AttributeID(aip)
 {
@@ -62,7 +62,7 @@ Vector3AttributeID::Vector3AttributeID(const _attridTyped<attr::Vector3T>* aip) 
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 Vector3AttributeID::Vector3AttributeID() :
     AttributeID()
 {
@@ -73,11 +73,11 @@ Vector3AttributeID::Vector3AttributeID() :
     Gives the AttributeID "name".
     Will fail hard if AttributeID doesn't exist.
 */
-inline 
+inline
 Vector3AttributeID::Vector3AttributeID(const nString& name)
 {
     const Vector3AttributeID& existingID = Vector3AttributeID::FindVector3AttributeID(name);
-    
+
     if (!existingID.IsValid())
     {
         n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
@@ -89,7 +89,7 @@ Vector3AttributeID::Vector3AttributeID(const nString& name)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 Vector3AttributeID::~Vector3AttributeID()
 {
 }

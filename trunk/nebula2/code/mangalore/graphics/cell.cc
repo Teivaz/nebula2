@@ -122,7 +122,7 @@ Cell::BeginChildCells(int num)
 {
     n_assert(num > 0);
     n_assert(0 == this->childCellArray.Size());
-    
+
     this->childCellArray.SetSize(num);
     int i;
     for (i = 0; i < num; i++)
@@ -169,7 +169,7 @@ Cell::EndChildCells()
 
 //------------------------------------------------------------------------------
 /**
-    Attach a graphics entity to the cell. The refcount of the entity 
+    Attach a graphics entity to the cell. The refcount of the entity
     will be incremented.
 */
 void
@@ -212,12 +212,12 @@ Cell::RemoveEntity(Entity* entity)
     - starting from initial cell:
         - if the entity does not fit into the cell, move up the
           tree until the first cell is found which the entity completely fits into
-        - if the entity fits into a cell, check each child cell if the 
+        - if the entity fits into a cell, check each child cell if the
           entity fits completely into the cell
 
-    The entity will not be attached! If the entity does not fit into the 
+    The entity will not be attached! If the entity does not fit into the
     root cell, the root cell will be returned, not 0.
-    
+
     @param  entity      pointer of entity to find new cell for
     @return             cell which completely encloses the entity (the
                         root cell is an exception)
@@ -234,7 +234,7 @@ Cell::FindEntityContainmentCell(Entity* entity)
     while ((cell->GetParentCell() != 0) && (!cell->GetBox().contains(entityBox)))
     {
         cell = cell->GetParentCell();
-    } 
+    }
 
     // find smallest downward cell which completely contains the entity
     int cellIndex, numCells;
@@ -314,19 +314,19 @@ Cell::ClearLinks(Entity::LinkType linkType)
 
 //------------------------------------------------------------------------------
 /**
-    Recursively gather all entities of a given entity type which are 
-    visible by a observerEntity. A link will be established between the observer 
-    and observed entity. 
-    
+    Recursively gather all entities of a given entity type which are
+    visible by a observerEntity. A link will be established between the observer
+    and observed entity.
+
     This method is actually the core of the whole visibility detection!
 
     @param  observerEntity      the observer entity
     @param  observedType        the type of entities to consider
     @param  linkType            type of link that will be established
-    @param  clipStatus          the uplevel clip status 
+    @param  clipStatus          the uplevel clip status
 */
 void
-Cell::LinkVisibleEntities(Entity* observerEntity, 
+Cell::LinkVisibleEntities(Entity* observerEntity,
                           Entity::Type observedType,
                           Entity::LinkType linkType,
                           Entity::ClipStatus clipStatus)
@@ -349,7 +349,7 @@ Cell::LinkVisibleEntities(Entity* observerEntity,
         const bbox3& cellBox = this->GetBox();
         clipStatus = observerEntity->GetBoxClipStatus(cellBox);
     }
-    
+
     // if we are outside the view volume, return immediately since none
     // of our entities or child cells will be visible
     if (Entity::Outside == clipStatus)
@@ -395,7 +395,7 @@ Cell::LinkVisibleEntities(Entity* observerEntity,
             Entity* entity = observedPool[entityIndex];
             if (entity->GetVisible())
             {
-                // check against extruded shadow bounding box, 
+                // check against extruded shadow bounding box,
                 // or canonical bounding box, depending on link type
                 const bbox3* entityBox;
                 bool setRenderContextHints = false;

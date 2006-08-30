@@ -302,11 +302,11 @@ Shape::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
         contactPoint.SetPosition(contactPos);
         contactPoint.SetUpVector(contactNormal);
         contactPoint.SetMaterial(otherShape->GetMaterialType());
-        contactPoint.SetDepth(odeContact.depth);        
+        contactPoint.SetDepth(odeContact.depth);
         Entity* entity = otherShape->GetEntity();
         if (entity)
         {
-            contactPoint.SetEntityId(entity->GetUniqueId());            
+            contactPoint.SetEntityId(entity->GetUniqueId());
         }
         RigidBody* rigidBody = otherShape->GetRigidBody();
         if (rigidBody)

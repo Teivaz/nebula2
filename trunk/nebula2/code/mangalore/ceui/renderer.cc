@@ -71,7 +71,7 @@ void Renderer::destroyTexture(CEGUI::Texture* tex) {
     if (i != -1) {
         textures.Erase(i);
         n_delete(texture);
-    }    
+    }
 }
 
 //------------------------------------------------------------------------------

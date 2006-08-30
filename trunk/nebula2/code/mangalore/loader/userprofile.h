@@ -83,7 +83,7 @@ public:
     /// get vector4 attribute from the profile
     vector4 GetVector4(const nString& name) const;
 
-private:
+protected:
     bool isOpen;
     nString name;
     nStream stream;

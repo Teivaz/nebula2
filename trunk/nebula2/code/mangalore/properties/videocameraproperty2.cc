@@ -91,8 +91,8 @@ VideoCameraProperty2::OnObtainFocus()
     camera->GetCamera().SetAngleOfView(GetEntity()->GetFloat(Attr::FieldOfView));
     camera->GetCamera().SetAspectRatio(GetEntity()->GetFloat(Attr::FilmAspectRatio));
     camera->GetCamera().SetNearPlane(GetEntity()->GetFloat(Attr::NearClipPlane));
-    camera->GetCamera().SetFarPlane(GetEntity()->GetFloat(Attr::FarClipPlane)); 
-   
+    camera->GetCamera().SetFarPlane(GetEntity()->GetFloat(Attr::FarClipPlane));
+
     const matrix44 m = GetEntity()->GetMatrix44(Attr::ProjectionMatrix);
     camera->GetCamera().SetProjectionMatrix(m);
 
@@ -122,15 +122,15 @@ VideoCameraProperty2::OnRender()
            }
 
            // update the Maya camera
-           this->mayaCamera.Update();     
-    }  
+           this->mayaCamera.Update();
+    }
 
     if (FocusManager::Instance()->GetCameraFocusEntity() == GetEntity())
     {
         // update the graphics subsystem's camera transform
         Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
         n_assert(camera != 0);
-     
+
         if (GetEntity()->HasAttr(Attr::AnimPath) && GetEntity()->GetString(Attr::AnimPath).IsValid())
         {
             // entity is animated, use the entity's transform

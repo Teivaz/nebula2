@@ -48,7 +48,7 @@ EntityManager::~EntityManager()
 /**
     Attach a game entity to the entity manager. This means the entity is
     activated and added to the "world". The entity will be added to
-    the internal entity array, and the method OnActivate() will be 
+    the internal entity array, and the method OnActivate() will be
     invoked on the entity.
 */
 void
@@ -63,7 +63,7 @@ EntityManager::AttachEntity(Entity* entity)
 //------------------------------------------------------------------------------
 /**
     Remove a game entity from the entity manager. This basically removes
-    the entity from the world. This invokes the method OnDeactivate() on the 
+    the entity from the world. This invokes the method OnDeactivate() on the
     entity and removes the entity from internal arrays.
 */
 void
@@ -122,7 +122,7 @@ EntityManager::GetEntities() const
 
 //------------------------------------------------------------------------------
 /**
-    Find entity by its unique id. Returns 0 is not attached to the 
+    Find entity by its unique id. Returns 0 is not attached to the
     entity manager. This method will never return a sleeping entity.
 */
 Entity*
@@ -213,7 +213,7 @@ EntityManager::FindEntitiesByAttr(const Db::Attribute& attr)
     for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
     {
         Entity* entity = this->GetEntityAt(entityIndex);
-        if (entity->HasAttr(attr.GetAttributeID()) && 
+        if (entity->HasAttr(attr.GetAttributeID()) &&
             (entity->GetAttr(attr.GetAttributeID()) == attr) &&
             entity->GetEntityPool() == Entity::LivePool)
         {

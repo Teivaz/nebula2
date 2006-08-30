@@ -78,7 +78,7 @@ PathFinder::FindPath(const vector3& start, const vector3& target)
 
     n_assert(startNode >= 0 && startNode < this->map->nodes.Size());
     n_assert(targetNode >= 0 && targetNode < this->map->nodes.Size());
-    
+
     // prepare for search
     this->PrepareSearch(target);
     this->AddCandidate(startNode, 0.0f);
@@ -145,7 +145,7 @@ PathFinder::FindPath(const vector3& start, const vector3& target)
     }
 
     // build path over navigation mesh
-    // note that the path on the mesh is reversed, so appending elements 
+    // note that the path on the mesh is reversed, so appending elements
     // from target to start is actually the right order
     vector3 prev;
     prev = start;

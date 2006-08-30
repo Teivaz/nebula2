@@ -23,6 +23,7 @@ Server::Server() :
 {
     n_assert(Singleton == 0);
     Singleton = this;
+    PROFILER_INIT(this->profNavMakePath, "profMangaNavMakePath");
 }
 
 //------------------------------------------------------------------------------
@@ -66,13 +67,33 @@ Server::Close()
 
 //------------------------------------------------------------------------------
 /**
+    Call once at beginning of frame.
+*/
+void
+Server::OnBeginFrame()
+{
+    PROFILER_RESET(this->profNavMakePath);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Call once at end of frame.
+*/
+void
+Server::OnEndFrame()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 Path3D*
-Server::MakePath(const vector3& a, const vector3& b) const
+Server::MakePath(const vector3& a, const vector3& b)
 {
+    PROFILER_STARTACCUM(this->profNavMakePath);
     Path3D* result = 0;
     PathFinder pathFinder;
-    
     if (this->map.isvalid())
     {
         pathFinder.SetMap(this->map);
@@ -85,6 +106,7 @@ Server::MakePath(const vector3& a, const vector3& b) const
         result->Extend(a);
         result->Extend(b);
     }
+    PROFILER_STOPACCUM(this->profNavMakePath);
     return result;
 }
 
@@ -142,7 +164,7 @@ Server::AddCoverPoint(const CoverPoint& coverPoint)
 //------------------------------------------------------------------------------
 /**
 */
-CoverPoint* 
+CoverPoint*
 Server::FindCoverPoint(const vector3& position, const vector3& enemy, float range) const
 {
     CoverPoint* bestCover = 0;

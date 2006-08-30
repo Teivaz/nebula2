@@ -69,11 +69,11 @@ Entity::CleanupProperties()
     This method loads the entity attributes from the world database
     and attaches them to the entity. To identify the entity in the database,
     a valid GUID attribute must be attached to the entity.
-    Existing attributes will be overwritten (if they are in the database) or 
-    left untouched (if they are not in the database). To implement post-loading 
-    initialization actions, please be aware of the Entity::OnLoad(), 
-    Property::OnLoad() and Manager::OnLoad() methods. These methods are called 
-    after all entities have been loaded (this is important if entity need other 
+    Existing attributes will be overwritten (if they are in the database) or
+    left untouched (if they are not in the database). To implement post-loading
+    initialization actions, please be aware of the Entity::OnLoad(),
+    Property::OnLoad() and Manager::OnLoad() methods. These methods are called
+    after all entities have been loaded (this is important if entity need other
     entities for their setup).
 */
 void
@@ -97,7 +97,7 @@ Entity::LoadAttributesFromDatabase()
     Entity without a GUID will simply not be saved. If an entry with this
     GUID already exists in the world database, it will be overwritten with
     the new attribute values, otherwise a new entry will be created in the
-    world database. New attribute columns in the world database are created 
+    world database. New attribute columns in the world database are created
     as expected.
 
     If the entity was created from template force to save all attributes once.
@@ -203,7 +203,7 @@ Entity::OnMoveAfter()
 /**
     Called on game entities before rendering.
 */
-void 
+void
 Entity::OnRender()
 {
     n_assert(LivePool == this->entityPool);
@@ -223,7 +223,7 @@ Entity::OnRender()
     database. At the time when this method is called all entities
     in the world have already been created and their attributes have been
     loaded from the database.
-    
+
     This method reads the entity attributes from the world database. A
     valid GUID attribute must exist on the entity for identification in
     the database. After the attributes are loaded from the world database,
@@ -245,7 +245,7 @@ Entity::OnLoad()
 /**
     This method writes the current entity attributes back to the world database.
     At least a valid GUID attribute must exist on the entity for
-    identification. If no entry exists yet in the database for the 
+    identification. If no entry exists yet in the database for the
     entity, a new one will be created. Before the attributes are written back
     to the database, the method Property::OnSave() will be called on each
     attached property.
@@ -269,7 +269,7 @@ void
 Entity::AttachProperty(Property* prop)
 {
     n_assert(0 != prop);
-    
+
     // only add the entity if it is compatible with our entity pool
     if (prop->GetActiveEntityPools() & this->GetEntityPool())
     {
@@ -281,7 +281,7 @@ Entity::AttachProperty(Property* prop)
 
 //------------------------------------------------------------------------------
 /**
-    Remove a property from the entity. If the property is not attached to the entity, 
+    Remove a property from the entity. If the property is not attached to the entity,
     a hard error will be thrown.
 */
 void

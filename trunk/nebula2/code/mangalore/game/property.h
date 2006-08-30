@@ -14,7 +14,6 @@
     (C) 2006 RadonLabs GmbH
 */
 #include "message/port.h"
-#include "util/nstream.h"
 #include "message/msg.h"
 
 //------------------------------------------------------------------------------
@@ -33,6 +32,8 @@ public:
 
     /// return mask of entity pool flags where this property is active
     virtual int GetActiveEntityPools() const;
+    /// returns whether this property should be attached to entities in the given state
+    virtual bool IsActiveInState(const nString& state) const;
     /// setup default entity attributes
     virtual void SetupDefaultAttributes();
     /// called from Entity::ActivateProperties()
@@ -43,6 +44,8 @@ public:
     bool IsActive() const;
     /// called from within Entity::Load() after attributes are loaded
     virtual void OnLoad();
+    /// called from within Entity::OnStart() after OnLoad when the complete world exist
+    virtual void OnStart();
     /// called from within Entity::Save() before attributes are saved back to database
     virtual void OnSave();
     /// called at the start of a frame
@@ -53,7 +56,9 @@ public:
     virtual void OnMoveAfter();
     /// called before rendering happens
     virtual void OnRender();
-    /// return true if message is accepted by controller
+    /// called before rendering happens
+    virtual void OnRenderDebug();
+    /// return true if message is accepted by a property
     virtual bool Accepts(Message::Msg* msg);
     /// handle a single message
     virtual void HandleMessage(Message::Msg* msg);

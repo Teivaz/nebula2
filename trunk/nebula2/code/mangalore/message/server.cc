@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  message/server.cc
-//  (C) 2003 RadonLabs GmbH
+//  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "message/server.h"
 #include "message/port.h"
@@ -17,7 +17,8 @@ Server* Server::Singleton = 0;
 */
 Server::Server() :
     isOpen(false),
-    portArray(1024, 1024)
+    portArray(1024, 1024),
+    broadcastLockCount(0)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -68,6 +69,23 @@ Server::RegisterPort(Port* port)
 {
     n_assert(port);
     n_assert(0 == this->portArray.Find(port));
+
+    // try to cleanup
+    this->CleanupEmptyPorts();
+
+    // check if there is a free ptr that could be used
+    int i;
+    int num = this->portArray.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (this->portArray[i] == 0)
+        {
+            // use free element
+            this->portArray[i] = port;
+            return;
+        }
+    }
+
     this->portArray.Append(port);
 }
 
@@ -75,6 +93,10 @@ Server::RegisterPort(Port* port)
 /**
     Unregister a message port from the server. The port will no longer
     receive broadcast messages.
+
+    Do not delete the array element, just set to 0. This makes it possible
+    that while broadcasting, one of the ports could be removed without invalidating
+    the loop over the array.
 
     @param  port    pointer to a registered Port object
 */
@@ -84,12 +106,16 @@ Server::UnregisterPort(Port* port)
     n_assert(port);
     nArray<Ptr<Port> >::iterator iter = this->portArray.Find(port);
     n_assert(iter);
-    this->portArray.Erase(iter);
+    // set ptr to 0
+    iter->operator =(0);
+
+    // try to cleanup
+    this->CleanupEmptyPorts();
 }
 
 //------------------------------------------------------------------------------
 /**
-    Send an asynchronous message to a specific message port. The port does not 
+    Send an asynchronous message to a specific message port. The port does not
     have to be registered with the server (although it can be). Asynchronous
     sending means, the message will be added to the port's message queue,
     and the message will be processed during the port's HandlePendingMessages()
@@ -114,17 +140,26 @@ Server::SendAsync(Port* port, Msg* msg)
 void
 Server::BroadcastAsync(Msg* msg)
 {
+    // lock array
+    this->BeginBroadcast();
+
     int num = this->portArray.Size();
     int i;
     for (i = 0; i < num; i++)
     {
-        this->portArray[i]->Put(msg);
+        if (this->portArray[i] != 0)
+        {
+            this->portArray[i]->Put(msg);
+        }
     }
+
+    // unlock array
+    this->EndBroadcast();
 }
 
 //------------------------------------------------------------------------------
 /**
-    Send a synchronous message to a specific message port. The port does not 
+    Send a synchronous message to a specific message port. The port does not
     have to be registered with the server (although it can be). Synchronous
     sending means, the message will not be added to the port's message queue,
     instead the port's HandleMessage() method will be called directly.
@@ -151,16 +186,77 @@ Server::SendSync(Port* port, Msg* msg)
 void
 Server::BroadcastSync(Msg* msg)
 {
+    // lock array
+    this->BeginBroadcast();
+
     int num = this->portArray.Size();
     int i;
     for (i = 0; i < num; i++)
     {
-        Port* port = this->portArray[i];
-        if (port->Accepts(msg))
+        if (this->portArray[i] != 0)
         {
-            port->HandleMessage(msg);
+            Port* port = this->portArray[i];
+            if (port->Accepts(msg))
+            {
+                port->HandleMessage(msg);
+            }
         }
     }
+
+    // unlock array
+    this->EndBroadcast();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Server::CleanupEmptyPorts()
+{
+    if (!this->IsInBroadcast())
+    {
+        int i;
+        for (i = 0; i < this->portArray.Size(); /*empty*/)
+        {
+            if (this->portArray[i] == 0)
+            {
+                this->portArray.Erase(i);
+            }
+            else
+            {
+                // next
+                i++;
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Server::BeginBroadcast()
+{
+    this->broadcastLockCount++;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Server::EndBroadcast()
+{
+    n_assert(this->broadcastLockCount > 0);
+    this->broadcastLockCount--;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+Server::IsInBroadcast() const
+{
+    return (this->broadcastLockCount > 0);
 }
 
 } // namespace Message

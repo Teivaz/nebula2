@@ -20,7 +20,7 @@ nArray<ContactPoint>* Ray::contactsArray = 0;
 //------------------------------------------------------------------------------
 /**
 */
-Ray::Ray() : 
+Ray::Ray() :
     vec(0.0f, 1.0f, 0.0f)
 {
     // create an ODE ray

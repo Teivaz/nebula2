@@ -13,7 +13,7 @@
 
 namespace Attr
 {
-    
+
 class StringAttributeID : public AttributeID
 {
 public:
@@ -33,8 +33,8 @@ public:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator==(const StringAttributeID& lhs, const StringAttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
@@ -43,8 +43,8 @@ operator==(const StringAttributeID& lhs, const StringAttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator!=(const StringAttributeID& lhs, const StringAttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
@@ -53,7 +53,7 @@ operator!=(const StringAttributeID& lhs, const StringAttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 StringAttributeID::StringAttributeID(const _attridTyped<attr::StringT>* aip) :
     AttributeID(aip)
 {
@@ -62,7 +62,7 @@ StringAttributeID::StringAttributeID(const _attridTyped<attr::StringT>* aip) :
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 StringAttributeID::StringAttributeID() :
     AttributeID()
 {
@@ -73,11 +73,11 @@ StringAttributeID::StringAttributeID() :
     Gives the AttributeID "name".
     Will fail hard if AttributeID doesn't exist.
 */
-inline 
+inline
 StringAttributeID::StringAttributeID(const nString& name)
 {
     const StringAttributeID& existingID = StringAttributeID::FindStringAttributeID(name);
-    
+
     if (!existingID.IsValid())
     {
         n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
@@ -89,7 +89,7 @@ StringAttributeID::StringAttributeID(const nString& name)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 StringAttributeID::~StringAttributeID()
 {
 }

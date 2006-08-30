@@ -29,7 +29,7 @@ GuiEventHandler::~GuiEventHandler()
 
 //------------------------------------------------------------------------------
 /**
-    Handle a user interface event. This simply routes the event to our 
+    Handle a user interface event. This simply routes the event to our
     event handler.
 */
 void

@@ -35,7 +35,7 @@ WaveBank::~WaveBank()
 
 //------------------------------------------------------------------------------
 /**
-    This create a nSound3 object from a xml table row using the defined 
+    This create a nSound3 object from a xml table row using the defined
     file name column.
 */
 nSound3*
@@ -80,7 +80,7 @@ WaveBank::Open()
     int numRows = xmlTable.NumRows();
 	n_assert(numRows >= 1);
 	int numSounds = numRows - 1;
-    
+
     int soundIndex;
     for (soundIndex = 0; soundIndex < numSounds; soundIndex++)
     {
@@ -160,7 +160,7 @@ WaveBank::CreateResource(const nString& name)
 
 //------------------------------------------------------------------------------
 /**
-    Add wave resource to the wave bank. Increments refcount of the 
+    Add wave resource to the wave bank. Increments refcount of the
     wave resource.
 */
 void

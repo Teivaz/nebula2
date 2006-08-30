@@ -36,7 +36,7 @@ PhysicsGfxUtil::CreateGraphics(Physics::Entity* physicsEntity)
 /**
     Setup graphics entities created by CreateGraphics().
 */
-bool 
+bool
 PhysicsGfxUtil::SetupGraphics(const nString& resourceName, Physics::Entity* physicsEntity, const nArray<Ptr<Graphics::Entity> >& graphicsEntities)
 {
     n_assert(physicsEntity);
@@ -135,8 +135,8 @@ PhysicsGfxUtil::CreateCompositeGraphics(Physics::Composite* composite)
     composite's rigid bodies have no ModelNode links, the method will return false.
 */
 bool
-PhysicsGfxUtil::SetupCompositeGraphics(const nString& resourceName, 
-                                       Physics::Composite* composite, 
+PhysicsGfxUtil::SetupCompositeGraphics(const nString& resourceName,
+                                       Physics::Composite* composite,
                                        const nArray<Ptr<Graphics::Entity> >& graphicsEntities)
 {
     n_assert(resourceName.IsValid());
@@ -221,7 +221,7 @@ PhysicsGfxUtil::SetupCompositeGraphics(const nString& resourceName,
     from joint names into joint indices.
 */
 bool
-PhysicsGfxUtil::SetupRagdollGraphics(const nString& resourceName, 
+PhysicsGfxUtil::SetupRagdollGraphics(const nString& resourceName,
                                      Physics::Entity* physicsEntity,
                                      Graphics::CharEntity* graphicsEntity)
 {
@@ -231,7 +231,7 @@ PhysicsGfxUtil::SetupRagdollGraphics(const nString& resourceName,
     n_assert(graphicsLevel);
     Physics::Ragdoll* ragdoll = (Physics::Ragdoll*) physicsEntity->GetComposite();
     n_assert(ragdoll && ragdoll->IsA(Physics::Ragdoll::RTTI));
-    
+
     // first do the usual graphics entity setup stuff
     graphicsEntity->SetTransform(physicsEntity->GetTransform());
     graphicsEntity->SetResourceName(resourceName);
@@ -292,7 +292,7 @@ PhysicsGfxUtil::TransferRagdollTransforms(Physics::Entity* physicsEntity, Graphi
 
     // first position the graphics entity itself
     graphicsEntity->SetTransform(physicsEntity->GetTransform());
-    
+
     // then write joint positions to Nebula2 character
     Physics::Ragdoll* ragdoll = (Physics::Ragdoll*) physicsEntity->GetComposite();
     n_assert(ragdoll && ragdoll->IsA(Physics::Ragdoll::RTTI));

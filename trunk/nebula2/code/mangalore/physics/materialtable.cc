@@ -14,7 +14,7 @@ nArray<struct MaterialTable::interaction> MaterialTable::interactions;
 //------------------------------------------------------------------------------
 /**
     Materials used in ODE
-    
+
     Unit defintions are:
     Density:                t/m^3
     Force (MegaNewton):     t*m/s^2
@@ -24,12 +24,12 @@ nArray<struct MaterialTable::interaction> MaterialTable::interactions;
     Moment of force:        N*m
     Pressure (MegaPascal):  MN/m^2
     Weight (MegaNewton):    t*m/s^2
-    Work (MegaJoule):       MN*m 
+    Work (MegaJoule):       MN*m
     Energy (MegaJoule):     MN*m
 
     Note: I'm not really sure that this is right... ;-)
-*/      
-void 
+*/
+void
 MaterialTable::Setup()
 {
     nXmlSpreadSheet materialDb;
@@ -140,7 +140,7 @@ MaterialTable::MaterialTypeToString(MaterialType t)
 //------------------------------------------------------------------------------
 /**
 */
-MaterialType 
+MaterialType
 MaterialTable::StringToMaterialType(const char* str)
 {
     for (int i = 0; i < materialCount; ++i)
@@ -178,7 +178,7 @@ MaterialTable::GetFriction(MaterialType t0, MaterialType t1)
 //------------------------------------------------------------------------------
 /**
 */
-float 
+float
 MaterialTable::GetBounce(MaterialType t0, MaterialType t1)
 {
     n_assert(t0 >= 0 && t0 < materialCount);

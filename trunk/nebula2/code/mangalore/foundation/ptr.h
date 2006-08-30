@@ -44,7 +44,7 @@ public:
     TYPE& operator*() const;
     /// safe pointer cast operator
     operator TYPE*() const;
-    /// create instance 
+    /// create instance
     void create();
     /// check if pointer is valid
     bool isvalid() const;
@@ -61,7 +61,7 @@ private:
 /**
 */
 template<class TYPE>
-Ptr<TYPE>::Ptr() : 
+Ptr<TYPE>::Ptr() :
     ptr(0)
 {
     // empty
@@ -71,7 +71,7 @@ Ptr<TYPE>::Ptr() :
 /**
 */
 template<class TYPE>
-Ptr<TYPE>::Ptr(TYPE* p) : 
+Ptr<TYPE>::Ptr(TYPE* p) :
     ptr(p)
 {
     if (0 != this->ptr)
@@ -84,7 +84,7 @@ Ptr<TYPE>::Ptr(TYPE* p) :
 /**
 */
 template<class TYPE>
-Ptr<TYPE>::Ptr(const Ptr<TYPE>& p) : 
+Ptr<TYPE>::Ptr(const Ptr<TYPE>& p) :
     ptr(p.ptr)
 {
     if (0 != this->ptr)
@@ -218,7 +218,7 @@ Ptr<TYPE>::operator TYPE*() const
 /**
 */
 template<class TYPE>
-void 
+void
 Ptr<TYPE>::create()
 {
     n_assert(0 == this->ptr);
@@ -230,7 +230,7 @@ Ptr<TYPE>::create()
 /**
 */
 template<class TYPE>
-bool 
+bool
 Ptr<TYPE>::isvalid() const
 {
     return (0 != this->ptr);
@@ -262,5 +262,5 @@ Ptr<TYPE>::get_unsafe() const
 
 
 
-    
-    
+
+

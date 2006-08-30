@@ -38,7 +38,7 @@ int
 Echo::Execute(const Util::CmdLineArgs& args)
 {
     // FIXME: Fill me
-    Tcl_SetResult(((nTclServer *)(Foundation::Server::Instance()->GetScriptServer()))->GetInterp(), 
+    Tcl_SetResult(((nTclServer *)(Foundation::Server::Instance()->GetScriptServer()))->GetInterp(),
         "Dies ist ein Test !!!!!", TCL_STATIC);
     return true;
 }

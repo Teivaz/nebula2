@@ -44,7 +44,7 @@ MouseGripperProperty::~MouseGripperProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int
@@ -81,7 +81,7 @@ MouseGripperProperty::OnBeginFrame()
 void
 MouseGripperProperty::OnMoveBefore()
 {
-    Input::Server* inputServer = Input::Server::Instance(); 
+    Input::Server* inputServer = Input::Server::Instance();
     //get Mouse position
     SetMousePos(inputServer->GetMousePos());
 
@@ -172,7 +172,7 @@ MouseGripperProperty::CloseGrip()
         // already closed
         return;
     }
-    
+
     // check if we are over a physics entity
     if (this->contactPoint.GetEntityId() != 0)
     {
@@ -310,17 +310,17 @@ MouseGripperProperty::RenderDebug()
     gfxServer->DrawShape(nGfxServer2::Sphere, gripTransform, gripColor);
     gfxServer->EndShapes();
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     If grip closed around a valid rigid body, apply a force to the
-    rigid body which moves the body into the direction of the 
+    rigid body which moves the body into the direction of the
     mouse.
 */
 void
 MouseGripperProperty::UpdateGripForce()
 {
-   
+
     if (!this->gripOpen && (0 != this->contactPoint.GetRigidBodyId()))
     {
         Physics::RigidBody* rigidBody = this->GetRigidBodyFromContact();
@@ -364,7 +364,7 @@ MouseGripperProperty::OnRender()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 MouseGripperProperty::SetupDefaultAttributes()
 {
     GetEntity()->SetFloat(Attr::MaxDistance, 20.0f);

@@ -48,7 +48,7 @@ PostEffectProperty::~PostEffectProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int

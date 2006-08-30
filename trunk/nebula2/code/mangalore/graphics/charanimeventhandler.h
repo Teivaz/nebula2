@@ -5,7 +5,7 @@
     @class Graphics::CharAnimEventHandler
 
     An animation event handler for the Graphics::CharEntity class.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "anim2/nanimeventhandler.h"
@@ -64,4 +64,4 @@ CharAnimEventHandler::GetEntity() const
 };
 //------------------------------------------------------------------------------
 #endif
-    
+

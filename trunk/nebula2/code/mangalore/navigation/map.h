@@ -72,7 +72,7 @@ public:
     /// render debug visualization
     void RenderDebug();
 
-private:
+protected:
     void Connect(int node0, int node1);
 
     /// qsort hooks for sorting corners and edges

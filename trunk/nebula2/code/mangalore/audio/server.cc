@@ -58,7 +58,7 @@ Server::Open()
         n_error("Audio::Server::Open(): failed to open Nebula2 audio server!");
         return false;
     }
-    
+
     // make the default listener current
     this->SetListener(this->defaultListener);
 
@@ -77,15 +77,15 @@ void
 Server::Close()
 {
     n_assert(this->isOpen);
-    
+
     // unregister the sound fx handler
     Message::Server::Instance()->UnregisterPort(this->soundFxHandler);
 
     // remove all audio entities
     while (this->GetNumEntities() > 0)
     {
-        Entity* curEntity = this->GetEntityAt(this->GetNumEntities() - 1);  
-        this->RemoveEntity(curEntity);  
+        Entity* curEntity = this->GetEntityAt(this->GetNumEntities() - 1);
+        this->RemoveEntity(curEntity);
     }
 
     if (this->waveBank.isvalid())

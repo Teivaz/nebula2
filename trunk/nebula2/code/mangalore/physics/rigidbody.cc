@@ -88,7 +88,7 @@ RigidBody::EndShapes()
 
 //------------------------------------------------------------------------------
 /**
-    Attach the rigid body to the world and initialize its position. 
+    Attach the rigid body to the world and initialize its position.
     This will create an ODE rigid body object and create all associated shapes.
 */
 void
@@ -350,7 +350,7 @@ RigidBody::IsHorizontalCollided() const
     Set the body's current transformation in global space. Only translation
     and rotation is allowed (no scale or shear).
 
-    @param  m   the translate/rotate matrix    
+    @param  m   the translate/rotate matrix
 */
 void
 RigidBody::SetTransform(const matrix44& m)

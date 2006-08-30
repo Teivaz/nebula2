@@ -46,7 +46,7 @@ PathAnimProperty::~PathAnimProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int
@@ -215,7 +215,7 @@ PathAnimProperty::Rewind()
 
 //------------------------------------------------------------------------------
 /**
-    Handle animation playback. 
+    Handle animation playback.
 */
 void
 PathAnimProperty::UpdateAnimation()

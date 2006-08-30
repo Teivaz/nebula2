@@ -59,7 +59,7 @@ void
 Server::Close()
 {
     n_assert(this->isOpen);
-    
+
     // remove all managers
     int i;
     int num = this->managers.Size();

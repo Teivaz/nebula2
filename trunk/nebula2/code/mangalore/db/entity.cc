@@ -31,7 +31,7 @@ Entity::~Entity()
 //------------------------------------------------------------------------------
 /**
     This loads all attributes from the world database into the entity. Existing
-    attribute values will be overwritten with values from the db. If 
+    attribute values will be overwritten with values from the db. If
     existing attributes don't exist in the db, they won't be touched.
 */
 void
@@ -67,7 +67,7 @@ Entity::Save(bool saveAllAttributes)
         // get all storable attributes from the entity
         const nArray<Attribute>& attrArray = this->attrs.GetAttrs();
         nArray<Attribute> storableAttrs(32, 32);
-        
+
         int num = attrArray.Size();
         int i;
         for (i = 0; i < num; i++)

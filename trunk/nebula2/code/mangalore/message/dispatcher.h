@@ -26,7 +26,7 @@
     Handlers, no messages are kept in the Dispatcher object. Thus,
     a Dispatcher always appears as an empty message Port.
 
-    (C) 2003 RadonLabs GmbH
+    (C) 2005 RadonLabs GmbH
 */
 #include "foundation/ptr.h"
 #include "message/port.h"
@@ -53,8 +53,20 @@ public:
     /// remove a message port
     void RemovePort(Port* port);
 
+protected:
+    /// cleanup empty msg ports when not in handle message trigger
+    virtual void CleanupEmptyPorts();
+
+    /// begin handle message
+    void BeginHandleMessage();
+    /// is in handle message tigger
+    bool IsInHandleMessage() const;
+    /// end handle message
+    void EndHandleMessage();
 private:
     nArray<Ptr<Port> > portArray;
+    /// in the handle message trigger
+    int handleMsgLockCount;
 };
 
 RegisterFactory(Dispatcher);

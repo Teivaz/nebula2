@@ -5,8 +5,8 @@
     @class VFX::Effect
 
     A visual effect.
-    
-    (C) 2003 RadonLabs GmbH  
+
+    (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
 #include "foundation/ptr.h"

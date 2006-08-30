@@ -96,8 +96,8 @@ ContactPoint::Clear()
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 ContactPoint::SetPosition(const vector3& v)
 {
     position = v;
@@ -106,8 +106,8 @@ ContactPoint::SetPosition(const vector3& v)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-const vector3& 
+inline
+const vector3&
 ContactPoint::GetPosition() const
 {
     return position;
@@ -116,8 +116,8 @@ ContactPoint::GetPosition() const
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-void 
+inline
+void
 ContactPoint::SetUpVector(const vector3& v)
 {
     upVector = v;
@@ -126,8 +126,8 @@ ContactPoint::SetUpVector(const vector3& v)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-const vector3& 
+inline
+const vector3&
 ContactPoint::GetUpVector() const
 {
     return upVector;
@@ -140,7 +140,7 @@ inline
 float
 ContactPoint::GetDepth() const
 {
-    return this->depth;    
+    return this->depth;
 }
 
 //------------------------------------------------------------------------------

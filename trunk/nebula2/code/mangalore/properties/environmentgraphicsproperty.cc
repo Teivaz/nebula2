@@ -28,7 +28,7 @@ EnvironmentGraphicsProperty::~EnvironmentGraphicsProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int

@@ -4,7 +4,7 @@
 /**
     @class Foundation::Rtti
 
-    Implements the runtime type information system of Mangalore. Every class 
+    Implements the runtime type information system of Mangalore. Every class
     derived from RefCounted should define a static RTTI object which is initialized
     with a pointer to a static string containing the human readable name
     of the class, and a pointer to the static RTTI object of the

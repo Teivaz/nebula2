@@ -67,7 +67,7 @@ void
 ActorPhysicsProperty::EnablePhysics()
 {
     n_assert(!this->IsEnabled());
-    
+
     // create a char physics entity
 	this->charPhysicsEntity = Physics::CharEntity::Create();
     this->charPhysicsEntity->SetUserData(GetEntity()->GetUniqueId());
@@ -104,7 +104,7 @@ void
 ActorPhysicsProperty::DisablePhysics()
 {
     n_assert(this->IsEnabled());
-    
+
     // stop
     this->Stop();
 
@@ -140,7 +140,7 @@ ActorPhysicsProperty::Accepts(Message::Msg* msg)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 ActorPhysicsProperty::HandleMessage(Message::Msg* msg)
 {
     if (!this->IsEnabled())
@@ -188,7 +188,7 @@ ActorPhysicsProperty::HandleMessage(Message::Msg* msg)
 
 //------------------------------------------------------------------------------
 /**
-    The OnMoveBefore() method handles all pending messages, and other 
+    The OnMoveBefore() method handles all pending messages, and other
     per-frame-stuff that must happen before the physics subsystem is
     triggered.
 */
@@ -211,7 +211,7 @@ ActorPhysicsProperty::OnMoveBefore()
 
 //------------------------------------------------------------------------------
 /**
-    The OnMoveAfter() method transfers the current physics entity transform to 
+    The OnMoveAfter() method transfers the current physics entity transform to
     the game entity.
 */
 void
@@ -370,7 +370,7 @@ void
 ActorPhysicsProperty::HandleSetTransform(SetTransform* msg)
 {
     n_assert(msg);
-    this->charPhysicsEntity->SetTransform(msg->GetMatrix());   
+    this->charPhysicsEntity->SetTransform(msg->GetMatrix());
 }
 
 //------------------------------------------------------------------------------

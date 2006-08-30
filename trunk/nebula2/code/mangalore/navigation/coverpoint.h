@@ -45,7 +45,7 @@ public:
     void Claim();
     /// Release cover point
     void Release();
-    /// Check whether 
+    /// Check whether
     bool IsClaimed() const;
 
     // Check whether cover point provides cover against a give point of attack
@@ -155,7 +155,7 @@ CoverPoint::IsClaimed() const
 /**
 */
 inline
-bool 
+bool
 CoverPoint::ProvidesCoverAgainst(const vector3& attacker) const
 {
     polar2 attackAngle(attacker - this->position);

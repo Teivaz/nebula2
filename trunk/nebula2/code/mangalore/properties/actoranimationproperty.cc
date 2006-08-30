@@ -16,7 +16,7 @@ ImplementRtti(Properties::ActorAnimationProperty, Game::Property);
 ImplementFactory(Properties::ActorAnimationProperty);
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Animation is only active for live entities.
 */
 int
@@ -64,7 +64,7 @@ void
 ActorAnimationProperty::OnActivate()
 {
     Game::Property::OnActivate();
-    
+
     // by default go to idle animation
     this->RequestAnimation("Idle", "", 0.0f);
 }

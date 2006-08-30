@@ -11,7 +11,7 @@ ImplementRtti(Properties::AbstractGraphicsProperty, Game::Property);
 ImplementFactory(Properties::AbstractGraphicsProperty);
 
 //------------------------------------------------------------------------------
-/** 
+/**
 */
 AbstractGraphicsProperty::AbstractGraphicsProperty()
 {
@@ -19,7 +19,7 @@ AbstractGraphicsProperty::AbstractGraphicsProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
 */
 AbstractGraphicsProperty::~AbstractGraphicsProperty()
 {
@@ -27,7 +27,7 @@ AbstractGraphicsProperty::~AbstractGraphicsProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int

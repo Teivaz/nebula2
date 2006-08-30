@@ -13,7 +13,7 @@ ImplementFactory(Physics::HingeJoint);
 //------------------------------------------------------------------------------
 /**
 */
-HingeJoint::HingeJoint() : 
+HingeJoint::HingeJoint() :
     Joint(Joint::HingeJoint)
 {
     this->axisParams.SetAxis(vector3(0.0f, 1.0f, 0.0f));
@@ -29,7 +29,7 @@ HingeJoint::~HingeJoint()
 
 //------------------------------------------------------------------------------
 /**
-    NOTE: it is important that rigid bodies are added 
+    NOTE: it is important that rigid bodies are added
     (happens in Joint::Attach()) before joint transforms are set!!!
 */
 void
@@ -54,7 +54,7 @@ HingeJoint::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
     dJointSetHingeParam(this->odeJointId, dParamCFM, this->axisParams.GetCFM());
     dJointSetHingeParam(this->odeJointId, dParamStopERP, this->axisParams.GetStopERP());
     dJointSetHingeParam(this->odeJointId, dParamStopCFM, this->axisParams.GetStopCFM());
-    
+
     // hand to parent class
     Joint::Attach(worldID, groupID, m);
 
@@ -65,7 +65,7 @@ HingeJoint::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 HingeJoint::UpdateTransform(const matrix44& m)
 {
     vector3 p = m * this->GetAnchor();

@@ -13,7 +13,7 @@ ImplementFactory(Physics::SliderJoint);
 //------------------------------------------------------------------------------
 /**
 */
-SliderJoint::SliderJoint() : 
+SliderJoint::SliderJoint() :
     Joint(Joint::SliderJoint)
 {
     this->axisParams.SetAxis(vector3(1.0f, 0.0f, 0.0f));
@@ -29,7 +29,7 @@ SliderJoint::~SliderJoint()
 
 //------------------------------------------------------------------------------
 /**
-    NOTE: it is important that rigid bodies are added 
+    NOTE: it is important that rigid bodies are added
     (happens in Joint::Attach()) before joint transforms are set!!!
 */
 void
@@ -65,7 +65,7 @@ SliderJoint::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 SliderJoint::UpdateTransform(const matrix44& m)
 {
     matrix33 m33(m.x_component(), m.y_component(), m.z_component());
