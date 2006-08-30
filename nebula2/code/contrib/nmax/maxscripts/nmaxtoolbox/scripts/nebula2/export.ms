@@ -15,6 +15,11 @@
 ---------------------------------------------------------------------------------
 fn nExport = 
 (
+    include "nebula2/utilz.ms"
+
+    -- see if the scene has multiple objects which has same name.
+    nCheckObjectName()
+
     -- check the 3ds max system "dirty" flag.
     -- 'ture' if the scene needs to save.
     needSave = getSaveRequired()
