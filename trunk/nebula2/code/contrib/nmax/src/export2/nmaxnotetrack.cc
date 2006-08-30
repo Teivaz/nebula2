@@ -64,33 +64,19 @@ nMaxNoteTrack::~nMaxNoteTrack()
 
 //---------------------------------------------------------------------------
 /**
-    Extract note name.
-    e.g) get a word 'walk' with the given string, "walk : repeat".
-*/
-nString nMaxNoteTrack::ExtractNoteName(nString& rhs)
-{
-    nString tmp = rhs;
-    tmp.TrimRight(":");
-    return nMaxUtil::CorrectName(tmp);
-}
-
-//---------------------------------------------------------------------------
-/**
-    Extract loop type.
-    e.g) get a word 'repeat' with the given string, "walk : repeat".
-*/
-nString nMaxNoteTrack::ExtractLoopType(nString& rhs)
-{
-    nString tmp = rhs;
-    tmp.TrimLeft(":");
-    return nMaxUtil::CorrectName(tmp);
-}
-
-//---------------------------------------------------------------------------
-/**
     Collect note key from the given node and creates animation states.
-
     A note key is used for representing animation state.
+
+    The following presents a note key format:
+    @verbatim
+    loopName: loop-type 
+    duration: frame-count 
+    fadeintime: seconds-as-float 
+    @endverbatim
+    Note that ':' colon is used to separate a name and its value.
+
+    -30-Aug-06  kims  Changed the current format to support fade-in-time.
+                      Thank you bruce for the patch.
 
     -20-Feb-06  kims  Fixed to get correct index of ExtractRange().
                       Thanks Ivan Tivonenko for the patch.
@@ -116,48 +102,65 @@ void nMaxNoteTrack::GetAnimState(INode* inode)
             nString note = noteKey->note.data();
             if (!note.IsEmpty())
             {
-                int duration = 0;
-                nString strNote, strNoteName, strDuration, strLoopType;
+                int duration = -1;
+                float fadeInTime = 0.0f;
+                nString strNote, strNoteName, strDuration, strLoopType, strFadeInTime;
 
-                int idx = note.FindCharIndex('\n', 0);
-                if (idx > 0) // we have both note key and duration for the property
+                nArray<nString> noteLines;
+                note.Tokenize("\n", noteLines);
+                for (int i = 0; i < noteLines.Size(); i++)
                 {
-                    strNote = nMaxUtil::CorrectName(note.ExtractRange(0, idx));
-                    if (strNote.ContainsCharFromSet(":"))
+                    nString line = noteLines[i].Trim(" \r");
+                    nArray<nString> tokens;
+                    line.Tokenize(":", tokens);
+                    if (tokens.Size() > 1)
                     {
-                        strNoteName = this->ExtractNoteName(strNote);
-                        strLoopType = this->ExtractLoopType(strNote);
+                        nString key = tokens[0].Trim(" ");
+                        nString value = tokens[1].Trim(" ");
+                        key.ToLower();
+                        value.ToLower();
+                        if (i == 0)
+                        {
+                            // First line, will be the state name and loop type.
+                            strNoteName = tokens[0]; // Get the original token to maintain case.
+                            strLoopType = value;
+                        }
+                        else if (key == "duration")
+                        {
+                            strDuration = value;
+                            duration = value.AsInt();
+                        }
+                        else if (key == "fadeintime")
+                        {
+                            strFadeInTime = value;
+                            fadeInTime = value.AsFloat();
+                        }
                     }
-                    else
+                    else if (tokens.Size() == 1)
                     {
-                        strNoteName = strNote;
-                    }
-
-                    int durLen = note.Length() - idx - 1;
-                    if (durLen > 0) 
-                    {
-                        strDuration = nMaxUtil::CorrectName(note.ExtractRange(idx+1, durLen));
-                        duration = strDuration.AsInt();//duration = atoi(strDuration.Get());
-                    }
-
-                    if (duration <= 0)
-                    {
-                        duration = nextFrame - frame;
+                        // No value, just a key
+                        if (i == 0)
+                        {
+                            // First line, it'll be the name.
+                            strNoteName = line;
+                        }
+                        else
+                        {
+                            // Is it an int? Maybe it is the duration, but warn
+                            // about deprecated usage and suggest that they update
+                            // their data format.
+                            if (line.IsValidInt())
+                            {
+                                strDuration = line;
+                                duration = line.AsInt();
+                                n_maxlog(Warning, "Integer found alone on line %d of note on frame %d, assuming it is a duration.", i + 1, frame);
+                            }
+                        }
                     }
                 }
-                else // we only have note key name
-                {
-                    strNote = nMaxUtil::CorrectName(note);
-                    if (strNote.ContainsCharFromSet(":"))
-                    {
-                        strNoteName = this->ExtractNoteName(strNote);
-                        strLoopType = this->ExtractLoopType(strNote);
-                    }
-                    else
-                    {
-                        strNoteName = strNote;
-                    }
 
+                if (duration == -1)
+                {
                     duration = nextFrame - frame;
                 }
 
@@ -167,7 +170,7 @@ void nMaxNoteTrack::GetAnimState(INode* inode)
                 animState.name       = strNoteName;
                 animState.firstFrame = frame;
                 animState.duration   = duration;
-                animState.fadeInTime = 0.0f;
+                animState.fadeInTime = fadeInTime;
 
                 strLoopType.ToLower();
                 if (strLoopType == "repeat")
@@ -190,4 +193,5 @@ void nMaxNoteTrack::GetAnimState(INode* inode)
         }// end of for each key in note track.
     }// end of for each note track.
 }
+
 
