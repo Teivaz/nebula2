@@ -37,16 +37,16 @@ STR_SRC_FILE = '''\
                     <FileConfiguration Name="Debug|Win32">
                         <Tool
                             Name="VCCLCompilerTool"
-                            PreprocessorDefinitions="%(nebSyms)s"
+                            %(nebSymsStr)s
                             ObjectFile="$(IntDir)/%(objectName)s.obj"
-                            CompileAs="%(compileAsFlag)i"/>
+                            %(compileAsStr)s/>
                     </FileConfiguration>
                     <FileConfiguration Name="Release|Win32">
                         <Tool
                             Name="VCCLCompilerTool"
-                            PreprocessorDefinitions="%(nebSyms)s"
+                            %(nebSymsStr)s
                             ObjectFile="$(IntDir)/%(objectName)s.obj"
-                            CompileAs="%(compileAsFlag)i"/>
+                            %(compileAsStr)s/>
                     </FileConfiguration>
                 </File>
 '''
@@ -442,91 +442,76 @@ class vstudio8:
             projFile.write(STR_PROJ_CONFIG_TOOL_RES_COMPILER)
 
         projFile.write('        </Configuration>\n')
+	
+    #--------------------------------------------------------------------------
+    def writeModuleFiles(self, target, module, projFile):
+        compileAsFlag = 0
+        compileAsStr = ''
+        if 'c' == module.modType:
+            compileAsFlag = 1
+            compileAsStr = 'CompileAs="%i"' % compileAsFlag
+        elif 'cpp' == module.modType:
+            compileAsFlag = 2
+
+        safeModName = module.GetFullNameNoColons()
+        nebSyms = 'N_INIT=n_init_' + safeModName + ';' \
+                    'N_NEW=n_new_' + safeModName + ';' \
+                    'N_INITCMDS=n_initcmds_' + safeModName
+
+        projFile.write('            <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
+                        % module.name)
+
+        # source files
+        for fileName in module.resolvedFiles:
+            relPath = self.buildSys.FindRelPath(self.vcprojLocation,
+                                                        fileName)
+            ignore, shortFileName = os.path.split(fileName)
+            objectName, ignore = os.path.splitext(shortFileName)
+            nebSymsStr = ''
+            if target.PkgTarget:
+                nebSymsStr = 'PreprocessorDefinitions="%s"' % nebSyms
+            args = {'relPath' : relPath,
+                    'nebSymsStr' : nebSymsStr,
+                    'objectName' : ('%s_%s' % (safeModName, objectName)),
+                    'compileAsStr' : compileAsStr }
+            projFile.write(STR_SRC_FILE % args)
+
+        # header files
+        for fileName in module.resolvedHeaders:
+            relPath = self.buildSys.FindRelPath(self.vcprojLocation,
+                                                fileName)
+            projFile.write('                <File RelativePath="%s"/>\n' \
+                            % relPath)
+
+        projFile.write('            </Filter>\n')
+
+    #--------------------------------------------------------------------------
+    def getModulesinDir(self, modules, dir):
+        fmods = []
+        for modulename in modules:
+            module = self.buildSys.modules[modulename]
+            if module.dir == dir:
+                fmods.append(module)
+        return fmods
 
     #--------------------------------------------------------------------------
     def writeProjectFiles(self, target, projFile):
         projFile.write('    <Files>\n')
         for dir in target.dirs:
-            projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
+            modules = self.getModulesinDir(target.modules, dir)
+            if len(modules) > 1:
+                projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
                            % dir)
-            for moduleName in target.modules:
-                module = self.buildSys.modules[moduleName]
-                if module.dir != dir:
-                    continue
-                compileAsFlag = 0
-                if 'c' == module.modType:
-                    compileAsFlag = 1
-                elif 'cpp' == module.modType:
-                    compileAsFlag = 2
-
-                safeModName = module.GetFullNameNoColons()
-                nebSyms = 'N_INIT=n_init_' + safeModName + ';' \
-                          'N_NEW=n_new_' + safeModName + ';' \
-                          'N_INITCMDS=n_initcmds_' + safeModName
-
-                projFile.write('            <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
-                               % module.name)
-
-                # source files
-                for fileName in module.resolvedFiles:
-                    relPath = self.buildSys.FindRelPath(self.vcprojLocation,
-                                                        fileName)
-                    ignore, shortFileName = os.path.split(fileName)
-                    objectName, ignore = os.path.splitext(shortFileName)
-                    args = { 'relPath' : relPath,
-                             'nebSyms' : nebSyms,
-                             'objectName' : ('%s_%s' % (safeModName, objectName)),
-                             'compileAsFlag' : compileAsFlag }
-                    projFile.write(STR_SRC_FILE % args)
-
-                # header files
-                for fileName in module.resolvedHeaders:
-                    relPath = self.buildSys.FindRelPath(self.vcprojLocation,
-                                                        fileName)
-                    projFile.write('                <File RelativePath="%s"/>\n' \
-                                   % relPath)
-
-                projFile.write('            </Filter>\n')
-            projFile.write('        </Filter>\n')
+            for module in modules:
+                self.writeModuleFiles(target, module, projFile)
+            if len(modules) > 1:
+                projFile.write('        </Filter>\n')
 
         for moduleName in target.modules:
             module = self.buildSys.modules[moduleName]
             if module.dir:
                 continue
-            compileAsFlag = 0
-            if 'c' == module.modType:
-                compileAsFlag = 1
-            elif 'cpp' == module.modType:
-                compileAsFlag = 2
-
-            safeModName = module.GetFullNameNoColons()
-            nebSyms = 'N_INIT=n_init_' + safeModName + ';' \
-                      'N_NEW=n_new_' + safeModName + ';' \
-                      'N_INITCMDS=n_initcmds_' + safeModName
-
-            projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
-                           % module.name)
-
-            # source files
-            for fileName in module.resolvedFiles:
-                relPath = self.buildSys.FindRelPath(self.vcprojLocation,
-                                                    fileName)
-                ignore, shortFileName = os.path.split(fileName)
-                objectName, ignore = os.path.splitext(shortFileName)
-                args = { 'relPath' : relPath,
-                         'nebSyms' : nebSyms,
-                         'objectName' : ('%s_%s' % (safeModName, objectName)),
-                         'compileAsFlag' : compileAsFlag }
-                projFile.write(STR_SRC_FILE % args)
-
-            # header files
-            for fileName in module.resolvedHeaders:
-                relPath = self.buildSys.FindRelPath(self.vcprojLocation,
-                                                    fileName)
-                projFile.write('            <File RelativePath="%s"/>\n' \
-                               % relPath)
-
-            projFile.write('        </Filter>\n')
+            self.writeModuleFiles(target, module, projFile)            
 
         # if the module definition file is set and target is dll then add it
         if ('' != target.modDefFile) and ('dll' == target.type):
