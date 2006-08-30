@@ -101,6 +101,9 @@ protected:
     ///
     bool IsExportedNode(INode* inode);
 
+    ///
+    virtual void ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName);
+
 protected:
     /// variable server
     nRef<nVariableServer> varServer;

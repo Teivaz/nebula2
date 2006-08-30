@@ -46,16 +46,18 @@ struct nMaxSkinMeshData
 class nMaxMesh : public nMaxNode
 {
 public:
-    // mesh types
+    /// mesh types
     enum Type {
-        None      = 0,  // 0,  none of selected in radiobutton of max script ui
-        Shape     = 1,  // static or skinned mesh 
-        Swing     = 2,  // swing shape node
-        Shadow    = 3,  // shadow mesh
-        Collision = 4,  // collision mesh only
+        None      = 0,  /// 0,  none of selected in radiobutton of max script ui
+        Shape     = 1,  /// static or skinned mesh 
+        Swing     = 2,  /// swing shape node
+        Shadow    = 3,  /// shadow mesh
+        Collision = 4,  /// collision mesh only
     };
 
+    /// Constructor.
     nMaxMesh();
+    /// Destructor.
     virtual ~nMaxMesh();
 
     nSceneNode* Export(INode* inode);
@@ -63,16 +65,20 @@ public:
     int GetNumGroupMeshes() const;
     const nMaxSkinMeshData& GetGroupMesh(const int index);
 
+    /// Retrieve mesh type.
     Type GetType() const;
 
     nMeshBuilder& GetMeshBuilder();
     void SetBaseGroupIndex(int baseGroupIndex);
 
-    static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
-    static void CheckGeometryErrors(nMeshBuilder& meshBuilder, const char* filename);
-
     /// Retrieve directory path where the mesh will be located.
     nString GetMeshPath() const;
+
+    /// Retrieve vertex component of the first vertex.(position at 0)
+    int GetVertexComponent() const;
+
+    /// Retrieve 3dsmax node name for this mesh.
+    nString GetNodeName() const;
 
 protected:
     Mesh* LockMesh(INode* node);
@@ -105,7 +111,7 @@ protected:
     void GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &weights);
     //@}
 
-    void SetMeshFile(nSceneNode* shapeNode, nString &nodeName);
+    void SetMeshFile(nSceneNode* createdNode);
 
 protected:
     int GetGroupIndex (nMeshBuilder *meshBuilder);
@@ -189,7 +195,11 @@ protected:
     /// storage for all created shape or shadow nodes.
     nArray<nSceneNode*> sceneNodeArray;
 
+    ///
     nString meshPath;
+
+    /// 3dsmax node name.
+    nString nodeName;
 
 };
 //-----------------------------------------------------------------------------
@@ -244,6 +254,19 @@ inline
 nString nMaxMesh::GetMeshPath() const
 {
     return this->meshPath;
+}
+//-----------------------------------------------------------------------------
+inline
+int nMaxMesh::GetVertexComponent() const
+{
+    nMeshBuilder::Vertex v = this->localMeshBuilder.GetVertexAt(0);
+    return v.compMask;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxMesh::GetNodeName() const
+{
+    return this->nodeName;
 }
 //-----------------------------------------------------------------------------
 #endif
