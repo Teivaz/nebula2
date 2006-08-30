@@ -37,7 +37,7 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_createtable_ss",  'CRTB', n_createtable);
+    cl->AddCmd("v_createtable_sss", 'CRTB', n_createtable);
     cl->AddCmd("v_deletetable_s",   'DLTB', n_deletetable);
     cl->AddCmd("v_renametable_ss",  'RNTB', n_renametable);
     cl->AddCmd("v_updatetable_ss",  'UPTB', n_updatetable);
@@ -61,7 +61,7 @@ n_initcmds(nClass* cl)
     @cmd
     createtable
     @input
-    s(TableName), s(Columns)
+    s(TableName), s(Columns), s(KeyColumn)
     @output
     v
     @info
@@ -73,9 +73,10 @@ n_createtable(void* slf, nCmd* cmd)
     nSqlDatabase* self = (nSqlDatabase*) slf;
     nString tableName = cmd->In()->GetS();
     nString columns   = cmd->In()->GetS();
+    nString keyColumn = cmd->In()->GetS();
     nArray<nString> columnTokens;
     columns.Tokenize(" \t", columnTokens);
-    self->CreateTable(tableName, columnTokens);
+    self->CreateTable(tableName, columnTokens, keyColumn);
 }
 
 //------------------------------------------------------------------------------

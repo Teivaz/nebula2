@@ -29,7 +29,7 @@ nSqlDatabase::~nSqlDatabase()
 /**
 */
 bool
-nSqlDatabase::CreateTable(const nString& name, const nArray<nString>& columns)
+nSqlDatabase::CreateTable(const nString& name, const nArray<nString>& columns, const nString& primayColumn)
 {
     // empty, override in subclass
     return false;

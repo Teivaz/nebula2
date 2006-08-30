@@ -6,6 +6,11 @@
 #include "sql/nsqlite3database.h"
 #include "util/nfixedarray.h"
 
+#ifdef __NEBULA_STATS__
+// count the db accesses per frame
+int nSQLite3Query::dbAccessCount = 0;
+#endif
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -121,8 +126,13 @@ nSQLite3Query::GetRow(int rowIndex) const
     This executes the stored query and internally stores the result.
 */
 bool
-nSQLite3Query::Execute()
+nSQLite3Query::Execute(bool failOnError)
 {
+    #ifdef __NEBULA_STATS__
+    // count the db accesses per frame
+    this->dbAccessCount++;
+    #endif
+
     // clear the previous result (if exists)
     this->Clear();
 
@@ -135,7 +145,10 @@ nSQLite3Query::Execute()
                                 0);
     if (SQLITE_OK != err)
     {
-        n_error("nSQLite3Query::Execute(): sqlite3_get_table() failed with '%s'", sqlite3_errmsg(this->refDatabase->GetDatabaseHandle()));
+        if (failOnError)
+        {
+            n_error("nSQLite3Query::Execute(): sqlite3_get_table() failed with '%s'", sqlite3_errmsg(this->refDatabase->GetDatabaseHandle()));
+        }
         return false;
     }
 
