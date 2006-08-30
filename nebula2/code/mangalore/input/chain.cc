@@ -26,7 +26,7 @@ void
 Chain::BeginFrame()
 {
     // create a begin frame event and send to all sinks
-    nArray<Ptr<Event>> events;
+    nArray<Ptr<Event> > events;
     Ptr<Event> event = Event::Create();
     event->SetType(Event::BeginFrame);
     events.Append(event);
@@ -41,7 +41,7 @@ void
 Chain::EndFrame()
 {
     // create a end frame event and send to all sinks
-    nArray<Ptr<Event>> events;
+    nArray<Ptr<Event> > events;
     Ptr<Event> event = Event::Create();
     event->SetType(Event::EndFrame);
     events.Append(event);
@@ -54,7 +54,7 @@ Chain::EndFrame()
     Let the ports handle the message in the order of the priority.
 */
 void
-Chain::SendEvents(const nArray<Ptr<Event>>& events)
+Chain::SendEvents(const nArray<Ptr<Event> >& events)
 {
     // try to cleanup
     this->CleanupEmptyPorts();
