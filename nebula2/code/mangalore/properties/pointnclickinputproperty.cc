@@ -138,7 +138,7 @@ PointNClickInputProperty::OnMmbPressed()
     Input::Server* inputServer = Input::Server::Instance();
     float x = inputServer->GetSlider("vwrLeft") - inputServer->GetSlider("vwrRight");
     float y = inputServer->GetSlider("vwrUp") - inputServer->GetSlider("vwrDown");
-    
+
     // create CameraOrbit message
 	Ptr<Message::CameraOrbit> msg = Message::CameraOrbit::Create();
     msg->SetHorizontalRotation(x);

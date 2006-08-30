@@ -41,7 +41,7 @@ BoxShape::Attach(dSpaceID spaceId)
     {
         dGeomID box = dCreateBox(0, this->size.x, this->size.y, this->size.z);
         this->AttachGeom(box, spaceId);
-        dMassSetBox(&(this->odeMass), Physics::MaterialTable::GetDensity(this->materialType), 
+        dMassSetBox(&(this->odeMass), Physics::MaterialTable::GetDensity(this->materialType),
                     this->size.x, this->size.y, this->size.z);
         this->TransformMass();
         return true;

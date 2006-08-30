@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::CameraDistance
-    
+
     Change the distance of a 3rd camera to its lookat point.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"

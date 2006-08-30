@@ -27,8 +27,10 @@
     Message Id macros.
 */
 #define DeclareMsgId \
+public:\
     static Message::Id Id; \
-    virtual const Message::Id& GetId() const;
+    virtual const Message::Id& GetId() const; \
+private:
 
 #define ImplementMsgId(type) \
     Message::Id type::Id; \

@@ -86,8 +86,8 @@ Window::CloseFromEventHandler()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called by this window's event handler when an event 
-    should be processed. You can override this method if you are 
+    This method is called by this window's event handler when an event
+    should be processed. You can override this method if you are
     interested in events emitted by elements in this window.
 */
 void

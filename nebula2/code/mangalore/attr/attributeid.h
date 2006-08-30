@@ -6,14 +6,14 @@
 
     The AttributeID class is used to add new attribute ID to Your
     application. Those can then be used to add attributes to Your Entities.
-    Also see db::Atrribute for usage of Attributes.
+    Also see db::Attribute for usage of Attributes.
 
     (C) 2005 Radon Labs GmbH
 
     usage:
 
     - to declare(add) a new attribute ID use:
-      
+
       DeclareBool( attributeTypeName );
       DeclareString( attributeTypeName );
       ..
@@ -21,17 +21,17 @@
       ( possible types are: Void, Bool, Int, Float, String, Vector3, Vector4, Matrix44 )
 
     - you then have to define the attribute ID with:
-      
+
       DefineBool( attributeTypeName );
       DefineString( attributeTypeName );
 
-      or 
+      or
 
       DefineBoolStorable( attributeTypeName );
       DefineStringStorable( attributeTypeName );
 
     - e.g.:
-      
+
       DeclareIntAttribute( Hitpoints );
       DefineIntAttribute( Hitpoints );
 */
@@ -112,7 +112,7 @@ bool operator!=(const AttributeID& lhs, const AttributeID& rhs)
 /**
 */
 inline
-bool 
+bool
 AttributeID::IsValid() const
 {
     return 0 != this->attridPtr;
@@ -140,7 +140,7 @@ AttributeID::~AttributeID()
 /**
 */
 inline
-AttributeID::AttributeID() : 
+AttributeID::AttributeID() :
     attridPtr(0)
 {
 }
@@ -170,7 +170,7 @@ inline
 AttributeID::AttributeID(const nString& name)
 {
     const AttributeID& existingID = AttributeID::FindAttributeID(name);
-    
+
     if ( !existingID.IsValid() )
     {
         n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
@@ -193,7 +193,7 @@ AttributeID::GetName() const
 /**
 */
 inline
-Type 
+Type
 AttributeID::GetType() const
 {
     return (Type) this->attridPtr->GetType();
@@ -203,7 +203,7 @@ AttributeID::GetType() const
 /**
 */
 inline
-bool 
+bool
 AttributeID::IsStorable() const
 {
     return this->attridPtr->IsStorable();
@@ -213,7 +213,7 @@ AttributeID::IsStorable() const
 /**
 */
 inline
-bool 
+bool
 AttributeID::IsWritable() const
 {
     return this->attridPtr->IsWritable();

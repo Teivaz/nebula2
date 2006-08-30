@@ -16,15 +16,18 @@ namespace Attr
     DefineString(_Type);
     DefineString(_Category);
     DefineStorableString(_Level);
+    DefineString(_Layers);
     DefineString(_ID);
     DefineBool(StartLevel);
-    DefineString(GUID);
+    DefineBool(RandomEncounterLevel);
+    DefineStorableString(GUID);
     DefineVector3(Center);
     DefineVector3(Extents);
     DefineStorableString(CurrentLevel);
     DefineString(Id);
     DefineString(Name);
     DefineString(Placeholder);
+    DefineBool(Rot180);
     DefineStorableMatrix44(Transform);
     DefineInt(AnimIndex);
     DefineString(Physics);
@@ -38,7 +41,7 @@ namespace Attr
     DefineStorableInt(TargetEntityId);
     DefineStorableFloat(Time);
     DefineString(File);
-    DefineString(EntityGroup);
+    DefineStorableString(EntityGroup);
 
     DefineVector3(VelocityVector);
 
@@ -51,4 +54,5 @@ namespace Attr
 
     DefineString(AnimSet);
     DefineString(CharacterSet);
+    DefineString(SoundSet);
 };

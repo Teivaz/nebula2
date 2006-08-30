@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::CameraReset
-    
+
     A camera reset message.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"

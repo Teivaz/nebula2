@@ -96,5 +96,20 @@ Factory::Create(const nString& className) const
 	return 0;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+int Factory::GetNumClassNames() const
+{
+    return this->table.Size();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+const nString& Factory::GetClassNameAt(int index) const
+{
+    return this->table[index].name;
+}
 
 } // namespace Foundation

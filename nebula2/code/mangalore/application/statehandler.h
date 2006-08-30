@@ -8,10 +8,10 @@
     of Application::StateHandler. The Application class calls state handler
     objects when a new state is entered, when the current state is left, and
     for each frame.
-    
+
     State handlers must implement the OnStateEnter(), OnStateLeave() and
     OnStateFrame() methods accordingly.
-    
+
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"

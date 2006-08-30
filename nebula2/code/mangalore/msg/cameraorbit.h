@@ -3,9 +3,9 @@
 //------------------------------------------------------------------------------
 /**
     @class Message::CameraOrbit
-    
+
     A camera orbit rotation message.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"

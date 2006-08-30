@@ -25,7 +25,7 @@ CmdLineArgs::Parse()
 {
     nArray<nString> tokens;
     this->cmdLine.Tokenize(" \t\n=", '"', tokens);
-    
+
     // number of tokens must be odd (1 command name,  plus N name/value pairs)
     if (1 != (tokens.Size() & 1))
     {

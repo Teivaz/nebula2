@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  message/port.cc
-//  (C) 2003 RadonLabs GmbH
+//  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "message/port.h"
 
@@ -43,13 +43,16 @@ Port::Put(Msg* msg)
 
 //------------------------------------------------------------------------------
 /**
-    Handle all pending messages. This will simply call the virtual 
+    Handle all pending messages. This will simply call the virtual
     HandleMessage() method for each message in the msgQueue and clear the
     message queue afterwards.
 */
 void
 Port::HandlePendingMessages()
 {
+    // increment ref count on me, because messages could cause removing my entity
+    Ptr<Port> myself = this;
+
     int i;
     int num = this->msgQueue.Size();
     for (i = 0; i < num; i++)
@@ -57,6 +60,9 @@ Port::HandlePendingMessages()
         this->HandleMessage(this->msgQueue[i]);
     }
     this->msgQueue.Clear();
+
+    // decrement ref count
+    myself = 0;
 }
 
 //------------------------------------------------------------------------------

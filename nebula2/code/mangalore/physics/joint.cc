@@ -12,7 +12,7 @@ ImplementRtti(Physics::Joint, Foundation::RefCounted);
 //------------------------------------------------------------------------------
 /**
 */
-Joint::Joint(Type t) : 
+Joint::Joint(Type t) :
     type(t),
     odeJointId(0),
     isAttached(false)
@@ -33,8 +33,8 @@ Joint::~Joint()
 
 //------------------------------------------------------------------------------
 /**
-    Attach the joint to the world given a parent transformation. This will 
-    actually create the ODE joint, since ODE doesn't have a way to attach and 
+    Attach the joint to the world given a parent transformation. This will
+    actually create the ODE joint, since ODE doesn't have a way to attach and
     detach joints.
 */
 void
@@ -86,7 +86,7 @@ Joint::UpdateTransform(const matrix44& m)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 Joint::SetBodies(RigidBody* body1, RigidBody* body2)
 {
     this->rigidBody1 = body1;

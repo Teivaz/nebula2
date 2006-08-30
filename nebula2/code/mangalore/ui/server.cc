@@ -200,7 +200,7 @@ Server::Trigger()
     Ptr<Canvas> activeCanvas = this->GetToplevelCanvas();
     this->inTrigger = true;
 
-    // process raw input from the Nebula2 input server 
+    // process raw input from the Nebula2 input server
     nInputServer* inputServer = nInputServer::Instance();
     nInputEvent* ie;
     for (ie = inputServer->FirstEvent(); ie; ie = inputServer->NextEvent(ie))
@@ -228,7 +228,7 @@ Server::Trigger()
                 case N_INPUT_BUTTON_DOWN:
                     {
                         vector2 mousePos(ie->GetRelXPos(), ie->GetRelYPos());
-                        if (ie->GetButton() == 0) 
+                        if (ie->GetButton() == 0)
                         {
                             if (activeCanvas.isvalid() && activeCanvas->IsValid())
                             {
@@ -256,7 +256,7 @@ Server::Trigger()
                 case N_INPUT_BUTTON_UP:
                     {
                         vector2 mousePos(ie->GetRelXPos(), ie->GetRelYPos());
-                        if (ie->GetButton() == 0) 
+                        if (ie->GetButton() == 0)
                         {
                             if (activeCanvas.isvalid() && activeCanvas->IsValid())
                             {

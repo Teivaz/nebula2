@@ -13,7 +13,7 @@ ImplementFactory(Physics::BallJoint);
 //------------------------------------------------------------------------------
 /**
 */
-BallJoint::BallJoint() : 
+BallJoint::BallJoint() :
     Joint(Joint::BallJoint)
 {
     // empty
@@ -29,7 +29,7 @@ BallJoint::~BallJoint()
 
 //------------------------------------------------------------------------------
 /**
-    NOTE: it is important that rigid bodies are added 
+    NOTE: it is important that rigid bodies are added
     (happens in Joint::Attach()) before joint transforms are set!!!
 */
 void
@@ -48,7 +48,7 @@ BallJoint::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 BallJoint::UpdateTransform(const matrix44& m)
 {
     vector3 a = m * this->anchor;

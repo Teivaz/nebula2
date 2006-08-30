@@ -6,7 +6,7 @@
 
     A MoveStop message. The expected behaviour is that an entity which
     receives this messages stops immediately.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"

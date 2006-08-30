@@ -68,7 +68,7 @@ ExplosionAreaImpulse::Apply()
 //------------------------------------------------------------------------------
 /**
     Applies impulse on single rigid body. Does line of sight test on
-    the center of the rigid body (FIXME: check all corners of the 
+    the center of the rigid body (FIXME: check all corners of the
     bounding box??).
 */
 bool

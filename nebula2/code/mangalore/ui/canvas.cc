@@ -117,7 +117,7 @@ Canvas::OnRender()
 {
     // first distribute to children
     Element::OnRender();
-   
+
     // then render our graphics entity
     this->graphicsEntity->Render();
 }

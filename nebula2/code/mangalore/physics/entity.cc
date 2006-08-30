@@ -61,7 +61,7 @@ Entity::OnActivate()
     if (this->composite != 0)
     {
         // composite directly set
-        this->composite->SetTransform(this->transform);        
+        this->composite->SetTransform(this->transform);
         this->composite->Attach(physicsServer->GetOdeWorldId(), dynamicSpaceId, staticSpaceId);
     }
     else if (!this->compositeName.IsEmpty())
@@ -71,7 +71,7 @@ Entity::OnActivate()
         // load and initialize composite object
         CompositeLoader compLoader;
         Ptr<Composite> newComposite = compLoader.Load(this->compositeName);
-        newComposite->SetTransform(this->transform);        
+        newComposite->SetTransform(this->transform);
         newComposite->Attach(physicsServer->GetOdeWorldId(), dynamicSpaceId, staticSpaceId);
         n_assert2( newComposite != 0, "Composite was created for PhysicsProperty" );
         this->SetComposite(newComposite);
@@ -147,7 +147,7 @@ Entity::OnCollide(Shape* collidee)
     }
 
     // collision is valid on default
-    return true; 
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -244,7 +244,7 @@ Entity::OnStepAfter()
 
 //------------------------------------------------------------------------------
 /**
-    This method is invoked before a physics frame starts (consisting of 
+    This method is invoked before a physics frame starts (consisting of
     several physics steps).
 */
 void
@@ -259,7 +259,7 @@ Entity::OnFrameBefore()
 
 //------------------------------------------------------------------------------
 /**
-    This method is invoked after a physics frame is taken (consisting of 
+    This method is invoked after a physics frame is taken (consisting of
     several physics steps).
 */
 void
@@ -366,7 +366,7 @@ Entity::Lock()
 
 //------------------------------------------------------------------------------
 /**
-    Unlock the entity. This will reset the entity (set velocity and forces 
+    Unlock the entity. This will reset the entity (set velocity and forces
     to 0), and place it on the position where it was when the entity was
     locked. Note that the entity will NOT be enabled. This will happen
     automatically when necessary (for instance on contact with another
@@ -423,7 +423,7 @@ Entity::RenderDebug()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 Entity::EnableCollision()
 {
     if (this->collisionEnabled || !this->composite.isvalid())
@@ -438,7 +438,7 @@ Entity::EnableCollision()
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 Entity::DisableCollision()
 {
     if (!this->collisionEnabled || !this->composite.isvalid())

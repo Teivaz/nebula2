@@ -36,6 +36,11 @@ public:
 	/// Create object associated with `className'.
 	RefCounted* Create(const nString& className) const;
 
+    /// Get the total number of known classes.
+    int GetNumClassNames() const;
+    /// Get the string class name at the given index.
+    const nString& GetClassNameAt(int index) const;
+
 protected:
 	/// Constructor.
 	Factory ();

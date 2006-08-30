@@ -37,7 +37,7 @@ InputProperty::~InputProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int
@@ -86,7 +86,7 @@ InputProperty::OnDeactivate()
 //------------------------------------------------------------------------------
 /**
     This method is called by the FocusManager when our entity gains the
-    input focus. Override this method if your subclass needs to do 
+    input focus. Override this method if your subclass needs to do
     some initialization when gaining the input focus.
 */
 void
@@ -109,7 +109,7 @@ InputProperty::OnLoseFocus()
 
 //------------------------------------------------------------------------------
 /**
-    This method returns true if our entity has the input focus. This 
+    This method returns true if our entity has the input focus. This
     implementation makes sure that 2 properties cannot report that they
     have the input focus by accident.
 */
@@ -130,7 +130,7 @@ InputProperty::OnBeginFrame()
     if (FocusManager::Instance()->GetInputFocusEntity() == GetEntity())
     {
         Input::Server* inputServer = Input::Server::Instance();
-        
+
         // move focus to next entity when Tab is pressed,
         // only cycle camera focus on Ctrl + Tab
         if (inputServer->GetButton("tabDown"))

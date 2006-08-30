@@ -141,8 +141,8 @@ FocusManager::SetToNextEntity(bool cameraFocus, bool inputFocus)
 /**
     Set focus to next entity which has both an InputProperty and
     CameraProperty attached. If no current focus entity exists, the method
-    will start to iterate with the first entity. The method will wrap around. 
-    The method will return false if no entities exist which have both an 
+    will start to iterate with the first entity. The method will wrap around.
+    The method will return false if no entities exist which have both an
     InputProperty and CameraProperty attached.
 */
 void
@@ -153,7 +153,7 @@ FocusManager::SetFocusToNextEntity()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called once per frame by the game server and 
+    This method is called once per frame by the game server and
     actually handles focus entity switches.
 */
 void
@@ -293,7 +293,7 @@ FocusManager::SetCameraFocusToNextEntity()
     Set camera focus to first Entity with CameraFocus property.
     @result true, if proper entity found, false if not
 */
-bool 
+bool
 FocusManager::SwitchToFirstCameraFocusEntity()
 {
    const nArray<Ptr<Entity> >& entityArray = EntityManager::Instance()->GetEntities();
@@ -307,12 +307,12 @@ FocusManager::SwitchToFirstCameraFocusEntity()
         Entity* entity = *iter;
         CameraProperty* cameraProperty = (CameraProperty*) entity->FindProperty(CameraProperty::RTTI);
         bool isPriorityCamera = ( 0 != entity->FindProperty(VideoCameraProperty::RTTI) );
-    
+
         if ( 0 != cameraProperty )
         {
             if ( cameraProperty->HasFocus() ) cameraProperty->OnLoseFocus();
-            
-            if 
+
+            if
             (
                 !cameraPropertyEntityFound
                 || ( !priorityCameraFound && isPriorityCamera )
@@ -335,7 +335,7 @@ FocusManager::SwitchToFirstCameraFocusEntity()
     Set camera focus to first Entity with "GrabCameraFocus = true" or if none
     found to first "CameraFocus = true" Entity.
 */
-void 
+void
 FocusManager::SetDefaultFocus()
 {
     SwitchToFirstCameraFocusEntity();

@@ -23,7 +23,7 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
     Graphics::Resource resource;
     resource.SetName(resName);
     resource.Load();
-    
+
     // collect segment hierarchy nodes from resource
     nTransformNode* modelNode = (nTransformNode*) resource.GetNode()->Find("model");
     if (modelNode)
@@ -45,7 +45,7 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
         if (segments.Size() > 0)
         {
             nTransformNode* shadowNode = (nTransformNode*) resource.GetNode()->Find("shadow");
-        
+
             // create one graphics entity for each segment
             int num = segments.Size();
             int i;
@@ -56,7 +56,7 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
                 segResName.TrimRight("/");
                 segResName.Append("/model/");
                 segResName.Append(segments[i]->GetName());
-                
+
                 // create and setup graphics entity
 				Ptr<Graphics::Entity> ge = Graphics::Entity::Create();
                 ge->SetResourceName(segResName);

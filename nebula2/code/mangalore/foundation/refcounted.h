@@ -59,7 +59,8 @@ private:
 public: \
     static classname* Create(); \
     static Foundation::RefCounted* InternalCreate(); \
-	static bool RegisterFactoryFunction();
+	static bool RegisterFactoryFunction(); \
+private:
 
 // Register factory macro.
 #define RegisterFactory(classname) \

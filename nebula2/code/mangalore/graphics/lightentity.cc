@@ -47,7 +47,7 @@ void
 LightEntity::UpdateNebulaLight()
 {
     // initialize the Nebula2 light
-    nLightNode* nebLight = this->refLightNode;    
+    nLightNode* nebLight = this->refLightNode;
     nebLight->SetType(this->light.GetType());
     nebLight->SetCastShadows(this->light.GetCastShadows());
     nebLight->SetVector(nShaderState::LightDiffuse, this->light.GetDiffuse());
@@ -57,7 +57,7 @@ LightEntity::UpdateNebulaLight()
     if (nLight::Directional == this->light.GetType())
     {
         lightRange = 100000.0f;
-    }    
+    }
     else
     {
         lightRange = this->light.GetRange();
@@ -69,8 +69,8 @@ LightEntity::UpdateNebulaLight()
 //------------------------------------------------------------------------------
 /**
     This method is called when the graphics object becomes active (i.e.
-    when it is attached to a game entity. 
-    This method creates a Nebula2 light object and places it in the 
+    when it is attached to a game entity.
+    This method creates a Nebula2 light object and places it in the
     resource pool.
 */
 void
@@ -79,7 +79,7 @@ LightEntity::OnActivate()
     n_assert(!this->active);
     n_assert(!this->resource.IsLoaded());
     n_assert(!this->refLightNode.isvalid());
-   
+
     nKernelServer* kernelServer = nKernelServer::Instance();
     Foundation::Server* fndServer = Foundation::Server::Instance();
 
@@ -134,11 +134,11 @@ LightEntity::GetBoxClipStatus(const bbox3& box)
         sphere sph(this->GetTransform().pos_component(), this->light.GetRange());
         switch (sph.clipstatus(box))
         {
-            case sphere::Inside:    
+            case sphere::Inside:
                 return Inside;
-            case sphere::Clipped:   
+            case sphere::Clipped:
                 return Clipped;
-            case sphere::Outside:   
+            case sphere::Outside:
             default:
                 return Outside;
         }

@@ -28,7 +28,7 @@ AMotor::~AMotor()
 
 //------------------------------------------------------------------------------
 /**
-    NOTE: it is important that rigid bodies are added 
+    NOTE: it is important that rigid bodies are added
     (happens in Joint::Attach()) before joint transforms are set!!!
 */
 void

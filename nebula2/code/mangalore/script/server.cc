@@ -172,12 +172,12 @@ Server::DeRegisterCommand(const nString& name)
     @param  objv[]   array with the commandline-parameters
 
 */
-int 
+int
 Tcl_CallMethod(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
     nString argsData;
     int idx;
-    
+
     if( 0 < objc )
     {
         for( idx = 1; idx < objc; idx++)

@@ -47,7 +47,7 @@ EffectHandler::HandleMessage(Message::Msg* msg)
     Server* server = Server::Instance();
     if (msg->CheckId(Message::PlayVisualEffect::Id))
     {
-        // play a visual effect 
+        // play a visual effect
         Message::PlayVisualEffect* pveMsg = (Message::PlayVisualEffect*) msg;
         server->PlayEffect(pveMsg->GetName(), pveMsg->GetTransform());
     }

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  graphics/resource.cc
-//  (C) 2003 RadonLabs GmbH
+//  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "graphics/resource.h"
 #include "kernel/nkernelserver.h"
@@ -95,7 +95,7 @@ Resource::FindRootNode()
 
 //------------------------------------------------------------------------------
 /**
-    Load the resource. The routine will fail hard if loading fails. If the 
+    Load the resource. The routine will fail hard if loading fails. If the
     resource already exists in memory, it's refcount will be incremented.
 */
 void
@@ -205,6 +205,11 @@ Resource::Load()
             for (index = 2; index < tokens.Size(); index++)
             {
                 this->refNode = (nTransformNode*) this->refNode->Find(tokens[index].Get());
+                if (!this->refNode.isvalid())
+                {
+                    // break into the following error message
+                    break;
+                }
             }
         }
 

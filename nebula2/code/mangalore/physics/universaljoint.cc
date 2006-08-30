@@ -13,7 +13,7 @@ ImplementFactory(Physics::UniversalJoint);
 //------------------------------------------------------------------------------
 /**
 */
-UniversalJoint::UniversalJoint() : 
+UniversalJoint::UniversalJoint() :
     Joint(Joint::UniversalJoint),
     axisParams(2)
 {
@@ -31,7 +31,7 @@ UniversalJoint::~UniversalJoint()
 
 //------------------------------------------------------------------------------
 /**
-    NOTE: it is important that rigid bodies are added 
+    NOTE: it is important that rigid bodies are added
     (happens in Joint::Attach()) before joint transforms are set!!!
 */
 void
@@ -72,7 +72,7 @@ UniversalJoint::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& 
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 UniversalJoint::UpdateTransform(const matrix44& m)
 {
     vector3 p = m * this->GetAnchor();

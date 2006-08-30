@@ -138,7 +138,7 @@ Element::OnCreate(Element* parent)
 */
 void
 Element::OnDestroy()
-{   
+{
     n_assert(this->IsValid());
 
     // destroy all children
@@ -355,7 +355,7 @@ Element::UpdateScreenSpaceRect()
                                     0.0f, 0.0f,   -0.5f, 0.0f,
                                     0.0f, 0.0f,    0.5f, 1.0f);
     m = m * orthoProj;
-    
+
     // get local bounding box and transform to screen space
     bbox3 box = this->gfxNode->GetLocalBox();
     box.transform_divw(m);
@@ -375,7 +375,7 @@ Element::UpdateScreenSpaceRect()
     This method returns true if the given mouse position is inside the
     elements screen space area. By default this checks the mouse position
     against the screen space rectangle computed in UpdateScreenSpaceRect(),
-    but you can override the method in a subclass if you need more 
+    but you can override the method in a subclass if you need more
     advanced picking.
 */
 bool

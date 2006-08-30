@@ -6,9 +6,9 @@
 
     Private helper class for the Mangalore attribute system. This adds
     a data type to the generic _id class. The class is used as a base class
-    for _attridTyped which adds compile time type information to the attribute 
+    for _attridTyped which adds compile time type information to the attribute
     ids.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "util/narray.h"

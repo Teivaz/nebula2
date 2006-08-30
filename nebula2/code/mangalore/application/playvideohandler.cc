@@ -49,17 +49,17 @@ nString
 PlayVideoHandler::OnFrame()
 {
     nString returnState = App::Instance()->GetCurrentState();
-    
+
     nInputServer* inputServer = nInputServer::Instance();
     nVideoServer* videoServer = nVideoServer::Instance();
     nGfxServer2* gfxServer    = nGfxServer2::Instance();
 
-    // distribute timestamps to interested subsystems    
+    // distribute timestamps to interested subsystems
     if (gfxServer->Trigger())
     {
         // trigger input and video servers
         videoServer->Trigger();
-        
+
         nTime time = App::Instance()->GetStateTime();
         inputServer->Trigger(time);
 

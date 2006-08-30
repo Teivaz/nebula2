@@ -64,7 +64,7 @@ SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity)
         CharEntity* charEntity = (CharEntity*) entity;
         nCharacter2* nebCharacter = charEntity->GetCharacterPointer();
         // FIXME: only the first shapenode will be used
-        this->skinShapeNode = (nSkinShapeNode*) shapeNodes[0]; 
+        this->skinShapeNode = (nSkinShapeNode*) shapeNodes[0];
 
         this->charEntity = charEntity;
 
@@ -97,7 +97,7 @@ SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity)
         nShapeNode* shapeNode = shapeNodes[0];
         this->meshGroupIndex = shapeNode->GetGroupIndex();
         this->refOriginalMesh = shapeNode->GetMeshObject();
-        
+
         //initialize rsistent mesh
         this->InitResistentMesh();
         this->refSkinnedMesh = this->refResistentMesh.get();
@@ -289,7 +289,7 @@ SkinRayCheckUtil::InitFaceArray()
             }
         }
     }
-    
+
     this->vertices.SetSize(meshGroup.GetNumIndices());  //DEBUG
 
     /*this->UpdateFaces();
@@ -380,8 +380,8 @@ SkinRayCheckUtil::InitSkinnedMesh()
 //------------------------------------------------------------------------------
 /**
     This method performs the actual skinning on the cpu and writes the
-    skinned vertices into the refSkinnedMesh. A valid and uptodate character 
-    skeleton must be set through 
+    skinned vertices into the refSkinnedMesh. A valid and uptodate character
+    skeleton must be set through
 
     FIXME: performance optimization: convert float joint indices to integer
     during load time?
@@ -389,7 +389,7 @@ SkinRayCheckUtil::InitSkinnedMesh()
 void
 SkinRayCheckUtil::UpdateSkinning()
 {
-    n_assert(this->charSkeleton);    
+    n_assert(this->charSkeleton);
     n_assert(this->skinShapeNode);
     nMesh2* srcMesh = this->refResistentMesh;
     nMesh2* dstMesh = this->refSkinnedMesh;
@@ -411,7 +411,7 @@ SkinRayCheckUtil::UpdateSkinning()
         int numSrcVertices = srcGroup.GetNumVertices();
         int numDstVertices = dstGroup.GetNumVertices();
         n_assert(numSrcVertices == numDstVertices);
-        
+
         float* srcVertices = srcVertexBase + srcGroup.GetFirstVertex();
         float* dstVertices = dstVertexBase + dstGroup.GetFirstVertex();
         vector3 v;
@@ -452,14 +452,14 @@ SkinRayCheckUtil::UpdateSkinning()
 
 //------------------------------------------------------------------------------
 /**
-    Does a raycheck, returns if an intersection occured 
+    Does a raycheck, returns if an intersection occured
     and fills an array of faceIntersections
 */
 bool
 SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &intersectedFaces)
 {
     n_assert(this->initialized);
-    
+
     matrix44 trans = this->activeEntity->GetTransform();
     vector3 transPos = trans.pos_component();
     trans.translate(-transPos);
@@ -497,7 +497,7 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
 
     if (this->useLastFaceOptimization && this->lastFace >= 0)
     {
-        // Optimization: Before updating all faces/vertices, 
+        // Optimization: Before updating all faces/vertices,
         // just update the last intersected one and check it.
         if (updateFaces) this->UpdateSingleFace(this->lastFace);
         if (this->Intersects(this->faces[this->lastFace], tRay, newFaceIntersection))
@@ -592,12 +592,12 @@ SkinRayCheckUtil::FindShapeNodes(nRoot *parent, nArray<nShapeNode*> &shapeNodes)
 bool
 SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& intersectionData)
 {
-    // segmentation optimization: 
+    // segmentation optimization:
     // if ray doesn't intersects the faces segmentation, it doesn't has be checked
     //matrix44 m = this->activeEntity->GetTransform();
     //line3 tRay(m.transform_coord(line.start()), m.transform_coord(line.end()));
     /*if (poly.segmentationIndex == -1 ||
-        tRay.distance(this->segmentationBoxes[poly.segmentationIndex].center()) 
+        tRay.distance(this->segmentationBoxes[poly.segmentationIndex].center())
         <= (this->segmentationBoxes[poly.segmentationIndex].diagonal_size() * 0.5f))
     {*/
 
@@ -609,9 +609,9 @@ SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& in
         vector3 p2 = line.start();
         vector3 p1 = line.end();
 
-        vector3 pa1, pa2, pa3; 
+        vector3 pa1, pa2, pa3;
         vector3 ip; // intersection point
-        
+
 
         // Calculate the normal vector of the plane
         n.x = (pb.y - pa.y)*(pc.z - pa.z) - (pb.z - pa.z)*(pc.y - pa.y);
@@ -625,7 +625,7 @@ SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& in
         double d = - (n.x * pa.x) - (n.y * pa.y) - (n.z * pa.z);
         double denom = n.x * (p2.x - p1.x) + n.y * (p2.y - p1.y) + n.z * (p2.z - p1.z);
         if (abs(denom) < 0.00001f) return false; // Line and plane don't intersect
-        
+
         double mu = - (d + n.x * p1.x + n.y * p1.y + n.z * p1.z) / denom;
         if (mu < 0 || mu > 1) return false;   // Intersection not along line segment
 
@@ -650,14 +650,14 @@ SkinRayCheckUtil::Intersects(face &poly, const line3 &line, faceIntersection& in
         if (abs(total - (2*N_PI)) > 0.00001f) return false;
         else return true;
     /*}
-    else 
-    {  
+    else
+    {
         return false;
     }*/
 }
 
 //------------------------------------------------------------------------------
-/**   
+/**
     determines the uv coordinate of an intersection point.
 */
 bool
@@ -681,7 +681,7 @@ SkinRayCheckUtil::GetIntersectionUV(int uvNr, faceIntersection &intersection, ve
                 }
                 break;
             }  //-------------
-        case 0: 
+        case 0:
             {
                 if(resistentMesh->HasAllVertexComponents(nMesh2::Uv0))
                 {
@@ -690,7 +690,7 @@ SkinRayCheckUtil::GetIntersectionUV(int uvNr, faceIntersection &intersection, ve
                 }
                 break;
             }
-        case 1: 
+        case 1:
             {
                 if(resistentMesh->HasAllVertexComponents(nMesh2::Uv1))
                 {
@@ -699,7 +699,7 @@ SkinRayCheckUtil::GetIntersectionUV(int uvNr, faceIntersection &intersection, ve
                 }
                 break;
             }
-        case 2: 
+        case 2:
             {
                 if(resistentMesh->HasAllVertexComponents(nMesh2::Uv2))
                 {
@@ -708,7 +708,7 @@ SkinRayCheckUtil::GetIntersectionUV(int uvNr, faceIntersection &intersection, ve
                 }
                 break;
             }
-        case 3: 
+        case 3:
             {
                 if(resistentMesh->HasAllVertexComponents(nMesh2::Uv3))
                 {
@@ -783,22 +783,22 @@ SkinRayCheckUtil::GetIntersectionUV(int uvNr, faceIntersection &intersection, ve
         resistentMesh->UnlockVertices();
 
         this->UpdateOriginalMesh();
-        
+
         return true;
     }
     else return false;
 }
 
 //------------------------------------------------------------------------------
-/**   
-    
+/**
+
 */
 bool
 SkinRayCheckUtil::SetVertexColorOfMesh(const vector4& col)
 {
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
-    
+
     if(mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
@@ -823,14 +823,14 @@ SkinRayCheckUtil::SetVertexColorOfMesh(const vector4& col)
         mesh->UnlockIndices();
         mesh->UnlockVertices();
         this->UpdateOriginalMesh();
-        return true;  
+        return true;
     }
     else return false;
 }
 
 //------------------------------------------------------------------------------
-/**   
-    
+/**
+
 */
 vector4
 SkinRayCheckUtil::GetAverageVertexColorOfMesh()
@@ -865,8 +865,8 @@ SkinRayCheckUtil::GetAverageVertexColorOfMesh()
 }
 
 //------------------------------------------------------------------------------
-/**   
-    
+/**
+
 */
 bool
 SkinRayCheckUtil::SetVertexColorOfFace(int faceIndex, const vector4& col)
@@ -897,14 +897,14 @@ SkinRayCheckUtil::SetVertexColorOfFace(int faceIndex, const vector4& col)
         mesh->UnlockIndices();
         mesh->UnlockVertices();
         this->UpdateOriginalMesh();
-        return true;  
+        return true;
     }
     else return false;
 }
 
 //------------------------------------------------------------------------------
-/**   
-    
+/**
+
 */
 bool
 SkinRayCheckUtil::AddVertexColorOfFace(int faceIndex, const vector4& col)
@@ -934,18 +934,18 @@ SkinRayCheckUtil::AddVertexColorOfFace(int faceIndex, const vector4& col)
             tempCol.w = n_clamp(tempCol.w, 0, 1);
             *(vector4*)(vertices + indices[ii+k] * vertexWidth + offset) = tempCol;
         }
-        
+
         mesh->UnlockIndices();
         mesh->UnlockVertices();
         this->UpdateOriginalMesh();
-        return true;  
+        return true;
     }
     else return false;
 }
 
 //------------------------------------------------------------------------------
-/**   
-    
+/**
+
 */
 vector4
 SkinRayCheckUtil::GetVertexColorOfFace(int faceIndex)
@@ -976,14 +976,14 @@ SkinRayCheckUtil::GetVertexColorOfFace(int faceIndex)
 
         mesh->UnlockIndices();
         mesh->UnlockVertices();
-        return resultCol;  
+        return resultCol;
     }
     else return vector4(-1,-1,-1,-1);
 }
 
 //------------------------------------------------------------------------------
-/**   
-    
+/**
+
 */
 vector4
 SkinRayCheckUtil::GetVertexColorOfFace(int faceIndex, const vector3& intersectionPoint)
@@ -1009,7 +1009,7 @@ SkinRayCheckUtil::GetVertexColorOfFace(int faceIndex, const vector3& intersectio
         col0 = *(vector4*)(vertices + indices[ii] * vertexWidth + offset);
         col1 = *(vector4*)(vertices + indices[ii+1] * vertexWidth + offset);
         col2 = *(vector4*)(vertices + indices[ii+2] * vertexWidth + offset);
-        
+
         float distP0 = intersectionPoint.distance(intersectionPoint, this->faces[faceIndex].p0);
         float distP1 = intersectionPoint.distance(intersectionPoint, this->faces[faceIndex].p1);
         float distP2 = intersectionPoint.distance(intersectionPoint, this->faces[faceIndex].p2);
@@ -1017,14 +1017,14 @@ SkinRayCheckUtil::GetVertexColorOfFace(int faceIndex, const vector3& intersectio
 
         mesh->UnlockIndices();
         mesh->UnlockVertices();
-        return resultCol;  
+        return resultCol;
     }
     else return vector4(-1,-1,-1,-1);
 }
 
 //------------------------------------------------------------------------------
-/**   
-    
+/**
+
 */
 bool
 SkinRayCheckUtil::HasMeshVertexColor()
@@ -1047,7 +1047,7 @@ SkinRayCheckUtil::UpdateOriginalMesh()
 
     nMesh2* resistentMesh = this->refResistentMesh;
     nMesh2* originalMesh = this->refOriginalMesh;
-   
+
     // transfer vertices from bindPoseMesh
     int numVertices = originalMesh->GetNumVertices();
     int srcVertexWidth = originalMesh->GetVertexWidth();
@@ -1081,7 +1081,7 @@ SkinRayCheckUtil::FindNeighbourFaces(int faceIndex)
         {
             this->faces[faceIndex].neighbourFaces.Append(i);
         }
-        else 
+        else
         if (((this->faces[faceIndex].p0.x == this->faces[i].p0.x &&
             this->faces[faceIndex].p0.y == this->faces[i].p0.y &&
             this->faces[faceIndex].p0.z == this->faces[i].p0.z) ||

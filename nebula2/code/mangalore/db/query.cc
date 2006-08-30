@@ -85,7 +85,7 @@ void
 Query::BuildUpdateStatement()
 {
     n_assert(this->tableName.IsValid());
-    n_assert(this->updateAttrs.Size() > 0);    
+    n_assert(this->updateAttrs.Size() > 0);
     n_assert(this->whereAttrs.Size() > 0);
 
     this->sqlStatement = "UPDATE ";
@@ -135,14 +135,14 @@ Query::Execute()
 {
     n_assert(this->sqlStatement.IsValid());
     nSqlDatabase* db = Server::Instance()->GetSqlDatabase();
-    
+
     // create a Nebula2 sqlQuery object
     nSqlQuery* sqlQuery = db->CreateQuery(this->sqlStatement);
     sqlQuery->Execute();
 
     // convert result to Mangalore attributes
     this->result.SetSize(sqlQuery->GetColumns().Size(), sqlQuery->GetNumRows());
-    
+
     // create a reference array of attributes
     const nArray<nString>& resColumns = sqlQuery->GetColumns();
     int colIndex;
@@ -218,14 +218,14 @@ Query::Execute()
                         break;
 
                 }
-                
+
                 this->result.At(colIndex, rowIndex) = attrs[colIndex];
             }
             else
             {
                 // no column
                 this->result.At(colIndex, rowIndex).Clear();
-            }   
+            }
         }
     }
     sqlQuery->Release();

@@ -31,7 +31,7 @@ AbstractPhysicsProperty::~AbstractPhysicsProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Physics is only active for live entities, sleeping entities don't
     have physics.
 */
@@ -42,7 +42,7 @@ AbstractPhysicsProperty::GetActiveEntityPools() const
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Called when property is attached to a game entity. This will create and setup
     the required physics entities.
 */
@@ -50,13 +50,13 @@ void
 AbstractPhysicsProperty::OnActivate()
 {
     TransformableProperty::OnActivate();
-    
+
     // activate physics by default
     this->EnablePhysics();
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Called when property is going to be removed from its game entity.
     This will release the physics entity owned by the game entity.
 */
@@ -67,7 +67,7 @@ AbstractPhysicsProperty::OnDeactivate()
     {
         this->DisablePhysics();
     }
-    
+
     TransformableProperty::OnDeactivate();
 }
 

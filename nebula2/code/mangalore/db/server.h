@@ -3,12 +3,12 @@
 //------------------------------------------------------------------------------
 /**
     @class Db::Server
-    
+
     The DB server is a comfortable wrapper around the world database as
     created by the level exporter. It provides high-level services which
     require a specific database layout, but also allows low level access
     directly to the database using SQL statements.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/refcounted.h"
@@ -23,7 +23,7 @@
 namespace Db
 {
 class Query;
-    
+
 class Server : public Foundation::RefCounted
 {
     DeclareRtti;
@@ -36,7 +36,7 @@ public:
     virtual ~Server();
     /// get instance pointer
     static Server* Instance();
-    
+
     //=== basic stuff ===
 
     /// set world database filename
@@ -370,4 +370,4 @@ Server::GetGlobalMatrix44(Attr::Matrix44AttributeID attrId) const
 
 };
 //------------------------------------------------------------------------------
-#endif    
+#endif

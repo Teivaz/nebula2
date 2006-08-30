@@ -33,7 +33,7 @@ TimeProperty::~TimeProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int

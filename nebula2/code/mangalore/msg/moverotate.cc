@@ -14,7 +14,7 @@ ImplementMsgId(MoveRotate);
 //------------------------------------------------------------------------------
 /**
 */
-MoveRotate::MoveRotate() : 
+MoveRotate::MoveRotate() :
 	angle(0.0f)
 {
 }

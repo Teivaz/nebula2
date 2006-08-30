@@ -18,7 +18,7 @@ TimeManager::TimeManager() :
     time(0.0),
     frameTime(0.0),
     frameId(0)
-{    
+{
     n_assert(0 == Singleton);
     Singleton = this;
 }
@@ -54,7 +54,7 @@ TimeManager::GetTime() const
 
 //------------------------------------------------------------------------------
 /**
-    Set the current frame time. This is usually called by 
+    Set the current frame time. This is usually called by
     Application::GameStateHandler.
 */
 void

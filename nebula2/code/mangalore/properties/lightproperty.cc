@@ -44,7 +44,7 @@ LightProperty::~LightProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int

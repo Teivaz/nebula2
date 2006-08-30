@@ -13,7 +13,7 @@
 
 namespace Attr
 {
-    
+
 class VoidAttributeID : public AttributeID
 {
 public:
@@ -33,8 +33,8 @@ public:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator==(const VoidAttributeID& lhs, const VoidAttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
@@ -43,8 +43,8 @@ operator==(const VoidAttributeID& lhs, const VoidAttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator!=(const VoidAttributeID& lhs, const VoidAttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
@@ -53,7 +53,7 @@ operator!=(const VoidAttributeID& lhs, const VoidAttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 VoidAttributeID::VoidAttributeID(const _attridTyped<attr::VoidT>* aip) :
     AttributeID(aip)
 {
@@ -62,7 +62,7 @@ VoidAttributeID::VoidAttributeID(const _attridTyped<attr::VoidT>* aip) :
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 VoidAttributeID::VoidAttributeID() :
     AttributeID()
 {
@@ -73,11 +73,11 @@ VoidAttributeID::VoidAttributeID() :
     Gives the AttributeID "name".
     Will fail hard if AttributeID doesn't exist.
 */
-inline 
+inline
 VoidAttributeID::VoidAttributeID(const nString& name)
 {
     const VoidAttributeID& existingID = VoidAttributeID::FindVoidAttributeID(name);
-    
+
     if (!existingID.IsValid())
     {
         n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
@@ -89,7 +89,7 @@ VoidAttributeID::VoidAttributeID(const nString& name)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 VoidAttributeID::~VoidAttributeID()
 {
 }

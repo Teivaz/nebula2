@@ -5,7 +5,7 @@
     @class Graphics::AnimTable
 
     Creates a mapping from abstract animation names to actual anim clip names.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/refcounted.h"
@@ -89,4 +89,4 @@ AnimTable::GetFilename() const
 
 };
 //------------------------------------------------------------------------------
-#endif    
+#endif

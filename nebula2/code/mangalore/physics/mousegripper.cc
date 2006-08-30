@@ -40,7 +40,7 @@ MouseGripper::~MouseGripper()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called before a physics frame (consisting of multiple steps) 
+    This method is called before a physics frame (consisting of multiple steps)
     is evaluated.
 */
 void
@@ -154,7 +154,7 @@ MouseGripper::CloseGrip()
         // already closed
         return;
     }
-    
+
     // check if we are over a physics entity
     if (this->contactPoint.GetEntityId() != 0)
     {
@@ -290,11 +290,11 @@ MouseGripper::RenderDebug()
     }
     gfxServer->DrawShape(nGfxServer2::Sphere, gripTransform, gripColor);
 }
-    
+
 //------------------------------------------------------------------------------
 /**
     If grip closed around a valid rigid body, apply a force to the
-    rigid body which moves the body into the direction of the 
+    rigid body which moves the body into the direction of the
     mouse.
 */
 void

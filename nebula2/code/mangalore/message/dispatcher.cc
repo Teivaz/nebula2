@@ -14,7 +14,8 @@ ImplementFactory(Message::Dispatcher);
 /**
 */
 Dispatcher::Dispatcher() :
-    portArray(8, 8)
+    portArray(8, 8),
+    handleMsgLockCount(0)
 {
     // empty
 }
@@ -42,12 +43,22 @@ void
 Dispatcher::Put(Msg* msg)
 {
     n_assert(msg);
+
+    // lock array
+    this->BeginHandleMessage();
+
     int i;
     int num = this->portArray.Size();
     for (i = 0; i < num; i++)
     {
-        this->portArray[i]->Put(msg);
+        if (this->portArray[i] != 0)
+        {
+            this->portArray[i]->Put(msg);
+        }
     }
+
+    // unlock array
+    this->EndHandleMessage();
 }
 
 //------------------------------------------------------------------------------
@@ -59,15 +70,24 @@ Dispatcher::Put(Msg* msg)
 void
 Dispatcher::HandleMessage(Msg* msg)
 {
+    // lock array
+    this->BeginHandleMessage();
+
     int i;
     int num = this->portArray.Size();
     for (i = 0; i < num; i++)
     {
-        if (this->portArray[i]->Accepts(msg))
+        if (this->portArray[i] != 0)
         {
-            this->portArray[i]->HandleMessage(msg);
+            if (this->portArray[i]->Accepts(msg))
+            {
+                this->portArray[i]->HandleMessage(msg);
+            }
         }
     }
+
+    // unlock array
+    this->EndHandleMessage();
 }
 
 //------------------------------------------------------------------------------
@@ -79,13 +99,34 @@ Dispatcher::HandleMessage(Msg* msg)
 void
 Dispatcher::AttachPort(Port* port)
 {
+    // try to cleanup
+    this->CleanupEmptyPorts();
+
     n_assert(port);
+    // check if there is a free ptr that could be used
+    int i;
+    int num = this->portArray.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (this->portArray[i] == 0)
+        {
+            // use free element
+            this->portArray[i] = port;
+            return;
+        }
+    }
+
+    // fallthrough: append port
     this->portArray.Append(port);
 }
 
 //------------------------------------------------------------------------------
 /**
     Remove a message port object.
+
+    Do not delete the array element, just set to 0. This makes it possible
+    that while handling a msg, one of the ports could be removed without invalidating
+    the loop over the array.
 
     @param  port    pointer to message port object to be removed
 */
@@ -94,7 +135,63 @@ Dispatcher::RemovePort(Port* port)
 {
     nArray<Ptr<Port> >::iterator iter = this->portArray.Find(port);
     n_assert(iter);
-    this->portArray.Erase(iter);
+    // set ptr to 0
+    iter->operator =(0);
+
+    // try to cleanup
+    this->CleanupEmptyPorts();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Dispatcher::CleanupEmptyPorts()
+{
+    if (!this->IsInHandleMessage())
+    {
+        int i;
+        for (i = 0; i < this->portArray.Size(); /*empty*/)
+        {
+            if (this->portArray[i] == 0)
+            {
+                this->portArray.Erase(i);
+            }
+            else
+            {
+                // next
+                i++;
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Dispatcher::BeginHandleMessage()
+{
+    this->handleMsgLockCount++;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Dispatcher::EndHandleMessage()
+{
+    n_assert(this->handleMsgLockCount > 0);
+    this->handleMsgLockCount--;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+Dispatcher::IsInHandleMessage() const
+{
+    return (this->handleMsgLockCount > 0);
 }
 
 } // namespace Message

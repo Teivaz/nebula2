@@ -74,7 +74,7 @@ StateHandler::OnStateLeave(const nString& nextState)
 
 //------------------------------------------------------------------------------
 /**
-    This method is called on the current application state after the 
+    This method is called on the current application state after the
     database is opened and before entities are loaded. You can use this
     method to setup managers which depend on a valid database.
 */
@@ -86,8 +86,8 @@ StateHandler::OnLoadBefore()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called on the current application state after entities 
-    have been loaded. You can use this method to setup managers which depend 
+    This method is called on the current application state after entities
+    have been loaded. You can use this method to setup managers which depend
     on loaded entities.
 */
 void

@@ -43,7 +43,7 @@ CharAnimEventHandler::HandleEvent(const nAnimEventTrack& track, int eventIndex)
     // get global position of event, apply the Nebula2 180 degree hack for characters
     matrix44 rot180;
     rot180.rotate_y(n_deg2rad(180.0f));
-    
+
     matrix44 m;
     m.mult_simple(matrix44(event.GetQuaternion()));
     m.translate(event.GetTranslation());

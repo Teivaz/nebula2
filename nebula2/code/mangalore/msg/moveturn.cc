@@ -14,7 +14,7 @@ ImplementMsgId(MoveTurn);
 //------------------------------------------------------------------------------
 /**
 */
-MoveTurn::MoveTurn() : 
+MoveTurn::MoveTurn() :
 	dir(1.0f, 0.0f, 0.0f),
 	camRelative(false)
 {

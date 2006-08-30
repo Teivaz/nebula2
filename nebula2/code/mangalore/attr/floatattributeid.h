@@ -13,7 +13,7 @@
 
 namespace Attr
 {
-    
+
 class FloatAttributeID : public AttributeID
 {
 public:
@@ -33,8 +33,8 @@ public:
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator==(const FloatAttributeID& lhs, const FloatAttributeID& rhs)
 {
     return lhs.attridPtr == rhs.attridPtr;
@@ -43,8 +43,8 @@ operator==(const FloatAttributeID& lhs, const FloatAttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
-bool 
+inline
+bool
 operator!=(const FloatAttributeID& lhs, const FloatAttributeID& rhs)
 {
     return lhs.attridPtr != rhs.attridPtr;
@@ -53,7 +53,7 @@ operator!=(const FloatAttributeID& lhs, const FloatAttributeID& rhs)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 FloatAttributeID::FloatAttributeID(const _attridTyped<attr::FloatT>* aip) :
     AttributeID(aip)
 {
@@ -62,7 +62,7 @@ FloatAttributeID::FloatAttributeID(const _attridTyped<attr::FloatT>* aip) :
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 FloatAttributeID::FloatAttributeID() :
     AttributeID()
 {
@@ -73,11 +73,11 @@ FloatAttributeID::FloatAttributeID() :
     Gives the AttributeID "name".
     Will fail hard if AttributeID doesn't exist.
 */
-inline 
+inline
 FloatAttributeID::FloatAttributeID(const nString& name)
 {
     const FloatAttributeID& existingID = FloatAttributeID::FindFloatAttributeID(name);
-    
+
     if (!existingID.IsValid())
     {
         n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
@@ -89,7 +89,7 @@ FloatAttributeID::FloatAttributeID(const nString& name)
 //------------------------------------------------------------------------------
 /**
 */
-inline 
+inline
 FloatAttributeID::~FloatAttributeID()
 {
 }

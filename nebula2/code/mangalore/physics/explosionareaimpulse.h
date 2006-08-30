@@ -9,7 +9,7 @@
     explosion witch satisfy a line-of-sight test. After Apply() is called,
     the object can be asked about all physics entities which have been
     affected.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "physics/areaimpulse.h"

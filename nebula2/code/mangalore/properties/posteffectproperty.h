@@ -5,12 +5,12 @@
     @class Properties::PostEffectProperty
 
     The PostEffectProperty manages a number of attributes which influence
-    post-effect rendering. 
+    post-effect rendering.
 
     FIXME: at the moment, only one PostEffectProperty object per level is
     supported. In the future one should be able to place several post-effect
     objects into the level which each have an influence bubble.
-    
+
     (C) 2005 Radon Labs GmbH
 */
 #include "game/property.h"

@@ -44,9 +44,9 @@ SoundFxHandler::HandleMessage(Message::Msg* msg)
     if (msg->CheckId(Message::PlaySound::Id))
     {
         Message::PlaySound* playSoundMsg = (Message::PlaySound*) msg;
-        Audio::Server::Instance()->PlaySoundEffect(playSoundMsg->GetName(), 
-                                                   playSoundMsg->GetPosition(), 
-                                                   playSoundMsg->GetVelocity(), 
+        Audio::Server::Instance()->PlaySoundEffect(playSoundMsg->GetName(),
+                                                   playSoundMsg->GetPosition(),
+                                                   playSoundMsg->GetVelocity(),
                                                    playSoundMsg->GetVolume());
     }
 }

@@ -32,7 +32,7 @@ public:
     virtual nString OnFrame();
 	/// called when the state represented by this state handler is entered
     virtual void OnStateEnter(const nString& prevState);
-	
+
 	/// set the video file to play
     void SetVideoFile(const nString& filename);
 	/// get the video file to play

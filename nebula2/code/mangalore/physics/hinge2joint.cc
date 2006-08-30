@@ -33,7 +33,7 @@ Hinge2Joint::~Hinge2Joint()
 
 //------------------------------------------------------------------------------
 /**
-    NOTE: it is important that rigid bodies are added 
+    NOTE: it is important that rigid bodies are added
     (happens in Joint::Attach()) before joint transforms are set!!!
 */
 void
@@ -76,7 +76,7 @@ Hinge2Joint::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
 //------------------------------------------------------------------------------
 /**
 */
-void 
+void
 Hinge2Joint::UpdateTransform(const matrix44& m)
 {
     vector3 p = m * this->GetAnchor();

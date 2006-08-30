@@ -29,7 +29,7 @@ EnvironmentCollideProperty::~EnvironmentCollideProperty()
 }
 
 //------------------------------------------------------------------------------
-/** 
+/**
     Makes only sense for live entities.
 */
 int

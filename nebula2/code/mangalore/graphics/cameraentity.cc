@@ -141,7 +141,7 @@ CameraEntity::SetCamera(const nCamera2& cam)
     The camera entity simply distributes the method on all linked graphics
     entities.
 */
-void 
+void
 CameraEntity::OnRenderBefore()
 {
     // update Nebula2's camera
