@@ -9,16 +9,16 @@ beginmodule db
         attributecontainer
         entity
         query
+        reader
         server
+        writer
     }
-        #reader
-        #writer
     setfiles {
         attributecontainer
         entity
         query
+        reader
         server
+        writer
     }
-        #reader
-        #writer
 endmodule

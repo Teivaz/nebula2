@@ -105,8 +105,7 @@ Entity::LoadAttributesFromDatabase()
 void
 Entity::SaveAttributesToDatabase()
 {
-    this->dbEntity->Save(this->GetCreatedFromTemplate());
-    this->SetCreatedFromTemplate(false);
+    this->dbEntity->Save();
 }
 
 //------------------------------------------------------------------------------

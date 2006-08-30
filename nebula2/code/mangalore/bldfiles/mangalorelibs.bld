@@ -19,6 +19,7 @@ begintarget mangalore
         foundation
         fsm
         game
+        game::time
         graphics
         input
         loader
@@ -33,7 +34,6 @@ begintarget mangalore
         util
         vfx
     }
-        #game::time
         #msg::ui
 endtarget
 

@@ -23,7 +23,7 @@ public:
     /// get the SQL statement
     virtual const nString& GetSqlStatement() const;
     /// execute the query, this updates the stored result
-    virtual bool Execute();
+    virtual bool Execute(bool failOnError = true);
     /// get non-empty columns in the result
     virtual const nArray<nString>& GetColumns() const;
     /// return number of rows in the result
@@ -32,6 +32,11 @@ public:
     virtual nSqlRow GetRow(int rowIndex) const;
     /// return the complete result as a string (only useful for scripting)
     virtual nString GetResultAsString() const;
+
+    #ifdef __NEBULA_STATS__
+    // count the db accesses per frame
+    static int dbAccessCount;
+    #endif
 
 private:
     friend class nSQLite3Database;

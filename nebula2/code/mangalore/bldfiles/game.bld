@@ -20,20 +20,20 @@ beginmodule game
     }
 endmodule
 
-#beginmodule game::time
-#    setdir game/time
-#    setheaders {
-#        gametimesource
-#        guitimesource
-#        inputtimesource
-#        systemtimesource
-#        timesource
-#    }
-#    setfiles {
-#        gametimesource
-#        guitimesource
-#        inputtimesource
-#        systemtimesource
-#        timesource
-#    }
-#endmodule
+beginmodule game::time
+    setdir game/time
+    setheaders {
+        gametimesource
+        guitimesource
+        inputtimesource
+        systemtimesource
+        timesource
+    }
+    setfiles {
+        gametimesource
+        guitimesource
+        inputtimesource
+        systemtimesource
+        timesource
+    }
+endmodule

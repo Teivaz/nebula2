@@ -57,17 +57,6 @@ public:
     void EndTransaction();
     /// gain direct access to database object
     virtual nSqlDatabase* GetSqlDatabase() const;
-
-    //=== reading and writing attributes from/to database ===
-
-    /// reading and writing data from/to database
-    virtual bool WriteAttrs(const nString& tableName, const Attribute& key, const nArray<Attribute>& attrs);
-    /// read a complete row of attributes from the db
-    virtual nArray<Attribute> ReadAttrs(const nString& tableName, const Attribute& key);
-    /// write a single attribute to the db, will create or update table if needed
-    virtual bool WriteAttr(const nString& tableName, const Attribute& key, const Attribute& attr);
-    /// read a single attribute from the db
-    virtual bool ReadAttr(const nString& tableName, const Attribute& key, Attribute& inOutAttr);
     /// create an empty query object
     virtual Query* CreateQuery() const;
 
@@ -111,7 +100,7 @@ public:
     virtual Query* CreateQuery(const nString& sqlStatement) const;
     /// create specialized query which returns the data for all levels in the world database
     virtual Query* CreateLevelsQuery() const;
-    /// create a specialzed query which returns the data for one level in the world database
+    /// create a specialized query which returns the data for one level in the world database
     virtual Query* CreateLevelQuery(const nString& levelName) const;
     /// create specialized query which returns the data for all categories in the world database
     virtual Query* CreateCategoriesQuery() const;

@@ -58,11 +58,11 @@ SetupManager::SetCurrentLevel(const nString& levelName)
     levelQuery->Execute();
     if (levelQuery->GetNumRows() == 0)
     {
-        n_error("SetupManager::SetupWorldFromLevel(): level '%s' not found in world database!", levelName.Get());
+        n_error("SetupManager::SetCurrentLevel(): level '%s' not found in world database!", levelName.Get());
     }
 
     // update the CurrentLevel global attribute
-    Db::Server::Instance()->WriteAttr("_Global", Db::Attribute(Attr::_Dummy, nString("x")), Db::Attribute(Attr::CurrentLevel, levelName));
+    Db::Server::Instance()->SetGlobalString(Attr::CurrentLevel, levelName);
 }
 
 //------------------------------------------------------------------------------
@@ -72,9 +72,7 @@ SetupManager::SetCurrentLevel(const nString& levelName)
 nString
 SetupManager::GetCurrentLevel() const
 {
-    Db::Attribute curLevel(Attr::CurrentLevel);
-    Db::Server::Instance()->ReadAttr("_Global", Db::Attribute(Attr::_Dummy, nString("x")), curLevel);
-    return curLevel.GetString();
+    return Db::Server::Instance()->GetGlobalString(Attr::CurrentLevel);
 }
 
 //------------------------------------------------------------------------------

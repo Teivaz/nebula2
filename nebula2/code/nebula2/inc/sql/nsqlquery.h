@@ -22,7 +22,7 @@ public:
     /// get the SQL statement
     virtual const nString& GetSqlStatement() const = 0;
     /// execute the query, this updates the stored result
-    virtual bool Execute() = 0;
+    virtual bool Execute(bool failOnError = true) = 0;
     /// get non-empty columns in the result
     virtual const nArray<nString>& GetColumns() const = 0;
     /// return number of rows in the result
