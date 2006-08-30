@@ -51,27 +51,27 @@ PointNClickInputProperty::OnBeginFrame()
     if (FocusManager::Instance()->GetInputFocusEntity() == GetEntity())
     {
         Input::Server* inputServer = Input::Server::Instance();
-        if (inputServer->GetButton("lmbDown"))
+        if (inputServer->GetButtonDown("mouseLMB"))
         {
             this->OnLmbDown();
         }
-        else if (inputServer->GetButton("lmbPressed"))
+        else if (inputServer->GetButtonPressed("mouseLMB"))
         {
             this->OnLmbPressed();
         }
-        if (inputServer->GetButton("mmbPressed"))
+        if (inputServer->GetButtonPressed("mouseMMB"))
         {
             this->OnMmbPressed();
         }
-        if (inputServer->GetButton("rmbDown"))
+        if (inputServer->GetButtonDown("mouseRMB"))
         {
             this->OnRmbDown();
         }
-        if (inputServer->GetButton("vwrZoomIn"))
+        if (inputServer->GetButtonClicked("mouseWheelUp"))
         {
             this->OnCameraZoomIn();
         }
-        if (inputServer->GetButton("vwrZoomOut"))
+        if (inputServer->GetButtonClicked("mouseWheelDown"))
         {
             this->OnCameraZoomOut();
         }
@@ -136,8 +136,8 @@ PointNClickInputProperty::OnMmbPressed()
 {
     // get horizontal and vertical mouse movement
     Input::Server* inputServer = Input::Server::Instance();
-    float x = inputServer->GetSlider("vwrLeft") - inputServer->GetSlider("vwrRight");
-    float y = inputServer->GetSlider("vwrUp") - inputServer->GetSlider("vwrDown");
+    float x = inputServer->GetSlider("mouseLeft") - inputServer->GetSlider("mouseRight");
+    float y = inputServer->GetSlider("mouseUp") - inputServer->GetSlider("mouseDown");
 
     // create CameraOrbit message
 	Ptr<Message::CameraOrbit> msg = Message::CameraOrbit::Create();

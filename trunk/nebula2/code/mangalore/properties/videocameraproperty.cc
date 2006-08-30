@@ -79,7 +79,7 @@ VideoCameraProperty::OnRender()
     if (FocusManager::Instance()->GetInputFocusEntity() == GetEntity())
     {
         // feed the Maya camera object with input
-        Input::Server* inputServer = Input::Server::Instance();
+        nInputServer* inputServer = nInputServer::Instance();
 
         if (inputServer->GetButton("ctrlPressed"))
         {

@@ -86,12 +86,12 @@ MouseGripperProperty::OnMoveBefore()
     SetMousePos(inputServer->GetMousePos());
 
     //if left mouse button is pressed, pick up physic entity
-    if(!inputServer->GetButton("ctrlPressed") && inputServer->GetButton("lmbDown"))
+    if(!inputServer->GetButtonPressed("ctrl") && inputServer->GetButtonDown("mouseLMB"))
     {
         CloseGrip();
     }
     //if right button is pressed, force release of physics entity
-    if(inputServer->GetButton("rmbDown")||inputServer->GetButton("lmbUp"))
+    if(inputServer->GetButtonDown("mouseRMB") || inputServer->GetButtonUp("mouseLMB"))
     {
         OpenGrip();
     }

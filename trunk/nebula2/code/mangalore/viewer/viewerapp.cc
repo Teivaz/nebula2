@@ -210,7 +210,7 @@ void
 ViewerApp::OnFrame()
 {
     Input::Server* inputServer = Input::Server::Instance();
-    if (inputServer->GetButton("timeReset"))
+    if (inputServer->GetButtonClicked("timeReset"))
     {
         if (this->loadedEntity)
         {

@@ -139,6 +139,8 @@ protected:
     virtual void SetupFromCmdLineArgs();
     /// setup the application from a user profile
     virtual void SetupFromProfile();
+    /// setup the app's input mapping (called in SetupSubsystems())
+    virtual void SetupDefaultInputMapping();
     /// setup the Game subsystem
     virtual void SetupGameSubsystem();
     /// cleanup the Game subsystem
