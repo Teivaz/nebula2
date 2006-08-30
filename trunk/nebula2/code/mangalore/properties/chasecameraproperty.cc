@@ -3,7 +3,7 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "properties/chasecameraproperty.h"
-#include "managers/timemanager.h"
+#include "game/time/inputtimesource.h"
 #include "managers/focusmanager.h"
 #include "game/entity.h"
 #include "graphics/server.h"
@@ -103,7 +103,7 @@ ChaseCameraProperty::OnObtainFocus()
     // that we get a smooth interpolation to the new position
     Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
     const matrix44& m = camera->GetTransform();
-    nTime time = TimeManager::Instance()->GetTime();
+    nTime time = InputTimeSource::Instance()->GetTime();
     this->cameraPos.Reset(time, 0.0001f, GetEntity()->GetFloat(Attr::CameraLinearGain), m.pos_component());
     this->cameraLookat.Reset(time, 0.0001f, GetEntity()->GetFloat(Attr::CameraAngularGain), m.pos_component() - (m.z_component() * 10.0f));
 
@@ -205,7 +205,7 @@ ChaseCameraProperty::HandleCameraOrbit(float dRho, float dTheta)
     float lowStop = n_deg2rad(GetEntity()->GetFloat(Attr::CameraLowStop));
     float hiStop  = n_deg2rad(GetEntity()->GetFloat(Attr::CameraHighStop));
 
-    float frameTime = (float) TimeManager::Instance()->GetFrameTime();
+    float frameTime = (float) InputTimeSource::Instance()->GetFrameTime();;
     this->cameraAngles.rho += dRho * angularVelocity * frameTime;
     this->cameraAngles.theta += dTheta * angularVelocity * frameTime;
     this->cameraAngles.theta = n_clamp(this->cameraAngles.theta, lowStop, hiStop);
@@ -275,13 +275,13 @@ ChaseCameraProperty::UpdateCamera()
     const vector3& camPos = camera->GetTransform().pos_component();
     if (camPos.isequal(vector3::zero, 0.0f))
     {
-        nTime time = TimeManager::Instance()->GetTime();
+        nTime time = InputTimeSource::Instance()->GetTime();
         this->cameraPos.Reset(time, 0.0001f, GetEntity()->GetFloat(Attr::CameraLinearGain), goalPos);
         this->cameraLookat.Reset(time, 0.0001f, GetEntity()->GetFloat(Attr::CameraAngularGain), lookatPoint);
     }
 
     // feed and update the feedback loops
-    nTime time = TimeManager::Instance()->GetTime();
+    nTime time = InputTimeSource::Instance()->GetTime();
     this->cameraPos.SetGoal(goalPos);
     this->cameraLookat.SetGoal(lookatPoint);
     this->cameraPos.Update(time);
