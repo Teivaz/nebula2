@@ -36,7 +36,7 @@ public:
     void RemoveInputSink(int priority, Message::Port* sink);
 
     /// send this array of events
-    void SendEvents(const nArray<Ptr<Event>>& events);
+    void SendEvents(const nArray<Ptr<Event> >& events);
 
     /// get number of attached input sinks
     int GetNumSinks() const;

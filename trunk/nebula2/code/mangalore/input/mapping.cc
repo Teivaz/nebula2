@@ -99,7 +99,7 @@ Mapping::Emit()
 /**
 */
 void
-Mapping::SendEvents(const nArray<Ptr<Event>>& events)
+Mapping::SendEvents(const nArray<Ptr<Event> >& events)
 {
     // set the mapping
     int i;

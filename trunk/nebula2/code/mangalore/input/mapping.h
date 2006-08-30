@@ -59,7 +59,7 @@ public:
     void RemoveInputSink(int priority, Message::Port* sink);
 
     /// send a array of events into the input chain
-    void SendEvents(const nArray<Ptr<Event>>& events);
+	void SendEvents(const nArray<Ptr<Event> >& events);
 
 private:
     /// the embedded input chain for this mapping
