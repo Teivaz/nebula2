@@ -21,14 +21,19 @@ class nSceneNode;
 class nMaxDummy : public nMaxNode
 {
 public:
+    /// Constructor.
     nMaxDummy();
+    /// Destructor.
     virtual ~nMaxDummy();
 
+    ///
     nSceneNode* Export(INode* inode);
 
 protected:
+    ///
     nSceneNode* CreateNodeFromCustAttrib(INode* inode);
 
+    ///
     nSceneNode* ExportLODNode(INode *inode, TiXmlHandle &xmlHandle, const char* paramName);
 
 protected:
