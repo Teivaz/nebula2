@@ -38,18 +38,24 @@ STR_SRC_FILE = '''\
                         <Tool
                             Name="VCCLCompilerTool"
                             %(nebSymsStr)s
-                            ObjectFile="$(IntDir)/%(objectName)s.obj"
+                            %(objectNameStr)s
                             %(compileAsStr)s/>
                     </FileConfiguration>
                     <FileConfiguration Name="Release|Win32">
                         <Tool
                             Name="VCCLCompilerTool"
                             %(nebSymsStr)s
-                            ObjectFile="$(IntDir)/%(objectName)s.obj"
+                            %(objectNameStr)s
                             %(compileAsStr)s/>
                     </FileConfiguration>
                 </File>
 '''
+
+STR__NOCFG_SRC_FILE = '''\
+                <File
+                    RelativePath="%(relPath)s" />
+'''
+
 
 STR_SLN_PROJECT_CONFIGS = '''\
 \t\t{%(uuid)s}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -466,15 +472,27 @@ class vstudio8:
             relPath = self.buildSys.FindRelPath(self.vcprojLocation,
                                                         fileName)
             ignore, shortFileName = os.path.split(fileName)
+
             objectName, ignore = os.path.splitext(shortFileName)
+            objectNameStr = ''
+            if target.ObjectFileNames.has_key(objectName):
+                objectNameStr = 'ObjectFile="$(IntDir)/%s_%s.obj"' % (safeModName, objectName)
+            else:
+                target.ObjectFileNames[objectName] = True
+            
             nebSymsStr = ''
             if target.PkgTarget:
                 nebSymsStr = 'PreprocessorDefinitions="%s"' % nebSyms
+            
             args = {'relPath' : relPath,
                     'nebSymsStr' : nebSymsStr,
-                    'objectName' : ('%s_%s' % (safeModName, objectName)),
+                    'objectNameStr' : objectNameStr,
                     'compileAsStr' : compileAsStr }
-            projFile.write(STR_SRC_FILE % args)
+
+            if nebSymsStr == objectNameStr == compileAsStr == '':
+                projFile.write(STR__NOCFG_SRC_FILE % args)
+            else:
+                projFile.write(STR_SRC_FILE % args)
 
         # header files
         for fileName in module.resolvedHeaders:
@@ -496,15 +514,19 @@ class vstudio8:
 
     #--------------------------------------------------------------------------
     def writeProjectFiles(self, target, projFile):
+        target.ObjectFileNames = dict()
         projFile.write('    <Files>\n')
         for dir in target.dirs:
             modules = self.getModulesinDir(target.modules, dir)
-            if len(modules) > 1:
+            addFilter = True
+            if len(modules) == 1 and modules[0].name == dir:
+                addFilter = False
+            if addFilter:
                 projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
                            % dir)
             for module in modules:
                 self.writeModuleFiles(target, module, projFile)
-            if len(modules) > 1:
+            if addFilter:
                 projFile.write('        </Filter>\n')
 
         for moduleName in target.modules:
