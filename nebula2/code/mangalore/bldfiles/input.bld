@@ -5,26 +5,26 @@
 beginmodule input
     setdir input
     setheaders {
+        axissource
+        buttonsource
         chain
+        event
+        keysource
+        mapping
+        mousesource
         priority
+        source
         server
     }
-        #axissource
-        #buttonsource
-        #event
-        #keysource
-        #mapping
-        #mousesource
-        #source
     setfiles {
+        axissource
+        buttonsource
+        chain
+        event
+        keysource
+        mapping
+        mousesource
+        source
         server
     }
-        #axissource
-        #buttonsource
-        #chain
-        #event
-        #keysource
-        #mapping
-        #mousesource
-        #source
 endmodule

@@ -244,6 +244,40 @@ App::SetupFromCmdLineArgs()
 
 //------------------------------------------------------------------------------
 /**
+    Setup the default input mapping.
+*/
+void
+App::SetupDefaultInputMapping()
+{
+    Input::Server* inputServer = Input::Server::Instance();
+
+    // per default the input server keep track of the 2d windows mouse position
+    inputServer->AddMapping("mousePosition", "mouse0:position");
+
+    inputServer->AddMapping("mouseLMB", "mouse0:btn0");
+    inputServer->AddMapping("mouseRMB", "mouse0:btn1");
+    inputServer->AddMapping("mouseMMB", "mouse0:btn2");
+    inputServer->AddMapping("mouseWheelDown", "relmouse0:+zbtn");
+    inputServer->AddMapping("mouseWheelUp", "relmouse0:-zbtn");
+    inputServer->AddMapping("mouseLeft", "relmouse0:-x");
+    inputServer->AddMapping("mouseRight", "relmouse0:+x");
+    inputServer->AddMapping("mouseUp", "relmouse0:-y");
+    inputServer->AddMapping("mouseDown", "relmouse0:+y");
+
+    // for the character/text input add a default mapping
+    inputServer->AddMapping("textinput", "keyb0:characters");
+
+    inputServer->AddMapping("ctrl", "keyb0:ctrl");
+    inputServer->AddMapping("shift", "keyb0:shift");
+    inputServer->AddMapping("space", "keyb0:space");
+    inputServer->AddMapping("tab", "keyb0:tab");
+    inputServer->AddMapping("escape", "keyb0:esc");
+
+    inputServer->AddMapping("timeReset", "keyb0:t");
+}
+
+//------------------------------------------------------------------------------
+/**
     Setup the Game subsystem. This is most likely to be different in
     a derived application, so it lives in its own method which can
     be overwritten by a subclass.
@@ -318,6 +352,7 @@ App::SetupSubsystems()
 
     // setup the input subsystem
     this->inputServer = Input::Server::Create();
+    this->SetupDefaultInputMapping();
     this->inputServer->Open();
 
     // setup the audio subsystem

@@ -74,6 +74,18 @@ AMotor::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
 /**
 */
 void
+AMotor::UpdateVelocity(uint axisIndex)
+{
+    n_assert(this->GetNumAxes() > axisIndex);
+
+    const JointAxis& curAxis = this->axisParams[axisIndex];
+    dJointSetAMotorParam(this->odeJointId, dParamVel + dParamGroup * axisIndex, curAxis.GetVelocity());
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
 AMotor::UpdateTransform(const matrix44& m)
 {
     matrix33 m33(m.x_component(), m.y_component(), m.z_component());

@@ -37,6 +37,8 @@ public:
     uint GetNumAxes() const;
     /// read/write access to axis parameters
     JointAxis& AxisParams(uint axisIndex) const;
+    /// update axis parameter velocity in ode joint motor
+    void UpdateVelocity(uint axisIndex);
 
 private:
     nFixedArray<JointAxis> axisParams;
