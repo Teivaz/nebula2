@@ -130,4 +130,4 @@ EnvQueryManager::OnFrame()
     }
 }
 
-} // namespace Game
+} // namespace Managers

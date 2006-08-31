@@ -138,4 +138,4 @@ SetupManager::CleanupWorld()
     Navigation::Server::Instance()->Close();
 }
 
-} // namespace Game
+} // namespace Managers

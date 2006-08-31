@@ -75,7 +75,7 @@ Entity::CleanupProperties()
     CAREFUL! THIS METHOD IS SLOW.
 
     This method loads the entity attributes from the world database
-    and attaches them to the entity. To identify the entity in the database,
+    and attached them to the entity. To identify the entity in the database,
     a valid GUID attribute must be attached to the entity.
     Existing attributes will be overwritten (if they are in the database) or
     left untouched (if they are not in the database). To implement post-loading
@@ -201,7 +201,7 @@ Entity::OnDeactivate()
 
 //------------------------------------------------------------------------------
 /**
-    Called on game entities at the start of the frame.
+    Called on game entities at the begin of the frame.
 */
 void
 Entity::OnBeginFrame()
@@ -373,7 +373,7 @@ Entity::AttachProperty(Property* prop)
         if (prop->IsActiveInState(currState))
         {
             this->properties.Append(prop);
-	        prop->SetEntity(this);
+            prop->SetEntity(this);
             prop->SetupDefaultAttributes();
         }
     }

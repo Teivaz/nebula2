@@ -11,7 +11,7 @@
     the Message::Port class and as such may receive and handle
     messages but they are not required to do so.
 
-    (C) 2006 RadonLabs GmbH
+    (C) 2005 Radon Labs GmbH
 */
 #include "message/port.h"
 #include "message/msg.h"
@@ -48,7 +48,7 @@ public:
     virtual void OnStart();
     /// called from within Entity::Save() before attributes are saved back to database
     virtual void OnSave();
-    /// called at the start of a frame
+    /// called on begin of frame
     virtual void OnBeginFrame();
     /// called before movement happens
     virtual void OnMoveBefore();
@@ -74,7 +74,7 @@ protected:
     /// Remove entity.
     void ClearEntity();
 
-    Entity* entity;
+    Ptr<Entity> entity;
     bool active;
 };
 
@@ -109,6 +109,6 @@ Property::HasEntity() const
     return this->entity != 0;
 }
 
-} // namespace Game
+} // namespace Property
 //------------------------------------------------------------------------------
 #endif

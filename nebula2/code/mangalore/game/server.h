@@ -19,6 +19,7 @@
 */
 #include "foundation/refcounted.h"
 #include "foundation/ptr.h"
+#include "kernel/nprofiler.h"
 
 //------------------------------------------------------------------------------
 namespace Game
@@ -29,7 +30,7 @@ class Manager;
 class Server : public Foundation::RefCounted
 {
     DeclareRtti;
-	DeclareFactory(Server);
+    DeclareFactory(Server);
 
 public:
     /// constructor
@@ -41,6 +42,12 @@ public:
 
     /// open the game world
     virtual bool Open();
+    /// start the game world
+    virtual bool Start();
+    /// has the game world already started
+    bool HasStarted() const;
+    /// stop the game world
+    virtual void Stop();
     /// close the game world
     virtual void Close();
     /// trigger the game world
@@ -57,13 +64,18 @@ public:
     virtual bool HasManager(const Foundation::Rtti& classId) const;
     /// find a manager by its class id
     virtual Manager* FindManager(const Foundation::Rtti& classId) const;
+    /// render a debug visualization
+    virtual void RenderDebug();
 
 protected:
     friend class Entity;
     static Server* Singleton;
 
     bool isOpen;
+    bool isStarted;
     nArray<Ptr<Manager> > managers;
+
+    PROFILER_DECLARE(profGameServerFrame);
 };
 
 RegisterFactory(Server);
@@ -82,3 +94,4 @@ Server::Instance()
 } // namespace Game
 //------------------------------------------------------------------------------
 #endif
+

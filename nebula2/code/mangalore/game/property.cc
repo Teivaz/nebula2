@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //  game/property.cc
-//  (C) 2006 RadonLabs GmbH
+//  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "game/property.h"
 #include "game/entity.h"
@@ -12,7 +12,7 @@ ImplementRtti(Game::Property, Message::Port);
 //------------------------------------------------------------------------------
 /**
 */
-Property::Property() : active(false), entity(0)
+Property::Property() : active(false)
 {
     // empty
 }
@@ -22,7 +22,7 @@ Property::Property() : active(false), entity(0)
 */
 Property::~Property()
 {
-    // empty
+    n_assert(!this->entity.isvalid());
 }
 
 //------------------------------------------------------------------------------
@@ -220,12 +220,12 @@ Property::Accepts(Message::Msg* msg)
     not be called "automagically" because the Property doesn't know at which
     point in the frame you want to handle pending messages.
 
-    Thus, you must call the HandlePendingMessages() yourself from either
-    OnBeginFrame(), OnMoveBefore(), OnMoveAfter() or OnRender().
+    Thus, you must call the HandlePendingMessages() yourself from either OnBeginFrame(),
+    OnMoveBefore(), OnMoveAfter() or OnRender().
 
     The simple rule is: if you override the Accepts() method, you must also call
-    HandlePendingMessages() either in OnBeginFrame(), OnMoveBefore(),
-    OnMoveAfter() or OnRender().
+    HandlePendingMessages() either in OnBeginFrame(), OnMoveBefore(), OnMoveAfter()
+    or OnRender()
 */
 void
 Property::HandleMessage(Message::Msg* msg)
@@ -254,4 +254,4 @@ Property::ClearEntity()
     this->entity = 0;
 }
 
-} // namespace Game
+}; // namespace Game
