@@ -237,7 +237,7 @@ nGuiDockWindow::OnShow()
     rectangle rect;
     const float width  = 12 * btnSize.x;
     const float height = btnSize.y;
-    
+
     rect.v0.set(0.5f - (width * 0.5f), 0.0f);
     rect.v1.set(0.5f + (width * 0.5f), height);
     this->SetRect(rect);

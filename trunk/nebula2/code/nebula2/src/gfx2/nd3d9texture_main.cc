@@ -1069,7 +1069,7 @@ nD3D9Texture::FormatToD3DFormat(nTexture2::Format format)
 
 //------------------------------------------------------------------------------
 /**
-    Generante mip maps for surface data.
+    Generate mip maps for surface data.
 
     - Feb-04 Kim, H.W. added to support ngameswf.
 */

@@ -70,7 +70,7 @@ public:
 
     /// attach port to mapping (return ptr to mapping, so a sink that is attached to multiple mapping could know which one sends now)
     Mapping* AttachInputSink(const nString& mappingName, int priority, Message::Port* sink);
-    /// remove input sink from mapping (removes the sink from all prioritys)
+    /// remove input sink from mapping (removes the sink from all priorities)
     void RemoveInputSink(const nString& mappingName, Message::Port* sink);
     /// remove input sink with given priority from mapping
     void RemoveInputSink(const nString& mappingName, int priority, Message::Port* sink);
@@ -87,15 +87,15 @@ public:
     bool GetButtonPressed(const nString& mappingName) const;
     /// was a button clicked in the last frame?
     bool GetButtonClicked(const nString& mappingName) const;
-    /// was a button double in the last frame?
+    /// was a button double clicked in the last frame?
     bool GetButtonDoubleClicked(const nString& mappingName) const;
 
-    /// convinience - keep track of current mouse position
+    /// convenience - keep track of current mouse position
     /// get current mouse position
     virtual const vector2& GetMousePos() const;
 
 protected:
-    /// create a appropiate input source for the given device channel
+    /// create an appropiate input source for the given device channel
     Ptr<Source> CreateInputSource(const nString& deviceChannel) const;
 
     /// cleanup empty elements from mapping array

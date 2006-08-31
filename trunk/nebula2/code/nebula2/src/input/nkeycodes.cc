@@ -7,7 +7,7 @@
 #ifndef __XBxX__
 /*
     -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping.
-                          Thanks Magon Fox and Chris Tencati for the pointing out this.
+                          Thanks Megan Fox and Chris Tencati for the pointing out this.
 */
 nStrToKey key_remaptable[] = {
     { "bs",         N_KEY_BACK, },

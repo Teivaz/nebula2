@@ -23,9 +23,9 @@ public:
     /// constructor
     SegmentedGfxUtil();
     /// create and setup one or more graphics entities from hierarchy nodes
-    nArray<Ptr<Graphics::Entity>> CreateAndSetupGraphicsEntities(const nString& resName, const matrix44& worldMatrix, bool attachToLevel=true);
+    nArray<Ptr<Graphics::Entity> > CreateAndSetupGraphicsEntities(const nString& resName, const matrix44& worldMatrix, bool attachToLevel=true);
 private:
-    nArray<Ptr<Graphics::Resource>> resourceCache;
+    nArray<Ptr<Graphics::Resource> > resourceCache;
 };
 
 } // namespace Util
