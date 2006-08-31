@@ -535,13 +535,14 @@ void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod,
     ISkin* skin = (ISkin*)skinMod->GetInterface(I_SKIN);
     if (skin == NULL)
         return;
-
+/*
     // get the skin context
     ISkinContextData* context = skin->GetContextInterface( node );
-
+    
     if (context != NULL)
     {
-        // for all skinned points
+        // walks over every vertex to find the bones that modify it.
+        // only add bones to the array if the bone has any vertices which are affected by it.
         const int numPoints = context->GetNumPoints();
         for (int i=0; i<numPoints; i++)
         {
@@ -569,6 +570,26 @@ void nMaxBoneManager::ExtractSkinBones(INode* node, Modifier* skinMod,
                 this->AddBoneToNode(node, bone);
             }
         }
+    }
+*/
+    // force to add every bones to the array.
+    // This is useful when you've got various dummy bones(no vertices affected by it)
+    // that are just there for the purpose of using them as hard points.
+    int numBones = skin->GetNumBones();
+
+    for (int i=0; i<numBones; i++)
+    {
+        INode* bone = skin->GetBone(i);
+
+        // add found bone to the bones array
+        if (!boneNodeArray.Find(bone))
+        {
+            nString nodeName = node->GetName();
+            nString boneName = bone->GetName();
+            n_maxlog(High, "      node '%s' -> bone '%s' ", nodeName.Get(), boneName.Get());
+            boneNodeArray.Append(bone);
+        }
+        this->AddBoneToNode(node, bone);
     }
 }
 
