@@ -264,4 +264,4 @@ TimeManager::Update()
     }
 }
 
-}; // namespace Game
+} // namespace Managers

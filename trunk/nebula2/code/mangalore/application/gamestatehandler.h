@@ -13,7 +13,7 @@
     * LOAD LEVEL: game starts at the given level
     * LOAD SAVE GAME: game starts with the given save game
 
-    (C) 2006 RadonLabs GmbH
+    (C) 2003 RadonLabs GmbH
 */
 #include "application/statehandler.h"
 #include "gfx2/nmesh2.h"
@@ -48,10 +48,6 @@ public:
     void SetSetupMode(SetupMode mode);
     /// get the setup mode
     SetupMode GetSetupMode() const;
-    /// set database filename
-    void SetDbName(const nString& n);
-    /// get database name
-    const nString& GetDbName() const;
     /// set level filename, required by setup mode LoadLevel
     void SetLevelName(const nString& n);
     /// get level name
@@ -60,7 +56,7 @@ public:
     void SetSaveGame(const nString& n);
     /// get save game name
     const nString& GetSaveGame() const;
-    /// configure follow up state when Alt-F4 or Windows close button is pressed (default: App::Exit)
+    /// configure followup state when Alt-F4 or Windows close button is pressed (default: App::Exit)
     void SetExitState(const nString& state);
     /// get Alt-F4 state
     const nString& GetExitState() const;
@@ -71,16 +67,16 @@ public:
     /// called each frame as long as state is current, return new state
     virtual nString OnFrame();
 
-protected:
+private:
     SetupMode setupMode;
     nString exitState;
-    nString dbName;
     nString levelName;
     nString saveGame;
     bool physicsVisualizationEnabled;
     bool graphicsVisualizationEnabled;
     bool gameEntityVisualizationEnabled;
     bool fovVisualization;
+
     PROFILER_DECLARE(profCompleteFrame);
     PROFILER_DECLARE(profParticleUpdates);
     PROFILER_DECLARE(profRender);
@@ -126,26 +122,6 @@ const nString&
 GameStateHandler::GetExitState() const
 {
     return this->exitState;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-GameStateHandler::SetDbName(const nString& n)
-{
-    this->dbName = n;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-const nString&
-GameStateHandler::GetDbName() const
-{
-    return this->dbName;
 }
 
 //------------------------------------------------------------------------------

@@ -55,6 +55,7 @@ GameStateHandler::OnStateEnter(const nString& prevState)
 {
     TimeManager::Instance()->ResetAll();
     TimeManager::Instance()->Update();
+
     this->physicsVisualizationEnabled = false;
     this->graphicsVisualizationEnabled = false;
 
@@ -68,7 +69,6 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     else if (NewGame == this->setupMode)
     {
         // use override start level, or the startup level from the world database?
-        saveGameManager->SetWorldDbOverride(this->GetDbName());
         saveGameManager->SetStartLevelOverride(this->GetLevelName());
         saveGameManager->NewGame();
     }
@@ -85,20 +85,14 @@ GameStateHandler::OnStateEnter(const nString& prevState)
         loaderServer->SetProgressText("On Load Before...");
         loaderServer->UpdateProgressDisplay();
         setupManager->SetCurrentLevel(this->GetLevelName());
-
-        // notify application state handler
         this->OnLoadBefore();
 
         loaderServer->SetProgressText("Setup World...");
         loaderServer->UpdateProgressDisplay();
-
-        // setup world from current game
         setupManager->SetupWorldFromCurrentLevel();
 
         loaderServer->SetProgressText("On Load After...");
         loaderServer->UpdateProgressDisplay();
-        
-        // notify application state handler
         this->OnLoadAfter();
         loaderServer->CloseProgressIndicator();
     }
@@ -108,7 +102,6 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     }
 
     // clear the startup level and save game name
-    this->SetDbName("");
     this->SetLevelName("");
     this->SetSaveGame("");
 
@@ -168,13 +161,14 @@ GameStateHandler::OnFrame()
     Navigation::Server::Instance()->OnEndFrame();
     Audio::Server::Instance()->EndScene();
     VFX::Server::Instance()->BeginScene();
+
     PROFILER_START(this->profParticleUpdates);
     nParticleServer::Instance()->Trigger();
     nParticleServer2::Instance()->Trigger();
     PROFILER_STOP(this->profParticleUpdates);
+
     PROFILER_START(this->profRender);
     running &= Graphics::Server::Instance()->Trigger();
-
     if (Graphics::Server::Instance()->BeginRender())
     {
         UI::Server::Instance()->Render();
@@ -196,7 +190,7 @@ GameStateHandler::OnFrame()
         }
         if (this->gameEntityVisualizationEnabled)
         {
-            //Game::Server::Instance()->RenderDebug();
+            Game::Server::Instance()->RenderDebug();
         }
         Graphics::Server::Instance()->EndRender();
     }

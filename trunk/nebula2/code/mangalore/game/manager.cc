@@ -49,7 +49,7 @@ Manager::OnDeactivate()
 {
     n_assert(this->isActive);
     Message::Server::Instance()->UnregisterPort(this);
-    this->isActive = true;
+    this->isActive = false;
 }
 
 //------------------------------------------------------------------------------
@@ -76,7 +76,25 @@ Manager::OnLoad()
 /**
 */
 void
+Manager::OnRenderDebug()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
 Manager::OnSave()
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Manager::OnStart()
 {
     // empty
 }

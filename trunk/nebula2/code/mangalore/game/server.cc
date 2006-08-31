@@ -7,9 +7,10 @@
 #include "game/manager.h"
 #include "managers/entitymanager.h"
 #include "db/server.h"
-
-// FIXME: [np] remove profiling!
-#include "kernel/nprofiler.h"
+#include "db/writer.h"
+#include "attr/attributes.h"
+#include "loader/server.h"
+#include "gfx2/ngfxserver2.h"
 
 namespace Game
 {
@@ -22,10 +23,13 @@ Server* Server::Singleton = 0;
 /**
 */
 Server::Server() :
-    isOpen(false)
+    isOpen(false),
+    isStarted(false)
 {
     n_assert(0 == Singleton);
     Singleton = this;
+
+    PROFILER_INIT(this->profGameServerFrame, "profMangaGameServerFrame");
 }
 
 //------------------------------------------------------------------------------
@@ -47,8 +51,62 @@ bool
 Server::Open()
 {
     n_assert(!this->isOpen);
+    n_assert(!this->isStarted);
     this->isOpen = true;
     return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Start the game world, called after loading has completed.
+*/
+bool
+Server::Start()
+{
+    n_assert(this->isOpen);
+    n_assert(!this->isStarted);
+
+    // call the OnStart method on all managers
+    int i;
+    int num = this->managers.Size();
+    for (i = 0; i < num; i++)
+    {
+        this->managers[i]->OnStart();
+    }
+
+    // call the OnStart() method on all entities
+    const nArray<Ptr<Entity> >& entities = Managers::EntityManager::Instance()->GetEntities();
+    int entityIndex;
+    int numEntities = entities.Size();
+    for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
+    {
+        entities[entityIndex]->OnStart();
+    }
+
+    this->isStarted = true;
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+Server::HasStarted() const
+{
+    return this->isStarted;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Stop the game world, called before the world(current level) is cleaned up.
+*/
+void
+Server::Stop()
+{
+    n_assert(this->isOpen);
+    n_assert(this->isStarted);
+
+    this->isStarted = false;
 }
 
 //------------------------------------------------------------------------------
@@ -58,6 +116,7 @@ Server::Open()
 void
 Server::Close()
 {
+    n_assert(!this->isStarted);
     n_assert(this->isOpen);
 
     // remove all managers
@@ -81,12 +140,14 @@ void
 Server::OnFrame()
 {
     // call OnFrame() on managers
+    PROFILER_START(this->profGameServerFrame);
     int i;
     int num = this->managers.Size();
     for (i = 0; i < num; i++)
     {
         this->managers[i]->OnFrame();
     }
+    PROFILER_STOP(this->profGameServerFrame);
 }
 
 //------------------------------------------------------------------------------
@@ -163,28 +224,38 @@ Server::Save()
 
     dbServer->BeginTransaction();
 
-    // first call the OnSave() method on all entities, so they can prepare their
-    // attributes for saving to the world database
-    const nArray<Ptr<Entity> >& entities = Managers::EntityManager::Instance()->GetEntities();
-    int entityIndex;
-    int numEntities = entities.Size();
-    for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
-    {
-        entities[entityIndex]->OnSave();
-    }
-
-    // now let the entities actually save themselves to the database
-    for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
-    {
-        entities[entityIndex]->SaveAttributesToDatabase();
-    }
-
     // finally, let the managers save their state to the database
     int managerIndex;
     int numManagers = this->managers.Size();
     for (managerIndex = 0; managerIndex < numManagers; managerIndex++)
     {
         this->managers[managerIndex]->OnSave();
+    }
+
+    // first call the OnSave() method on all entities, so they can prepare their
+    // attributes for saving to the world database
+    const nArray<Ptr<Entity> >& entities = Managers::EntityManager::Instance()->GetEntities();
+    int entityIndex;
+    int numEntities = entities.Size();
+    if (numEntities > 0)
+    {
+        for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
+        {
+            entities[entityIndex]->OnSave();
+        }
+
+        // now let the entities actually save themselves to the database
+        Ptr<Db::Writer> dbWriter = Db::Writer::Create();
+        dbWriter->SetTableName("_Entities");
+        dbWriter->SetPrimaryKey(Attr::GUID);
+        if (dbWriter->Open())
+        {
+            for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
+            {
+                entities[entityIndex]->SaveAttributesToDbWriter(dbWriter);
+            }
+            dbWriter->Close();
+        }
     }
 
     // and save the global attributes...
@@ -204,7 +275,11 @@ Server::Save()
 void
 Server::Load()
 {
+    Loader::Server* loaderServer = Loader::Server::Instance();
+
     // call the OnLoad() method on all entities
+    loaderServer->SetProgressText("Calling OnLoad() on loaded entities...");
+    loaderServer->UpdateProgressDisplay();
     const nArray<Ptr<Entity> >& entities = Managers::EntityManager::Instance()->GetEntities();
     int entityIndex;
     int numEntities = entities.Size();
@@ -218,8 +293,38 @@ Server::Load()
     int numManagers = this->managers.Size();
     for (managerIndex = 0; managerIndex < numManagers; managerIndex++)
     {
+        // update progress display
+        nString progressText;
+        progressText.Format("Calling OnLoad() on manager '%s'", this->managers[managerIndex]->GetClassName().Get());
+        loaderServer->SetProgressText(progressText);
+        loaderServer->UpdateProgressDisplay();
+
+        // invoke OnLoad() on manager
         this->managers[managerIndex]->OnLoad();
     }
+    loaderServer->SetProgressText("Game::Server::Load() done!");
+    loaderServer->UpdateProgressDisplay();
+}
+
+//------------------------------------------------------------------------------
+/**
+    Renders the debug visualization of the level.
+*/
+void
+Server::RenderDebug()
+{
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    gfxServer->BeginShapes();
+    int i;
+    for(i = 0; i < this->managers.Size(); i++)
+    {
+        n_assert(this->managers[i].isvalid());
+        if (this->managers[i]->IsActive())
+        {
+            this->managers[i]->OnRenderDebug();
+        }
+    }
+    gfxServer->EndShapes();
 }
 
 } // namespace Game

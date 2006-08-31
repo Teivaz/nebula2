@@ -13,6 +13,7 @@
 #include "game/server.h"
 #include "application/app.h"
 #include "application/statehandler.h"
+#include "managers/factorymanager.h"
 
 namespace Managers
 {
@@ -41,29 +42,10 @@ SaveGameManager::~SaveGameManager()
 
 //------------------------------------------------------------------------------
 /**
-    This method get the world database.
-*/
-nString
-SaveGameManager::GetWorldDb()
-{
-    if (this->overrideWorldDb.IsValid())
-    {
-        // override database set, use this
-        return nString("db:") + this->overrideWorldDb;
-    }
-    else
-    {
-        // return default database
-        return nString("db:world.db3");
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
     This method queries the world database for the startup level.
 */
 nString
-SaveGameManager::QueryStartupLevel()
+SaveGameManager::GetStartupLevel()
 {
     if (this->overrideStartLevel.IsValid())
     {
@@ -103,39 +85,63 @@ SaveGameManager::NewGame()
     nFileServer2* fileServer = nFileServer2::Instance();
     Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     Db::Server* dbServer = Db::Server::Instance();
+    Loader::Server* loaderServer = Loader::Server::Instance();
     Application::StateHandler* curAppStateHandler = Application::App::Instance()->GetCurrentStateHandler();
     n_assert(curAppStateHandler);
+
+    // open progress bar display
+    loaderServer->OpenProgressIndicator();
 
     // close database before it will be deleted
     if (dbServer->IsOpen())
     {
+        loaderServer->SetProgressText("Closing Database...");
+        loaderServer->UpdateProgressDisplay();
         dbServer->Close();
     }
 
+    // delete and copy database
+    loaderServer->SetProgressText("Copy Database File...");
+    loaderServer->UpdateProgressDisplay();
     fileServer->MakePath(userProfile->GetProfileDirectory());
     nString dbPath = userProfile->GetDatabasePath();
     if (fileServer->FileExists(dbPath))
     {
         fileServer->DeleteFile(dbPath);
     }
-    fileServer->CopyFile(this->GetWorldDb(), dbPath);
+    fileServer->CopyFile("export:db/world.db3", dbPath);
 
     // open database with new file
+    loaderServer->SetProgressText("Open Database...");
+    loaderServer->UpdateProgressDisplay();
     dbServer->SetDatabaseFilename(dbPath);
     dbServer->Open();
+    if (FactoryManager::Instance()->IsActive())
+    {
+        Game::Server::Instance()->RemoveManager(FactoryManager::Instance());
+    }
+    Game::Server::Instance()->AttachManager(FactoryManager::Instance());
 
     // notify application state handler
+    loaderServer->SetProgressText("On Load Before...");
+    loaderServer->UpdateProgressDisplay();
     curAppStateHandler->OnLoadBefore();
 
     // setup the world
+    loaderServer->SetProgressText("Setup World...");
+    loaderServer->UpdateProgressDisplay();
     SetupManager* setupManager = SetupManager::Instance();
-    nString startupLevel = this->QueryStartupLevel();
+    nString startupLevel = this->GetStartupLevel();
     setupManager->SetCurrentLevel(startupLevel);
     setupManager->SetupWorldFromCurrentLevel();
 
     // notify application state handler
+    loaderServer->SetProgressText("On Load After...");
+    loaderServer->UpdateProgressDisplay();
     curAppStateHandler->OnLoadAfter();
 
+    // close progress indicator
+    loaderServer->CloseProgressIndicator();
     return true;
 }
 
@@ -164,27 +170,48 @@ SaveGameManager::ContinueGame()
 {
     n_assert(this->CurrentGameExists());
     Db::Server* dbServer = Db::Server::Instance();
+    Loader::Server* loaderServer = Loader::Server::Instance();
     Application::StateHandler* curAppStateHandler = Application::App::Instance()->GetCurrentStateHandler();
     n_assert(curAppStateHandler);
+
+    // open progress bar display
+    loaderServer->OpenProgressIndicator();
 
     // re-open db server
     if (dbServer->IsOpen())
     {
+        loaderServer->SetProgressText("Closing Database...");
+        loaderServer->UpdateProgressDisplay();
         dbServer->Close();
     }
+    loaderServer->SetProgressText("Open Database...");
+    loaderServer->UpdateProgressDisplay();
     Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     dbServer->SetDatabaseFilename(userProfile->GetDatabasePath());
     dbServer->Open();
+    if (FactoryManager::Instance()->IsActive())
+    {
+        Game::Server::Instance()->RemoveManager(FactoryManager::Instance());
+    }
+    Game::Server::Instance()->AttachManager(FactoryManager::Instance());
 
     // notify application state handler
+    loaderServer->SetProgressText("On Load Before...");
+    loaderServer->UpdateProgressDisplay();
     curAppStateHandler->OnLoadBefore();
 
     // setup world
+    loaderServer->SetProgressText("Setup World...");
+    loaderServer->UpdateProgressDisplay();
     SetupManager::Instance()->SetupWorldFromCurrentLevel();
 
     // notify application state handler
+    loaderServer->SetProgressText("On Load After...");
+    loaderServer->UpdateProgressDisplay();
     curAppStateHandler->OnLoadAfter();
 
+    // close progress indicator
+    loaderServer->CloseProgressIndicator();
     return true;
 }
 
@@ -226,8 +253,12 @@ SaveGameManager::LoadGame(const nString& saveGameName)
 {
     Loader::UserProfile* userProfile = Loader::Server::Instance()->GetUserProfile();
     nFileServer2* fileServer = nFileServer2::Instance();
+    Loader::Server* loaderServer = Loader::Server::Instance();
     Application::StateHandler* curAppStateHandler = Application::App::Instance()->GetCurrentStateHandler();
     n_assert(curAppStateHandler);
+
+    // open progress bar display
+    loaderServer->OpenProgressIndicator();
 
     // get relevant filenames
     nString dbPath  = userProfile->GetDatabasePath();
@@ -243,26 +274,45 @@ SaveGameManager::LoadGame(const nString& saveGameName)
     Db::Server* dbServer = Db::Server::Instance();
     if (dbServer->IsOpen())
     {
+        loaderServer->SetProgressText("Closing Database...");
+        loaderServer->UpdateProgressDisplay();
         dbServer->Close();
     }
     if (fileServer->FileExists(dbPath))
     {
+        loaderServer->SetProgressText("Deleting Database...");
+        loaderServer->UpdateProgressDisplay();
         fileServer->DeleteFile(dbPath);
     }
+    loaderServer->SetProgressText("Copy Database File...");
+    loaderServer->UpdateProgressDisplay();
     fileServer->CopyFile(saveGamePath, dbPath);
     dbServer->SetDatabaseFilename(dbPath);
     dbServer->Open();
+    if (FactoryManager::Instance()->IsActive())
+    {
+        Game::Server::Instance()->RemoveManager(FactoryManager::Instance());
+    }
+    Game::Server::Instance()->AttachManager(FactoryManager::Instance());
 
     // notify application state handler
+    loaderServer->SetProgressText("On Load Before...");
+    loaderServer->UpdateProgressDisplay();
     curAppStateHandler->OnLoadBefore();
 
     // setup world from saved game
+    loaderServer->SetProgressText("Setup World...");
+    loaderServer->UpdateProgressDisplay();
     SetupManager::Instance()->SetupWorldFromCurrentLevel();
 
     // notify application state handler
+    loaderServer->SetProgressText("On Load After...");
+    loaderServer->UpdateProgressDisplay();
     curAppStateHandler->OnLoadAfter();
 
+    // close progress indicator
+    loaderServer->CloseProgressIndicator();
     return true;
 }
 
-} // namespace Game
+} // namespace Managers
