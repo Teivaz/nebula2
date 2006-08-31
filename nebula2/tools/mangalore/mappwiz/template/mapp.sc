@@ -33,6 +33,8 @@ main(int argc, const char** argv)
     // Uncomment and add your own startup script if it is necessary.
     //%(appObjName)s->SetStartupScript("home:<your own startup script>");
 
+    %(appObjName)s->SetCmdLineArgs(args);
+
     if (%(appObjName)s->Open())
     {
         %(appObjName)s->Run();
