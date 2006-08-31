@@ -5,6 +5,7 @@
 beginworkspace nebula2tools
     settargets {
         nviewer
+        nanalyzeexport
         nanimtool
         nbumprev
         nbundler
@@ -19,26 +20,25 @@ beginworkspace nebula2tools
         nstub
     }
 endworkspace
-#       nanalyzeexport
 #       nimagetool
 
-#begintarget nanalyzeexport
-#    settype exe
-#    setmodules {
-#        nanalyzeexport
-#    }
-#    settargetdeps {
-#        nkernel
-#        nnebula
-#        microtcl
-#        ndinput8
-#        ndirect3d9
-#        ndsound
-#        ndshow
-#        ngui
-#        nnetwork
-#        ntoollib
-#    }
+begintarget nanalyzeexport
+    settype exe
+    setmodules {
+        nanalyzeexport
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ndshow
+        ngui
+        nnetwork
+        ntoollib
+    }
 #endtarget
 
 begintarget nanimtool
