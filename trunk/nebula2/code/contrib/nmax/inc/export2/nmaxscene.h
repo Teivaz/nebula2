@@ -58,8 +58,6 @@ protected:
     // @}
 
     /// To be overrided if needed.
-    virtual nString GetFileNameToSave();
-    /// To be overrided if needed.
     virtual nString GetMeshFileNameToSave(nString& meshPath);
     /// To be overrided if needed.
     virtual nString GetAnimFileNameToSaveBase();
@@ -129,6 +127,9 @@ protected:
 
     /// viewport background color.
     Point3 backgroudCol;
+
+    ///
+    nString sceneDir;
 
 };
 //-----------------------------------------------------------------------------

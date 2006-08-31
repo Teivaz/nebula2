@@ -26,12 +26,15 @@ Object* nMaxUtil::GetBaseObject(INode* inode, TimeValue time)
     ObjectState objState = inode->EvalWorldState(time);
     Object* obj = objState.obj;
 
-    SClass_ID sID;
-    sID = obj->SuperClassID();
-    while( sID == GEN_DERIVOB_CLASS_ID )
+    if (obj)
     {
-        obj = ((IDerivedObject*)obj)->GetObjRef();
+        SClass_ID sID;
         sID = obj->SuperClassID();
+        while( sID == GEN_DERIVOB_CLASS_ID )
+        {
+            obj = ((IDerivedObject*)obj)->GetObjRef();
+            sID = obj->SuperClassID();
+        }
     }
 
     return obj;
@@ -484,18 +487,33 @@ nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
 
     nString manglePath = nFileServer2::Instance()->ManglePath(assign);
     
+    nString a = manglePath;
+    a.ToLower();
+    
     path.ConvertBackslashes();
-    path.ToLower();
 
-    if (path.ContainsCharFromSet(manglePath.Get()))
+    nString b = path;
+    b.ToLower();
+
+    int len = a.Length();
+    a += "/";
+    // not identical and b has subdirectory
+    if (a != b && (b.Length() > a.Length()))
     {
-        // retrieve subdirectory of texture assgin directory,
-        ret += GetPathFromType(type);
-        // HACK: every manglepath has no trailing slash. 
-        //       so we append the trailing shash to remove the first slash
-        manglePath += "/";
-        ret += path.Substitute(manglePath.Get(), "");
-        ret += "/";
+        if (0 == strncmp(a.Get(), b.Get(), len))
+        {
+            // retrieve subdirectory of texture assgin directory,
+            ret += GetPathFromType(type);
+            // HACK: every manglepath has no trailing slash. 
+            //       so we append the trailing shash to remove the first slash
+            nString sub = b.Substitute(a.Get(), "");
+            ret += sub;
+            ret += "/";
+        }
+        else
+        {
+            ret += GetPathFromType(type);
+        }
     }
     else
     {
