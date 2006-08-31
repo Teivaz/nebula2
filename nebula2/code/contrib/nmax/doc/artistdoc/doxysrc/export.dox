@@ -4,11 +4,13 @@
     @section NMaxHowtoExportOverview Overview
 
     This section of the manual provides the information on the exporting features of 
-    toolkit.
+    the toolkit plugin.
 
       - @ref NMaxHowtoExportHowto
       - @ref NMaxHowtoExportBatchExport
       - @ref NMaxHowtoExportWhereFiles
+      - @ref NMaxHowtoExportExportedMeshFiles
+
 
     @section NMaxHowtoExportHowto How do I export my model?
 
@@ -63,17 +65,63 @@
     For more information on <b>path assigns</b>, see @ref NMaxPathAssigns.
 
     The @b export directory contains the exported graphics data in Nebula2 format. 
-    The contents of this directory is only important to programmers who want to 
+    The contents of this directory are only important to programmers who want to 
     load Nebula2 graphics objects into their applications.
 
     - export
-        - gfxlib exported Nebula2 .n2 files in category subdirectories
+        - gfxlib : exported Nebula2 .n2 files in category subdirectories
             - examples this is a category called examples
                 - eagle.n2 the Nebula2 version of exported eagle sample
                 - tiger.n2 etc...
-        - meshes exported mesh resource files loaded by the .n2 object files
-        - anims exported animation resource files loaded by the .n2 object files
-        - textures textures 
+        - meshes : exported mesh resource files loaded by the .n2 object files
+        - anims : exported animation resource files loaded by the .n2 object files
+        - textures : textures 
+
+    You can also specify a directory where exported asset(meshes, textures, animations 
+    and so on.) to be put.
+    There are '<<' buttons which open folder selection dialog. With the dialog, you can 
+    specify the directory for the exported asset.
+    When you select a directory, it is higly recommended to select a subdirectory 
+    under you already defined for the asset.
+    For example, if you already have a assigned directory <tt>'$nebula2/export/meshes'</tt> 
+    for meshes, make a subdirecotry under the mesh assign directory like 
+    <tt>'$nebula2/export/meshes/mymesh'</tt> and select the <tt>'mymesh'</tt> directory 
+    for putting exported mesh.
+    If you do not specify any directory, the plugin defaultly put the exported asset 
+    to the already assigned directory path in <tt>$3dsmax/plugcfg/nmaxtoolbox.ini</tt> file.
+
+    <i>add screenshots...</i>
+
+
+    @section NMaxHowtoExportExportedMeshFiles Exported Mesh Files
+
+    A mesh object in a scene is exported and saved as a Nebula2 mesh files such as 
+    <i><tt>.n3d2</tt></i> or <i><tt>.nvx2</tt></i> file.
+
+    When the plugin exports mesh objects in a scene, it checks the first vertex each of the mesh 
+    object and sees that it has joint index. 
+    If the mesh has, the plugin considers it as a skinned mesh then merges all skinned mesh to a 
+    big one mesh file and saves. 
+    So although you have several mesh objects for a skinned mesh, there will be only one Nebula2 
+    mesh file after it is exported and saved.
+    For example, let's consider a character model which has seperate mesh objects for its head, body, 
+    arms and legs. Though the character model has several mesh objects there is only one Nebula2 
+    mesh file is exported with the scene name as the mesh file name.
+    This is due to skin partitioning for a skinned mesh. 
+    Before doing skin partitioning, all meshes should be merged to one so it can be correctly partitioned.
+    
+    If the mesh objects are not a skinned one, it will be exported and saved to seperate Nebula2 
+    mesh files. Each of mesh files has its mesh object name in 3dsmax as its exported mesh file name.
+    For example, if the mesh object has 'wall01' in 3dsmax for its name, the plugin will exports
+    and saves it with the same name as mesh file name.
+    There may a case that you want to export and save such a seperate several mesh objects to one 
+    Nebula2 mesh files. If so, just merge the objects in 3dsmax then export.
+    
+    Even if a given scene has not only skinned mesh objects but also a plain static mesh objects,
+    the plugin can export and save it. In this case all skinned mesh objects will be exported and saved 
+    to one mesh file though static mesh objects are exported and saved to seperate mesh files.
+
+    See also @ref NMaxHowtoExportWhereFiles and @ref NMaxHowtoHierarchyWithJoints sections.
 
 */
 
