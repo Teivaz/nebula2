@@ -15,10 +15,10 @@ fn nCheckObjectName =
 
     for i in $* do
     (
-    append o i
+        append o i
     )
 
-    -- iterate and see if there are objects which have same name.
+    -- iterate collected objects and see if there are objects which have same name.
     for i=1 to o.count do
     (
         for j=1 to o.count do
