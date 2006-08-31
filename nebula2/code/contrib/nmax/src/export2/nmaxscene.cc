@@ -23,6 +23,7 @@
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxskinpartitioner.h"
 #include "export2/nmaxanimator.h"
+#include "export2/nmaxcustattrib.h"
 
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
@@ -498,21 +499,71 @@ bool nMaxScene::Postprocess()
         }
     }
 
-    // save node.
-    nString exportNodeName;
-    exportNodeName += "/";
-    exportNodeName += this->exportRoot->GetName();
+    //
+    // save node to export.
+    //
 
+    INode* sceneRoot = nMaxInterface::Instance()->GetInterface()->GetRootNode();
+
+    TiXmlDocument xmlDoc;
+    nMaxCustAttrib custAttrib;
+
+    // HACK: sceneRoot is root node of 
+    if (!custAttrib.Convert(sceneRoot, xmlDoc))
+    {
+        n_maxlog(Warning, "A directory for gfxlib is not specified.");
+    }
+
+    TiXmlHandle xmlHandle(&xmlDoc);
+
+    // parameter block name for gfx directory setting.
+    const char* dirParamName = "SceneDirSetting";
+    TiXmlElement* e;
+    e = xmlHandle.FirstChild(dirParamName).Element();
+    if (e)
+    {
+        // find parameter with the given its name.
+        TiXmlElement* child;
+        child = xmlHandle.FirstChild(dirParamName).FirstChild("gfxDir").Child("", 0).Element();
+        if (child)
+        {
+            const char* scenePath = child->Attribute("value");
+            if (scenePath)
+            {
+                this->sceneDir = scenePath;
+
+                //HACK: if the path has "<<NULL>>" for its value,
+                //      we convert it to the default mesh export directory.
+                //      See nMaxCustAttrib::StringToXml() function in the nmaxcustattrib.cc file.
+                if (this->sceneDir == "<<NULL>>")
+                {
+                    this->sceneDir = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetGfxLibAssign());
+                }
+            }
+        }
+    }
+
+    // assign gfx object name.
+    nString gfxname, gfxObjFileName;
+    gfxname = nMaxOptions::Instance()->GetSaveFileName();
+
+    gfxObjFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Gfx, this->sceneDir, gfxname);
+    gfxObjFileName += ".n2";
+
+    // specify boundbox of the top level exported node.
     nKernelServer* ks = nKernelServer::Instance();
 
-    nTransformNode* exportNode = static_cast<nTransformNode*>(ks->Lookup(exportNodeName.Get()));
+    nString exportedNodeName;
+    exportedNodeName += "/";
+    exportedNodeName += this->exportRoot->GetName();
+
+    nTransformNode* exportNode = static_cast<nTransformNode*>(ks->Lookup(exportedNodeName.Get()));
     exportNode->SetLocalBox(rootBBox);
 
-    nString filename = this->GetFileNameToSave();
-
-    if (!exportNode->SaveAs(filename.Get()))
+    // save gfx object.
+    if (!exportNode->SaveAs(gfxObjFileName.Get()))
     {
-        n_maxlog(Error, "Failed to Save % file.", filename.Get());
+        n_maxlog(Error, "Failed to Save % file.", gfxObjFileName.Get());
         return false;
     }
 
@@ -560,19 +611,6 @@ nString nMaxScene::GetMeshFileNameToSave(nString& meshPath)
     meshFileName += nMaxOptions::Instance()->GetMeshFileType();
 
     return meshFileName;
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-nString nMaxScene::GetFileNameToSave() 
-{
-    nString tmp = nMaxOptions::Instance()->GetSaveFilePath().Get();
-
-    nString filename;
-    filename += nMaxOptions::Instance()->GetGfxLibPath();
-    filename += tmp.ExtractFileName();
-    return filename;
 }
 
 //-----------------------------------------------------------------------------

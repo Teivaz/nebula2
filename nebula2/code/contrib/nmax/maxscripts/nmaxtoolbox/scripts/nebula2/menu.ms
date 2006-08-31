@@ -75,6 +75,25 @@ tooltip:"Open Nebula Custom Material Editor"
 )
 
 ---------------------------------------------------------------------------------
+-- macro script for 'Scene Options' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_SceneOptions
+category:"nmaxtoolbox" 
+buttonText:"Scene Options"
+tooltip:"Specify Scene Options" 
+( 	
+    include "nebula2/sceneoptions_fn.ms"
+	
+    on execute do
+    (
+        AddSceneOptionsCustomAttributes()
+		
+        -- Sets Modify command mode activate.
+        max utility mode
+    )
+)
+
+---------------------------------------------------------------------------------
 -- macro script for 'Mesh Options' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_MeshOptions
@@ -270,6 +289,7 @@ fn AddMenu =
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Animation" "nmaxtoolbox")		
         append ItemsTemp (menuMan.createSeparatorItem())
 
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_SceneOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_MeshOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_AnimOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_LOD" "nmaxtoolbox")
