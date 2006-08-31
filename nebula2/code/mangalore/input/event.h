@@ -32,14 +32,14 @@ public:
     /// set this event was handled
     void SetHandled();
 
-    /// connect the event to other events (so a button click is able to now if up or down already was handled)
+    /// connect the event to other events (so a button click is able to know if up or down already was handled)
     void Connect(Event* relatedEvent);
-    /// disconnect all references to other events !! needed to broke up the circular references !!
+    /// disconnect all references to other events !! needed to break up the circular references !!
     void Disconnect();
 
-    /// set the mapping from where the event comes
+    /// set the mapping which generated the event
     void SetMapping(Mapping* mapping);
-    /// get the mapping from where the event comes
+    /// get the mapping which generated the event
     Mapping* GetMapping() const;
 
     /// set the input priority of the chain element that just get this event
@@ -87,9 +87,9 @@ public:
     /// --- data of button events ---
     /// does this event have a mouse position (special events from win proc have a mouse position)
     bool HasMousePosition() const;
-    /// set position of mouse where the button event occured
+    /// set position of mouse where the button event occurred
     void SetMousePosition(const vector2& pos);
-    /// get position of mouse where the button event occured
+    /// get position of mouse where the button event occurred
     const vector2& GetMousePosition() const;
 
     /// get the pressed button (to easy know the mouse buttons)

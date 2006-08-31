@@ -47,11 +47,16 @@ nExportAnalyzer::Run()
 
     // get a date-and-time string (argh...)
     time_t ltime;
-    struct tm now;
     time(&ltime);
-    _localtime64_s(&now, &ltime);
     char buf[256];
+#if defined(_MSC_VER) && (_MSC_VER > 1400)
+    struct tm now;
+    _localtime64_s(&now, &ltime);
     strftime(buf, sizeof(dateAndTime), "%Y-%m-%d_%H-%M-%S", &now);
+#else
+    struct tm * now = localtime(&ltime);
+    strftime(buf, sizeof(dateAndTime), "%Y-%m-%d_%H-%M-%S", now);
+#endif
 
     // initialize time stamp, target directory
     this->dateAndTime = buf;
@@ -66,7 +71,7 @@ nExportAnalyzer::Run()
     success &= this->ParseObjects();
     success &= this->ParseLevels();
 
-    // write analysiz files as comma-separated-files
+    // write analysis files as comma-separated-files
     this->WriteTextureInfo();
     this->WriteMeshInfo();
     this->WriteAnimInfo();

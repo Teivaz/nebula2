@@ -231,7 +231,7 @@ ActorPhysicsProperty::OnMoveAfter()
         this->smoothedHeading.SetGoal(headingAngles.rho);
 
         // evaluate the feedback loops
-            nTime time = GameTimeSource::Instance()->GetTime();
+        nTime time = GameTimeSource::Instance()->GetTime();
         this->smoothedPosition.Update(time);
         this->smoothedHeading.Update(time);
 

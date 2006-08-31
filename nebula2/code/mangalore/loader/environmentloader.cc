@@ -121,7 +121,7 @@ EnvironmentLoader::Load(Db::Reader* dbReader)
                 matrix44 worldMatrix = dbReader->GetMatrix44(Attr::Transform);
 
                 // create graphics entity(s) and attach to graphics property
-                nArray<Ptr<Graphics::Entity>> gfxEntities = segGfxUtil.CreateAndSetupGraphicsEntities(resName, worldMatrix, false);
+                nArray<Ptr<Graphics::Entity> > gfxEntities = segGfxUtil.CreateAndSetupGraphicsEntities(resName, worldMatrix, false);
                 gfxProperty->AddGraphicsEntities(gfxEntities);
 
                 // check if a collide mesh file exists for the object

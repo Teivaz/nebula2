@@ -4,7 +4,6 @@
 /**
     @class Input::Chain
 
-    A list of Input::Sinks, ordered by priority.
     A list of Msg::Ports attached to this Dispatcher, ordered by Priority.
 
     (C) 2006 RadonLabs GmbH

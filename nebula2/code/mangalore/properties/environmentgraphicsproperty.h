@@ -40,7 +40,7 @@ public:
     /// add a graphics entity to the property, must have resource name and position
     void AddGraphicsEntity(Graphics::Entity* gfxEntity);
     /// attach several graphics entities to the property
-    void AddGraphicsEntities(const nArray<Ptr<Graphics::Entity>>& gfxEntities);
+    void AddGraphicsEntities(const nArray<Ptr<Graphics::Entity> >& gfxEntities);
 
 private:
     nArray<nString> resNames;
@@ -65,7 +65,7 @@ EnvironmentGraphicsProperty::AddGraphicsEntity(Graphics::Entity* gfxEntity)
 */
 inline
 void
-EnvironmentGraphicsProperty::AddGraphicsEntities(const nArray<Ptr<Graphics::Entity>>& gfxEntities)
+EnvironmentGraphicsProperty::AddGraphicsEntities(const nArray<Ptr<Graphics::Entity> >& gfxEntities)
 {
     this->graphicsEntities.AppendArray(gfxEntities);
 }
