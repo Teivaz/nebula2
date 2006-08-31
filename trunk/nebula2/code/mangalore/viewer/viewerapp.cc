@@ -232,11 +232,6 @@ ViewerApp::SetupStateHandlers()
     gameStateHandler->SetName("Game");
     gameStateHandler->SetExitState("Exit");
 
-    if (this->GetWorldDb().IsValid())
-    {
-        gameStateHandler->SetDbName(this->GetWorldDb());
-    }
-
     // if a startup level has been set, directly start with the location state
     if (this->GetStartupLevel().IsValid())
     {
