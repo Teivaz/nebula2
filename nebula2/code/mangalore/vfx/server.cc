@@ -21,9 +21,7 @@ Server::Server() :
     isOpen(false),
     curTime(0.0),
     activeEffects(256, 256),
-    activeShakeEffects(256, 256),
-    statsNumActiveEffects("vfxNumEffects", nArg::Int),
-    statsNumActiveShakeEffects("vfxNumShakeEffects", nArg::Int)
+    statsNumActiveEffects("vfxNumEffects", nArg::Int)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -65,19 +63,21 @@ void
 Server::Close()
 {
     n_assert(this->isOpen);
-
-    // unregister the effect handler
     Message::Server::Instance()->UnregisterPort(this->effectHandler);
 
-    // clear active effects
-    this->activeEffects.Clear();
-    this->activeShakeEffects.Clear();
-
-    if (this->effectBank.isvalid())
+    // cleanup active effects
+    int i;
+    int num = this->activeEffects.Size();
+    for (i = 0; i < num; i++)
     {
-        this->CloseEffectBank();
+        if (!this->activeEffects[i]->IsFinished())
+        {
+            this->activeEffects[i]->OnDeactivate();
+        }
+        this->activeEffects[i] = 0;
     }
-
+    this->activeEffects.Clear();
+    this->CloseEffectBank();
     this->isOpen = false;
 }
 
@@ -101,9 +101,11 @@ Server::OpenEffectBank(const nString& name)
 void
 Server::CloseEffectBank()
 {
-    n_assert(this->effectBank.isvalid());
-    this->effectBank->Close();
-    this->effectBank = 0;
+    if (this->effectBank.isvalid())
+    {
+        this->effectBank->Close();
+        this->effectBank = 0;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -118,66 +120,67 @@ Server::GetEffectBank() const
 
 //------------------------------------------------------------------------------
 /**
-    Start playing a visual effect. An effect under this name must exist as a
-    template in the currently set effect bank. This will create a new effect object
-    which renders itself until the effect has expired. Once expired, the
-    effect will remove itself. Make sure to call the Trigger() method
-    once per frame for correct garbage collection!
-
-    @param  effectName      name of effect to play
-    @param  transform       position/orientation at which to place the effect
+    Attach a generic effect to the world.
 */
 void
-Server::PlayEffect(const nString& effectName, const matrix44& transform)
+Server::AttachEffect(Effect* effect)
 {
-    n_assert(this->effectBank.isvalid());
+    n_assert(0 != effect);
+    effect->OnActivate();
+    this->activeEffects.Append(effect);
+}
 
-    // create a new effect object and add it to the currently active effects
-    Effect* newEffect = this->effectBank->CreateEffect(effectName, transform);
-    if (newEffect)
+//------------------------------------------------------------------------------
+/**
+    Remove an effect from the world.
+*/
+void
+Server::RemoveEffect(Effect* effect)
+{
+    n_assert(0 != effect);
+    int index = this->activeEffects.FindIndex(effect);
+    if (-1 != index)
     {
-        newEffect->SetTime(this->curTime);
-        newEffect->Activate();
-        this->activeEffects.Append(newEffect);
+        if (!this->activeEffects[index]->IsFinished())
+        {
+            this->activeEffects[index]->OnDeactivate();
+        }
+        this->activeEffects.Erase(index);
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Create a new particle effect
 */
-Effect*
-Server::CreateEffect(const nString& effectName, const matrix44& transform)
+GraphicsEffect*
+Server::FindGraphicsEffectTemplate(const nString& effectName)
 {
-    n_assert(this->effectBank.isvalid());
-
-    // create a new effect object and add it to the currently active effects
-    Effect* newEffect = this->effectBank->CreateEffect(effectName, transform);
-    if (newEffect)
-    {
-        newEffect->SetTime(this->curTime);
-        newEffect->Activate();
-        this->activeEffects.Append(newEffect);
-        return newEffect;
-    }
-    return 0;
+    return this->effectBank->FindEffect(effectName);
 }
 
 //------------------------------------------------------------------------------
 /**
-    Start playing a shake effect.
 */
-void
-Server::PlayShakeEffect(const vector3& pos, float range, float duration, float intensity)
+GraphicsEffect*
+Server::CreateGraphicsEffect(const nString& effectName, const matrix44& transform)
+{
+    GraphicsEffect* newEffect = this->effectBank->CreateGraphicsEffect(effectName, transform);
+    return newEffect;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+ShakeEffect*
+Server::CreateShakeEffect(const matrix44& tform, float range, float duration, float intensity)
 {
     // create a new shake effect
     Ptr<ShakeEffect> newShakeEffect = ShakeEffect::Create();
-    newShakeEffect->SetPosition(pos);
+    newShakeEffect->SetTransform(tform);
     newShakeEffect->SetRange(range);
     newShakeEffect->SetDuration(duration);
     newShakeEffect->SetIntensity(intensity);
-    newShakeEffect->Play();
-    this->activeShakeEffects.Append(newShakeEffect);
+    return newShakeEffect;
 }
 
 //------------------------------------------------------------------------------
@@ -190,14 +193,6 @@ Server::BeginScene()
 {
     // process pending effect play messages
     this->effectHandler->HandlePendingMessages();
-
-    // trigger active shake effects
-    int i;
-    int num = this->activeShakeEffects.Size();
-    for (i = 0; i < num; i++)
-    {
-        this->activeShakeEffects[i]->Trigger();
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -208,17 +203,22 @@ Server::BeginScene()
 void
 Server::EndScene()
 {
+    // update active effects
+    int i;
+    int num = this->activeEffects.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (!this->activeEffects[i]->IsFinished())
+        {
+            this->activeEffects[i]->OnFrame();
+        }
+    }
+
     // garbage collect expired effects
     nArray<Ptr<Effect> >::iterator effectIter;
     for (effectIter = this->activeEffects.Begin(); effectIter != this->activeEffects.End();)
     {
-        if ((*effectIter)->IsActive())
-        {
-            (*effectIter)->SetTime(this->curTime);
-            (*effectIter)->Update();
-            effectIter++;
-        }
-        else if (1 == (*effectIter)->GetRefCount())
+        if ((*effectIter)->IsFinished())
         {
             effectIter = this->activeEffects.Erase(effectIter);
         }
@@ -228,24 +228,8 @@ Server::EndScene()
         }
     }
 
-    // garbage collect expired shake effects
-    nArray<Ptr<ShakeEffect> >::iterator shakeIter;
-    for (shakeIter = this->activeShakeEffects.Begin(); shakeIter != this->activeShakeEffects.End();)
-    {
-        if (!(*shakeIter)->IsPlaying())
-        {
-            n_assert(1 == (*shakeIter)->GetRefCount());
-            shakeIter = this->activeShakeEffects.Erase(shakeIter);
-        }
-        else
-        {
-            shakeIter++;
-        }
-    }
-
     // update statistics
     this->statsNumActiveEffects->SetI(this->activeEffects.Size());
-    this->statsNumActiveShakeEffects->SetI(this->activeShakeEffects.Size());
 }
 
 //------------------------------------------------------------------------------
@@ -257,18 +241,21 @@ Server::ComputeShakeIntensityAtPosition(const vector3& pos)
 {
     float shake = 0.0f;
     int i;
-    int num = this->activeShakeEffects.Size();
+    int num = this->activeEffects.Size();
     for (i = 0; i < num; i++)
     {
-        ShakeEffect* curShake = this->activeShakeEffects[i];
-        if (curShake->IsPlaying())
+        if (this->activeEffects[i]->IsA(ShakeEffect::RTTI))
         {
-            vector3 distVec = pos - curShake->GetPosition();
-            float absDist = distVec.len();
-            if (absDist < curShake->GetRange())
+            ShakeEffect* curShake = (ShakeEffect*) this->activeEffects[i].get();
+            if (curShake->IsPlaying())
             {
-                float attenuate = 1.0f - n_saturate(absDist / curShake->GetRange());
-                shake += attenuate * curShake->GetCurrentIntensity();
+                vector3 distVec = pos - curShake->ComputeWorldSpaceTransform().pos_component();
+                float absDist = distVec.len();
+                if (absDist < curShake->GetRange())
+                {
+                    float attenuate = 1.0f - n_saturate(absDist / curShake->GetRange());
+                    shake += attenuate * curShake->GetCurrentIntensity();
+                }
             }
         }
     }

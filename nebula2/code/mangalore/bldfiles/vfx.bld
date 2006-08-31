@@ -5,35 +5,36 @@
 beginmodule vfx
     setdir vfx
     setheaders {
+        attachmenteffect
         bank
         effect
         effecthandler
         server
+        graphicseffect
+        guieffect
+        sendmessageeffect
         shakeeffect
         shakeeffecthelper
+        soundeffect
+        texteffect
     }
         #animeffect
-        #attachmenteffect
-        #graphicseffect
-        #guieffect
         #lighteffect
-        #sendmessageeffect
-        #soundeffect
-        #texteffect
+
     setfiles {
+        attachmenteffect
         bank
         effect
         effecthandler
+        graphicseffect
+        guieffect
+        sendmessageeffect
         server
         shakeeffect
         shakeeffecthelper
+        soundeffect
+        texteffect
     }
         #animeffect
-        #attachmenteffect
-        #graphicseffect
-        #guieffect
         #lighteffect
-        #sendmessageeffect
-        #soundeffect
-        #texteffect
 endmodule

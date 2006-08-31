@@ -70,6 +70,8 @@ public:
     virtual void SetTransform(const matrix44& m);
     /// get the current world space transformation
     virtual matrix44 GetTransform() const;
+    /// return true if transformation has changed between OnFrameBefore() and OnFrameAfter()
+    virtual bool HasTransformChanged() const;
     /// get the current world space velocity
     virtual vector3 GetVelocity() const;
     /// enable/disable the physics entity, re-enables itself on contact

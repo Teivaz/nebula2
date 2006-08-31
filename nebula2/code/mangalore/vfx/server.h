@@ -47,18 +47,20 @@ public:
     void SetTime(nTime time);
     /// get the current time
     nTime GetTime() const;
-    /// get pointer to effect handler
-    EffectHandler* GetEffectHandler();
-    /// play a visual effect
-    void PlayEffect(const nString& effectName, const matrix44& transform);
-    /// create a particle effect
-    Effect* CreateEffect(const nString& effectName, const matrix44& transform);
-    /// play a shake effect
-    void PlayShakeEffect(const vector3& pos, float range, float duration, float intensity);
+    /// attach a generic effect
+    virtual void AttachEffect(Effect* effect);
+    /// remove an effect
+    virtual void RemoveEffect(Effect* effect);
+    /// find a graphics effect template returns 0 if not found
+    virtual GraphicsEffect* FindGraphicsEffectTemplate(const nString& effectName);
+    /// create a graphics effect from the effects table
+    virtual GraphicsEffect* CreateGraphicsEffect(const nString& effectName, const matrix44& transform);
+    /// create a shake effect
+    virtual ShakeEffect* CreateShakeEffect(const matrix44& tform, float range, float duration, float intensity);
     /// call before rendering happens
-    void BeginScene();
+    virtual void BeginScene();
     /// call after rendering has happened
-    void EndScene();
+    virtual void EndScene();
     /// get number of currently active effects
     int GetNumActiveEffects() const;
     /// get active effect at index
@@ -74,9 +76,7 @@ private:
     Ptr<Bank> effectBank;
     Ptr<EffectHandler> effectHandler;
     nArray<Ptr<Effect> > activeEffects;
-    nArray<Ptr<ShakeEffect> > activeShakeEffects;
     nWatched statsNumActiveEffects;
-    nWatched statsNumActiveShakeEffects;
 };
 
 RegisterFactory(Server);
@@ -110,16 +110,6 @@ nTime
 Server::GetTime() const
 {
     return this->curTime;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-EffectHandler*
-Server::GetEffectHandler()
-{
-    return this->effectHandler;
 }
 
 //------------------------------------------------------------------------------

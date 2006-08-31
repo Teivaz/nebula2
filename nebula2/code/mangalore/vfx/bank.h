@@ -4,12 +4,12 @@
 /**
     @class VFX::Bank
 
-    An Fx bank holds templates for visual effects which can be played.
+    An Fx bank holds templates for graphics effects which can be played.
 
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "vfx/effect.h"
+#include "vfx/graphicseffect.h"
 #include "xml/nxmlspreadsheet.h"
 
 //------------------------------------------------------------------------------
@@ -34,15 +34,14 @@ public:
 	/// close the effetc xls table
 	virtual void Close();
     /// add a template effect to the effect bank
-    virtual void AddEffect(const nString& effectName, const nString& resourceName, nTime duration);
+    virtual void AddGraphicsEffect(const nString& effectName, const nString& resourceName, nTime duration, nTime hotspot);
     /// return a new effect object as clone of an existing template
-    virtual Effect* CreateEffect(const nString& templateEffectName, const matrix44& transform);
-
-protected:
+    virtual GraphicsEffect* CreateGraphicsEffect(const nString& templateEffectName, const matrix44& transform);
     /// find a template effect by name
-    Effect* FindEffect(const nString& templateEffectName);
+    GraphicsEffect* FindEffect(const nString& templateEffectName);
+protected:
 
-    nArray< Ptr<Effect> > effectArray;
+    nArray<Ptr<GraphicsEffect> > effectArray;
 	nXmlSpreadSheet xmlSpreadSheet;
 };
 
@@ -57,7 +56,7 @@ Bank::SetFilename(const nString& fileName)
 {
 	if(fileName.IsEmpty())
 	{
-		n_error("VFX::Bank::SetFilename(): got no filename!");
+		n_error("VFX::Bank::SetFilename(): got no filename!", fileName);
 	}
 
 	this->xmlSpreadSheet.SetFilename(fileName);

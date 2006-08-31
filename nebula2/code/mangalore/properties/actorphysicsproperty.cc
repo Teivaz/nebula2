@@ -470,7 +470,7 @@ ActorPhysicsProperty::ContinueFollow()
     else if ((this->gotoTimeStamp + 1.0) < GameTimeSource::Instance()->GetTime())
     {
         // continue moving towards our target entity
-		Ptr<MoveGoto> moveGoto = MoveGoto::Create();
+        Ptr<MoveGoto> moveGoto = MoveGoto::Create();
         moveGoto->SetPosition(targetPos);
         this->HandleMoveGoto(moveGoto);
     }

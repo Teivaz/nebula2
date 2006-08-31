@@ -530,15 +530,6 @@ Server::RenderDebug()
 
 //------------------------------------------------------------------------------
 /**
-*/
-MouseGripper*
-Server::GetMouseGripper() const
-{
-    return this->curLevel->GetMouseGripper();
-}
-
-//------------------------------------------------------------------------------
-/**
     This method returns all physics entities touching the given spherical
     area. The method creates a sphere shape and calls its collide
     method, so it's quite fast. Note that entities will be appended to the
