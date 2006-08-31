@@ -29,8 +29,9 @@ EntityLoaderBase::~EntityLoaderBase()
 /**
 */
 bool
-EntityLoaderBase::Load(const nString& /*levelName*/)
+EntityLoaderBase::Load(Db::Reader* dbReader)
 {
+    n_assert(dbReader);
     return false;
 }
 

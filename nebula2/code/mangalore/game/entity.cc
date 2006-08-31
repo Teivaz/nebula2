@@ -7,6 +7,7 @@
 #include "game/entity.h"
 #include "mathlib/transform44.h"
 #include "foundation/factory.h"
+#include "application/app.h"
 
 namespace Game
 {
@@ -21,7 +22,9 @@ uint Entity::uniqueIdCounter = 0;
 Entity::Entity() :
     uniqueId(++uniqueIdCounter),
     entityPool(LivePool),
-    createdFromTemplate(false)
+    activated(false),
+    isInOnActivate(false),
+    isInOnDeactivate(false)
 {
     this->dispatcher = Message::Dispatcher::Create();
     this->dbEntity = Db::Entity::Create();
@@ -38,6 +41,9 @@ Entity::~Entity()
 
 //------------------------------------------------------------------------------
 /**
+    This method sets up the entity properties. Overwrite this method
+    in entity subclasses to create
+
     This method sets up the entity. The method is called from within
     OnActivate(). Override the method for different or additional setup tasks.
 */
@@ -66,6 +72,8 @@ Entity::CleanupProperties()
 
 //------------------------------------------------------------------------------
 /**
+    CAREFUL! THIS METHOD IS SLOW.
+
     This method loads the entity attributes from the world database
     and attaches them to the entity. To identify the entity in the database,
     a valid GUID attribute must be attached to the entity.
@@ -84,7 +92,23 @@ Entity::LoadAttributesFromDatabase()
 
 //------------------------------------------------------------------------------
 /**
-    This method saves all storable entity attributes back into the database.
+    Fast version to load entity attributes. A Db reader only does ONE
+    query on the database for entities in the level, so this should
+    be much faster then LoadAttributesFromDatabase() if many entities
+    are loaded (like loading a level or a savegame). The reader has to
+    be positioned on the entity data.
+*/
+void
+Entity::LoadAttributesFromDbReader(Db::Reader* dbReader)
+{
+    this->dbEntity->LoadFromReader(dbReader);
+}
+
+//------------------------------------------------------------------------------
+/**
+    CAREFUL! THIS METHOD IS SLOW.
+
+    This method saves all entity attributes back into the database.
     It is usually flush the current save state back into the database.
     If you want to do any work before saving happens please have a look
     at the methods Entity::OnSave(), Property::OnSave() and Manager::OnSave().
@@ -110,15 +134,33 @@ Entity::SaveAttributesToDatabase()
 
 //------------------------------------------------------------------------------
 /**
+    Fast version to save entity attributes. A Db writer caches the attributes
+    for all entities and does only one access to the database for all entities.
+*/
+void
+Entity::SaveAttributesToDbWriter(Db::Writer *dbWriter)
+{
+    this->dbEntity->SaveToWriter(dbWriter);
+}
+
+//------------------------------------------------------------------------------
+/**
     Called when the game entity has been attached to a game level object.
     This will attach contained subsystem entities to their respective
     subsystems.
+
+    @param  l   pointer to a level object to which the entity was attached
 
     - 01-Apr-05 floh    graphics entity now created after physics entity
 */
 void
 Entity::OnActivate()
 {
+    n_assert(!this->activated);
+    n_assert(!this->isInOnActivate);
+    this->isInOnActivate = true;
+    n_assert(!this->isInOnDeactivate);
+
     // attach dispatcher to message server
     Message::Server::Instance()->RegisterPort(this->dispatcher);
 
@@ -127,6 +169,10 @@ Entity::OnActivate()
 
     // activate all properties
     this->ActivateProperties();
+
+    // set activated flag
+    this->activated = true;
+    this->isInOnActivate = false;
 }
 
 //------------------------------------------------------------------------------
@@ -137,11 +183,20 @@ Entity::OnActivate()
 void
 Entity::OnDeactivate()
 {
+    n_assert(this->activated);
+    n_assert(!this->isInOnDeactivate);
+    this->isInOnDeactivate = true;
+    n_assert(!this->isInOnActivate);
+
     // cleanup properties
     this->CleanupProperties();
 
     // detach dispatcher from message server
     Message::Server::Instance()->UnregisterPort(this->dispatcher);
+
+    // clear activated flag
+    this->activated = false;
+    this->isInOnDeactivate = false;
 }
 
 //------------------------------------------------------------------------------
@@ -156,7 +211,7 @@ Entity::OnBeginFrame()
     // call properties
     int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnBeginFrame();
     }
@@ -174,7 +229,7 @@ Entity::OnMoveBefore()
     // call properties
     int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnMoveBefore();
     }
@@ -192,7 +247,7 @@ Entity::OnMoveAfter()
     // call properties
     int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnMoveAfter();
     }
@@ -210,11 +265,30 @@ Entity::OnRender()
     // call properties
     int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnRender();
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+    Called on game entities before rendering.
+*/
+void
+Entity::OnRenderDebug()
+{
+    n_assert(LivePool == this->entityPool);
+
+    // call properties
+    int i;
+    int num = this->properties.Size();
+    for (i = 0; this->activated && i < num; i++)
+    {
+        this->properties[i]->OnRenderDebug();
+    }
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -237,6 +311,28 @@ Entity::OnLoad()
     for (i = 0; i < num; i++)
     {
         this->properties[i]->OnLoad();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called in 2 cases:
+
+    When a level is loaded it is called on all entities after OnLoad when the
+    complete world already exist.
+
+    When a entity is created at runtime (while a level is active) OnStart is
+    called after the entity is attached to level.
+*/
+void
+Entity::OnStart()
+{
+    // let propreties do there OnStart init stuff
+    int i;
+    int num = this->properties.Size();
+    for (i = 0; i < num; i++)
+    {
+        this->properties[i]->OnStart();
     }
 }
 
@@ -270,11 +366,16 @@ Entity::AttachProperty(Property* prop)
     n_assert(0 != prop);
 
     // only add the entity if it is compatible with our entity pool
+    // and it should be added to entities in the current state.
     if (prop->GetActiveEntityPools() & this->GetEntityPool())
     {
-        this->properties.Append(prop);
-        prop->SetEntity(this);
-        prop->SetupDefaultAttributes();
+        nString currState = Application::App::Instance()->GetCurrentState();
+        if (prop->IsActiveInState(currState))
+        {
+            this->properties.Append(prop);
+	        prop->SetEntity(this);
+            prop->SetupDefaultAttributes();
+        }
     }
 }
 
@@ -396,6 +497,30 @@ Entity::HasAttributeSet(const AttrSet* attrSet) const
         }
     }
     return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Entity::AttachPort(Message::Port* port)
+{
+    n_assert(port);
+    n_assert(this->dispatcher);
+
+    this->dispatcher->AttachPort(port);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+Entity::RemovePort(Message::Port* port)
+{
+    n_assert(port);
+    n_assert(this->dispatcher);
+
+    this->dispatcher->RemovePort(port);
 }
 
 } // namespace Game

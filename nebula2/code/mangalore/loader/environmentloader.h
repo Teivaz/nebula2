@@ -26,7 +26,7 @@ public:
     /// destructor
     ~EnvironmentLoader();
     /// load environment objects into the level
-    virtual bool Load(const nString& levelName);
+    virtual bool Load(Db::Reader* dbReader);
 
 private:
     /// return true if collide mesh file exists for the resource name
@@ -34,9 +34,11 @@ private:
     /// return true if physics file exists for the resource name
     bool HasPhysics(const nString& resName);
     /// create a special animated environment entity
-    void CreateAnimatedEntity(Db::Query* query, int queryRowIndex);
+    void CreateAnimatedEntity(Db::Reader* dbReader);
     /// create a game entity with graphics and physics
-    void CreatePhysicsEntity(Db::Query* query, int queryRowIndex);
+    void CreatePhysicsEntity(Db::Reader* dbReader);
+    /// update the progress indicator
+    void UpdateProgressIndicator(const nString& resName);
 };
 
 RegisterFactory(EnvironmentLoader);

@@ -16,6 +16,8 @@ beginmodule msg
         gfxremattachment
         gfxremskin
         gfxsetanimation
+        gfxsetcharacterset
+        gfxsetvisible
         movedirection
         movefollow
         movegoto
@@ -29,8 +31,6 @@ beginmodule msg
         settransform
         updatetransform
     }
-        #gfxsetcharacterset
-        #gfxsetvisible
     setfiles {
         animplay
         animrewind
@@ -43,6 +43,8 @@ beginmodule msg
         gfxremattachment
         gfxremskin
         gfxsetanimation
+        gfxsetcharacterset
+        gfxsetvisible
         movedirection
         movefollow
         movegoto
@@ -56,8 +58,6 @@ beginmodule msg
         settransform
         updatetransform
     }
-        #gfxsetcharacterset
-        #gfxsetvisible
 endmodule
 
 beginmodule msg::ui

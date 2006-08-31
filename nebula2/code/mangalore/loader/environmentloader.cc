@@ -17,11 +17,15 @@
 #include "physics/meshshape.h"
 #include "game/entity.h"
 #include "managers/entitymanager.h"
+#include "loader/server.h"
+#include "util/segmentedgfxutil.h"
 
 namespace Loader
 {
 using namespace Properties;
+using namespace Game;
 using namespace Managers;
+using namespace Util;
 
 ImplementRtti(Loader::EnvironmentLoader, Loader::EntityLoaderBase);
 ImplementFactory(Loader::EnvironmentLoader);
@@ -74,60 +78,64 @@ EnvironmentLoader::HasPhysics(const nString& resName)
 /**
 */
 bool
-EnvironmentLoader::Load(const nString& levelName)
+EnvironmentLoader::Load(Db::Reader* dbReader)
 {
     bool hasEnvironmentNodes = false;
+    const nString envCategory = "_Environment";
 
-    // create a query which gives us all environment object in the level
-    Ptr<Db::Query> query = Db::Server::Instance()->CreateLevelCategoryQuery(levelName, "_Environment");
-    query->Execute();
+    // create a segmented gfx util object
+    SegmentedGfxUtil segGfxUtil;
 
     // create a single environment graphics and collide property for all
     // static environment objects, this reduces clutter in the game entity pool
     Ptr<EnvironmentGraphicsProperty> gfxProperty = (EnvironmentGraphicsProperty*) FactoryManager::Instance()->CreateProperty("EnvironmentGraphicsProperty");
     Ptr<EnvironmentCollideProperty> collideProperty = (EnvironmentCollideProperty*) FactoryManager::Instance()->CreateProperty("EnvironmentCollideProperty");
 
-    // for each object...
-    int entityIndex;
-    int numEntities = query->GetNumRows();
-    for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
+    // for each row...
+    int rowIndex;
+    int numRows = dbReader->GetNumRows();
+    for (rowIndex = 0; rowIndex < numRows; rowIndex++)
     {
-        const nString& resName = query->GetAttr(Attr::Graphics, entityIndex).GetString();
-        if (query->HasAttr(Attr::AnimPath, entityIndex))
-        {
-            // if the AnimPath attribute exists, create an animated entity
-            CreateAnimatedEntity(query, entityIndex);
-        }
-        else if (HasPhysics(resName) && !HasCollide(resName))
-        {
-            // if physics and no static collision exists, create physics entity
-            CreatePhysicsEntity(query, entityIndex);
-        }
-        else
-        {
-            // else create vanilla pooled environment entity
-            hasEnvironmentNodes = true;
-            matrix44 worldMatrix = query->GetAttr(Attr::Transform, entityIndex).GetMatrix44();
+        dbReader->SetToRow(rowIndex);
 
-            // create graphics entity and attach to graphics property
-			Ptr<Graphics::Entity> gfxEntity = Graphics::Entity::Create();
-            gfxEntity->SetTransform(worldMatrix);
-            gfxEntity->SetResourceName(resName);
-            gfxProperty->AddGraphicsEntity(gfxEntity);
-
-            // check if a collide mesh file exists for the object
-            if (HasCollide(resName))
+        // get category of current row...
+        nString category = dbReader->GetString(Attr::_Category);
+        if (envCategory == category)
+        {
+            const nString& resName = dbReader->GetString(Attr::Graphics);
+            this->UpdateProgressIndicator(resName);
+            if (dbReader->HasAttr(Attr::AnimPath))
             {
-                // collide mesh exists, create a mesh shape node and attach to collide property
-                // FIXME: material type should be assignable in Maya!!
-                nString collideFilename;
-                collideFilename.Format("meshes:%s_c_0.nvx2", resName.Get());
-                if (!nFileServer2::Instance()->FileExists(collideFilename)) {
-                    collideFilename.Format("meshes:%s_c_0.n3d2", resName.Get());
+                // if the AnimPath attribute exists, create an animated entity
+                this->CreateAnimatedEntity(dbReader);
+            }
+            else if (this->HasPhysics(resName) && !this->HasCollide(resName))
+            {
+                // if physics and no static collision exists, create physics entity
+                this->CreatePhysicsEntity(dbReader);
+            }
+            else
+            {
+                // else create vanilla pooled environment entity
+                hasEnvironmentNodes = true;
+                matrix44 worldMatrix = dbReader->GetMatrix44(Attr::Transform);
+
+                // create graphics entity(s) and attach to graphics property
+                nArray<Ptr<Graphics::Entity>> gfxEntities = segGfxUtil.CreateAndSetupGraphicsEntities(resName, worldMatrix, false);
+                gfxProperty->AddGraphicsEntities(gfxEntities);
+
+                // check if a collide mesh file exists for the object
+                if (this->HasCollide(resName))
+                {
+                    // collide mesh exists, create a mesh shape node and attach to collide property
+                    // FIXME: material type should be assignable in Maya!!
+                    nString collideFilename;
+                    collideFilename.Format("meshes:%s_c_0.nvx2", resName.Get());
+                    Ptr<Physics::MeshShape> meshShape = Physics::Server::Instance()->CreateMeshShape(worldMatrix,
+                                                        Physics::MaterialTable::StringToMaterialType("Soil"),
+                                                        collideFilename);
+                    collideProperty->AddShape(meshShape);
                 }
-                Ptr<Physics::MeshShape> meshShape = Physics::Server::Instance()->CreateMeshShape(worldMatrix,
-                    Physics::MaterialTable::StringToMaterialType("Soil"), collideFilename);
-                collideProperty->AddShape(meshShape);
             }
         }
     }
@@ -151,21 +159,21 @@ EnvironmentLoader::Load(const nString& levelName)
     big environment pool, but instead must create a unique game entity.
 */
 void
-EnvironmentLoader::CreateAnimatedEntity(Db::Query* query, int queryRowIndex)
+EnvironmentLoader::CreateAnimatedEntity(Db::Reader* dbReader)
 {
     FactoryManager* factory = FactoryManager::Instance();
 
     // create a raw game entity
-    Game::Entity* gameEntity = factory->CreateEntityByClassName("Entity");
+    Entity* gameEntity = factory->CreateEntityByClassName("Entity");
 
     // attach required properties
-    Ptr<Game::Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
-    Ptr<Game::Property> pathAnimProperty = factory->CreateProperty("PathAnimProperty");
+    Ptr<Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
+    Ptr<Property> pathAnimProperty = factory->CreateProperty("PathAnimProperty");
     gameEntity->AttachProperty(graphicsProperty);
     gameEntity->AttachProperty(pathAnimProperty);
 
     // setup attributes directly from database
-    gameEntity->SetAttr(query->GetAttr(Attr::GUID, queryRowIndex));
+    gameEntity->SetAttr(dbReader->GetAttr(Attr::GUID));
     gameEntity->LoadAttributesFromDatabase();
 
     // attach game entity to world
@@ -178,26 +186,41 @@ EnvironmentLoader::CreateAnimatedEntity(Db::Query* query, int queryRowIndex)
     attached. This is a usual passive, bouncing, rolling game entity.
 */
 void
-EnvironmentLoader::CreatePhysicsEntity(Db::Query* query, int queryRowIndex)
+EnvironmentLoader::CreatePhysicsEntity(Db::Reader* dbReader)
 {
     FactoryManager* factory = FactoryManager::Instance();
 
     // create a game entity
-    Game::Entity* gameEntity = factory->CreateEntityByClassName("Entity");
+    Entity* gameEntity = factory->CreateEntityByClassName("Entity");
 
     // attach required properties (NOTE: the order of attachment is
     // important in this case)
-    Ptr<Game::Property> physicsProperty  = factory->CreateProperty("PhysicsProperty");
-    Ptr<Game::Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
+    Ptr<Property> physicsProperty  = factory->CreateProperty("PhysicsProperty");
+    Ptr<Property> graphicsProperty = factory->CreateProperty("GraphicsProperty");
     gameEntity->AttachProperty(physicsProperty);
     gameEntity->AttachProperty(graphicsProperty);
 
     // setup attributes directly from database
-    gameEntity->SetAttr(query->GetAttr(Attr::GUID, queryRowIndex));
+    gameEntity->SetAttr(dbReader->GetAttr(Attr::GUID));
     gameEntity->LoadAttributesFromDatabase();
 
     // attach game entity to world
     EntityManager::Instance()->AttachEntity(gameEntity);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Update the progress indicator...
+*/
+void
+EnvironmentLoader::UpdateProgressIndicator(const nString& resName)
+{
+    Loader::Server* loaderServer = Loader::Server::Instance();
+    nString progressText;
+    progressText.Format("Loading env object '%s'...", resName.Get());
+    loaderServer->SetProgressText(progressText);
+    loaderServer->AdvanceProgress(1);
+    loaderServer->UpdateProgressDisplay();
 }
 
 } // namespace Loader

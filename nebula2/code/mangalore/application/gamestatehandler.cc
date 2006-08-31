@@ -78,16 +78,29 @@ GameStateHandler::OnStateEnter(const nString& prevState)
     }
     else if (LoadLevel == this->setupMode)
     {
+        // show progress bar UI
+        Loader::Server* loaderServer = Loader::Server::Instance();
+        loaderServer->OpenProgressIndicator();
+
+        loaderServer->SetProgressText("On Load Before...");
+        loaderServer->UpdateProgressDisplay();
         setupManager->SetCurrentLevel(this->GetLevelName());
 
         // notify application state handler
         this->OnLoadBefore();
 
+        loaderServer->SetProgressText("Setup World...");
+        loaderServer->UpdateProgressDisplay();
+
         // setup world from current game
         setupManager->SetupWorldFromCurrentLevel();
 
+        loaderServer->SetProgressText("On Load After...");
+        loaderServer->UpdateProgressDisplay();
+        
         // notify application state handler
         this->OnLoadAfter();
+        loaderServer->CloseProgressIndicator();
     }
     else if (LoadSaveGame == this->setupMode)
     {
