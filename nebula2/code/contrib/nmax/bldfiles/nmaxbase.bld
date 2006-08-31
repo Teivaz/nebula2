@@ -1,11 +1,11 @@
 #--------------------------------------------------------------------
 #   nmaxbase.bld
 #   the base modules for the max plugins
-#   
+#
 #   Modules:
 #       nmaxloghandler
 #       nmaxdll
-#     
+#
 #   Targets:
 #     nmaxbase
 #-------------------------------------------------------------------------------
@@ -18,15 +18,15 @@ beginmodule nmaxloghandler
     setdir base
     setfiles  { nmaxloghandler }
     setheaders { nmaxloghandler }
-    
+
 endmodule
 #-------------------------------------------------------------------------------
 beginmodule nmaxdll
     annotate "The required dll exports for a max plugin"
-    
+
     settype cpp
     setplatform win32
-    
+
     setdir base
     setfiles   { nmaxdll }
     setheaders { nmaxdll }

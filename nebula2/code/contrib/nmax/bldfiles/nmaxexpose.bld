@@ -1,13 +1,13 @@
 #-------------------------------------------------------------------------------
 #   nmaxexpose.bld
-# 
+#
 #   Build file for nmaxexpose package.
 #
-#   Modules: 
+#   Modules:
 #       - nmaxexpose
 #       - nmaxscript
 #   Targets:
-#   
+#
 #   (C) 2004 Kim, Hyoun Woo
 #-------------------------------------------------------------------------------
 beginmodule nmaxexpose
@@ -27,9 +27,9 @@ beginmodule nmaxscript
     setplatform win32
     setdir expose
     setfiles {
-        nmaxscript_builder 
-        nmaxscript_callables 
-        nmaxscript_objattr 
+        nmaxscript_builder
+        nmaxscript_callables
+        nmaxscript_objattr
         nmaxscript_params
     }
     setheaders {

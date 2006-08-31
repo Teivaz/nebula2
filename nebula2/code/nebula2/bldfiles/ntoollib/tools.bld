@@ -184,11 +184,11 @@ beginmodule nwinmaincmdlineargs
     }
 endmodule
 #-------------------------------------------------------------------------------
-#beginmodule nanalyzeexport
-#    setdir tools
-#    setfiles {
-#        nanalyzeexport
-#    }
+beginmodule nanalyzeexport
+    setdir tools
+    setfiles {
+        nanalyzeexport
+    }
 #endmodule
 
 beginmodule nanimtool

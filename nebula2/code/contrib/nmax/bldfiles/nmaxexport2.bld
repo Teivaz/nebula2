@@ -27,7 +27,7 @@ beginmodule nmaxexport2
     settype cpp
     setplatform win32
     setdir export2
-    setfiles { 
+    setfiles {
         nmaxexport2_main
         nmaxexport2_script
         nmaxexport2_ipc
@@ -50,7 +50,7 @@ beginmodule nmaxoptions
     settype cpp
     setplatform win32
     setdir export2
-    setfiles { 
+    setfiles {
         nmaxoptions
         nmaxoptionscriptext
     }
@@ -65,7 +65,7 @@ beginmodule nmaxscene
     settype cpp
     setplatform win32
     setdir export2
-    setfiles { 
+    setfiles {
         nmaxscene
     }
     setheaders {
@@ -91,7 +91,7 @@ beginmodule nmaxmesh
         nmaxmesh_main
         nmaxmesh_skin
         nmaxvertexinfluence
-    } 
+    }
     setheaders {
         nmaxmesh
         nmaxvertexinfluence
@@ -106,7 +106,7 @@ beginmodule nmaxskinpartitioner
     setdir export2
     setfiles {
         nmaxskinpartitioner
-    } 
+    }
     setheaders {
         nmaxskinpartitioner
     }
@@ -126,7 +126,7 @@ beginmodule nmaxmaterial
         nmaxmaterial_ui
         nmaxmaterial_script
         nmaxtexture
-    } 
+    }
     setheaders {
         nmaxmaterial
         nmaxmaterial_shd
@@ -142,10 +142,10 @@ beginmodule nmaxbone
     setdir export2
     setfiles {
         nmaxbones
-    } 
+    }
     setheaders {
         nmaxbones
-        
+
     }
 endmodule
 #-------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ beginmodule nmaxtransform
     setdir export2
     setfiles {
         nmaxtransform
-    } 
+    }
     setheaders {
         nmaxtransform
     }
@@ -169,7 +169,7 @@ beginmodule nmaxcamera
     setdir export2
     setfiles {
         nmaxcamera
-    } 
+    }
     setheaders {
         nmaxcamera
     }
@@ -182,7 +182,7 @@ beginmodule nmaxlight
     setdir export2
     setfiles {
         nmaxlight
-    } 
+    }
     setheaders {
         nmaxlight
     }

@@ -1,13 +1,13 @@
 #-------------------------------------------------------------------------------
 #   nmaximport.bld
-# 
+#
 #   Build file for Nebula2 3DS Max importer package.
 #
-#   Modules: 
+#   Modules:
 #       - nmaxmeshimport
 #       - nmaximport
 #   Targets:
-#       - nmaximport   
+#       - nmaximport
 #
 #   (C) 2005 Kim, Hyoun Woo
 #-------------------------------------------------------------------------------
@@ -23,14 +23,14 @@ beginmodule nmaximport
     setdir import
     setfiles { nmaximport_main nmaximport_script }
     setheaders { nmaximport }
-    setlibs_win32 { 
-        maxutil.lib 
-        core.lib 
-        geom.lib 
-        mesh.lib 
-        poly.lib 
-        paramblk2.lib 
-        maxscrpt.lib 
+    setlibs_win32 {
+        maxutil.lib
+        core.lib
+        geom.lib
+        mesh.lib
+        poly.lib
+        paramblk2.lib
+        maxscrpt.lib
     }
 endmodule
 #-------------------------------------------------------------------------------
@@ -46,6 +46,8 @@ begintarget nmaximport
     settargetdeps {
         nmaxbase
         nkernel
+        nnebula
+        ngui
         ntoollib
         microtcl
     }
@@ -56,9 +58,6 @@ beginworkspace nmaximport
     settargets {
         nmaximport
         nmaxbase
-        nkernel
-        ntoollib
-        microtcl
     }
 endworkspace
 #-------------------------------------------------------------------------------
