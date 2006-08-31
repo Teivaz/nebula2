@@ -12,20 +12,33 @@ namespace Util
 //------------------------------------------------------------------------------
 /**
 */
+SegmentedGfxUtil::SegmentedGfxUtil() :
+    resourceCache(128, 128)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
 nArray<Ptr<Graphics::Entity> >
-SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const matrix44& worldMatrix)
+SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const matrix44& worldMatrix, bool attachToLevel)
 {
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
     n_assert(graphicsLevel);
     nArray<Ptr<Graphics::Entity> > graphicsEntities;
 
     // create a resource object
-    Graphics::Resource resource;
-    resource.SetName(resName);
-    resource.Load();
+    Ptr<Graphics::Resource> resource = Graphics::Resource::Create();
+    resource->SetName(resName);
+    resource->Load();
+    if (!attachToLevel)
+    {
+        this->resourceCache.Append(resource);
+    }
 
     // collect segment hierarchy nodes from resource
-    nTransformNode* modelNode = (nTransformNode*) resource.GetNode()->Find("model");
+    nTransformNode* modelNode = (nTransformNode*) resource->GetNode()->Find("model");
     if (modelNode)
     {
         n_assert(modelNode);
@@ -44,7 +57,7 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
         // check if segments actually exist
         if (segments.Size() > 0)
         {
-            nTransformNode* shadowNode = (nTransformNode*) resource.GetNode()->Find("shadow");
+            nTransformNode* shadowNode = (nTransformNode*) resource->GetNode()->Find("shadow");
 
             // create one graphics entity for each segment
             int num = segments.Size();
@@ -70,7 +83,10 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
                     shdResName.Append(segments[i]->GetName());
                     ge->SetShadowResourceName(shdResName);
                 }
-                graphicsLevel->AttachEntity(ge);
+                if (attachToLevel)
+                {
+                    graphicsLevel->AttachEntity(ge);
+                }
                 graphicsEntities.Append(ge);
             }
             return graphicsEntities;
@@ -81,7 +97,10 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
 	Ptr<Graphics::Entity> ge = Graphics::Entity::Create();
     ge->SetResourceName(resName);
     ge->SetTransform(worldMatrix);
-    graphicsLevel->AttachEntity(ge);
+    if (attachToLevel)
+    {
+        graphicsLevel->AttachEntity(ge);
+    }
     graphicsEntities.Append(ge);
 
     return graphicsEntities;

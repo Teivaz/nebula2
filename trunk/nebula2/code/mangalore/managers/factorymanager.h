@@ -10,7 +10,7 @@
 
     The FactoryManager loads the file
 
-    data:tables/entitytypes.xml
+    data:tables/blueprints.xml
 
     on creation, which contains the construction blueprints for the
     entity types of your application. This file defines entity types
@@ -21,6 +21,9 @@
 #include "game/manager.h"
 #include "game/property.h"
 #include "game/entity.h"
+#include "db/reader.h"
+#include "db/query.h"
+#include "message/dispatcher.h"
 
 //------------------------------------------------------------------------------
 namespace Managers
@@ -37,18 +40,32 @@ public:
     virtual ~FactoryManager();
     /// get instance pointer
     static FactoryManager* Instance();
+    /// called when attached to game server
+    virtual void OnActivate();
+    /// called when removed from game server
+    virtual void OnDeactivate();
     /// create a new raw game entity by type name, extend this method in subclasses for new types
     virtual Game::Entity* CreateEntityByClassName(const nString& cppClassName) const;
     /// create a new entity from its category name
     virtual Game::Entity* CreateEntityByCategory(const nString& categoryName, Game::Entity::EntityPool pool = Game::Entity::LivePool) const;
     /// create a new entity from a database template entry
     virtual Game::Entity* CreateEntityByTemplate(const nString& categoryName, const nString& templateName, Game::Entity::EntityPool = Game::Entity::LivePool) const;
+    /// create a new entity cloning a existing one
+    virtual Game::Entity* CreateEntityByEntity(Game::Entity* templateEntity, Game::Entity::EntityPool = Game::Entity::LivePool) const;
     /// create new entity from world database using any key attribute
     virtual Game::Entity* CreateEntityByKeyAttr(const Db::Attribute& key, Game::Entity::EntityPool pool = Game::Entity::LivePool) const;
+    /// create new entities from world database using the key attributes
+    virtual nArray<Game::Entity*> CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, const nArray<Ptr<Game::Entity> >& filteredEntitys, Game::Entity::EntityPool pool = Game::Entity::LivePool, bool failOnDBError = true) const;
     /// create new entity from world database using GUID as key attribute
     virtual Game::Entity* CreateEntityByGuid(const nString& guid, Game::Entity::EntityPool pool = Game::Entity::LivePool) const;
+    /// create a new entity from a row of a database reader (fastest way to load many entities)
+    virtual Game::Entity* CreateEntityByDbReader(Db::Reader* dbReader, int rowIndex, Game::Entity::EntityPool pool = Game::Entity::LivePool) const;
+
     /// create a new property by type name, extend in subclass for new types
     virtual Game::Property* CreateProperty(const nString& type) const;
+
+    /// create a Message Dispatcher
+    virtual Message::Dispatcher* CreateDispatcher()const;
 
 private:
     static FactoryManager* Singleton;
@@ -70,6 +87,7 @@ protected:
     };
 
     nArray<BluePrint> bluePrints;
+    Ptr<Db::Query> cachedTemplateQuery;
 };
 
 RegisterFactory(FactoryManager);

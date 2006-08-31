@@ -11,6 +11,7 @@
 #include "game/entity.h"
 #include "attr/attributes.h"
 #include "msg/updatetransform.h"
+#include "msg/gfxsetvisible.h"
 
 namespace Properties
 {
@@ -31,6 +32,16 @@ GraphicsProperty::GraphicsProperty()
 GraphicsProperty::~GraphicsProperty()
 {
     n_assert(this->graphicsEntities.Size() == 0);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get a reference to the array of graphics entities
+*/
+const nArray<Ptr<Graphics::Entity> >&
+GraphicsProperty::GetGraphicsEntities() const
+{
+    return this->graphicsEntities;
 }
 
 //------------------------------------------------------------------------------
@@ -64,35 +75,24 @@ GraphicsProperty::OnActivate()
 void
 GraphicsProperty::OnDeactivate()
 {
-    this->CleanupGraphicsEntities();
+    Graphics::Level* gfxLevel = Graphics::Server::Instance()->GetLevel();
+
+    // release graphics entities
+    int i;
+    int num = this->graphicsEntities.Size();
+    for (i = 0;  i < num; i++)
+    {
+        Graphics::Entity* gfxEntity = this->graphicsEntities[i];
+        if (gfxEntity->GetCell())
+        {
+            gfxLevel->RemoveEntity(gfxEntity);
+        }
+        this->graphicsEntities[i] = 0;
+    }
+    this->graphicsEntities.Clear();
 
     // up to parent class
     AbstractGraphicsProperty::OnDeactivate();
-}
-
-//------------------------------------------------------------------------------
-/**
-    This method is called before rendering happens and updates the
-    positions of the graphics entity.
-*/
-void
-GraphicsProperty::OnRender()
-{
-    // TODO: DO NOT SEARCH FOR A ATTACHED PHYSICS PROERTY!
-    // if we have a physics property, transfer physics transforms to
-    // the graphics entities
-    AbstractPhysicsProperty* physProperty = (AbstractPhysicsProperty*) GetEntity()->FindProperty(AbstractPhysicsProperty::RTTI);
-    if (physProperty && physProperty->IsEnabled())
-    {
-        Physics::Entity* physEntity = physProperty->GetPhysicsEntity();
-        if (physEntity)
-        {
-            if (Util::PhysicsGfxUtil::UpdateGraphicsTransforms(physEntity, this->graphicsEntities))
-            {
-                return;
-            }
-        }
-    }
 }
 
 //------------------------------------------------------------------------------
@@ -104,8 +104,7 @@ void
 GraphicsProperty::SetupGraphicsEntities()
 {
     // get some entity attributes
-    nString resName = GetEntity()->GetString(Attr::Graphics);
-    const matrix44& worldMatrix = GetEntity()->GetMatrix44(Attr::Transform);
+    nString resName =  this->GetGraphicsResource();
 
     // TODO: DO NOT SEARCH FOR A ATTACHED PHYSICS PROERTY!
     // check if we have a physics property attached
@@ -127,35 +126,14 @@ GraphicsProperty::SetupGraphicsEntities()
         }
     }
 
-    // fallthrough: setup physics-less graphics entity
-    this->graphicsEntities = Util::SegmentedGfxUtil::CreateAndSetupGraphicsEntities(resName, worldMatrix);
+    // fall through: setup physics-less graphics entity
+    const matrix44& worldMatrix = GetEntity()->GetMatrix44(Attr::Transform);
+    Util::SegmentedGfxUtil segGfxUtil;
+    this->graphicsEntities = segGfxUtil.CreateAndSetupGraphicsEntities(resName, worldMatrix);
     for (int i = 0; i < this->graphicsEntities.Size(); i++)
     {
         this->graphicsEntities[i]->SetUserData(GetEntity()->GetUniqueId());
     }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Cleanup graphics entities
-*/
-void
-GraphicsProperty::CleanupGraphicsEntities() {
-    Graphics::Level* gfxLevel = Graphics::Server::Instance()->GetLevel();
-
-    // release graphics entities
-    int i;
-    int num = this->graphicsEntities.Size();
-    for (i = 0;  i < num; i++)
-    {
-        Graphics::Entity* gfxEntity = this->graphicsEntities[i];
-        if (gfxEntity->GetCell())
-        {
-            gfxLevel->RemoveEntity(gfxEntity);
-        }
-        this->graphicsEntities[i] = 0;
-    }
-    this->graphicsEntities.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -166,6 +144,7 @@ GraphicsProperty::Accepts(Message::Msg* msg)
 {
     n_assert(msg);
     if (msg->CheckId(Message::UpdateTransform::Id)) return true;
+    if (msg->CheckId(Message::GfxSetVisible::Id)) return true;
     return AbstractGraphicsProperty::Accepts(msg);
 }
 
@@ -178,18 +157,69 @@ GraphicsProperty::HandleMessage(Message::Msg* msg)
     n_assert(msg);
     if (msg->CheckId(Message::UpdateTransform::Id))
     {
-        // update the graphics entities transform
-        Message::UpdateTransform* updateTransform = (Message::UpdateTransform*) msg;
-        int i;
-        int num = this->graphicsEntities.Size();
-        for (i = 0; i < num; i++)
-        {
-            this->graphicsEntities[i]->SetTransform(updateTransform->GetMatrix());
-        }
+        this->UpdateTransform(((Message::UpdateTransform*)msg)->GetMatrix(), false);
+    }
+    if (msg->CheckId(Message::GfxSetVisible::Id))
+    {
+        this->SetVisible(((Message::GfxSetVisible*)msg)->GetVisible());
     }
     else
     {
         AbstractGraphicsProperty::HandleMessage(msg);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Called to update the graphics entity's transform.
+*/
+void
+GraphicsProperty::UpdateTransform(const matrix44& m, bool setDirectly)
+{
+    // TODO: DO NOT SEARCH FOR A ATTACHED PHYSICS PROERTY!
+
+    // if physics property exists, gather transforms from physics property,
+    // otherwise use the transform in the UpdateTransform message
+
+
+    AbstractPhysicsProperty* physProperty = (AbstractPhysicsProperty*) GetEntity()->FindProperty(AbstractPhysicsProperty::RTTI);
+    if (setDirectly || (0 == physProperty))
+    {
+        // set transformation directly
+        int i;
+        for (i = 0; i < this->graphicsEntities.Size(); i++)
+        {
+            this->graphicsEntities[i]->SetTransform(m);
+        }
+    }
+    else
+    {
+        // gather transform from physics entity
+        if (physProperty->IsEnabled())
+        {
+            Physics::Entity* physEntity = physProperty->GetPhysicsEntity();
+            if (physEntity)
+            {
+                if (Util::PhysicsGfxUtil::UpdateGraphicsTransforms(physEntity, this->graphicsEntities))
+                {
+                    return;
+                }
+            }
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Shows or hides all attached graphics entities.
+*/
+void
+GraphicsProperty::SetVisible(bool visible)
+{
+    int i;
+    for (i = 0; i < this->graphicsEntities.Size(); i++)
+    {
+        this->graphicsEntities[i]->SetVisible(visible);
     }
 }
 

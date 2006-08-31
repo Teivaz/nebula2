@@ -9,6 +9,8 @@
     (C) 2006 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
+#include "db/reader.h"
+#include "ui/progressbarwindow.h"
 
 //------------------------------------------------------------------------------
 namespace Loader
@@ -23,7 +25,7 @@ public:
     /// destructor
     ~EntityLoaderBase();
     /// load entity objects into the level
-    virtual bool Load(const nString& levelName);
+    virtual bool Load(Db::Reader* dbReader);
 };
 
 } // namespace Loader

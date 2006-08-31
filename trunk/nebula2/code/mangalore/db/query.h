@@ -38,13 +38,15 @@ public:
     /// add attribute-safe update attribute for constructed statement
     void AddUpdateAttr(const Db::Attribute& attr);
     /// add attribute-safe WHERE column for constructed statement (will be ANDed)
-    void AddWhereAttr(const Db::Attribute& attr);
+    void AddWhereAttr(const Db::Attribute& attr, bool not = false);
     /// build a SELECT statement from the given data
     void BuildSelectStatement();
-    /// build an UPDATE statement from the given data
+    /// build an UPDATE statement from the given data, fails if requested columns does not exist
     void BuildUpdateStatement();
+    /// build an DELETE statement from the given data, fails if requested columns does not exist
+    void BuildDeleteStatement();
     /// execute an sql query, this updates the stored query result
-    bool Execute();
+    bool Execute(bool failOnError = true);
     /// return number of columns in the result
     int GetNumColumns() const;
     /// return number of rows in the result
@@ -78,7 +80,14 @@ public:
 private:
     nString tableName;
     nArray<nString> resultAttrs;
-    nArray<Db::Attribute> whereAttrs;
+
+    struct WhereAttr
+    {
+        Db::Attribute attr;
+        bool not;
+    };
+
+    nArray<WhereAttr> whereAttrs;
     nArray<Db::Attribute> updateAttrs;
     nString sqlStatement;
     nArray2<Attribute> result;
@@ -112,9 +121,13 @@ Query::AddResultAttr(const Attr::AttributeID& attrId)
 */
 inline
 void
-Query::AddWhereAttr(const Db::Attribute& attr)
+Query::AddWhereAttr(const Db::Attribute& attr, bool not)
 {
-    this->whereAttrs.Append(attr);
+    WhereAttr whereAttr;
+    whereAttr.attr = attr;
+    whereAttr.not = not;
+
+    this->whereAttrs.Append(whereAttr);
 }
 
 //------------------------------------------------------------------------------

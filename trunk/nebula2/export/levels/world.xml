@@ -3,7 +3,7 @@
     <Global currentLevel = "stage1" />
     <Level center="0.000 0.000 0.000" extents="2000.000 2000.000 2000.000" startLevel="true" id = "stage1">
         <Objects>
-            <Object name="Kila" loc="db:Actor:Kila" pos="0.000 0.000 0.000" rot="0.000 0.000 0.000 1.000" scale="100.000 100.000 100.000" Graphics="examples/kila" AnimSet="Kila" Name="The Kila" InputFocus="true" CameraFocus="false" MaxVelocity="4.000" />
+            <Object name="Kila" loc="db:Actor:Kila" pos="0.000 0.000 0.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" Graphics="examples/kila" AnimSet="Kila" Name="The Kila" InputFocus="true" CameraFocus="false" MaxVelocity="4.000" />
             <Object name="Physics1" loc="db:Simple:Physics1" pos="0.000 0.000 -10.000" rot="0.000 0.000 0.000 1.000" scale="1.000 1.000 1.000" Graphics="examples/physics1" Physics="examples/physics1" Name="The Physics" InputFocus="false" CameraFocus="false" MaxVelocity="4.000" />
             <Object name="Camera" loc="db:Camera:Camera" pos="0.000 10.000 10.000" rot="-0.225 0.000 0.000 0.975" scale="1.000 1.000 1.000" InputFocus="true" CameraFocus="true" FieldOfView="60.000" />
         </Objects>

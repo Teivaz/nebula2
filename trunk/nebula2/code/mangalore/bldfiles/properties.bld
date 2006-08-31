@@ -24,13 +24,13 @@ beginmodule properties
         physicsproperty
         pointnclickinputproperty
         posteffectproperty
+        simplecameraproperty
         simplegraphicsproperty
         timeproperty
         transformableproperty
         videocameraproperty
         videocameraproperty2
     }
-        #simplecameraproperty
     setfiles {
         abstractgraphicsproperty
         abstractphysicsproperty
@@ -51,11 +51,11 @@ beginmodule properties
         physicsproperty
         pointnclickinputproperty
         posteffectproperty
+        simplecameraproperty
         simplegraphicsproperty
         timeproperty
         transformableproperty
         videocameraproperty
         videocameraproperty2
     }
-    #simplecameraproperty
 endmodule

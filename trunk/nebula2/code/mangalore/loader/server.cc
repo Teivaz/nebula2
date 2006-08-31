@@ -18,7 +18,8 @@ Server* Server::Singleton = 0;
 /**
 */
 Server::Server() :
-    isOpen(false)
+    isOpen(false),
+    debugTextEnabled(true)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -52,6 +53,10 @@ Server::Open()
     userProfile->Open();
     this->SetUserProfile(userProfile);
 
+    // create progress indicator window
+    this->progressIndicator = UI::ProgressBarWindow::Create();
+    this->progressIndicator->SetResource("gui/progressbar");
+
     this->isOpen = true;
     return true;
 }
@@ -65,8 +70,15 @@ Server::Close()
 {
     n_assert(this->isOpen);
 
+    // close progress indicator window
+    if (this->progressIndicator->IsOpen())
+    {
+        this->progressIndicator->Close();
+    }
+    this->progressIndicator = 0;
+
     // remove all loader from list
-    this->RemoveAllLoader();
+    this->RemoveAllLoaders();
 
     this->isOpen = false;
 }
@@ -82,6 +94,18 @@ Server::CreateUserProfile() const
     return UserProfile::Create();
 }
 
+
+//------------------------------------------------------------------------------
+/**
+    Creates a new character profile object. Override in subclass to create
+    your own character profile subclass instances.
+*/
+CharacterProfile*
+Server::CreateCharacterProfile() const
+{
+    return CharacterProfile::Create();
+}
+
 //------------------------------------------------------------------------------
 /**
     Load a new game level from the world database.
@@ -93,7 +117,12 @@ bool
 Server::LoadLevel(const nString& levelName)
 {
     n_assert(levelName.IsValid());
-    return LevelLoader::Load(levelName);
+
+    // load the level...
+    bool success = LevelLoader::Load(levelName);
+
+    // done
+    return success;
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +136,7 @@ Server::AttachLoader(EntityLoaderBase* loader)
 {
     n_assert(0 != loader);
 
-    this->entityLoader.Append(loader);
+    this->entityLoaders.Append(loader);
 }
 
 //------------------------------------------------------------------------------
@@ -124,7 +153,7 @@ Server::RemoveLoader(EntityLoaderBase* loader)
     int index = GetEntityLoaderIndex(loader);
     n_assert(index > -1);
 
-    this->entityLoader.Erase(index);
+    this->entityLoaders.Erase(index);
 }
 
 //------------------------------------------------------------------------------
@@ -132,9 +161,9 @@ Server::RemoveLoader(EntityLoaderBase* loader)
     Remove all loaders.
 */
 void
-Server::RemoveAllLoader()
+Server::RemoveAllLoaders()
 {
-    this->entityLoader.Clear();
+    this->entityLoaders.Clear();
 }
 
 //------------------------------------------------------------------------------
@@ -150,9 +179,9 @@ Server::GetEntityLoaderIndex(EntityLoaderBase* loader) const
     n_assert(0 != loader);
 
     int loaderIndex = -1;
-    for (int i = 0; i < this->entityLoader.Size(); i++)
+    for (int i = 0; i < this->entityLoaders.Size(); i++)
     {
-        if (this->entityLoader[i].get() == loader)
+        if (this->entityLoaders[i].get() == loader)
         {
             loaderIndex = i;
         }
@@ -163,14 +192,15 @@ Server::GetEntityLoaderIndex(EntityLoaderBase* loader) const
 
 //------------------------------------------------------------------------------
 /**
-    Go thru all entity loader and call its Load function.
+    Go through all entity loader and call its Load function.
 */
 void
-Server::LoadEntities(const nString& levelName)
+Server::LoadEntities(Db::Reader* dbReader)
 {
-    for (int i = 0; i < this->entityLoader.Size(); i++)
+    n_assert(0 != dbReader);
+    for (int i = 0; i < this->entityLoaders.Size(); i++)
     {
-        this->entityLoader[i]->Load(levelName);
+        this->entityLoaders[i]->Load(dbReader);
     }
 }
 

@@ -16,6 +16,7 @@
 #include "loader/entityloader.h"
 #include "loader/navmaploader.h"
 #include "game/server.h"
+#include "loader/server.h"
 
 namespace Loader
 {
@@ -30,8 +31,14 @@ bool
 LevelLoader::Load(const nString& levelName)
 {
     Db::Server* dbServer = Db::Server::Instance();
+    Loader::Server* loaderServer = Loader::Server::Instance();
+
+    // update progress bar window
+    loaderServer->SetProgressText("Query Database...");
+    loaderServer->UpdateProgressDisplay();
 
     // get the level data from the world database
+    Db::Server::Instance()->BeginTransaction();
     Ptr<Db::Query> levelQuery = dbServer->CreateLevelQuery(levelName);
     levelQuery->Execute();
     if (levelQuery->GetNumRows() == 0)
@@ -60,17 +67,28 @@ LevelLoader::Load(const nString& levelName)
     cellTreeBuilder.BuildQuadTree(graphicsLevel, 5, levelBox);
     Graphics::Server::Instance()->SetLevel(graphicsLevel);
 
-    // load objects
-    Db::Server::Instance()->BeginTransaction();
+    // load objects through a database reader, that way, only
+    // one query is necessary for all objects
+    Ptr<Db::Reader> dbReader = Db::Reader::Create();
+    dbReader->SetTableName("_Entities");
+    dbReader->AddFilterAttr(Db::Attribute(Attr::_Type, "INSTANCE"));
+    dbReader->AddFilterAttr(Db::Attribute(Attr::_Level, levelName));
+    if (dbReader->Open())
+    {
+        loaderServer->SetMaxProgressValue(dbReader->GetNumRows());
+        Server::Instance()->LoadEntities(dbReader);
+        dbReader->Close();
+    }
 
-    // load entities from db
-    Server::Instance()->LoadEntities(levelName);
-
+    // update progress bar window
+    loaderServer->SetProgressText("Loading Navigation Map...");
+    loaderServer->UpdateProgressDisplay();
     NavMapLoader::Load(levelName);
+
     Db::Server::Instance()->EndTransaction();
 
-    // invoke OnLoad() on everything
-    Game::Server::Instance()->Load();
+    loaderServer->SetProgressText("Level Loader Done...");
+    loaderServer->UpdateProgressDisplay();
 
     return true;
 }

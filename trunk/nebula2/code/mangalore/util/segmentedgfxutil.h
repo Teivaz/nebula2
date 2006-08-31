@@ -12,6 +12,7 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "graphics/entity.h"
+#include "graphics/resource.h"
 
 //------------------------------------------------------------------------------
 namespace Util
@@ -19,8 +20,12 @@ namespace Util
 class SegmentedGfxUtil
 {
 public:
+    /// constructor
+    SegmentedGfxUtil();
     /// create and setup one or more graphics entities from hierarchy nodes
-    static nArray<Ptr<Graphics::Entity> > CreateAndSetupGraphicsEntities(const nString& resName, const matrix44& worldMatrix);
+    nArray<Ptr<Graphics::Entity>> CreateAndSetupGraphicsEntities(const nString& resName, const matrix44& worldMatrix, bool attachToLevel=true);
+private:
+    nArray<Ptr<Graphics::Resource>> resourceCache;
 };
 
 } // namespace Util
