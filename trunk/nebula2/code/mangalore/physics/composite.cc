@@ -23,7 +23,9 @@ Composite::Composite() :
     inBeginJoints(false),
     inBeginShapes(false),
     isAttached(false),
-    odeSpaceId(0)
+    odeSpaceId(0),
+    transformChanged(false),
+    transformWasSet(false)
 {
     // empty
 }
@@ -377,14 +379,11 @@ Composite::OnStepAfter()
         }
 
         // update stored transform
-        if (this->IsAttached())
+        RigidBody* masterBody = this->GetMasterBody();
+        if (masterBody)
         {
-            RigidBody* masterBody = this->GetMasterBody();
-            if (masterBody)
-            {
-                matrix44 m = masterBody->GetTransform();
-                this->transform = masterBody->GetInverseInitialTransform() * m;
-            }
+            matrix44 m = masterBody->GetTransform();
+            this->transform = masterBody->GetInverseInitialTransform() * m;
         }
     }
 }
@@ -398,6 +397,10 @@ Composite::OnFrameBefore()
 {
     if (this->IsAttached())
     {
+        // take a snapshot of the current transform
+        this->frameBeforeTransform = this->transform;
+        this->transformChanged = false;
+
         int num = this->GetNumBodies();
         int i;
         for (i = 0; i < num; i++)
@@ -420,9 +423,31 @@ Composite::OnFrameAfter()
         int i;
         for (i = 0; i < num; i++)
         {
-            this->GetBodyAt(i)->OnFrameAfter();
+            RigidBody* curBody = this->GetBodyAt(i);
+            curBody->OnFrameAfter();
+
+            // if any rigid body is enabled, we set the
+            // transform changed flag
+            if (curBody->IsEnabled())
+            {
+                this->transformChanged = true;
+            }
+        }
+
+        // check if transform has changed by other means
+        if (!this->transformChanged)
+        {
+            if (this->transformWasSet ||
+                (!this->frameBeforeTransform.x_component().isequal(this->transform.x_component(), 0.001f)) ||
+                (!this->frameBeforeTransform.y_component().isequal(this->transform.y_component(), 0.001f)) ||
+                (!this->frameBeforeTransform.z_component().isequal(this->transform.z_component(), 0.001f)) ||
+                (!this->frameBeforeTransform.pos_component().isequal(this->transform.pos_component(), 0.001f)))
+            {
+                this->transformChanged = true;
+            }
         }
     }
+    this->transformWasSet = false;
 }
 
 //------------------------------------------------------------------------------
@@ -500,6 +525,7 @@ void
 Composite::SetTransform(const matrix44& m)
 {
     this->transform = m;
+    this->transformWasSet = true;
 
     if (this->IsAttached())
     {

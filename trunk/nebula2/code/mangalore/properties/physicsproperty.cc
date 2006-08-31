@@ -35,11 +35,21 @@ PhysicsProperty::~PhysicsProperty()
 
 //------------------------------------------------------------------------------
 /**
+    Get pointer to physics entity. Note that this method may return 0!
+*/
+Physics::Entity*
+PhysicsProperty::GetPhysicsEntity() const
+{
+    return this->physicsEntity.get_unsafe();
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 void
 PhysicsProperty::SetupDefaultAttributes()
 {
-    TransformableProperty::SetupDefaultAttributes();
+    AbstractPhysicsProperty::SetupDefaultAttributes();
     GetEntity()->SetVector3(Attr::VelocityVector, vector3(0.0f, 0.0f, 0.0f));
 }
 
@@ -51,10 +61,10 @@ PhysicsProperty::SetupDefaultAttributes()
 void
 PhysicsProperty::OnMoveAfter()
 {
-    if (this->IsEnabled())
+    if (this->IsEnabled() && this->physicsEntity->HasTransformChanged())
     {
         Ptr<Message::UpdateTransform> msg = Message::UpdateTransform::Create();
-        msg->SetMatrix(this->physicsEntity->GetTransform());
+        msg->SetMatrix(this->GetPhysicsEntity()->GetTransform());
         this->GetEntity()->SendSync(msg);
         GetEntity()->SetVector3(Attr::VelocityVector, this->physicsEntity->GetVelocity());
     }
@@ -68,7 +78,7 @@ PhysicsProperty::Accepts(Message::Msg* msg)
 {
     n_assert(msg != 0);
     if (msg->CheckId(Message::SetTransform::Id)) return true;
-    return TransformableProperty::Accepts(msg);
+    return AbstractPhysicsProperty::Accepts(msg);
 }
 
 //------------------------------------------------------------------------------
@@ -85,10 +95,9 @@ PhysicsProperty::HandleMessage(Message::Msg* msg)
         Message::SetTransform* transformMsg = (Message::SetTransform*) msg;
         this->GetPhysicsEntity()->SetTransform(transformMsg->GetMatrix());
     }
-    else
-    {
-        TransformableProperty::HandleMessage(msg);
-    }
+
+	// forward settransform msg upwards to set Attr::Transform directly in Transformable::Property
+	AbstractPhysicsProperty::HandleMessage(msg);
 }
 
 //------------------------------------------------------------------------------
@@ -104,13 +113,14 @@ PhysicsProperty::EnablePhysics()
         if (this->physicsEntity == 0)
         {
             // create and setup physics entity
-		    this->physicsEntity = Physics::Entity::Create();
-            this->physicsEntity->SetUserData(GetEntity()->GetUniqueId());
+            this->physicsEntity = CreatePhysicsEntity();
+            n_assert(this->physicsEntity != 0);
             this->physicsEntity->SetCompositeName(GetEntity()->GetString(Attr::Physics));
-            this->physicsEntity->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
+            this->physicsEntity->SetUserData(GetEntity()->GetUniqueId());
         }
 
         // attach physics entity to physics level
+        this->physicsEntity->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
         Physics::Level* physicsLevel = Physics::Server::Instance()->GetLevel();
         n_assert(physicsLevel);
         physicsLevel->AttachEntity(this->physicsEntity);
@@ -118,6 +128,15 @@ PhysicsProperty::EnablePhysics()
         // call parent to do the real enable
         AbstractPhysicsProperty::EnablePhysics();
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+Physics::Entity*
+PhysicsProperty::CreatePhysicsEntity()
+{
+    return Physics::Entity::Create();
 }
 
 //------------------------------------------------------------------------------
@@ -131,7 +150,7 @@ PhysicsProperty::DisablePhysics()
     // release the physics entity
     Physics::Level* physicsLevel = Physics::Server::Instance()->GetLevel();
     n_assert(physicsLevel);
-    physicsLevel->RemoveEntity(this->physicsEntity);
+    physicsLevel->RemoveEntity(this->GetPhysicsEntity());
 
     // call parent
     AbstractPhysicsProperty::DisablePhysics();

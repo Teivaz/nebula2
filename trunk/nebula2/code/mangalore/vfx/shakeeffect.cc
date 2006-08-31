@@ -8,7 +8,7 @@
 
 namespace VFX
 {
-ImplementRtti(VFX::ShakeEffect, Foundation::RefCounted);
+ImplementRtti(VFX::ShakeEffect, VFX::Effect);
 ImplementFactory(VFX::ShakeEffect);
 
 //------------------------------------------------------------------------------
@@ -17,9 +17,6 @@ ImplementFactory(VFX::ShakeEffect);
 ShakeEffect::ShakeEffect() :
     range(1.0f),
     intensity(1.0f),
-    isPlaying(false),
-    duration(0.01),
-    startTime(0.0),
     curIntensity(0.0f)
 {
     // empty
@@ -30,30 +27,9 @@ ShakeEffect::ShakeEffect() :
 */
 ShakeEffect::~ShakeEffect()
 {
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-ShakeEffect::Play()
-{
-    n_assert(!this->isPlaying);
-    this->isPlaying = true;
-    this->startTime = VFX::Server::Instance()->GetTime();
-    this->curIntensity = this->intensity;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-ShakeEffect::Stop()
-{
-    if (this->IsPlaying())
+    if (!this->IsFinished())
     {
-        this->isPlaying = false;
+        this->OnDeactivate();
     }
 }
 
@@ -61,21 +37,26 @@ ShakeEffect::Stop()
 /**
 */
 void
-ShakeEffect::Trigger()
+ShakeEffect::OnStart()
 {
-    if (this->isPlaying)
+    Effect::OnStart();
+    this->curIntensity = this->intensity;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+ShakeEffect::OnFrame()
+{
+    Effect::OnFrame();
+    if (this->IsPlaying())
     {
-        nTime age = VFX::Server::Instance()->GetTime() - this->startTime;
-        if (age <= this->duration)
+        // drop off shake intensity by time
+        nTime age = this->GetTime() - this->startTime;
+        if (age <= this->GetDuration())
         {
-            // drop off shake intensity by time
             this->curIntensity = this->intensity * (1.0f - n_saturate(float(age / this->duration)));
-        }
-        else
-        {
-            // shake effect has expired, stop playback. VFX::Server will
-            // care about our garbage collection
-            this->Stop();
         }
     }
 }

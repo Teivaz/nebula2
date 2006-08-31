@@ -90,8 +90,8 @@ SimpleGraphicsProperty::SetupGraphicsEntity()
     // create graphics entity
     this->graphicsEntity = Graphics::Entity::Create();
     this->graphicsEntity->SetUserData(GetEntity()->GetUniqueId());
-    this->graphicsEntity->SetResourceName(GetEntity()->GetString(Attr::Graphics));
-    this->graphicsEntity->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
+    this->graphicsEntity->SetResourceName(this->GetGraphicsResource());
+    this->graphicsEntity->SetTransform(this->GetGraphicsTransform());
 
     // attach to level
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
@@ -117,6 +117,15 @@ SimpleGraphicsProperty::CleanupGraphicsEntity()
         }
         this->graphicsEntity = 0;
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+SimpleGraphicsProperty::IsGraphicsActive() const
+{
+    return this->graphicsEntity != 0;
 }
 
 //------------------------------------------------------------------------------
@@ -150,6 +159,16 @@ SimpleGraphicsProperty::HandleMessage(Message::Msg* msg)
     {
         AbstractGraphicsProperty::HandleMessage(msg);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+matrix44
+SimpleGraphicsProperty::GetGraphicsTransform()
+{
+    n_assert(this->GetEntity()->HasAttr(Attr::Transform));
+    return this->GetEntity()->GetMatrix44(Attr::Transform);
 }
 
 } // namespace Properties

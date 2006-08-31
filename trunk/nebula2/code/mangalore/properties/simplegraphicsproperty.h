@@ -44,11 +44,17 @@ public:
     virtual bool Accepts(Message::Msg* msg);
     /// handle a single message
     virtual void HandleMessage(Message::Msg* msg);
+
+    /// override to provide a other position than the entity for the graphics (default is Attr::Transform)
+    virtual matrix44 GetGraphicsTransform();
+
 protected:
     /// setup graphics entity
     virtual void SetupGraphicsEntity();
     /// cleanup graphics entity
     virtual void CleanupGraphicsEntity();
+    /// is graphics loaded
+    bool IsGraphicsActive() const;
 
     Ptr<Graphics::Entity> graphicsEntity;
 };

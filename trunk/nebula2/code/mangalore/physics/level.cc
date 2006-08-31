@@ -8,7 +8,6 @@
 #include "physics/shape.h"
 #include "physics/server.h"
 #include "physics/rigidbody.h"
-#include "physics/mousegripper.h"
 #include "input/ninputserver.h"
 #include "foundation/factory.h"
 #include "msg/playsound.h"
@@ -25,6 +24,15 @@ ImplementFactory(Physics::Level);
 /**
 */
 Level::Level() :
+#ifdef __NEBULA_STATS__
+    statsNumSpaceCollideCalled(0),
+    statsNumNearCallbackCalled(0),
+    statsNumCollideCalled(0),
+    statsNumCollided(0),
+    statsNumSpaces(0),
+    statsNumShapes(0),
+    statsNumSteps(0),
+#endif
     time(0.0),
     stepSize(0.01),
     simTimeStamp(0.0),
@@ -34,23 +42,15 @@ Level::Level() :
     odeStaticSpaceId(0),
     odeCommonSpaceId(0),
     contactJointGroup(0),
-    gravity(0.0f, -9.81f, 0.0f),
-    profFrameBefore("profMangaPhysFrameBefore"),
-    profFrameAfter("profMangaPhysFrameAfter"),
-    profStepBefore("profMangaPhysStepBefore"),
-    profStepAfter("profMangaPhysStepAfter"),
-    profCollide("profMangaPhysCollide"),
-    profStep("profMangaPhysStep"),
-    profJointGroupEmpty("profMangaPhysJointGroupEmpty"),
-    statsNumSpaceCollideCalled(0),
-    statsNumNearCallbackCalled(0),
-    statsNumCollideCalled(0),
-    statsNumCollided(0),
-    statsNumSpaces(0),
-    statsNumShapes(0),
-    statsNumSteps(0)
+    gravity(0.0f, -9.81f, 0.0f)
 {
-    // empty
+    PROFILER_INIT(this->profFrameBefore, "profMangaPhysFrameBefore");
+    PROFILER_INIT(this->profFrameAfter, "profMangaPhysFrameAfter");
+    PROFILER_INIT(this->profStepBefore, "profMangaPhysStepBefore");
+    PROFILER_INIT(this->profStepAfter, "profMangaPhysStepAfter");
+    PROFILER_INIT(this->profCollide, "profMangaPhysCollide");
+    PROFILER_INIT(this->profStep, "profMangaPhysStep");
+    PROFILER_INIT(this->profJointGroupEmpty, "profMangaPhysJointGroupEmpty");
 }
 
 //------------------------------------------------------------------------------
@@ -98,9 +98,6 @@ Level::OnActivate()
 
     // create a contact group for joints
     this->contactJointGroup = dJointGroupCreate(0);
-
-    // initialize the mouse gripper
-    this->mouseGripper = MouseGripper::Create();
 }
 
 //------------------------------------------------------------------------------
@@ -114,9 +111,6 @@ Level::OnDeactivate()
     n_assert(0 != this->odeDynamicSpaceId);
     n_assert(0 != this->odeStaticSpaceId);
     n_assert(0 != this->odeCommonSpaceId);
-
-    // delete mouse gripper object
-    this->mouseGripper = 0;
 
     // release all attached collide shapes
     int shapeIndex;
@@ -451,90 +445,74 @@ Level::Trigger()
     }
 
     // invoke the "on-frame-before" methods
-    this->profFrameBefore.Start();
+    PROFILER_START(this->profFrameBefore);
     int numEntities = this->GetNumEntities();
     int entityIndex;
     for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
     {
         this->GetEntityAt(entityIndex)->OnFrameBefore();
     }
-    //this->mouseGripper->SetMousePos(nInputServer::Instance()->GetMousePos());
-    //this->mouseGripper->OnFrameBefore();
-    this->profFrameBefore.Stop();
+    PROFILER_STOP(this->profFrameBefore);
 
-    // HMM... HACK?!?!?
-    // maybe that's better done by some inputcontroller...
-    /*
-    if (this->mouseGripper->GetEntityIdUnderMouse() != 0)
-    {
-        if (nInputServer::Instance()->GetButton("lmbDown"))
-        {
-            this->mouseGripper->CloseGrip();
-        }
-        if (nInputServer::Instance()->GetButton("lmbUp"))
-        {
-            this->mouseGripper->OpenGrip();
-        }
-    }
-    */
+    PROFILER_RESET(this->profStepBefore);
+    PROFILER_RESET(this->profStepAfter);
+    PROFILER_RESET(this->profCollide);
+    PROFILER_RESET(this->profStep);
+    PROFILER_RESET(this->profJointGroupEmpty);
 
-    this->profStepBefore.ResetAccum();
-    this->profStepAfter.ResetAccum();
-    this->profCollide.ResetAccum();
-    this->profStep.ResetAccum();
-    this->profJointGroupEmpty.ResetAccum();
+    #ifdef __NEBULA_STATS__
     this->statsNumNearCallbackCalled = 0;
     this->statsNumCollideCalled = 0;
     this->statsNumCollided = 0;
     this->statsNumSpaceCollideCalled = 0;
     this->statsNumSteps = 0;
+    #endif
 
     // step simulation until simulated time is present
     while (this->simTimeStamp < this->time)
     {
         // invoke the "on-step-before" methods
-        this->profStepBefore.StartAccum();
+        PROFILER_STARTACCUM(this->profStepBefore);
         int entityIndex;
         for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
         {
             this->GetEntityAt(entityIndex)->OnStepBefore();
         }
-        //this->mouseGripper->OnStepBefore();
-        this->profStepBefore.StopAccum();
+        PROFILER_STOPACCUM(this->profStepBefore);
 
         // do collision detection
-        this->profCollide.StartAccum();
+        PROFILER_STARTACCUM(this->profCollide);
         this->statsNumSpaceCollideCalled++;
         // collide the dynamic space against the static space
         dSpaceCollide2((dGeomID)this->odeDynamicSpaceId, (dGeomID) this->odeStaticSpaceId, this, &OdeNearCallback);
         // collide the static space against itself
         dSpaceCollide(this->odeDynamicSpaceId, this, &OdeNearCallback);
-        this->profCollide.StopAccum();
+        PROFILER_STOPACCUM(this->profCollide);
 
         // step physics simulation
-        this->profStep.StartAccum();
+        PROFILER_STARTACCUM(this->profStep);
         dWorldQuickStep(this->odeWorldId, dReal(this->stepSize));
-        this->profStep.StopAccum();
+        PROFILER_STOPACCUM(this->profStep);
 
         // clear contact joints
-        this->profJointGroupEmpty.StartAccum();
+        PROFILER_STARTACCUM(this->profJointGroupEmpty);
         dJointGroupEmpty(this->contactJointGroup);
-        this->profJointGroupEmpty.StopAccum();
+        PROFILER_STOPACCUM(this->profJointGroupEmpty);
 
         // invoke the "on-step-after" methods
-        this->profStepAfter.StartAccum();
+        PROFILER_STARTACCUM(this->profStepAfter);
         for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
         {
             this->GetEntityAt(entityIndex)->OnStepAfter();
         }
-        //this->mouseGripper->OnStepAfter();
-        this->profStepAfter.StopAccum();
+        PROFILER_STOPACCUM(this->profStepAfter);
 
         this->statsNumSteps++;
         this->simTimeStamp += this->stepSize;
     }
 
     // export statistics
+    #ifdef __NEBULA_STATS__
     nWatched watchSpaceCollideCalled("statsMangaPhysicsSpaceCollideCalled", nArg::Int);
     nWatched watchNearCallbackCalled("statsMangaPhysicsNearCallbackCalled", nArg::Int);
     nWatched watchCollideCalled("statsMangaPhysicsCollideCalled", nArg::Int);
@@ -552,15 +530,15 @@ Level::Trigger()
     watchSpaces->SetI(this->statsNumSpaces);
     watchShapes->SetI(this->statsNumShapes);
     watchSteps->SetI(this->statsNumSteps);
+    #endif
 
     // invoke the "on-frame-after" methods
-    this->profFrameAfter.Start();
+    PROFILER_START(this->profFrameAfter);
     for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
     {
         this->GetEntityAt(entityIndex)->OnFrameAfter();
     }
-    //this->mouseGripper->OnFrameAfter();
-    this->profFrameAfter.Stop();
+    PROFILER_STOP(this->profFrameAfter);
 }
 
 //------------------------------------------------------------------------------
@@ -588,7 +566,6 @@ Level::RenderDebug()
         Entity* entity = this->GetEntityAt(entityIndex);
         entity->RenderDebug();
     }
-    //this->mouseGripper->RenderDebug();
 }
 
 } // namespace Physics

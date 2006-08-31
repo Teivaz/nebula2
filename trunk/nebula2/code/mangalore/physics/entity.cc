@@ -190,6 +190,23 @@ Entity::GetTransform() const
 
 //------------------------------------------------------------------------------
 /**
+    Return true if the transformation has changed during the frame.
+*/
+bool
+Entity::HasTransformChanged() const
+{
+    if (this->composite != 0)
+    {
+        return this->composite->HasTransformChanged();
+    }
+    else
+    {
+        return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Get the current world space velocity.
 */
 vector3
