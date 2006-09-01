@@ -2,47 +2,47 @@
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
 new ntransformnode blendshape
-	sel blendshape
-	new nblendshapenode blend_0
-		sel blend_0
-		.addanimator "anim"
-		.addanimator "../tanim"
-		.seteuler 307.558014 615.116028 0.000000
-		.settexture "DiffMap0" "textures:materials/checker.dds"
-		.settexture "BumpMap0" "textures:materials/granit_bruch_boden_bump.dds"
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-		.setfloat "MatEmissiveIntensity" 1.000000
-		.setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
-		.setfloat "MatSpecularPower" 18.160000
-		.setint "CullMode" 2
-		.setfloat "BumpScale" 0.000000
-		.setshader "blended"
-		.setgroupindex 0
-		.setmeshat 0 "meshes:examples/blendshape_b_0.n3d2"
-		.setlocalboxat 0 -0.000000 -0.000000 -0.000000 1.500001 0.499014 1.497041
-		.setweightat 0 0.000000
-		.setmeshat 1 "meshes:examples/blendshape_b_1.n3d2"
-		.setlocalboxat 1 -0.106895 0.017367 -0.023889 1.746861 0.864752 1.665298
-		.setweightat 1 0.100608
-		.setmeshat 2 "meshes:examples/blendshape_b_2.n3d2"
-		.setlocalboxat 2 -0.007855 -0.000000 -0.000000 1.492146 0.499014 1.497041
-		.setweightat 2 0.963733
-		new nblendshapeanimator anim
-			sel anim
-			.setchannel "time"
-			.setlooptype "loop"
-			.setanimation "anims:examples/blendshape.nanim2"
-			.setanimationgroup 0
-		sel ..
-	sel ..
-	new ntransformanimator tanim
-		sel tanim
-		.setchannel "time"
-		.setlooptype "loop"
-		.addeulerkey 0.000000 0.000000 0.000000 0.000000
-		.addeulerkey 10.000000 360.000000 720.000000 0.000000
-	sel ..
+    sel blendshape
+    new nblendshapenode blend_0
+        sel blend_0
+        .addanimator "anim"
+        .addanimator "../tanim"
+        .seteuler 307.558014 615.116028 0.000000
+        .settexture "DiffMap0" "textures:materials/checker.dds"
+        .settexture "BumpMap0" "textures:materials/granit_bruch_boden_bump.dds"
+        .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+        .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+        .setfloat "MatEmissiveIntensity" 1.000000
+        .setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
+        .setfloat "MatSpecularPower" 18.160000
+        .setint "CullMode" 2
+        .setfloat "BumpScale" 0.000000
+        .setshader "blended"
+        .setgroupindex 0
+        .setmeshat 0 "meshes:examples/blendshape_b_0.n3d2"
+        .setlocalboxat 0 -0.000000 -0.000000 -0.000000 1.500001 0.499014 1.497041
+        .setweightat 0 0.000000
+        .setmeshat 1 "meshes:examples/blendshape_b_1.n3d2"
+        .setlocalboxat 1 -0.106895 0.017367 -0.023889 1.746861 0.864752 1.665298
+        .setweightat 1 0.100608
+        .setmeshat 2 "meshes:examples/blendshape_b_2.n3d2"
+        .setlocalboxat 2 -0.007855 -0.000000 -0.000000 1.492146 0.499014 1.497041
+        .setweightat 2 0.963733
+        new nblendshapeanimator anim
+            sel anim
+            .setchannel "time"
+            .setlooptype "loop"
+            .setanimation "anims:examples/blendshape.nanim2"
+            .setanimationgroup 0
+        sel ..
+    sel ..
+    new ntransformanimator tanim
+        sel tanim
+        .setchannel "time"
+        .setlooptype "loop"
+        .addeulerkey 0.000000 0.000000 0.000000 0.000000
+        .addeulerkey 10.000000 360.000000 720.000000 0.000000
+    sel ..
 sel ..
 # ---
 # Eof

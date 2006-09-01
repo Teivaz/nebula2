@@ -3,242 +3,242 @@
 # ---
 .setlocalbox 0.000000 0.000000 0.000000 100000.000000 100000.000000 100000.000000
 new nskynode nsky
-	sel nsky
-	new nshapenode sun
-		sel sun
-		.setlocalbox 0.000000 0.000000 0.000000 0.033553 0.033553 0.000000
-		.setposition 0.328219 0.870272 -0.367287
-		.setquat 0.470583 -0.308072 0.179627 0.807080
-		.setscale 1.650260 1.650260 1.000000
-		.settexture "DiffMap0" "textures:environment/sun.dds"
-		.setfloat "Intensity0" 1.000000
-		.setvector "MatDiffuse" 10.000000 3.402614 2.355410 1.000000
-		.setvector "Move" 0.000000 1.000000 0.000000 0.000000
-		.setvector "ScaleVector" 1.000000 1.000000 1.000000 1.650260
-		.setvector "Position" 40.000008 64.630188 20.000004 0.000000
-		.setvector "LightDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setvector "LightDiffuse1" 0.100000 0.100000 0.150000 1.000000
-		.setshader "sun"
-		.setmesh "meshes:examples/skyElements_s_0.n3d2"
-		.setgroupindex 3
-	sel ..
-	new nshapenode moon
-		sel moon
-		.setlocalbox 0.000000 0.000000 0.000000 0.033553 0.033553 0.000000
-		.setposition 0.075904 -0.690978 0.718880
-		.setquat 0.019570 0.926853 0.371724 -0.048796
-		.setscale 2.281352 2.281352 1.000000
-		.settexture "DiffMap0" "textures:environment/moon.dds"
-		.setfloat "Intensity0" 1.000000
-		.setvector "MatDiffuse" 1.248225 1.248225 1.248225 1.000000
-		.setvector "Move" 0.000000 1.000000 0.000000 0.000000
-		.setvector "ScaleVector" 1.000000 1.000000 1.000000 2.281352
-		.setvector "Position" -39.996140 -84.313789 -5.998408 0.000000
-		.setvector "LightDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setvector "LightDiffuse1" 0.100000 0.100000 0.150000 1.000000
-		.setshader "sun"
-		.setmesh "meshes:examples/skyElements_s_0.n3d2"
-		.setgroupindex 3
-	sel ..
-	new nlightnode light
-		sel light
-		.setlocalbox 0.000000 0.000000 0.000000 5000.000000 5000.000000 5000.000000
-		.setposition 328.218719 870.271484 -367.287354
-		.setint "LightType" 0
-		.setvector "LightDiffuse" 0.663732 0.663732 0.663732 1.000000
-		.setvector "LightSpecular" 0.500000 0.500000 0.500000 1.000000
-		.setvector "LightAmbient" 0.100000 0.100000 0.150000 1.000000
-		.setvector "LightDiffuse1" 0.230884 0.252876 0.234026 1.000000
-		.setfloat "LightRange" 5000.000000
-		.settype "Point"
-		.setcastshadows false
-	sel ..
-	new nshapenode sky
-		sel sky
-		.setlocalbox 0.000000 0.000000 0.000000 0.978960 0.978960 0.978960
-		.setlockviewer true
-		.setfloat "Intensity0" 1.492853
-		.setfloat "SunFlat" 0.000000
-		.setfloat "SunRange" 0.927875
-		.setfloat "SkyBottom" 0.000000
-		.setvector "Saturation" 1.000000 1.000000 1.000000 1.000000
-		.setvector "Brightness" 1.000000 1.000000 1.000000 1.000000
-		.setvector "TopColor" 0.290541 0.448383 0.547997 1.000000
-		.setvector "BottomColor" 0.655941 0.717942 0.794306 1.000000
-		.setvector "SunColor" 1.000000 1.000000 1.000000 1.000000
-		.setvector "Position" 0.328219 0.870272 -0.367287 1.000000
-		.setshader "sky"
-		.setmesh "meshes:examples/skyElements_s_0.n3d2"
-		.setgroupindex 0
-	sel ..
-	new nshapenode cloud
-		sel cloud
-		.setlocalbox 0.000000 0.087695 0.000000 1.016183 0.169394 1.016183
-		.setlockviewer true
-		.settexture "BumpMap0" "textures:environment/cloud_bump_ripple.dds"
-		.settexture "DiffMap0" "textures:environment/cloud_map_cloudy.dds"
-		.settexture "DiffMap1" "textures:environment/cloud_map_cloudy1.dds"
-		.setint "CullMode" 1
-		.setfloat "Map0uvRes" 1.000000
-		.setfloat "Map1uvRes" 1.000000
-		.setvector "MatDiffuse" 0.667912 0.667912 0.816336 1.000000
-		.setvector "Move" -0.468793 0.234397 -0.152053 0.076027
-		.setvector "CloudMod" 0.901560 1.585435 0.000000 0.000000
-		.setvector "CloudPos" -0.239730 0.119871 -0.023855 0.011936
-		.setvector "CloudGrad" 0.000000 3.000000 1.000000 1.000000
-		.setvector "LightDiffuse" 0.663732 0.663732 0.663732 1.000000
-		.setvector "LightDiffuse1" 0.230884 0.252876 0.234026 1.000000
-		.setfloat "SunRange" 1.021768
-		.setfloat "Density" 0.000000
-		.setfloat "Lightness" 0.200000
-		.setfloat "Glow" 0.558967
-		.setvector "Position" 328.218719 870.271484 -367.287354 1.000000
-		.setfloat "Weight" 0.579792
-		.setfloat "BumpFactor" 2.145714
-		.setshader "cloud"
-		.setmesh "meshes:examples/skyElements_s_0.n3d2"
-		.setgroupindex 2
-	sel ..
-	new nshapenode horizon
-		sel horizon
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.setlockviewer true
-		.settexture "DiffMap0" "textures:environment/Cubemap_Berge.dds"
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-		.setfloat "Intensity0" 1.000000
-		.setshader "horizon"
-		.setmesh "meshes:examples/skyElements_s_0.n3d2"
-		.setgroupindex 4
-	sel ..
-	new nshapenode stars
-		sel stars
-		.setlocalbox 0.000000 0.489480 0.000000 0.978960 0.489480 0.978960
-		.settexture "DiffMap0" "textures:environment/stars_tile.dds"
-		.settexture "DiffMap1" "textures:environment/stars_spread.dds"
-		.setfloat "Intensity0" 10.000000
-		.setvector "Saturation" 1.000000 1.000000 1.000000 1.000000
-		.setvector "Brightness" 0.000000 0.000000 0.000000 0.000000
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 0.000000
-		.setshader "stars"
-		.setmesh "meshes:examples/skyElements_s_0.n3d2"
-		.setgroupindex 1
-	sel ..
-	new nskystate horizon_night
-		sel horizon_night
-		.setfloat "Intensity0" 0.400000
-	sel ..
-	new nskystate horizon_dawn_dusk
-		sel horizon_dawn_dusk
-		.setfloat "Intensity0" 0.500000
-	sel ..
-	new nskystate horizon_noon
-		sel horizon_noon
-		.setfloat "Intensity0" 1.000000
-	sel ..
-	new nskystate moon_night
-		sel moon_night
-	sel ..
-	new nskystate moon_dawn_dusk
-		sel moon_dawn_dusk
-	sel ..
-	new nskystate moon_noon
-		sel moon_noon
-	sel ..
-	new nskystate stars_night
-		sel stars_night
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-	sel ..
-	new nskystate stars_dawn_dusk
-		sel stars_dawn_dusk
-		.setvector "MatDiffuse" 1.000000 1.000000 1.000000 0.000000
-	sel ..
-	new nskystate sun_night
-		sel sun_night
-	sel ..
-	new nskystate sun_dawn_dusk
-		sel sun_dawn_dusk
-	sel ..
-	new nskystate sun_noon
-		sel sun_noon
-	sel ..
-	new nskystate light_night
-		sel light_night
-	sel ..
-	new nskystate light_predawn_postdusk
-		sel light_predawn_postdusk
-	sel ..
-	new nskystate light_dawn_dusk
-		sel light_dawn_dusk
-	sel ..
-	new nskystate light_prenoon_postnoon
-		sel light_prenoon_postnoon
-	sel ..
-	new nskystate light_noon
-		sel light_noon
-	sel ..
-	new nskystate sky_night
-		sel sky_night
-	sel ..
-	new nskystate sky_dawn_dusk
-		sel sky_dawn_dusk
-	sel ..
-	new nskystate sky_noon
-		sel sky_noon
-	sel ..
-	new nskystate cloud_dawn
-		sel cloud_dawn
-	sel ..
-	new nskystate cloud_dusk
-		sel cloud_dusk
-	sel ..
-	new nskystate cloud_night
-		sel cloud_night
-	sel ..
-	.setlockviewer true
-	.settimefactor 48.000122
-	.settimeperiode 86400.000000
-	.setstarttime 26474.169922
-	.addelement "sun" "sun"
-	.addelement "sun" "moon"
-	.addelement "generic" "horizon"
-	.addelement "star" "stars"
-	.addelement "light" "light"
-	.addelement "sky" "sky"
-	.addelement "cloud" "cloud"
-	.linkto "light" "sun"
-	.linkto "sky" "sun"
-	.linkto "cloud" "light"
-	.addstate "sun" "sun_night" 0.000000
-	.addstate "sun" "sun_dawn_dusk" 21600.000000
-	.addstate "sun" "sun_noon" 28200.000000
-	.addstate "sun" "sun_noon" 57200.000000
-	.addstate "sun" "sun_dawn_dusk" 64800.000000
-	.addstate "moon" "moon_night" 0.000000
-	.addstate "moon" "moon_dawn_dusk" 21600.000000
-	.addstate "moon" "moon_noon" 28200.000000
-	.addstate "moon" "moon_noon" 57200.000000
-	.addstate "moon" "moon_dawn_dusk" 64800.000000
-	.addstate "stars" "stars_night" 12600.000000
-	.addstate "stars" "stars_dawn_dusk" 16600.000000
-	.addstate "stars" "stars_dawn_dusk" 68000.000000
-	.addstate "stars" "stars_night" 72000.000000
-	.addstate "light" "light_night" 10000.000000
-	.addstate "light" "light_predawn_postdusk" 17800.000000
-	.addstate "light" "light_dawn_dusk" 21600.000000
-	.addstate "light" "light_prenoon_postnoon" 28200.000000
-	.addstate "light" "light_noon" 43200.000000
-	.addstate "light" "light_prenoon_postnoon" 57200.000000
-	.addstate "light" "light_dawn_dusk" 64800.000000
-	.addstate "light" "light_predawn_postdusk" 68600.000000
-	.addstate "light" "light_night" 76400.000000
-	.addstate "sky" "sky_night" 0.000000
-	.addstate "sky" "sky_dawn_dusk" 21600.000000
-	.addstate "sky" "sky_noon" 30000.000000
-	.addstate "sky" "sky_noon" 55000.000000
-	.addstate "sky" "sky_dawn_dusk" 64800.000000
-	.addstate "cloud" "cloud_night" 0.000000
-	.addstate "cloud" "cloud_dawn" 21600.000000
-	.addstate "cloud" "cloud_dusk" 64800.000000
+    sel nsky
+    new nshapenode sun
+        sel sun
+        .setlocalbox 0.000000 0.000000 0.000000 0.033553 0.033553 0.000000
+        .setposition 0.328219 0.870272 -0.367287
+        .setquat 0.470583 -0.308072 0.179627 0.807080
+        .setscale 1.650260 1.650260 1.000000
+        .settexture "DiffMap0" "textures:environment/sun.dds"
+        .setfloat "Intensity0" 1.000000
+        .setvector "MatDiffuse" 10.000000 3.402614 2.355410 1.000000
+        .setvector "Move" 0.000000 1.000000 0.000000 0.000000
+        .setvector "ScaleVector" 1.000000 1.000000 1.000000 1.650260
+        .setvector "Position" 40.000008 64.630188 20.000004 0.000000
+        .setvector "LightDiffuse" 1.000000 1.000000 1.000000 1.000000
+        .setvector "LightDiffuse1" 0.100000 0.100000 0.150000 1.000000
+        .setshader "sun"
+        .setmesh "meshes:examples/skyElements_s_0.n3d2"
+        .setgroupindex 3
+    sel ..
+    new nshapenode moon
+        sel moon
+        .setlocalbox 0.000000 0.000000 0.000000 0.033553 0.033553 0.000000
+        .setposition 0.075904 -0.690978 0.718880
+        .setquat 0.019570 0.926853 0.371724 -0.048796
+        .setscale 2.281352 2.281352 1.000000
+        .settexture "DiffMap0" "textures:environment/moon.dds"
+        .setfloat "Intensity0" 1.000000
+        .setvector "MatDiffuse" 1.248225 1.248225 1.248225 1.000000
+        .setvector "Move" 0.000000 1.000000 0.000000 0.000000
+        .setvector "ScaleVector" 1.000000 1.000000 1.000000 2.281352
+        .setvector "Position" -39.996140 -84.313789 -5.998408 0.000000
+        .setvector "LightDiffuse" 1.000000 1.000000 1.000000 1.000000
+        .setvector "LightDiffuse1" 0.100000 0.100000 0.150000 1.000000
+        .setshader "sun"
+        .setmesh "meshes:examples/skyElements_s_0.n3d2"
+        .setgroupindex 3
+    sel ..
+    new nlightnode light
+        sel light
+        .setlocalbox 0.000000 0.000000 0.000000 5000.000000 5000.000000 5000.000000
+        .setposition 328.218719 870.271484 -367.287354
+        .setint "LightType" 0
+        .setvector "LightDiffuse" 0.663732 0.663732 0.663732 1.000000
+        .setvector "LightSpecular" 0.500000 0.500000 0.500000 1.000000
+        .setvector "LightAmbient" 0.100000 0.100000 0.150000 1.000000
+        .setvector "LightDiffuse1" 0.230884 0.252876 0.234026 1.000000
+        .setfloat "LightRange" 5000.000000
+        .settype "Point"
+        .setcastshadows false
+    sel ..
+    new nshapenode sky
+        sel sky
+        .setlocalbox 0.000000 0.000000 0.000000 0.978960 0.978960 0.978960
+        .setlockviewer true
+        .setfloat "Intensity0" 1.492853
+        .setfloat "SunFlat" 0.000000
+        .setfloat "SunRange" 0.927875
+        .setfloat "SkyBottom" 0.000000
+        .setvector "Saturation" 1.000000 1.000000 1.000000 1.000000
+        .setvector "Brightness" 1.000000 1.000000 1.000000 1.000000
+        .setvector "TopColor" 0.290541 0.448383 0.547997 1.000000
+        .setvector "BottomColor" 0.655941 0.717942 0.794306 1.000000
+        .setvector "SunColor" 1.000000 1.000000 1.000000 1.000000
+        .setvector "Position" 0.328219 0.870272 -0.367287 1.000000
+        .setshader "sky"
+        .setmesh "meshes:examples/skyElements_s_0.n3d2"
+        .setgroupindex 0
+    sel ..
+    new nshapenode cloud
+        sel cloud
+        .setlocalbox 0.000000 0.087695 0.000000 1.016183 0.169394 1.016183
+        .setlockviewer true
+        .settexture "BumpMap0" "textures:environment/cloud_bump_ripple.dds"
+        .settexture "DiffMap0" "textures:environment/cloud_map_cloudy.dds"
+        .settexture "DiffMap1" "textures:environment/cloud_map_cloudy1.dds"
+        .setint "CullMode" 1
+        .setfloat "Map0uvRes" 1.000000
+        .setfloat "Map1uvRes" 1.000000
+        .setvector "MatDiffuse" 0.667912 0.667912 0.816336 1.000000
+        .setvector "Move" -0.468793 0.234397 -0.152053 0.076027
+        .setvector "CloudMod" 0.901560 1.585435 0.000000 0.000000
+        .setvector "CloudPos" -0.239730 0.119871 -0.023855 0.011936
+        .setvector "CloudGrad" 0.000000 3.000000 1.000000 1.000000
+        .setvector "LightDiffuse" 0.663732 0.663732 0.663732 1.000000
+        .setvector "LightDiffuse1" 0.230884 0.252876 0.234026 1.000000
+        .setfloat "SunRange" 1.021768
+        .setfloat "Density" 0.000000
+        .setfloat "Lightness" 0.200000
+        .setfloat "Glow" 0.558967
+        .setvector "Position" 328.218719 870.271484 -367.287354 1.000000
+        .setfloat "Weight" 0.579792
+        .setfloat "BumpFactor" 2.145714
+        .setshader "cloud"
+        .setmesh "meshes:examples/skyElements_s_0.n3d2"
+        .setgroupindex 2
+    sel ..
+    new nshapenode horizon
+        sel horizon
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .setlockviewer true
+        .settexture "DiffMap0" "textures:environment/Cubemap_Berge.dds"
+        .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+        .setfloat "Intensity0" 1.000000
+        .setshader "horizon"
+        .setmesh "meshes:examples/skyElements_s_0.n3d2"
+        .setgroupindex 4
+    sel ..
+    new nshapenode stars
+        sel stars
+        .setlocalbox 0.000000 0.489480 0.000000 0.978960 0.489480 0.978960
+        .settexture "DiffMap0" "textures:environment/stars_tile.dds"
+        .settexture "DiffMap1" "textures:environment/stars_spread.dds"
+        .setfloat "Intensity0" 10.000000
+        .setvector "Saturation" 1.000000 1.000000 1.000000 1.000000
+        .setvector "Brightness" 0.000000 0.000000 0.000000 0.000000
+        .setvector "MatDiffuse" 1.000000 1.000000 1.000000 0.000000
+        .setshader "stars"
+        .setmesh "meshes:examples/skyElements_s_0.n3d2"
+        .setgroupindex 1
+    sel ..
+    new nskystate horizon_night
+        sel horizon_night
+        .setfloat "Intensity0" 0.400000
+    sel ..
+    new nskystate horizon_dawn_dusk
+        sel horizon_dawn_dusk
+        .setfloat "Intensity0" 0.500000
+    sel ..
+    new nskystate horizon_noon
+        sel horizon_noon
+        .setfloat "Intensity0" 1.000000
+    sel ..
+    new nskystate moon_night
+        sel moon_night
+    sel ..
+    new nskystate moon_dawn_dusk
+        sel moon_dawn_dusk
+    sel ..
+    new nskystate moon_noon
+        sel moon_noon
+    sel ..
+    new nskystate stars_night
+        sel stars_night
+        .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+    sel ..
+    new nskystate stars_dawn_dusk
+        sel stars_dawn_dusk
+        .setvector "MatDiffuse" 1.000000 1.000000 1.000000 0.000000
+    sel ..
+    new nskystate sun_night
+        sel sun_night
+    sel ..
+    new nskystate sun_dawn_dusk
+        sel sun_dawn_dusk
+    sel ..
+    new nskystate sun_noon
+        sel sun_noon
+    sel ..
+    new nskystate light_night
+        sel light_night
+    sel ..
+    new nskystate light_predawn_postdusk
+        sel light_predawn_postdusk
+    sel ..
+    new nskystate light_dawn_dusk
+        sel light_dawn_dusk
+    sel ..
+    new nskystate light_prenoon_postnoon
+        sel light_prenoon_postnoon
+    sel ..
+    new nskystate light_noon
+        sel light_noon
+    sel ..
+    new nskystate sky_night
+        sel sky_night
+    sel ..
+    new nskystate sky_dawn_dusk
+        sel sky_dawn_dusk
+    sel ..
+    new nskystate sky_noon
+        sel sky_noon
+    sel ..
+    new nskystate cloud_dawn
+        sel cloud_dawn
+    sel ..
+    new nskystate cloud_dusk
+        sel cloud_dusk
+    sel ..
+    new nskystate cloud_night
+        sel cloud_night
+    sel ..
+    .setlockviewer true
+    .settimefactor 48.000122
+    .settimeperiode 86400.000000
+    .setstarttime 26474.169922
+    .addelement "sun" "sun"
+    .addelement "sun" "moon"
+    .addelement "generic" "horizon"
+    .addelement "star" "stars"
+    .addelement "light" "light"
+    .addelement "sky" "sky"
+    .addelement "cloud" "cloud"
+    .linkto "light" "sun"
+    .linkto "sky" "sun"
+    .linkto "cloud" "light"
+    .addstate "sun" "sun_night" 0.000000
+    .addstate "sun" "sun_dawn_dusk" 21600.000000
+    .addstate "sun" "sun_noon" 28200.000000
+    .addstate "sun" "sun_noon" 57200.000000
+    .addstate "sun" "sun_dawn_dusk" 64800.000000
+    .addstate "moon" "moon_night" 0.000000
+    .addstate "moon" "moon_dawn_dusk" 21600.000000
+    .addstate "moon" "moon_noon" 28200.000000
+    .addstate "moon" "moon_noon" 57200.000000
+    .addstate "moon" "moon_dawn_dusk" 64800.000000
+    .addstate "stars" "stars_night" 12600.000000
+    .addstate "stars" "stars_dawn_dusk" 16600.000000
+    .addstate "stars" "stars_dawn_dusk" 68000.000000
+    .addstate "stars" "stars_night" 72000.000000
+    .addstate "light" "light_night" 10000.000000
+    .addstate "light" "light_predawn_postdusk" 17800.000000
+    .addstate "light" "light_dawn_dusk" 21600.000000
+    .addstate "light" "light_prenoon_postnoon" 28200.000000
+    .addstate "light" "light_noon" 43200.000000
+    .addstate "light" "light_prenoon_postnoon" 57200.000000
+    .addstate "light" "light_dawn_dusk" 64800.000000
+    .addstate "light" "light_predawn_postdusk" 68600.000000
+    .addstate "light" "light_night" 76400.000000
+    .addstate "sky" "sky_night" 0.000000
+    .addstate "sky" "sky_dawn_dusk" 21600.000000
+    .addstate "sky" "sky_noon" 30000.000000
+    .addstate "sky" "sky_noon" 55000.000000
+    .addstate "sky" "sky_dawn_dusk" 64800.000000
+    .addstate "cloud" "cloud_night" 0.000000
+    .addstate "cloud" "cloud_dawn" 21600.000000
+    .addstate "cloud" "cloud_dusk" 64800.000000
 sel ..
 # ---
 # Eof

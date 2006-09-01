@@ -2,145 +2,145 @@
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
 new ntransformnode lightmapping
-	sel lightmapping
-	.setlocalbox -0.827290 8.904684 0.747708 4.603963 9.401833 4.653893
-	new ntransformnode model
-		sel model
-		.setlocalbox -0.827290 8.904684 0.747708 4.603963 9.401833 4.653893
-		new nshapenode static_0_0
-			sel static_0_0
-			.setlocalbox -0.855658 6.673505 0.793874 4.281816 7.170653 4.482170
-			.settexture "DiffMap0" "textures:buildings/burgtextur.dds"
-			.settexture "BumpMap0" "textures:buildings/burg_bump.dds"
-			.settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.160580 0.160580 0.160580 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setfloat "Intensity0" 2.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "lightmapped"
-			.setmesh "meshes:examples/lightmapping_s_0.nvx2"
-			.setgroupindex 0
-			.setneedsvertexshader false
-		sel ..
-		new nshapenode static_0_1
-			sel static_0_1
-			.setlocalbox 0.000000 1.394037 -2.624819 1.810360 1.768659 0.059577
-			.settexture "DiffMap0" "textures:materials/stahl_baender.dds"
-			.settexture "BumpMap0" "textures:materials/stahl_baender_bump.dds"
-			.settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setfloat "Intensity0" 2.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "lightmapped"
-			.setmesh "meshes:examples/lightmapping_s_0.nvx2"
-			.setgroupindex 1
-			.setneedsvertexshader false
-		sel ..
-		new nshapenode static_0_2
-			sel static_0_2
-			.setlocalbox 0.013559 12.021265 0.753318 3.710116 6.285251 4.552151
-			.settexture "DiffMap0" "textures:materials/holzschindeln.dds"
-			.settexture "BumpMap0" "textures:materials/holzschindeln_bump.dds"
-			.settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.321160 0.321160 0.321160 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setfloat "Intensity0" 2.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "lightmapped"
-			.setmesh "meshes:examples/lightmapping_s_0.nvx2"
-			.setgroupindex 2
-			.setneedsvertexshader false
-		sel ..
-		new nshapenode static_0_3
-			sel static_0_3
-			.setlocalbox -0.658014 6.550578 0.699643 4.405450 6.098078 4.605827
-			.settexture "DiffMap0" "textures:materials/holz_planken.dds"
-			.settexture "BumpMap0" "textures:materials/holz_planken_bump.dds"
-			.settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.233580 0.233580 0.233580 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setfloat "Intensity0" 2.000000
-			.setint "CullMode" 1
-			.setfloat "BumpScale" 0.000000
-			.setshader "lightmapped"
-			.setmesh "meshes:examples/lightmapping_s_0.nvx2"
-			.setgroupindex 3
-			.setneedsvertexshader false
-		sel ..
-		new nshapenode static_0_4
-			sel static_0_4
-			.setlocalbox -0.010359 11.356476 -0.067801 3.504810 0.472723 3.520635
-			.settexture "DiffMap0" "textures:materials/putz_hell.dds"
-			.settexture "BumpMap0" "textures:materials/putz_hell_bump.dds"
-			.settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setfloat "Intensity0" 2.000000
-			.setint "CullMode" 1
-			.setfloat "BumpScale" 0.000000
-			.setshader "lightmapped"
-			.setmesh "meshes:examples/lightmapping_s_0.nvx2"
-			.setgroupindex 4
-			.setneedsvertexshader false
-		sel ..
-		new nshapenode static_0_5
-			sel static_0_5
-			.setlocalbox -1.112450 2.684874 3.968977 3.729210 0.983338 0.911106
-			.settexture "DiffMap0" "textures:materials/granit_bruch_boden.dds"
-			.settexture "BumpMap0" "textures:materials/granit_bruch_boden_bump.dds"
-			.settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setfloat "Intensity0" 2.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "lightmapped"
-			.setmesh "meshes:examples/lightmapping_s_0.nvx2"
-			.setgroupindex 5
-			.setneedsvertexshader false
-		sel ..
-		new nshapenode static_0_6
-			sel static_0_6
-			.setlocalbox -0.827290 1.386106 0.974645 4.603963 1.883253 4.426955
-			.settexture "DiffMap0" "textures:buildings/burg_turm.dds"
-			.settexture "BumpMap0" "textures:buildings/burg_turm_bump.dds"
-			.settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.218980 0.218980 0.218980 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setfloat "Intensity0" 2.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "lightmapped"
-			.setmesh "meshes:examples/lightmapping_s_0.nvx2"
-			.setgroupindex 6
-			.setneedsvertexshader false
-		sel ..
-	sel ..
+    sel lightmapping
+    .setlocalbox -0.827290 8.904684 0.747708 4.603963 9.401833 4.653893
+    new ntransformnode model
+        sel model
+        .setlocalbox -0.827290 8.904684 0.747708 4.603963 9.401833 4.653893
+        new nshapenode static_0_0
+            sel static_0_0
+            .setlocalbox -0.855658 6.673505 0.793874 4.281816 7.170653 4.482170
+            .settexture "DiffMap0" "textures:buildings/burgtextur.dds"
+            .settexture "BumpMap0" "textures:buildings/burg_bump.dds"
+            .settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.160580 0.160580 0.160580 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setfloat "Intensity0" 2.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "lightmapped"
+            .setmesh "meshes:examples/lightmapping_s_0.nvx2"
+            .setgroupindex 0
+            .setneedsvertexshader false
+        sel ..
+        new nshapenode static_0_1
+            sel static_0_1
+            .setlocalbox 0.000000 1.394037 -2.624819 1.810360 1.768659 0.059577
+            .settexture "DiffMap0" "textures:materials/stahl_baender.dds"
+            .settexture "BumpMap0" "textures:materials/stahl_baender_bump.dds"
+            .settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setfloat "Intensity0" 2.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "lightmapped"
+            .setmesh "meshes:examples/lightmapping_s_0.nvx2"
+            .setgroupindex 1
+            .setneedsvertexshader false
+        sel ..
+        new nshapenode static_0_2
+            sel static_0_2
+            .setlocalbox 0.013559 12.021265 0.753318 3.710116 6.285251 4.552151
+            .settexture "DiffMap0" "textures:materials/holzschindeln.dds"
+            .settexture "BumpMap0" "textures:materials/holzschindeln_bump.dds"
+            .settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.321160 0.321160 0.321160 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setfloat "Intensity0" 2.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "lightmapped"
+            .setmesh "meshes:examples/lightmapping_s_0.nvx2"
+            .setgroupindex 2
+            .setneedsvertexshader false
+        sel ..
+        new nshapenode static_0_3
+            sel static_0_3
+            .setlocalbox -0.658014 6.550578 0.699643 4.405450 6.098078 4.605827
+            .settexture "DiffMap0" "textures:materials/holz_planken.dds"
+            .settexture "BumpMap0" "textures:materials/holz_planken_bump.dds"
+            .settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.233580 0.233580 0.233580 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setfloat "Intensity0" 2.000000
+            .setint "CullMode" 1
+            .setfloat "BumpScale" 0.000000
+            .setshader "lightmapped"
+            .setmesh "meshes:examples/lightmapping_s_0.nvx2"
+            .setgroupindex 3
+            .setneedsvertexshader false
+        sel ..
+        new nshapenode static_0_4
+            sel static_0_4
+            .setlocalbox -0.010359 11.356476 -0.067801 3.504810 0.472723 3.520635
+            .settexture "DiffMap0" "textures:materials/putz_hell.dds"
+            .settexture "BumpMap0" "textures:materials/putz_hell_bump.dds"
+            .settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setfloat "Intensity0" 2.000000
+            .setint "CullMode" 1
+            .setfloat "BumpScale" 0.000000
+            .setshader "lightmapped"
+            .setmesh "meshes:examples/lightmapping_s_0.nvx2"
+            .setgroupindex 4
+            .setneedsvertexshader false
+        sel ..
+        new nshapenode static_0_5
+            sel static_0_5
+            .setlocalbox -1.112450 2.684874 3.968977 3.729210 0.983338 0.911106
+            .settexture "DiffMap0" "textures:materials/granit_bruch_boden.dds"
+            .settexture "BumpMap0" "textures:materials/granit_bruch_boden_bump.dds"
+            .settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setfloat "Intensity0" 2.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "lightmapped"
+            .setmesh "meshes:examples/lightmapping_s_0.nvx2"
+            .setgroupindex 5
+            .setneedsvertexshader false
+        sel ..
+        new nshapenode static_0_6
+            sel static_0_6
+            .setlocalbox -0.827290 1.386106 0.974645 4.603963 1.883253 4.426955
+            .settexture "DiffMap0" "textures:buildings/burg_turm.dds"
+            .settexture "BumpMap0" "textures:buildings/burg_turm_bump.dds"
+            .settexture "DiffMap1" "textures:lightmaps/examples_lightmapping_Pool1.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.218980 0.218980 0.218980 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setfloat "Intensity0" 2.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "lightmapped"
+            .setmesh "meshes:examples/lightmapping_s_0.nvx2"
+            .setgroupindex 6
+            .setneedsvertexshader false
+        sel ..
+    sel ..
 sel ..
 # ---
 # Eof

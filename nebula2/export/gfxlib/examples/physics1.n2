@@ -3,563 +3,563 @@
 # ---
 .setlocalbox -0.136472 6.621616 0.154725 1.745785 6.613173 3.178825
 new ntransformnode model
-	sel model
-	.setlocalbox -0.136472 6.621616 0.154725 1.745785 6.613173 3.178825
-	new ntransformnode pCube31
-		sel pCube31
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 5.720860 -0.010142
-		new nshapenode static_0_0
-			sel static_0_0
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 0
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube30
-		sel pCube30
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 4.676138 0.494314
-		new nshapenode static_0_1
-			sel static_0_1
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 1
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube29
-		sel pCube29
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 4.676138 -0.582822
-		new nshapenode static_0_2
-			sel static_0_2
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 2
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube24
-		sel pCube24
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 3.638701 1.159483
-		new nshapenode static_0_3
-			sel static_0_3
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 3
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube23
-		sel pCube23
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 3.638701 0.082347
-		new nshapenode static_0_4
-			sel static_0_4
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 4
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube22
-		sel pCube22
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 3.638701 -0.985586
-		new nshapenode static_0_5
-			sel static_0_5
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 5
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube18
-		sel pCube18
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 2.601182 1.681360
-		new nshapenode static_0_6
-			sel static_0_6
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 6
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube17
-		sel pCube17
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 2.601182 0.604225
-		new nshapenode static_0_7
-			sel static_0_7
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 7
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube16
-		sel pCube16
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 2.601182 -0.463709
-		new nshapenode static_0_8
-			sel static_0_8
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 8
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube15
-		sel pCube15
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 2.601182 -1.544167
-		new nshapenode static_0_9
-			sel static_0_9
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 9
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube12
-		sel pCube12
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 1.558170 2.227579
-		new nshapenode static_0_10
-			sel static_0_10
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 10
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube11
-		sel pCube11
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 1.558170 1.150444
-		new nshapenode static_0_11
-			sel static_0_11
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 11
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube10
-		sel pCube10
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 1.558170 0.082510
-		new nshapenode static_0_12
-			sel static_0_12
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 12
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube9
-		sel pCube9
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 1.558170 -0.997948
-		new nshapenode static_0_13
-			sel static_0_13
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 13
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube8
-		sel pCube8
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 1.558170 -2.066853
-		new nshapenode static_0_14
-			sel static_0_14
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 14
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube6
-		sel pCube6
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 0.508443 -2.524101
-		new nshapenode static_0_15
-			sel static_0_15
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 15
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube5
-		sel pCube5
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 0.508443 -1.460881
-		new nshapenode static_0_16
-			sel static_0_16
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 16
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube4
-		sel pCube4
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 0.508443 -0.391977
-		new nshapenode static_0_17
-			sel static_0_17
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 17
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube3
-		sel pCube3
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 0.508443 0.688481
-		new nshapenode static_0_18
-			sel static_0_18
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 18
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube2
-		sel pCube2
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 0.508443 1.756415
-		new nshapenode static_0_19
-			sel static_0_19
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 19
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pCube1
-		sel pCube1
-		.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-		.addhints 1
-		.setposition 0.000000 0.508443 2.833550
-		new nshapenode static_0_20
-			sel static_0_20
-			.setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 20
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pSphere1
-		sel pSphere1
-		.setlocalbox -0.794470 -5.245018 -0.000000 1.794470 6.245018 1.000000
-		.addhints 1
-		.setposition 1.109314 12.694478 0.000000
-		.setscale 0.500000 0.500000 0.500000
-		new nshapenode static_0_21
-			sel static_0_21
-			.setlocalbox -0.794470 -5.245018 -0.000000 1.794470 6.245018 1.000000
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 1.000000 0.228540 0.161000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 21
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pSphere4
-		sel pSphere4
-		.setlocalbox 0.119098 -5.013040 -1.519932 1.119098 6.013040 2.519932
-		.addhints 1
-		.setposition -0.673222 12.734790 1.924798
-		.setscale 0.500000 0.500000 0.500000
-		new nshapenode static_0_22
-			sel static_0_22
-			.setlocalbox 0.119098 -5.013040 -1.519932 1.119098 6.013040 2.519932
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 1.000000 0.228540 0.161000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 22
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode pSphere5
-		sel pSphere5
-		.setlocalbox 0.826024 -4.779527 1.025478 1.826024 5.779527 2.025478
-		.addhints 1
-		.setposition -1.382257 12.357474 -1.746562
-		.setscale 0.500000 0.500000 0.500000
-		new nshapenode static_0_23
-			sel static_0_23
-			.setlocalbox 0.826024 -4.779527 1.025478 1.826024 5.779527 2.025478
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 1.000000 0.228540 0.161000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
-			.setfloat "MatSpecularPower" 32.000000
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/physics1_s_0.n3d2"
-			.setgroupindex 23
-			.setneedsvertexshader false
-		sel ..
-	sel ..
+    sel model
+    .setlocalbox -0.136472 6.621616 0.154725 1.745785 6.613173 3.178825
+    new ntransformnode pCube31
+        sel pCube31
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 5.720860 -0.010142
+        new nshapenode static_0_0
+            sel static_0_0
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 0
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube30
+        sel pCube30
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 4.676138 0.494314
+        new nshapenode static_0_1
+            sel static_0_1
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 1
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube29
+        sel pCube29
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 4.676138 -0.582822
+        new nshapenode static_0_2
+            sel static_0_2
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 2
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube24
+        sel pCube24
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 3.638701 1.159483
+        new nshapenode static_0_3
+            sel static_0_3
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 3
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube23
+        sel pCube23
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 3.638701 0.082347
+        new nshapenode static_0_4
+            sel static_0_4
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 4
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube22
+        sel pCube22
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 3.638701 -0.985586
+        new nshapenode static_0_5
+            sel static_0_5
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 5
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube18
+        sel pCube18
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 2.601182 1.681360
+        new nshapenode static_0_6
+            sel static_0_6
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 6
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube17
+        sel pCube17
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 2.601182 0.604225
+        new nshapenode static_0_7
+            sel static_0_7
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 7
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube16
+        sel pCube16
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 2.601182 -0.463709
+        new nshapenode static_0_8
+            sel static_0_8
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 8
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube15
+        sel pCube15
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 2.601182 -1.544167
+        new nshapenode static_0_9
+            sel static_0_9
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 9
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube12
+        sel pCube12
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 1.558170 2.227579
+        new nshapenode static_0_10
+            sel static_0_10
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 10
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube11
+        sel pCube11
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 1.558170 1.150444
+        new nshapenode static_0_11
+            sel static_0_11
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 11
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube10
+        sel pCube10
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 1.558170 0.082510
+        new nshapenode static_0_12
+            sel static_0_12
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 12
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube9
+        sel pCube9
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 1.558170 -0.997948
+        new nshapenode static_0_13
+            sel static_0_13
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 13
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube8
+        sel pCube8
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 1.558170 -2.066853
+        new nshapenode static_0_14
+            sel static_0_14
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 14
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube6
+        sel pCube6
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 0.508443 -2.524101
+        new nshapenode static_0_15
+            sel static_0_15
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 15
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube5
+        sel pCube5
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 0.508443 -1.460881
+        new nshapenode static_0_16
+            sel static_0_16
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 16
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube4
+        sel pCube4
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 0.508443 -0.391977
+        new nshapenode static_0_17
+            sel static_0_17
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 17
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube3
+        sel pCube3
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 0.508443 0.688481
+        new nshapenode static_0_18
+            sel static_0_18
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 18
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube2
+        sel pCube2
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 0.508443 1.756415
+        new nshapenode static_0_19
+            sel static_0_19
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 19
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pCube1
+        sel pCube1
+        .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+        .addhints 1
+        .setposition 0.000000 0.508443 2.833550
+        new nshapenode static_0_20
+            sel static_0_20
+            .setlocalbox 0.000000 0.000000 0.000000 0.500000 0.500000 0.500000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 0.000000 0.733750 1.875000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 20
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pSphere1
+        sel pSphere1
+        .setlocalbox -0.794470 -5.245018 -0.000000 1.794470 6.245018 1.000000
+        .addhints 1
+        .setposition 1.109314 12.694478 0.000000
+        .setscale 0.500000 0.500000 0.500000
+        new nshapenode static_0_21
+            sel static_0_21
+            .setlocalbox -0.794470 -5.245018 -0.000000 1.794470 6.245018 1.000000
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 1.000000 0.228540 0.161000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 21
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pSphere4
+        sel pSphere4
+        .setlocalbox 0.119098 -5.013040 -1.519932 1.119098 6.013040 2.519932
+        .addhints 1
+        .setposition -0.673222 12.734790 1.924798
+        .setscale 0.500000 0.500000 0.500000
+        new nshapenode static_0_22
+            sel static_0_22
+            .setlocalbox 0.119098 -5.013040 -1.519932 1.119098 6.013040 2.519932
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 1.000000 0.228540 0.161000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 22
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode pSphere5
+        sel pSphere5
+        .setlocalbox 0.826024 -4.779527 1.025478 1.826024 5.779527 2.025478
+        .addhints 1
+        .setposition -1.382257 12.357474 -1.746562
+        .setscale 0.500000 0.500000 0.500000
+        new nshapenode static_0_23
+            sel static_0_23
+            .setlocalbox 0.826024 -4.779527 1.025478 1.826024 5.779527 2.025478
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 1.000000 0.228540 0.161000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 0.500000 0.500000 0.500000 1.000000
+            .setfloat "MatSpecularPower" 32.000000
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/physics1_s_0.n3d2"
+            .setgroupindex 23
+            .setneedsvertexshader false
+        sel ..
+    sel ..
 sel ..
 # ---
 # Eof
