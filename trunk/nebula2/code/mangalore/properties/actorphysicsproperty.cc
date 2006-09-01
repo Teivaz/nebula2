@@ -389,9 +389,10 @@ ActorPhysicsProperty::HandleMoveFollow(MoveFollow* msg)
 {
     n_assert(msg);
     GetEntity()->SetInt(Attr::TargetEntityId, msg->GetTargetEntityId());
-    Entity* targetEntity = EntityManager::Instance()->FindEntityById(GetEntity()->GetInt(Attr::TargetEntityId));
-    if (targetEntity)
+    if (EntityManager::Instance()->ExistsEntityById(this->GetEntity()->GetInt(Attr::TargetEntityId)))
     {
+        Entity* targetEntity = EntityManager::Instance()->GetEntityById(this->GetEntity()->GetInt(Attr::TargetEntityId));
+        n_assert(targetEntity);
         this->followTargetDist = msg->GetDistance();
         GetEntity()->SetBool(Attr::Following, true);
     }
@@ -443,36 +444,38 @@ ActorPhysicsProperty::ContinueFollow()
 {
     n_assert(GetEntity()->GetBool(Attr::Following));
 
-    Game::Entity* targetEntity = EntityManager::Instance()->FindEntityById(GetEntity()->GetInt(Attr::TargetEntityId));
-    if (0 == targetEntity)
+    if (!EntityManager::Instance()->ExistsEntityById(this->GetEntity()->GetInt(Attr::TargetEntityId)))
     {
         // our target entity has gone...
         this->SendStop();
-        return;
     }
-
-    // compute positions in world coordinates
-    const vector3 targetPos = targetEntity->GetMatrix44(Attr::Transform).pos_component();
-    const vector3 curPos = GetEntity()->GetMatrix44(Attr::Transform).pos_component();
-    vector3 targetVec = targetPos - curPos;
-    targetVec.y = 0.0f; // ignore vertical dimension
-    float targetDist = targetVec.len();
-
-    // if we are close enough to our target, stop, and always face our target
-    if (targetDist < this->followTargetDist)
+    else
     {
-        // stop and look at our target
-        this->SendStop();
-        this->charPhysicsEntity->SetDesiredLookat(targetVec);
-    }
+        Game::Entity* targetEntity = EntityManager::Instance()->GetEntityById(this->GetEntity()->GetInt(Attr::TargetEntityId));
+        n_assert(targetEntity);
 
-    // continue following target position if not stopped.
-    else if ((this->gotoTimeStamp + 1.0) < GameTimeSource::Instance()->GetTime())
-    {
-        // continue moving towards our target entity
-        Ptr<MoveGoto> moveGoto = MoveGoto::Create();
-        moveGoto->SetPosition(targetPos);
-        this->HandleMoveGoto(moveGoto);
+        // compute positions in world coordinates
+        const vector3 targetPos = targetEntity->GetMatrix44(Attr::Transform).pos_component();
+        const vector3 curPos = this->GetEntity()->GetMatrix44(Attr::Transform).pos_component();
+        vector3 targetVec = targetPos - curPos;
+        targetVec.y = 0.0f; // ignore vertical dimension
+        float targetDist = targetVec.len();
+
+        // if we are close enough to our target, stop, and always face our target
+        if (targetDist < this->followTargetDist)
+        {
+            // stop and look at our target
+            this->SendStop();
+            this->charPhysicsEntity->SetDesiredLookat(targetVec);
+        }
+        // continue following target position if not stopped.
+        else if ((this->gotoTimeStamp + 1.0) < GameTimeSource::Instance()->GetTime())
+        {
+            // continue moving towards our target entity
+		    Ptr<MoveGoto> moveGoto = MoveGoto::Create();
+            moveGoto->SetPosition(targetPos);
+            this->HandleMoveGoto(moveGoto);
+        }
     }
 }
 

@@ -29,8 +29,10 @@ CharEntity::CharEntity() :
     hover(0.2f),
     nebCharacter(0),
     ragdollActive(false),
-    groundMaterial(InvalidMaterial)
+    groundMaterial(InvalidMaterial),
+    wasDisabledInTheLastFrame(false)
 {
+    // empty
 }
 
 //------------------------------------------------------------------------------
@@ -113,6 +115,7 @@ CharEntity::OnActivate()
 {
     n_assert(this->baseBody == 0);
     Server* physicsServer = Physics::Server::Instance();
+    this->active = true;
 
     // create the default composite object (when the character is alive)
     this->CreateDefaultComposite();
@@ -193,6 +196,25 @@ CharEntity::GetTransform() const
 
 //------------------------------------------------------------------------------
 /**
+    Must also return true if lookatDirection != -zcomponent.
+*/
+bool
+CharEntity::HasTransformChanged() const
+{
+    // compare current look direction and desired lookat direaction
+    vector3 curLookAt = -Entity::GetTransform().z_component();
+    if (!this->lookatDirection.isequal(curLookAt, 0.01f))
+    {
+        return true;
+    }
+    else
+    {
+        return Entity::HasTransformChanged();
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     Always return the desired velocity instead of the real velocity.
 */
 vector3
@@ -242,35 +264,49 @@ CharEntity::OnStepBefore()
 {
     if (this->IsCollisionEnabled() && !this->IsRagdollActive())
     {
-        Physics::Server* physicsServer = Physics::Server::Instance();
-        RigidBody* body = this->baseBody;
-        dBodyID odeBodyId = body->GetOdeBodyId();
+        // detect a activation from collide or if the entity should move
+        if ((this->wasDisabledInTheLastFrame && this->IsEnabled())
+            || this->desiredVelocity.len() > 0.0f)
+        {
+            this->wasDisabledInTheLastFrame = false;
 
-        // get "touching ground status" and determine ground material
-        float distToGround;
-        bool nearGround = this->CheckGround(distToGround);
+            if (!this->IsEnabled())
+            {
+                this->SetEnabled(true);
+            }
+            Physics::Server* physicsServer = Physics::Server::Instance();
+            RigidBody* body = this->baseBody;
+            dBodyID odeBodyId = body->GetOdeBodyId();
 
-        // enable/disable the body based on desired velocity
-        vector3 desVel(this->desiredVelocity.x, -distToGround * 50.0f, this->desiredVelocity.z);
-        this->SetEnabled(true);
+            // get "touching ground status" and determine ground material
+            float distToGround;
+            bool nearGround = this->CheckGround(distToGround);
 
-        // get current velocity and mass of body
-        float m = body->GetMass();
-        vector3 curVel = body->GetLinearVelocity();
+            // get current velocity and mass of body
+            vector3 desVel(this->desiredVelocity.x, -distToGround * 50.0f, this->desiredVelocity.z);
+            float m = body->GetMass();
+            vector3 curVel = body->GetLinearVelocity();
 
-        // compute resulting impulse
-        vector3 p = (desVel - curVel) * m;
+            // compute resulting impulse
+            vector3 p = -(curVel - desVel) * m;
 
-        // convert impulse to force
-        dVector3 odeForce;
-        dWorldImpulseToForce(physicsServer->GetOdeWorldId(), dReal(this->level->GetStepSize()), p.x, p.y, p.z, odeForce);
+            // convert impulse to force
+            dVector3 odeForce;
+            dWorldImpulseToForce(physicsServer->GetOdeWorldId(), dReal(this->level->GetStepSize()), p.x, p.y, p.z, odeForce);
 
-        // set new force
-        dBodyAddForce(odeBodyId, odeForce[0], odeForce[1], odeForce[2]);
+            // set new force
+            dBodyAddForce(odeBodyId, odeForce[0], odeForce[1], odeForce[2]);
+        }
+        else
+        {
+            this->wasDisabledInTheLastFrame = true;
+            if (this->IsEnabled())
+            {
+                this->SetEnabled(false);
+            }
+        }
     }
-
-    // call parent class
-    Entity::OnStepBefore();
+    // NOTE: do NOT call the parent class, we don't need any damping
 }
 
 //------------------------------------------------------------------------------

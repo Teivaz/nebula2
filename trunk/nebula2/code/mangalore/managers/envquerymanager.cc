@@ -51,7 +51,7 @@ EnvQueryManager::~EnvQueryManager()
 Entity*
 EnvQueryManager::GetEntityUnderMouse() const
 {
-    return EntityManager::Instance()->FindEntityById(this->entityUnderMouse);
+    return EntityManager::Instance()->GetEntityById(this->entityUnderMouse).get_unsafe();
 }
 
 //------------------------------------------------------------------------------
@@ -73,11 +73,100 @@ EnvQueryManager::GetEntitiesUnderMouseDragDropRect(const rectangle& dragDropRect
         int entityId = graphicsEntities[i]->GetUserData();
         if (entityId)
         {
-            entities.PushBack(entityMgr->FindEntityById(entityId));
+            n_assert(entityMgr->ExistsEntityById(entityId));
+            entities.PushBack(entityMgr->GetEntityById(entityId));
         }
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+    This returns the position where a vector through the mouse position
+    intersects the 3d world (or the nearest entity). If the mouse doesn't
+    intersect, the result will be undefined, and the method
+    HasMouseIntersection() returns false.
+*/
+const vector3&
+EnvQueryManager::GetMousePos3d() const
+{
+    return this->mousePos3d;
+}
+
+//------------------------------------------------------------------------------
+/**
+    This returns the upvector of the face under the mousecursor.
+    If the mouse doesn't intersect, the result will be undefined,
+    and the method HasMouseIntersection() returns false.
+*/
+const vector3&
+EnvQueryManager::GetUpVector() const
+{
+    return this->upVector;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns true if the vector through the current mouse position intersects
+    the world, or an entity, false if no intersection exists.
+*/
+bool
+EnvQueryManager::HasMouseIntersection() const
+{
+    return this->mouseIntersection;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Returns all game entities which intersect the given sphere. Uses the
+    physics subsystem to do the query.
+*/
+nArray<Ptr<Game::Entity> >
+EnvQueryManager::GetEntitiesInSphere(const vector3& midPoint, float radius)
+{
+    nArray<Ptr<Game::Entity> > gameEntities;
+    Physics::FilterSet excludeSet;
+    nArray<Ptr<Physics::Entity> > physicsEntities;
+    Physics::Server::Instance()->GetEntitiesInSphere(midPoint, radius, excludeSet, physicsEntities);
+
+    // convert physics entities back into game entities
+    EntityManager* entityManager = EntityManager::Instance();
+    int i;
+    int num = physicsEntities.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (entityManager->ExistsEntityById(physicsEntities[i]->GetUserData()))
+        {
+            gameEntities.Append(entityManager->GetEntityById(physicsEntities[i]->GetUserData()));
+        }
+    }
+    return gameEntities;
+}
+//------------------------------------------------------------------------------
+/**
+    Returns all game entities which intersect the given box. Uses the
+    physics subsystem to do the query.
+*/
+nArray<Ptr<Game::Entity> >
+EnvQueryManager::GetEntitiesInBox(const vector3& scale, const matrix44& m)
+{
+    nArray<Ptr<Game::Entity> > gameEntities;
+    Physics::FilterSet excludeSet;
+    nArray<Ptr<Physics::Entity> > physicsEntities;
+    Physics::Server::Instance()->GetEntitiesInBox(scale, m, excludeSet, physicsEntities);
+
+    // convert physics entities back into game entities
+    EntityManager* entityManager = EntityManager::Instance();
+    int i;
+    int num = physicsEntities.Size();
+    for (i = 0; i < num; i++)
+    {
+        if (entityManager->ExistsEntityById(physicsEntities[i]->GetUserData()))
+        {
+            gameEntities.Append(entityManager->GetEntityById(physicsEntities[i]->GetUserData()));
+        }
+    }
+    return gameEntities;
+}
 //------------------------------------------------------------------------------
 /**
     This method is called per-frame by the game server and updates the
@@ -113,7 +202,7 @@ EnvQueryManager::OnFrame()
             this->mouseIntersection = true;
 
             // new entity under mouse?
-            Physics::Entity* physicsEntity = contact->GetEntity();
+            Physics::Entity* physicsEntity = physicsServer->FindEntityByUniqueId(contact->GetEntityId());
             Game::Entity::EntityId gameEntityUnderMouse = 0;
             if (physicsEntity)
             {

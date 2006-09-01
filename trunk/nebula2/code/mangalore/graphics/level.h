@@ -58,16 +58,13 @@ private:
     Ptr<Cell> rootCell;
     Ptr<CameraEntity> defaultCamera;
     Ptr<CameraEntity> curCamera;
-    nWatched watchCameraPos;
 
-    #if __NEBULA_STATS__
-    nProfiler profFindVisibleLights;
-    nProfiler profFindLitObjects;
-    nProfiler profFindVisibleObjects;
-    nProfiler profCameraRenderBefore;
-    nProfiler profCameraRender;
-    nProfiler profClearLinks;
-    #endif
+    PROFILER_DECLARE(profFindVisibleLights);
+    PROFILER_DECLARE(profFindLitObjects);
+    PROFILER_DECLARE(profFindVisibleObjects);
+    PROFILER_DECLARE(profCameraRenderBefore);
+    PROFILER_DECLARE(profCameraRender);
+    PROFILER_DECLARE(profClearLinks);
 };
 
 RegisterFactory(Level);
