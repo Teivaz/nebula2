@@ -2,88 +2,88 @@
 # $parser:ntclserver$ $class:ntransformnode$
 # ---
 new ntransformnode bouncingball
-	sel bouncingball
-	.setlocalbox 0.000000 10.083082 0.000000 26.350338 10.083082 26.350338
-	new ntransformnode model
-		sel model
-		.setlocalbox 0.000000 10.083082 0.000000 26.350338 10.083082 26.350338
-		new ntransformnode bouncingball
-			sel bouncingball
-			.setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
-			.addhints 1
-			.addanimator "anim_0"
-			.setposition 0.000000 8.840729 0.000000
-			.setscale 3.000000 3.991129 3.000000
-			new ntransformcurveanimator anim_0
-				sel anim_0
-				.setchannel "time"
-				.setlooptype "loop"
-				.setanimation "anims:examples/bouncingball.nanim2"
-				.setanimationgroup 0
-			sel ..
-			new nshapenode static_0_1
-				sel static_0_1
-				.setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
-				.settexture "DiffMap0" "textures:materials/checker.dds"
-				.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-				.setvector "MatDiffuse" 0.879440 0.879440 0.879440 1.000000
-				.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-				.setfloat "MatEmissiveIntensity" 1.000000
-				.setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
-				.setfloat "MatSpecularPower" 52.655998
-				.setint "CullMode" 2
-				.setfloat "BumpScale" 0.000000
-				.setshader "static"
-				.setmesh "meshes:examples/bouncingball_s_0.n3d2"
-				.setgroupindex 1
-				.setneedsvertexshader false
-			sel ..
-		sel ..
-		new nshapenode static_0_0
-			sel static_0_0
-			.setlocalbox 0.000000 0.000000 0.000000 26.350338 0.000000 26.350338
-			.settexture "DiffMap0" "textures:materials/checker.dds"
-			.settexture "BumpMap0" "textures:materials/checker_bump.dds"
-			.setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
-			.setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
-			.setfloat "MatEmissiveIntensity" 1.000000
-			.setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
-			.setfloat "MatSpecularPower" 72.627998
-			.setint "CullMode" 2
-			.setfloat "BumpScale" 0.000000
-			.setshader "static"
-			.setmesh "meshes:examples/bouncingball_s_0.n3d2"
-			.setgroupindex 0
-			.setneedsvertexshader false
-		sel ..
-	sel ..
-	new ntransformnode shadow
-		sel shadow
-		.setlocalbox 0.000000 17.166164 0.000000 3.000000 3.000000 2.853169
-		.setrotatepivot 0.000000 1.623121 0.000000
-		.setscalepivot 0.000000 1.623121 0.000000
-		new ntransformnode bouncingshadow
-			sel bouncingshadow
-			.setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
-			.addhints 1
-			.addanimator "anim_1"
-			.setposition 0.000000 8.840729 0.000000
-			.setscale 3.000000 3.991129 3.000000
-			new ntransformcurveanimator anim_1
-				sel anim_1
-				.setchannel "time"
-				.setlooptype "loop"
-				.setanimation "anims:examples/bouncingball.nanim2"
-				.setanimationgroup 1
-			sel ..
-			new nshadownode shadow_0_0
-				sel shadow_0_0
-				.setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
-				.setmesh "meshes:examples/bouncingball_sh_0.n3d2"
-				.setgroupindex 0
-			sel ..
-		sel ..
-	sel ..
+    sel bouncingball
+    .setlocalbox 0.000000 10.083082 0.000000 26.350338 10.083082 26.350338
+    new ntransformnode model
+        sel model
+        .setlocalbox 0.000000 10.083082 0.000000 26.350338 10.083082 26.350338
+        new ntransformnode bouncingball
+            sel bouncingball
+            .setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
+            .addhints 1
+            .addanimator "anim_0"
+            .setposition 0.000000 8.840729 0.000000
+            .setscale 3.000000 3.991129 3.000000
+            new ntransformcurveanimator anim_0
+                sel anim_0
+                .setchannel "time"
+                .setlooptype "loop"
+                .setanimation "anims:examples/bouncingball.nanim2"
+                .setanimationgroup 0
+            sel ..
+            new nshapenode static_0_1
+                sel static_0_1
+                .setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
+                .settexture "DiffMap0" "textures:materials/checker.dds"
+                .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+                .setvector "MatDiffuse" 0.879440 0.879440 0.879440 1.000000
+                .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+                .setfloat "MatEmissiveIntensity" 1.000000
+                .setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
+                .setfloat "MatSpecularPower" 52.655998
+                .setint "CullMode" 2
+                .setfloat "BumpScale" 0.000000
+                .setshader "static"
+                .setmesh "meshes:examples/bouncingball_s_0.n3d2"
+                .setgroupindex 1
+                .setneedsvertexshader false
+            sel ..
+        sel ..
+        new nshapenode static_0_0
+            sel static_0_0
+            .setlocalbox 0.000000 0.000000 0.000000 26.350338 0.000000 26.350338
+            .settexture "DiffMap0" "textures:materials/checker.dds"
+            .settexture "BumpMap0" "textures:materials/checker_bump.dds"
+            .setvector "MatDiffuse" 1.000000 1.000000 1.000000 1.000000
+            .setvector "MatEmissive" 0.000000 0.000000 0.000000 0.000000
+            .setfloat "MatEmissiveIntensity" 1.000000
+            .setvector "MatSpecular" 1.000000 1.000000 1.000000 1.000000
+            .setfloat "MatSpecularPower" 72.627998
+            .setint "CullMode" 2
+            .setfloat "BumpScale" 0.000000
+            .setshader "static"
+            .setmesh "meshes:examples/bouncingball_s_0.n3d2"
+            .setgroupindex 0
+            .setneedsvertexshader false
+        sel ..
+    sel ..
+    new ntransformnode shadow
+        sel shadow
+        .setlocalbox 0.000000 17.166164 0.000000 3.000000 3.000000 2.853169
+        .setrotatepivot 0.000000 1.623121 0.000000
+        .setscalepivot 0.000000 1.623121 0.000000
+        new ntransformnode bouncingshadow
+            sel bouncingshadow
+            .setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
+            .addhints 1
+            .addanimator "anim_1"
+            .setposition 0.000000 8.840729 0.000000
+            .setscale 3.000000 3.991129 3.000000
+            new ntransformcurveanimator anim_1
+                sel anim_1
+                .setchannel "time"
+                .setlooptype "loop"
+                .setanimation "anims:examples/bouncingball.nanim2"
+                .setanimationgroup 1
+            sel ..
+            new nshadownode shadow_0_0
+                sel shadow_0_0
+                .setlocalbox 0.000000 0.000000 0.000000 1.000000 1.000000 0.951056
+                .setmesh "meshes:examples/bouncingball_sh_0.n3d2"
+                .setgroupindex 0
+            sel ..
+        sel ..
+    sel ..
 sel ..
 # ---
 # Eof
