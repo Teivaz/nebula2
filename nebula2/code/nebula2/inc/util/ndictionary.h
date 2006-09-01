@@ -71,7 +71,7 @@ public:
     nArray<VALUETYPE> AsArray() const;
 
 private:
-    nArray<nKeyValuePair<KEYTYPE, VALUETYPE>> keyValuePairs;
+    nArray<nKeyValuePair<KEYTYPE, VALUETYPE> > keyValuePairs;
     bool inBeginAdd;
 };
 
