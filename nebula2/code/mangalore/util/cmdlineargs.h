@@ -21,8 +21,10 @@ class CmdLineArgs
 public:
     /// constructor
     CmdLineArgs(const nString& cmdLine);
+    /// get the original command line
+    const nString& GetCmdLine() const;
     /// get the command name
-    const nString& GetCommandName() const;
+    const nString& GetCmdName() const;
     /// return true if arg exists
     bool HasArg(const nString& arg) const;
     /// get string value
