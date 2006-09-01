@@ -369,7 +369,7 @@ Cell::LinkVisibleEntities(Entity* observerEntity,
         for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
         {
             Entity* entity = observedPool[entityIndex];
-            if (entity->GetVisible())
+            if (entity->GetVisible() && entity->TestLodVisibility())
             {
                 observerEntity->AddLink(linkType, entity);
                 entity->AddLink(linkType, observerEntity);
@@ -393,7 +393,7 @@ Cell::LinkVisibleEntities(Entity* observerEntity,
         for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
         {
             Entity* entity = observedPool[entityIndex];
-            if (entity->GetVisible())
+            if (entity->GetVisible() && entity->TestLodVisibility())
             {
                 // check against extruded shadow bounding box,
                 // or canonical bounding box, depending on link type

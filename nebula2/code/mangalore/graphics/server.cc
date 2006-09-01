@@ -28,15 +28,14 @@ ImplementRtti(Graphics::Server, Foundation::RefCounted);
 ImplementFactory(Graphics::Server);
 
 Server* Server::Singleton = 0;
+const float Server::maxLodDistThreshold = 10000.0f;
+const float Server::minLodSizeThreshold = 0.0f;
 
 //------------------------------------------------------------------------------
 /**
 */
 Server::Server() :
     #if __NEBULA_STATS__
-    profMangaRender_GfxEndRender_LevelEndRender("profMangaRender_GfxEndRender_LevelEndRender"),
-    profMangaRender_GfxEndRender_CaptureTrigger("profMangaRender_GfxEndRender_CaptureTrigger"),
-    profMangaRender_GfxEndRender_PresentScene("profMangaRender_GfxEndRender_PresentScene"),
     numShapesVisible("mangaShapesVisible", nArg::Int),
     numLightsVisible("mangaLightVisible", nArg::Int),
     numShapesLit("mangaShapesLit", nArg::Int),
@@ -228,6 +227,7 @@ Server::BeginRender()
     }
 
     // reset debug watchers
+    #if __NEBULA_STATS__
     this->numShapesVisible->SetI(0);
     this->numLightsVisible->SetI(0);
     this->numShapesLit->SetI(0);
@@ -237,6 +237,7 @@ Server::BeginRender()
     this->numCellsOutsideLight->SetI(0);
     this->numCellsVisibleCamera->SetI(0);
     this->numCellsVisibleLight->SetI(0);
+    #endif
 
     // update frame id
     this->frameId++;
@@ -284,35 +285,17 @@ Server::RenderDebug()
 void
 Server::EndRender()
 {
-    #if __NEBULA_STATS__
-    this->profMangaRender_GfxEndRender_LevelEndRender.Start();
-    #endif
     this->curLevel->EndRender();
-    #if __NEBULA_STATS__
-    this->profMangaRender_GfxEndRender_LevelEndRender.Stop();
-
-    this->profMangaRender_GfxEndRender_CaptureTrigger.Start();
-    #endif
-
     nCaptureServer::Instance()->Trigger();
-
-    #if __NEBULA_STATS__
-    this->profMangaRender_GfxEndRender_CaptureTrigger.Stop();
-
-    this->profMangaRender_GfxEndRender_PresentScene.Start();
-    #endif
     nSceneServer::Instance()->PresentScene();
-
-    #if __NEBULA_STATS__
-    this->profMangaRender_GfxEndRender_PresentScene.Stop();
-    #endif
 }
 
 //------------------------------------------------------------------------------
 /**
     Drag drop select
 */
-void Server::DragDropSelect(const vector3& lookAt, float angleOfView, float aspectRatio, nArray<Ptr<Entity> >& entities) {
+void Server::DragDropSelect(const vector3& lookAt, float angleOfView, float aspectRatio, nArray<Ptr<Entity> >& entities)
+{
     if (this->curLevel != 0)
     {
         CameraEntity* cameraEntity = this->curLevel->GetCamera();
