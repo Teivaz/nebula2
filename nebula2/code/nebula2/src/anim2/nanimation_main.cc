@@ -54,5 +54,3 @@ nAnimation::GetDuration(int groupIndex) const
 {
     return this->groupArray[groupIndex].GetDuration();
 }
-
-

@@ -5,12 +5,12 @@
     @class nAnimStateArray
     @ingroup Anim2
 
-    @brief An anim state array holds several mutually exclusive nAnimState
+    @brief An animation state array holds several mutually exclusive nAnimState
     objects and allows switching between them.
 
     (C) 2003 RadonLabs GmbH
 */
-#include "anim2/nanimstate.h"
+#include "anim2/nanimstateinfo.h"
 #include "util/narray.h"
 
 //------------------------------------------------------------------------------
@@ -21,23 +21,23 @@ public:
     nAnimStateArray();
     /// destructor
     ~nAnimStateArray();
-    /// begin adding anim states
+    /// begin adding animation states
     void Begin(int num);
-    /// set a new anim state
-    void SetState(int index, const nAnimState& state);
-    /// finish adding anim states
+    /// set a new animation state
+    void SetState(int index, const nAnimStateInfo& state);
+    /// finish adding animation states
     void End();
     /// get number of animation states
     int GetNumStates() const;
-    /// get an anim state object at given index
-    nAnimState& GetStateAt(int index) const;
+    /// get an animation state object at given index
+    nAnimStateInfo& GetStateAt(int index) const;
     /// find state by name
-    nAnimState* FindState(const nString& n) const;
+    nAnimStateInfo* FindState(const nString& n) const;
     /// find a state index by name
     int FindStateIndex(const nString& n) const;
 
 private:
-    nArray<nAnimState> stateArray;
+    nArray<nAnimStateInfo> stateArray;
 };
 
 //------------------------------------------------------------------------------
@@ -61,9 +61,9 @@ nAnimStateArray::~nAnimStateArray()
 
 //------------------------------------------------------------------------------
 /**
-    Begin adding states to the anim state array.
+    Begin adding states to the animation state array.
 
-    @param  num     number of anim states
+    @param  num     number of animation states
 */
 inline
 void
@@ -77,7 +77,7 @@ nAnimStateArray::Begin(int num)
 */
 inline
 void
-nAnimStateArray::SetState(int index, const nAnimState& state)
+nAnimStateArray::SetState(int index, const nAnimStateInfo& state)
 {
     this->stateArray[index] = state;
 }
@@ -106,7 +106,7 @@ nAnimStateArray::GetNumStates() const
 /**
 */
 inline
-nAnimState&
+nAnimStateInfo&
 nAnimStateArray::GetStateAt(int index) const
 {
     return this->stateArray[index];
@@ -116,14 +116,14 @@ nAnimStateArray::GetStateAt(int index) const
 /**
 */
 inline
-nAnimState*
+nAnimStateInfo*
 nAnimStateArray::FindState(const nString& n) const
 {
     int i;
     int num = this->stateArray.Size();
     for (i = 0; i < num; i++)
     {
-        nAnimState& state = this->stateArray[i];
+        nAnimStateInfo& state = this->stateArray[i];
         if (state.GetName() == n)
         {
             return &state;
@@ -144,7 +144,7 @@ nAnimStateArray::FindStateIndex(const nString& n) const
     int num = this->stateArray.Size();
     for (i = 0; i < num; i++)
     {
-        nAnimState& state = this->stateArray[i];
+        nAnimStateInfo& state = this->stateArray[i];
         if (state.GetName() == n)
         {
             return i;

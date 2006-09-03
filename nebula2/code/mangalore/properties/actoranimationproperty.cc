@@ -48,12 +48,16 @@ ActorAnimationProperty::HandleMessage(Message::Msg* msg)
     n_assert(msg);
     if (msg->CheckId(Message::MoveStop::Id))
     {
-        this->RequestAnimation("Idle", "", 0.0f);
+        this->RequestAnimation("Idle", "", n_rand(0.0f, 1.0f));
     }
     else if (msg->CheckId(Message::MoveDirection::Id) ||
              msg->CheckId(Message::MoveSetVelocity::Id))
     {
-        this->RequestAnimation("Walk", "", 0.0f);
+        if (this->GetEntity()->HasAttr(Attr::MaxVelocity) && this->GetEntity()->GetFloat(Attr::MaxVelocity) > 1.2f)
+        {
+             this->RequestAnimation("Run", "", n_rand(0.0f, 1.0f));
+        }
+        else this->RequestAnimation("Walk", "", n_rand(0.0f, 1.0f));
     }
 }
 
@@ -66,7 +70,7 @@ ActorAnimationProperty::OnActivate()
     Game::Property::OnActivate();
 
     // by default go to idle animation
-    this->RequestAnimation("Idle", "", 0.0f);
+    this->RequestAnimation("Idle", "", n_rand(0.0f, 1.0f));
 }
 
 //------------------------------------------------------------------------------
@@ -79,7 +83,7 @@ ActorAnimationProperty::RequestAnimation(const nString& baseAnimation, const nSt
     setAnimation->SetBaseAnimation(baseAnimation);
     setAnimation->SetOverlayAnimation(overlayAnimation);
     setAnimation->SetBaseAnimTimeOffset(baseAnimTimeOffset);
-
+    setAnimation->SetFadeInTime(0.2);
     this->GetEntity()->SendSync(setAnimation);
 }
 

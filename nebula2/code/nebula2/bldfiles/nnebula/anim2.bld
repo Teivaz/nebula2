@@ -8,7 +8,6 @@ beginbundle nnebula::anim2
         nanimationserver
         nanimeventhandler
         nanimstate
-        nanimstatearray
         ncombinedanimation
         nmemoryanimation
         nstreaminganimation
@@ -39,7 +38,7 @@ beginmodule nanimeventhandler
     setdir anim2
     setheaders {
         nanimevent
-        nanimventhandler
+        nanimeventhandler
         nanimeventtrack
     }
     setfiles {
@@ -51,16 +50,7 @@ beginmodule nanimstate
     setdir anim2
     setheaders {
         nanimclip
-        nanimstate
-    }
-    setfiles {
-        nanimstate
-    }
-endmodule
-
-beginmodule nanimstatearray
-    setdir anim2
-    setheaders {
+        nanimstateinfo
         nanimstatearray
     }
 endmodule

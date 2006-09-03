@@ -7,7 +7,7 @@
 
     @brief An nAnimation is a nResource subclass which holds one or more
     animation curves, which must all share the same number of
-    keys, framerate and loop type. The nAnimation object
+    keys, frame rate and loop type. The nAnimation object
     can be sampled for a given curve index at a given sample time.
 
     One nAnimation object points to the data of exactly one
@@ -23,11 +23,11 @@
     After creation the object should be configured by setting the
     file and group name, after that, LoadResource() should
     be called (and also when IsValid() returns false), this is
-    normal nResource class behaviour.
+    normal nResource class behavior.
 
     To get a sample from a curve, call the SampleCurves() method.
 
-    Animation fileformats:
+    Animation file formats:
 
     <b>ASCII: .nanim2      (not streamable)</b>
 
@@ -37,7 +37,7 @@
     numkeys [numKeys]
 
     FOR EACH GROUP {
-        group [numCurves] [startKey] [numKeys] [keyStride] [keyTime] [clamp|repeat]
+        group [numCurves] [startKey] [numKeys] [keyStride] [keyTime] [FadeInFrames] [clamp|repeat]
         FOR EACH CURVE {
             curve [step|linear|quat|none] [firstKeyIndex] [collapsedKey(x,y,z,w)]
             curve
@@ -67,12 +67,14 @@
         int32 numKeys           // number of keys in group
         int32 keyStride         // key stride in key pool
         float keyTime           // key duration
+        float fadeInFrames      // number of fade in frames
         int32 loopType          // nAnimation::LoopType
     }
 
     FOR EACH CURVE {
         int16 ipolType          // nAnimation::Curve::IpolType
         int32 firstKeyIndex     // index of first curve key in key pool (-1 if collapsed!)
+        int32 isAnimated        // flag, if the curve's joint is animated
         float[4] collapsedKey   // the key value if this is a collapsed curve
     }
 
@@ -84,14 +86,13 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "resource/nresource.h"
-#include "mathlib/vector.h"
 #include "util/narray.h"
 
 //------------------------------------------------------------------------------
 class nAnimation : public nResource
 {
 public:
-    /// holds anim curve information
+    /// holds animation curve information
     class Curve
     {
     public:
@@ -122,14 +123,29 @@ public:
         void SetFirstKeyIndex(int index);
         /// get first key index
         int GetFirstKeyIndex() const;
+        /// set curve as animated or not
+        void SetIsAnimated(int isAnim);
+        /// is curve animated?
+        int IsAnimated() const;
+        /// set the start value (at frame 0/ time 0) of the curve
+        void SetStartValue(vector4 val);
+        /// get the start value of the curve
+        vector4 GetStartValue() const;
+        /// set the animation value of the curve if it is animated
+        void SetCurAnimClipValue(vector4 value);
+        /// get the animation value of the curve
+        vector4 GetCurAnimClipValue() const;
 
     private:
         IpolType ipolType;
         vector4 constValue;
         int firstKeyIndex;
+        int isAnimated;
+        vector4 startValue;
+        vector4 firstClipValue;
     };
 
-    /// holds anim group information (a group of curves)
+    /// holds animation group information (a group of curves)
     class Group
     {
     public:
@@ -138,6 +154,7 @@ public:
         {
             Clamp = 0,
             Repeat,
+            InvalidLoopType,
         };
 
         /// constructor
@@ -166,13 +183,17 @@ public:
         void SetKeyTime(float t);
         /// get the key duration
         float GetKeyTime() const;
+        /// set the number of fade in frames
+        void SetFadeInFrames(float frames);
+        ///get the number of fade in frames
+        float GetFadeInFrames() const;
         /// set the loop type (identical for all curves)
         void SetLoopType(LoopType t);
         /// get the loop type
         LoopType GetLoopType() const;
         /// convert string to loop type
         static LoopType StringToLoopType(const char* str);
-        /// convert a time stamp into 2 global key indices and an inbetween value
+        /// convert a time stamp into 2 global key indexes and an inbetween value
         void TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float& inbetween) const;
         /// return true if time is between startTime and stopTime (handles looped and clamped case correctly)
         bool IsInbetween(float time, float startTime, float stopTime) const;
@@ -185,6 +206,7 @@ public:
         int keyStride;          ///< key stride in key array
         float keyTime;          ///< number of keys
         LoopType loopType;      ///< the loop type
+        float fadeInFrames;
         nArray<Curve> curveArray;
     };
 
@@ -206,7 +228,7 @@ public:
 protected:
     /// unload the resource (clears the valid flag)
     virtual void UnloadResource();
-    /// fix the firstKeyIndex and keyStride members in the contained anim curve objects
+    /// fix the firstKeyIndex and keyStride members in the contained animation curve objects
     void FixKeyOffsets();
 
     nArray<Group> groupArray;
@@ -218,7 +240,10 @@ protected:
 inline
 nAnimation::Curve::Curve() :
     ipolType(None),
-    firstKeyIndex(-1)
+    firstKeyIndex(-1),
+    isAnimated(1),
+    startValue(0.0f, 0.0f, 0.0f, 0.0f),
+    firstClipValue(0.0f, 0.0f, 0.0f, 0.0f)
 {
     // empty
 }
@@ -239,6 +264,7 @@ inline
 void
 nAnimation::Curve::SetIpolType(IpolType t)
 {
+    n_assert(t != None);
     this->ipolType = t;
 }
 
@@ -322,12 +348,73 @@ nAnimation::Curve::StringToIpolType(const char* str)
 /**
 */
 inline
+void
+nAnimation::Curve::SetIsAnimated(int isAnim)
+{
+    this->isAnimated = isAnim;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nAnimation::Curve::IsAnimated() const
+{
+    return this->isAnimated;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimation::Curve::SetStartValue(vector4 value)
+{
+    this->startValue = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector4
+nAnimation::Curve::GetStartValue() const
+{
+    return this->startValue;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nAnimation::Curve::SetCurAnimClipValue(vector4 value)
+{
+    this->firstClipValue = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+vector4
+nAnimation::Curve::GetCurAnimClipValue() const
+{
+    return this->firstClipValue;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
 nAnimation::Group::Group() :
     startKey(0),
     numKeys(0),
     keyStride(0),
     keyTime(0),
     loopType(Repeat),
+    fadeInFrames(0),
     curveArray(0, 0)
 {
     // empty
@@ -458,6 +545,26 @@ nAnimation::Group::GetKeyTime() const
 */
 inline
 void
+nAnimation::Group::SetFadeInFrames(float frames)
+{
+    this->fadeInFrames = frames;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+float
+nAnimation::Group::GetFadeInFrames() const
+{
+    return this->fadeInFrames;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
 nAnimation::Group::SetLoopType(LoopType t)
 {
     this->loopType = t;
@@ -527,7 +634,7 @@ nAnimation::Group::IsInbetween(float time, float startTime, float stopTime) cons
 
 //------------------------------------------------------------------------------
 /**
-    - 18-Oct-04   floh      fixed case where returned indices could be <0
+    - 18-Oct-04   floh      fixed case where returned indexes could be <0
 */
 inline
 void
@@ -537,7 +644,7 @@ nAnimation::Group::TimeToIndex(float time, int& keyIndex0, int& keyIndex1, float
     int intFrame = int(frame);
     keyIndex0    = intFrame - this->startKey;
     keyIndex1    = keyIndex0 + 1;
-    inbetween    = frame - float(intFrame);
+    inbetween    = n_saturate(frame - float(intFrame));
     if (Clamp == this->loopType)
     {
         // 'clamp' loop type

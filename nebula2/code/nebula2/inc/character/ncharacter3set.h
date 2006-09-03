@@ -7,11 +7,13 @@
 
     (C) 2005 RadonLabs GmbH
 */
+#include "character/ncharacter2set.h"
 #include "scene/ncharacter3node.h"
 
 class nRenderContext;
+
 //------------------------------------------------------------------------------
-class nCharacter3Set
+class nCharacter3Set : public nCharacter2Set
 {
 public:
     /// constructor
@@ -19,13 +21,14 @@ public:
     /// destructor
     virtual ~nCharacter3Set();
 
-    /// reads the available skins and animations from a character3 node
+    /// reads the available skins and variations from a character3 node
     void Init(nCharacter3Node* characterNode);
-
+    /// loads a character set from a XML file
+    bool LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nString& fileName);
     /// is the character3set correctly initialized ?
     bool IsValid() const;
 
-    /// retreive count of available skins
+    /// retrieve count of available skins
     int GetNumAvailableSkins() const;
     /// get names of loaded skins
     nArray<nString> GetNamesOfLoadedSkins() const;
@@ -33,22 +36,14 @@ public:
     void SetSkinVisible(const nString& name, bool value);
     /// returns if the skin at index is switched on or off
     bool IsSkinVisible(const nString& name);
-
     /// sets the visibility of the skin at the index
     void SetSkinVisibleAtIndex(int index, bool value);
     /// returns if the skin at index is switched on or off
     bool IsSkinVisibleAtIndex(int index);
+    /// converts the skin name to an index
+    int ConvertSkinNameToIndex(const nString& name);
 
-    /// retreive count of available animations
-    int GetNumAvailableAnimations() const;
-    /// retreive count of available animations
-    int GetCurrentAnimation() const;
-    /// sets the current animation
-    void SetCurrentAnimation(int index);
-    /// get names of animations
-    nArray<nString> GetNamesOfLoadedAnimations() const;
-
-    /// retreive count of available variations
+    /// retrieve count of available variations
     int GetNumAvailableVariations() const;
     /// get names of loaded variations
     nArray<nString> GetNamesOfLoadedVariations() const;
@@ -58,28 +53,16 @@ public:
     int GetCurrentVariationIndex() const;
     /// set current variation
     void SetCurrentVariationIndexed(int index);
-
-    /// converts the skin name to an index
-    int ConvertSkinNameToIndex(const nString& name);
     /// converts the variation name to an index
     int ConvertVariationNameToIndex(const nString& name);
-    /// converts the animation name to an index
-    int ConvertAnimationNameToIndex(const nString& name);
-
-    /// loads a characterset from a xml file
-    bool LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nString& fileName);
 
 protected:
-
     bool isSetUp;
     int numAvailableSkins;
-    int numAvailableAnimations;
     int numAvailableVariations;
     nArray<nString> skinNames;
-    nArray<nString> animationNames;
     nArray<nString> variationNames;
     nArray<bool> selectedSkins;
-    int selectedAnimation;
     int selectedVariation;
 };
 //------------------------------------------------------------------------------
@@ -167,31 +150,10 @@ nCharacter3Set::GetNumAvailableSkins() const
 */
 inline
 int
-nCharacter3Set::GetNumAvailableAnimations() const
-{
-    return this->numAvailableAnimations;
-};
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
 nCharacter3Set::GetNumAvailableVariations() const
 {
     return this->numAvailableVariations;
 };
-
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nCharacter3Set::GetCurrentAnimation() const
-{
-    return this->selectedAnimation;
-}
 
 //------------------------------------------------------------------------------
 /**
@@ -208,30 +170,9 @@ nCharacter3Set::GetCurrentVariationIndex() const
 */
 inline
 nArray<nString>
-nCharacter3Set::GetNamesOfLoadedAnimations() const
-{
-    return this->animationNames;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nArray<nString>
 nCharacter3Set::GetNamesOfLoadedVariations() const
 {
     return this->variationNames;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nCharacter3Set::SetCurrentAnimation(int index)
-{
-    n_assert( (index >= 0) && (index < this->numAvailableAnimations) );
-    this->selectedAnimation = index;
 }
 
 //------------------------------------------------------------------------------
@@ -300,26 +241,5 @@ nCharacter3Set::ConvertVariationNameToIndex(const nString& name)
     return result;
 };
 
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nCharacter3Set::ConvertAnimationNameToIndex(const nString& name)
-{
-    int result = -1;
-
-    int i;
-    for( i = 0; i < this->animationNames.Size(); i++)
-    {
-        if(name == this->animationNames[i])
-        {
-            result = i;
-            break;
-        };
-    };
-
-    return result;
-};
 //------------------------------------------------------------------------------
 #endif

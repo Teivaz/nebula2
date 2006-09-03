@@ -37,6 +37,8 @@ public:
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render per-instance geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
+    /// render debug information
+    virtual void RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix);
     /// get the mesh usage flags required by this shape node
     virtual int GetMeshUsage() const;
     /// set the skin animator

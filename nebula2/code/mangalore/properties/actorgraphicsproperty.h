@@ -12,6 +12,7 @@
 */
 #include "properties/graphicsproperty.h"
 #include "graphics/charentity.h"
+#include "msg/gfxsetanimation.h"
 
 //------------------------------------------------------------------------------
 namespace Properties
@@ -25,6 +26,8 @@ public:
     /// destructor
     virtual ~ActorGraphicsProperty();
 
+    /// called from Entity::DeactivateProperties()
+    virtual void OnDeactivate();
     /// called before rendering happens
     virtual void OnRender();
 
@@ -32,21 +35,18 @@ public:
     virtual bool Accepts(Message::Msg* msg);
     /// handle a single message
     virtual void HandleMessage(Message::Msg* msg);
-
     /// setup default entity attributes
     virtual void SetupDefaultAttributes();
-
-protected:
     /// get graphics entity cast to Graphics::CharEntity
     Graphics::CharEntity* GetGraphicsEntity() const;
+
+protected:
     /// setup graphics entities
     virtual void SetupGraphicsEntities();
-    /// cleanup graphics entities
-    virtual void CleanupGraphicsEntities();
     /// set base or overlay animation
-    void SetAnimation(const nString& baseAnim, const nString& overlayAnim, float baseAnimTimeOffset);
+    void SetAnimation(Message::GfxSetAnimation* msg);
     /// add attachment definition
-    void AddAttachment(const nString& jointName, const nString& gfxResName, const matrix44& offset);
+    void AddAttachment(const nString& jointName, const nString& gfxResName, const matrix44& offset, Graphics::Entity* gfxEntity = 0);
     /// remove attachment definition
     void RemAttachment(const nString& jointName);
     /// find attachment index by joint name, return -1 if not found
@@ -57,12 +57,15 @@ protected:
     void AddSkin(const nString& skinName);
     /// make skin visible on Character3
     void RemSkin(const nString& skinName);
+    /// set character set
+    void SetCharacterSet(const nString& characterSetName);
 
     struct Attachment
     {
         int jointIndex;
         Ptr<Graphics::Entity> graphicsEntity;
         matrix44 offsetMatrix;
+        bool newCreated;
     };
 
     nArray<Attachment> attachments;

@@ -18,34 +18,29 @@
 class nAnimClip
 {
 public:
-    /// constructor
+    /// default constructor
     nAnimClip();
     /// constructor
-    nAnimClip(int firstAnimCurveIndex, int numAnimCurves, nVariable::Handle weightChnHandle);
-    /// get number of anim curves in the clip
+    nAnimClip(const nString& clipName, int animGroupIndex, int numCurves);
+    /// get the name of the clip
+    const nString& GetClipName() const;
+    /// get animation group index
+    int GetAnimGroupIndex() const;
+    /// get number of curves in the clip's animation group
     int GetNumCurves() const;
-    /// get the index of the first anim curve in the animation object's group
-    int GetFirstCurveIndex() const;
-    /// get the weight channel's variable handle
-    nVariable::Handle GetWeightChannelHandle() const;
-    /// set current weight value
-    void SetWeight(float w);
-    /// get current weight value
-    float GetWeight() const;
     /// set number of animation event tracks
     void SetNumAnimEventTracks(int num);
     /// get number of animation event tracks
     int GetNumAnimEventTracks() const;
-    /// read/write access to animation event track
-    nAnimEventTrack& GetAnimEventTrackAt(int index);
-    /// access to anim event tracks array
-    nFixedArray<nAnimEventTrack>& AnimEventTracks();
+    /// get to animation event track
+    const nAnimEventTrack& GetAnimEventTrackAt(int index) const;
+    /// read/write access to animation event tracks array
+    nFixedArray<nAnimEventTrack>& GetAnimEventTracks();
 
 private:
+    nString clipName;
+    int animGroupIndex;
     int numCurves;
-    int firstCurveIndex;
-    float weight;
-    nVariable::Handle weightChannelHandle;
     nFixedArray<nAnimEventTrack> animEventTracks;
 };
 
@@ -54,10 +49,8 @@ private:
 */
 inline
 nAnimClip::nAnimClip() :
-    numCurves(0),
-    firstCurveIndex(0),
-    weight(0.0f),
-    weightChannelHandle(nVariable::InvalidHandle)
+    animGroupIndex(0),
+    numCurves(0)
 {
     // empty
 }
@@ -66,15 +59,31 @@ nAnimClip::nAnimClip() :
 /**
 */
 inline
-nAnimClip::nAnimClip(int firstAnimCurveIndex, int numAnimCurves, nVariable::Handle weightChnHandle) :
-    numCurves(numAnimCurves),
-    firstCurveIndex(firstAnimCurveIndex),
-    weight(0.0f),
-    weightChannelHandle(weightChnHandle)
+nAnimClip::nAnimClip(const nString& name, int animGroupIndex, int numCurves) :
+   clipName(name),
+   animGroupIndex(animGroupIndex),
+   numCurves(numCurves)
 {
-    n_assert(numAnimCurves >= 0);
-    n_assert(firstAnimCurveIndex >= 0);
-    n_assert(weightChnHandle != nVariable::InvalidHandle);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nAnimClip::GetClipName() const
+{
+    return this->clipName;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nAnimClip::GetAnimGroupIndex() const
+{
+    return this->animGroupIndex;
 }
 
 //------------------------------------------------------------------------------
@@ -85,46 +94,6 @@ int
 nAnimClip::GetNumCurves() const
 {
     return this->numCurves;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-nAnimClip::GetFirstCurveIndex() const
-{
-    return this->firstCurveIndex;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-nVariable::Handle
-nAnimClip::GetWeightChannelHandle() const
-{
-    return this->weightChannelHandle;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-void
-nAnimClip::SetWeight(float w)
-{
-    this->weight = w;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-float
-nAnimClip::GetWeight() const
-{
-    return this->weight;
 }
 
 //------------------------------------------------------------------------------
@@ -151,8 +120,8 @@ nAnimClip::GetNumAnimEventTracks() const
 /**
 */
 inline
-nAnimEventTrack&
-nAnimClip::GetAnimEventTrackAt(int index)
+const nAnimEventTrack&
+nAnimClip::GetAnimEventTrackAt(int index) const
 {
     return this->animEventTracks[index];
 }
@@ -162,7 +131,7 @@ nAnimClip::GetAnimEventTrackAt(int index)
 */
 inline
 nFixedArray<nAnimEventTrack>&
-nAnimClip::AnimEventTracks()
+nAnimClip::GetAnimEventTracks()
 {
     return this->animEventTracks;
 }

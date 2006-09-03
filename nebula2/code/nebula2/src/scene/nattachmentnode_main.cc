@@ -96,7 +96,7 @@ nAttachmentNode::UpdateFinalTransform()
 void
 nAttachmentNode::SetJointByName(const char *jointName)
 {
-    if (strcmp(this->parent->GetClass()->GetName(), "nskinshapenode"))
+    /*if (strcmp(this->parent->GetClass()->GetName(), "nskinshapenode"))
     {
         n_printf("Error: nAttachmentNode can only function if it is parented by an nSkinShapeNode\n");
         return;
@@ -116,7 +116,7 @@ nAttachmentNode::SetJointByName(const char *jointName)
     else
     {
         n_printf("Error: Unable to find joint of name '%s' on parent nSkinAnimator\n", jointName);
-    }
+    }*/
 }
 
 //------------------------------------------------------------------------------

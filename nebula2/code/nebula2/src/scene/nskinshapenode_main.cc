@@ -100,6 +100,62 @@ nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
 
 //------------------------------------------------------------------------------
 /**
+    Render debugging information for this mesh (the joints)
+*/
+void
+nSkinShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& modelMatrix)
+{
+    n_assert(sceneServer);
+    n_assert(renderContext);
+
+    // call my skin animator (updates the char skeleton pointer)
+    kernelServer->PushCwd(this);
+    if (this->refSkinAnimator.isvalid())
+    {
+        this->refSkinAnimator->Animate(this, renderContext);
+    }
+    kernelServer->PopCwd();
+
+    // render the joints of the skeleton
+    int numJoints = this->extCharSkeleton->GetNumJoints();
+    int i;
+
+    nArray<vector3> lines;
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    gfxServer->BeginShapes();
+
+    for (i = 0; i < numJoints; i++)
+    {
+        // add a joint
+        lines.Clear();
+        const nCharJoint& joint = this->extCharSkeleton->GetJointAt(i);
+        if (joint.GetParentJointIndex() != -1)
+        {
+            nCharJoint* parrentJoint = joint.GetParentJoint();
+            n_assert(parrentJoint);
+
+            // add start point
+            lines.Append(parrentJoint->GetMatrix() * vector3());
+
+            // add end point
+            lines.Append(joint.GetMatrix() * vector3());
+
+            // draw
+            float blue = (1.f / numJoints * (i+1));
+            float red = (1.f - 1.f / numJoints * (i+1));
+            vector4 color(red, 1.f, blue, 1.f);
+            gfxServer->DrawShapePrimitives(nGfxServer2::LineList, lines.Size(), &(lines[0]), 3, modelMatrix, color);
+        }
+    }
+
+    gfxServer->EndShapes();
+
+    // call parrent
+    nShapeNode::RenderDebug(sceneServer, renderContext, modelMatrix);
+}
+
+//------------------------------------------------------------------------------
+/**
     Set relative path to the skin animator object.
 */
 void

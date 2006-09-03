@@ -121,7 +121,17 @@ nMemoryAnimation::LoadNanim2(const char* filename)
         {
             const char* numGroupsString = strtok(0, N_WHITESPACE);
             n_assert(numGroupsString);
-            this->SetNumGroups(atoi(numGroupsString));
+
+            int numGroups = atoi(numGroupsString);
+            if (0 == numGroups)
+            {
+                n_error("nMemoryAnimation::LoadNanim2(): File %s has no groups! Invalid Export ?", filename);
+                file->Close();
+                file->Release();
+                return false;
+            }
+
+            this->SetNumGroups(numGroups);
         }
         else if (0 == strcmp(keyWord, "numkeys"))
         {
@@ -136,8 +146,9 @@ nMemoryAnimation::LoadNanim2(const char* filename)
             const char* numKeysString   = strtok(0, N_WHITESPACE);
             const char* keyStrideString = strtok(0, N_WHITESPACE);
             const char* keyTimeString   = strtok(0, N_WHITESPACE);
+            const char* fadeInFramesString = strtok(0, N_WHITESPACE);
             const char* loopTypeString  = strtok(0, N_WHITESPACE);
-            n_assert(numCurvesString && startKeyString && keyStrideString && numKeysString && keyTimeString && loopTypeString);
+            n_assert(numCurvesString && startKeyString && keyStrideString && numKeysString && keyTimeString && fadeInFramesString && loopTypeString);
 
             curveIndex = 0;
             curGroup = &(this->GetGroupAt(groupIndex++));
@@ -146,22 +157,25 @@ nMemoryAnimation::LoadNanim2(const char* filename)
             curGroup->SetNumKeys(atoi(numKeysString));
             curGroup->SetKeyStride(atoi(keyStrideString));
             curGroup->SetKeyTime(float(atof(keyTimeString)));
+            curGroup->SetFadeInFrames(float(atof(fadeInFramesString)));
             curGroup->SetLoopType(curGroup->StringToLoopType(loopTypeString));
         }
         else if (0 == strcmp(keyWord, "curve"))
         {
             const char* ipolTypeString      = strtok(0, N_WHITESPACE);
             const char* firstKeyIndexString = strtok(0, N_WHITESPACE);
+            const char* isAnimatedString    = strtok(0, N_WHITESPACE);
             const char* constXString        = strtok(0, N_WHITESPACE);
             const char* constYString        = strtok(0, N_WHITESPACE);
             const char* constZString        = strtok(0, N_WHITESPACE);
             const char* constWString        = strtok(0, N_WHITESPACE);
-            n_assert(ipolTypeString && firstKeyIndexString && constXString && constYString && constZString && constWString);
+            n_assert(ipolTypeString && firstKeyIndexString && isAnimatedString && constXString && constYString && constZString && constWString);
 
             n_assert(curGroup);
             curCurve = &(curGroup->GetCurveAt(curveIndex++));
             curCurve->SetIpolType(curCurve->StringToIpolType(ipolTypeString));
             curCurve->SetFirstKeyIndex(atoi(firstKeyIndexString));
+            curCurve->SetIsAnimated(atoi(isAnimatedString));
             vec4.x = float(atof(constXString));
             vec4.y = float(atof(constYString));
             vec4.z = float(atof(constZString));
@@ -229,6 +243,14 @@ nMemoryAnimation::LoadNax2(const char* filename)
         return false;
     }
     int numGroups = file->GetInt();
+    if (0 == numGroups)
+    {
+        n_error("nMemoryAnimation::LoadNax2(): File %s has no groups! Invalid Export ?", filename);
+        file->Close();
+        file->Release();
+        return false;
+    }
+
     int numKeys = file->GetInt();
 
     this->SetNumGroups(numGroups);
@@ -243,6 +265,7 @@ nMemoryAnimation::LoadNax2(const char* filename)
         int numKeys   = file->GetInt();
         int keyStride = file->GetInt();
         float keyTime = file->GetFloat();
+        float fadeInFrames = file->GetFloat();
         int loopType  = file->GetInt();
 
         Group& group = this->GetGroupAt(groupIndex);
@@ -251,6 +274,7 @@ nMemoryAnimation::LoadNax2(const char* filename)
         group.SetNumKeys(numKeys);
         group.SetKeyStride(keyStride);
         group.SetKeyTime(keyTime);
+        group.SetFadeInFrames(fadeInFrames);
         group.SetLoopType((Group::LoopType) loopType);
     }
 
@@ -263,8 +287,9 @@ nMemoryAnimation::LoadNax2(const char* filename)
         for (curveIndex = 0; curveIndex < numCurves; curveIndex++)
         {
             static vector4 collapsedKey;
-            short ipolType = file->GetShort();
+            int ipolType = file->GetInt();
             int firstKeyIndex = file->GetInt();
+            int isAnim = file->GetInt();
             collapsedKey.x = file->GetFloat();
             collapsedKey.y = file->GetFloat();
             collapsedKey.z = file->GetFloat();
@@ -273,6 +298,7 @@ nMemoryAnimation::LoadNax2(const char* filename)
             Curve& curve = group.GetCurveAt(curveIndex);
             curve.SetIpolType((Curve::IpolType) ipolType);
             curve.SetConstValue(collapsedKey);
+            curve.SetIsAnimated(isAnim);
             curve.SetFirstKeyIndex(firstKeyIndex);
         }
     }
@@ -312,63 +338,88 @@ nMemoryAnimation::LoadNax2(const char* filename)
 void
 nMemoryAnimation::SampleCurves(float time, int groupIndex, int firstCurveIndex, int numCurves, vector4* dstKeyArray)
 {
-    // convert the time into 2 global key indices and an inbetween value
+    // convert the time into 2 global key indexes and an inbetween value
     const Group& group = this->GetGroupAt(groupIndex);
+    int startKey = group.GetStartKey();
+    double frameTime = startKey * group.GetKeyTime();
     int keyIndex[2];
+    int startKeyIndex[2];
+    float startInbetween;
     float inbetween;
+    ///calculation for start values of the curves (time 0)
+    group.TimeToIndex(0.0f, startKeyIndex[0], startKeyIndex[1], startInbetween);
     group.TimeToIndex(time, keyIndex[0], keyIndex[1], inbetween);
-    n_assert((inbetween >= 0.0f) && (inbetween < 1.0f));
 
     int i;
     static quaternion q0;
     static quaternion q1;
     static quaternion q;
+    int animCount = 0;
     for (i = 0; i < numCurves; i++)
     {
-        const Curve& curve = group.GetCurveAt(i + firstCurveIndex);
-        if (curve.GetFirstKeyIndex() == -1)
-        {
-            // a collapsed curve
-            dstKeyArray[i] = curve.GetConstValue();
-        }
-        else
-        {
-            switch (curve.GetIpolType())
-            {
-                case Curve::Step:
-                    {
-                        int index0 = curve.GetFirstKeyIndex() + keyIndex[0];
-                        dstKeyArray[i] = this->keyArray[index0];
-                    }
-                    break;
+       Curve& curve = group.GetCurveAt(i + firstCurveIndex);
 
-                case Curve::Quat:
-                    {
-                        int curveFirstKeyIndex = curve.GetFirstKeyIndex();
-                        int index0 = curveFirstKeyIndex + keyIndex[0];
-                        int index1 = curveFirstKeyIndex + keyIndex[1];
-                        q0.set(this->keyArray[index0].x, this->keyArray[index0].y, this->keyArray[index0].z, this->keyArray[index0].w);
-                        q1.set(this->keyArray[index1].x, this->keyArray[index1].y, this->keyArray[index1].z, this->keyArray[index1].w);
-                        q.slerp(q0, q1, inbetween);
-                        dstKeyArray[i].set(q.x, q.y, q.z, q.w);
-                    }
-                    break;
+       if (curve.GetFirstKeyIndex() == -1)
+       {
+           // a collapsed curve
+           dstKeyArray[i] = curve.GetConstValue();
+           curve.SetStartValue(curve.GetConstValue());
+       }
+       else
+       {
+           switch (curve.GetIpolType())
+           {
+               case Curve::Step:
+               {
+                   int index0 = curve.GetFirstKeyIndex() + keyIndex[0];
+                   dstKeyArray[i] = this->keyArray[index0];
 
-                case Curve::Linear:
-                    {
-                        int curveFirstKeyIndex = curve.GetFirstKeyIndex();
-                        int index0 = curveFirstKeyIndex + keyIndex[0];
-                        int index1 = curveFirstKeyIndex + keyIndex[1];
-                        const vector4& v0 = this->keyArray[index0];
-                        const vector4& v1 = this->keyArray[index1];
-                        dstKeyArray[i] = v0 + ((v1 - v0) * inbetween);
-                    }
-                    break;
+                   index0 = curve.GetFirstKeyIndex();
+                   curve.SetStartValue(this->keyArray[index0]);
+               }
+               break;
 
-                default:
-                    n_error("nMemoryAnimation::SampleCurves(): invalid curveIpolType %d!", curve.GetIpolType());
-                    break;
-            }
+               case Curve::Quat:
+               {
+                   int curveFirstKeyIndex = curve.GetFirstKeyIndex();
+                   int index0 = curveFirstKeyIndex + keyIndex[0];
+                   int index1 = curveFirstKeyIndex + keyIndex[1];
+                   q0.set(this->keyArray[index0].x, this->keyArray[index0].y, this->keyArray[index0].z, this->keyArray[index0].w);
+                   q1.set(this->keyArray[index1].x, this->keyArray[index1].y, this->keyArray[index1].z, this->keyArray[index1].w);
+                   q.slerp(q0, q1, inbetween);
+                   dstKeyArray[i].set(q.x, q.y, q.z, q.w);
+
+                   index0 = curveFirstKeyIndex + startKeyIndex[0];
+                   index1 = curveFirstKeyIndex + startKeyIndex[1];
+                   q0.set(this->keyArray[index0].x, this->keyArray[index0].y, this->keyArray[index0].z, this->keyArray[index0].w);
+                   q1.set(this->keyArray[index1].x, this->keyArray[index1].y, this->keyArray[index1].z, this->keyArray[index1].w);
+                   q.slerp(q0, q1, startInbetween);
+                   vector4 val(q.x, q.y, q.z, q.w);
+                   curve.SetStartValue(val);
+               }
+               break;
+
+               case Curve::Linear:
+               {
+                   int curveFirstKeyIndex = curve.GetFirstKeyIndex();
+                   int index0 = curveFirstKeyIndex + keyIndex[0];
+                   int index1 = curveFirstKeyIndex + keyIndex[1];
+                   const vector4& v0 = this->keyArray[index0];
+                   const vector4& v1 = this->keyArray[index1];
+                   dstKeyArray[i] = v0 + ((v1 - v0) * inbetween);
+
+                   index0 = curveFirstKeyIndex + startKeyIndex[0];
+                   index1 = curveFirstKeyIndex + startKeyIndex[1];
+                   vector4& v2 = this->keyArray[index0];
+                   vector4& v3 = this->keyArray[index1];
+                   curve.SetStartValue(v2 + ((v3 - v2) * startInbetween));
+               }
+               break;
+
+               default:
+                   n_error("nMemoryAnimation::SampleCurves(): invalid curveIpolType %d!", curve.GetIpolType());
+                   break;
+           }
         }
     }
 }

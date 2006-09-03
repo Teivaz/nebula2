@@ -27,21 +27,17 @@ void
 nCharacter3Set::Init(nCharacter3Node* characterNode)
 {
     n_assert(characterNode);
+    n_assert(characterNode->AreResourcesValid());
 
     this->selectedSkins.Clear();
     this->skinNames.Clear();
-    this->animationNames.Clear();
 
     this->skinNames = characterNode->GetNamesOfLoadedSkins();
     this->variationNames = characterNode->GetNamesOfLoadedVariations();
     this->numAvailableSkins = this->skinNames.Size();
-    this->animationNames = characterNode->GetNamesOfLoadedAnimations();
-    this->numAvailableAnimations = this->animationNames.Size();
     this->numAvailableVariations = this->variationNames.Size();
 
-    this->selectedAnimation = 0;
     this->selectedVariation = -1;
-
     int i;
     for( i = 0; i < this->numAvailableSkins; i++)
     {

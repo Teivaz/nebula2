@@ -7,21 +7,19 @@
 #include "scene/nshadowskinshapenode.h"
 #include "anim2/nanimation.h"
 #include "anim2/nanimationserver.h"
-#include "anim2/nanimstatearray.h"
 #include "character/ncharacter2.h"
 #include "scene/nrendercontext.h"
 #include "variable/nvariableserver.h"
 #include "kernel/ndirectory.h"
 #include "character/ncharacter3set.h"
+#include "resource/nresourceserver.h"
 
-nNebulaScriptClass(nCharacter3SkinAnimator, "nskinanimator");
+nNebulaClass(nCharacter3SkinAnimator, "nskinanimator");
 
 //------------------------------------------------------------------------------
 /**
 */
-nCharacter3SkinAnimator::nCharacter3SkinAnimator():
-    animations(0),
-    variations(0),
+nCharacter3SkinAnimator::nCharacter3SkinAnimator() :
     currentVariation(-1)
 {
 }
@@ -33,16 +31,6 @@ nCharacter3SkinAnimator::~nCharacter3SkinAnimator()
 {
 }
 
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nCharacter3SkinAnimator::SetCharacterSetIndexHandle(int handle)
-{
-    this->characterSetIndex = handle;
-};
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -53,17 +41,16 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
+
     const nVariable& charVar = renderContext->GetLocalVar(this->characterVarIndex);
     nCharacter2* curCharacter = (nCharacter2*) charVar.GetObj();
     n_assert(curCharacter);
 
-    this->currentVariation = -1;
-    nVariable& varCharacter3Set = renderContext->GetLocalVar(this->characterSetIndex);
-    nCharacter3Set* charSet = (nCharacter3Set*) varCharacter3Set.GetObj();
-    if((charSet) && (charSet->IsValid()))
-    {
-        this->currentVariation = charSet->GetCurrentVariationIndex();
-    };
+    const nVariable& varCharacterSet = renderContext->GetLocalVar(this->characterSetIndex);
+    nCharacter3Set* characterSet = (nCharacter3Set*) varCharacterSet.GetObj();
+    n_assert(characterSet);
+
+    this->currentVariation = characterSet->GetCurrentVariationIndex();
 
     // check if I am already uptodate for this frame
     uint curFrameId = renderContext->GetFrameId();
@@ -73,84 +60,85 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 
         // get the sample time from the render context
         nVariable* var = renderContext->GetVariable(this->channelVarHandle);
-        if (var == 0)
-        {
-            n_error("nSkinAnimator::Animate: TimeChannel Variable '%s' not found in the RenderContext!\n", nVariableServer::Instance()->GetVariableName(this->channelVarHandle));
-        }
-        float curTime = var->GetFloat();
+        n_assert2(0 != var, "nCharacter3SkinAnimator::Animate(): TimeChannel Variable in RenderContext.\n");
+        const float curTime = var->GetFloat();
 
         // get the time offset from the render context
         var = renderContext->GetVariable(this->channelOffsetVarHandle);
-        float curOffset = 0 != var ? var->GetFloat() : 0.0f;
+        const float curOffset = 0 != var ? var->GetFloat() : 0.0f;
 
-        // get the current anim state from the anim state channel
-        // (assume 0 as default state index)
-        var = renderContext->GetVariable(this->animStateVarHandle);
-        int animState = 0;
-        if (var)
+        // get character 2 set from render context and check if animation state needs to be updated
+        if (characterSet->IsDirty())
         {
-            animState = var->GetInt();
-        }
-        int restartAnim = 0;
-        var = renderContext->GetVariable(this->animRestartVarHandle);
-        if (var)
-        {
-            restartAnim = var->GetInt();
-        }
-        if ((animState != curCharacter->GetActiveState()) || (0 != restartAnim))
-        {
-            // activate new state
-            if (curCharacter->IsValidStateIndex(animState))
+            nAnimStateInfo newState;
+            int numClips = characterSet->GetNumClips();
+            int i;
+
+            float weightSum = 0.0f;
+            for (i = 0; i < numClips; i++)
             {
-                curCharacter->SetActiveState(animState, curTime, curOffset);
+                weightSum += characterSet->GetClipWeightAt(i);
             }
-            else
+
+            // add clips
+            if (weightSum > 0.0f)
             {
-                // n_printf("Warning: Invalid state index %d. State switch ignored. \n", animState);
+                newState.SetStateStarted(curTime);
+                newState.SetFadeInTime(characterSet->GetFadeInTime());
+                newState.BeginClips(numClips);
+                for (i = 0; i < numClips; i++)
+                {
+                    int index = this->GetClipIndexByName(characterSet->GetClipNameAt(i));
+                    if (-1 == index)
+                    {
+                        nRoot* parent = this->GetParent();
+                        n_assert(parent);
+                        n_error("nCharacter3SkinAnimator::Animate(): Requested clip \"%s\" does not exist on resource \"%s\".\n", characterSet->GetClipNameAt(i).Get(), parent->GetName());
+                    }
+                    newState.SetClip(i, this->GetClipAt(index), characterSet->GetClipWeightAt(i) / weightSum);
+                }
+                newState.EndClips();
             }
+
+            curCharacter->SetActiveState(newState);
+            characterSet->SetDirty(false);
         }
 
         // evaluate the current state of the character skeleton
-        curCharacter->EvaluateSkeleton(curTime, renderContext);
+        curCharacter->EvaluateSkeleton(curTime);
 
         // now apply the variation on the skeleton
-        if(this->currentVariation != -1)
+        nCharSkeleton& skeleton = curCharacter->GetSkeleton();
+        if (this->currentVariation != -1)
         {
-            // just multiplying the scaling here
-
-            // make a copy of the skeleton
-            nCharSkeleton &skeleton = curCharacter->GetVariationSkeleton();
-            skeleton = curCharacter->GetSkeleton();
-
-            nArray<nCharJoint> *jointList = &this->variationJoints[this->currentVariation];
-            int i;
-            for(i = 0; i < jointList->Size(); i++)
+            const nArray<nCharJoint>& varJoints = this->variationJoints[this->currentVariation];
+            n_assert(varJoints.Size() == skeleton.GetNumJoints());
+            int jointIndex;
+            for (jointIndex = 0; jointIndex < varJoints.Size(); jointIndex++)
             {
-                nCharJoint &joint = skeleton.GetJointAt(i);
-                vector3 scale = joint.GetScale();
-                vector3 scale2 = jointList->At(i).GetScale();
-                scale.x *= scale2.x;
-                scale.y *= scale2.y;
-                scale.z *= scale2.z;
-                joint.SetScale(scale);
-            };
+                const vector3& varScale = varJoints[jointIndex].GetScale();
+                skeleton.GetJointAt(jointIndex).SetVariationScale(varScale);
+            }
             skeleton.Evaluate();
-        };
-
+        }
+        else
+        {
+            // no variation applied, reset variation scale to one
+            int jointIndex;
+            static const vector3 noScale(1.0f, 1.0f, 1.0f);
+            for (jointIndex = 0; jointIndex < skeleton.GetNumJoints(); jointIndex++)
+            {
+                skeleton.GetJointAt(jointIndex).SetVariationScale(noScale);
+            }
+            skeleton.Evaluate();
+        }
     }
 
     // update the source node with the new char skeleton state
     if (sceneNode->IsA(this->skinShapeNodeClass))
     {
         nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;
-        if((!skinShapeNode->GetChar3VariationFlag()) && (this->currentVariation != -1) )
-        {
-            skinShapeNode->SetCharSkeleton(&curCharacter->GetVariationSkeleton());
-        }
-        else
-        {
-            skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
-        };
+        skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
     }
     else if (sceneNode->IsA(this->shadowSkinShapeNodeClass))
     {
@@ -167,91 +155,97 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
 /**
 */
 nArray<nCharJoint>
-nCharacter3SkinAnimator::EvaluteVariation(nRef<nMemoryAnimation> variation)
+nCharacter3SkinAnimator::EvaluateVariation(nMemoryAnimation* variation)
 {
     nArray<nCharJoint> result;
 
-    // create a temporary context, this is needed to evaluate the skeleton
-    nVariableContext    context;
-
-    nVariable           var(this->GetStateAt(0).GetClipAt(0).GetWeightChannelHandle(),1.0f);
-    context.AddVariable(var);
+    nAnimStateInfo stateInfo;
+    stateInfo.BeginClips(1);
+    stateInfo.SetClip(0, this->clips[0], 1.0f);
+    stateInfo.EndClips();
 
     this->character.SetAnimation(variation);
-    this->character.SetActiveState(0,0,0);
+    this->character.SetActiveState(stateInfo);
     // evaluate the skeleton at time 30s, now the transformation should be complete
-    this->character.EvaluateSkeleton(30.0f,&context);
+    this->character.EvaluateSkeleton(30.0f);
 
     int i;
     int numJoints = this->character.GetSkeleton().GetNumJoints();
-    for(i = 0; i < numJoints; i++)
+    for (i = 0; i < numJoints; i++)
     {
         nCharJoint &joint = this->character.GetSkeleton().GetJointAt(i);
         result.Append(joint);
-    };
+    }
     return result;
-};
+}
 
 
 //------------------------------------------------------------------------------
 /**
+    -20-Apr-06  floh    cleaned up a bit
 */
 bool
 nCharacter3SkinAnimator::LoadResources()
 {
     bool result = true;
 
-    if(!this->AreResourcesValid())
+    if (!this->AreResourcesValid())
     {
-        result &= nSkinAnimator::LoadResources();
-        if(result)
+        // NOTE: don't call nSkinAnimator::LoadResources cause anim file is only dummy
+        result &= nSceneNode::LoadResources();
+        if (result)
         {
-            nRoot *parent = this->GetParent();
+            nRoot* parent = this->GetParent();
             n_assert(parent);
             nString name = parent->GetName();
             this->animationNames = this->LoadAnimationsFromFolder(nString("anims:characters/")+name+"/animations",this->animationAnims);
             this->variationNames = this->LoadAnimationsFromFolder(nString("anims:characters/")+name+"/variations",this->variationAnims);
 
-            // evaluate variations
-            int i;
-            for(i = 0; i < this->variationAnims.Size(); i++)
-            {
-                this->variationJoints.Append(this->EvaluteVariation(this->variationAnims[i]));
-            };
-
-            // reset the character
-            this->character.ResetCurrentState();
-
-            // combine animations
-            this->animations = (nCombinedAnimation*) nKernelServer::Instance()->New("ncombinedanimation","character3animations");
-            n_assert(this->animations);
+            // create a combined animation object, throw away original animations
+            // so they don't use up memory
+            nString rsrcName = name + nString("_c3anim");
+            this->animations = (nCombinedAnimation*) nResourceServer::Instance()->NewResource("ncombinedanimation", rsrcName, nResource::Animation);
             this->animations->BeginAnims();
             int numAnimations = this->animationAnims.Size();
-            for( i = 0; i < numAnimations; i++)
+            int i;
+            for (i = 0; i < numAnimations; i++)
             {
                 this->animations->AddAnim(this->animationAnims[i]);
-            };
-
+            }
             this->animations->EndAnims();
-
-            this->character.SetAnimation(this->animations);
-
-            // create the states
-            this->BeginStates(numAnimations);
-            for( i = 0; i < numAnimations; i++)
+            for (i = 0; i < numAnimations; i++)
             {
-                this->SetState(i,i, 0.3f);
-                this->SetStateName(i, this->animationNames[i]);
-                this->BeginClips(i, 1);
-                this->SetClip(i, 0, "one");
-                this->EndClips(i);
-            };
-            this->EndStates();
-        };
-    };
+                this->animationAnims[i]->Release();
+                n_assert(!this->animationAnims[i].isvalid());
+            }
+
+            this->UnloadAnim();
+            this->refAnim = this->animations;
+
+            // create the clips
+            this->BeginClips(numAnimations);
+            for (i = 0; i < numAnimations; i++)
+            {
+                this->SetClip(i, i, this->animationNames[i]);
+            }
+            this->EndClips();
+
+            // evaluate variations, throw away original variation animation, so they don't
+            // use up memory
+            for (i = 0; i < this->variationAnims.Size(); i++)
+            {
+                this->variationJoints.Append(this->EvaluateVariation(this->variationAnims[i]));
+                this->variationAnims[i]->Release();
+                n_assert(!this->variationAnims[i].isvalid());
+            }
+
+            /// at last set the current animation object on my character
+            this->character.SetAnimation(this->animations);
+        }
+    }
 
     return result;
-};
+}
 
 
 //------------------------------------------------------------------------------
@@ -260,18 +254,26 @@ nCharacter3SkinAnimator::LoadResources()
 void
 nCharacter3SkinAnimator::UnloadResources()
 {
-    if(this->AreResourcesValid())
+    if (this->AreResourcesValid())
     {
         nSkinAnimator::UnloadResources();
+
+        // NOTE Floh: this should already have happened
+        // in LoadResources when variations have been
+        // evaluated
         int i;
-        for(i = 0; i < this->variationAnims.Size(); i++)
+        for (i = 0; i < this->variationAnims.Size(); i++)
         {
             if (this->variationAnims[i].isvalid())
             {
                 this->variationAnims[i]->Release();
                 this->variationAnims[i].invalidate();
             }
-        };
+        }
+
+        // NOTE Floh: this should already have happened
+        // in LoadResources when the source anims have been
+        // combined
         for(i = 0; i < this->animationAnims.Size(); i++)
         {
             if (this->animationAnims[i].isvalid())
@@ -279,78 +281,66 @@ nCharacter3SkinAnimator::UnloadResources()
                 this->animationAnims[i]->Release();
                 this->animationAnims[i].invalidate();
             }
-        };
-        if(this->animations)
+        }
+
+        if (this->animations.isvalid())
         {
             this->animations->Release();
-        };
-        if(this->variations)
-        {
-            this->variations->Release();
-        };
-    };
-};
+        }
+    }
+}
 
 //------------------------------------------------------------------------------
 /**
+    - 20-Apr-06 floh    cleaned up
 */
 nArray<nString>
-nCharacter3SkinAnimator::LoadAnimationsFromFolder(nString path,nArray<nRef<nMemoryAnimation> > &animArray)
+nCharacter3SkinAnimator::LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation>>& outAnimArray)
 {
     nArray<nString> result;
-    nDirectory* dir = nFileServer2::Instance()->NewDirectoryObject();
-    if (dir->Open(path.Get()))
+    nArray<nString> files = nFileServer2::Instance()->ListFiles(path);
+    int i;
+    for (i = 0; i < files.Size(); i++)
     {
-        if (dir->SetToFirstEntry()) do
+        if (files[i].CheckExtension("nax2") || files[i].CheckExtension("nanim2"))
         {
-            if (dir->GetEntryType() == nDirectory::FILE)
+            n_printf("Loading animation %s...\n", files[i].Get());
+
+            // load a memory animation
+            nString entryName = files[i].ExtractFileName();
+            entryName.StripExtension();
+            result.Append(entryName);
+            nMemoryAnimation* anim = (nMemoryAnimation*) this->refAnimServer->NewMemoryAnimation(0);
+            anim->SetFilename(files[i]);
+            if (!anim->Load())
             {
-                nString curPath = dir->GetEntryName();
-                if(curPath.CheckExtension("nax2") || curPath.CheckExtension("nanim2"))
-                {
-                    n_printf("Loading animation %s ... ",curPath.Get());
-                    // load new object
-
-                    nString entryName = curPath.ExtractFileName();
-                    entryName.StripExtension();
-                    result.Append(entryName);
-
-                    nMemoryAnimation* anim = (nMemoryAnimation*) this->refAnimServer->NewMemoryAnimation(entryName);
-                    n_assert(anim);
-
-                    anim->SetFilename(curPath);
-                    if (!anim->Load())
-                    {
-                        n_printf("nCharacter3SkinAnimator: Error loading anim file '%s'\n", curPath.Get());
-                        anim->Release();
-                        n_assert(false);// just break
-                        return result;
-                    }
-                    animArray.Append(anim);
-                    n_printf("Done!\n");
-                };
-            };
-        } while (dir->SetToNextEntry());
-        dir->Close();
-    };
-    delete dir;
+                n_error("nCharacter3SkinAnimator: Error loading anim file '%s'\n", files[i].Get());
+                return result;
+            }
+            outAnimArray.Append(anim);
+        }
+    }
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-nArray<nString>
-nCharacter3SkinAnimator::GetNamesOfLoadedAnimations()
+nCharacter2Set*
+nCharacter3SkinAnimator::CreateCharacterSet()
 {
-    return this->animationNames;
-};
+    return n_new (nCharacter3Set);
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-nArray<nString>
-nCharacter3SkinAnimator::GetNamesOfLoadedVariations()
+void
+nCharacter3SkinAnimator::DeleteCharacterSet(nRenderContext* renderContext)
 {
-    return this->variationNames;
-};
+    n_assert(0 != renderContext);
+    nVariable var = renderContext->GetLocalVar(this->characterSetIndex);
+    nCharacter3Set* characterSet = (nCharacter3Set*) var.GetObj();
+    n_assert(characterSet);
+    characterSet->Release();
+}

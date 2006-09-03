@@ -36,7 +36,7 @@ protected:
     virtual bool LoadResource();
     /// unload the resource (clears the valid flag)
     virtual void UnloadResource();
-    /// load curve group from ascii nanim2 file
+    /// load curve group from ASCII nanim2 file
     bool LoadNanim2(const char* filename);
     /// load curve group from binary nax2 file
     bool LoadNax2(const char* filename);
