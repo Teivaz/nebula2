@@ -199,7 +199,7 @@ nCharJoint::SetPose(const vector3& t, const quaternion& q, const vector3& s)
     this->localScaledMatrix = poseMatrix;
     this->worldScaledMatrix = poseMatrix;
 
-    // globale pose matrix and compute global inverse pose matrix
+    // global pose matrix and compute global inverse pose matrix
     if (this->parentJoint)
     {
         this->poseMatrix.mult_simple(this->parentJoint->poseMatrix);
@@ -408,7 +408,7 @@ nCharJoint::Evaluate()
 
                 // we calculate 2 world matrices
                 // the unscaled one has uniform axis, which our children need to calculate their matrices
-                // the scaled one is the one used to calculate the skinmatrix (the applied scaling is the local,
+                // the scaled one is the one used to calculate the skin matrix (the applied scaling is the local,
                 // parent scaling which influences the translation of the joint has been handled above)
                 this->worldUnscaledMatrix.mult_simple(this->parentJoint->worldUnscaledMatrix);
                 this->worldScaledMatrix.mult_simple(this->parentJoint->worldUnscaledMatrix);

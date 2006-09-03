@@ -10,7 +10,7 @@
 #include "scene/nskinanimator.h"
 #include "gui/nguitextlabel.h"
 #include "gui/nguitextview.h"
-#include "anim2/nanimstate.h"
+#include "anim2/nanimstateinfo.h"
 #include "variable/nvariable.h"
 #include "variable/nvariableserver.h"
 

@@ -124,6 +124,7 @@ nCombinedAnimation::EndAnims()
                 };
                 dstCurve.SetFirstKeyIndex( srcFirstKey );
                 dstCurve.SetConstValue( srcCurve.GetConstValue() );
+                dstCurve.SetIsAnimated( srcCurve.IsAnimated() );
             };
 
             currentGroup++;
@@ -136,7 +137,6 @@ nCombinedAnimation::EndAnims()
         };
     };
 
-/*
     // lets print some stats
     int numg = this->GetNumGroups();
     n_printf("Combined Animation Stats : %i Groups\n",numg);
@@ -146,6 +146,5 @@ nCombinedAnimation::EndAnims()
         n_printf("Group %i : Duration = %i, NumKeys = %i, StartKey = %i",i,group.GetDuration(),group.GetNumKeys(),group.GetStartKey());
         n_printf("\n");
     };
-*/
 };
 

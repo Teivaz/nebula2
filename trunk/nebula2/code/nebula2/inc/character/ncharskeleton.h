@@ -43,7 +43,7 @@ public:
     void Evaluate();
 
 private:
-    /// update the parent joint pointers from their indices
+    /// update the parent joint pointers from their indexes
     void UpdateParentJointPointers();
 
     nFixedArray<nCharJoint> jointArray;

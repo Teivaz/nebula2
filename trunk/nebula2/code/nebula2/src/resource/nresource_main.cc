@@ -124,7 +124,7 @@ nResource::Load()
 //------------------------------------------------------------------------------
 /**
     Loads the resource from within an open file.
-    This method should be overriden by subclasses.
+    This method should be overridden by subclasses.
 
     @return     true if resource data successfully loaded
 */

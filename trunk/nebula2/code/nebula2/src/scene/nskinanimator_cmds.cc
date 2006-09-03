@@ -12,15 +12,6 @@ static void n_setjoint(void* slf, nCmd* cmd);
 static void n_endjoints(void* slf, nCmd* cmd);
 static void n_getnumjoints(void* slf, nCmd* cmd);
 static void n_getjoint(void* slf, nCmd* cmd);
-static void n_setstatechannel(void* slf, nCmd* cmd);
-static void n_getstatechannel(void* slf, nCmd* cmd);
-static void n_beginstates(void* slf, nCmd* cmd);
-static void n_setstate(void* slf, nCmd* cmd);
-static void n_setstatename(void* slf, nCmd* cmd);
-static void n_endstates(void* slf, nCmd* cmd);
-static void n_getnumstates(void* slf, nCmd* cmd);
-static void n_getstateat(void* slf, nCmd* cmd);
-static void n_getstatenameat(void* slf, nCmd* cmd);
 static void n_beginclips(void* slf, nCmd* cmd);
 static void n_setclip(void* slf, nCmd* cmd);
 static void n_endclips(void* slf, nCmd* cmd);
@@ -59,25 +50,16 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_endjoints_v",                     'EJNT', n_endjoints);
     cl->AddCmd("i_getnumjoints_v",                  'GNJT', n_getnumjoints);
     cl->AddCmd("iffffffffffs_getjoint_i",           'GJNT', n_getjoint);
-    cl->AddCmd("v_setstatechannel_s",               'SSCN', n_setstatechannel);
-    cl->AddCmd("s_getstatechannel_v",               'GSCN', n_getstatechannel);
-    cl->AddCmd("v_beginstates_i",                   'BGST', n_beginstates);
-    cl->AddCmd("v_setstate_iif",                    'SSTT', n_setstate);
-    cl->AddCmd("v_setstatename_is",                 'SSNM', n_setstatename);
-    cl->AddCmd("v_endstates_v",                     'ENDS', n_endstates);
-    cl->AddCmd("i_getnumstates_v",                  'GNST', n_getnumstates);
-    cl->AddCmd("if_getstateat_i",                   'GSAT', n_getstateat);
-    cl->AddCmd("s_getstatenameat_i",                'GSNA', n_getstatenameat);
-    cl->AddCmd("v_beginclips_ii",                   'BGCL', n_beginclips);
+    cl->AddCmd("v_beginclips_i",                    'BGCL', n_beginclips);
     cl->AddCmd("v_setclip_iis",                     'STCL', n_setclip);
-    cl->AddCmd("v_endclips_i",                      'EDCL', n_endclips);
-    cl->AddCmd("i_getnumclips_i",                   'GNCL', n_getnumclips);
-    cl->AddCmd("s_getclipat_ii",                    'GCLA', n_getclipat);
-    cl->AddCmd("v_beginanimeventtracks_iii",        'BATS', n_beginanimeventtracks);
-    cl->AddCmd("v_beginanimeventtrack_iiisi",       'BATK', n_beginanimeventtrack);
-    cl->AddCmd("v_setanimeevent_iiiifffffffffff",   'SAET', n_setanimevent);
-    cl->AddCmd("v_endanimeventtrack_iii",           'EATK', n_endanimeventtrack);
-    cl->AddCmd("v_endanimeventtracks_ii",           'EATS', n_endanimeventtracks);
+    cl->AddCmd("v_endclips_v",                      'EDCL', n_endclips);
+    cl->AddCmd("i_getnumclips_v",                   'GNCL', n_getnumclips);
+    cl->AddCmd("s_getclipat_i",                     'GCLA', n_getclipat);
+    cl->AddCmd("v_beginanimeventtracks_ii",         'BATS', n_beginanimeventtracks);
+    cl->AddCmd("v_beginanimeventtrack_iisi",        'BATK', n_beginanimeventtrack);
+    cl->AddCmd("v_setanimeevent_iiifffffffffff",    'SAET', n_setanimevent);
+    cl->AddCmd("v_endanimeventtrack_ii",            'EATK', n_endanimeventtrack);
+    cl->AddCmd("v_endanimeventtracks_i",            'EATS', n_endanimeventtracks);
     cl->AddCmd("v_setanimenabled_b",                'SANE', n_setanimenabled);
     cl->AddCmd("b_isanimenabled_v",                 'IAEN', n_isanimenabled);
     cl->EndCmds();
@@ -263,182 +245,9 @@ n_getjoint(void* slf, nCmd* cmd)
 //------------------------------------------------------------------------------
 /**
     @cmd
-    setstatechannel
-    @input
-    s(StateChannelName)
-    @output
-    v
-    @info
-    Set the name of the channel which controls the current animation state.
-*/
-static void
-n_setstatechannel(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    self->SetStateChannel(cmd->In()->GetS());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getstatechannel
-    @input
-    v
-    @output
-    s(StateChannelName)
-    @info
-    Get the name of the channel which controls the current animation state.
-*/
-static void
-n_getstatechannel(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    cmd->Out()->SetS(self->GetStateChannel());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    beginstates
-    @input
-    i(NumStates)
-    @output
-    v
-    @info
-    Begin setting animation states.
-*/
-static void
-n_beginstates(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    self->BeginStates(cmd->In()->GetI());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setstate
-    @input
-    i(StateIndex), i(AnimGroupIndex), f(FadeInTime)
-    @output
-    v
-    @info
-    Define an animation state.
-*/
-static void
-n_setstate(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    int i0, i1;
-    float f0;
-    i0 = cmd->In()->GetI();
-    i1 = cmd->In()->GetI();
-    f0 = cmd->In()->GetF();
-    self->SetState(i0, i1, f0);
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    setstatename
-    @input
-    i(StateIndex), s(StateName)
-    @output
-    v
-    @info
-    Sets an optional state name.
-*/
-static void
-n_setstatename(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    int i = cmd->In()->GetI();
-    nString s = cmd->In()->GetS();
-    self->SetStateName(i, s);
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    endstates
-    @input
-    v
-    @output
-    v
-    @info
-    Finish defining animation states.
-*/
-static void
-n_endstates(void* slf, nCmd* /*cmd*/)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    self->EndStates();
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getnumstates
-    @input
-    v
-    @output
-    i(NumStates)
-    @info
-    Returns number of animation states.
-*/
-static void
-n_getnumstates(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    cmd->Out()->SetI(self->GetNumStates());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getstateat
-    @input
-    i(StateIndex)
-    @output
-    i(AnimGroupIndex)
-    f(FadeInTime)
-    @info
-    Get state definition at index.
-*/
-static void
-n_getstateat(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    const nAnimState& state = self->GetStateAt(cmd->In()->GetI());
-    cmd->Out()->SetI(state.GetAnimGroupIndex());
-    cmd->Out()->SetF(state.GetFadeInTime());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
-    getstatenameat
-    @input
-    i(StateIndex)
-    @output
-    s(StateName)
-    @info
-    Get state name at index.
-*/
-static void
-n_getstatenameat(void* slf, nCmd* cmd)
-{
-    nSkinAnimator* self = (nSkinAnimator*) slf;
-    const nAnimState& state = self->GetStateAt(cmd->In()->GetI());
-    cmd->Out()->SetS(state.GetName().Get());
-}
-
-//------------------------------------------------------------------------------
-/**
-    @cmd
     beginclips
     @input
-    i(StateIndex), i(NumClips)
+    i(NumClips)
     @output
     v
     @info
@@ -448,10 +257,8 @@ static void
 n_beginclips(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int i0, i1;
-    i0 = cmd->In()->GetI();
-    i1 = cmd->In()->GetI();
-    self->BeginClips(i0, i1);
+    int i0 = cmd->In()->GetI();
+    self->BeginClips(i0);
 }
 
 //------------------------------------------------------------------------------
@@ -459,7 +266,7 @@ n_beginclips(void* slf, nCmd* cmd)
     @cmd
     setclip
     @input
-    i(StateIndex), i(ClipIndex), s(WeightChannelName)
+    i(ClipIndex), i(AnimGroupIndex), s(ClipName)
     @output
     v
     @info
@@ -471,6 +278,7 @@ n_setclip(void* slf, nCmd* cmd)
     nSkinAnimator* self = (nSkinAnimator*) slf;
     int i0, i1;
     const char* s0;
+    nString s1;
     i0 = cmd->In()->GetI();
     i1 = cmd->In()->GetI();
     s0 = cmd->In()->GetS();
@@ -482,7 +290,7 @@ n_setclip(void* slf, nCmd* cmd)
     @cmd
     endclips
     @input
-    i(StateIndex)
+    v
     @output
     v
     @info
@@ -492,7 +300,7 @@ static void
 n_endclips(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    self->EndClips(cmd->In()->GetI());
+    self->EndClips();
 }
 
 //------------------------------------------------------------------------------
@@ -500,7 +308,7 @@ n_endclips(void* slf, nCmd* cmd)
     @cmd
     getnumclips
     @input
-    i(StateIndex)
+    v
     @output
     i(NumClips)
     @info
@@ -510,7 +318,7 @@ static void
 n_getnumclips(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    cmd->Out()->SetI(self->GetNumClips(cmd->In()->GetI()));
+    cmd->Out()->SetI(self->GetNumClips());
 }
 
 //------------------------------------------------------------------------------
@@ -518,7 +326,7 @@ n_getnumclips(void* slf, nCmd* cmd)
     @cmd
     getclipat
     @input
-    i(StateIndex), i(ClipIndex)
+    i(ClipIndex)
     @output
     s(ClipWeightChannelName)
     @info
@@ -528,11 +336,9 @@ static void
 n_getclipat(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int stateIndex = cmd->In()->GetI();
     int clipIndex = cmd->In()->GetI();
-    const char* weightChannelName;
-    self->GetClipAt(stateIndex, clipIndex, weightChannelName);
-    cmd->Out()->SetS(weightChannelName);
+    const char* name = self->GetClipAt(clipIndex).GetClipName().Get();
+    cmd->Out()->SetS(name);
 }
 
 //------------------------------------------------------------------------------
@@ -540,7 +346,7 @@ n_getclipat(void* slf, nCmd* cmd)
     @cmd
     beginanimeventtracks
     @input
-    i(StateIndex),i(ClipIndex),i(numTracks)
+    i(ClipIndex),i(numTracks)
     @output
     v
     @info
@@ -550,10 +356,9 @@ static void
 n_beginanimeventtracks(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int stateIndex = cmd->In()->GetI();
     int clipIndex  = cmd->In()->GetI();
     int numTracks  = cmd->In()->GetI();
-    self->BeginAnimEventTracks(stateIndex, clipIndex, numTracks);
+    self->BeginAnimEventTracks(clipIndex, numTracks);
 }
 
 //------------------------------------------------------------------------------
@@ -561,7 +366,7 @@ n_beginanimeventtracks(void* slf, nCmd* cmd)
     @cmd
     beginanimeventtrack
     @input
-    i(StateIndex),i(ClipIndex),i(TrackIndex),s(Name),i(numEvents)
+    i(ClipIndex),i(TrackIndex),s(Name),i(numEvents)
     @output
     v
     @info
@@ -571,12 +376,11 @@ static void
 n_beginanimeventtrack(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int stateIndex = cmd->In()->GetI();
     int clipIndex  = cmd->In()->GetI();
     int trackIndex = cmd->In()->GetI();
     const char* name = cmd->In()->GetS();
     int numEvents = cmd->In()->GetI();
-    self->BeginAnimEventTrack(stateIndex, clipIndex, trackIndex, name, numEvents);
+    self->BeginAnimEventTrack(clipIndex, trackIndex, name, numEvents);
 }
 
 //------------------------------------------------------------------------------
@@ -584,7 +388,7 @@ n_beginanimeventtrack(void* slf, nCmd* cmd)
     @cmd
     setanimevent
     @input
-    i(StateIndex),i(ClipIndex),i(TrackIndex),i(EventIndex),f(Time),fff(Translate),ffff(Rotate),fff(Scale)
+    i(ClipIndex),i(TrackIndex),i(EventIndex),f(Time),fff(Translate),ffff(Rotate),fff(Scale)
     @output
     v
     @info
@@ -594,7 +398,6 @@ static void
 n_setanimevent(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int stateIndex = cmd->In()->GetI();
     int clipIndex  = cmd->In()->GetI();
     int trackIndex = cmd->In()->GetI();
     int eventIndex = cmd->In()->GetI();
@@ -611,7 +414,7 @@ n_setanimevent(void* slf, nCmd* cmd)
     s.x = cmd->In()->GetF();
     s.y = cmd->In()->GetF();
     s.z = cmd->In()->GetF();
-    self->SetAnimEvent(stateIndex, clipIndex, trackIndex, eventIndex, time, t, q, s);
+    self->SetAnimEvent(clipIndex, trackIndex, eventIndex, time, t, q, s);
 }
 
 //------------------------------------------------------------------------------
@@ -619,7 +422,7 @@ n_setanimevent(void* slf, nCmd* cmd)
     @cmd
     endanimeventtrack
     @input
-    i(StateIndex),i(ClipIndex),i(TrackIndex)
+    i(ClipIndex),i(TrackIndex)
     @output
     v
     @info
@@ -629,10 +432,9 @@ static void
 n_endanimeventtrack(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int stateIndex = cmd->In()->GetI();
     int clipIndex  = cmd->In()->GetI();
     int trackIndex = cmd->In()->GetI();
-    self->EndAnimEventTrack(stateIndex, clipIndex, trackIndex);
+    self->EndAnimEventTrack(clipIndex, trackIndex);
 }
 
 //------------------------------------------------------------------------------
@@ -640,7 +442,7 @@ n_endanimeventtrack(void* slf, nCmd* cmd)
     @cmd
     endanimeventtracks
     @input
-    i(StateIndex),i(ClipIndex)
+    i(ClipIndex)
     @output
     v
     @info
@@ -650,9 +452,8 @@ static void
 n_endanimeventtracks(void* slf, nCmd* cmd)
 {
     nSkinAnimator* self = (nSkinAnimator*) slf;
-    int stateIndex = cmd->In()->GetI();
     int clipIndex  = cmd->In()->GetI();
-    self->EndAnimEventTracks(stateIndex, clipIndex);
+    self->EndAnimEventTracks(clipIndex);
 }
 
 //------------------------------------------------------------------------------
@@ -748,150 +549,98 @@ nSkinAnimator::SaveCmds(nPersistServer* ps)
         cmd = ps->GetCmd(this, 'EJNT');
         ps->PutCmd(cmd);
 
-        //--- setstatechannel ---
-        cmd = ps->GetCmd(this, 'SSCN');
-        cmd->In()->SetS(this->GetStateChannel());
-        ps->PutCmd(cmd);
-
-        int numStates = this->GetNumStates();
-        if (numStates > 0)
+        int numClips = this->GetNumClips();
+        if (numClips > 0)
         {
-            //--- beginstates ---
-            cmd = ps->GetCmd(this, 'BGST');
-            cmd->In()->SetI(numStates);
+            //--- beginclips ---
+            cmd = ps->GetCmd(this, 'BGCL');
+            cmd->In()->SetI(numClips);
             ps->PutCmd(cmd);
 
-            int stateIndex;
-            for (stateIndex = 0; stateIndex < numStates; stateIndex++)
+            //--- setclip ---
+            int clipIndex;
+            for (clipIndex = 0; clipIndex < numClips; clipIndex++)
             {
-                const nAnimState& state = this->GetStateAt(stateIndex);
+                const nAnimClip& clip = this->GetClipAt(clipIndex);
+                nString clipName = clip.GetClipName();
+                this->GetClipAt(clipIndex);
 
-                //--- setstate ---
-                cmd = ps->GetCmd(this, 'SSTT');
-                cmd->In()->SetI(stateIndex);
-                cmd->In()->SetI(state.GetAnimGroupIndex());
-                cmd->In()->SetF(state.GetFadeInTime());
+                cmd = ps->GetCmd(this, 'STCL');
+                cmd->In()->SetI(clipIndex);
+                cmd->In()->SetI(clip.GetAnimGroupIndex());
+                cmd->In()->SetS(clipName.Get());
                 ps->PutCmd(cmd);
-
-                //--- setstatename ---
-                if (!state.GetName().IsEmpty())
-                {
-                    cmd = ps->GetCmd(this, 'SSNM');
-                    cmd->In()->SetI(stateIndex);
-                    cmd->In()->SetS(state.GetName().Get());
-                    ps->PutCmd(cmd);
-                }
-
-                int numClips = this->GetNumClips(stateIndex);
-                if (numClips > 0)
-                {
-                    //--- beginclips ---
-                    cmd = ps->GetCmd(this, 'BGCL');
-                    cmd->In()->SetI(stateIndex);
-                    cmd->In()->SetI(numClips);
-                    ps->PutCmd(cmd);
-
-                    //--- setclip ---
-                    int clipIndex;
-                    for (clipIndex = 0; clipIndex < numClips; clipIndex++)
-                    {
-                        const char* weightChannelName;
-                        this->GetClipAt(stateIndex, clipIndex, weightChannelName);
-
-                        cmd = ps->GetCmd(this, 'STCL');
-                        cmd->In()->SetI(stateIndex);
-                        cmd->In()->SetI(clipIndex);
-                        cmd->In()->SetS(weightChannelName);
-                        ps->PutCmd(cmd);
-                    }
-
-                    //--- endclips ---
-                    cmd = ps->GetCmd(this, 'EDCL');
-                    cmd->In()->SetI(stateIndex);
-                    ps->PutCmd(cmd);
-                }
             }
 
-            //--- endstates
-            cmd = ps->GetCmd(this, 'ENDS');
+            //--- endclips ---
+            cmd = ps->GetCmd(this, 'EDCL');
             ps->PutCmd(cmd);
+        }
 
-            // anim event tracks
-            for (stateIndex = 0; stateIndex < numStates; stateIndex++)
+        int clipIndex;
+        for (clipIndex = 0; clipIndex < numClips; clipIndex++)
+        {
+            const nAnimClip& animClip = this->GetClipAt(clipIndex);
+            int numAnimEventTracks = animClip.GetNumAnimEventTracks();
+            if (numAnimEventTracks > 0)
             {
-                const nAnimState& animState = this->animStateArray.GetStateAt(stateIndex);
-                int numClips = this->GetNumClips(stateIndex);
-                int clipIndex;
-                for (clipIndex = 0; clipIndex < numClips; clipIndex++)
+                //--- beginanimeventtracks ---
+                cmd = ps->GetCmd(this, 'BATS');
+                cmd->In()->SetI(clipIndex);
+                cmd->In()->SetI(numAnimEventTracks);
+                ps->PutCmd(cmd);
+
+                int animEventTrackIndex;
+                for (animEventTrackIndex = 0; animEventTrackIndex < numAnimEventTracks; animEventTrackIndex++)
                 {
-                    nAnimClip& animClip = animState.GetClipAt(clipIndex);
-                    int numAnimEventTracks = animClip.GetNumAnimEventTracks();
-                    if (numAnimEventTracks > 0)
+                    const nAnimEventTrack& animEventTrack = animClip.GetAnimEventTrackAt(animEventTrackIndex);
+                    int numEvents = animEventTrack.GetNumEvents();
+
+                    //--- beginanimeventtrack ---
+                    cmd = ps->GetCmd(this, 'BATK');
+                    cmd->In()->SetI(clipIndex);
+                    cmd->In()->SetI(animEventTrackIndex);
+                    cmd->In()->SetS(animEventTrack.GetName().Get());
+                    cmd->In()->SetI(numEvents);
+                    ps->PutCmd(cmd);
+
+                    int eventIndex;
+                    for (eventIndex = 0; eventIndex < numEvents; eventIndex++)
                     {
-                        //--- beginanimeventtracks ---
-                        cmd = ps->GetCmd(this, 'BATS');
-                        cmd->In()->SetI(stateIndex);
+                        //--- setanimevent ---
+                        const nAnimEvent& animEvent = animEventTrack.GetEvent(eventIndex);
+                        const vector3& t = animEvent.GetTranslation();
+                        const quaternion& q = animEvent.GetQuaternion();
+                        const vector3& s = animEvent.GetScale();
+                        cmd = ps->GetCmd(this, 'SAET');
                         cmd->In()->SetI(clipIndex);
-                        cmd->In()->SetI(numAnimEventTracks);
-                        ps->PutCmd(cmd);
-
-                        int animEventTrackIndex;
-                        for (animEventTrackIndex = 0; animEventTrackIndex < numAnimEventTracks; animEventTrackIndex++)
-                        {
-                            nAnimEventTrack& animEventTrack = animClip.GetAnimEventTrackAt(animEventTrackIndex);
-                            int numEvents = animEventTrack.GetNumEvents();
-
-                            //--- beginanimeventtrack ---
-                            cmd = ps->GetCmd(this, 'BATK');
-                            cmd->In()->SetI(stateIndex);
-                            cmd->In()->SetI(clipIndex);
-                            cmd->In()->SetI(animEventTrackIndex);
-                            cmd->In()->SetS(animEventTrack.GetName().Get());
-                            cmd->In()->SetI(numEvents);
-                            ps->PutCmd(cmd);
-
-                            int eventIndex;
-                            for (eventIndex = 0; eventIndex < numEvents; eventIndex++)
-                            {
-                                //--- setanimevent ---
-                                const nAnimEvent& animEvent = animEventTrack.GetEvent(eventIndex);
-                                const vector3& t = animEvent.GetTranslation();
-                                const quaternion& q = animEvent.GetQuaternion();
-                                const vector3& s = animEvent.GetScale();
-                                cmd = ps->GetCmd(this, 'SAET');
-                                cmd->In()->SetI(stateIndex);
-                                cmd->In()->SetI(clipIndex);
-                                cmd->In()->SetI(animEventTrackIndex);
-                                cmd->In()->SetI(eventIndex);
-                                cmd->In()->SetF(animEvent.GetTime());
-                                cmd->In()->SetF(t.x);
-                                cmd->In()->SetF(t.y);
-                                cmd->In()->SetF(t.z);
-                                cmd->In()->SetF(q.x);
-                                cmd->In()->SetF(q.y);
-                                cmd->In()->SetF(q.z);
-                                cmd->In()->SetF(q.w);
-                                cmd->In()->SetF(s.x);
-                                cmd->In()->SetF(s.y);
-                                cmd->In()->SetF(s.z);
-                                ps->PutCmd(cmd);
-                            }
-
-                            //--- endanimeventtrack ---
-                            cmd = ps->GetCmd(this, 'EATK');
-                            cmd->In()->SetI(stateIndex);
-                            cmd->In()->SetI(clipIndex);
-                            cmd->In()->SetI(animEventTrackIndex);
-                            ps->PutCmd(cmd);
-                        }
-
-                        //--- endanimeventtracks ---
-                        cmd = ps->GetCmd(this, 'EATS');
-                        cmd->In()->SetI(stateIndex);
-                        cmd->In()->SetI(clipIndex);
+                        cmd->In()->SetI(animEventTrackIndex);
+                        cmd->In()->SetI(eventIndex);
+                        cmd->In()->SetF(animEvent.GetTime());
+                        cmd->In()->SetF(t.x);
+                        cmd->In()->SetF(t.y);
+                        cmd->In()->SetF(t.z);
+                        cmd->In()->SetF(q.x);
+                        cmd->In()->SetF(q.y);
+                        cmd->In()->SetF(q.z);
+                        cmd->In()->SetF(q.w);
+                        cmd->In()->SetF(s.x);
+                        cmd->In()->SetF(s.y);
+                        cmd->In()->SetF(s.z);
                         ps->PutCmd(cmd);
                     }
+
+                    //--- endanimeventtrack ---
+                    cmd = ps->GetCmd(this, 'EATK');
+                    cmd->In()->SetI(clipIndex);
+                    cmd->In()->SetI(animEventTrackIndex);
+                    ps->PutCmd(cmd);
                 }
+
+                //--- endanimeventtracks ---
+                cmd = ps->GetCmd(this, 'EATS');
+                cmd->In()->SetI(clipIndex);
+                ps->PutCmd(cmd);
             }
         }
         return true;

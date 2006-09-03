@@ -7,6 +7,7 @@
 #include "character/ncharacter2.h"
 #include "graphics/server.h"
 #include "scene/ncharacter3node.h"
+#include "scene/nskinanimator.h"
 #include "kernel/nfileserver2.h"
 
 namespace Graphics
@@ -18,27 +19,27 @@ ImplementFactory(Graphics::CharEntity);
 /**
 */
 CharEntity::CharEntity() :
-    curBaseAnimIndex(0),
     baseAnimStarted(0.0),
     baseAnimOffset(0.0),
-    curOverlayAnimIndex(-1),
+    baseAnimDuration(0.0),
+    baseAnimFadeIn(0.0),
     overlayAnimStarted(0.0),
     overlayAnimDuration(0.0),
-    baseAnimDuration(0.0),
-    nebCharacter(0),
-    animEventHandler(0),
     restartOverlayAnim(0),
+    overlayEndFadeIn(0.0),
+    nebCharacter(0),
+    characterSet(0),
+    animEventHandler(0),
     character3Mode(false),
-    char3VarHandle(nVariable::InvalidHandle),
-    char3NodePtr(0)
+    character3NodePtr(0),
+    activateNewBaseAnim(false)
 {
     // initialize Nebula variable handles
     nVariableServer* varServer  = nVariableServer::Instance();
-    this->animStateVarHandle    = varServer->GetVariableHandleByName("chnCharState");
     this->animRestartVarHandle  = varServer->GetVariableHandleByName("chnRestartAnim");
     this->animOffsetVarHandle   = varServer->GetVariableHandleByName("timeOffset");
-    this->charPointerHandle     = varServer->GetVariableHandleByName("charPointer");
-    this->renderContext.AddVariable(nVariable(this->animStateVarHandle, 0));
+    this->characterHandle       = varServer->GetVariableHandleByName("charPointer");
+    this->characterSetHandle    = varServer->GetVariableHandleByName("charSetPointer");
     this->renderContext.AddVariable(nVariable(this->animOffsetVarHandle, 0.0f));
     this->renderContext.AddVariable(nVariable(this->animRestartVarHandle, 0));
 }
@@ -67,7 +68,7 @@ CharEntity::OnActivate()
     n_assert(0 != this->animEventHandler);
 
     // lookup character pointer
-    nVariable* var = this->renderContext.FindLocalVar(this->charPointerHandle);
+    nVariable* var = this->renderContext.FindLocalVar(this->characterHandle);
     if (var)
     {
         this->nebCharacter = (nCharacter2*) var->GetObj();
@@ -75,6 +76,26 @@ CharEntity::OnActivate()
         this->nebCharacter->SetAnimEventHandler(this->animEventHandler);
     }
     this->animEventHandler->SetEntity(this);
+
+    // lookup character set
+    this->characterSetHandle = this->nebCharacter->GetSkinAnimator()->GetCharacterSetIndexHandle();
+    const nVariable& characterSetVar = this->renderContext.GetLocalVar(this->characterSetHandle);
+    this->characterSet = (nCharacter2Set*) characterSetVar.GetObj();
+
+    nClass* nCharacter3SkinAnimatorClass = nKernelServer::Instance()->FindClass("ncharacter3skinanimator");
+    n_assert(0 != nCharacter3SkinAnimatorClass);
+    if (this->nebCharacter->GetSkinAnimator()->IsA(nCharacter3SkinAnimatorClass))
+    {
+        nClass* nCharacter3NodeClass = nKernelServer::Instance()->FindClass("ncharacter3node");
+        n_assert(0 != nCharacter3NodeClass);
+        nTransformNode* charParentNode = this->GetResource().GetNode();
+        n_assert(0 != charParentNode);
+        nCharacter3Node* charNode = (nCharacter3Node*) this->FindFirstInstance(charParentNode, nCharacter3NodeClass);
+        n_assert(0 != charNode);
+
+        this->character3NodePtr = charNode;
+        this->character3Mode = true;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -105,38 +126,11 @@ CharEntity::GetNumAnimations() const
 {
     if (this->nebCharacter)
     {
-        return this->nebCharacter->GetAnimStateArray()->GetNumStates();
+        nSkinAnimator* skinAnimator = this->nebCharacter->GetSkinAnimator();
+        n_assert(0 != skinAnimator);
+        return skinAnimator->GetNumClips();
     }
-    else
-    {
-        return 0;
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Set base animation by index.
-*/
-void
-CharEntity::SetBaseAnimationByIndex(int i, float timeOffset)
-{
-    if (this->nebCharacter)
-    {
-        n_assert((i >= 0) && (i < this->GetNumAnimations()));
-        this->curBaseAnimIndex = i;
-        this->baseAnimStarted = this->GetEntityTime();
-        nTime dur = (this->nebCharacter->GetStateDuration(i) - this->nebCharacter->GetStateFadeInTime(i)) / this->timeFactor;
-        if (dur <= 0.0)
-        {
-            dur = 0.0;
-        }
-        this->baseAnimDuration = dur;
-        this->baseAnimOffset = timeOffset;
-        if(this->character3Mode)
-        {
-            this->character3Set.SetCurrentAnimation(i);
-        };
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -144,108 +138,174 @@ CharEntity::SetBaseAnimationByIndex(int i, float timeOffset)
     Set a new base animation. This is usually a looping animation, like
     Idle, Walking, Running, etc...
 
-    @param  animName        new base animation
-    @param  timeOffset      flag defines if played from start or from random offset
+    @param  anim                new base animation
+    @param  fadeIn              time to fade from current animation
+    @param  timeOffset          optional animation time offset
 */
 void
-CharEntity::SetBaseAnimation(const nString& animName, float timeOffset)
+CharEntity::SetBaseAnimation(const nString& animName, nTime fadeIn, nTime timeOffset, bool onlyIfInactive)
 {
     n_assert(animName.IsValid());
-    this->curBaseAnimName.Clear();
 
-    // convert name to index
-    nCharacter2* chr = this->GetCharacterPointer();
-    if (chr)
+    if (onlyIfInactive)
     {
-        n_assert(chr);
-
-        const nString& mappedName = AnimTable::Instance()->Lookup(this->GetAnimationSet(), animName);
-
-        if(this->character3Mode)
+        if (!this->baseAnimNames.Empty() && this->baseAnimNames[0] == animName)
         {
-            int animIndex = this->character3Set.ConvertAnimationNameToIndex(mappedName);
-            this->SetBaseAnimationByIndex(animIndex, timeOffset);
-            this->curBaseAnimName = animName;
+            return;
         }
-        else
-        {
-            int animIndex = chr->FindStateIndexByName(mappedName.Get());
-            if (animIndex != -1)
-            {
-                if (animIndex != this->curBaseAnimIndex)
-                {
-                    this->SetBaseAnimationByIndex(animIndex, timeOffset);
-                    this->curBaseAnimName = animName;
-                }
-                else
-                {
-                    //n_printf("CharEntity::SetBaseAnimation(): redundant anim '%s'\n", animName);
-                }
-            }
-            else
-            {
-                //n_printf("CharEntity::SetBaseAnimation(): invalid anim '%s'\n", animName);
-            }
-        };
     }
+
+    nArray<nString> anims;
+    anims.PushBack(animName);
+    nArray<float> weights;
+    weights.PushBack(1.0f);
+
+    this->SetBaseAnimationMix(anims, weights, fadeIn, timeOffset);
 }
 
 //------------------------------------------------------------------------------
 /**
-    Set a new overlay animation. This is usually a oneshot animation, like
-    Bash, Jump, etc... After the overlay animation has finished, the
-    current base animation will be re-activated.
+    Set a new base animation. This is usually a looping animation, like
+    Idle, Walking, Running, etc...
 
-    @param  animName    new overlay animation
+    @param  animNames           new base animations
+    @param  animWeights         new base animation weights
+    @param  fadeIn              time to fade from current animation
+    @param  timeOffset          optional animation time offset
 */
 void
-CharEntity::SetOverlayAnimation(const nString& animName)
+CharEntity::SetBaseAnimationMix(const nArray<nString>& animNames, const nArray<float>& animWeights, nTime fadeIn, nTime timeOffset)
 {
-    n_assert(animName.IsValid());
-    this->curOverlayAnimName.Clear();
+    n_assert(animNames.Size() >= 1);
+    n_assert(animWeights.Size() >= 1);
+    n_assert(this->nebCharacter);
+    n_assert(0 != this->characterSet);
 
-    // convert name to index, note: overlay animation
-    // are not checked for redundancy
-    nCharacter2* chr = this->GetCharacterPointer();
-    if (chr)
+    nSkinAnimator* skinAnimator = this->nebCharacter->GetSkinAnimator();
+    n_assert(0 != skinAnimator);
+
+    const nString& mappedName = AnimTable::Instance()->Lookup(this->animMapping, animNames[0]).GetAnimName();
+    int index = skinAnimator->GetClipIndexByName(mappedName);
+    if (-1 != index)
     {
-        const nString& mappedName = AnimTable::Instance()->Lookup(this->GetAnimationSet(), animName);
-        int animIndex = chr->FindStateIndexByName(mappedName.Get());
-        if (animIndex != -1)
+        nTime duration = skinAnimator->GetClipDuration(index);
+
+        this->baseAnimNames = animNames;
+        this->baseAnimWeights = animWeights;
+        this->baseAnimStarted = this->GetEntityTime();
+        this->baseAnimFadeIn = fadeIn;
+        nTime dur = 0.0;
+        if (this->timeFactor > 0.0f)
         {
-            this->SetOverlayAnimationByIndex(animIndex);
-            this->curOverlayAnimName = animName;
+            dur = (duration - fadeIn) / this->timeFactor;
         }
-        else
-        {
-            //n_printf("CharEntity::SetOverlayAnimation(): invalid anim '%s'\n", animName);
-        }
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Set overlay animation by index.
-*/
-void
-CharEntity::SetOverlayAnimationByIndex(int i)
-{
-    n_assert((i >= 0) && (i < this->GetNumAnimations()));
-
-    this->curOverlayAnimIndex = i;
-    this->overlayAnimStarted = this->GetEntityTime();
-
-    // get duration of overlay animation from Nebula2 character
-    nCharacter2* chr = this->GetCharacterPointer();
-    if (chr)
-    {
-        nTime dur = (chr->GetStateDuration(i) - chr->GetStateFadeInTime(i)) / this->timeFactor;
-        if (dur <= 0.0)
+        if (dur < 0.0)
         {
             dur = 0.0;
         }
-        this->overlayAnimDuration = dur;
+        this->baseAnimDuration = dur;
+        this->baseAnimOffset = timeOffset;
+
+        if (!this->IsOverlayAnimationActive())
+        {
+            this->ActivateAnimations(this->baseAnimNames, this->baseAnimWeights, fadeIn);
+        }
+        else
+        {
+            this->activateNewBaseAnim = true;
+        }
+    }
+    else
+    {
+#ifdef _DEBUG
+        n_printf("CharEntity::SetBaseAnimationMix:: AnimColumn: %s AnimRow: %s with table animation: %s in character not found! \n", this->animMapping.Get(), animNames[0].Get(), mappedName.Get());
+#endif
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set a new overlay animation. This is usually a looping animation, like
+    Idle, Walking, Running, etc...
+
+    @param  animName            new base animation
+    @param  fadeIn              time to fade from current animation
+    @param  overrideDuration    if != 0.0, override the animation's duration with this value
+*/
+void
+CharEntity::SetOverlayAnimation(const nString& animName, nTime fadeIn, nTime overrideDuration, bool onlyIfInactive)
+{
+    n_assert(animName.IsValid());
+
+    if (onlyIfInactive)
+    {
+        if (!this->overlayAnimNames.Empty() && this->overlayAnimNames[0] == animName)
+        {
+            return;
+        }
+    }
+
+    nArray<nString> anims;
+    anims.PushBack(animName);
+    nArray<float> weights;
+    weights.PushBack(1.0f);
+
+    this->SetOverlayAnimationMix(anims, weights, fadeIn, overrideDuration);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Set a new overlay animation. This is usually a one shot animation, like
+    Bash, Jump, etc... After the overlay animation has finished, the
+    current base animation will be re-activated.
+
+    @param  animNames           new overlay animations
+    @param  animWeights         new overlay animation weights
+    @param  fadeIn              time to fade from current animation
+    @param  overrideDuration    if != 0.0, override the animation's duration with this value
+*/
+void
+CharEntity::SetOverlayAnimationMix(const nArray<nString>& animNames, const nArray<float>& animWeights, nTime fadeIn, nTime overrideDuration)
+{
+    n_assert(animNames.Size() >= 1);
+    n_assert(animWeights.Size() >= 1);
+    n_assert(this->nebCharacter);
+    n_assert(0 != this->characterSet);
+
+    nSkinAnimator* skinAnimator = this->nebCharacter->GetSkinAnimator();
+    n_assert(0 != skinAnimator);
+
+    const nString& mappedName = AnimTable::Instance()->Lookup(this->animMapping, animNames[0]).GetAnimName();
+    int index = skinAnimator->GetClipIndexByName(mappedName);
+    if (-1 != index)
+    {
+        nTime duration = skinAnimator->GetClipDuration(index);
+
+        this->overlayAnimNames = animNames;
+        this->overlayAnimWeights = animWeights;
+        this->overlayAnimStarted = this->GetEntityTime();
+        if (overrideDuration > 0.0)
+        {
+            this->overlayAnimDuration = overrideDuration;
+        }
+        else
+        {
+            nTime dur = 0.0;
+            if (timeFactor > 0.0f)
+            {
+                dur = (duration - fadeIn) / this->timeFactor;
+            }
+            if (dur < 0.0)
+            {
+                dur = 0.0;
+            }
+            this->overlayAnimDuration = dur;
+        }
+
         this->restartOverlayAnim = 1;
+        this->overlayEndFadeIn = fadeIn;
+
+        this->ActivateAnimations(this->overlayAnimNames, this->overlayAnimWeights, fadeIn);
     }
 }
 
@@ -253,11 +313,44 @@ CharEntity::SetOverlayAnimationByIndex(int i)
 /**
 */
 void
-CharEntity::StopOverlayAnimation()
+CharEntity::StopOverlayAnimation(nTime fadeIn)
 {
-    this->curOverlayAnimIndex = -1;
-    this->curOverlayAnimName.Clear();
+    this->overlayAnimNames.Clear();
+    this->overlayAnimWeights.Clear();
     this->restartOverlayAnim = 0;
+
+    if (!this->baseAnimNames.Empty())
+    {
+        this->ActivateAnimations(this->baseAnimNames, this->baseAnimWeights, fadeIn);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+CharEntity::ActivateAnimations(const nArray<nString>& animNames, const nArray<float>& animWeights, nTime fadeIn)
+{
+    n_assert(animNames.Size() >= 1);
+    n_assert(animWeights.Size() >= 1);
+    n_assert(this->nebCharacter);
+    n_assert(0 != this->characterSet);
+
+    nSkinAnimator* skinAnimator = this->nebCharacter->GetSkinAnimator();
+    n_assert(0 != skinAnimator);
+
+    this->characterSet->ClearClips();
+    this->characterSet->SetFadeInTime((float) fadeIn);
+
+    int i;
+    for (i = 0; i < animNames.Size(); i++)
+    {
+        if (animNames[i].IsValid())
+        {
+            const nString& mappedName = AnimTable::Instance()->Lookup(this->animMapping, animNames[i]).GetAnimName();
+            this->characterSet->AddClip(mappedName, animWeights[i]);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -269,32 +362,28 @@ void
 CharEntity::UpdateRenderContextVariables()
 {
     Entity::UpdateRenderContextVariables();
+
     if (this->nebCharacter)
     {
-        if (-1 != this->curOverlayAnimIndex)
+        if (this->IsOverlayAnimationActive())
         {
-            this->renderContext.GetVariable(this->animStateVarHandle)->SetInt(this->curOverlayAnimIndex);
             this->renderContext.GetVariable(this->animOffsetVarHandle)->SetFloat(0.0f);
         }
         else
         {
-            n_assert(-1 != this->curBaseAnimIndex);
-            this->renderContext.GetVariable(this->animStateVarHandle)->SetInt(this->curBaseAnimIndex);
-            this->renderContext.GetVariable(this->animOffsetVarHandle)->SetFloat((float)this->baseAnimOffset);
+            this->renderContext.GetVariable(this->animOffsetVarHandle)->SetFloat((float) this->baseAnimOffset);
         }
+
+        // communicate restart animation flag to Nebula
         this->renderContext.GetVariable(this->animRestartVarHandle)->SetInt(this->restartOverlayAnim);
+        this->restartOverlayAnim = 0;
+
+        // HACK: need to rotate characters by 180 degrees around Y
         matrix44 rot;
         rot.rotate_y(n_deg2rad(180.0f));
         rot.mult_simple(this->transform);
         this->renderContext.SetTransform(rot);
         this->shadowRenderContext.SetTransform(rot);
-        this->restartOverlayAnim = 0;
-    }
-
-    if(this->character3Mode)
-    {
-        nVariable& var = this->renderContext.GetLocalVar(this->char3VarHandle);
-        var.SetObj(&this->character3Set);
     }
 }
 
@@ -307,15 +396,24 @@ void
 CharEntity::OnRenderBefore()
 {
     Entity::OnRenderBefore();
+
     if (this->nebCharacter)
     {
-        if (-1 != this->curOverlayAnimIndex)
+        if (this->IsOverlayAnimationActive())
         {
-            nTime endTime = this->overlayAnimStarted + this->overlayAnimDuration;
+            // HACK: overlay animation needs to be stopped slightly before it's computed end time to avoid plopping
+            static const nTime OverlayAnimStopBuffer = 0.3; // to assert overlay stopping before animation has finished
+            nTime endTime = this->overlayAnimStarted + this->overlayAnimDuration - OverlayAnimStopBuffer;
             if (this->GetEntityTime() >= endTime)
             {
-                this->curOverlayAnimIndex = -1;
-                this->curOverlayAnimName.Clear();
+                this->StopOverlayAnimation(this->overlayEndFadeIn);
+
+                if (this->activateNewBaseAnim && this->baseAnimNames.Size() > 0)
+                {
+                    n_assert(this->baseAnimWeights.Size() == this->baseAnimNames.Size());
+                    this->activateNewBaseAnim = false;
+                    ActivateAnimations(this->baseAnimNames, this->baseAnimWeights, this->baseAnimFadeIn);
+                }
             }
         }
 
@@ -329,57 +427,10 @@ CharEntity::OnRenderBefore()
 
     if (this->character3Mode)
     {
-        n_assert(this->char3NodePtr);
-        this->SetLocalBox(this->char3NodePtr->GetLocalBox());
+        n_assert(this->character3NodePtr);
+        this->SetLocalBox(this->character3NodePtr->GetLocalBox());
     }
 }
-
-//------------------------------------------------------------------------------
-/**
-    DEBUG : this is just for the MILESTONE, check actorgraphicsproperty.cc
-*/
-void
-CharEntity::LoadNextSkinListInDirectory()
-{
-    nString path = this->char3SetFileName.ExtractDirName();
-    nString curFile = this->char3SetFileName.ExtractFileName();
-    int sel = 0;
-    nArray<nString> filesPure = nFileServer2::Instance()->ListFiles(path);
-    nArray<nString> files;
-    int i;
-    for( i = 0; i < filesPure.Size(); i++)
-    {
-        if((filesPure[i].GetExtension() == nString("xml")) && (filesPure[i].ExtractFileName() != nString("_auto_default_.xml")))
-        {
-            files.Append(filesPure[i]);
-        };
-    };
-
-    if(files.Size() > 0)
-    {
-        for(i = 0; i < files.Size(); i++)
-        {
-            if(files[i].ExtractFileName() == curFile)
-            {
-                sel = i+1;
-            };
-        };
-        if(sel >= files.Size())
-        {
-            sel = 0;
-        };
-        this->char3SetFileName = path + files[sel].ExtractFileName();
-
-
-        nTransformNode* charParentNode = this->GetResource().GetNode();
-        nCharacter3Node* char3 = (nCharacter3Node*)charParentNode->GetHead();
-        if(!char3->AreResourcesValid())
-        {
-            char3->LoadResources();
-        };
-        this->character3Set.LoadCharacterSetFromXML(char3,this->char3SetFileName);
-    };
-};
 
 //------------------------------------------------------------------------------
 /**
@@ -403,7 +454,7 @@ CharEntity::GetJointIndexByName(const nString& name)
 //------------------------------------------------------------------------------
 /**
     This brings the character's skeleton uptodate. Make sure the
-    entity's time and animation state weights in the rendercontext are uptodate
+    entity's time and animation state weights in the render context are uptodate
     before calling this method, to avoid one-frame-latencies.
 */
 void
@@ -411,7 +462,7 @@ CharEntity::EvaluateSkeleton()
 {
     if (this->nebCharacter)
     {
-        this->nebCharacter->EvaluateSkeleton(float(this->GetEntityTime()), &this->renderContext);
+        this->nebCharacter->EvaluateSkeleton((float) this->GetEntityTime());
     }
 }
 
@@ -424,7 +475,7 @@ CharEntity::GetJoint(int jointIndex) const
 {
     if (this->nebCharacter)
     {
-        return &this->nebCharacter->GetSkeleton().GetJointAt(jointIndex);
+        return &(this->nebCharacter->GetSkeleton().GetJointAt(jointIndex));
     }
     else
     {
@@ -446,25 +497,8 @@ CharEntity::GetJointMatrix(int jointIndex) const
     }
     else
     {
-        return matrix44::identity;
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-    Return true if the Nebula2's character object is currently in a valid
-    state. This is only the case after the object has been rendered once.
-*/
-bool
-CharEntity::IsNebulaCharacterInValidState() const
-{
-    if (this->nebCharacter)
-    {
-        return (this->nebCharacter->GetActiveState() != -1);
-    }
-    else
-    {
-        return false;
+        static matrix44 identity;
+        return identity;
     }
 }
 
@@ -496,56 +530,64 @@ CharEntity::CleanupAnimationEventHandler()
 
 //------------------------------------------------------------------------------
 /**
-    set the characterset
 */
 void
-CharEntity::SetCharacterSet(nString fileName)
+CharEntity::LoadCharacter3Set(const nString& fileName)
 {
-    // skip, if filename is empty
-    if (!fileName.IsValid())
+    n_assert(fileName.IsValid());
+    n_assert2(this->character3Mode && this->character3NodePtr, "CharEntity has Character 3 Resource");
+
+    // assure resources are loaded
+    if (!this->character3NodePtr->AreResourcesValid())
     {
-        return;
+        this->character3NodePtr->LoadResources();
     }
 
-    if (!this->character3Mode)
+    // create new character 3 set
+    nCharacter3Set* newCharacter3Set = n_new(nCharacter3Set);
+    newCharacter3Set->Init(this->character3NodePtr);
+    newCharacter3Set->LoadCharacterSetFromXML(this->character3NodePtr, fileName);
+    this->characterSet = newCharacter3Set;
+
+    // set new character set in render context
+    nVariable& var = this->renderContext.GetLocalVar(this->characterSetHandle);
+    nCharacter3Set* oldCharacterSet = (nCharacter3Set*) var.GetObj();
+    oldCharacterSet->Release();
+    var.SetObj(this->characterSet);
+
+    this->character3SetFileName = fileName;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Recursively Find instance of nClass, used to search for lights, skin
+    animators, etc...
+*/
+nRoot*
+CharEntity::FindFirstInstance(nRoot* node, nClass* classType)
+{
+    nRoot* resultNode = NULL;
+    if (node == NULL)
     {
-        this->character3Mode = true;
-        this->char3SetFileName = fileName;
-        this->char3NodePtr = 0;
-
-        // /res/gfx/characters/skeleton/zweibeiner
-        // now the basic character3 node is loaded, but needs to be initialized
-        // first we need to find the character3 node
-        nClass* nCharacter3NodeClass = nKernelServer::Instance()->FindClass("ncharacter3node");
-        nTransformNode* charParentNode = this->GetResource().GetNode();
-
-        // find the first ncharacter3node object under the parent node
-        nRoot* charNode;
-        for (charNode = charParentNode->GetHead();
-             charNode;
-             charNode = charNode->GetSucc())
+        resultNode = NULL;
+    }
+    else
+    {
+        if (node->IsInstanceOf(classType))
         {
-            if (charNode->IsA(nCharacter3NodeClass))
+            resultNode = node;
+        }
+        else
+        {
+            resultNode = FindFirstInstance(node->GetSucc(), classType);
+            if (resultNode == NULL)
             {
-                nCharacter3Node* char3 = (nCharacter3Node*) charNode;
-                if (!char3->AreResourcesValid())
-                {
-                    char3->LoadResources();
-                }
-                this->char3NodePtr = char3;
-
-                this->character3Set.Init(char3);
-                this->character3Set.LoadCharacterSetFromXML(char3,fileName);
-
-                this->char3VarHandle = char3->GetRenderContextCharacterSetIndex();
-                nVariable& var = this->renderContext.GetLocalVar(this->char3VarHandle);
-                var.SetObj(&this->character3Set);
-
-                break;
+                resultNode = FindFirstInstance(node->GetHead(), classType);
             }
         }
-        n_assert(this->char3NodePtr);
     }
+
+    return resultNode;
 }
 
 } // namespace Graphics

@@ -23,32 +23,26 @@ public:
     virtual bool SaveCmds(nPersistServer *ps);
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
-    /// on render context created
-    virtual void RenderContextCreated(nRenderContext* renderContext);
-/*
-    /// render geometry
-    virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
-*/
     /// load resources for this object
     virtual bool LoadResources();
     /// unload resources
     virtual void UnloadResources();
 
-    /// retreive names of loaded skins
+    /// retrieve names of loaded skins
     nArray<nString> GetNamesOfLoadedSkins() const;
-    /// retreive names of loaded animations
-    nArray<nString> GetNamesOfLoadedAnimations();
-    /// retreive names of loaded variations
-    nArray<nString> GetNamesOfLoadedVariations();
-    /// retreive full names of loaded skins
+    /// retrieve full names of loaded skins
     nArray<nString> GetFullNamesOfLoadedSkins() const;
+    /// retrieve names of loaded animations
+    const nArray<nString>& GetNamesOfLoadedAnimations();
+    /// retrieve names of loaded variations
+    const nArray<nString>& GetNamesOfLoadedVariations();
 
-    /// get index of character set variable in rendercontext
-    int GetRenderContextCharacterSetIndex() const;
+    /// get index of character set variable in render context
+    //int GetRenderContextCharacterSetIndex() const;
 
-    /// read skinlist from a XML file
+    /// read skin list from a XML file
     static bool ReadCharacterStuffFromXML(nString fileName,nString &resultSkinList,nString &resultVariation);
-    /// save skinlist to a XML file
+    /// save skin list to a XML file
     static bool WriteCharacterStuffFromXML(nString fileName, nString skins,nString variation);
 
 protected:
@@ -56,16 +50,18 @@ protected:
     /// loads the skins that belong to this character
     void LoadSkinsFromSubfolder(nString path);
 
-    /// looks up the skinanimator which belongs to this character3 node
+    /// looks up the skin animator which belongs to this character3 node
     nCharacter3SkinAnimator* FindMySkinAnimator();
 
     /// lookup first appearance of a specific class under @c node
     nRoot* FindFirstInstance(nRoot* node, nClass* classType);
+    /// update bounding box from loaded skins
+    void UpdateBoundingBox();
 
-
+    nClass* transformNodeClass;
     nArray<nRoot*> loadedSkins;
     nArray<nString> loadedSkinName;
-    int characterSetIndex;
+    //int characterSetIndex;
 };
 
 //------------------------------------------------------------------------------

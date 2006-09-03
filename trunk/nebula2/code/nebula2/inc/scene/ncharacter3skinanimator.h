@@ -13,7 +13,7 @@
 #include "anim2/ncombinedanimation.h"
 #include "character/ncharskeleton.h"
 #include "character/ncharacter2.h"
-#include "anim2/nanimstate.h"
+#include "anim2/nanimstateinfo.h"
 
 class nAnimation;
 class nAnimationServer;
@@ -34,29 +34,49 @@ public:
     virtual void Animate(nSceneNode* sceneNode, nRenderContext* renderContext);
 
     /// Get names of loaded Animations
-    nArray<nString> GetNamesOfLoadedAnimations();
+    const nArray<nString>& GetNamesOfLoadedAnimations();
     /// Get names of loaded Variations
-    nArray<nString> GetNamesOfLoadedVariations();
-    /// set the index for the rendercontext
-    void SetCharacterSetIndexHandle(int handle);
+    const nArray<nString>& GetNamesOfLoadedVariations();
 
 private:
+    /// character set factory function
+    virtual nCharacter2Set* CreateCharacterSet();
+    /// release character set
+    virtual void DeleteCharacterSet(nRenderContext* renderContext);
 
-    nArray<nString> LoadAnimationsFromFolder(nString path,nArray<nRef<nMemoryAnimation> > &animArray);
-    nArray<nCharJoint> EvaluteVariation(nRef<nMemoryAnimation> variation);
+    nArray<nString> LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation>>& outAnimArray);
+    nArray<nCharJoint> EvaluateVariation(nMemoryAnimation* variation);
 
-    nCombinedAnimation* variations;
-    nCombinedAnimation* animations;
+    nRef<nCombinedAnimation> animations;
     nArray<nRef<nMemoryAnimation> > variationAnims;
     nArray<nRef<nMemoryAnimation> > animationAnims;
     nArray<nString> animationNames;
     nArray<nString> variationNames;
     nArray<nArray<nCharJoint> > variationJoints;
 
-    int characterSetIndex;
     int characterVariationVarIndex;
     int currentVariation;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nArray<nString>&
+nCharacter3SkinAnimator::GetNamesOfLoadedAnimations()
+{
+    return this->animationNames;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nArray<nString>&
+nCharacter3SkinAnimator::GetNamesOfLoadedVariations()
+{
+    return this->variationNames;
+}
 
 //------------------------------------------------------------------------------
 #endif

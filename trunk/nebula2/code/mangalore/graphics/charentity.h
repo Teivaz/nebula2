@@ -32,30 +32,34 @@ public:
     virtual void OnActivate();
     /// called when removed from game entity
     virtual void OnDeactivate();
-    /// set animation set name to use
-    void SetAnimationSet(const nString& n);
-    /// get animation set name to use
-    const nString& GetAnimationSet() const;
+    /// set animation mapping to use
+    void SetAnimationMapping(const nString& n);
+    /// get animation mapping to use
+    const nString& GetAnimationMapping() const;
     /// set the current base animation (usually loop anims)
-    void SetBaseAnimation(const nString& anim, float timeOffset);
-    /// get current base animation
-    const nString& GetBaseAnimation() const;
+    void SetBaseAnimation(const nString& anim, nTime fadeIn = 0.0, nTime timeOffset = 0.0, bool onlyIfInactive = true);
+    /// set the current base animation mix (usually loop anims)
+    void SetBaseAnimationMix(const nArray<nString>& anims, const nArray<float>& weights, nTime fadeIn = 0.0, nTime timeOffset = 0.0);
+    /// get current base animation (first of mix)
+    nString GetBaseAnimation() const;
     /// get base animation duration
     nTime GetBaseAnimationDuration() const;
-    /// set the current overlay animation (usually oneshot anims)
-    void SetOverlayAnimation(const nString& anim);
-    /// get name of currently active overlay animation
-    const nString& GetOverlayAnimation() const;
+    /// set the current overlay animation (usually one shot anims)
+    void SetOverlayAnimation(const nString& anim, nTime fadeIn = 0.0, nTime overrideDuration = 0.0, bool onlyIfInactive = true);
+    /// set the current overlay animation mix (usually one shot anims)
+    void SetOverlayAnimationMix(const nArray<nString>& anims, const nArray<float>& weights, nTime fadeIn = 0.0, nTime overrideDuration = 0.0f);
+    /// get name of currently active overlay animation (first of mix)
+    nString GetOverlayAnimation() const;
     /// get overlay animation duration
     nTime GetOverlayAnimationDuration() const;
     /// stop current overlay animation
-    void StopOverlayAnimation();
+    void StopOverlayAnimation(nTime fadeIn);
     /// return true if overlay animation is currently active
     bool IsOverlayAnimationActive() const;
     /// called before rendering happens
     virtual void OnRenderBefore();
     /// get pointer to our nCharacter2 object
-    nCharacter2* GetCharacterPointer();
+    nCharacter2* GetCharacterPointer() const;
     /// return joint index by name
     int GetJointIndexByName(const nString& name);
     /// bring the character's skeleton uptodate
@@ -64,21 +68,16 @@ public:
     nCharJoint* GetJoint(int jointIndex) const;
     /// return a joint's current matrix in model space
     const matrix44& GetJointMatrix(int jointIndex) const;
-    /// return true if the Nebula2 character is in a valid state
-    bool IsNebulaCharacterInValidState() const;
     /// get animation event handler
     CharAnimEventHandler* GetAnimationEventHandler() const;
-    /// set the characterset
-    void SetCharacterSet(nString fileName);
     /// is this a character3 ?
     bool HasCharacter3Set() const;
-    /// get the character3 set
-    nCharacter3Set* GetCharacter3Set();
+    /// set the character 3 set to load
+    void LoadCharacter3Set(const nString& fileName);
+    /// get the character set
+    nCharacter2Set* GetCharacterSet() const;
 
-    /// DEBUG : this is just for the MILESTONE, check actorgraphicsproperty.cc
-    void LoadNextSkinListInDirectory();
-
-protected:
+private:
     /// create animation event handler
     virtual void CreateAnimationEventHandler();
     /// cleanup animation event handler
@@ -87,45 +86,42 @@ protected:
     virtual void UpdateRenderContextVariables();
     /// update the time used for rendering
     void UpdateTime();
-    /// set the current base animation by index
-    void SetBaseAnimationByIndex(int i, float timeOffset);
-    /// get current base animation index
-    int GetBaseAnimationIndex() const;
-    /// set the current overlay animation by index
-    void SetOverlayAnimationByIndex(int i);
-    /// get current overlay animation index
-    int GetOverlayAnimationIndex() const;
+    /// activate animations
+    void ActivateAnimations(const nArray<nString>& animNames, const nArray<float>& animWeights, nTime fadeIn);
     /// get the number of animations of this character
     int GetNumAnimations() const;
+    /// find first instance of a node
+    nRoot* FindFirstInstance(nRoot* node, nClass* classType);
 
-    nString animationSet;
+    nString animMapping;                ///< name of the animation mapping
 
-    int curBaseAnimIndex;           // current base animation
-    nTime baseAnimStarted;          // timestamp when base animation has been started
-    nTime baseAnimOffset;           // animation offset for base animation
-    nTime baseAnimDuration;         // duration of one loop of the base animation
-    int curOverlayAnimIndex;        // current overlay animation
-    nTime overlayAnimStarted;       // timestamp when overlay animation has been started
-    nTime overlayAnimDuration;      // duration of overlay animation
+    nArray<nString> baseAnimNames;      ///< names of current base animations
+    nArray<float> baseAnimWeights;      ///< weights of the base animations
+    nTime baseAnimStarted;              ///< timestamp when base animation has been started
+    nTime baseAnimOffset;               ///< animation offset for base animation
+    nTime baseAnimDuration;             ///< duration of one loop of the base animation
+    nTime baseAnimFadeIn;
+    bool activateNewBaseAnim;
 
-    nVariable::Handle animStateVarHandle;
+    nArray<nString> overlayAnimNames;   ///< names of current overlay animations
+    nArray<float> overlayAnimWeights;   ///< weights of the overlay animations
+    nTime overlayAnimStarted;           ///< timestamp when overlay animation has been started
+    nTime overlayAnimDuration;          ///< duration of overlay animation
+    int restartOverlayAnim;             ///< flag indicating to Nebula2 that animation must be restarted
+    nTime overlayEndFadeIn;             ///< fade in time when overlay animation has finished
+
+    nVariable::Handle characterHandle;      ///< handle of character pointer local var in RenderContext
+    nVariable::Handle characterSetHandle;   ///< handle of character set pointer local var in RenderContext
     nVariable::Handle animOffsetVarHandle;
-    nVariable::Handle charPointerHandle;        // handle of character pointer local var in RenderContext
     nVariable::Handle animRestartVarHandle;
 
-    CharAnimEventHandler* animEventHandler;
     nCharacter2* nebCharacter;
-
-    int restartOverlayAnim;        // flag indicating to Nebula2 that animation must be restarted
-
-    nString curOverlayAnimName;
-    nString curBaseAnimName;
+    nCharacter2Set* characterSet;
+    CharAnimEventHandler* animEventHandler;
 
     bool                character3Mode;
-    nCharacter3Set      character3Set;
-    nVariable::Handle   char3VarHandle;
-    nString             char3SetFileName;
-    nCharacter3Node*    char3NodePtr;
+    nString             character3SetFileName;
+    nCharacter3Node*    character3NodePtr;
 };
 
 RegisterFactory(CharEntity);
@@ -135,10 +131,9 @@ RegisterFactory(CharEntity);
 */
 inline
 void
-CharEntity::SetAnimationSet(const nString& s)
+CharEntity::SetAnimationMapping(const nString& name)
 {
-    n_assert(s.IsValid());
-    this->animationSet = s;
+    this->animMapping = name;
 }
 
 //------------------------------------------------------------------------------
@@ -146,9 +141,9 @@ CharEntity::SetAnimationSet(const nString& s)
 */
 inline
 const nString&
-CharEntity::GetAnimationSet() const
+CharEntity::GetAnimationMapping() const
 {
-    return this->animationSet;
+    return this->animMapping;
 }
 
 //------------------------------------------------------------------------------
@@ -158,47 +153,27 @@ inline
 bool
 CharEntity::IsOverlayAnimationActive() const
 {
-    return (-1 != this->curOverlayAnimIndex);
+    return !this->overlayAnimNames.Empty();
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const nString&
+nString
 CharEntity::GetOverlayAnimation() const
 {
-    return this->curOverlayAnimName;
+    return this->overlayAnimNames.Empty() ? "" : this->overlayAnimNames[0];
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-const nString&
+nString
 CharEntity::GetBaseAnimation() const
 {
-    return this->curBaseAnimName;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-CharEntity::GetBaseAnimationIndex() const
-{
-    return this->curBaseAnimIndex;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-int
-CharEntity::GetOverlayAnimationIndex() const
-{
-    return this->curOverlayAnimIndex;
+    return this->baseAnimNames.Empty() ? "" : this->baseAnimNames[0];
 }
 
 //------------------------------------------------------------------------------
@@ -227,7 +202,7 @@ CharEntity::GetBaseAnimationDuration() const
 */
 inline
 nCharacter2*
-CharEntity::GetCharacterPointer()
+CharEntity::GetCharacterPointer() const
 {
     return this->nebCharacter;
 }
@@ -257,10 +232,10 @@ CharEntity::HasCharacter3Set() const
 /**
 */
 inline
-nCharacter3Set*
-CharEntity::GetCharacter3Set()
+nCharacter2Set*
+CharEntity::GetCharacterSet() const
 {
-    return &this->character3Set;
+    return this->characterSet;
 }
 
 } // namespace Graphics

@@ -24,16 +24,35 @@ class UpdateTransform : public Message::Msg
     DeclareMsgId;
 
 public:
+
+    /// constructor
+    UpdateTransform();
     /// set the target transform matrix
     void SetMatrix(const matrix44& m);
     /// get the target transform matrix
     const matrix44& GetMatrix() const;
+    /// set smoothing flag
+    void SetSmoothing(bool b);
+    /// get smoothing flag
+    bool GetSmoothing() const;
 
 private:
     matrix44 transform;
+    bool     smoothing;
 };
 
 RegisterFactory(UpdateTransform);
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+UpdateTransform::UpdateTransform():
+    smoothing(true)
+{
+    // empty
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -55,6 +74,27 @@ UpdateTransform::GetMatrix() const
     return this->transform;
 }
 
-} // namespace Message
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+UpdateTransform::SetSmoothing(bool b)
+{
+    this->smoothing = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+UpdateTransform::GetSmoothing() const
+{
+    return this->smoothing;
+}
+
+} // namespace Msg
 //------------------------------------------------------------------------------
 #endif
