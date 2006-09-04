@@ -82,14 +82,9 @@ new ntransformnode facialanim
             .setjoint 64 -1 -0.004469 0.203163 0.127426 0.000000 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 "MarkerJoint_URLIP1"
             .setjoint 65 -1 0.000000 0.000000 0.000000 0.000000 0.000000 0.000000 1.000000 1.000000 1.000000 1.000000 "MarkerJoint_Stab"
             .endjoints
-            .setstatechannel "chnCharState"
-            .beginstates 1
-            .setstate 0 0 0.400000
-            .setstatename 0 "bla"
-            .beginclips 0 1
+            .beginclips 1
             .setclip 0 0 "one"
-            .endclips 0
-            .endstates
+            .endclips
         sel ..
         new nskinshapenode skinned0
             sel skinned0
