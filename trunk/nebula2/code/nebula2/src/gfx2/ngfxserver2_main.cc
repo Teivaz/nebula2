@@ -50,12 +50,6 @@ nGfxServer2::nGfxServer2() :
     {
         this->transformTopOfStack[i] = 0;
     }
-
-    #if __NEBULA_STATS__
-    this->profGUIBreakLines.Initialize("profGUI_BreakLines");
-    this->profGUIGetTextExtent.Initialize("profGUI_GetTextExtent");
-    this->profGUIDrawText.Initialize("profGUI_DrawText");
-    #endif
 }
 
 //------------------------------------------------------------------------------
@@ -342,12 +336,6 @@ nGfxServer2::BeginFrame()
     n_assert(!this->inBeginFrame);
     n_assert(!this->inBeginScene);
     this->inBeginFrame = true;
-
-    #if __NEBULA_STATS__
-    this->profGUIBreakLines.ResetAccum();
-    this->profGUIDrawText.ResetAccum();
-    this->profGUIGetTextExtent.ResetAccum();
-    #endif
 
     return true;
 }
@@ -1002,10 +990,6 @@ nGfxServer2::RestoreGamma()
 void
 nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& outString)
 {
-#if __NEBULA_STATS__
-    this->profGUIBreakLines.StartAccum();
-#endif
-
     n_assert(!inText.IsEmpty());
     n_assert(this->refFont->IsValid());
 
@@ -1087,9 +1071,6 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
             }
         }
     }
-#if __NEBULA_STATS__
-    this->profGUIBreakLines.StopAccum();
-#endif
 }
 
 //------------------------------------------------------------------------------

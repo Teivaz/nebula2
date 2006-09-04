@@ -4,15 +4,156 @@
 #-------------------------------------------------------------------------------
 beginbundle nnetwork::network
     setmodules {
+        naddbuddy
+        nbuddyclient
+        nbuddycommandhandler
+        nbuddycommandinterpreter
+        nbuddydatabase
+        nbuddyserver
+        nbuddysession
+        nbuddysessioncontroller
+        ncommand
+        ncreateuser
+        ngetbuddylist
+        ngetprofileattr
         nhttpserver
+        nlogin
+        nmessage
         nnetclient
         nnetserver
+        nsendmessage
+        nservermessageinterpreter
         nsessionclient
         nsessionclientcontext
         nsessionserver
         nsessionservercontext
+        nsetprofileattr
+        nupdate
+        nusercontext
+        nusercontroller
     }
 endbundle
+
+beginmodule naddbuddy
+    setdir network
+    setheaders {
+        naddbuddy
+    }
+    setfiles {
+        naddbuddy
+    }
+endmodule
+
+beginmodule nbuddyclient
+    setdir network
+    setheaders {
+        nbuddyclient
+    }
+    setfiles {
+        nbuddyclient_main
+        nbuddyclient_cmds
+    }
+endmodule
+
+beginmodule nbuddycommandhandler
+    setdir network
+    setheaders {
+        nbuddycommandhandler
+    }
+    setfiles {
+        nbuddycommandhandler
+    }
+endmodule
+
+beginmodule nbuddycommandinterpreter
+    setdir network
+    setheaders {
+        nbuddycommandinterpreter
+    }
+    setfiles {
+        nbuddycommandinterpreter
+    }
+endmodule
+
+beginmodule nbuddydatabase
+    setdir network
+    setheaders {
+        nbuddydatabase
+    }
+    setfiles {
+        nbuddydatabase_main
+    }
+endmodule
+
+beginmodule nbuddyserver
+    setdir network
+    setheaders {
+        nbuddyserver
+    }
+    setfiles {
+        nbuddyserver_main
+    }
+endmodule
+
+beginmodule nbuddysession
+    setdir network
+    setheaders {
+        nbuddysession
+    }
+    setfiles {
+        nbuddysession
+    }
+endmodule
+
+beginmodule nbuddysessioncontroller
+    setdir network
+    setheaders {
+        nbuddysessioncontroller
+    }
+    setfiles {
+        nbuddysessioncontroller
+    }
+endmodule
+
+beginmodule ncommand
+    setdir network
+    setheaders {
+        ncommand
+    }
+    setfiles {
+        ncommand
+    }
+endmodule
+
+beginmodule ncreateuser
+    setdir network
+    setheaders {
+        ncreateuser
+    }
+    setfiles {
+        ncreateuser
+    }
+endmodule
+
+beginmodule ngetbuddylist
+    setdir network
+    setheaders {
+        ngetbuddylist
+    }
+    setfiles {
+        ngetbuddylist
+    }
+endmodule
+
+beginmodule ngetprofileattr
+    setdir network
+    setheaders {
+        ngetprofileattr
+    }
+    setfiles {
+        ngetprofileattr
+    }
+endmodule
 
 beginmodule nhttpserver
     setdir network
@@ -26,6 +167,26 @@ beginmodule nhttpserver
     setlibs_win32 {
         wininet.lib
         rpcrt4.lib
+    }
+endmodule
+
+beginmodule nlogin
+    setdir network
+    setheaders {
+        nlogin
+    }
+    setfiles {
+        nlogin
+    }
+endmodule
+
+beginmodule nmessage
+    setdir network
+    setheaders {
+        nmessage
+    }
+    setfiles {
+        nmessage
     }
 endmodule
 
@@ -48,6 +209,26 @@ beginmodule nnetserver
     setfiles {
         nnetserver_main
         nnetserver_cmds
+    }
+endmodule
+
+beginmodule nsendmessage
+    setdir network
+    setheaders {
+        nsendmessage
+    }
+    setfiles {
+        nsendmessage
+    }
+endmodule
+
+beginmodule nservermessageinterpreter
+    setdir network
+    setheaders {
+        nservermessageinterpreter
+    }
+    setfiles {
+        nservermessageinterpreter
     }
 endmodule
 
@@ -77,6 +258,7 @@ endmodule
 beginmodule nsessionserver
     setdir network
     setheaders {
+        nsessionatrpool
         nsessionserver
     }
     setfiles {
@@ -93,5 +275,45 @@ beginmodule nsessionservercontext
     setfiles {
         nsessionservercontext_main
         nsessionservercontext_cmds
+    }
+endmodule
+
+beginmodule nsetprofileattr
+    setdir network
+    setheaders {
+        nsetprofileattr
+    }
+    setfiles {
+        nsetprofileattr
+    }
+endmodule
+
+beginmodule nupdate
+    setdir network
+    setheaders {
+        nupdate
+    }
+    setfiles {
+        nupdate
+    }
+endmodule
+
+beginmodule nusercontext
+    setdir network
+    setheaders {
+        nusercontext
+    }
+    setfiles {
+        nusercontext_main
+    }
+endmodule
+
+beginmodule nusercontroller
+    setdir network
+    setheaders {
+        nusercontroller
+    }
+    setfiles {
+        nusercontroller_main
     }
 endmodule

@@ -305,24 +305,10 @@ private:
     IDirect3DQuery9*   queryResourceManager;    ///< for quering the d3d resource manager
     nTime timeStamp;                            ///< time stamp for FPS computation
     // query watcher variables
-/*
-    nWatched dbgQueryTextureTrashing;
-    nWatched dbgQueryTextureApproxBytesDownloaded;
-    nWatched dbgQueryTextureNumEvicts;
-    nWatched dbgQueryTextureNumVidCreates;
-    nWatched dbgQueryTextureLastPri;
-    nWatched dbgQueryTextureNumUsed;
-    nWatched dbgQueryTextureNumUsedInVidMem;
-    nWatched dbgQueryTextureWorkingSet;
-    nWatched dbgQueryTextureWorkingSetBytes;
-    nWatched dbgQueryTextureTotalManaged;
-    nWatched dbgQueryTextureTotalBytes;
-*/
-    nWatched dbgQueryNumPrimitives;
-    nWatched dbgQueryFPS;
-    nWatched dbgQueryNumDrawCalls;
-    nWatched dbgQueryNumRenderStateChanges;
-    nWatched dbgQueryNumTextureChanges;
+    WATCHER_DECLARE(watchNumPrimitives);
+    WATCHER_DECLARE(watchFPS);
+    WATCHER_DECLARE(watchNumDrawCalls);
+    WATCHER_DECLARE(watchNumRenderStateChanges);
 
     int statsFrameCount;
     int statsNumTextureChanges;

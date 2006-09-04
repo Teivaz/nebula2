@@ -423,7 +423,7 @@ nEditLine::InsertString(const char* str)
 {
     n_assert(str);
     uchar c;
-    while ((c = *str++))
+    while (c = *str++)
     {
         this->InsertChar(c);
     }

@@ -10,17 +10,9 @@
     through a user defined mapping table.
 */
 //-------------------------------------------------------------------
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_HASHNODE_H
 #include "util/nhashnode.h"
-#endif
-
-#ifndef N_INPUTEVENT_H
 #include "input/ninputevent.h"
-#endif
 
 //-------------------------------------------------------------------
 class nInputState : public nHashNode

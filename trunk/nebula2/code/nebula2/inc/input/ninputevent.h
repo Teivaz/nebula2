@@ -16,13 +16,8 @@
     This information can be mapped into a string.
 */
 //-------------------------------------------------------------------
-#ifndef N_TYPES_H
 #include "kernel/ntypes.h"
-#endif
-
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
 #include "input/nkeycodes.h"
 
 //-------------------------------------------------------------------

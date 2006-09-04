@@ -228,7 +228,7 @@ nSessionServer::Trigger()
                     }
                 }
             }
-            while ((curMsg = recvMsg.GetNextString()));
+            while (curMsg = recvMsg.GetNextString());
         }
     }
 
@@ -600,7 +600,7 @@ nSessionServer::UpdateServerClientAttrs()
     }
 
     // fill the remaining Client status attributes with the value "free"
-    for (; clientIndex < this->GetMaxNumClients(); clientIndex++)
+    for (clientIndex; clientIndex < this->GetMaxNumClients(); clientIndex++)
     {
         sprintf(serverAttrName, "Client%d_Status", clientIndex);
         this->SetServerAttr(serverAttrName, "open");

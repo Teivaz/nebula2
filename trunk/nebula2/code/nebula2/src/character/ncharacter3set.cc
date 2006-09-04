@@ -59,9 +59,9 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
     nArray<nString> loadedSkins = characterNode->GetFullNamesOfLoadedSkins();
     nString skinList;
     nString variation;
-    if(nCharacter3Node::ReadCharacterStuffFromXML(fileName,skinList,variation))
+    if (nCharacter3Node::ReadCharacterStuffFromXML(fileName,skinList,variation))
     {
-        if(variation.IsValid())
+        if (variation.IsValid())
         {
             this->SetCurrentVariation(variation);
         }

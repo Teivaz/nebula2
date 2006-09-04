@@ -12,6 +12,7 @@ static void n_start(void* slf, nCmd* cmd);
 static void n_stop(void* slf, nCmd* cmd);
 static void n_toggle(void* slf, nCmd* cmd);
 static void n_iscapturing(void* slf, nCmd* cmd);
+static void n_savetiledscreenshot(void* slf, nCmd* cmd);
 
 //-------------------------------------------------------------------
 /**
@@ -31,14 +32,15 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
-    cl->AddCmd("v_setbasedirectory_s", 'SBSD', n_setbasedirectory);
-    cl->AddCmd("s_getbasedirectory_v", 'GBSD', n_getbasedirectory);
-    cl->AddCmd("v_setframetime_f",     'SFRT', n_setframetime);
-    cl->AddCmd("f_getframetime_v",     'GFRT', n_getframetime);
-    cl->AddCmd("v_start_v",            'STRT', n_start);
-    cl->AddCmd("v_stop_v",             'STOP', n_stop);
-    cl->AddCmd("v_toggle_v",           'TOGL', n_toggle);
-    cl->AddCmd("b_iscapturing_v",      'ISCP', n_iscapturing);
+    cl->AddCmd("v_setbasedirectory_s",      'SBSD', n_setbasedirectory);
+    cl->AddCmd("s_getbasedirectory_v",      'GBSD', n_getbasedirectory);
+    cl->AddCmd("v_setframetime_f",          'SFRT', n_setframetime);
+    cl->AddCmd("f_getframetime_v",          'GFRT', n_getframetime);
+    cl->AddCmd("v_start_v",                 'STRT', n_start);
+    cl->AddCmd("v_stop_v",                  'STOP', n_stop);
+    cl->AddCmd("v_toggle_v",                'TOGL', n_toggle);
+    cl->AddCmd("b_iscapturing_v",           'ISCP', n_iscapturing);
+    cl->AddCmd("b_savetiledscreenshot_ii",  'STLS', n_savetiledscreenshot);
     cl->EndCmds();
 }
 
@@ -186,6 +188,25 @@ n_iscapturing(void* slf, nCmd* cmd)
     cmd->Out()->SetB(self->IsCapturing());
 }
 
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    savetiledscreenshot
+    @input
+    i(NumTilesX), i(NumTilesY)
+    @output
+    v
+    @info
+    Save a high resolution tiled screenshot.
+*/
+static void
+n_savetiledscreenshot(void* slf, nCmd* cmd)
+{
+    nCaptureServer* self = (nCaptureServer*) slf;
+    int i0 = cmd->In()->GetI();
+    int i1 = cmd->In()->GetI();
+    cmd->Out()->SetB(self->SaveTiledScreenShot(i0, i1));
+}
 
 
 

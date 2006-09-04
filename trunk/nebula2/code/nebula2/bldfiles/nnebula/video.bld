@@ -5,8 +5,10 @@
 beginbundle nnebula::video
     setmodules {
         noggtheoraplayer
+        nvideocontroller
         nvideoplayer
         nvideoserver
+        nvideoserver2
     }
 endbundle
 
@@ -25,6 +27,16 @@ beginmodule noggtheoraplayer
     setlibs_win32_debug {
         ogg_d.lib
         theora_d.lib
+    }
+endmodule
+
+beginmodule nvideocontroller
+    setdir video
+    setheaders {
+        nvideocontroller
+    }
+    setfiles {
+        nvideocontroller
     }
 endmodule
 
@@ -48,10 +60,22 @@ beginmodule nvideoserver
         nvideoserver_cmds
     }
 endmodule
+
+beginmodule nvideoserver2
+    setdir video
+    setheaders {
+        nvideoserver2
+    }
+    setfiles {
+        nvideoserver2_main
+        nvideoserver2_cmds
+    }
+endmodule
 #-------------------------------------------------------------------------------
 beginbundle ndshow::video
     setmodules {
         ndshowserver
+        ndshowserver2
     }
 endbundle
 
@@ -63,6 +87,21 @@ beginmodule ndshowserver
     }
     setfiles {
         ndshowserver_main
+    }
+    setlibs_win32 {
+        ole32.lib
+        strmiids.lib
+    }
+endmodule
+
+beginmodule ndshowserver2
+    setdir video
+    setplatform win32
+    setheaders {
+        ndshowserver2
+    }
+    setfiles {
+        ndshowserver2_main
     }
     setlibs_win32 {
         ole32.lib

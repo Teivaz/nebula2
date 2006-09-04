@@ -638,12 +638,12 @@ nD3D9Server::GetFeatureSet()
     }
 }
 
-#ifdef __NEBULA_STATS__
 //------------------------------------------------------------------------------
 /**
     Query the resource manager and fill the watcher variables with the
     result.
 */
+#ifdef __NEBULA_STATS__
 void
 nD3D9Server::QueryStatistics()
 {
@@ -654,14 +654,12 @@ nD3D9Server::QueryStatistics()
     {
         diff = 0.000001f;
     }
-    this->dbgQueryFPS->SetF(float(1.0 / diff));
+    WATCHER_SET_FLOAT(watchFPS, float(1.0f / diff));
+    WATCHER_SET_INT(watchNumPrimitives, this->statsNumPrimitives);
+    WATCHER_SET_INT(watchNumDrawCalls, this->statsNumDrawCalls);
+    WATCHER_SET_INT(watchNumRenderStateChanges, this->statsNumRenderStateChanges);
+
     this->timeStamp = curTime;
-
-    this->dbgQueryNumRenderStateChanges->SetI(this->statsNumRenderStateChanges);
-    this->dbgQueryNumTextureChanges->SetI(this->statsNumTextureChanges);
-    this->dbgQueryNumDrawCalls->SetI(this->statsNumDrawCalls);
-    this->dbgQueryNumPrimitives->SetI(this->statsNumPrimitives);
-
     this->statsNumRenderStateChanges = 0;
     this->statsNumTextureChanges = 0;
     this->statsNumDrawCalls = 0;

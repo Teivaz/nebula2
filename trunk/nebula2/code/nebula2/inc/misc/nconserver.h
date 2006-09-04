@@ -6,8 +6,7 @@
     @ingroup NebulaConsoleServer
     @brief Implements the Nebula ingame console.
 
-    Must live under the name /sys/servers/console in the Nebula object
-    hierarchy.
+    Must live under the name /sys/servers/console in the Nebula object hierarchy.
 
     See also @ref N2ScriptInterface_nconserver
 

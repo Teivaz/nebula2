@@ -122,7 +122,7 @@ nN3d2Loader::Open()
             // vertex components
             char* str;
             this->fileVertexComponents = 0;
-            while ((str = strtok(0, N_WHITESPACE)))
+            while (str = strtok(0, N_WHITESPACE))
             {
                 if (0 == strcmp(str, "coord"))          this->fileVertexComponents |= nMesh2::Coord;
                 else if (0 == strcmp(str, "normal"))    this->fileVertexComponents |= nMesh2::Normal;

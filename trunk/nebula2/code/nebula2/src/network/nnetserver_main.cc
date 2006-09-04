@@ -132,7 +132,7 @@ nNetServer::Trigger()
                     }
                 }
             }
-            while ((curMsg = recvMsg.GetNextString()));
+            while (curMsg = recvMsg.GetNextString());
         }
     }
 

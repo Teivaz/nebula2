@@ -95,6 +95,7 @@ nSkinShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
         charSkinRenderer.Render(fragment.GetMeshGroupIndex(), fragment.GetJointPalette());
     }
     this->charSkinRenderer.End();
+
     return true;
 }
 
