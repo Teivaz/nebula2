@@ -111,8 +111,7 @@ Chain::AttachInputSink(int priority, Message::Port* sink)
 
     // find place to insert
     int insertBehind = -1;
-    int i;
-    for (i = 0; i < this->ports.Size(); i++)
+    for (int i = 0; i < this->ports.Size(); i++)
     {
         // deal with empty ports
         if (this->ports[i].port != 0)
@@ -157,8 +156,7 @@ Chain::RemoveInputSink(Message::Port* sink)
 {
     n_assert(sink);
     // find element
-    int i;
-    for (i = 0; i < this->ports.Size(); i++)
+    for (int i = 0; i < this->ports.Size(); i++)
     {
         if (this->ports[i].port.get_unsafe() == sink)
         {
@@ -178,8 +176,7 @@ Chain::RemoveInputSink(int priority, Message::Port* sink)
 {
     n_assert(sink);
     // find element
-    int i;
-    for (i = 0; i < this->ports.Size(); i++)
+    for (int i = 0; i < this->ports.Size(); i++)
     {
         if (this->ports[i].port.get_unsafe() == sink)
         {
@@ -203,8 +200,7 @@ Chain::CleanupEmptyPorts()
     if (!this->IsInHandleMessage())
     {
         // find empty ports and remove them
-        int i;
-        for (i = 0; i < this->ports.Size(); /*empty*/)
+        for (int i = 0; i < this->ports.Size(); /*empty*/)
         {
             if (this->ports[i].port == 0)
             {
@@ -229,8 +225,7 @@ int
 Chain::GetNumSinks() const
 {
     int count = 0;
-    int i;
-    for (i = 0; i < this->ports.Size(); i++)
+    for (int i = 0; i < this->ports.Size(); i++)
     {
         if (this->ports[i].port != 0)
         {

@@ -354,8 +354,7 @@ Composite::OnStepBefore()
     if (this->IsAttached())
     {
         int num = this->GetNumBodies();
-        int i;
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             this->GetBodyAt(i)->OnStepBefore();
         }
@@ -372,8 +371,7 @@ Composite::OnStepAfter()
     if (this->IsAttached())
     {
         int num = this->GetNumBodies();
-        int i;
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             this->GetBodyAt(i)->OnStepAfter();
         }
@@ -402,8 +400,7 @@ Composite::OnFrameBefore()
         this->transformChanged = false;
 
         int num = this->GetNumBodies();
-        int i;
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             this->GetBodyAt(i)->OnFrameBefore();
         }
@@ -420,8 +417,7 @@ Composite::OnFrameAfter()
     if (this->IsAttached())
     {
         int num = this->GetNumBodies();
-        int i;
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             RigidBody* curBody = this->GetBodyAt(i);
             curBody->OnFrameAfter();
@@ -460,8 +456,7 @@ void
 Composite::SetEnabled(bool b)
 {
     int num = this->GetNumBodies();
-    int i;
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->GetBodyAt(i)->SetEnabled(b);
     }
@@ -568,8 +563,7 @@ void
 Composite::Reset()
 {
     int numBodies = this->bodyArray.Size();
-    int i;
-    for (i = 0; i < numBodies; i++)
+    for (int i = 0; i < numBodies; i++)
     {
         RigidBody* body = this->bodyArray[i];
         body->Reset();
@@ -640,9 +634,8 @@ Composite::FindBodyByUniqueId(int id) const
 {
     if (0 != id)
     {
-        int i;
         int num = this->GetNumBodies();
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             if (id == this->GetBodyAt(i)->GetUniqueId())
             {
@@ -662,9 +655,8 @@ Composite::FindBodyByUniqueId(int id) const
 bool
 Composite::HasLinkType(RigidBody::LinkType t)
 {
-    int i;
     int num = this->GetNumBodies();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->GetBodyAt(i)->IsLinkValid(t))
         {

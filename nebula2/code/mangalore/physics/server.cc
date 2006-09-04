@@ -437,10 +437,9 @@ Server::GetClosestContactAlongRay(const vector3& pos, const vector3& dir, const 
     const nArray<ContactPoint>& contacts = this->GetContactPoints();
     int closestContactIndex = -1;
     float closestDistance = dir.len();;
-    int i;
     int numContacts = contacts.Size();
     vector3 distVec;
-    for (i = 0; i < numContacts; i++)
+    for (int i = 0; i < numContacts; i++)
     {
         const ContactPoint& curContact = contacts[i];
         distVec = curContact.GetPosition() - pos;
@@ -562,9 +561,8 @@ Server::GetEntitiesInSphere(const vector3& pos, float radius, const FilterSet& e
 
     // convert contacts to unique entities
     uint stamp = this->GetUniqueStamp();
-    int i;
     int numContacts = this->contactPoints.Size();
-    for (i = 0; i < numContacts; i++)
+    for (int i = 0; i < numContacts; i++)
     {
         Entity* entity = this->contactPoints[i].GetEntity();
         if (entity && (entity->GetStamp() != stamp))
@@ -614,9 +612,8 @@ Server::GetEntitiesInBox(const vector3& scale, const matrix44& m, const FilterSe
 
     // convert contacts to unique entities
     uint stamp = this->GetUniqueStamp();
-    int i;
     int numContacts = this->contactPoints.Size();
-    for (i = 0; i < numContacts; i++)
+    for (int i = 0; i < numContacts; i++)
     {
         Entity* entity = this->contactPoints[i].GetEntity();
         if (entity && (entity->GetStamp() != stamp))

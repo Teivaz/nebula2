@@ -277,8 +277,7 @@ PhysicsGfxUtil::TransferCompositeTransforms(Physics::Composite* composite, const
     else
     {
         const matrix44& transform = composite->GetTransform();
-        int i;
-        for (i = 0; i < graphicsEntities.Size(); i++)
+        for (int i = 0; i < graphicsEntities.Size(); i++)
         {
             graphicsEntities[i]->SetTransform(transform);
         }

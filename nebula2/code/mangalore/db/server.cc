@@ -269,8 +269,7 @@ Server::LoadGlobalAttributes()
         {
             reader->SetToRow(0);
             nArray<Attribute> attrs = reader->GetAttrs();
-            int i;
-            for (i = 0; i < attrs.Size(); i++)
+            for (int i = 0; i < attrs.Size(); i++)
             {
                 this->globalAttrs.SetAttr(attrs[i]);
             }

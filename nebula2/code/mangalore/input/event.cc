@@ -72,8 +72,7 @@ Event::Handled(int recursive) const
     // check if one of the connected events already is handled
     if (recursive > 0)
     {
-        int i;
-        for (i = 0; i < this->connectedEvents.Size(); i++)
+        for (int i = 0; i < this->connectedEvents.Size(); i++)
         {
             if (this->connectedEvents[i]->Handled(recursive - 1))
             {

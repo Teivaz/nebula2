@@ -140,8 +140,7 @@ Server::GetActiveWindow() const
 {
     // FIXME!
     // find the first valid window
-    int i;
-    for (i = 0; i < this->windows.Size(); i++)
+    for (int i = 0; i < this->windows.Size(); i++)
     {
         if (this->windows[i].isvalid())
         {

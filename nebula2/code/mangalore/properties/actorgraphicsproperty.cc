@@ -162,9 +162,8 @@ ActorGraphicsProperty::OnDeactivate()
     // clear our attachments
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
     n_assert(graphicsLevel);
-    int i;
     int num = this->attachments.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->attachments[i].newCreated)
         {
@@ -229,8 +228,7 @@ ActorGraphicsProperty::FindAttachment(const nString& jointName)
     if (-1 != jointIndex)
     {
         int num = this->attachments.Size();
-        int i;
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             if (jointIndex == this->attachments[i].jointIndex)
             {
@@ -353,8 +351,7 @@ ActorGraphicsProperty::UpdateAttachments()
 
             // for each attachment...
             int numAttachments = this->attachments.Size();
-            int i;
-            for (i = 0; i < numAttachments; i++)
+            for (int i = 0; i < numAttachments; i++)
             {
                 const Attachment& curAttachment = this->attachments[i];
 

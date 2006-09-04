@@ -42,10 +42,10 @@ nCharacter3Set::Init(nCharacter3Node* characterNode)
     for( i = 0; i < this->numAvailableSkins; i++)
     {
         this->selectedSkins.Append(false);
-    };
+    }
 
     this->isSetUp = true;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -64,7 +64,7 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
         if(variation.IsValid())
         {
             this->SetCurrentVariation(variation);
-        };
+        }
 
         nArray<nString> skin;
         skinList.Tokenize(" ",skin);
@@ -87,12 +87,12 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
                         (skin[k+2] == nameTokens[2]) )
                     {
                         visible = true;
-                    };
-                };
-            };
+                    }
+                }
+            }
             this->selectedSkins[i] = visible;
-        };
+        }
         return true;
-    };
+    }
     return false;
-};
+}

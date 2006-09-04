@@ -330,8 +330,7 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
     float friction = Physics::MaterialTable::GetFriction(mat1, mat2);
     float bounce   = Physics::MaterialTable::GetBounce(mat1, mat2);
     static dContact contact[MaxContacts];
-    int i;
-    for (i = 0; i < MaxContacts; i++)
+    for (int i = 0; i < MaxContacts; i++)
     {
         contact[i].surface.mode = dContactBounce | dContactSoftCFM;
         contact[i].surface.mu = friction;
@@ -358,7 +357,7 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
             return;
         }
 
-        for (i = 0; i < numColls; i++)
+        for (int i = 0; i < numColls; i++)
         {
             // create a contact for each collision
             dJointID jointId = dJointCreateContact(level->odeWorldId, level->contactJointGroup, &(contact[i]));

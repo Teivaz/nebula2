@@ -198,9 +198,8 @@ FocusManager::SetInputFocusEntity(Entity* entity)
     // (there may be cases where more then one entity has the input focus flag set,
     // mainly when a new level is loaded)
     EntityManager* entityManager = EntityManager::Instance();
-    int i;
     int num = entityManager->GetNumEntities();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         Entity* currEntity = entityManager->GetEntityAt(i);
         if (currEntity)
@@ -250,9 +249,8 @@ FocusManager::SetCameraFocusEntity(Entity* entity)
     // (there may be cases where more then one entity has the camera focus flag set,
     // mainly when a new level is loaded)
     EntityManager* entityManager = EntityManager::Instance();
-    int i;
     int num = entityManager->GetNumEntities();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         Entity* currEntity = entityManager->GetEntityAt(i);
         if (currEntity)

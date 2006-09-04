@@ -60,10 +60,10 @@ nNodeList::Close ()
     }
 
     // if we have a character3set, we must delete it
-    if(this->character3Set)
+    if (this->character3Set)
     {
         delete this->character3Set;
-    };
+    }
 
     // verify if everything is clean
     n_assert(this->refUsrScene == 0);
@@ -249,17 +249,19 @@ nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex)
 void
 nNodeList::Trigger(double time, uint frameId)
 {
-    n_assert ( this->refUsrScene.isvalid() )
+    n_assert(this->refUsrScene.isvalid());
 
     // Update all Variables
     uint index;
-    for( index=0 ; index < numElements ; index++ )
-        TransferGlobalVars(renderContexts[index],time,frameId);
+    for (index=0 ; index < numElements ; index++)
+    {
+        this->TransferGlobalVars(renderContexts[index],time,frameId);
+    }
 
     // Apply animation on the Node that was attached to a Hardpoint
-    if(this->hardpointObjectsCnt > 0)
+    if (this->hardpointObjectsCnt > 0)
     {
-        nCharacter2* curChar = GetCharacter();
+        nCharacter2* curChar = this->GetCharacter();
         if( 0 != curChar )
         {
             nCharSkeleton& skel = curChar->GetSkeleton();
@@ -272,10 +274,10 @@ nNodeList::Trigger(double time, uint frameId)
                 {
                     nTransformNode* transformNode = (nTransformNode*) currentNode;
                     transformNode->SetTransform(joint.GetMatrix());
-                };
-            };
-        };
-    };
+                }
+            }
+        }
+    }
 }
 //------------------------------------------------------------------------------
 /**

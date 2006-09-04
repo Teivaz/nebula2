@@ -222,29 +222,32 @@ ActorPhysicsProperty::OnMoveAfter()
     if (this->IsEnabled())
     {
         // get current physics entity transform and velocity
-        matrix44 physicsEntityTransform = this->charPhysicsEntity->GetTransform();
-        vector3 physicsEntityVelocity = this->charPhysicsEntity->GetVelocity();
+        if (this->charPhysicsEntity->HasTransformChanged())
+        {
+            matrix44 physicsEntityTransform = this->charPhysicsEntity->GetTransform();
+            vector3 physicsEntityVelocity = this->charPhysicsEntity->GetVelocity();
 
-        // feed the feedback loops
-        polar2 headingAngles(-physicsEntityTransform.z_component());
-        this->smoothedPosition.SetGoal(physicsEntityTransform.pos_component());
-        this->smoothedHeading.SetGoal(headingAngles.rho);
+            // feed the feedback loops
+            polar2 headingAngles(physicsEntityTransform.z_component());
+            this->smoothedPosition.SetGoal(physicsEntityTransform.pos_component());
+            this->smoothedHeading.SetGoal(headingAngles.rho);
 
-        // evaluate the feedback loops
-        nTime time = GameTimeSource::Instance()->GetTime();
-        this->smoothedPosition.Update(time);
-        this->smoothedHeading.Update(time);
+            // evaluate the feedback loops
+            nTime time = GameTimeSource::Instance()->GetTime();
+            this->smoothedPosition.Update(time);
+            this->smoothedHeading.Update(time);
 
-        // construct the new entity matrix
-        matrix44 entityMatrix;
-        entityMatrix.rotate_y(this->smoothedHeading.GetState());
-        entityMatrix.translate(this->smoothedPosition.GetState());
+            // construct the new entity matrix
+            matrix44 entityMatrix;
+            entityMatrix.rotate_y(this->smoothedHeading.GetState());
+            entityMatrix.translate(this->smoothedPosition.GetState());
 
-        // update game entity
-        Ptr<Message::UpdateTransform> msg = Message::UpdateTransform::Create();
-        msg->SetMatrix(entityMatrix);
-        GetEntity()->SendSync(msg);
-        GetEntity()->SetVector3(Attr::VelocityVector, physicsEntityVelocity);
+            // update game entity
+            Ptr<Message::UpdateTransform> msg = Message::UpdateTransform::Create();
+            msg->SetMatrix(entityMatrix);
+            this->GetEntity()->SendSync(msg);
+            this->GetEntity()->SetVector3(Attr::VelocityVector, physicsEntityVelocity);
+        }
     }
 }
 
@@ -373,6 +376,7 @@ ActorPhysicsProperty::HandleSetTransform(SetTransform* msg)
 {
     n_assert(msg);
     this->charPhysicsEntity->SetTransform(msg->GetMatrix());
+
     // reset the feedback loops
     nTime time = GameTimeSource::Instance()->GetTime();
     this->smoothedPosition.Reset(time, 0.001f, this->positionGain, msg->GetMatrix().pos_component());
@@ -413,7 +417,7 @@ ActorPhysicsProperty::ContinueGoto()
     float dist = targetVec.len();
 
     // current segment position reached?
-    if (dist < (this->charPhysicsEntity->GetRadius() * 1.1f))
+    if (dist < this->gotoTargetDist)
     {
         // reached final target position?
         if (this->curGotoSegment == this->gotoPath->CountSegments())
@@ -499,8 +503,7 @@ ActorPhysicsProperty::OnRenderDebug()
     {
         nGfxServer2* gfxServer = nGfxServer2::Instance();
         const nArray<vector3>& points = this->gotoPath->GetPoints();
-        int i;
-        for (i = 0; i < points.Size(); i++)
+        for (int i = 0; i < points.Size(); i++)
         {
             matrix44 m;
             m.scale(vector3(0.1f, 0.1f, 0.1f));

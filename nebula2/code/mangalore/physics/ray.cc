@@ -85,8 +85,7 @@ Ray::OdeRayCallback(void* data, dGeomID o1, dGeomID o2)
     static vector3 contactPos;
     static vector3 contactNormal;
     ContactPoint contactPoint;
-    int i;
-    for (i = 0; i < numColls; i++)
+    for (int i = 0; i < numColls; i++)
     {
         // FIXME: hmm, contact[x].geom.pos[] doesn't seem to be correct with mesh
         // shapes which are not at the origin. Computing the intersection pos from

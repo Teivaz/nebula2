@@ -27,6 +27,10 @@ public:
     static SaveGameManager* Instance();
     /// return true if a current game exists
     static bool CurrentGameExists();
+    /// optional method to override world database for NewGame()
+    void SetWorldDbOverride(const nString& dbName);
+    /// get optional override world database
+    const nString& GetWorldDbOverride() const;
     /// optional method to override start level for NewGame()
     void SetStartLevelOverride(const nString& levelName);
     /// get optional override start level
@@ -43,8 +47,11 @@ public:
     nString GetStartupLevel();
 
 private:
+    /// get world database
+    nString GetWorldDb();
 
     static SaveGameManager* Singleton;
+    nString overrideWorldDb;
     nString overrideStartLevel;
 };
 
@@ -59,6 +66,28 @@ SaveGameManager::Instance()
 {
     n_assert(0 != Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Override the world database
+*/
+inline
+void
+SaveGameManager::SetWorldDbOverride(const nString& dbName)
+{
+    this->overrideWorldDb = dbName;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Override the world database
+*/
+inline
+const nString&
+SaveGameManager::GetWorldDbOverride() const
+{
+    return this->overrideWorldDb;
 }
 
 //------------------------------------------------------------------------------

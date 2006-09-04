@@ -97,8 +97,7 @@ Writer::Close()
     {
         // check if the table layout needs to be updated
         nArray<nString> columnTitles(128, 128);
-        int i;
-        for (i = 0; i < this->columns.Size(); i++)
+        for (int i = 0; i < this->columns.Size(); i++)
         {
             columnTitles.Append(this->columns[i].GetName());
         }

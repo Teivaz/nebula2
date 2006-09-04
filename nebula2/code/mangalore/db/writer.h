@@ -83,9 +83,8 @@ inline
 int
 Writer::FindAttrIndex(Attr::AttributeID id) const
 {
-    int i;
     int num = this->rows.Back().Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->rows.Back()[i].GetAttributeID() == id)
         {

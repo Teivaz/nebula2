@@ -56,7 +56,7 @@ nAnimLoopType::FromString(const nString& s)
     else
     {
         n_error("nAnimLoopType::ToString(): invalid loop type '%s'\n", s.Get());
-        return Loop;
+        return Clamp;
     }
 }
 

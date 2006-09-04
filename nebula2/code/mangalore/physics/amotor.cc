@@ -40,9 +40,8 @@ AMotor::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
     // configure ODE joint
     dJointSetAMotorMode(this->odeJointId, dAMotorUser);
     dJointSetAMotorNumAxes(this->odeJointId, this->GetNumAxes());
-    int i;
     int num = this->GetNumAxes();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         const JointAxis& curAxis = this->axisParams[i];
         dJointSetAMotorAngle(this->odeJointId, i, curAxis.GetAngle());
@@ -89,9 +88,8 @@ void
 AMotor::UpdateTransform(const matrix44& m)
 {
     matrix33 m33(m.x_component(), m.y_component(), m.z_component());
-    int i;
     int num = this->GetNumAxes();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         vector3 a = m33 * this->axisParams[i].GetAxis();
         dJointSetAMotorAxis(this->odeJointId, i, 0, a.x, a.y, a.z);

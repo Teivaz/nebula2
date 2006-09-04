@@ -74,9 +74,8 @@ Server::RegisterPort(Port* port)
     this->CleanupEmptyPorts();
 
     // check if there is a free ptr that could be used
-    int i;
     int num = this->portArray.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->portArray[i] == 0)
         {
@@ -144,8 +143,7 @@ Server::BroadcastAsync(Msg* msg)
     this->BeginBroadcast();
 
     int num = this->portArray.Size();
-    int i;
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->portArray[i] != 0)
         {
@@ -190,8 +188,7 @@ Server::BroadcastSync(Msg* msg)
     this->BeginBroadcast();
 
     int num = this->portArray.Size();
-    int i;
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->portArray[i] != 0)
         {
@@ -215,8 +212,7 @@ Server::CleanupEmptyPorts()
 {
     if (!this->IsInBroadcast())
     {
-        int i;
-        for (i = 0; i < this->portArray.Size(); /*empty*/)
+        for (int i = 0; i < this->portArray.Size(); /*empty*/)
         {
             if (this->portArray[i] == 0)
             {

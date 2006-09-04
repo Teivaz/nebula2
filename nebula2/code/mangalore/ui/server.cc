@@ -99,8 +99,7 @@ void
 Server::Close()
 {
     n_assert(this->isOpen);
-    int i;
-    for (i = 0; i < this->windows.Size(); i++)
+    for (int i = 0; i < this->windows.Size(); i++)
     {
         if (this->windows[i].isvalid() && this->windows[i]->IsOpen())
         {
@@ -168,8 +167,7 @@ Server::Render()
     {
         this->lightEntity->Render();
     }
-    int i;
-    for (i = 0; i < this->windows.Size(); i++)
+    for (int i = 0; i < this->windows.Size(); i++)
     {
         if (this->windows[i].isvalid())
         {
@@ -228,9 +226,8 @@ Server::Trigger()
     this->inTrigger = true;
 
     // call the per-frame method
-    int i;
     int num = this->windows.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->windows[i].isvalid())
         {

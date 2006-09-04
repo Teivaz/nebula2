@@ -34,13 +34,14 @@ public:
     bool Open();
     /// close the script server
     void Close();
+    /// return true if server is open
+    bool IsOpen() const;
     /// register a command on the server
-    void RegisterCommand(Command *command);
+    void RegisterCommand(Command *cmd);
     /// deregister a command from the server
-    void DeRegisterCommand(const nString& name);
-
-    /// Callback for the TCL-Interpreter-Object
-    //static int Tcl_CallMethod(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv);
+    void DeRegisterCommand(const nString& cmdName);
+    /// return true if a command exists
+    bool CommandExists(const nString& cmdName) const;
 
 private:
 
@@ -61,6 +62,16 @@ Server::Instance()
 {
     n_assert(0 != Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+Server::IsOpen() const
+{
+    return this->isOpen;
 }
 
 } // namespace Message

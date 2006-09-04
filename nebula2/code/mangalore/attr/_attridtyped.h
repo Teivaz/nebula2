@@ -177,9 +177,8 @@ _attridTyped<_AttrIdType>::Find( const nString& n )
     // check if any elements of this id type:
     if (!attrIdRegistry) return 0;
 
-    int i;
     int num = attrIdRegistry->Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (attrIdRegistry->At(i)->GetName() == n)
         {

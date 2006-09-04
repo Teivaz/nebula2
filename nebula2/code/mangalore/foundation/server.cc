@@ -223,8 +223,7 @@ Server::Close()
     this->scriptServer->Run("OnShutdown", result);
 
     // release resource pools
-    int i;
-    for (i = 0; i < NumResourcePoolTypes; i++)
+    for (int i = 0; i < NumResourcePoolTypes; i++)
     {
         this->resourcePools[i]->Release();
         n_assert(!this->resourcePools[i].isvalid());

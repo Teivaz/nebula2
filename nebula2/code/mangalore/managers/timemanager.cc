@@ -123,8 +123,7 @@ TimeSource*
 TimeManager::GetTimeSourceByClassName(const nString& n) const
 {
     n_assert(n.IsValid());
-    int i;
-    for (i = 0; i < this->timeSourceArray.Size(); i++)
+    for (int i = 0; i < this->timeSourceArray.Size(); i++)
     {
         if (this->timeSourceArray[i]->GetClassName() == n)
         {
@@ -178,8 +177,7 @@ TimeManager::OnSave()
     dbWriter->SetPrimaryKey(Attr::TimeSourceId);
     if (dbWriter->Open())
     {
-        int i;
-        for (i = 0; i < this->timeSourceArray.Size(); i++)
+        for (int i = 0; i < this->timeSourceArray.Size(); i++)
         {
             this->timeSourceArray[i]->OnSave(dbWriter);
         }
@@ -195,8 +193,7 @@ TimeManager::OnSave()
 void
 TimeManager::ResetAll()
 {
-    int i;
-    for (i = 0; i < this->timeSourceArray.Size(); i++)
+    for (int i = 0; i < this->timeSourceArray.Size(); i++)
     {
         this->timeSourceArray[i]->Reset();
     }
@@ -211,8 +208,7 @@ TimeManager::ResetAll()
 void
 TimeManager::PauseAll()
 {
-    int i;
-    for (i = 0; i < this->timeSourceArray.Size(); i++)
+    for (int i = 0; i < this->timeSourceArray.Size(); i++)
     {
         this->timeSourceArray[i]->Pause();
     }
@@ -225,8 +221,7 @@ TimeManager::PauseAll()
 void
 TimeManager::ContinueAll()
 {
-    int i;
-    for (i = 0; i < this->timeSourceArray.Size(); i++)
+    for (int i = 0; i < this->timeSourceArray.Size(); i++)
     {
         this->timeSourceArray[i]->Continue();
     }
@@ -257,8 +252,7 @@ TimeManager::Update()
     this->time = curTime;
 
     // update all time sources
-    int i;
-    for (i = 0; i < this->timeSourceArray.Size(); i++)
+    for (int i = 0; i < this->timeSourceArray.Size(); i++)
     {
         this->timeSourceArray[i]->UpdateTime(frameTime);
     }

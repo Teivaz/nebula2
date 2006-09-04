@@ -134,8 +134,7 @@ WaveBank::FindResource(const nString& name)
 {
     n_assert(name.IsValid());
     int num = this->GetNumResources();
-    int i;
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (0 == strcmp(this->waveArray[i]->GetName().Get(), name.Get()))
         {

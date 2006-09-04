@@ -530,9 +530,8 @@ App::CleanupStateHandlers()
     this->nextState.Clear();
 
     // cleanup state handlers
-    int i;
     int num = this->stateHandlers.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->stateHandlers[i]->OnRemoveFromApplication();
     }
@@ -735,9 +734,8 @@ App::AddStateHandler(StateHandler* handler)
 StateHandler*
 App::FindStateHandlerByName(const nString& name) const
 {
-    int i;
     int num = this->GetNumStates();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->stateHandlers[i]->GetName() == name)
         {
@@ -754,9 +752,8 @@ App::FindStateHandlerByName(const nString& name) const
 StateHandler*
 App::FindStateHandlerByRtti(const Foundation::Rtti& rtti) const
 {
-    int i;
     int num = this->GetNumStates();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->stateHandlers[i]->IsInstanceOf(rtti))
         {

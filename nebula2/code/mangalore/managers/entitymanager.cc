@@ -575,8 +575,7 @@ EntityManager::ExistsEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bo
     dbQuery->AddWhereAttr(Db::Attribute(Attr::_Type, nString("INSTANCE")));
 
     // add attributes as where clause
-    int i;
-    for (i = 0; i < attributes.Size(); i++)
+    for (int i = 0; i < attributes.Size(); i++)
     {
         dbQuery->AddWhereAttr(attributes[i]);
     }
@@ -589,9 +588,9 @@ EntityManager::ExistsEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bo
         return dbQuery->GetNumRows() > 0;
     }
 
-    // fallthrough, something went wrong
+    // fall through, something went wrong
     nString err;
-    for (i = 0; i < attributes.Size(); i++)
+    for (int i = 0; i < attributes.Size(); i++)
     {
         err.Append(attributes[i].GetName());
         err.Append("=");
@@ -655,8 +654,7 @@ EntityManager::GetEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bool 
     {
         // get entitys from db
         nArray<Entity*> dbEntitys = this->CreateSleepingEntities(attributes, entities, failOnDBError);
-        int i;
-        for (i = 0; i < dbEntitys.Size(); i++)
+        for (int i = 0; i < dbEntitys.Size(); i++)
         {
             entities.Append(dbEntitys[i]);
         }
@@ -672,15 +670,14 @@ EntityManager::GetEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bool 
     it to the world. Please note that the method may return a array with 0
     elements if such entities are not found in the database!
 
-    If there are filteredEntitys those will be filtered in the DB querty by
+    If there are filteredEntitys those will be filtered in the DB query by
     GUID.
 */
 nArray<Entity*>
 EntityManager::CreateSleepingEntities(const nArray<Db::Attribute>& keyAttributes, const nArray<Ptr<Game::Entity> >& filteredEntitys, bool failOnDBError)
 {
     nArray<Entity*> entities = FactoryManager::Instance()->CreateEntitiesByKeyAttrs(keyAttributes, filteredEntitys, Entity::SleepingPool, failOnDBError);
-    int i;
-    for (i = 0; i < entities.Size(); i++)
+    for (int i = 0; i < entities.Size(); i++)
     {
         this->AttachEntity(entities[i]);
     }

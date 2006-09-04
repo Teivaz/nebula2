@@ -159,9 +159,8 @@ RigidBody::OnFrameBefore()
 {
     // reset the number of collision counters and horizontal collided flag
     // in all shapes
-    int i;
     int num = this->shapeArray.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         shapeArray[i]->SetNumCollisions(0);
         shapeArray[i]->SetHorizontalCollided(false);
@@ -262,9 +261,8 @@ RigidBody::OnStepBefore()
     if (this->IsEnabled())
     {
         // move to dynamic collide space if we have become freshly enabled
-        int i;
         int num = this->GetNumShapes();
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             Shape* curShape = this->GetShapeAt(i);
             if (dynamicSpace != curShape->GetSpaceId())
@@ -280,9 +278,8 @@ RigidBody::OnStepBefore()
     else
     {
         // move to static collide space if we have become freshly disabled
-        int i;
         int num = this->GetNumShapes();
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             Shape* curShape = this->GetShapeAt(i);
             if (staticSpace != curShape->GetSpaceId())
@@ -474,9 +471,8 @@ RigidBody::RenderDebug()
     if (this->IsAttached())
     {
         matrix44 m = this->GetTransform();
-        int i;
         int numShapes = this->shapeArray.Size();
-        for (i = 0; i < numShapes; i++)
+        for (int i = 0; i < numShapes; i++)
         {
             this->shapeArray[i]->RenderDebug(m);
         }
@@ -493,9 +489,8 @@ RigidBody::SetEntity(Entity* e)
     this->entity = e;
 
     // distribute to shapes
-    int i;
     int num = this->shapeArray.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->shapeArray[i]->SetEntity(e);
     }

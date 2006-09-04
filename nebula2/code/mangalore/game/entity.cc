@@ -209,9 +209,8 @@ Entity::OnBeginFrame()
     n_assert(LivePool == this->entityPool);
 
     // call properties
-    int i;
     int num = this->properties.Size();
-    for (i = 0; this->activated && i < num; i++)
+    for (int i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnBeginFrame();
     }
@@ -227,9 +226,8 @@ Entity::OnMoveBefore()
     n_assert(LivePool == this->entityPool);
 
     // call properties
-    int i;
     int num = this->properties.Size();
-    for (i = 0; this->activated && i < num; i++)
+    for (int i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnMoveBefore();
     }
@@ -245,9 +243,8 @@ Entity::OnMoveAfter()
     n_assert(LivePool == this->entityPool);
 
     // call properties
-    int i;
     int num = this->properties.Size();
-    for (i = 0; this->activated && i < num; i++)
+    for (int i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnMoveAfter();
     }
@@ -263,9 +260,8 @@ Entity::OnRender()
     n_assert(LivePool == this->entityPool);
 
     // call properties
-    int i;
     int num = this->properties.Size();
-    for (i = 0; this->activated && i < num; i++)
+    for (int i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnRender();
     }
@@ -281,9 +277,8 @@ Entity::OnRenderDebug()
     n_assert(LivePool == this->entityPool);
 
     // call properties
-    int i;
     int num = this->properties.Size();
-    for (i = 0; this->activated && i < num; i++)
+    for (int i = 0; this->activated && i < num; i++)
     {
         this->properties[i]->OnRenderDebug();
     }
@@ -306,9 +301,8 @@ void
 Entity::OnLoad()
 {
     // let properties do their post-loading-stuff
-    int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->properties[i]->OnLoad();
     }
@@ -327,10 +321,9 @@ Entity::OnLoad()
 void
 Entity::OnStart()
 {
-    // let propreties do there OnStart init stuff
-    int i;
+    // let properties do there OnStart init stuff
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->properties[i]->OnStart();
     }
@@ -348,9 +341,8 @@ Entity::OnStart()
 void
 Entity::OnSave()
 {
-    int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->properties[i]->OnSave();
     }
@@ -411,9 +403,8 @@ Entity::RemoveProperty(Property* prop)
 void
 Entity::ActivateProperties()
 {
-    int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         n_assert(!this->properties[i]->IsActive());
         this->dispatcher->AttachPort(this->properties[i]);
@@ -428,9 +419,8 @@ Entity::ActivateProperties()
 void
 Entity::DeactivateProperties()
 {
-    int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         n_assert(this->properties[i]->IsActive());
         this->dispatcher->RemovePort(this->properties[i]);
@@ -445,9 +435,8 @@ Entity::DeactivateProperties()
 Property*
 Entity::FindProperty(const Foundation::Rtti& propId) const
 {
-    int i;
     int num = this->properties.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->properties[i]->IsA(propId))
         {
@@ -488,8 +477,7 @@ bool
 Entity::HasAttributeSet(const AttrSet* attrSet) const
 {
     n_assert(attrSet != 0);
-    int i;
-    for (i = 0; i < this->attrSets.Size(); i++)
+    for (int i = 0; i < this->attrSets.Size(); i++)
     {
         if (this->attrSets[i]->IsInstanceOf(*attrSet->GetRtti()))
         {

@@ -184,8 +184,7 @@ Server::EndScene()
 
     // trigger all attached entities
     int num = this->GetNumEntities();
-    int i;
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->entityArray[i]->Update();
     }

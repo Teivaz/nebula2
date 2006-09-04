@@ -30,7 +30,10 @@ public:
     const TYPE& GetValue() const;
     /// set to interpolated value
     void Lerp(const TYPE& key0, const TYPE& key1, float l);
-
+    /// only compares time
+    bool operator< (const nAnimKey& right) const;
+    /// only compares time
+    bool operator> (const nAnimKey& right) const;
 private:
     float time;
     TYPE value;
@@ -120,4 +123,25 @@ nAnimKey<TYPE>::Lerp(const TYPE& key0, const TYPE& key1, float l)
     lerp<TYPE>(this->value, key0, key1, l);
 }
 //------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+bool nAnimKey<TYPE>::operator<(const nAnimKey<TYPE>& right) const
+{
+    return this->GetTime() < right.GetTime();
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+template<class TYPE>
+inline
+bool nAnimKey<TYPE>::operator>(const nAnimKey<TYPE>& right) const
+{
+    return this->GetTime() > right.GetTime();
+}
+
+//------------------------------------------------------------------------------
+
 #endif

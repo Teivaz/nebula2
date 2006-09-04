@@ -39,8 +39,7 @@ Entity::LoadFromReader(Reader* reader)
 {
     n_assert(reader);
     nArray<Attribute> attrs = reader->GetAttrs();
-    int i;
-    for (i = 0; i < attrs.Size(); i++)
+    for (int i = 0; i < attrs.Size(); i++)
     {
         this->attrs.SetAttr(attrs[i]);
     }

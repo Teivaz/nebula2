@@ -67,9 +67,8 @@ Server::Start()
     n_assert(!this->isStarted);
 
     // call the OnStart method on all managers
-    int i;
     int num = this->managers.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->managers[i]->OnStart();
     }
@@ -120,9 +119,8 @@ Server::Close()
     n_assert(this->isOpen);
 
     // remove all managers
-    int i;
     int num = this->managers.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->managers[i]->OnDeactivate();
         this->managers[i] = 0;
@@ -141,9 +139,8 @@ Server::OnFrame()
 {
     // call OnFrame() on managers
     PROFILER_START(this->profGameServerFrame);
-    int i;
     int num = this->managers.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->managers[i]->OnFrame();
     }
@@ -189,9 +186,8 @@ Server::RemoveManager(Manager* manager)
 Manager*
 Server::FindManager(const Foundation::Rtti& classId) const
 {
-    int i;
     int num = this->managers.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->managers[i]->IsA(classId))
         {
@@ -308,15 +304,14 @@ Server::Load()
 
 //------------------------------------------------------------------------------
 /**
-    Renders the debug visualization of the level.
+    Render the debug visualization of the level.
 */
 void
 Server::RenderDebug()
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->BeginShapes();
-    int i;
-    for(i = 0; i < this->managers.Size(); i++)
+    for(int i = 0; i < this->managers.Size(); i++)
     {
         n_assert(this->managers[i].isvalid());
         if (this->managers[i]->IsActive())
