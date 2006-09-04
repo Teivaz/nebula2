@@ -13,7 +13,6 @@
 #include "mathlib/matrix.h"
 #include "input/ninputserver.h"
 #include "misc/nconserver.h"
-#include "misc/nwatched.h"
 
 //------------------------------------------------------------------------------
 class nMayaCamControl

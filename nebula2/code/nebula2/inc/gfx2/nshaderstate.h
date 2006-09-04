@@ -163,14 +163,14 @@ enum Param
     Color2,                         // color: general color
     Color3,                         // color: general color
     HalfPixelSize,                  // half size of a pixel of the current display resolution
-    MLPUVStretch,                   // parameters for MultiLayer - Shader (UV-stretches)
+    MLPUVStretch,                   // parameters for DX9-MultiLayer - Shader (UV-stretches)
     MLPSpecIntensity,               // parameters for DX9-MultiLayer - Shader (Specular Intensity)
-    UVStretch0,                     // parameters for MultiLayer - Shader (UV-stretches)
-    UVStretch1,                     // parameters for MultiLayer - Shader (UV-stretches)
-    UVStretch2,                     // parameters for MultiLayer - Shader (UV-stretches)
-    UVStretch3,                     // parameters for MultiLayer - Shader (UV-stretches)
-    UVStretch4,                     // parameters for MultiLayer - Shader (UV-stretches)
-    UVStretch5,                     // parameters for MultiLayer - Shader (UV-stretches)
+    UVStretch0,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
+    UVStretch1,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
+    UVStretch2,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
+    UVStretch3,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
+    UVStretch4,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
+    UVStretch5,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
     UVStretch6,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
     UVStretch7,                     // parameters for DX7-MultiLayer - Shader (UV-stretches)
     LeafCluster,                    // float4[]: leaf cluster table for gpu leaf placement

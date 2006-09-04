@@ -273,7 +273,7 @@ nSessionClient::DiscoverSessions()
                 this->RegisterSession(guid, hostName, portName);
             }
         }
-        while ((curMsg = recvMsg.GetNextString()));
+        while (curMsg = recvMsg.GetNextString());
     }
 }
 
@@ -323,7 +323,7 @@ nSessionClient::CleanupExpiredSessions()
                      cur->GetHostName(), cur->GetPortName());
             cur->Release();
         }
-    } while ((cur = next));
+    } while (cur = next);
 }
 
 //------------------------------------------------------------------------------
@@ -382,7 +382,7 @@ nSessionClient::TriggerServerContexts()
             cur->Release();
         }
     }
-    while ((cur = next));
+    while (cur = next);
 }
 
 //------------------------------------------------------------------------------

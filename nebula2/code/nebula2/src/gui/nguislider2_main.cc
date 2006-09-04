@@ -572,7 +572,7 @@ nGuiSlider2::SnapToIncrement()
 {
     n_assert(this->snapToIncrement);
     n_assert(this->increment > 0.0f);
-    float remainder = fmodf(this->visibleStart + this->increment * 0.5f, this->increment);
+    float remainder = n_fmod(this->visibleStart + this->increment * 0.5f, this->increment);
     this->visibleStart -= remainder;
 }
 

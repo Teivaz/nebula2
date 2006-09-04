@@ -14,7 +14,6 @@
 #include "kernel/nroot.h"
 #include "particle/nparticle2.h"
 #include "particle/nparticle2emitter.h"
-#include "util/narray.h"
 #include "util/nfixedarray.h"
 #include "util/nringbuffer.h"
 

@@ -145,7 +145,7 @@ nQuadTree::Node::~Node()
 {
     // unlink elements
     nNode* elm;
-    while ((elm = this->elmList.RemHead()));
+    while (elm = this->elmList.RemHead());
 }
 
 //------------------------------------------------------------------------------

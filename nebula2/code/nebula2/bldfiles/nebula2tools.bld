@@ -9,9 +9,12 @@ beginworkspace nebula2tools
         nanimtool
         nbumprev
         nbundler
+        nclientsh
+        ncompileshaders
         ngetcrc
         ngfxtool
         nmakepatch
+        nmasterserversh
         nmeshtool
         nnpktool
         nremoteshell
@@ -83,6 +86,35 @@ begintarget nbundler
     }
 endtarget
 
+begintarget nclientsh
+    settype exe
+    setmodules {
+        nclientsh
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ngui
+        nnetwork
+        ntoollib
+    }
+endtarget
+
+begintarget ncompileshaders
+    settype exe
+    setmodules {
+        ncompileshaders
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ngui
+        ntoollib
+    }
+endtarget
+
 begintarget ngetcrc
     settype exe
     setmodules {
@@ -135,6 +167,21 @@ begintarget nmakepatch
         nnebula
         microtcl
         ngui
+        ntoollib
+    }
+endtarget
+
+begintarget nmasterserversh
+    settype exe
+    setmodules {
+        nmasterserversh
+    }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ngui
+        nnetwork
         ntoollib
     }
 endtarget

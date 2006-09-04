@@ -17,14 +17,9 @@ nD3D9Server::nD3D9Server() :
     #ifdef __NEBULA_STATS__
     timeStamp(0.0),
     queryResourceManager(0),
-    dbgQueryNumPrimitives("gfxNumPrimitives", nArg::Int),
-    dbgQueryFPS("gfxFPS", nArg::Float),
-    dbgQueryNumDrawCalls("gfxNumDrawCalls", nArg::Int),
-    dbgQueryNumRenderStateChanges("gfxNumRenderStateChanges", nArg::Int),
-    dbgQueryNumTextureChanges("gfxNumTextureChanges", nArg::Int),
     #endif
     windowHandler(this),
-	deviceBehaviourFlags(0),
+    deviceBehaviourFlags(0),
     d3dSprite(0),
     d3d9(0),
     d3d9Device(0),
@@ -45,6 +40,11 @@ nD3D9Server::nD3D9Server() :
 {
     n_assert(0 == Singleton);
     Singleton = this;
+
+    WATCHER_INIT(watchNumPrimitives, "watchGfxNumPrimitives", nArg::Int);
+    WATCHER_INIT(watchFPS, "watchGfxFPS", nArg::Float);
+    WATCHER_INIT(watchNumDrawCalls, "watchGfxDrawCalls", nArg::Int);
+    WATCHER_INIT(watchNumRenderStateChanges, "watchGfxRSChanges", nArg::Int);
 
     memset(&(this->devCaps), 0, sizeof(this->devCaps));
     memset(&(this->presentParams), 0, sizeof(this->presentParams));

@@ -1,5 +1,8 @@
 //------------------------------------------------------------------------------
 //  nnodelist.cc
+//
+//  Implements the Root Node of an Object and a depending render context
+//
 //  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "tools/nnodelist.h"

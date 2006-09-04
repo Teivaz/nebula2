@@ -39,6 +39,8 @@ public:
     bool IsCapturing() const;
     /// trigger the capture server, call after rendering is complete
     bool Trigger();
+    /// create a tiled screen shot
+    bool SaveTiledScreenShot(int numTilesX, int numTilesY);
 
 private:
     /// find next session index
@@ -49,6 +51,8 @@ private:
     bool CaptureFrame();
     /// create session directory for new session
     bool CreateSessionDirectory();
+	/// Sets the renderPath offset variable to the right value
+	void SetCorrectRenderpathOffset(int numTilesX, int numTilesY, int tileXNum, int tileYNum, bool reset);
 
     static nCaptureServer* Singleton;
 

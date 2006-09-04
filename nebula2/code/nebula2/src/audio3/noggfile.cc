@@ -209,7 +209,8 @@ nOggFile::Read(void* buffer, uint bytesToRead)
 
                             if (clipFlag)
                             {
-                                n_printf("Clipping in frame %ld\n", (long)(vDecoderState.sequence));
+                                // FIXME Floh: is this a serious error?
+                                // n_printf("Clipping in frame %ld\n", (long)(vDecoderState.sequence));
                             }
 
                             samplesWritten+= samplesOut ;

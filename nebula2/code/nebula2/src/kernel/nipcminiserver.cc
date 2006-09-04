@@ -187,6 +187,10 @@ nIpcMiniServer::Poll()
                 }
             } while ((curString = msgBuffer.GetNextString()));
         }
+        if (!this->isConnected)
+        {
+            int a = 5;
+        }
         return this->isConnected;
     }
     else

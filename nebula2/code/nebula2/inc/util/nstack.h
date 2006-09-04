@@ -68,7 +68,7 @@ nStack<TYPE>::~nStack()
 {
     // delete any remaining elements on stack
     nStackNode* sn;
-    while ((sn = (nStackNode*) l.RemHead()))
+    while (sn = (nStackNode*) l.RemHead())
     {
         n_delete(sn);
     }

@@ -153,7 +153,7 @@ nShapeNode::ApplyGeometry(nSceneServer* /*sceneServer*/)
 //------------------------------------------------------------------------------
 /**
     Update geometry, set as current mesh in the gfx server and
-    call nGfxServer2::DrawIndexed().
+    call nGfxServer2::DrawIndexedNS().
 
     - 15-Jan-04     floh    AreResourcesValid()/LoadResource() moved to scene server
 */

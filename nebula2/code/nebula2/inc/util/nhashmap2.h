@@ -240,7 +240,7 @@ nHashMap2<TYPE>::Grow(size_t capacity)
         Node** old_buckets = this->buckets;
         size_t old_capacity = this->capacity;
 
-        this->buckets = (typename nHashMap2<TYPE>::Node**)n_calloc(capacity, sizeof(Node*));
+        this->buckets = (nHashMap2<TYPE>::Node**)n_calloc(capacity, sizeof(Node*));
         this->capacity = capacity;
 
         // null pointers aren't all-bits-zero on all architectures

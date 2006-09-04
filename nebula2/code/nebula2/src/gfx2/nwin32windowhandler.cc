@@ -78,7 +78,7 @@ nWin32WindowHandler::OpenWindow()
     WNDCLASSEX wc;
     memset(&wc, 0, sizeof(wc));
     wc.cbSize        = sizeof(wc);
-    wc.style         = 0;
+    wc.style         = CS_DBLCLKS;
     wc.lpfnWndProc   = WinProc;
     wc.cbClsExtra    = 0;
     wc.cbWndExtra    = sizeof(void*);   // used to hold 'this' pointer

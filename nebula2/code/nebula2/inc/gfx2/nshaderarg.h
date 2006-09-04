@@ -15,7 +15,6 @@
 #include "gfx2/nshaderstate.h"
 #include "mathlib/vector.h"
 #include "mathlib/matrix.h"
-#include "kernel/nref.h"
 
 class nTexture2;
 

@@ -6,6 +6,8 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/ntimeserver.h"
 #include "gfx2/ngfxserver2.h"
+#include "scene/nsceneserver.h"
+#include "resource/nresourceserver.h"
 
 nNebulaScriptClass(nCaptureServer, "nroot");
 nCaptureServer* nCaptureServer::Singleton = 0;
@@ -166,5 +168,125 @@ nCaptureServer::Toggle()
     {
         this->Start();
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Creates a high-resolution screenshot by subdividing the current
+    view into a number of tiles, and rendering and saving each tile into a
+    separate screenshot file.
+*/
+bool
+nCaptureServer::SaveTiledScreenShot(int numTilesX, int numTilesY)
+{
+    n_assert(numTilesX > 0);
+    n_assert(numTilesY > 0);
+    bool retval = true;
+    nGfxServer2* gfxServer = nGfxServer2::Instance();
+    nSceneServer* sceneServer = nSceneServer::Instance();
+
+    // prepare screenshot capture
+    bool origGuiEnabled = sceneServer->GetGuiEnabled();
+    bool origOcclusionQuery = sceneServer->GetOcclusionQuery();
+    bool origClipPlaneFencing = sceneServer->GetClipPlaneFencing();
+    bool origCamerasEnabled = sceneServer->GetCamerasEnabled();
+    sceneServer->SetGuiEnabled(false);
+    sceneServer->SetOcclusionQuery(false);
+    sceneServer->SetClipPlaneFencing(false);
+    sceneServer->SetCamerasEnabled(false);
+
+    this->SetToNextSessionIndex();
+    this->CreateSessionDirectory();
+
+    // get current camera from gfx server
+    nCamera2 origCamera = gfxServer->GetCamera();
+
+    // derive view volume width and height from the projection matrix
+    const matrix44& origProj = origCamera.GetProjection();
+	sceneServer->SaveProjectionMatrix(origProj);
+
+    // use hard coded Near/Far-Planes to improve Z-Buffer accuracy
+    float zNear = 0.5f;
+    float zFar  = 1500.0f;
+    float w = (2.0f * zNear) / origProj.m[0][0];
+    float h = (2.0f * zNear) / origProj.m[1][1];
+
+    // compute view volume top/left values and step sizes
+    float y = -h * 0.5f;
+    float dy = h / numTilesY;
+    int tileY;
+    for (tileY = 0; tileY < numTilesY; tileY++)
+    {
+        int tileX;
+        float x = -w * 0.5f;
+        float dx = w / numTilesX;
+        for (tileX = 0; tileX < numTilesX; tileX++)
+        {
+            // create tile projection matrix
+            matrix44 tileProj;
+            tileProj.perspOffCenterRh(x, x + dx, y, y + dy, zNear, zFar);
+
+            // manipulate camera entity and render a complete frame
+            nCamera2 tileCamera;
+            tileCamera.SetProjectionMatrix(tileProj);
+			this->SetCorrectRenderpathOffset(numTilesX, numTilesY, tileX, tileY, false);
+
+			gfxServer->SetCamera(tileCamera);
+            gfxServer->BeginFrame();
+            sceneServer->RenderScene();
+            gfxServer->EndScene();
+
+            // write screenshot, NOTE: screenshot copies the backbuffer, thus it
+            // is important that we don't do a screen flip before taking the shot
+            nString filename;
+            filename.Format("%s/Y%02d_X%02d.png", this->GetSessionDirectoryPath().Get(), tileY, tileX);
+            gfxServer->SaveScreenshot(filename.Get(), nTexture2::PNG);
+
+            gfxServer->PresentScene();
+            gfxServer->EndFrame();
+            x += dx;
+        }
+        y += dy;
+    }
+
+    // restore original settings...
+    gfxServer->SetCamera(origCamera);
+    sceneServer->SetGuiEnabled(origGuiEnabled);
+    sceneServer->SetOcclusionQuery(origOcclusionQuery);
+    sceneServer->SetClipPlaneFencing(origClipPlaneFencing);
+    sceneServer->SetCamerasEnabled(origCamerasEnabled);
+	this->SetCorrectRenderpathOffset(0, 0, 0, 0, true);
+    return retval;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nCaptureServer::SetCorrectRenderpathOffset(int numTilesX, int numTilesY, int tileXNum, int tileYNum, bool reset)
+{
+	nFloat4 offset;
+	nShader2* shaderParameter = (nShader2*)nResourceServer::Instance()->FindResourceA("shared", nResource::Shader);
+	if(reset == false)
+	{
+		float X0 = (float)tileXNum / (float)numTilesX;
+		float X1 =  X0 + 1 / (float)numTilesX;
+
+		float Y0 = (float)tileYNum / (float)numTilesY;
+		float Y1 = Y0 + 1 / (float)numTilesY;
+
+		offset.x = X0;
+		offset.y = X1;
+		offset.z = Y0;
+		offset.w = Y1;
+	}
+	else
+	{
+		offset.x = 0.0;
+		offset.y = 1.0;
+		offset.z = 0.0;
+		offset.w = 1.0;
+	}
+	shaderParameter->SetFloat4(nShaderState::RendertargetOffSet, offset);
 }
 

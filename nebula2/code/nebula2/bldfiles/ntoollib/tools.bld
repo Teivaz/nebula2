@@ -205,6 +205,20 @@ beginmodule nbumprev
     }
 endmodule
 
+beginmodule nclientsh
+    setdir tools
+    setsources {
+        nclientsh
+    }
+endmodule
+
+beginmodule ncompileshaders
+    setdir tools
+    setsources {
+        ncompileshaders
+    }
+endmodule
+
 beginmodule nbundler
     setdir tools
     setfiles {
@@ -237,6 +251,13 @@ beginmodule nmakepatch
     setdir tools
     setfiles {
         nmakepatch
+    }
+endmodule
+
+beginmodule nmasterserversh
+    setdir tools
+    setsources {
+        nmasterserversh
     }
 endmodule
 

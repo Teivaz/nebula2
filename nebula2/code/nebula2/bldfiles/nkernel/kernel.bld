@@ -27,6 +27,7 @@ beginbundle kernel::kernel
         nipcserver
         nkernelserver
         nloghandler
+        nmemory
         nobject
         npersistserver
         nprofiler
@@ -285,6 +286,13 @@ beginmodule nloghandler
     }
     setfiles {
         nloghandler
+    }
+endmodule
+
+beginmodule nmemory
+    setdir kernel
+    setfiles {
+        nmemory
     }
 endmodule
 
