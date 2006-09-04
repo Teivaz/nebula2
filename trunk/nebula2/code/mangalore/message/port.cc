@@ -53,9 +53,8 @@ Port::HandlePendingMessages()
     // increment ref count on me, because messages could cause removing my entity
     Ptr<Port> myself = this;
 
-    int i;
     int num = this->msgQueue.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->HandleMessage(this->msgQueue[i]);
     }

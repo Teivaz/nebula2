@@ -20,7 +20,6 @@ namespace Attr
     DeclareFloat(NearClipPlane);
     DeclareFloat(FarClipPlane);
     DeclareMatrix44(ProjectionMatrix);
-    DeclareString(AnimPath);
 };
 
 //------------------------------------------------------------------------------
@@ -44,6 +43,10 @@ public:
     virtual void OnObtainFocus();
     /// called before rendering happens
     virtual void OnRender();
+    /// return true if message is accepted by a property
+    virtual bool Accepts(Message::Msg* msg);
+    /// handle a single message
+    virtual void HandleMessage(Message::Msg* msg);
 
 private:
     nMayaCamControl mayaCamera;

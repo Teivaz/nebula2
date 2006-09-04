@@ -342,8 +342,7 @@ CharEntity::ActivateAnimations(const nArray<nString>& animNames, const nArray<fl
     this->characterSet->ClearClips();
     this->characterSet->SetFadeInTime((float) fadeIn);
 
-    int i;
-    for (i = 0; i < animNames.Size(); i++)
+    for (int i = 0; i < animNames.Size(); i++)
     {
         if (animNames[i].IsValid())
         {

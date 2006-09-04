@@ -35,8 +35,7 @@ PhysicsUtil::RayBundleCheck(const vector3& from, const vector3& to, const vector
     outContactDist = vector3(to - from).len();
     bool contact = false;
     float distance = 0.0f;
-    int i;
-    for (i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
         switch (i)
         {

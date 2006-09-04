@@ -148,8 +148,7 @@ Server::CleanupEmptyMappings()
     if (!this->isInTrigger)
     {
         // remove empty elements
-        int i;
-        for (i = 0; i < this->mappings.Size(); /*empty*/)
+        for (int i = 0; i < this->mappings.Size(); /*empty*/)
         {
             if (this->mappings[i] == 0)
             {
@@ -215,8 +214,7 @@ Server::Trigger()
 void
 Server::Consume()
 {
-    int i;
-    for (i = 0; i < this->mappings.Size(); i++)
+    for (int i = 0; i < this->mappings.Size(); i++)
     {
         if (this->mappings[i] != 0)
         {
@@ -231,8 +229,7 @@ Server::Consume()
 void
 Server::Emit()
 {
-    int i;
-    for (i = 0; i < this->mappings.Size(); i++)
+    for (int i = 0; i < this->mappings.Size(); i++)
     {
         if (this->mappings[i] != 0)
         {
@@ -247,8 +244,7 @@ Server::Emit()
 void
 Server::BeginInputFrame()
 {
-    int i;
-    for (i = 0; i < this->mappings.Size(); i++)
+    for (int i = 0; i < this->mappings.Size(); i++)
     {
         if (this->mappings[i] != 0)
         {
@@ -263,8 +259,7 @@ Server::BeginInputFrame()
 void
 Server::EndInputFrame()
 {
-    int i;
-    for (i = 0; i < this->mappings.Size(); i++)
+    for (int i = 0; i < this->mappings.Size(); i++)
     {
         if (this->mappings[i] != 0)
         {
@@ -462,8 +457,7 @@ Server::GetDeviceAttr(const nString& deviceName, const nString& channelName, con
     // find attribute
     int value = -1;
     bool found = false;
-    int i;
-    for (i = 0; i < attributes.Size(); i++)
+    for (int i = 0; i < attributes.Size(); i++)
     {
         // extract key and value
         nArray<nString> attrTokens;
@@ -516,8 +510,7 @@ Server::RemMapping(const nString& mappingName)
     n_assert(this->HasMapping(mappingName));
 
     // find mapping
-    int i;
-    for (i = 0; i < this->mappings.Size(); i++)
+    for (int i = 0; i < this->mappings.Size(); i++)
     {
         if (this->mappings[i] != 0 && this->mappings[i]->GetName() == mappingName)
         {
@@ -554,8 +547,7 @@ bool
 Server::HasMapping(const nString& name) const
 {
     n_assert(name.IsValid());
-    int i;
-    for (i = 0; i < this->mappings.Size(); i++)
+    for (int i = 0; i < this->mappings.Size(); i++)
     {
         if (this->mappings[i] != 0 && this->mappings[i]->GetName() == name)
         {
@@ -574,8 +566,7 @@ Server::GetMapping(const nString& name) const
     n_assert(name.IsValid());
     n_assert(this->HasMapping(name));
 
-    int i;
-    for (i = 0; i < this->mappings.Size(); i++)
+    for (int i = 0; i < this->mappings.Size(); i++)
     {
         if (this->mappings[i] != 0 && this->mappings[i]->GetName() == name)
         {

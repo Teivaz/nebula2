@@ -35,8 +35,7 @@ void
 SendMessageEffect::OnStart()
 {
     Effect::OnStart();
-    int i;
-    for (i = 0; i < this->messages.Size(); i++)
+    for (int i = 0; i < this->messages.Size(); i++)
     {
         this->GetEntity()->SendSync(this->messages[i]);
     }

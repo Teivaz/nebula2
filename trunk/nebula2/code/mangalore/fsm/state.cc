@@ -4,8 +4,6 @@
 //------------------------------------------------------------------------------
 #include "fsm/state.h"
 
-#include "kernel/ntimeserver.h"
-
 namespace FSM
 {
 ImplementRtti(FSM::State, Foundation::RefCounted);

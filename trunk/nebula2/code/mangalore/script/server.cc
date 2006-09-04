@@ -20,11 +20,11 @@ Tcl_ObjCmdProc Tcl_CallMethod;
 */
 Server::Server() :
     isOpen(false),
-    commandArray(128, 128)
+    commandArray(128, 128),
+    interp(0)
 {
     n_assert(0 == Singleton);
     Singleton = this;
-    this->interp = 0x0L;
 }
 
 //------------------------------------------------------------------------------
@@ -32,11 +32,10 @@ Server::Server() :
 */
 Server::~Server()
 {
-    n_assert(!this->isOpen);
+    n_assert(!this->IsOpen());
     n_assert(this->commandArray.Empty());
     n_assert(0 != Singleton);
     Singleton = 0;
-    this->interp = 0x0L;
 }
 
 //------------------------------------------------------------------------------
@@ -46,15 +45,13 @@ Server::~Server()
 bool
 Server::Open()
 {
-    n_assert(!this->isOpen);
-    if( ((nTclServer *)(Foundation::Server::Instance()->GetScriptServer()))->GetInterp() )
-    {
-        this->interp = ((nTclServer *)(Foundation::Server::Instance()->GetScriptServer()))->GetInterp();
-        this->isOpen = true;
-        return true;
-    }
+    n_assert(!this->IsOpen());
 
-    return false;
+    // get Tcl interpreter pointer from Nebula2 script server
+    this->interp = ((nTclServer *)(Foundation::Server::Instance()->GetScriptServer()))->GetInterp();
+    n_assert(0 != this->interp);
+    this->isOpen = true;
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -64,24 +61,32 @@ Server::Open()
 void
 Server::Close()
 {
-    int index;
+    n_assert(this->IsOpen());
 
-    n_assert(this->isOpen);
-
-    if( this->isOpen )
+    // unregister all commands
+    while (this->commandArray.Size() > 0)
     {
-        // deregister the command-objects and remove the array
-        for( index = 0; index < this->commandArray.Size(); index++ )
-        {
-            Tcl_DeleteCommand(this->interp, (char *)this->commandArray[index].get()->GetName().Get());
-        }
-
-        this->commandArray.Clear();
+        this->DeRegisterCommand(this->commandArray[0]->GetClassName());
     }
-
-    n_assert(this->commandArray.Empty());
-    this->interp = 0x0L;
+    this->interp = 0;
     this->isOpen = false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Return true if a command exists.
+*/
+bool
+Server::CommandExists(const nString& cmdName) const
+{
+    for (int i = 0; i < this->commandArray.Size(); i++)
+    {
+        if (this->commandArray[i]->GetClassName() == cmdName)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -89,40 +94,16 @@ Server::Close()
     Register a Command with the server. Only registered Commands
     will be callable from the Nebula-Console.
 
-    @param  command    pointer to a Command object
+    @param  Command    pointer to a Command object
 */
 void
-Server::RegisterCommand(Command *command)
+Server::RegisterCommand(Command *cmd)
 {
-    int index;
-    bool exists = false;
-
-
-    n_assert(((nTclServer *)(Foundation::Server::Instance()->GetScriptServer()))->GetInterp());
-    n_assert(this->isOpen);
-
-    if( this->isOpen )
-    {
-        // check if the command exists in the array
-        for( index = 0; index < this->commandArray.Size(); index++ )
-        {
-            // if exists, than set exists to true
-            if( command->GetName() == this->commandArray[index].get()->GetName() )
-            {
-                exists = true;
-                break;
-            }
-        }
-
-        n_assert( !exists );
-
-        // if not exists, than register the command-object and add to the array
-        if( !exists )
-        {
-            Tcl_CreateObjCommand(this->interp, (char *)(command->GetName()).Get(), Tcl_CallMethod, (ClientData)command, 0);
-            this->commandArray.Append( command );
-        }
-    }
+    n_assert(this->IsOpen());
+    n_assert(cmd);
+    n_assert(!this->CommandExists(cmd->GetClassName()));
+    Tcl_CreateObjCommand(this->interp, (char *)cmd->GetClassName().Get(), Tcl_CallMethod, (ClientData)cmd, 0);
+    this->commandArray.Append(cmd);
 }
 
 //------------------------------------------------------------------------------
@@ -130,71 +111,47 @@ Server::RegisterCommand(Command *command)
     DeRegister a Command from the server. The Command will no longer
     be callable from the Nebula-Console.
 
-    @param  name    pointer to a Command object
+    @param  Command    pointer to a Command object
 */
 void
 Server::DeRegisterCommand(const nString& name)
 {
-    int index;
-    bool exists = false;
+    n_assert(this->IsOpen());
+    n_assert(this->CommandExists(name));
 
-    n_assert(((nTclServer *)(Foundation::Server::Instance()->GetScriptServer()))->GetInterp());
-    n_assert(this->isOpen);
-
-    if( this->isOpen )
+    for (int i = 0; i < this->commandArray.Size(); i++)
     {
-        // check if the command exists in the array
-        for( index = 0; index < this->commandArray.Size(); index++ )
+        if (this->commandArray[i]->GetClassName() == name)
         {
-            // if exists,  than deregister the command-object and remove it from the array
-            if( this->commandArray[index].get()->GetName() == name )
-            {
-                Tcl_DeleteCommand(this->interp, (char *)name.Get());
-                this->commandArray.Erase(index);
-                exists = true;
-                break;
-            }
+            Tcl_DeleteCommand(this->interp, (char *)name.Get());
+            this->commandArray.Erase(i);
+            break;
         }
-
-        n_assert( !exists );
     }
 }
 
-
-
 //------------------------------------------------------------------------------
 /**
-    Callback for the TCL-Interpreter-Object
+    Command callback for the TCL-Interpreter-Object
 
-    @param  cdata    pointer to the userdata
+    @param  cdata    pointer to the user data
     @param  interp   pointer to the TCL-Interpreter-Object
-    @param  objc     count of the commandline-parameters
-    @param  objv[]   array with the commandline-parameters
+    @param  objc     count of the command line parameters
+    @param  objv[]   array with the command line parameters
 
 */
 int
 Tcl_CallMethod(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
 {
+    n_assert(objc > 0);
     nString argsData;
-    int idx;
-
-    if( 0 < objc )
+    for (int i = 0; i < objc; i++)
     {
-        for( idx = 1; idx < objc; idx++)
-        {
-            argsData.Append( (const char *)Tcl_GetString(objv[idx]) );
-            argsData.Append( " " );
-        }
-
-        Util::CmdLineArgs args( argsData );
-
-        return ((Command *)cdata)->Execute( args );
+        argsData.Append((const char *)Tcl_GetString(objv[i]));
+        argsData.Append(" ");
     }
-
-    return TCL_ERROR;
+    Util::CmdLineArgs args(argsData);
+    return ((Command *)cdata)->Execute(args);
 }
-
-
-
 
 } // namespace Script

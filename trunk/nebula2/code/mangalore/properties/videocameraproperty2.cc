@@ -12,6 +12,8 @@
 #include "gfx2/ncamera2.h"
 #include "db/query.h"
 #include "db/server.h"
+#include "msg/updatetransform.h"
+#include "properties/pathanimproperty.h"
 
 namespace Attr
 {
@@ -29,6 +31,7 @@ ImplementFactory(Properties::VideoCameraProperty2);
 
 using namespace Game;
 using namespace Managers;
+using namespace Message;
 
 //------------------------------------------------------------------------------
 /**
@@ -44,6 +47,35 @@ VideoCameraProperty2::VideoCameraProperty2()
 VideoCameraProperty2::~VideoCameraProperty2()
 {
     // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+VideoCameraProperty2::Accepts(Msg* msg)
+{
+    if (msg->CheckId(UpdateTransform::Id)) return true;
+    return CameraProperty::Accepts(msg);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+VideoCameraProperty2::HandleMessage(Msg* msg)
+{
+    if (msg->CheckId(UpdateTransform::Id))
+    {
+        // this is coming usually from the AnimPath property
+        Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
+        n_assert(camera != 0);
+        camera->SetTransform(((UpdateTransform*)msg)->GetMatrix());
+    }
+    else
+    {
+        CameraProperty::HandleMessage(msg);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -127,18 +159,11 @@ VideoCameraProperty2::OnRender()
 
     if (FocusManager::Instance()->GetCameraFocusEntity() == GetEntity())
     {
-        // update the graphics subsystem's camera transform
-        Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
-        n_assert(camera != 0);
-
-        if (GetEntity()->HasAttr(Attr::AnimPath) && GetEntity()->GetString(Attr::AnimPath).IsValid())
+        if (!(GetEntity()->HasAttr(Attr::AnimPath) && GetEntity()->GetString(Attr::AnimPath).IsValid()))
         {
-            // entity is animated, use the entity's transform
-            camera->SetTransform(GetEntity()->GetMatrix44(Attr::Transform));
-        }
-        else
-        {
-            // entity is not animated, use the user input transform
+            // only use the internal matrix if we are not animated
+            Graphics::CameraEntity* camera = Graphics::Server::Instance()->GetCamera();
+            n_assert(camera != 0);
             camera->SetTransform(this->mayaCamera.GetViewMatrix());
         }
     }

@@ -102,8 +102,7 @@ void
 Mapping::SendEvents(const nArray<Ptr<Event> >& events)
 {
     // set the mapping
-    int i;
-    for (i = 0; i < events.Size(); i++)
+    for (int i = 0; i < events.Size(); i++)
     {
         events[i]->SetMapping(this);
     }

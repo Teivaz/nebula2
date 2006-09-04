@@ -51,8 +51,7 @@ Query::BuildSelectStatement()
     else
     {
         nArray<nString> resultStrings;
-        int i;
-        for (i = 0; i < this->resultAttrs.Size(); i++)
+        for (int i = 0; i < this->resultAttrs.Size(); i++)
         {
             resultStrings.Append(this->resultAttrs[i]);
         }
@@ -63,8 +62,7 @@ Query::BuildSelectStatement()
     if (this->whereAttrs.Size() > 0)
     {
         this->sqlStatement.Append(" WHERE ");
-        int i;
-        for (i = 0; i < this->whereAttrs.Size(); i++)
+        for (int i = 0; i < this->whereAttrs.Size(); i++)
         {
             bool lastElement = (i + 1) >= this->whereAttrs.Size();
             nString clause;
@@ -93,8 +91,7 @@ Query::BuildUpdateStatement()
     this->sqlStatement = "UPDATE ";
     this->sqlStatement.Append(this->tableName);
     this->sqlStatement.Append(" SET ");
-    int i;
-    for (i = 0; i < this->updateAttrs.Size(); i++)
+    for (int i = 0; i < this->updateAttrs.Size(); i++)
     {
         this->sqlStatement.Append("\"");
         this->sqlStatement.Append(this->updateAttrs[i].GetName());
@@ -110,7 +107,7 @@ Query::BuildUpdateStatement()
         }
     }
     this->sqlStatement.Append(" WHERE ");
-    for (i = 0; i < this->whereAttrs.Size(); i++)
+    for (int i = 0; i < this->whereAttrs.Size(); i++)
     {
         bool lastElement = (i + 1) >= this->whereAttrs.Size();
         nString clause;
@@ -144,8 +141,7 @@ Query::BuildDeleteStatement()
     }
     else
     {
-        int i;
-        for (i = 0; i < this->whereAttrs.Size(); i++)
+        for (int i = 0; i < this->whereAttrs.Size(); i++)
         {
             bool lastElement = (i + 1) >= this->whereAttrs.Size();
             nString clause;

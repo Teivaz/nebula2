@@ -48,9 +48,8 @@ EnvironmentGraphicsProperty::OnActivate()
     // attach graphics properties to graphics level
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
     n_assert(graphicsLevel);
-    int i;
     int num = this->graphicsEntities.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         graphicsLevel->AttachEntity(this->graphicsEntities[i]);
     }
@@ -65,9 +64,8 @@ EnvironmentGraphicsProperty::OnDeactivate()
     // remove graphics properties from level, and release the graphics entities
     Graphics::Level* graphicsLevel = Graphics::Server::Instance()->GetLevel();
     n_assert(graphicsLevel);
-    int i;
     int num = this->graphicsEntities.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         graphicsLevel->RemoveEntity(this->graphicsEntities[i]);
     }

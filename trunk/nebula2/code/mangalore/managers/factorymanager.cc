@@ -257,9 +257,8 @@ FactoryManager::CreateEntityByEntity(Entity* templateEntity, Entity::EntityPool 
 
     // copy all attributes from template (skip the GUID!)
     const nArray<Db::Attribute>& templateAttrs = templateEntity->GetAttrs();
-    int i;
     int num = templateAttrs.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (templateAttrs[i].GetAttributeID() != Attr::GUID)
         {
@@ -361,13 +360,12 @@ FactoryManager::CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, cons
     dbQuery->AddWhereAttr(Db::Attribute(Attr::_Type, nString("INSTANCE")));
 
     // add attributes as where clause
-    int i;
-    for (i = 0; i < keys.Size(); i++)
+    for (int i = 0; i < keys.Size(); i++)
     {
         dbQuery->AddWhereAttr(keys[i]);
     }
     // add filter entities where not clause
-    for (i = 0; i < filteredEntitys.Size(); i++)
+    for (int i = 0; i < filteredEntitys.Size(); i++)
     {
         dbQuery->AddWhereAttr(filteredEntitys[i]->GetAttr(Attr::GUID), true); // NOT
     }
@@ -381,7 +379,7 @@ FactoryManager::CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, cons
     {
         if (dbQuery->GetNumRows() > 0)
         {
-            for (i = 0; i < dbQuery->GetNumRows(); i++)
+            for (int i = 0; i < dbQuery->GetNumRows(); i++)
             {
                 // get the category (blueprint) from the query result
                 nString categoryName = dbQuery->GetString(Attr::_Category, i);
@@ -516,9 +514,8 @@ FactoryManager::ParseBluePrints()
 int
 FactoryManager::FindBluePrint(const nString& entityType) const
 {
-    int i;
     int num = this->bluePrints.Size();
-    for (i = 0;  i < num; i++)
+    for (int i = 0;  i < num; i++)
     {
         if (this->bluePrints[i].type == entityType)
         {
@@ -543,9 +540,8 @@ FactoryManager::AddProperties(Entity* entity, const nString& categoryName) const
     if (-1 != index)
     {
         const BluePrint& bluePrint = this->bluePrints[index];
-        int i;
         int num = bluePrint.properties.Size();
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             Ptr<Property> prop = this->CreateProperty(bluePrint.properties[i]);
             entity->AttachProperty(prop);

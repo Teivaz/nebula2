@@ -34,9 +34,8 @@ CmdLineArgs::Parse()
     else
     {
         this->cmdName = tokens[0];
-        int i;
         int num = tokens.Size() - 1;
-        for (i = 1; i < num; i += 2)
+        for (int i = 1; i < num; i += 2)
         {
             this->argNames.Append(tokens[i]);
             this->argValues.Append(tokens[i + 1]);

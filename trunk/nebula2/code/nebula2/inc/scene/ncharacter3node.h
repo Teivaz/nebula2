@@ -19,7 +19,7 @@ public:
     nCharacter3Node();
     /// destructor
     virtual ~nCharacter3Node();
-    /// object persistency
+    /// save object to persistent stream
     virtual bool SaveCmds(nPersistServer *ps);
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);

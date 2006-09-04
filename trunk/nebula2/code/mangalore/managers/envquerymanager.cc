@@ -130,9 +130,8 @@ EnvQueryManager::GetEntitiesInSphere(const vector3& midPoint, float radius)
 
     // convert physics entities back into game entities
     EntityManager* entityManager = EntityManager::Instance();
-    int i;
     int num = physicsEntities.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (entityManager->ExistsEntityById(physicsEntities[i]->GetUserData()))
         {
@@ -156,9 +155,8 @@ EnvQueryManager::GetEntitiesInBox(const vector3& scale, const matrix44& m)
 
     // convert physics entities back into game entities
     EntityManager* entityManager = EntityManager::Instance();
-    int i;
     int num = physicsEntities.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (entityManager->ExistsEntityById(physicsEntities[i]->GetUserData()))
         {

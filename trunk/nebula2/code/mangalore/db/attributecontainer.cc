@@ -35,9 +35,8 @@ AttributeContainer::~AttributeContainer()
 int
 AttributeContainer::FindAttrIndex(const Attr::AttributeID& attrId) const
 {
-    int i;
     int num = this->attrs.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->attrs[i].GetAttributeID() == attrId)
         {

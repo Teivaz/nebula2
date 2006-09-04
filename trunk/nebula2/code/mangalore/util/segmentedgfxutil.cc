@@ -61,8 +61,7 @@ SegmentedGfxUtil::CreateAndSetupGraphicsEntities(const nString& resName, const m
 
             // create one graphics entity for each segment
             int num = segments.Size();
-            int i;
-            for (i = 0; i < num; i++)
+            for (int i = 0; i < num; i++)
             {
                 // build a resource name for the segment
                 nString segResName = resName;

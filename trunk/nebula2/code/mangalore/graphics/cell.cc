@@ -85,9 +85,8 @@ void
 Cell::OnAttachToLevel(Level* l)
 {
     // distribute to child cells
-    int i;
     int num = this->GetNumChildCells();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->GetChildCellAt(i)->OnAttachToLevel(l);
     }
@@ -101,9 +100,8 @@ void
 Cell::OnRemoveFromLevel()
 {
     // distribute to child cells
-    int i;
     int num = this->GetNumChildCells();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->GetChildCellAt(i)->OnRemoveFromLevel();
     }
@@ -124,8 +122,7 @@ Cell::BeginChildCells(int num)
     n_assert(0 == this->childCellArray.Size());
 
     this->childCellArray.SetSize(num);
-    int i;
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->childCellArray[i] = 0;
     }
@@ -136,7 +133,7 @@ Cell::BeginChildCells(int num)
     Add a child cell at a given index. Adding a child cell will increment
     the refcount of the child cell. Since child cells are owned by
     their parent cell, be sure to call release on a cell after adding it,
-    otherwise memleaks will result.
+    otherwise memory leaks will result.
 
     @param  index   index at which to add the child cell
     @param  cell    pointer to the child cell (refcount will be incremented)
@@ -160,8 +157,7 @@ Cell::EndChildCells()
 {
     // do some validity checks
     int num = this->childCellArray.Size();
-    int i;
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         n_assert(this->childCellArray[i] != 0);
     }

@@ -78,9 +78,8 @@ GraphicsProperty::OnDeactivate()
     Graphics::Level* gfxLevel = Graphics::Server::Instance()->GetLevel();
 
     // release graphics entities
-    int i;
     int num = this->graphicsEntities.Size();
-    for (i = 0;  i < num; i++)
+    for (int i = 0;  i < num; i++)
     {
         Graphics::Entity* gfxEntity = this->graphicsEntities[i];
         if (gfxEntity->GetCell())
@@ -186,8 +185,7 @@ GraphicsProperty::UpdateTransform(const matrix44& m, bool setDirectly)
     if (setDirectly || (0 == physProperty))
     {
         // set transformation directly
-        int i;
-        for (i = 0; i < this->graphicsEntities.Size(); i++)
+        for (int i = 0; i < this->graphicsEntities.Size(); i++)
         {
             this->graphicsEntities[i]->SetTransform(m);
         }
@@ -216,8 +214,7 @@ GraphicsProperty::UpdateTransform(const matrix44& m, bool setDirectly)
 void
 GraphicsProperty::SetVisible(bool visible)
 {
-    int i;
-    for (i = 0; i < this->graphicsEntities.Size(); i++)
+    for (int i = 0; i < this->graphicsEntities.Size(); i++)
     {
         this->graphicsEntities[i]->SetVisible(visible);
     }

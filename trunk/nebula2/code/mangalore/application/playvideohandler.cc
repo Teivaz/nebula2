@@ -17,6 +17,7 @@ ImplementFactory(Application::PlayVideoHandler);
 
 using namespace Managers;
 using namespace Game;
+
 //------------------------------------------------------------------------------
 /**
 */

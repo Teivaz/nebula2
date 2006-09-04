@@ -52,9 +52,8 @@ ExplosionAreaImpulse::Apply()
 
     // apply impulse to rigid bodies
     uint stamp = Server::GetUniqueStamp();
-    int i;
     int numContacts = CollideContacts.Size();
-    for (i = 0; i < numContacts; i++)
+    for (int i = 0; i < numContacts; i++)
     {
         RigidBody* rigidBody = CollideContacts[i].GetRigidBody();
         if (rigidBody && (rigidBody->GetStamp() != stamp))

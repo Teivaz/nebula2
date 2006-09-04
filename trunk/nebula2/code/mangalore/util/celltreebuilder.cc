@@ -59,8 +59,7 @@ CellTreeBuilder::CreateQuadTreeCell(Graphics::Cell* parentCell, uint curLevel, u
     if (childLevel < this->quadTree.GetDepth())
     {
         cell->BeginChildCells(4);
-        int i;
-        for (i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             uint childCol = 2 * curCol + (i & 1);
             uint childRow = 2 * curRow + ((i & 2) >> 1);

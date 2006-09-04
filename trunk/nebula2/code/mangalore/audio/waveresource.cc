@@ -23,9 +23,8 @@ WaveResource::WaveResource() :
 */
 WaveResource::~WaveResource()
 {
-    int i;
     int num = this->sounds.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         this->sounds[i]->Release();
         this->sounds[i].invalidate();
@@ -38,9 +37,8 @@ WaveResource::~WaveResource()
 bool
 WaveResource::IsPlaying() const
 {
-    int i;
     int num = this->sounds.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->sounds[i]->IsPlaying())
         {

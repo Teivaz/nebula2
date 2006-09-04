@@ -88,16 +88,15 @@ GraphicsEffect*
 Bank::FindEffect(const nString& name)
 {
     n_assert(name.IsValid());
-    int i;
     int num = this->effectArray.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (name == this->effectArray[i]->GetName())
         {
             return this->effectArray[i];
         }
     }
-    // fallthrough: effect template doesn't exist
+    // fall through: effect template doesn't exist
     return 0;
 }
 

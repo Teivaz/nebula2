@@ -40,7 +40,7 @@ nGfxServer2::nGfxServer2() :
     refRenderTargets(MaxRenderTargets),
     lightingType(Off),
     scissorRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f)),
-    hints(0)
+    hints(CountStats)
 {
     n_assert(0 == Singleton);
     Singleton = this;

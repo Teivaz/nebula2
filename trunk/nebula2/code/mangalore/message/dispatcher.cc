@@ -47,9 +47,8 @@ Dispatcher::Put(Msg* msg)
     // lock array
     this->BeginHandleMessage();
 
-    int i;
     int num = this->portArray.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->portArray[i] != 0)
         {
@@ -73,9 +72,8 @@ Dispatcher::HandleMessage(Msg* msg)
     // lock array
     this->BeginHandleMessage();
 
-    int i;
     int num = this->portArray.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->portArray[i] != 0)
         {
@@ -104,9 +102,8 @@ Dispatcher::AttachPort(Port* port)
 
     n_assert(port);
     // check if there is a free ptr that could be used
-    int i;
     int num = this->portArray.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->portArray[i] == 0)
         {
@@ -116,7 +113,7 @@ Dispatcher::AttachPort(Port* port)
         }
     }
 
-    // fallthrough: append port
+    // fall through: append port
     this->portArray.Append(port);
 }
 
@@ -150,8 +147,7 @@ Dispatcher::CleanupEmptyPorts()
 {
     if (!this->IsInHandleMessage())
     {
-        int i;
-        for (i = 0; i < this->portArray.Size(); /*empty*/)
+        for (int i = 0; i < this->portArray.Size(); /*empty*/)
         {
             if (this->portArray[i] == 0)
             {

@@ -78,10 +78,9 @@ AnimTable::Open()
                 nArray<nString> tokens;
                 content.Tokenize(";", tokens);
 
-                int i;
-                int animCounter=0;
+                int animCounter = 0;
 
-                for (i = 0; i < tokens.Size(); i++)
+                for (int i = 0; i < tokens.Size(); i++)
                 {
                     nArray<nString> attrValueTokens;
                     tokens[i].Tokenize("= \t", attrValueTokens);

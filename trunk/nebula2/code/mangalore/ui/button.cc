@@ -133,8 +133,7 @@ void
 Button::OnRender()
 {
     // first, hide all visuals
-    int i;
-    for (i = 0; i < NumVisualStates; i++)
+    for (int i = 0; i < NumVisualStates; i++)
     {
         if (this->visuals[i].isvalid())
         {

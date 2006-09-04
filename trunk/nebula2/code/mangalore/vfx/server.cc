@@ -66,9 +66,8 @@ Server::Close()
     Message::Server::Instance()->UnregisterPort(this->effectHandler);
 
     // cleanup active effects
-    int i;
     int num = this->activeEffects.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (!this->activeEffects[i]->IsFinished())
         {
@@ -204,9 +203,8 @@ void
 Server::EndScene()
 {
     // update active effects
-    int i;
     int num = this->activeEffects.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (!this->activeEffects[i]->IsFinished())
         {
@@ -240,9 +238,8 @@ float
 Server::ComputeShakeIntensityAtPosition(const vector3& pos)
 {
     float shake = 0.0f;
-    int i;
     int num = this->activeEffects.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         if (this->activeEffects[i]->IsA(ShakeEffect::RTTI))
         {

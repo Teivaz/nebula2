@@ -49,9 +49,8 @@ EnvironmentCollideProperty::OnActivate()
     // attach collide shapes to physics level
     Physics::Level* physicsLevel = Physics::Server::Instance()->GetLevel();
     n_assert(physicsLevel);
-    int i;
     int num = this->collideShapes.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         physicsLevel->AttachShape(this->collideShapes[i]);
     }
@@ -66,9 +65,8 @@ EnvironmentCollideProperty::OnDeactivate()
     // remove collide shapes from physics level, and clear the collide shapes
     Physics::Level* physicsLevel = Physics::Server::Instance()->GetLevel();
     n_assert(physicsLevel);
-    int i;
     int num = this->collideShapes.Size();
-    for (i = 0; i < num; i++)
+    for (int i = 0; i < num; i++)
     {
         physicsLevel->RemoveShape(this->collideShapes[i]);
     }

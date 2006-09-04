@@ -554,9 +554,8 @@ Entity::GetShadowBox()
 
         // for each light link...
         vector3 lightVec, extrudeVec;
-        int i;
         int num = this->GetNumLinks(LightLink);
-        for (i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             LightEntity* lightEntity = (LightEntity*) this->GetLinkAt(LightLink, i);
             n_assert(lightEntity->IsA(LightEntity::RTTI));

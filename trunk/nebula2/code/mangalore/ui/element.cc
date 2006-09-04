@@ -76,15 +76,14 @@ Element::GetElements() const
 Element*
 Element::FindElement(const nString& id)
 {
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
+    for (int i = 0; i < this->childElements.Size(); i++)
     {
         if (id == this->childElements[i]->GetId())
         {
             return this->childElements[i];
         }
     }
-    // fallthrough: not found
+    // fall through: not found
     return 0;
 }
 
@@ -138,8 +137,7 @@ Element::OnDestroy()
     if (this->IsValid())
     {
         // destroy all children
-        int i;
-        for (i = 0; i < this->childElements.Size(); i++)
+        for (int i = 0; i < this->childElements.Size(); i++)
         {
             this->childElements[i]->OnDestroy();
         }
@@ -155,7 +153,7 @@ Element::OnDestroy()
 //------------------------------------------------------------------------------
 /**
     This method is called once per frame during UIServer::Trigger() after
-    the input has been delivered to the gui.
+    the input has been delivered to the GUI.
 */
 void
 Element::OnFrame()
@@ -163,8 +161,7 @@ Element::OnFrame()
     // distribute to children
     if (this->IsVisible())
     {
-        int i;
-        for (i = 0; i < this->childElements.Size(); i++)
+        for (int i = 0; i < this->childElements.Size(); i++)
         {
             this->childElements[i]->OnFrame();
         }
@@ -179,8 +176,7 @@ void
 Element::OnRender()
 {
     // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
+    for (int i = 0; i < this->childElements.Size(); i++)
     {
         this->childElements[i]->OnRender();
     }
@@ -300,8 +296,7 @@ Element::SetVisible(bool b)
     this->isVisible = b;
 
     // distribute to children
-    int i;
-    for (i = 0; i < this->childElements.Size(); i++)
+    for (int i = 0; i < this->childElements.Size(); i++)
     {
         this->childElements[i]->SetVisible(b);
     }

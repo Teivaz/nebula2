@@ -43,8 +43,7 @@ Hinge2Joint::Attach(dWorldID worldID, dJointGroupID groupID, const matrix44& m)
     this->odeJointId = dJointCreateHinge2(worldID, groupID);
 
     // configure ODE joint
-    int i;
-    for (i = 0; i < 2; i++)
+    for (int i = 0; i < 2; i++)
     {
         const JointAxis& curAxis = this->axisParams[i];
         if (curAxis.IsLoStopEnabled())

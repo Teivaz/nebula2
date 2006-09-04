@@ -42,6 +42,25 @@ SaveGameManager::~SaveGameManager()
 
 //------------------------------------------------------------------------------
 /**
+    This method get the world database.
+*/
+nString
+SaveGameManager::GetWorldDb()
+{
+    if (this->overrideWorldDb.IsValid())
+    {
+        // override database set, use this
+        return nString("db:") + this->overrideWorldDb;
+    }
+    else
+    {
+        // return default database
+        return nString("db:world.db3");
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
     This method queries the world database for the startup level.
 */
 nString

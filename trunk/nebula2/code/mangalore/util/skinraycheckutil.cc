@@ -63,8 +63,7 @@ SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity, nString meshName)
     }
     else
     {
-        int i;
-        for (i=0; i < shapeNodes.Size(); i++)
+        for (int i = 0; i < shapeNodes.Size(); i++)
         {
             nString name = shapeNodes[i]->GetMesh();
             name = name.ExtractFileName();
@@ -181,8 +180,7 @@ SkinRayCheckUtil::InitResistentMesh()
         for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
         {
             int srcOffset = vertexIndex * srcVertexWidth;
-            int i;
-            for (i=0; i < vertexWidth; i++)
+            for (int i = 0; i < vertexWidth; i++)
             {
                 *dstVertices++ = srcVertices[srcOffset + i];
             }
@@ -401,8 +399,7 @@ SkinRayCheckUtil::UpdateSkinning()
             float* weights = &srcVertices[srcMesh->GetVertexComponentOffset(nMesh2::Weights)];
             float* indices = &srcVertices[srcMesh->GetVertexComponentOffset(nMesh2::JIndices)];
             v.set(0.0f, 0.0f, 0.0f);
-            int i;
-            for (i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (weights[i] > 0.0f)
                 {
@@ -417,10 +414,10 @@ SkinRayCheckUtil::UpdateSkinning()
 
             // write skinned vertex to vertex position, note, we are filling
             // a dynamic vertex buffer which will be discarded after rendering, so we NEED to write
-            // seeminigly constant data (the extrude weights) as well!
+            // seemingly constant data (the extrude weights) as well!
             *dstVertices++ = v.x; *dstVertices++ = v.y; *dstVertices++ = v.z; *dstVertices++ = 1.0f;
 
-            // set to next src vertex
+            // set to next source vertex
             srcVertices += srcMesh->GetVertexWidth();
         }
     }
@@ -430,7 +427,7 @@ SkinRayCheckUtil::UpdateSkinning()
 
 //------------------------------------------------------------------------------
 /**
-    Does a raycheck, returns if an intersection occured
+    Does a ray check, returns if an intersection occurred
     and fills an array of faceIntersections
 */
 bool
@@ -497,8 +494,7 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
 
         nArray<int> faceList;
         this->FindNeighbourFaces(this->lastFace, faceList, 1);
-        int i;
-        for (i=0; i < faceList.Size(); i++)
+        for (int i = 0; i < faceList.Size(); i++)
         {
             if (updateFaces) this->UpdateSingleFace(faceList[i]);
             if (this->Intersects(this->faces[faceList[i]], tRay, newFaceIntersection))
@@ -523,8 +519,7 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
         // if faces are not up to date update them!
         if (updateFaces) this->UpdateFaces();
 
-        int i;
-        for (i=0; i < numFaces; i++)
+        for (int i = 0; i < numFaces; i++)
         {
             if (this->Intersects(this->faces[i], tRay, newFaceIntersection))
             {
@@ -544,8 +539,7 @@ SkinRayCheckUtil::DoRayCheck(const line3 &ray, nArray<faceIntersection> &interse
     if (intersected)
     {
         int nearest = 0;
-        int i;
-        for (i=1; i < intersectedFaces.Size(); i++)
+        for (int i = 1; i < intersectedFaces.Size(); i++)
         {
             if (intersectedFaces[i].distance < intersectedFaces[nearest].distance) nearest = i;
         }
@@ -902,8 +896,7 @@ SkinRayCheckUtil::UpdateOriginalMesh()
     for (vertexIndex = 0; vertexIndex < numVertices; vertexIndex++)
     {
         int srcOffset = vertexIndex * srcVertexWidth;
-        int i;
-        for (i=0; i < vertexWidth; i++)
+        for (int i = 0; i < vertexWidth; i++)
         {
             *originalVertices++ = resistentVertices[srcOffset + i];
         }
@@ -957,8 +950,7 @@ SkinRayCheckUtil::PaintVertexList(const nArray<int> &vertexList, const vector4 &
         int vertexWidth = mesh->GetVertexWidth();
         int offset = mesh->GetVertexComponentOffset(nMesh2::Color);
 
-        int i;
-        for (i=0; i < vertexList.Size(); i++)
+        for (int i = 0; i < vertexList.Size(); i++)
         {
             vector4 tempCol;
             if (addCol)
@@ -1010,8 +1002,7 @@ SkinRayCheckUtil::FindVerticesInRange(int faceIndex, const vector3& intersection
         if (!vertexList.Find(vertex0))
         {
             vertexList.Append(vertex0);
-            int i;
-            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v0].Size(); i++)
+            for (int i = 0; i < this->neighbourFacesMap[this->faces[faceIndex].v0].Size(); i++)
             {
                 this->FindVerticesInRange(this->neighbourFacesMap[this->faces[faceIndex].v0][i], intersectionPoint, radius, vertexList);
             }
@@ -1023,8 +1014,7 @@ SkinRayCheckUtil::FindVerticesInRange(int faceIndex, const vector3& intersection
         if (!vertexList.Find(vertex1))
         {
             vertexList.Append(vertex1);
-            int i;
-            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v1].Size(); i++)
+            for (int i = 0; i < this->neighbourFacesMap[this->faces[faceIndex].v1].Size(); i++)
             {
                 this->FindVerticesInRange(this->neighbourFacesMap[this->faces[faceIndex].v1][i], intersectionPoint, radius, vertexList);
             }
@@ -1036,8 +1026,7 @@ SkinRayCheckUtil::FindVerticesInRange(int faceIndex, const vector3& intersection
         if (!vertexList.Find(vertex2))
         {
             vertexList.Append(vertex2);
-            int i;
-            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v2].Size(); i++)
+            for (int i = 0; i < this->neighbourFacesMap[this->faces[faceIndex].v2].Size(); i++)
             {
                 this->FindVerticesInRange(this->neighbourFacesMap[this->faces[faceIndex].v2][i], intersectionPoint, radius, vertexList);
             }
@@ -1059,8 +1048,7 @@ SkinRayCheckUtil::FindNeighbourVertices(int vertexIndex, nArray<int>& vertexList
         if (!vertexList.Find(vertexIndex))
         {
             vertexList.Append(vertexIndex);
-            int i;
-            for (i=0; i < this->neighbourFacesMap[vertexIndex].Size(); i++)
+            for (int i = 0; i < this->neighbourFacesMap[vertexIndex].Size(); i++)
             {
                 int v0, v1, v2;
                 this->GetVerticesOfFace(this->neighbourFacesMap[vertexIndex][i], v0, v1, v2);
@@ -1098,18 +1086,17 @@ SkinRayCheckUtil::FindNeighbourFaces(int faceIndex, nArray<int>& faceList, int d
         if (!faceList.Find(faceIndex))
         {
             faceList.Append(faceIndex);
-            int i;
-            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v0].Size(); i++)
+            for (int i = 0; i < this->neighbourFacesMap[this->faces[faceIndex].v0].Size(); i++)
             {
                 this->FindNeighbourFaces(this->neighbourFacesMap[this->faces[faceIndex].v0][i], faceList, depth-1);
             }
 
-            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v1].Size(); i++)
+            for (int i = 0; i < this->neighbourFacesMap[this->faces[faceIndex].v1].Size(); i++)
             {
                 this->FindNeighbourFaces(this->neighbourFacesMap[this->faces[faceIndex].v1][i], faceList, depth-1);
             }
 
-            for (i=0; i < this->neighbourFacesMap[this->faces[faceIndex].v2].Size(); i++)
+            for (int i = 0; i < this->neighbourFacesMap[this->faces[faceIndex].v2].Size(); i++)
             {
                 this->FindNeighbourFaces(this->neighbourFacesMap[this->faces[faceIndex].v2][i], faceList, depth-1);
             }
@@ -1196,16 +1183,15 @@ SkinRayCheckUtil::FillNeighbourFaceMap()
         this->neighbourFacesMap[this->faces[faceIndex].v1].Append(faceIndex);
         this->neighbourFacesMap[this->faces[faceIndex].v2].Append(faceIndex);
 
-        int i;
-        for (i=0; i < this->collapseMap[this->faces[faceIndex].v0].Size(); i++)
+        for (int i = 0; i < this->collapseMap[this->faces[faceIndex].v0].Size(); i++)
         {
             this->neighbourFacesMapOverOriginalVertex[this->collapseMap[this->faces[faceIndex].v0][i]].Append(faceIndex);
         }
-        for (i=0; i < this->collapseMap[this->faces[faceIndex].v1].Size(); i++)
+        for (int i = 0; i < this->collapseMap[this->faces[faceIndex].v1].Size(); i++)
         {
             this->neighbourFacesMapOverOriginalVertex[this->collapseMap[this->faces[faceIndex].v1][i]].Append(faceIndex);
         }
-        for (i=0; i < this->collapseMap[this->faces[faceIndex].v2].Size(); i++)
+        for (int i = 0; i < this->collapseMap[this->faces[faceIndex].v2].Size(); i++)
         {
             this->neighbourFacesMapOverOriginalVertex[this->collapseMap[this->faces[faceIndex].v2][i]].Append(faceIndex);
         }
@@ -1232,8 +1218,7 @@ SkinRayCheckUtil::InitVertexColorMap()
         this->vertexColorMap.SetFixedSize(numVertices);
         float* vertices = mesh->LockVertices();
 
-        int i;
-        for (i=0; i < numVertices; i++)
+        for (int i = 0; i < numVertices; i++)
         {
             this->vertexColorMap[i] = *(vector4*)(vertices + (startVertex + i) * vertexWidth + offset);
         }
@@ -1262,8 +1247,7 @@ SkinRayCheckUtil::InitVertexPosMap()
     this->vertexPosMap.SetFixedSize(numVertices);
     float* vertices = mesh->LockVertices();
 
-    int i;
-    for (i=0; i < numVertices; i++)
+    for (int i = 0; i < numVertices; i++)
     {
         this->vertexPosMap[i] = *(vector3*)(vertices + (startVertex + i) * vertexWidth + offset);
     }
@@ -1293,8 +1277,7 @@ SkinRayCheckUtil::InitVertexNormalMap()
         this->vertexNormalMap.SetFixedSize(numVertices);
         float* vertices = mesh->LockVertices();
 
-        int i;
-        for (i=0; i < numVertices; i++)
+        for (int i = 0; i < numVertices; i++)
         {
             this->vertexNormalMap[i] = *(vector3*)(vertices + (startVertex + i) * vertexWidth + offset);
         }
@@ -1328,8 +1311,7 @@ SkinRayCheckUtil::UpdateVertexColorMapByList(const nArray<int>& vertexList)
 
         float* vertices = mesh->LockVertices();
 
-        int i;
-        for (i=0; i < vertexList.Size(); i++)
+        for (int i = 0; i < vertexList.Size(); i++)
         {
             this->vertexColorMap[vertexList[i]] = *(vector4*)(vertices + (startVertex + vertexList[i]) * vertexWidth + offset);
         }
@@ -1357,8 +1339,7 @@ SkinRayCheckUtil::UpdateVertexPosMapByList(const nArray<int>& vertexList)
 
     float* vertices = mesh->LockVertices();
 
-    int i;
-    for (i=0; i < vertexList.Size(); i++)
+    for (int i = 0; i < vertexList.Size(); i++)
     {
         this->vertexPosMap[vertexList[i]] = *(vector3*)(vertices + (startVertex + vertexList[i]) * vertexWidth + offset);
     }
@@ -1387,8 +1368,7 @@ SkinRayCheckUtil::UpdateVertexNormalMapByList(const nArray<int>& vertexList)
 
         float* vertices = mesh->LockVertices();
 
-        int i;
-        for (i=0; i < vertexList.Size(); i++)
+        for (int i = 0; i < vertexList.Size(); i++)
         {
             this->vertexNormalMap[vertexList[i]] = *(vector3*)(vertices + (startVertex + vertexList[i]) * vertexWidth + offset);
         }
@@ -1430,8 +1410,7 @@ SkinRayCheckUtil::UpdateFromVertexColorMap()
 
         float* vertices = mesh->LockVertices();
 
-        int i;
-        for (i=0; i < this->vertexColorMap.Size(); i++)
+        for (int i = 0; i < this->vertexColorMap.Size(); i++)
         {
             *(vector4*)(vertices + (startVertex + i) * vertexWidth + offset) = this->vertexColorMap[i];
         }
@@ -1442,7 +1421,6 @@ SkinRayCheckUtil::UpdateFromVertexColorMap()
 
 //------------------------------------------------------------------------------
 /**
-    Heronische Flächenformel
 */
 float
 SkinRayCheckUtil::GetSizeOfFace(int faceIndex)
@@ -1468,8 +1446,7 @@ SkinRayCheckUtil::GetSizeOfVertexFace(int vertexIndex)
 {
     vertexIndex += this->startVertex;
     float size = 0;
-    int i;
-    for (i = 0; i < this->neighbourFacesMapOverOriginalVertex[vertexIndex].Size(); i++)
+    for (int i = 0; i < this->neighbourFacesMapOverOriginalVertex[vertexIndex].Size(); i++)
     {
         size += this->GetSizeOfFace(this->neighbourFacesMapOverOriginalVertex[vertexIndex][i]);
     }
