@@ -75,7 +75,6 @@ endmodule
 beginbundle ndshow::video
     setmodules {
         ndshowserver
-        ndshowserver2
     }
 endbundle
 
@@ -87,21 +86,6 @@ beginmodule ndshowserver
     }
     setfiles {
         ndshowserver_main
-    }
-    setlibs_win32 {
-        ole32.lib
-        strmiids.lib
-    }
-endmodule
-
-beginmodule ndshowserver2
-    setdir video
-    setplatform win32
-    setheaders {
-        ndshowserver2
-    }
-    setfiles {
-        ndshowserver2_main
     }
     setlibs_win32 {
         ole32.lib
