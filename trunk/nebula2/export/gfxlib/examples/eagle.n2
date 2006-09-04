@@ -13,7 +13,7 @@ new ntransformnode eagle
             sel skinanimator
             .setchannel "time"
             .setlooptype "loop"
-            .setanim "anims:examples/eagle.nanim2"
+            .setanim "anims:examples/eagle1.nanim2"
             .beginjoints 79
             .setjoint 0 -1 0.000000 0.051875 0.316360 0.009157 -0.707048 -0.009157 0.707048 1.000000 1.000000 1.000000 "spine_01"
             .setjoint 1 0 -0.223303 0.018931 0.000000 0.000000 0.000000 -0.006724 0.999977 1.000000 1.000000 1.000000 "spine_02"
@@ -95,19 +95,10 @@ new ntransformnode eagle
             .setjoint 77 76 0.059888 0.000000 0.000000 -0.000000 -0.000000 0.501387 0.865223 1.000000 1.000000 1.000000 "zeh_02_R"
             .setjoint 78 77 0.064517 0.000000 0.000000 0.071305 0.703502 -0.071305 0.703502 1.000000 1.000000 1.000000 "zeh_02_R|joint35"
             .endjoints
-            .setstatechannel "chnCharState"
-            .beginstates 2
-            .setstate 0 0 0.800000
-            .setstatename 0 "fliegen"
-            .beginclips 0 1
-            .setclip 0 0 "one"
-            .endclips 0
-            .setstate 1 1 1.600000
-            .setstatename 1 "gleiten"
-            .beginclips 1 1
-            .setclip 1 0 "one"
-            .endclips 1
-            .endstates
+            .beginclips 2
+            .setclip 0 0 "fliegen"
+            .setclip 1 1 "gleiten"
+            .endclips
         sel ..
         new nskinshapenode skinned0
             sel skinned0

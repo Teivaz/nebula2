@@ -11,7 +11,7 @@
   <Created>2005-07-11T16:14:27Z</Created>
   <LastSaved>2005-12-22T15:26:00Z</LastSaved>
   <Company>Radon Labs GmbH</Company>
-  <Version>11.6568</Version>
+  <Version>11.8036</Version>
  </DocumentProperties>
  <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
   <DownloadComponents/>
@@ -110,10 +110,12 @@
    <Row ss:StyleID="s28">
     <Cell ss:StyleID="s29"><Data ss:Type="String">Run</Data></Cell>
     <Cell ss:StyleID="s27"><Data ss:Type="String">fliegen</Data></Cell>
+    <Cell><Data ss:Type="String">walk</Data></Cell>
    </Row>
    <Row ss:StyleID="s28">
     <Cell ss:StyleID="s29"><Data ss:Type="String">Idle</Data></Cell>
     <Cell ss:StyleID="s27"><Data ss:Type="String">gleiten</Data></Cell>
+    <Cell><Data ss:Type="String">walk</Data></Cell>
    </Row>
    <Row ss:StyleID="s28">
     <Cell ss:StyleID="s29"/>
@@ -372,7 +374,7 @@
    <Panes>
     <Pane>
      <Number>3</Number>
-     <ActiveRow>3</ActiveRow>
+     <ActiveRow>11</ActiveRow>
      <ActiveCol>2</ActiveCol>
     </Pane>
    </Panes>

@@ -38,7 +38,7 @@ AnimTable::Open()
 {
     n_assert(!this->IsOpen());
 
-    // create an xml spreadsheet object
+    // create an XML spreadsheet object
     nXmlSpreadSheet xmlSpreadSheet;
     xmlSpreadSheet.SetFilename(this->filename);
     if (xmlSpreadSheet.Open())
@@ -62,7 +62,7 @@ AnimTable::Open()
             this->rowIndexMap.Append(xmlTable.Cell(rowIndex, 0).AsString());
         }
 
-        // build anim info table
+        // build animation info table
         this->animInfos.SetSize(this->columnIndexMap.Size(), this->rowIndexMap.Size());
 
         for (rowIndex = 0; rowIndex < xmlTable.NumRows() - 1; rowIndex++)
@@ -96,7 +96,7 @@ AnimTable::Open()
                             n_assert( attrValueTokens[1].IsValid() );
                             info.animName=attrValueTokens[1];
 
-                            // Check if next token has a hotspot for this anim
+                            // Check if next token has a hot spot for this animation
                             if(tokens.Size() > (i+1) )
                             {
                                 nString nextToken = tokens.At(i+1);
@@ -128,7 +128,7 @@ AnimTable::Open()
                     }
                     else
                     {
-                        // old style string, just the anim name
+                        // old style string, just the animation name
                         AnimInfo info;
                         n_assert( tokens[i].IsValid() );
                         info.animName = tokens[i];
@@ -158,8 +158,8 @@ AnimTable::Close()
 }
 
 //------------------------------------------------------------------------------
-/** lookup anim info by name
- *  By default chooses randomly from the existing anim-variations
+/** lookup animation info by name
+ *  By default chooses randomly from the existing animation variations
 */
 const AnimTable::AnimInfo&
 AnimTable::Lookup(const nString& id, const nString& animName, bool random) const
