@@ -50,11 +50,10 @@ nAnimator* nMaxSkinAnimator::Export(int skelIndex, const char* animatorName, con
         animator->SetLoopType(nAnimLoopType::Loop);
 
         animator->SetAnim(animFilename);
-        animator->SetStateChannel("chnCharState");
 
         // build animation states.
         nMaxNoteTrack& noteTrack = boneManager->GetNoteTrack(skelIndex);
-        this->BuildAnimStates(animator, noteTrack);
+        this->BuildAnimClips(animator, noteTrack);
     }
     else
     {
@@ -121,33 +120,21 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
 
 //-----------------------------------------------------------------------------
 /**
-    Build animation states and clips.
+    Build animation clips.
 */
-void nMaxSkinAnimator::BuildAnimStates(nSkinAnimator* animator, nMaxNoteTrack& noteTrack)
+void nMaxSkinAnimator::BuildAnimClips(nSkinAnimator* animator, nMaxNoteTrack& noteTrack)
 {
-    int numStates = noteTrack.GetNumStates();
+    const nMaxAnimState& state = noteTrack.GetState(0);
 
-    animator->BeginStates(numStates);
+    int numClips = state.clipArray.Size();
+    animator->BeginClips(numClips);
 
-    for (int j=0; j<numStates; j++)
+    for (int i=0; i<numClips; i++)
     {
-        const nMaxAnimState& state = noteTrack.GetState(j);
-
-        animator->SetState(j, j, state.fadeInTime);
-        animator->SetStateName(j, state.name);
-
-        int numClips = state.clipArray.Size();
-        animator->BeginClips(j, numClips);
-
-        for (int k=0; k<numClips; k++)
-        {
-            const nString& weightChannelName = state.GetClip(k);
-            animator->SetClip(j, k, weightChannelName.Get());
-        }
-
-        animator->EndClips(j);
+        const nString& weightChannelName = state.GetClip(i);
+        animator->SetClip(i, i, weightChannelName.Get());
     }
 
-    animator->EndStates();
+    animator->EndClips();
 }
 

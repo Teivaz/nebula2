@@ -56,8 +56,6 @@ begintarget nmaxtoolbox
         ngui
         ntoollib
         microtcl
-        npythonserver
-        nlua
     }
 endtarget
 #-------------------------------------------------------------------------------
