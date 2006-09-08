@@ -28,12 +28,6 @@ bool nMaxPluginInitialize()
         return false;
     }
 
-    // read option values from '$3dsmax/plugincfg/nmaxtoolbox.ini' file.
-    if (!options->Initialize())
-    {
-        return false;
-    }
-
     return true;
 }
 
