@@ -24,6 +24,7 @@
         <dd>
         <b>A:</b> Make it sure that you copied all necessary files not only <tt>'nmaxtoolbox.dlu'</tt> 
         but also all other files to <tt>'$3dsmax/scripts/'</tt> directory.
+        And be sure that you specified nmaxtoolbox.ini file in <tt>'$3dsmax/plugcfg'</tt> directory.
         See @ref NMaxInstallation page for more details about the installation.
         </dd>
       </dt>
@@ -43,12 +44,25 @@
         But you can easily edit and adjust parameters with supported Nebula custom
         material editor and preview the changes. 
         Also this approach makes the plugin more easy to write and maintain.
-        
         See @ref NMaxHowtoUsingMaterialEditor section for more information on
         Nebula custom material editor and supported features.
         </dd>
     </dl>
 
+    <dl>
+      <dt>
+      <b>Q:</b> I can't find Nebula2 material on 3dsmax material editor even though there are no errors or
+                any warnings. What's the problem?
+      </dt>
+        <dd>
+        <b>A:</b> The plugin generates the max script for Nebula2 material whenever 3dsmax starts 
+        then executes it. When the max script is executed it searches <tt>'shader.xml'</tt> file 
+        which is usually located in the <tt>'$nebula2/data/shaders'</tt> directory. 
+        If you do not have correct directory for the <tt>$home</tt> path, the plugin cannot generate 
+        max script so Nebula2 material is not shown on the 3dsmax material editor.
+        See @ref NMaxInstallation page for more details to specify the <tt>$home</tt> path.
+        </dd>
+    </dl>
 
     @section NMaxFAQExport Export
 
