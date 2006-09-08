@@ -1,0 +1,15 @@
+Nebula 2 Exporter for 3dsmax 3D End User License Agreement
+
+You may use this product free of charge for both commercial and non-commercial
+projects.
+
+You may not re-distribute this product without the explicit written permission
+of the author.
+
+The art assets that come with this product, in the form of models, textures
+and scenes cannot be used for commercial projects without the explicit written
+permission of the artists who contributed those assets. You may use these
+art assets in non-commercial projects free of charge.
+
+
+The End.
