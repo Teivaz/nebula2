@@ -13,6 +13,7 @@
 #include "game/time/gametimesource.h"
 #include "game/time/inputtimesource.h"
 #include "game/time/guitimesource.h"
+#include "ceui/ceguitimesource.h"
 
 #ifdef __NEBULA_STATS__
 // count the DB queries per frame
