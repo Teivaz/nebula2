@@ -288,6 +288,10 @@ App::SetupTimeSources()
     timeManager->AttachTimeSource(gameTimeSource);
     timeManager->AttachTimeSource(inputTimeSource);
     timeManager->AttachTimeSource(guiTimeSource);
+#ifdef MANGALORE_USE_CEGUI
+    Ptr<CEUI::CeGuiTimeSource> ceuiTimeSource = CEUI::CeGuiTimeSource::Create();
+    timeManager->AttachTimeSource(ceuiTimeSource);
+#endif
 }
 
 //------------------------------------------------------------------------------
