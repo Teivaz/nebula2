@@ -2,13 +2,6 @@
 #  bldfiles/mangalorelibs.bld
 #  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginworkspace mangalorelibs
-    settargets {
-        mangalore
-        mcegui
-    }
-endworkspace
-#-------------------------------------------------------------------------------
 begintarget mangalore
     settype lib
     setmodules {
@@ -44,3 +37,11 @@ begintarget mcegui
         ceui
     }
 endtarget
+#-------------------------------------------------------------------------------
+beginworkspace mangalorelibs
+    settargets {
+        mangalore
+        mcegui
+    }
+    addtargetdef mangalore USE_MCEGUI
+endworkspace

@@ -3,7 +3,7 @@
 //  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "application/playvideohandler.h"
-
+#include "application/app.h"
 #include "video/nvideoserver.h"
 #include "input/ninputserver.h"
 #include "gfx2/ngfxserver2.h"

@@ -5,7 +5,7 @@
     @class Application::App
 
     The App class is where specific application classes are derived
-    from. The Application class defines the highlevel runtime environment
+    from. The Application class defines the high-level runtime environment
     wrapper for a specific game. It goes through specific application states
     which may display UI screens to the user, load and start a level,
     manage game options.
@@ -30,7 +30,9 @@
 #include "vfx/server.h"
 #include "db/server.h"
 #include "ui/server.h"
+#ifdef USE_MCEGUI
 #include "ceui/server.h"
+#endif
 #include "script/server.h"
 #include "tools/ncmdlineargs.h"
 #include "util/nstartupchecker.h"
@@ -41,8 +43,6 @@
 #include "managers/savegamemanager.h"
 #include "managers/setupmanager.h"
 #include "managers/timemanager.h"
-
-#define MANGALORE_USE_CEGUI
 
 //------------------------------------------------------------------------------
 namespace Application
@@ -78,7 +78,7 @@ public:
     virtual nString GetAppVersion() const;
     /// returns vendor name (override in subclass)
     virtual nString GetVendorName() const;
-    /// return true if this is a pure fullscreen app (override in subclass)
+    /// return true if this is a pure full-screen app (override in subclass)
     virtual bool GetForceFullscreen() const;
     /// get path to startup.tcl
     virtual nString GetStartupPath() const;
@@ -182,7 +182,7 @@ protected:
     Ptr<VFX::Server> vfxServer;
     Ptr<Db::Server> dbServer;
     Ptr<UI::Server> uiServer;
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
     Ptr<CEUI::Server> ceuiServer;
 #endif
     Ptr<Script::Server> scriptServer;

@@ -2,7 +2,6 @@
 //  managers/envquerymanager.cc
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
-#define MANGALORE_USE_CEGUI
 #include "managers/envquerymanager.h"
 #include "managers/entitymanager.h"
 #include "physics/server.h"
@@ -10,7 +9,7 @@
 #include "input/server.h"
 #include "gui/nguiserver.h"
 #include "ui/server.h"
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
 #include "ceui/server.h"
 #endif
 
@@ -94,7 +93,7 @@ EnvQueryManager::GetMousePos3d() const
 
 //------------------------------------------------------------------------------
 /**
-    This returns the upvector of the face under the mousecursor.
+    This returns the upvector of the face under the mouse cursor.
     If the mouse doesn't intersect, the result will be undefined,
     and the method HasMouseIntersection() returns false.
 */
@@ -183,7 +182,7 @@ EnvQueryManager::OnFrame()
 
     // get 3d contact under mouse
     if (!nGuiServer::Instance()->IsMouseOverGui() && !UI::Server::Instance()->IsMouseOverGui()
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
         && !CEUI::Server::Instance()->IsMouseOverGui()
 #endif
     ) {

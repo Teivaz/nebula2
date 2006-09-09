@@ -9,8 +9,9 @@
 #include "gui/nguiserver.h"
 #include "gui/nguidragbox.h"
 #include "ui/server.h"
+#ifdef USE_MCEGUI
 #include "ceui/server.h"
-
+#endif
 #include "input/mapping.h"
 #include "input/chain.h"
 #include "input/event.h"
@@ -198,9 +199,9 @@ Server::Trigger()
     // THE NEBULA2 INPUT EVENT AT THE END OF THE FRAME
     guiServer->Trigger();
     UI::Server::Instance()->Trigger();
-
+#ifdef USE_MCEGUI
     CEUI::Server::Instance()->Trigger();
-
+#endif
     // flush Nebula input events
     inputServer->FlushEvents();
 

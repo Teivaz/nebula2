@@ -13,7 +13,9 @@
 #include "game/time/gametimesource.h"
 #include "game/time/inputtimesource.h"
 #include "game/time/guitimesource.h"
+#ifdef USE_MCEGUI
 #include "ceui/ceguitimesource.h"
+#endif
 
 #ifdef __NEBULA_STATS__
 // count the DB queries per frame
@@ -289,7 +291,7 @@ App::SetupTimeSources()
     timeManager->AttachTimeSource(gameTimeSource);
     timeManager->AttachTimeSource(inputTimeSource);
     timeManager->AttachTimeSource(guiTimeSource);
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
     Ptr<CEUI::CeGuiTimeSource> ceuiTimeSource = CEUI::CeGuiTimeSource::Create();
     timeManager->AttachTimeSource(ceuiTimeSource);
 #endif
@@ -438,7 +440,7 @@ App::SetupSubsystems()
     guiServer->Open();
     this->uiServer = UI::Server::Create();
     this->uiServer->Open();
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
     this->ceuiServer = CEUI::Server::Create();
     this->ceuiServer->Open();
 #endif
@@ -455,7 +457,7 @@ App::CleanupSubsystems()
     nGuiServer::Instance()->Close();
     this->uiServer->Close();
     this->uiServer = 0;
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
     this->ceuiServer->Close();
     this->ceuiServer = 0;
 #endif

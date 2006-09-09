@@ -3,9 +3,14 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "application/guistatehandler.h"
-#include "foundation/factory.h"
 #include "application/guieventhandler.h"
+#include "audio/server.h"
+#include "graphics/server.h"
+#include "input/server.h"
 #include "ui/server.h"
+#ifdef USE_MCEGUI
+#include "ceui/server.h"
+#endif
 #include "gui/nguiserver.h"
 #include "video/nvideoserver.h"
 #include "particle/nparticleserver.h"
@@ -72,7 +77,7 @@ GuiStateHandler::OnStateEnter(const nString& prevState)
     this->window->SetEventHandler(this->eventHandler);
     this->window->Open();
 
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
     CEUI::Server::Instance()->LoadWindowLayout(this->resName);
     CEUI::Server::Instance()->DisplayGui();
 #endif
@@ -86,7 +91,7 @@ GuiStateHandler::OnStateEnter(const nString& prevState)
 void
 GuiStateHandler::OnStateLeave(const nString& nextState)
 {
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
     CEUI::Server::Instance()->HideGui();
 #endif
 
@@ -131,7 +136,7 @@ GuiStateHandler::OnFrame()
     {
         UI::Server::Instance()->Render();
         Graphics::Server::Instance()->Render();
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
         CEUI::Server::Instance()->Render();
 #endif
         Graphics::Server::Instance()->EndRender();

@@ -2,12 +2,6 @@
 #  bldfiles/mangaloretools.bld
 #  (c) 2006 Nebula2 Community
 #-------------------------------------------------------------------------------
-beginworkspace mangaloretools
-    settargets {
-        mviewer
-    }
-endworkspace
-#-------------------------------------------------------------------------------
 begintarget mviewer
     settype exe
     setmodules {
@@ -29,3 +23,12 @@ begintarget mviewer
         mcegui
     }
 endtarget
+#-------------------------------------------------------------------------------
+beginworkspace mangaloretools
+    settargets {
+        mviewer
+        xmltodb
+        mangalore
+    }
+    addtargetdef mangalore USE_MCEGUI
+endworkspace
