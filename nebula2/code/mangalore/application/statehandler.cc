@@ -101,7 +101,7 @@ StateHandler::OnLoadAfter()
     This method is called once a frame while the state is active. The method
     must return a state identifier. If this is different from the current
     state, a state switch will occur after the method returns. This method
-    MUST be overriden by subclasses.
+    MUST be overridden by subclasses.
 
     @return     a state identifier
 */

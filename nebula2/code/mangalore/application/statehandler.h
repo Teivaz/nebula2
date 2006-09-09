@@ -4,7 +4,7 @@
 /**
     @class Application::StateHandler
 
-    State handlers implement actual application state behaviour in subclasses
+    State handlers implement actual application state behavior in subclasses
     of Application::StateHandler. The Application class calls state handler
     objects when a new state is entered, when the current state is left, and
     for each frame.
@@ -15,7 +15,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "application/app.h"
 
 //------------------------------------------------------------------------------
 namespace Application

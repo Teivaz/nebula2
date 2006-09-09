@@ -3,6 +3,17 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "application/gamestatehandler.h"
+#include "game/server.h"
+#include "audio/server.h"
+#include "graphics/server.h"
+#include "physics/server.h"
+#include "vfx/server.h"
+#include "input/server.h"
+#include "loader/server.h"
+#include "ui/server.h"
+#ifdef USE_MCEGUI
+#include "ceui/server.h"
+#endif
 #include "kernel/nscriptserver.h"
 #include "misc/nconserver.h"
 #include "gfx2/ngfxserver2.h"
@@ -173,7 +184,7 @@ GameStateHandler::OnFrame()
     {
         UI::Server::Instance()->Render();
         Graphics::Server::Instance()->Render();
-#ifdef MANGALORE_USE_CEGUI
+#ifdef USE_MCEGUI
         CEUI::Server::Instance()->Render();
 #endif
         if (this->graphicsVisualizationEnabled)
