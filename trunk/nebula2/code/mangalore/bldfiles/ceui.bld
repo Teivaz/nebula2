@@ -5,6 +5,7 @@
 beginmodule ceui
     setdir ceui
     setheaders {
+        ceguitimesource
         logger
         renderer
         resourceprovider
@@ -12,6 +13,7 @@ beginmodule ceui
         texture
     }
     setfiles {
+        ceguitimesource
         logger
         renderer
         resourceprovider
