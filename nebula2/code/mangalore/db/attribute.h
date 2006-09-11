@@ -61,9 +61,9 @@ public:
     Attribute();
     /// copy constructor
     Attribute(const Attribute& rhs);
-    /// constructor with only the attibute id
+    /// constructor with only the attribute id
     Attribute(const Attr::AttributeID& id);
-    /// constructor with only the attibute id
+    /// constructor with only the attribute id
     Attribute(const Attr::VoidAttributeID& id);
     /// string constructor
     Attribute(const Attr::StringAttributeID& id, const nString& val);

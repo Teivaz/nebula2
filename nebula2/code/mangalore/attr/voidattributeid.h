@@ -94,7 +94,7 @@ VoidAttributeID::~VoidAttributeID()
 {
 }
 
-} // namespace
+} // namespace Attr
 
 //------------------------------------------------------------------------------
 #endif

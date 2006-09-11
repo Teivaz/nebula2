@@ -94,7 +94,7 @@ StringAttributeID::~StringAttributeID()
 {
 }
 
-} // namespace
+} // namespace Attr
 
 //------------------------------------------------------------------------------
 #endif

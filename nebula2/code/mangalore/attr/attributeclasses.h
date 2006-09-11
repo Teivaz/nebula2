@@ -23,6 +23,6 @@ class Vector3T  {};
 class Vector4T  {};
 class Matrix44T {};
 
-} // namespace
+} // namespace attr
 
 #endif
