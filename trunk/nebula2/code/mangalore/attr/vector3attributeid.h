@@ -94,7 +94,7 @@ Vector3AttributeID::~Vector3AttributeID()
 {
 }
 
-} // namespace
+} // namespace Attr
 
 //------------------------------------------------------------------------------
 #endif

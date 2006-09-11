@@ -94,7 +94,7 @@ BoolAttributeID::~BoolAttributeID()
 {
 }
 
-} // namespace
+} // namespace Attr
 
 //------------------------------------------------------------------------------
 #endif

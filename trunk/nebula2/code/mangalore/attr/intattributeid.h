@@ -94,7 +94,7 @@ IntAttributeID::~IntAttributeID()
 {
 }
 
-} // namespace
+} // namespace Attr
 
 //------------------------------------------------------------------------------
 #endif

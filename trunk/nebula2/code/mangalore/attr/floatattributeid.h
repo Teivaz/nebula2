@@ -94,7 +94,7 @@ FloatAttributeID::~FloatAttributeID()
 {
 }
 
-} // namespace
+} // namespace Attr
 
 //------------------------------------------------------------------------------
 #endif

@@ -94,7 +94,7 @@ Matrix44AttributeID::~Matrix44AttributeID()
 {
 }
 
-} // namespace
+} // namespace Attr
 
 //------------------------------------------------------------------------------
 #endif

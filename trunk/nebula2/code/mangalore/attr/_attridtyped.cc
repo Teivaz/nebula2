@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "attr/_attridtyped.h"
 
-// explicitely instantiate template classes for all possible types:
+// explicitly instantiate template classes for all possible types:
 
 template class _attridTyped<attr::VoidT>;
 template class _attridTyped<attr::BoolT>;
@@ -14,4 +14,3 @@ template class _attridTyped<attr::StringT>;
 template class _attridTyped<attr::Vector3T>;
 template class _attridTyped<attr::Vector4T>;
 template class _attridTyped<attr::Matrix44T>;
-
