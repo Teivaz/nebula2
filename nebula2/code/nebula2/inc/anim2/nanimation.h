@@ -264,7 +264,7 @@ inline
 void
 nAnimation::Curve::SetIpolType(IpolType t)
 {
-    n_assert(t != None);
+    // n_assert(t != None);
     this->ipolType = t;
 }
 
