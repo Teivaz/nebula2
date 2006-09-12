@@ -46,6 +46,12 @@ main(int argc, const char** argv)
         return 5;
     }
 
+    if (0 == inFileArg)
+    {
+        printf("ngfxtool error: No input file! (type 'ngfxtool -help' for help)\n");
+        return 5;
+    }
+
     // create minimal Nebula runtime
     nKernelServer kernelServer;
     kernelServer.AddPackage(nnebula);
