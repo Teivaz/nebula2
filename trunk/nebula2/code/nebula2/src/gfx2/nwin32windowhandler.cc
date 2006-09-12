@@ -248,7 +248,7 @@ nWin32WindowHandler::RestoreWindow()
         y = this->displayMode.GetYPos();
         if (x + (r.right - r.left) > (parentRect.right - parentRect.left))
         {
-            w = (parentRect.right - parentRect.left) - x; //scale to max size inside the parrent window
+            w = (parentRect.right - parentRect.left) - x; //scale to max size inside the parent window
         }
         else
         {
@@ -257,7 +257,7 @@ nWin32WindowHandler::RestoreWindow()
 
         if (y + (r.bottom - r.top) > (parentRect.bottom - parentRect.top))
         {
-            h = parentRect.bottom - parentRect.top - y; //scale to max size inside the parrent window
+            h = parentRect.bottom - parentRect.top - y; //scale to max size inside the parent window
         }
         else
         {

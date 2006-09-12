@@ -95,7 +95,7 @@ ActorPhysicsProperty::EnablePhysics()
     polar2 headingAngle(entityMatrix.z_component());
     this->smoothedHeading.Reset(time, 0.001f, this->headingGain, headingAngle.rho);
 
-    // call parrent
+    // call parent
     AbstractPhysicsProperty::EnablePhysics();
 }
 

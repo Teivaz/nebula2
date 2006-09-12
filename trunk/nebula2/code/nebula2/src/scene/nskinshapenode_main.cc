@@ -132,11 +132,11 @@ nSkinShapeNode::RenderDebug(nSceneServer* sceneServer, nRenderContext* renderCon
         const nCharJoint& joint = this->extCharSkeleton->GetJointAt(i);
         if (joint.GetParentJointIndex() != -1)
         {
-            nCharJoint* parrentJoint = joint.GetParentJoint();
-            n_assert(parrentJoint);
+            nCharJoint* parentJoint = joint.GetParentJoint();
+            n_assert(parentJoint);
 
             // add start point
-            lines.Append(parrentJoint->GetMatrix() * vector3());
+            lines.Append(parentJoint->GetMatrix() * vector3());
 
             // add end point
             lines.Append(joint.GetMatrix() * vector3());
