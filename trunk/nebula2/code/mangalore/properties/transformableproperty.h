@@ -4,7 +4,7 @@
 /**
     @class Properties::TransformableProperty
 
-    Entites with this property can be transformed.
+    Entities with this property can be transformed.
 
     (C) 2005 Radon Labs GmbH
 */
