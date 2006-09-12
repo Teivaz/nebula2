@@ -439,7 +439,7 @@ class vstudio71:
             projFile.write(STR_PROJ_CONFIG_TOOL_RES_COMPILER)
 
         projFile.write('        </Configuration>\n')
-	
+
     #--------------------------------------------------------------------------
     def writeModuleFiles(self, target, module, projFile):
         compileAsFlag = 0
@@ -470,11 +470,11 @@ class vstudio71:
                 objectNameStr = 'ObjectFile="$(IntDir)/%s_%s.obj"' % (safeModName, objectName)
             else:
                 target.ObjectFileNames[objectName] = True
-            
+
             nebSymsStr = ''
             if target.PkgTarget:
                 nebSymsStr = 'PreprocessorDefinitions="%s"' % nebSyms
-            
+
             args = {'relPath' : relPath,
                     'nebSymsStr' : nebSymsStr,
                     'objectNameStr' : objectNameStr,
@@ -510,7 +510,8 @@ class vstudio71:
         for dir in target.dirs:
             modules = self.getModulesinDir(target.modules, dir)
             addFilter = True
-            if len(modules) == 1 and modules[0].name == dir:
+            #if len(modules) == 1 and modules[0].name == dir:
+            if len(modules) == 1:
                 addFilter = False
             if addFilter:
                 projFile.write('        <Filter Name="%s" Filter="cpp;c;cxx;cc;h;hxx;hcc">\n' \
@@ -524,7 +525,7 @@ class vstudio71:
             module = self.buildSys.modules[moduleName]
             if module.dir:
                 continue
-            self.writeModuleFiles(target, module, projFile)            
+            self.writeModuleFiles(target, module, projFile)
 
         # if the module definition file is set and target is dll then add it
         if ('' != target.modDefFile) and ('dll' == target.type):
