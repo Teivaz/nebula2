@@ -61,7 +61,7 @@ Control::OnDestroy()
 {
     this->SetEnabled(false);
 
-    // call parrent
+    // call parent
     Element::OnDestroy();
 }
 
