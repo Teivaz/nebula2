@@ -18,40 +18,16 @@ begintarget mviewer
         ndshow
         ngui
         nnetwork
-        ntree
         ntoollib
         mangalore
         mcegui
     }
 endtarget
 
-begintarget xmltodb
-    settype exe
-    setmodules {
-        xmltodb
-        xmltodbcompiler
-    }
-    settargetdeps {
-        nkernel
-        nnebula
-        microtcl
-        ndinput8
-        ndirect3d9
-        ndsound
-        ndshow
-        ngui
-        nnetwork
-        ntree
-        ntoollib
-        mangalore
-        mcegui
-    }
-endtarget
 #-------------------------------------------------------------------------------
 beginworkspace mangaloretools
     settargets {
         mviewer
-        xmltodb
         mangalore
     }
     addtargetdef mviewer USE_MCEGUI
