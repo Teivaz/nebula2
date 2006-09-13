@@ -83,6 +83,7 @@ main(int argc, const char** argv)
     float syArg                = args.GetFloatArg("-sy", 1.0f);
     float szArg                = args.GetFloatArg("-sz", 1.0f);
     float scaleArg             = args.GetFloatArg("-scale", 0.0f);
+    nString delComponentArg    = args.GetStringArg("-delcomponent", 0);
 
     // show help?
     if (helpArg)
@@ -113,7 +114,8 @@ main(int argc, const char** argv)
                  "-sx [float]           scale vertices along x\n"
                  "-sy [float]           scale vertices along y\n"
                  "-sz [float]           scale vertices along z\n"
-                 "-scale [float]        uniformly scale vertices\n");
+                 "-scale [float]        uniformly scale vertices\n"
+                 "-delcomponent [c]     delete a vertex component from all vertices\n");
         return 5;
     }
 
@@ -223,6 +225,60 @@ main(int argc, const char** argv)
     {
         n_printf("-> generating edges...\n");
         mesh.CreateEdges();
+    }
+
+    if (delComponentArg.IsValid())
+    {
+        nMeshBuilder::Vertex::Component c = nMeshBuilder::Vertex::NUM_VERTEX_COMPONENTS;
+        if (delComponentArg == "coord")
+        {
+            c = nMeshBuilder::Vertex::COORD;
+        }
+        else if (delComponentArg == "normal")
+        {
+            c = nMeshBuilder::Vertex::NORMAL;
+        }
+        else if (delComponentArg == "uv0")
+        {
+            c = nMeshBuilder::Vertex::UV0;
+        }
+        else if (delComponentArg == "uv1")
+        {
+            c = nMeshBuilder::Vertex::UV1;
+        }
+        else if (delComponentArg == "uv2")
+        {
+            c = nMeshBuilder::Vertex::UV2;
+        }
+        else if (delComponentArg == "uv3")
+        {
+            c = nMeshBuilder::Vertex::UV3;
+        }
+        else if (delComponentArg == "color")
+        {
+            c = nMeshBuilder::Vertex::COLOR;
+        }
+        else if (delComponentArg == "tangent")
+        {
+            c = nMeshBuilder::Vertex::TANGENT;
+        }
+        else if (delComponentArg == "binormal")
+        {
+            c = nMeshBuilder::Vertex::BINORMAL;
+        }
+        else if (delComponentArg == "weights")
+        {
+            c = nMeshBuilder::Vertex::WEIGHTS;
+        }
+        else if (delComponentArg == "jindices")
+        {
+            c = nMeshBuilder::Vertex::JINDICES;
+        }
+        if (c != nMeshBuilder::Vertex::NUM_VERTEX_COMPONENTS)
+        {
+            n_printf("-> deleting vertex component %s...\n", delComponentArg.Get());
+            mesh.DelVertexComponent(c);
+        }
     }
 
     // FIXME: group renaming

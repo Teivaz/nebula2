@@ -32,7 +32,7 @@ public:
     virtual void HandleMessage(Message::Msg* msg);
 
 private:
-    /// handle a SoundFxPlay message
+    /// handle a PlaySound message
     void HandlePlaySound(Message::PlaySound* msg);
 };
 

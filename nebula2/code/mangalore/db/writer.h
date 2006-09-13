@@ -4,7 +4,7 @@
 /**
     @class Db::Writer
 
-    Used to batch-write data in a more abstract and efficient way then
+    Used to batch-write data in a more abstract and efficient way than
     Query. Updates the database layout if needed.
 
     (C) 2006 Radon Labs GmbH

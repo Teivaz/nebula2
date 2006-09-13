@@ -47,7 +47,7 @@ public:
     Game::Entity* GetEntity() const;
     /// return true if entity has been set
     bool HasEntity() const;
-    /// set position and orientation in world, or relativ to entity
+    /// set position and orientation in world, or relative to entity
     void SetTransform(const matrix44& m);
     /// get position and orientation in world, or relative to entity
     const matrix44& GetTransform() const;

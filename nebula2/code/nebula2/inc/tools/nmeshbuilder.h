@@ -275,6 +275,8 @@ public:
 
     /// check if vertex component exists
     bool HasVertexComponent(Vertex::Component c) const;
+    /// delete a vertex component
+    void DelVertexComponent(Vertex::Component c);
     /// add a vertex
     void AddVertex(const Vertex& v);
     /// add a triangle
@@ -1182,6 +1184,19 @@ nMeshBuilder::HasVertexComponent(Vertex::Component c) const
     else
     {
         return false;
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMeshBuilder::DelVertexComponent(Vertex::Component c)
+{
+    for (int i = 0; i < this->GetNumVertices(); i++)
+    {
+        this->vertexArray[i].DelComponent(c);
     }
 }
 

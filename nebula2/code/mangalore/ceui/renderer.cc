@@ -18,7 +18,7 @@ Renderer::Renderer() {
     shader->SetFilename("shaders:cegui.fx");
     n_verify(shader->Load());
     mesh.SetShader(shader);
-    mesh.Initialize(nGfxServer2::TriangleList, nMesh2::Coord | nMesh2::Uv0 | nMesh2::Color, nMesh2::WriteOnly, false);
+    mesh.Initialize(nGfxServer2::TriangleList, nMesh2::Coord | nMesh2::Uv0 | nMesh2::Color, nMesh2::WriteOnly | nMesh2::NeedsVertexShader, false);
     transform.scale(vector3(2.0f/getWidth(), -2.0f/getHeight(), 1.0f));
     transform.set_translation(vector3(-1.0f/getWidth() - 1.0f, -1.0f/getHeight() + 1.0f, 0.0f));
     resourceProvider = 0;

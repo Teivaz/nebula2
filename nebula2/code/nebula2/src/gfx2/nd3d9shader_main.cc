@@ -144,7 +144,21 @@ nD3D9Shader::LoadResource()
     };
 
     // create effect
-    hr = D3DXCreateEffect(
+    if (compileFlags)
+    {
+        hr = D3DXCreateEffectFromFile(
+            d3d9Dev,            // pDevice
+            shaderPath.Get(),   // File name
+            defines,            // pDefines
+            &includeHandler,    // pInclude
+            compileFlags,       // Flags
+            effectPool,         // pPool
+            &(this->effect),    // ppEffect
+            &errorBuffer);      // ppCompilationErrors
+    }
+    else
+    {
+        hr = D3DXCreateEffect(
             d3d9Dev,            // pDevice
             buffer,             // pFileData
             fileSize,           // DataSize
@@ -154,6 +168,7 @@ nD3D9Shader::LoadResource()
             effectPool,         // pPool
             &(this->effect),    // ppEffect
             &errorBuffer);      // ppCompilationErrors
+    }
     n_free(buffer);
 
     if (FAILED(hr))

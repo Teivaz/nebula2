@@ -5,7 +5,7 @@
     @class Db::Reader
 
     Used to read data from the database in a more abstract
-    (but also more efficient) way then Query.
+    (but also more efficient) way than Query.
 
     (C) 2006 Radon Labs GmbH
 */

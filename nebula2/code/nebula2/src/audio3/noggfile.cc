@@ -32,7 +32,7 @@ nOggFile::Open(const nString& filename)
     n_assert(0 == this->file);
 
     this->file = nFileServer2::Instance()->NewFileObject();
-    return this->file->Open(filename.Get(), "rb") && this->InitOGG();
+    return this->file->Open(filename, "rb") && this->InitOGG();
 }
 
 //------------------------------------------------------------------------------
