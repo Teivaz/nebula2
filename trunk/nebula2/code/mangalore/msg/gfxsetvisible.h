@@ -9,7 +9,6 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "message/msg.h"
-#include "graphics/entity.h"
 
 //------------------------------------------------------------------------------
 namespace Message
@@ -34,6 +33,16 @@ private:
 };
 
 RegisterFactory(GfxSetVisible);
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+GfxSetVisible::GfxSetVisible():
+    visible(false)
+{
+    // empty
+}
 
 //------------------------------------------------------------------------------
 /**

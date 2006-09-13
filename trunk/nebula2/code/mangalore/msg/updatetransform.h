@@ -4,9 +4,9 @@
 /**
     @class Message::UpdateTransform
 
-    Updates the transform of a entity, does not set the physics tranform.
+    Updates the transform of a entity, does not set the physics transform.
     All property that need to update when entity transformation changes need
-    listen to this messags.
+    listen to this messages.
 
     To set the transformation of a entity (including the physics) use the SetTransform message.
 
@@ -24,7 +24,6 @@ class UpdateTransform : public Message::Msg
     DeclareMsgId;
 
 public:
-
     /// constructor
     UpdateTransform();
     /// set the target transform matrix
