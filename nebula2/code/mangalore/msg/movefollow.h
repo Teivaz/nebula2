@@ -4,7 +4,7 @@
 /**
     @class Message::MoveFollow
 
-    A MoveFollow message. The expected behaviour is that the entity which
+    A MoveFollow message. The expected behavior is that the entity which
     receives this message follows the target entity (defined by the
     target entity's unique id) until told otherwise.
 
