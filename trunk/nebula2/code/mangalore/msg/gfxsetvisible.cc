@@ -9,13 +9,4 @@ namespace Message
 ImplementRtti(Message::GfxSetVisible, Message::Msg);
 ImplementFactory(Message::GfxSetVisible);
 ImplementMsgId(GfxSetVisible);
-
-//------------------------------------------------------------------------------
-/**
-*/
-GfxSetVisible::GfxSetVisible()
-{
-    // empty
-}
-
-};
+} // namespace Message

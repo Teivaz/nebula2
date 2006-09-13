@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::DragBoxCancelled, Message::Msg);
 ImplementFactory(Message::DragBoxCancelled);
 ImplementMsgId(DragBoxCancelled);
-};
+} // namespace Message

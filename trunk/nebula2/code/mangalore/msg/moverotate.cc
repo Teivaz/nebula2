@@ -17,8 +17,7 @@ ImplementMsgId(MoveRotate);
 MoveRotate::MoveRotate() :
 	angle(0.0f)
 {
+    // empty
 }
 
-
-};
-
+} // namespace Message

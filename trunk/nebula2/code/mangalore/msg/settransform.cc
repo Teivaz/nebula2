@@ -9,5 +9,4 @@ namespace Message
 ImplementRtti(Message::SetTransform, Message::Msg);
 ImplementFactory(Message::SetTransform);
 ImplementMsgId(SetTransform);
-};
-
+} // namespace Message

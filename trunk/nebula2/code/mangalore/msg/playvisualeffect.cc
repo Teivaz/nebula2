@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::PlayVisualEffect, Message::Msg);
 ImplementFactory(Message::PlayVisualEffect);
 ImplementMsgId(PlayVisualEffect);
-};
+} // namespace Message

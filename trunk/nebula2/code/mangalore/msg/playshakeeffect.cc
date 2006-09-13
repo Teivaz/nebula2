@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::PlayShakeEffect, Message::Msg);
 ImplementFactory(Message::PlayShakeEffect);
 ImplementMsgId(PlayShakeEffect);
-};
+} // namespace Message

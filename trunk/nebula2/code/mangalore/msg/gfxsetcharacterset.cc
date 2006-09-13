@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::GfxSetCharacterSet, Message::Msg);
 ImplementFactory(Message::GfxSetCharacterSet);
 ImplementMsgId(GfxSetCharacterSet);
-};
+} // namespace Message

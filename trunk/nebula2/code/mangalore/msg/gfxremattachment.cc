@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::GfxRemAttachment, Message::Msg);
 ImplementFactory(Message::GfxRemAttachment);
 ImplementMsgId(GfxRemAttachment);
-};
+} // namespace Message

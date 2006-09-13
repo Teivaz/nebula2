@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::MoveSetVelocity, Message::Msg);
 ImplementFactory(Message::MoveSetVelocity);
 ImplementMsgId(MoveSetVelocity);
-};
+} // namespace Message

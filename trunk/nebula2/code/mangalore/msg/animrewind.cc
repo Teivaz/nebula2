@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::AnimRewind, Message::Msg);
 ImplementFactory(Message::AnimRewind);
 ImplementMsgId(AnimRewind);
-};
+} // namespace Message

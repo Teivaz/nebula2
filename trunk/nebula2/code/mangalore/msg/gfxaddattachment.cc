@@ -18,4 +18,5 @@ GfxAddAttachment::GfxAddAttachment():
 {
     // empty
 }
-};
+
+} // namespace Message
