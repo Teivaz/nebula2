@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::GfxAddSkin, Message::Msg);
 ImplementFactory(Message::GfxAddSkin);
 ImplementMsgId(GfxAddSkin);
-};
+} // namespace Message

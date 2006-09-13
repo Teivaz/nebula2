@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::GfxSetAnimation, Message::Msg);
 ImplementFactory(Message::GfxSetAnimation);
 ImplementMsgId(GfxSetAnimation);
-};
+} // namespace Message

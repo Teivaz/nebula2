@@ -9,5 +9,4 @@ namespace Message
 ImplementRtti(Message::MoveGoto, Message::Msg);
 ImplementFactory(Message::MoveGoto);
 ImplementMsgId(MoveGoto);
-};
-
+} // namespace Message

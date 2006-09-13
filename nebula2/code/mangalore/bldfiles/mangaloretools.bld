@@ -23,7 +23,6 @@ begintarget mviewer
         mcegui
     }
 endtarget
-
 #-------------------------------------------------------------------------------
 beginworkspace mangaloretools
     settargets {

@@ -9,4 +9,4 @@ namespace Message
 ImplementRtti(Message::AnimPlay, Message::Msg);
 ImplementFactory(Message::AnimPlay);
 ImplementMsgId(AnimPlay);
-};
+} // namespace Message
