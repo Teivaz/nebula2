@@ -50,7 +50,7 @@ public:
     virtual void EndScene();
     /// update sounds (can be called outside of BeginScene()/EndScene() to immediately commit changes
     virtual void UpdateAllSounds();
-    /// sound categorys
+    /// sound categories
     enum Category
     {
         Effect = 0,

@@ -13,6 +13,20 @@ static const float4x4 Ident = { 1.0f, 0.0f, 0.0f, 0.0f,
 
 
 //------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+struct vsInput
+{       
+    float4 position : POSITION;
+    float2 uv0      : TEXCOORD0;
+    float4 color    : COLOR;
+};
+
+struct vsOutput
+{
+    float4 position  : POSITION;
+    float2 uv0 : TEXCOORD0;
+    float4 color    : COLOR;
+};
 
 //------------------------------------------------------------------------------
 sampler ColorMap = sampler_state
@@ -24,6 +38,16 @@ sampler ColorMap = sampler_state
     MagFilter = Linear;
     MipFilter = None;
 };
+
+//------------------------------------------------------------------------------
+vsOutput vsMain(const vsInput vsIn)
+{
+    vsOutput vsOut;
+    vsOut.position = mul(vsIn.position, ModelViewProjection);
+    vsOut.uv0 = vsIn.uv0;
+    vsOut.color = vsIn.color;
+    return vsOut;
+}
 
 //------------------------------------------------------------------------------
 technique t0
@@ -61,5 +85,7 @@ technique t0
         AlphaArg2[0]     = Diffuse;
 
         AlphaOp[1]       = Disable;
+
+        VertexShader = compile vs_2_0 vsMain();
     }
 }
