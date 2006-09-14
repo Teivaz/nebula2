@@ -8,7 +8,6 @@
 #include "msg/movedirection.h"
 #include "msg/movesetvelocity.h"
 #include "msg/movestop.h"
-#include "msg/moveturn.h"
 
 namespace Properties
 {
@@ -35,7 +34,6 @@ ActorAnimationProperty::Accepts(Message::Msg* msg)
     if (msg->CheckId(Message::MoveDirection::Id)) return true;
     if (msg->CheckId(Message::MoveSetVelocity::Id)) return true;
     if (msg->CheckId(Message::MoveStop::Id)) return true;
-    if (msg->CheckId(Message::MoveTurn::Id)) return true;
     return Game::Property::Accepts(msg);
 }
 

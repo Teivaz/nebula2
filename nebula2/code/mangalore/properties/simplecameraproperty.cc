@@ -112,9 +112,9 @@ SimpleCameraProperty::OnRender()
         // restore translation
         newTransform.set_translation(curPosition);
 
-        // translate along loacal z-axis
+        // translate along local z-axis
         newTransform.translate(newTransform.z_component() * this->relMove.z * this->relMoveFactor);
-        // translate along loacal x-axis
+        // translate along local x-axis
         newTransform.translate(newTransform.x_component() * this->relMove.x * this->relMoveFactor);
 
         // clear relative values
@@ -150,6 +150,5 @@ SimpleCameraProperty::OnCameraOrbit(Message::CameraOrbit* msg)
     this->relHorizontalRotation += msg->GetHorizontalRotation();
     this->relVerticalRotation += msg->GetVerticalRotation();
 }
-
 
 }; // namespace Properties
