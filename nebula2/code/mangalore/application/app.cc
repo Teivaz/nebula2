@@ -6,6 +6,7 @@
 #include "foundation/factory.h"
 #include "kernel/nfileserver2.h"
 #include "gui/nguiserver.h"
+#include "input/priority.h"
 #include "application/statehandler.h"
 #include "loader/entityloader.h"
 #include "loader/environmentloader.h"
@@ -251,6 +252,8 @@ App::SetupDefaultInputMapping()
 
     // per default the input server keep track of the 2d windows mouse position
     inputServer->AddMapping("mousePosition", "mouse0:position");
+    // attach to the mouse input mapping, to keep track of the current mouse position
+    inputServer->AttachInputSink("mousePosition", Input::InputPriority_MousePositionTracking, inputServer);
 
     inputServer->AddMapping("mouseLMB", "mouse0:btn0");
     inputServer->AddMapping("mouseRMB", "mouse0:btn1");
@@ -392,8 +395,8 @@ App::SetupSubsystems()
 
     // setup the input subsystem
     this->inputServer = Input::Server::Create();
-    this->SetupDefaultInputMapping();
     this->inputServer->Open();
+    this->SetupDefaultInputMapping();
 
     // setup the audio subsystem
     this->audioServer = Audio::Server::Create();
