@@ -851,7 +851,7 @@ nD3D9Shader::D3DXParamToShaderStateParam(D3DXHANDLE h)
         }
     }
     // fallthrough: invalid handle
-    return nShaderState::InvalidParameter;;
+    return nShaderState::InvalidParameter;
 }
 
 //------------------------------------------------------------------------------

@@ -351,7 +351,7 @@ nAnimBuilder::FixKeyOffsets()
         group.SetKeyStride(numNonCollapsedCurves);
 
         // update the groupFirstKeyIndex for the next group
-        groupFirstKeyIndex += (numNonCollapsedCurves * group.GetNumKeys());;
+        groupFirstKeyIndex += (numNonCollapsedCurves * group.GetNumKeys());
     }
 }
 

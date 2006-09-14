@@ -205,7 +205,7 @@ ChaseCameraProperty::HandleCameraOrbit(float dRho, float dTheta)
     float lowStop = n_deg2rad(GetEntity()->GetFloat(Attr::CameraLowStop));
     float hiStop  = n_deg2rad(GetEntity()->GetFloat(Attr::CameraHighStop));
 
-    float frameTime = (float) InputTimeSource::Instance()->GetFrameTime();;
+    float frameTime = (float) InputTimeSource::Instance()->GetFrameTime();
     this->cameraAngles.rho += dRho * angularVelocity * frameTime;
     this->cameraAngles.theta += dTheta * angularVelocity * frameTime;
     this->cameraAngles.theta = n_clamp(this->cameraAngles.theta, lowStop, hiStop);

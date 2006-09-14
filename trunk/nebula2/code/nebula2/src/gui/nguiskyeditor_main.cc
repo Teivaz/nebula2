@@ -897,7 +897,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     vector4 vec = this->refElement->GetVector(nShaderState::Move);
                     vector2 dirvec(vec.x,vec.y);
                     dirvec.norm();
-                    float len = this->refCloudMapSpeedSlider->GetValue();;
+                    float len = this->refCloudMapSpeedSlider->GetValue();
                     vec.x = dirvec.x * len;
                     vec.y = dirvec.y * len;
                     this->refElement->SetVector(nShaderState::Move, vec);
@@ -907,7 +907,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     vector4 vec(0.0f,0.1f,0.0f,0.1f);
                     vector2 dirvec(vec.x,vec.y);
                     dirvec.norm();
-                    float len = this->refCloudMapSpeedSlider->GetValue();;
+                    float len = this->refCloudMapSpeedSlider->GetValue();
                     vec.x = dirvec.x * len;
                     vec.y = dirvec.y * len;
                     this->refElement->SetVector(nShaderState::Move, vec);
@@ -925,7 +925,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     vector4 vec = this->refElement->GetVector(nShaderState::Move);
                     vector2 dirvec(vec.x,vec.y);
                     dirvec.norm();
-                    float len = this->refCloudStrucSpeedSlider->GetValue();;
+                    float len = this->refCloudStrucSpeedSlider->GetValue();
                     vec.z = dirvec.x * len;
                     vec.w = dirvec.y * len;
                     this->refElement->SetVector(nShaderState::Move, vec);
@@ -935,7 +935,7 @@ nGuiSkyEditor::EventCloud(const nGuiEvent& event)
                     vector4 vec(0.0f,0.1f,0.0f,0.1f);
                     vector2 dirvec(vec.x,vec.y);
                     dirvec.norm();
-                    float len = this->refCloudStrucSpeedSlider->GetValue();;
+                    float len = this->refCloudStrucSpeedSlider->GetValue();
                     vec.z = dirvec.x * len;
                     vec.w = dirvec.y * len;
                     this->refElement->SetVector(nShaderState::Move, vec);
