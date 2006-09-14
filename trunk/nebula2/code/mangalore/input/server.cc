@@ -20,7 +20,6 @@
 #include "input/mousesource.h"
 #include "input/buttonsource.h"
 #include "input/keysource.h"
-#include "input/priority.h"
 
 namespace Input
 {
@@ -67,15 +66,6 @@ Server::Open()
     nScriptServer* scriptServer = Foundation::Server::Instance()->GetScriptServer();
     nString result;
     scriptServer->Run("OnMapInput", result);
-
-    // make sure the expected mappings exist to keep track of the mouse position
-    if (!this->HasMapping("mousePosition"))
-    {
-        n_error("Input::Server::Open(): Warning: Could not keep track of the mouse position, does not find the expected mapping 'mousePosition'!");
-    }
-
-    // attach to the mouse input mapping, to keep track of the current mouse position
-    this->AttachInputSink("mousePosition", InputPriority_MousePositionTracking, this);
 
     this->isOpen = true;
     return true;

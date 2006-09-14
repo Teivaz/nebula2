@@ -95,7 +95,7 @@ public:
     virtual const vector2& GetMousePos() const;
 
 protected:
-    /// create an appropiate input source for the given device channel
+    /// create an appropriate input source for the given device channel
     Ptr<Source> CreateInputSource(const nString& deviceChannel) const;
 
     /// cleanup empty elements from mapping array
