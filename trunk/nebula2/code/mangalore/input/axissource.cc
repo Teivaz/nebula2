@@ -83,6 +83,8 @@ AxisSource::EndFrame()
         event->SetAxisValue(this->axisFilter.GetFilteredValue());
 
         this->AddEvent(event);
+    } else {
+        this->axisFilter.PushValue(0.0f);
     }
 
     // call parent
