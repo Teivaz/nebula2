@@ -436,7 +436,7 @@ Server::GetClosestContactAlongRay(const vector3& pos, const vector3& dir, const 
     // find closest contact
     const nArray<ContactPoint>& contacts = this->GetContactPoints();
     int closestContactIndex = -1;
-    float closestDistance = dir.len();;
+    float closestDistance = dir.len();
     int numContacts = contacts.Size();
     vector3 distVec;
     for (int i = 0; i < numContacts; i++)

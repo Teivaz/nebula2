@@ -231,7 +231,7 @@ nSubdivShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rend
 				}
 				// advance components in U direction
 				v0 += d0; n0 += nd0; t0 += td0; uv00 += uv0d0; uv10 += uv1d0;
-				numSegments1 -= d1OverD0;;
+				numSegments1 -= d1OverD0;
 			}
 		}
 		this->dynMesh.End(curDstVertex);

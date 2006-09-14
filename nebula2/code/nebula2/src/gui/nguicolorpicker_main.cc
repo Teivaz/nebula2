@@ -133,7 +133,7 @@ nGuiColorPicker::OnButtonUp(const vector2& mousePos)
     if (this->Inside(mousePos))
     {
         this->UpdateColor(mousePos);
-        nGuiWidget::OnButtonUp(mousePos);;
+        nGuiWidget::OnButtonUp(mousePos);
         return true;
     }
 
