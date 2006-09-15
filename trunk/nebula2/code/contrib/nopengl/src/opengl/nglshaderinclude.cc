@@ -1,15 +1,16 @@
 //------------------------------------------------------------------------------
-//  ncgfxshaderinclude.cc
+//  nglshaderinclude.cc
 //  2004 Haron
 //------------------------------------------------------------------------------
-#include "opengl/ncgfxshaderinclude.h"
+#include "opengl/nglshaderinclude.h"
 #include "kernel/nfileserver2.h"
 
 //------------------------------------------------------------------------------
 /**
 */
-nCgFXShaderInclude::nCgFXShaderInclude() :
-    tmpFilePath("")
+nGLShaderInclude::nGLShaderInclude() :
+    tmpFilePath(""),
+    tmpFile(NULL)
 {
     // empty
 }
@@ -17,18 +18,20 @@ nCgFXShaderInclude::nCgFXShaderInclude() :
 //------------------------------------------------------------------------------
 /**
 */
-nCgFXShaderInclude::~nCgFXShaderInclude()
+nGLShaderInclude::~nGLShaderInclude()
 {
     this->End();
 }
 
 //------------------------------------------------------------------------------
 /**
-    Load CgFX-shader file.
+    Load shader file.
 */
 bool
-nCgFXShaderInclude::Begin(const nString& sourceFile)
+nGLShaderInclude::Begin(const nString& sourceFile)
 {
+    n_assert(!this->tmpFile);
+
     // mangle pathname
     nString mangledPath;
     mangledPath = nFileServer2::Instance()->ManglePath(sourceFile.Get());
@@ -37,32 +40,31 @@ nCgFXShaderInclude::Begin(const nString& sourceFile)
     // not a fatal error (result is that no rendering will be done)
     if (!nFileServer2::Instance()->FileExists(mangledPath.Get()))
     {
-        n_printf("nCgFXShaderInclude::Begin() WARNING: shader file '%s' does not exist!\n", mangledPath.Get());
+        n_printf("nGLShaderInclude::Begin() WARNING: shader file '%s' does not exist!\n", mangledPath.Get());
         return false;
     }
 
-    nFile* f = nFileServer2::Instance()->NewFileObject();
-    n_assert(f);
+    this->tmpFile = nFileServer2::Instance()->NewFileObject();
+    n_assert(this->tmpFile);
 
-    this->tmpFilePath.Append(mangledPath.ExtractDirName());
-    this->tmpFilePath.Append("__tmp__.fx");
+    this->tmpFilePath = mangledPath.ExtractDirName();
+    this->tmpFilePath.Append("__tmp__.");
+    this->tmpFilePath.Append(mangledPath.GetExtension());
     
-    if (!f->Open(this->tmpFilePath.Get(), "w"))
+    if (!this->tmpFile->Open(this->tmpFilePath.Get(), "rw"))
     {
-        n_error("nCgFXShaderInclude::Begin(): Could not create file %s\n", this->tmpFilePath.Get());
-        f->Release();
+        n_error("nGLShaderInclude::Begin(): Could not create file %s\n", this->tmpFilePath.Get());
+        this->tmpFile->Release();
         return false;
     }
-
-    //mangledPath = goochyFX;
-    Include(f, mangledPath, nArray<nString>());
 
 #ifdef __WIN32__
     this->tmpFilePath.ConvertBackslashes();
 #endif
 
-    f->Close();
-    f->Release();
+    Include(this->tmpFile, mangledPath, nArray<nString>());
+
+    this->tmpFile->Seek(0, nFile::START);
 
     return true;
 }
@@ -71,13 +73,50 @@ nCgFXShaderInclude::Begin(const nString& sourceFile)
 /**
 */
 void
-nCgFXShaderInclude::End()
+nGLShaderInclude::GetSource(nString& src)
 {
-    if (!nFileServer2::Instance()->FileExists(this->tmpFilePath.Get()))
+    n_assert(this->tmpFile);
+    int s = this->tmpFile->GetSize();
+    if (s > 0)
     {
-        //nFileServer2::Instance()->DeleteFile(this->tmpFilePath.Get());
-        this->tmpFilePath = "";
+        char* buf = n_new_array(char, s);
+        int bytes_read = this->tmpFile->Read(buf, s);
+        //char line[N_MAXPATH];
+        //while (this->tmpFile->GetS(line, sizeof(line)))
+        //{
+        //    src.Append(line);
+        //    n_printf("TT: %s", line);
+        //}
+        if (bytes_read == s )
+        {
+            src.Set(buf, s);
+        }
+        //else
+        //{
+        //    src.Clear();
+        //}
+        //n_printf("TEST(%d):\n%s\n;TEST\n", s, src.Get());
+        n_delete_array(buf);
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGLShaderInclude::End()
+{
+    if (this->tmpFile)
+    {
+        this->tmpFile->Close();
+        this->tmpFile->Release();
+        this->tmpFile = NULL;
+    }
+    if (nFileServer2::Instance()->FileExists(this->tmpFilePath.Get()))
+    {
+        nFileServer2::Instance()->DeleteFile(this->tmpFilePath.Get());
+    }
+    this->tmpFilePath = "";
 }
 
 //------------------------------------------------------------------------------
@@ -85,7 +124,7 @@ nCgFXShaderInclude::End()
     Recursive #include directives substituting
 */
 bool
-nCgFXShaderInclude::Include(nFile* dstfile, const nString& srcfile, nArray<nString>& includes)
+nGLShaderInclude::Include(nFile* dstfile, const nString& srcfile, nArray<nString>& includes)
 {
     //n_printf("<CHECK>%s</CHECK>\n", srcfile.Get());
 
@@ -96,10 +135,12 @@ nCgFXShaderInclude::Include(nFile* dstfile, const nString& srcfile, nArray<nStri
     // open the file
     if (!f->Open(srcfile.Get(), "r"))
     {
-        n_error("nCgFXShaderInclude::Include(): Could not open file %s\n", srcfile.Get());
+        n_error("nGLShaderInclude::Include(): Could not open file %s\n", srcfile.Get());
         f->Release();
         return false;
     }
+
+    includes.PushBack(srcfile);
 
     char line[N_MAXPATH];
     nString includeFile;
@@ -130,7 +171,6 @@ nCgFXShaderInclude::Include(nFile* dstfile, const nString& srcfile, nArray<nStri
                     needSave = false;
                     includeFile.Append(shaderdir);
                     includeFile.Append(ifname);
-                    includes.Append(fn);
 
                     if (!this->Include(dstfile, includeFile, includes))
                     {
@@ -154,6 +194,8 @@ nCgFXShaderInclude::Include(nFile* dstfile, const nString& srcfile, nArray<nStri
             dstfile->PutChar((char)0x0A); // only for CgFX needs
         }
     }
+
+    includes.Erase(includes.Size()-1); // includes.PopBack();
 
     f->Close();
     f->Release();

@@ -1,14 +1,16 @@
 //------------------------------------------------------------------------------
-//  nglfont_main.cc
+//  nglslshader_main.cc
+//  23-Mar-2005 Haron
 //------------------------------------------------------------------------------
-#include "opengl/nglfont.h"
+#include "opengl/nglshader.h"
 
-nNebulaClass(nGLFont, "nfont2");
+nNebulaClass(nGLShader, "nshader2");
 
 //------------------------------------------------------------------------------
 /**
 */
-nGLFont::nGLFont()
+nGLShader::nGLShader() :
+    ss_initialized(false)
 {
     // empty
 }
@@ -16,34 +18,30 @@ nGLFont::nGLFont()
 //------------------------------------------------------------------------------
 /**
 */
-nGLFont::~nGLFont()
+nGLShader::~nGLShader()
 {
-    if (this->IsValid())
-    {
-        this->Unload();
-    }
+    // empty
 }
 
 //------------------------------------------------------------------------------
 /**
+    initialize gl shader subsystem
 */
 bool
-nGLFont::LoadResource()
+nGLShader::InitShaderSys()
 {
-    // TODO: add code
-
-    this->SetState(Valid);
-    return true;
+    n_error("nGLShader::InitShaderSys(): Pure virtual function called!");
+    return false;
 }
 
 //------------------------------------------------------------------------------
 /**
+    release gl shader subsystem
 */
-void
-nGLFont::UnloadResource()
+bool
+nGLShader::ReleaseShaderSys()
 {
-    // TODO: add code
-
-    this->SetState(Unloaded);
+    n_error("nGLShader::ReleaseShaderSys(): Pure virtual function called!");
+    return false;
 }
 

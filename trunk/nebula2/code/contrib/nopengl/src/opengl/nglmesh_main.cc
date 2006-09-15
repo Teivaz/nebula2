@@ -3,8 +3,10 @@
 //  2004 Haron
 //------------------------------------------------------------------------------
 #include "opengl/nglmesh.h"
-#include "opengl/nglextensionserver.h"
+
+#include "opengl/nglserver2.h"
 #include "opengl/ngltexture.h"
+#include "opengl/nglextensionserver.h"
 
 nNebulaClass(nGLMesh, "nmesh2");
 
@@ -17,7 +19,7 @@ inline
 int firstSetBitPos(uint n)
 {
     int i, res;
-    res = 31; // there is no setted bits
+    res = -1; // there is no setted bits
 
     for(i = 0; i < 32; i++)
     {
@@ -81,7 +83,7 @@ nGLMesh::CanLoadAsync() const
 bool
 nGLMesh::LoadResource()
 {
-    n_assert(!this->IsValid());
+    n_assert(!this->IsLoaded());
     n_assert(0 == this->vertexBuffer && 0 == this->privVertexBuffer);
     n_assert(0 == this->indexBuffer  && 0 == this->privIndexBuffer );
 
@@ -113,7 +115,7 @@ nGLMesh::UnloadResource()
     //TODO: whats with buffers that got invalid during mapping?
 
     // release the resources
-    if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {    
         if (this->vertexBuffer)
         {
@@ -139,7 +141,41 @@ nGLMesh::UnloadResource()
         this->privIndexBuffer = 0;
     }
 
-    this->SetValid(false);
+    this->SetState(Unloaded);
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the gl device is lost. We only need to
+    react if our vertex and index buffers are not in GL's managed pool.
+    In this case, we need to unload ourselves...
+*/
+void
+nGLMesh::OnLost()
+{
+    if (WriteOnly & this->vertexUsage)
+    {
+        this->UnloadResource();
+        this->SetState(Lost);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    This method is called when the gl device has been restored. If our
+    buffers are in the GL's default pool, we need to restore ourselves
+    as well, and we need to set our state to empty, because the buffers contain
+    no data.
+*/
+void
+nGLMesh::OnRestored()
+{
+    if (WriteOnly & this->vertexUsage)
+    {
+        this->SetState(Unloaded);
+        this->LoadResource();
+        this->SetState(Empty);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +189,7 @@ nGLMesh::CreateVertexBuffer()
     n_assert(0 == this->privVertexBuffer);
     n_assert(0 == this->vertexBuffer);
 
-    if (ReadOnly & this->usage || !nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if ((ReadOnly & this->vertexUsage) || !N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         // this is a read-only mesh which will never be rendered
         // and only read-accessed by the CPU, allocate private
@@ -171,7 +207,7 @@ nGLMesh::CreateVertexBuffer()
 
         //select usage type
         GLenum bufferUsage = GL_STATIC_DRAW_ARB; //default
-        if (WriteOnly & this->usage)
+        if (WriteOnly & this->vertexUsage)
         {
             bufferUsage = GL_DYNAMIC_DRAW_ARB;
         }
@@ -199,7 +235,7 @@ nGLMesh::CreateIndexBuffer()
     n_assert(0 == this->indexBuffer);
     n_assert(0 == this->privIndexBuffer);
 
-    if (ReadOnly == this->usage || !nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if ((ReadOnly & this->indexUsage) || !N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         n_printf("nGLMesh::CreateIndexBuffer: NO vbo_support.\n");
         // this is a read-only mesh which will never be rendered
@@ -219,7 +255,7 @@ nGLMesh::CreateIndexBuffer()
 
         //select usage type
         GLenum bufferUsage = GL_STATIC_DRAW_ARB; //default
-        if (WriteOnly == this->usage)
+        if (WriteOnly == this->indexUsage)
         {
             bufferUsage = GL_DYNAMIC_DRAW_ARB;
         }
@@ -271,7 +307,7 @@ nGLMesh::LockVertices()
     n_assert((this->vertexBuffer || this->privVertexBuffer) && !this->VBMapFlag);
     float* retval = 0;
     this->VBMapFlag = true;
-    if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         glBindBufferARB(GL_ARRAY_BUFFER_ARB,this->vertexBuffer);
         void* ptr = glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
@@ -297,7 +333,7 @@ nGLMesh::UnlockVertices()
     this->LockMutex();
     n_assert((this->vertexBuffer || this->privVertexBuffer) && this->VBMapFlag);
     this->VBMapFlag = false;
-    if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         glUnmapBufferARB(GL_ARRAY_BUFFER_ARB);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, NULL);
@@ -317,7 +353,7 @@ nGLMesh::LockIndices()
     n_assert((this->indexBuffer || this->privIndexBuffer) && !this->IBMapFlag);
     ushort* retval = 0;
     this->IBMapFlag = true;
-    if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,this->indexBuffer);
         void* ptr = glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
@@ -343,7 +379,7 @@ nGLMesh::UnlockIndices()
     this->LockMutex();
     n_assert((this->indexBuffer || this->privIndexBuffer) && this->IBMapFlag);
     this->IBMapFlag = false;
-    if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB);
         glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, NULL);
@@ -354,33 +390,29 @@ nGLMesh::UnlockIndices()
 
 //-----------------------------------------------------------------------------
 /**
-    init mesh state
-    Feb-2004    Haron    created
+    Set gl vertices
 */
 bool
-nGLMesh::BeginRender(int vertexStart, bool useIndex, int indexStart)
+nGLMesh::SetVertices(int vertexStart)
 {
-    if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexBuffer);
-        if (useIndex)
-            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, this->indexBuffer);
     }
 
-    int vstride = this->vertexWidth * sizeof(GLfloat);
-    int istride = sizeof(GLushort);//this->numIndices * sizeof(GLushort);
+    int stride = this->GetVertexWidth() * sizeof(GLfloat);
 
     if (this->vertexComponentMask & Coord)
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(this->componentSize[firstSetBitPos(Coord)],//3,
-            GL_FLOAT, vstride, this->VertexOffset(vertexStart,Coord));
+            GL_FLOAT, stride, this->VertexOffset(vertexStart, Coord));
     }
 
     if (this->vertexComponentMask & Normal)
     {
         glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, vstride, this->VertexOffset(vertexStart,Normal));
+        glNormalPointer(GL_FLOAT, stride, this->VertexOffset(vertexStart, Normal));
     }
 
     // we work with texture only if mesh has tex coordinates
@@ -393,22 +425,21 @@ nGLMesh::BeginRender(int vertexStart, bool useIndex, int indexStart)
         // TODO: check this for situation when textures not placed one by one in gfx->refTextures
         for (stage = 0; stage < this->texCoordNum; stage++)
         {
-            nGLTexture* tex = (nGLTexture*)nGfxServer2::Instance()->GetTexture(stage);
+            nGLTexture* tex = (nGLTexture*)nGfxServer2::Instance()->GetRenderTarget(stage);
             if (tex)
             {                
                 int res = tex->ApplyCoords(
                     stage, this->componentSize[firstSetBitPos(Uv0 << stage)],
-                    vstride, this->VertexOffset(vertexStart,this->texCoordFirst + stage));
+                    stride, this->VertexOffset(vertexStart, this->texCoordFirst + stage));
 
                 if (res == -1)
                 {
-                    n_gltrace("nGLMesh::BeginState().");
+                    n_gltrace("nGLMesh::SetVertices().");
                     return false;
                 }
                 if (res == 0) break;
             }
         }
-
     //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
@@ -416,27 +447,20 @@ nGLMesh::BeginRender(int vertexStart, bool useIndex, int indexStart)
     {
         glEnableClientState(GL_COLOR_ARRAY);
         glColorPointer(this->componentSize[firstSetBitPos(Color)],//4,
-            GL_FLOAT, vstride, this->VertexOffset(vertexStart,Color));
+            GL_FLOAT, stride, this->VertexOffset(vertexStart, Color));
     }
 
-    if (useIndex)
-    {
-        glEnableClientState(GL_INDEX_ARRAY);
-        glIndexPointer(GL_UNSIGNED_BYTE, istride, this->IndexOffset(indexStart));
-    }
-
-    //n_printf("VStride(%s) IStride(%s)\n", vstride, istride);
-    n_gltrace("nGLMesh::BeginState().");
+    //n_printf("VStride(%s)\n", stride);
+    n_gltrace("nGLMesh::SetVertices().");
     return true;
 }
 
 //-----------------------------------------------------------------------------
 /**
-    uninit mesh state
-    Feb-2004    Haron    created
+    Unset gl vertices
 */
 void
-nGLMesh::EndRender(bool useIndex)
+nGLMesh::UnsetVertices()
 {
     // we work with texture only if mesh has tex coordinates
     if (this->texCoordNum > 0)
@@ -445,7 +469,7 @@ nGLMesh::EndRender(bool useIndex)
         int stage;
         for (stage = 0; stage < this->texCoordNum; stage++)
         {
-            nGLTexture* tex = (nGLTexture*)nGfxServer2::Instance()->GetTexture(stage);
+            nGLTexture* tex = (nGLTexture*)nGfxServer2::Instance()->GetRenderTarget(stage);
             if (tex)
             {
                 int res = tex->UnApplyCoords(stage);
@@ -464,15 +488,50 @@ nGLMesh::EndRender(bool useIndex)
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_INDEX_ARRAY);
 
-    if (nGLExtensionServer::Instance()->support_GL_ARB_vertex_buffer_object)
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, NULL);
-        if (useIndex)
-            glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, NULL);
     }
-    n_gltrace("nGLMesh::EndRender().");
+    n_gltrace("nGLMesh::UnsetVertices().");
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Set gl indices
+*/
+bool
+nGLMesh::SetIndices(int indexStart)
+{
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
+    {
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, this->indexBuffer);
+    }
+
+    int stride = sizeof(GLushort);//this->numIndices * sizeof(GLushort);
+
+    glEnableClientState(GL_INDEX_ARRAY);
+    glIndexPointer(GL_UNSIGNED_BYTE, stride, this->IndexOffset(indexStart));
+
+    //n_printf("IStride(%s)\n", stride);
+    n_gltrace("nGLMesh::SetIndices().");
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Unset gl indices
+*/
+void
+nGLMesh::UnsetIndices()
+{
+    glDisableClientState(GL_INDEX_ARRAY);
+
+    if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
+    {
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, NULL);
+    }
+    n_gltrace("nGLMesh::UnsetIndices().");
 }
 
 //-----------------------------------------------------------------------------
@@ -483,7 +542,7 @@ void*
 nGLMesh::VertexOffset(int vertexStart, int component)
 {
     int cm = this->vertexComponentMask & component;
-    n_assert2(cm < AllComponents, "You have tryed to get a buffer offset for a not possible type!!! this is a hard fail!\n");
+    n_assert2(cm < AllComponents, "You have tried to get a buffer offset for a not possible type!!! this is a hard fail!\n");
 
     float* basePtr = (float*)this->privVertexBuffer + vertexStart * this->vertexWidth + componentOffset[firstSetBitPos(cm)];
 

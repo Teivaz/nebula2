@@ -4,10 +4,13 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "opengl/nglserver2.h"
+
+#include "gfx2/nshader2.h"
 #include "resource/nresourceserver.h"
-#include "gfx2/nmesh2.h"
-#include "gfx2/nfont2.h"
-#include "opengl/ncgfxshader.h"
+
+//#include "gfx2/nmesh2.h"
+//#include "gfx2/nfont2.h"
+//#include "opengl/ncgfxshader.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -20,7 +23,7 @@
 nMesh2*
 nGLServer2::NewMesh(const char* rsrcName)
 {
-    n_printf("New Mesh: %s.\n", rsrcName);
+    n_printf("\nNew Mesh: %s.\n", rsrcName);
     return (nMesh2*) this->refResource->NewResource("nglmesh", rsrcName, nResource::Mesh);
 }
 
@@ -48,7 +51,7 @@ nGLServer2::NewMeshArray(const char* rsrcName)
 nTexture2*
 nGLServer2::NewTexture(const char* rsrcName)
 {
-    n_printf("New Texture: %s.\n", rsrcName);
+    n_printf("\nNew Texture: %s.\n", rsrcName);
     return (nTexture2*) this->refResource->NewResource("ngltexture", rsrcName, nResource::Texture);
 }
 //------------------------------------------------------------------------------
@@ -62,8 +65,9 @@ nGLServer2::NewTexture(const char* rsrcName)
 nShader2*
 nGLServer2::NewShader(const char* rsrcName)
 {
-    n_printf("New Shader: %s.\n", rsrcName);
-    return (nShader2*) this->refResource->NewResource("ncgfxshader", rsrcName, nResource::Shader);
+    n_printf("\nNew Shader: %s.\n", rsrcName);
+    return (nShader2*) this->refResource->NewResource("nglslshader", rsrcName, nResource::Shader);
+    //return (nShader2*) this->refResource->NewResource("ncgfxshader", rsrcName, nResource::Shader);
 }
 
 //------------------------------------------------------------------------------
@@ -77,7 +81,7 @@ nGLServer2::NewShader(const char* rsrcName)
 nFont2*
 nGLServer2::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
 {
-    n_printf("New Font: %s.\n", rsrcName);
+    n_printf("\nNew Font: %s.\n", rsrcName);
     nFont2* font = (nFont2*) this->refResource->NewResource("nglfont", rsrcName, nResource::Font);
     n_assert(font);
     font->SetFontDesc(fontDesc);
@@ -124,81 +128,117 @@ nGLServer2::NewRenderTarget(const char* rsrcName,
 
 //------------------------------------------------------------------------------
 /**
-    Unloads all resources used by the GLServer2 object. This method must
-    be called when the gl device has been lost.
+    Create a new occlusion query object.
+
+    @return     pointer to a new occlusion query object
+*/
+nOcclusionQuery*
+nGLServer2::NewOcclusionQuery()
+{
+    return NULL; //n_new(nGLOcclusionQuery);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Called either when the gl device is lost, or when the display is closed.
+    This should perform the required cleanup work on all affected resources.
 */
 void
-nGLServer2::OnDeviceLost(bool unloadManaged)
+nGLServer2::OnDeviceCleanup(bool shutdown)
 {
     // close the text renderer
     //this->CloseTextRenderer();
 
-    // release other resources
-    if (unloadManaged)
+    // handle resources
+    if (shutdown)
     {
-        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);      
+        // the display is about to be closed, do a real unload
+        this->refResource->UnloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
     }
     else
     {
-        this->refResource->UnloadResources(nResource::Mesh | nResource::Shader);
+        // the device has been lost, tell the resources about it
+        this->refResource->OnLost(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
     }
 
     // release shape shader
-/*    if (this->refShapeShader.isvalid())
-    {
-        this->refShapeShader->Release();
-        this->refShapeShader.invalidate();
-    }
-*/
+    //if (this->refShapeShader.isvalid())
+    //{
+    //    this->refShapeShader->Release();
+    //    this->refShapeShader.invalidate();
+    //}
+
     // release the shared state shader
     if (this->refSharedShader.isvalid())
     {
         this->refSharedShader->Release();
         this->refSharedShader.invalidate();
     }
-/*
+
     // release refs on original backbuffer and depth/stencil surfaces
-    if (this->backBufferSurface)
-    {
-        this->backBufferSurface->Release();
-        this->backBufferSurface = 0;
-    }
-    if (this->depthStencilSurface)
-    {
-        this->depthStencilSurface->Release();
-        this->depthStencilSurface = 0;
-    }
-    
+    //if (this->captureSurface)
+    //{
+    //    this->captureSurface->Release();
+    //    this->captureSurface = 0;
+    //}
+    //if (this->backBufferSurface)
+    //{
+    //    this->backBufferSurface->Release();
+    //    this->backBufferSurface = 0;
+    //}
+    //if (this->depthStencilSurface)
+    //{
+    //    this->depthStencilSurface->Release();
+    //    this->depthStencilSurface = 0;
+    //}
+
+    // inform line renderer
+    //HRESULT hr = this->d3dxLine->OnLostDevice();
+    //n_dxtrace(hr, "OnLostDevice() on d3dxLine failed");
+
     #ifdef __NEBULA_STATS__
     // release the d3d query object
-    if (this->queryResourceManager)
-    {
-        this->queryResourceManager->Release();
-        this->queryResourceManager = 0;
-    }
+    //if (this->queryResourceManager)
+    //{
+    //    this->queryResourceManager->Release();
+    //    this->queryResourceManager = 0;
+    //}
     #endif
-*/
 }
 
 //------------------------------------------------------------------------------
 /**
-    Reload all resources used by the nD3D8Server2 object. This method must
-    be called when the d3d device has been restored.
+    This method is called either after the software device has been
+    created, or after the device has been restored.
 */
 void
-nGLServer2::OnRestoreDevice()
+nGLServer2::OnDeviceInit(bool startup)
 {
+    n_assert(!this->refSharedShader.isvalid());
 /*
+    n_assert(0 == this->depthStencilSurface);
+    n_assert(0 == this->backBufferSurface);
+    n_assert(0 == this->captureSurface);
+
     HRESULT hr;
 
     // get a pointer to the back buffer and depth/stencil surface
     hr = this->d3d9Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &(this->backBufferSurface));
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "GetBackBuffer() on device failed.");
     n_assert(this->backBufferSurface);
 
     hr = this->d3d9Device->GetDepthStencilSurface(&this->depthStencilSurface);
-    n_assert(SUCCEEDED(hr));
+    n_dxtrace(hr, "GetDepthStencilSurface() on device failed.");
     n_assert(this->depthStencilSurface);
+
+    // create an offscreen surface for capturing data
+    hr = this->d3d9Device->CreateOffscreenPlainSurface(this->presentParams.BackBufferWidth,
+                                                       this->presentParams.BackBufferHeight,
+                                                       this->presentParams.BackBufferFormat,
+                                                       D3DPOOL_SYSTEMMEM,
+                                                       &(this->captureSurface), NULL);
+    n_dxtrace(hr, "CreateOffscreenPlainSurface() failed.");
+    n_assert(this->captureSurface);
 
     #ifdef __NEBULA_STATS__
     // create a query object for resource manager queries
@@ -206,19 +246,44 @@ nGLServer2::OnRestoreDevice()
     hr = this->d3d9Device->CreateQuery(D3DQUERYTYPE_RESOURCEMANAGER, &(this->queryResourceManager));
     #endif
 */
-    // (re-)-load resources
-    this->refResource->ReloadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    // restore or load resources
+    if (startup)
+    {
+        // this is a real startup
+        this->refResource->LoadResources(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    }
+    else
+    {
+        // the device has been restored...
+        this->refResource->OnRestored(nResource::Mesh | nResource::Texture | nResource::Shader | nResource::Font);
+    }
 
     // open the text renderer
     //this->OpenTextRenderer();
 
-    // flag the mouse cursor to be reset
+    // inform line renderer
+    //hr = this->d3dxLine->OnResetDevice();
+    //n_dxtrace(hr, "OnResetDevice() on d3dxLine failed");
+
+    // update mouse cursor
     this->cursorDirty = true;
     this->UpdateCursor();
 
+    // create the shape shader
+    //this->refShapeShader = (nD3D9Shader*) this->NewShader("shape");
+    //if (!this->refShapeShader->IsLoaded())
+    //{
+    //    this->refShapeShader->SetFilename("shaders:shape.fx");
+    //    if (!this->refShapeShader->Load())
+    //    {
+    //        this->refShapeShader->Release();
+    //        this->refShapeShader.invalidate();
+    //    }
+    //}
+
     // create the shared effect parameter reference shader
-    this->refSharedShader = (nCgFXShader*) this->NewShader("shared");
-    if (!this->refSharedShader->IsValid())
+    this->refSharedShader = this->NewShader("shared");
+    if (!this->refSharedShader->IsLoaded())
     {
         this->refSharedShader->SetFilename("shaders:shared.fx");
         if (!this->refSharedShader->Load())
