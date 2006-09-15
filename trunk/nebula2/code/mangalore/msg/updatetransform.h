@@ -17,10 +17,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class UpdateTransform : public Message::Msg
+class UpdateTransform : public Msg
 {
     DeclareRtti;
-	DeclareFactory(UpdateTransform);
+    DeclareFactory(UpdateTransform);
     DeclareMsgId;
 
 public:

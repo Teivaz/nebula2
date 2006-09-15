@@ -17,7 +17,7 @@ namespace Message
 class SetTransform : public UpdateTransform
 {
     DeclareRtti;
-	DeclareFactory(SetTransform);
+    DeclareFactory(SetTransform);
     DeclareMsgId;
 };
 

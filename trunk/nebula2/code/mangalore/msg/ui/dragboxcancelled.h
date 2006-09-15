@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class DragBoxCancelled : public Message::Msg
+class DragBoxCancelled : public Msg
 {
     DeclareRtti;
-	DeclareFactory(DragBoxCancelled);
+    DeclareFactory(DragBoxCancelled);
     DeclareMsgId;
 };
 

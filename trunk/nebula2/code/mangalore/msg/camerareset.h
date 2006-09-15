@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class CameraReset : public Message::Msg
+class CameraReset : public Msg
 {
     DeclareRtti;
-	DeclareFactory(CameraReset);
+    DeclareFactory(CameraReset);
     DeclareMsgId;
 };
 

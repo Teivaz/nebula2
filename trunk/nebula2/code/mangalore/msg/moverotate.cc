@@ -15,7 +15,7 @@ ImplementMsgId(MoveRotate);
 /**
 */
 MoveRotate::MoveRotate() :
-	angle(0.0f)
+    angle(0.0f)
 {
     // empty
 }

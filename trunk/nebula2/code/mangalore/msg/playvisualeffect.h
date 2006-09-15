@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class PlayVisualEffect : public Message::Msg
+class PlayVisualEffect : public Msg
 {
     DeclareRtti;
-	DeclareFactory(PlayVisualEffect);
+    DeclareFactory(PlayVisualEffect);
     DeclareMsgId;
 
 public:

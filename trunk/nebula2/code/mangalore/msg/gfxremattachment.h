@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class GfxRemAttachment : public Message::Msg
+class GfxRemAttachment : public Msg
 {
     DeclareRtti;
-	DeclareFactory(GfxRemAttachment);
+    DeclareFactory(GfxRemAttachment);
     DeclareMsgId;
 
 public:

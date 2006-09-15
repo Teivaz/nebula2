@@ -16,10 +16,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class MoveFollow : public Message::Msg
+class MoveFollow : public Msg
 {
     DeclareRtti;
-	DeclareFactory(MoveFollow);
+    DeclareFactory(MoveFollow);
     DeclareMsgId;
 
 public:

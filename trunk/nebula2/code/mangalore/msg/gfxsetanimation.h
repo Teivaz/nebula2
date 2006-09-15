@@ -14,10 +14,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class GfxSetAnimation : public Message::Msg
+class GfxSetAnimation : public Msg
 {
     DeclareRtti;
-	DeclareFactory(GfxSetAnimation);
+    DeclareFactory(GfxSetAnimation);
     DeclareMsgId;
 
 public:
@@ -66,6 +66,7 @@ public:
     void SetOverlayAnimStop(bool b);
     /// get overlay anim stop flag
     bool GetOverlayAnimStop() const;
+
 private:
     nTime fadeInTime;
     nString baseAnim;

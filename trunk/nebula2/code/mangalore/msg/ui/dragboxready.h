@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class DragBoxReady : public Message::Msg
+class DragBoxReady : public Msg
 {
     DeclareRtti;
-	DeclareFactory(DragBoxReady);
+    DeclareFactory(DragBoxReady);
     DeclareMsgId;
 };
 

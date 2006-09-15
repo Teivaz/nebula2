@@ -16,10 +16,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class MoveDirection : public Message::Msg
+class MoveDirection : public Msg
 {
     DeclareRtti;
-	DeclareFactory(MoveDirection);
+    DeclareFactory(MoveDirection);
     DeclareMsgId;
 
 public:
@@ -29,6 +29,10 @@ public:
     void SetDirection(const vector3& v);
     /// get the direction vector
     const vector3& GetDirection() const;
+    /// set correspond pose
+    void SetCorrespondPose(bool b);
+    /// get correspond pose
+    bool GetCorrespondPose() const;
     /// set camera relative flag
     void SetCameraRelative(bool b);
     /// get camera relative flag
@@ -36,6 +40,7 @@ public:
 
 private:
     vector3 dir;
+    bool correspondPose;
     bool camRelative;
 };
 
@@ -47,6 +52,7 @@ RegisterFactory(MoveDirection);
 inline
 MoveDirection::MoveDirection() :
     dir(1.0f, 0.0f, 0.0f),
+    correspondPose(true),
     camRelative(false)
 {
     // empty
@@ -70,6 +76,26 @@ const vector3&
 MoveDirection::GetDirection() const
 {
     return this->dir;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+MoveDirection::SetCorrespondPose(bool b)
+{
+    this->correspondPose = b;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+MoveDirection::GetCorrespondPose() const
+{
+    return this->correspondPose;
 }
 
 //------------------------------------------------------------------------------
