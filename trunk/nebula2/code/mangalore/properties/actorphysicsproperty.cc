@@ -268,8 +268,8 @@ ActorPhysicsProperty::SendStop()
 /**
     Immediately stop the entity.
 
-    26-Jan-06   floh    bugfix: also cancelled MoveFollow
-    14-Feb-06   nico    bugfix: now really cancelled MoveFollow ;)
+    26-Jan-06   floh    bugfix: also canceled MoveFollow
+    14-Feb-06   nico    bugfix: now really canceled MoveFollow ;)
 */
 void
 ActorPhysicsProperty::Stop()
@@ -306,7 +306,9 @@ ActorPhysicsProperty::HandleMoveDirection(MoveDirection* msg)
 
     vector3 desiredVelocity = dir * GetEntity()->GetFloat(Attr::RelVelocity) * GetEntity()->GetFloat(Attr::MaxVelocity);
     this->charPhysicsEntity->SetDesiredVelocity(desiredVelocity);
-    this->charPhysicsEntity->SetDesiredLookat(dir);
+    if (msg->GetCorrespondPose()) {
+        this->charPhysicsEntity->SetDesiredLookat(dir);
+    }
     GetEntity()->SetBool(Attr::Moving, true);
 }
 
@@ -334,7 +336,7 @@ ActorPhysicsProperty::HandleMoveTurn(MoveTurn* msg)
 
 //------------------------------------------------------------------------------
 /**
-    Handle a MoveTurn message.
+    Handle a MoveRotate message.
 */
 void
 ActorPhysicsProperty::HandleMoveRotate(MoveRotate* msg)
