@@ -7,7 +7,7 @@
 #define N_MAXSKINANIMATOR_H
 //-----------------------------------------------------------------------------
 /**
-    @class nMaxSkinAnimator 
+    @class nMaxSkinAnimator
     @ingroup NebulaMaxExport2Contrib
 
     @brief A class for exporting nSkinAnimator.
@@ -30,7 +30,7 @@ public:
 
 protected:
     void BuildJoints(nSkinAnimator* animator, const nArray<nMaxBoneManager::Bone> &boneArray);
-    void BuildAnimStates(nSkinAnimator* animator, nMaxNoteTrack& noteTrack);
+    void BuildAnimClips(nSkinAnimator* animator, nMaxNoteTrack& noteTrack);
 
 };
 #endif
