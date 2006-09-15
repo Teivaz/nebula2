@@ -4,13 +4,17 @@
 @ingroup NebulaContribRendererModules
 @brief This is an initial implementation of an OpenGL-based renderer for Nebula 2.
 
-This implementation uses CgFX from nVidia to provide an equivalent to the
-Effects Framework from Microsoft.
+As long as CgFX shader system isn't working, support for it was temporarily removed.
+GLSL should be main shader system for the OpenGL server now.
+There is only basic stuff to support GLSL shaders with a lot of bugs and mess.
+Working on it is in progress.
 
 Requirements to build:
 
-    - Working Cg 1.2 or later installation:
-      http://developer.nvidia.com/object/cg_toolkit.html
+    - Latest version of glext.h and wglext.h files:
+      http://oss.sgi.com/projects/ogl-sample/ABI/glext.h
+      http://oss.sgi.com/projects/ogl-sample/ABI/wglext.h
+    - Graphics drivers with GLSL support
 
 Known issues:
     - These may be found in Bugzilla:

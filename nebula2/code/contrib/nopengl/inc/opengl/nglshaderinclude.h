@@ -1,31 +1,34 @@
-#ifndef N_CGFXSHADERINCLUDE_H
-#define N_CGFXSHADERINCLUDE_H
+#ifndef N_GLSHADERINCLUDE_H
+#define N_GLSHADERINCLUDE_H
 //------------------------------------------------------------------------------
 /**
-	@class nCgFXShaderInclude
+	@class nGLShaderInclude
 	@ingroup OpenGL
 
-    '#include' statement resolver for CgFX shader
+    '#include' statement resolver for GL shaders
 
     2004 Oleg Kreptul (Haron)
+    10-Apr-2005 Haron Converted from nCgFXShaderInclude to nGLShaderInclude
 */
 #include "util/nstring.h"
 #include "kernel/nfile.h"
 
 //------------------------------------------------------------------------------
-class nCgFXShaderInclude
+class nGLShaderInclude
 {
 public:
     /// constructor
-    nCgFXShaderInclude();
+    nGLShaderInclude();
     /// destructor
-    virtual ~nCgFXShaderInclude();
+    virtual ~nGLShaderInclude();
 	
-	/// 
+	/// resolve all includes recursively
     bool Begin(const nString& sourceFile);
-    ///
+    /// return temporary file name
     nString& GetFileName();
-    /// 
+    /// get source
+    void GetSource(nString& src);
+    /// clean
     void End();
 
 protected:
@@ -33,6 +36,7 @@ protected:
 	bool Include(nFile* dstfile, const nString& srcfile, nArray<nString>& includes);
 
     nString tmpFilePath;
+    nFile* tmpFile;
 };
 
 //------------------------------------------------------------------------------
@@ -40,11 +44,10 @@ protected:
 */
 inline
 nString&
-nCgFXShaderInclude::GetFileName()
+nGLShaderInclude::GetFileName()
 {
     return this->tmpFilePath;
 }
 
 //------------------------------------------------------------------------------
 #endif
-

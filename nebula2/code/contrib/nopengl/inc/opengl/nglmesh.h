@@ -38,7 +38,10 @@ protected:
     virtual bool LoadResource();
     /// unload mesh resource
     virtual void UnloadResource();
-
+    /// called when contained resource may become lost 
+    virtual void OnLost();
+    /// called when contained resource may be restored
+    virtual void OnRestored();
     /// create the gl vertex buffer
     virtual void CreateVertexBuffer();
     /// create the gl index buffer
@@ -46,14 +49,19 @@ protected:
 
 private:
     friend class nGLServer2;
-    friend class nGLMeshArray;
+    //friend class nGLMeshArray;
 
     /// create the vertex declaration
     void CreateVertexDeclaration();
+
     ///
-    bool BeginRender(int vertexStart, bool useIndex = false, int indexStart = 0);
+    bool SetVertices(int vertexStart);
     ///
-    void EndRender(bool useIndex = false);
+    void UnsetVertices();
+    ///
+    bool SetIndices(int indexStart);
+    ///
+    void UnsetIndices();
 
     //void* indexBufferOffset(int offset);
     //void* vertexBufferOffset(int offset);

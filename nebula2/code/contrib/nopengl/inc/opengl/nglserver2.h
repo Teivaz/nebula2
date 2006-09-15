@@ -5,51 +5,17 @@
     @class nGLServer2
     @ingroup OpenGL
 
-    @brief OpenGL 1.4 based gfx server.
+    @brief OpenGL 2 based gfx server.
 
     2003        cubejk    created
-    2003-2004   Haron
+    2003-2006   Haron
 */
 #include "gfx2/ngfxserver2.h"
 #include "input/ninputserver.h"
 #include "misc/nwatched.h"
 #include "opengl/nglwin32windowhandler.h"
 
-#ifdef __WIN32__
-    #ifndef WIN32_LEAN_AND_MEAN
-    #define WIN32_LEAN_AND_MEAN
-    #endif
-    #include <windows.h>
-    #ifndef N_ENV_H
-    #include "kernel/nenv.h"
-    #endif
-#endif
-
-#ifdef __MACOSX__
-    #include <OpenGL/gl.h>
-    #include <OpenGL/glu.h>
-    #include <Carbon/carbon.h>
-    #include <AGL/agl.h>
-#else
-    #include <GL/gl.h>
-    #include <GL/glu.h>
-#endif
-
-#ifdef __LINUX__
-    #include <GL/glx.h>
-    #include <X11/Xatom.h>
-    #include <X11/Xmu/StdCmap.h>
-    #include <X11/keysym.h>
-    //#include <X11/extensions/xf86vmode.h>
-#endif
-
-#include <GL/glext.h>
-
-#ifdef __WIN32__
-    #include <GL/wglext.h>
-#else
-    #include "GL/glxext.h"
-#endif
+#include "opengl/nglincludes.h"
 
 void n_gltrace(const char *msg);
 
@@ -61,6 +27,8 @@ public:
     nGLServer2();
     /// destructor
     virtual ~nGLServer2();
+    /// get instance pointer
+    static nGLServer2* Instance();
 
     /// create a shared mesh object
     virtual nMesh2* NewMesh(const char* rsrcName);
@@ -74,11 +42,15 @@ public:
     virtual nFont2* NewFont(const char* rsrcName, const nFontDesc& fontDesc);
     /// create a render target object
     virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
+    /// create a new occlusion query object
+    virtual nOcclusionQuery* NewOcclusionQuery();
 
     /// set display mode
     virtual void SetDisplayMode(const nDisplayMode2& mode);
     /// get display mode
     virtual const nDisplayMode2& GetDisplayMode() const;
+    /// set the window title
+    virtual void SetWindowTitle(const char* title);
     /// set the current camera description
     virtual void SetCamera(nCamera2& cam);
     /// set the viewport
@@ -89,33 +61,45 @@ public:
     virtual void CloseDisplay();
     /// get the best supported feature set
     virtual FeatureSet GetFeatureSet();
+    /// return true if vertex shader run in software emulation
+    //virtual bool AreVertexShadersEmulated();
     /// parent window handle
     virtual HWND GetParentHwnd() const;
     /// returns the number of available stencil bits
     //virtual int GetNumStencilBits() const;
     /// returns the number of available z bits
     //virtual int GetNumDepthBits() const;
+    /// set scissor rect
+    //virtual void SetScissorRect(const rectangle& r);
+    /// set or clear user defined clip planes in clip space
+    //virtual void SetClipPlanes(const nArray<plane>& planes);
 
     /// set a new render target texture
-    virtual void SetRenderTarget(nTexture2* t);
+    virtual void SetRenderTarget(int index, nTexture2* t);
 
+    /// start rendering the current frame
+    virtual bool BeginFrame();
     /// start rendering to current render target
     virtual bool BeginScene();
     /// finish rendering to current render target
     virtual void EndScene();
     /// present the contents of the back buffer
     virtual void PresentScene();
+    /// end rendering the current frame
+    virtual void EndFrame();
     /// clear buffers
     virtual void Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil);
 
+    /// reset the light array
+    virtual void ClearLights();
+    /// remove a light
+    virtual void ClearLight(int index);
     /// add a light to the light array (reset in BeginScene)
     virtual int AddLight(const nLight& light);
     /// set current mesh
-    virtual void SetMesh(nMesh2* mesh);
+    virtual void SetMesh(nMesh2* vbMesh, nMesh2* ibMesh);
     /// set current mesh array, clearing the single mesh
     virtual void SetMeshArray(nMeshArray* meshArray);
-    /// set current texture
-    virtual void SetTexture(int stage, nTexture2* tex);
     /// set current shader
     virtual void SetShader(nShader2* shader);
     /// set transform
@@ -129,6 +113,24 @@ public:
     /// render non-indexed primitives without applying shader state (NS == No Shader)
     virtual void DrawNS(PrimitiveType primType);
 
+    /// trigger the window system message pump
+    virtual bool Trigger();
+
+    /// draw text (immediately)
+    //virtual void DrawText(const nString& text, const vector4& color, const rectangle& rect, uint flags, bool immediate=true);
+    /// get text extents
+    //virtual vector2 GetTextExtent(const nString& text);
+    /// draw the text buffer
+    //virtual void DrawTextBuffer();
+
+    /// enter dialog box mode (display mode must have DialogBoxMode enabled!)
+    virtual void EnterDialogBoxMode();
+    /// leave dialog box mode
+    virtual void LeaveDialogBoxMode();
+
+    /// save a screen shot
+    virtual bool SaveScreenshot(const char* fileName, nTexture2::FileFormat fileFormat);
+
     /// begin rendering lines
     virtual void BeginLines();
     /// draw 3d lines, using the current transforms
@@ -140,35 +142,31 @@ public:
 
     /// begin shape rendering (for debug visualizations)
     virtual void BeginShapes();
-    /// draw a shape with the given model matrix
+    /// draw a shape with the given model matrix with given color
     virtual void DrawShape(ShapeType type, const matrix44& model, const vector4& color);
+    /// draw a shape without shader management
+    virtual void DrawShapeNS(ShapeType type, const matrix44& model);
+    /// draw direct primitives
+    virtual void DrawShapePrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int vertexWidth, const matrix44& model, const vector4& color);
+    /// draw direct indexed primitives (slow, use for debug visual visualization only!)
+    virtual void DrawShapeIndexedPrimitives(PrimitiveType type, int numPrimitives, const vector3* vertexList, int numVertices, int vertexWidth, void* indices, IndexType indexType, const matrix44& model, const vector4& color);
     /// end shape rendering
     virtual void EndShapes();
-
-    /// trigger the window system message pump
-    virtual bool Trigger();
-/*  /// draw 2d text (will be buffered until end of frame)
-    virtual void Text(const char* text, const vector4& color, float x, float y);
-    /// draw the text buffer
-    virtual void DrawTextBuffer();
-
-    /// draw text (immediately)
-    virtual void DrawText(const char* text, const vector4& color, float xPos, float yPos);
-    /// get text extents
-    virtual vector2 GetTextExtent(const char* text);
-    */
-    /// enter dialog box mode (display mode must have DialogBoxMode enabled!)
-    virtual void EnterDialogBoxMode();
-    /// leave dialog box mode
-    virtual void LeaveDialogBoxMode();
-
-    /// save a screen shot
-    //virtual bool SaveScreenshot(const char*);
 
     /// adjust gamma.
     //virtual void AdjustGamma();
     /// restore gamma.
     //virtual void RestoreGamma();
+    /// skip message loop in trigger
+    //virtual void SetSkipMsgLoop(bool skip);
+
+    enum GLShaderSystem
+    {
+        GLSL,
+        CGFX,
+        CG,
+        GLES
+    };
 
 private:
     /// initialize the text renderer
@@ -185,10 +183,10 @@ private:
     bool DeviceOpen();
     /// close the gl device
     void DeviceClose();    
-    /// unload resource data (call when device lost)
-    void OnDeviceLost(bool unloadManaged);
-    /// reload resource data (call when device restored)
-    void OnRestoreDevice();
+    /// called before device destruction, or when device lost
+    void OnDeviceCleanup(bool shutdown);
+    /// called after device created or restored
+    void OnDeviceInit(bool startup);
     /// initialize device default state
     void InitDeviceState();
     /// update the feature set member
@@ -198,9 +196,9 @@ private:
     void QueryStatistics();
     #endif
     /// get gl primitive type and num primitives for indexed drawing
-    int GetGLPrimTypeAndNumIndexed(PrimitiveType primType, GLenum& d3dPrimType) const;
+    int GetGLPrimTypeAndNumIndexed(PrimitiveType primType, GLenum& glPrimType) const;
     /// get gl primitive type and num primitives
-    int GetGLPrimTypeAndNum(PrimitiveType primType, GLenum& d3dPrimType) const;
+    int GetGLPrimTypeAndNum(PrimitiveType primType, GLenum& glPrimType) const;
     /// update the mouse cursor image and visibility
     void UpdateCursor();
 
@@ -220,6 +218,9 @@ private:
     friend class nGLMesh;
     friend class nGLTexture;
     friend class nCgFXShader;
+    friend class nGLSLShader;
+
+    static nGLServer2* Singleton;
 
 #ifdef __WIN32__
     nGLWin32WindowHandler windowHandler; ///< a Win32 window handler object
@@ -234,30 +235,38 @@ private:
 
 private:
 
-    nRef<nCgFXShader> refSharedShader; ///< reference shader for shared effect parameters
+    nRef<nShader2> refSharedShader; ///< reference shader for shared effect parameters
 
     #ifdef __NEBULA_STATS__
     nTime timeStamp;                 ///< time stamp for FPS computation
     // query watcher variables
-    nWatched dbgQueryTextureTrashing;
-    nWatched dbgQueryTextureApproxBytesDownloaded;
-    nWatched dbgQueryTextureNumEvicts;
-    nWatched dbgQueryTextureNumVidCreates;
-    nWatched dbgQueryTextureLastPri;
-    nWatched dbgQueryTextureNumUsed;
-    nWatched dbgQueryTextureNumUsedInVidMem;
-    nWatched dbgQueryTextureWorkingSet;
-    nWatched dbgQueryTextureWorkingSetBytes;
-    nWatched dbgQueryTextureTotalManaged;
-    nWatched dbgQueryTextureTotalBytes;
-    nWatched dbgQueryNumPrimitives;
-    nWatched dbgQueryFPS;
-    nWatched dbgQueryNumDrawCalls;
-    nWatched dbgQueryNumRenderStateChanges;
-    nWatched dbgQueryNumTextureChanges;
+    WATCHER_DECLARE(watchNumPrimitives);
+    WATCHER_DECLARE(watchFPS);
+    WATCHER_DECLARE(watchNumDrawCalls);
+    WATCHER_DECLARE(watchNumRenderStateChanges);
 
+    //nWatched dbgQueryTextureTrashing;
+    //nWatched dbgQueryTextureApproxBytesDownloaded;
+    //nWatched dbgQueryTextureNumEvicts;
+    //nWatched dbgQueryTextureNumVidCreates;
+    //nWatched dbgQueryTextureLastPri;
+    //nWatched dbgQueryTextureNumUsed;
+    //nWatched dbgQueryTextureNumUsedInVidMem;
+    //nWatched dbgQueryTextureWorkingSet;
+    //nWatched dbgQueryTextureWorkingSetBytes;
+    //nWatched dbgQueryTextureTotalManaged;
+    //nWatched dbgQueryTextureTotalBytes;
+    //nWatched dbgQueryNumPrimitives;
+    //nWatched dbgQueryFPS;
+    //nWatched dbgQueryNumDrawCalls;
+    //nWatched dbgQueryNumRenderStateChanges;
+    //nWatched dbgQueryNumTextureChanges;
+
+    int statsFrameCount;
     int statsNumTextureChanges;
     int statsNumRenderStateChanges;
+    int statsNumDrawCalls;
+    int statsNumPrimitives;
     #endif
 
     #ifdef __WIN32__
@@ -349,6 +358,17 @@ private:
     GLXWindow* glx_current_win;
     #endif
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nGLServer2*
+nGLServer2::Instance()
+{
+    n_assert(0 != Singleton);
+    return Singleton;
+}
 
 //------------------------------------------------------------------------------
 /**
