@@ -108,9 +108,9 @@ main(int argc, const char** argv)
                  "-tx [float]           translate vertices along x\n"
                  "-ty [float]           translate vertices along y\n"
                  "-tz [float]           translate vertices along z\n"
-                 "-rx [float]           rotate vertices around x\n"
-                 "-ry [float]           rotate vertices around y\n"
-                 "-rz [float]           rotate vertices around z\n"
+                 "-rx [float]           rotate in degree vertices around x\n"
+                 "-ry [float]           rotate in degree vertices around y\n"
+                 "-rz [float]           rotate in degree vertices around z\n"
                  "-sx [float]           scale vertices along x\n"
                  "-sy [float]           scale vertices along y\n"
                  "-sz [float]           scale vertices along z\n"
@@ -201,9 +201,9 @@ main(int argc, const char** argv)
         }
         if (rotate.len() > 0.0f)
         {
-            m.rotate_x(rotate.x);
-            m.rotate_y(rotate.y);
-            m.rotate_z(rotate.z);
+            m.rotate_x(n_deg2rad(rotate.x));
+            m.rotate_y(n_deg2rad(rotate.y));
+            m.rotate_z(n_deg2rad(rotate.z));
         }
         if (translate.len() > 0.0f)
         {
