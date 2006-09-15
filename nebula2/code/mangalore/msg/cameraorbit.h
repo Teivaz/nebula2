@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class CameraOrbit : public Message::Msg
+class CameraOrbit : public Msg
 {
     DeclareRtti;
-	DeclareFactory(CameraOrbit);
+    DeclareFactory(CameraOrbit);
     DeclareMsgId;
 
 public:

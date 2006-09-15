@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class MoveRotate : public Message::Msg
+class MoveRotate : public Msg
 {
     DeclareRtti;
-	DeclareFactory(MoveRotate);
+    DeclareFactory(MoveRotate);
     DeclareMsgId;
 
 public:

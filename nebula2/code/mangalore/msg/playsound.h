@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class PlaySound : public Message::Msg
+class PlaySound : public Msg
 {
     DeclareRtti;
-	DeclareFactory(PlaySound);
+    DeclareFactory(PlaySound);
     DeclareMsgId;
 
 public:

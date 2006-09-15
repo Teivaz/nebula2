@@ -16,10 +16,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class MoveSetVelocity : public Message::Msg
+class MoveSetVelocity : public Msg
 {
     DeclareRtti;
-	DeclareFactory(MoveSetVelocity);
+    DeclareFactory(MoveSetVelocity);
     DeclareMsgId;
 
 public:

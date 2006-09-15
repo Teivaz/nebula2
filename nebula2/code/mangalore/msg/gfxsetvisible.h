@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class GfxSetVisible : public Message::Msg
+class GfxSetVisible : public Msg
 {
     DeclareRtti;
-	DeclareFactory(GfxSetVisible);
+    DeclareFactory(GfxSetVisible);
     DeclareMsgId;
 
 public:

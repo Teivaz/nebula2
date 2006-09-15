@@ -14,10 +14,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class GfxSetCharacterSet : public Message::Msg
+class GfxSetCharacterSet : public Msg
 {
     DeclareRtti;
-	DeclareFactory(GfxSetCharacterSet);
+    DeclareFactory(GfxSetCharacterSet);
     DeclareMsgId;
 
 public:

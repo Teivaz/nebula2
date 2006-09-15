@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class GfxAddSkin : public Message::Msg
+class GfxAddSkin : public Msg
 {
     DeclareRtti;
-	DeclareFactory(GfxAddSkin);
+    DeclareFactory(GfxAddSkin);
     DeclareMsgId;
 public:
     /// set skin name

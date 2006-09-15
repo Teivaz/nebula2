@@ -4,7 +4,7 @@
 /**
     @class Message::MoveGoto
 
-    A highlevel MoveGoto message. The expected behaviour is that an entity
+    A highlevel MoveGoto message. The expected behavior is that an entity
     should move to the target point defined by the move goto message
     and stop there. If possible, the entity should steer around obstacles
     and use pathfinding to reach the target point.
@@ -16,10 +16,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class MoveGoto : public Message::Msg
+class MoveGoto : public Msg
 {
     DeclareRtti;
-	DeclareFactory(MoveGoto);
+    DeclareFactory(MoveGoto);
     DeclareMsgId;
 
 public:

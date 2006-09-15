@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class CameraDistance : public Message::Msg
+class CameraDistance : public Msg
 {
     DeclareRtti;
-	DeclareFactory(CameraDistance);
+    DeclareFactory(CameraDistance);
     DeclareMsgId;
 
 public:

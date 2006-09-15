@@ -13,10 +13,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class AnimStop : public Message::Msg
+class AnimStop : public Msg
 {
     DeclareRtti;
-	DeclareFactory(AnimStop);
+    DeclareFactory(AnimStop);
     DeclareMsgId;
 };
 

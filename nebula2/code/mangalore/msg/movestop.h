@@ -4,7 +4,7 @@
 /**
     @class Message::MoveStop
 
-    A MoveStop message. The expected behaviour is that an entity which
+    A MoveStop message. The expected behavior is that an entity which
     receives this messages stops immediately.
 
     (C) 2005 Radon Labs GmbH
@@ -14,10 +14,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class MoveStop : public Message::Msg
+class MoveStop : public Msg
 {
     DeclareRtti;
-	DeclareFactory(MoveStop);
+    DeclareFactory(MoveStop);
     DeclareMsgId;
 };
 

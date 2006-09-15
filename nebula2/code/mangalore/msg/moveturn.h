@@ -14,10 +14,10 @@
 //------------------------------------------------------------------------------
 namespace Message
 {
-class MoveTurn : public Message::Msg
+class MoveTurn : public Msg
 {
     DeclareRtti;
-	DeclareFactory(MoveTurn);
+    DeclareFactory(MoveTurn);
     DeclareMsgId;
 
 public:
