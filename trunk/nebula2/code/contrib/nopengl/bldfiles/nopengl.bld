@@ -1,130 +1,242 @@
 #===============================================================================
 #  nopengl.bld
 #  A OpenGL implementation of ngfxserver2 and related bits.
-#
-#  Modules:
-#      nglserver
-#      nglmesh
-#      ncgfxshader
-#      ngltexture
-#      nglwin32windowhandler
-#      nglfont
-#  Targets:
-#      nopengl
+#  (c) 2006 Nebula2 Community
 #===============================================================================
+
+beginbundle nglserver2::gfx2
+    setmodules {
+        nglextensionserver
+        nglfont
+        nglmesh
+        nglserver2
+        nglshaderinclude
+        nglslshader
+        ngltexture
+        nglwin32windowhandler
+    }
+endbundle
+#        ncgfxshader
+#        nddstextureloader
+#        npbuffer
+
+beginmodule ncgfxshader
+    setdir opengl
+    setheaders {
+        ncgfxshader
+    }
+    setfiles {
+        ncgfxshader_main
+    }
+    setlibs_win32 {
+        cg.lib
+        CgFXParser.lib
+        cgGL.lib
+    }
+endmodule
+
+#beginmodule nddstextureloader
+#    setdir glutils
+#    setheaders {
+#        nddstextureloader
+#    }
+#    setfiles {
+#        nddstextureloader
+#    }
+#endmodule
+
+beginmodule nglextensionserver
+    setdir opengl
+    setheaders {
+        nglextensions
+        nglextensionserver
+    }
+    setfiles {
+        nglextensionserver_main
+    }
+    setlibs_linux {
+        GL
+        GLU
+        X11
+        Xmu
+    }
+    setlibs_win32 {
+        opengl32.lib
+        glu32.lib
+    }
+endmodule
+
+beginmodule nglfont
+    setdir opengl
+    setheaders {
+        nglfont
+    }
+    setfiles {
+        nglfont_main
+    }
+endmodule
+
+beginmodule nglmesh
+    setdir opengl
+    setheaders {
+        nglmesh
+    }
+    setfiles {
+        nglmesh_main
+    }
+endmodule
+#    setmoduledeps {
+#        npbuffer
+#    }
 
 beginmodule nglserver2
     setdir opengl
-    setfiles { 
+    setheaders {
+        nglincludes
+        nglserver2
+    }
+    setfiles {
         nglserver2_main
-        nglserver2_resource
-        nglserver2_render
+        nglserver2_device
         nglserver2_lines
+        nglserver2_render
+        nglserver2_resource
         nglserver2_shapes
         nglserver2_xwindow
         nglserver2_win32window
     }
-    setheaders { nglserver2 }
-    setlibs_linux { GL GLU X11 Xmu }
+    setlibs_linux {
+        GL
+        GLU
+        X11
+        Xmu
+    }
     setlibs_win32 {
-        wsock32.lib opengl32.lib glu32.lib
-        user32.lib gdi32.lib advapi32.lib
-        cg.lib CgFXParser.lib cgGL.lib
+        wsock32.lib
+        opengl32.lib
+        glu32.lib
+        user32.lib
+        gdi32.lib
+        advapi32.lib
     }
-    setmoduledeps { nglmesh ngltexture ncgfxshader nglfont nglextensionserver }
 endmodule
-#-------------------------------------------------------------------------------
-beginmodule nglextensionserver
+#    setmoduledeps {
+#        nglmesh
+#        ngltexture
+#        nglslshader
+#        nglshaderinclude
+#        nglfont
+#        nglextensionserver
+#        npbuffer
+#    }
+
+beginmodule nglshaderinclude
     setdir opengl
-    setfiles { 
-        nglextensionserver_main
+    setheaders {
+        nglshaderinclude
     }
-    setheaders { nglextensionserver }
-    setlibs_linux { GL GLU X11 Xmu }
-    setlibs_win32 { opengl32.lib glu32.lib }
+    setfiles {
+        nglshaderinclude
+    }
 endmodule
-#-------------------------------------------------------------------------------
-beginmodule nglmesh
+
+beginmodule nglslshader
     setdir opengl
-    setfiles { nglmesh_main }
-    setheaders { nglmesh }
+    setheaders {
+        nglslshader
+    }
+    setfiles {
+        nglslshader_main
+    }
 endmodule
-#-------------------------------------------------------------------------------
+
 beginmodule ngltexture
     setdir opengl
-    setfiles { ngltexture_main }
-    setheaders { ngltexture }
+    setheaders {
+        ngltexture
+    }
+    setfiles {
+        ngltexture_main
+    }
 endmodule
-#-------------------------------------------------------------------------------
-beginmodule ncgfxshader
-    setdir opengl
-    setfiles { ncgfxshader_main }
-    setheaders { ncgfxshader }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule ncgfxshaderinclude
-    setdir opengl
-    setfiles { ncgfxshaderinclude }
-    setheaders { ncgfxshaderinclude }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule nglfont
-    setdir opengl
-    setfiles { nglfont_main }
-    setheaders { nglfont }
-endmodule
-#-------------------------------------------------------------------------------
+#    setmoduledeps {
+#        nddstextureloader
+#        npbuffer
+#    }
+
 beginmodule nglwin32windowhandler
     setdir opengl
     setplatform win32
-    setfiles { nglwin32windowhandler }
-    setheaders { nglwin32windowhandler }
-endmodule
-#-------------------------------------------------------------------------------
-beginmodule noglviewer
-    setdir opengltest
-    setfiles { noglviewer }
+    setheaders {
+        nglwin32windowhandler
+    }
+    setfiles {
+        nglwin32windowhandler
+    }
 endmodule
 
+#beginmodule npbuffer
+#    setdir glutils
+#    setheaders {
+#        npbuffer
+#    }
+#    setfiles {
+#        npbuffer
+#    }
+#endmodule
+
 #-------------------------------------------------------------------------------
-begintarget nopengl
-    settype lib
-    setmodules {
-        nglserver2 nglextensionserver nglmesh ngltexture
-        ncgfxshader ncgfxshaderinclude nglfont nglwin32windowhandler
+beginmodule nglviewer
+    setdir opengltest
+    setfiles {
+        nglviewer
     }
-endtarget
-#-------------------------------------------------------------------------------
-begintarget noglviewer
+endmodule
+
+begintarget nglviewer
     annotate "Sample application:  Allows simple viewing of .n2 files using OpenGL"
     settype exe
     setmodules {
-        noglviewer
-        nviewerapp
+        nglviewer
     }
     settargetdeps {
         nkernel
         nnebula
         microtcl
         ndinput8
+        nopengl
         ndshow
         ngui
         nnetwork
-        nopengl
+        ntoollib
     }
 endtarget
+
+begintarget nopengl
+    settype lib
+    setbundles {
+        nglserver2::gfx2
+    }
+endtarget
+#    setmodules {
+#        nglserver2 nglextensionserver npbuffer nddstextureloader nglmesh
+#        ngltexture nglslshader nglshaderinclude nglfont nglwin32windowhandler
+#    }
+
 #-------------------------------------------------------------------------------
 beginworkspace nopengl
+    annotate "OpenGL based Gfx server for Nebula2."
     setbinarydir ./bin/
     settargets {
-        noglviewer
+        nglviewer
         nkernel
         nnebula
         microtcl
         ndinput8
+        nopengl
+        ntoollib
         ndshow
         ngui
         nnetwork
-        nopengl
     }
 endworkspace
