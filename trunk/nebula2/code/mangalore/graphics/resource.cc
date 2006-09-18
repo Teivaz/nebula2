@@ -120,7 +120,7 @@ Resource::Load()
     nString catDir = catName;
     nString nebulaPath = this->name;
     bool char3mode = false;
-    if((tokens.Size() == 3) && (catName == "characters") && (tokens[2] == "skeleton"))
+    if ((tokens.Size() == 3) && (catName == "characters") && (tokens[2] == "skeleton"))
     {
         // this seems to be a character
         catDir = tokens[0] + nString("/") + tokens[1];
@@ -131,7 +131,7 @@ Resource::Load()
         tokens.Append(objName);
         nebulaPath = catName + "/" + objName;
         char3mode = true;
-    };
+    }
     // ----------------------------------------------------------------------------
 
 
@@ -151,7 +151,7 @@ Resource::Load()
         else
         {
             this->refRootNode = this->FindRootNode();
-        };
+        }
         n_assert(this->refRootNode.isvalid());
         this->refRootNode->AddRef();
     }

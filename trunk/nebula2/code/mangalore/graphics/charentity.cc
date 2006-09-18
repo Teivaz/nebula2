@@ -141,6 +141,7 @@ CharEntity::GetNumAnimations() const
     @param  anim                new base animation
     @param  fadeIn              time to fade from current animation
     @param  timeOffset          optional animation time offset
+    @param  onlyIfInactive
 */
 void
 CharEntity::SetBaseAnimation(const nString& animName, nTime fadeIn, nTime timeOffset, bool onlyIfInactive)
@@ -225,12 +226,13 @@ CharEntity::SetBaseAnimationMix(const nArray<nString>& animNames, const nArray<f
 
 //------------------------------------------------------------------------------
 /**
-    Set a new overlay animation. This is usually a looping animation, like
+    Set a new overlay animation. This is usually an one-shot animation, like
     Idle, Walking, Running, etc...
 
     @param  animName            new base animation
     @param  fadeIn              time to fade from current animation
     @param  overrideDuration    if != 0.0, override the animation's duration with this value
+    @param  onlyIfInactive
 */
 void
 CharEntity::SetOverlayAnimation(const nString& animName, nTime fadeIn, nTime overrideDuration, bool onlyIfInactive)
@@ -255,7 +257,7 @@ CharEntity::SetOverlayAnimation(const nString& animName, nTime fadeIn, nTime ove
 
 //------------------------------------------------------------------------------
 /**
-    Set a new overlay animation. This is usually a one shot animation, like
+    Set a new overlay animation. This is usually an one-shot animation, like
     Bash, Jump, etc... After the overlay animation has finished, the
     current base animation will be re-activated.
 

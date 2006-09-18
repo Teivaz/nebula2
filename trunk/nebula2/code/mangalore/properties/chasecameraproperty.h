@@ -28,7 +28,7 @@ namespace Attr
     DeclareFloat(CameraLinearGain);
     DeclareFloat(CameraAngularGain);
     DeclareFloat(CameraDefaultTheta);
-};
+}
 
 //------------------------------------------------------------------------------
 namespace Properties
