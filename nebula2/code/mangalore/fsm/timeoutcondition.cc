@@ -8,7 +8,7 @@
 
 namespace FSM
 {
-    ImplementRtti(FSM::TimeOutCondition, FSM::Condition);
+ImplementRtti(FSM::TimeOutCondition, FSM::Condition);
 
 //------------------------------------------------------------------------------
 /**

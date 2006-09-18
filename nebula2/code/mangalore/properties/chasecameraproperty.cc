@@ -29,7 +29,7 @@ namespace Attr
     DefineFloat(CameraLinearGain);
     DefineFloat(CameraAngularGain);
     DefineFloat(CameraDefaultTheta);
-};
+}
 
 namespace Properties
 {
