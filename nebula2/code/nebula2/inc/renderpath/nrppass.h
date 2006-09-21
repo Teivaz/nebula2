@@ -84,7 +84,7 @@ public:
     ShadowTechnique GetDrawShadows() const;
     /// enable/disable statistics counter in this pass
     void SetStatsEnabled(bool b);
-    /// get statistics counter flag for this spass
+    /// get statistics counter flag for this pass
     bool GetStatsEnabled() const;
     /// set the occlusion query technique
     void SetOcclusionQuery(bool b);

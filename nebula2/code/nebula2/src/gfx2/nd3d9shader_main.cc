@@ -625,7 +625,7 @@ nD3D9Shader::ValidateEffect()
 
             // shader didn't validate at all, this may happen although the shader is valid
             // on older nVidia cards if the effect has a vertex shader, thus we simply force
-            // the first technique in the file as crurent
+            // the first technique in the file as current
             n_printf("nD3D9Shader() warning: shader '%s' did not validate!\n", this->GetFilename());
 
             // NOTE: this works around the dangling "BeginPass()" in D3DX when a shader did
