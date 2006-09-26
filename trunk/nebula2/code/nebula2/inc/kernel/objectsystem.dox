@@ -2,48 +2,48 @@
     @defgroup NebulaObjectSystem Object System
     @ingroup Kernel
 
-    @brief Nebula provides an object system to provide metadata for the 
-    scripting system.  This is a key part that allows Nebula to support 
-    object persistence and multiple scripting languages with relative 
+    @brief Nebula provides an object system to provide metadata for the
+    scripting system.  This is a key part that allows Nebula to support
+    object persistence and multiple scripting languages with relative
     ease.
 
     @section NebulaObjectSystemNamedObjectHierarchy Named Object Hierarchy
 
-    An instance of a class that is derived from nRoot is called a 
-    <b>Nebula Object</b>. Nebula objects have a unique name that can be 
-    converted to a C++ pointer and back. This feature is very useful for 
+    An instance of a class that is derived from nRoot is called a
+    <b>Nebula Object</b>. Nebula objects have a unique name that can be
+    converted to a C++ pointer and back. This feature is very useful for
     scripting and object persistency.
 
-    Nebula objects are arranged in a hierarchy similiar to a filesystem. 
-    This is often referred to as the <b>"Named Object Hierarchy".</b> or 
-    @b NOH. The @e path to any particular named object is unique and is 
-    used as that object's unique name. The tree of named objects can be 
-    navigated with the built-in command console (see @ref 
-    NebulaConsoleServer). Within C++ named objects are accessible 
-    through references (see @ref NebulaSmartPointers). 
+    Nebula objects are arranged in a hierarchy similiar to a filesystem.
+    This is often referred to as the <b>"Named Object Hierarchy".</b> or
+    @b NOH. The @e path to any particular named object is unique and is
+    used as that object's unique name. The tree of named objects can be
+    navigated with the built-in command console (see @ref
+    NebulaConsoleServer). Within C++ named objects are accessible
+    through references (see @ref NebulaSmartPointers).
 
     @section NebulaObjectSystemCreation Creation
 
-    To use Nebula scripting interface, the class instance which you want to create 
+    To use Nebula scripting interface, the class instance which you want to create
     should be derived from nRoot class.
     All nRoot derived classes should be created by nKernelServer::New with given
-    <i>class name</i> and <i>object name</i>. The class name is the name given to the 
+    <i>class name</i> and <i>object name</i>. The class name is the name given to the
     module that contains the class, this is set in your .bld files.
 
     Here's an example:
 
     @code
-    nShapeNode* node = nKernelServer::ks->New("nshapenode", "/usr/scene/node1");
+    nShapeNode* node = nKernelServer::Instance()->New("nshapenode", "/usr/scene/node1");
     @endcode
 
-    As mentioned above, Nebula object uses <I>class name</I> and <I>object name</I> 
+    As mentioned above, Nebula object uses <I>class name</I> and <I>object name</I>
     for it's creation. 'nshapenode' is the class name and '/usr/scene/node1' is
     the object name in the code example.
 
 
     @section NebulaObjectSystemPersistence Persistence
 
-    A Nebula object can be serialized. You can save an object from the Nebula console. 
+    A Nebula object can be serialized. You can save an object from the Nebula console.
     (Assume that you use ntclserver for script server)
 @verbatim
     > sel /usr/scene
@@ -73,7 +73,7 @@
 @endverbatim
 
     @note
-    Using binary script server dramaticaly reduces loading time when it reads script 
+    Using binary script server dramaticaly reduces loading time when it reads script
     file.
 
 */

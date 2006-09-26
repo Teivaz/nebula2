@@ -95,7 +95,7 @@ nAutoRef<TYPE>::check()
         {
             return 0;
         }
-        this->targetObject = (TYPE*) nKernelServer::ks->Lookup(this->targetName);
+        this->targetObject = (TYPE*) nKernelServer::Instance()->Lookup(this->targetName);
         if (this->targetObject)
         {
             ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);

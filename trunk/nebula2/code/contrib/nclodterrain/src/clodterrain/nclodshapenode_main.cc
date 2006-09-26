@@ -20,7 +20,7 @@ class nCLODQuadTreeNode {
 public:
     nCLODQuadTreeNode() : tqtdatafile(NULL), renderme(false), collspaceID(0), chunkGeomID(0) {}
 
-    ~nCLODQuadTreeNode() 
+    ~nCLODQuadTreeNode()
     {
         if (this->chunkGeomID)
         {
@@ -146,7 +146,7 @@ public:
         clodmeshname += chunkNamebase;
         char buffer[10];
         clodmeshname += itoa(chunkindex, buffer, 10);
-        this->meshdata = (nCLODMesh *)nKernelServer::ks->New("nclodmesh", clodmeshname.Get());
+        this->meshdata = (nCLODMesh *)nKernelServer::Instance()->New("nclodmesh", clodmeshname.Get());
         this->meshdata->Configure(GetBounds(), heightscale);
 
 /*      n_printf("clod chunk name %s, bounds (%f, %f, %f) - (%f, %f, %f)\n",
@@ -173,7 +173,7 @@ public:
         clodtilename += chunkNamebase;
         char buffer[10];
         clodtilename += itoa(chunkindex, buffer, 10);
-        this->tiledata = (nCLODTile *)nKernelServer::ks->New("nclodtile", clodtilename.Get());
+        this->tiledata = (nCLODTile *)nKernelServer::Instance()->New("nclodtile", clodtilename.Get());
         this->tiledata->Configure(tilesize, tqtfile);
 
         // compute extra splat offset - this will shift the blend texture be 1/2 a texel
@@ -327,7 +327,7 @@ public:
                 if (children[i]->IsValidChunk())
                     children[i]->PruneTree();
             }
-        }   
+        }
         this->UnloadChunk();
     }
 
@@ -336,13 +336,13 @@ public:
         public:
             bool    culled; // true when the volume is not visible
             unsigned char   active_planes;  // one bit per frustum plane
-        
-            //0x3F=b111111 => 6 planes for view frustum. Front, back and 4 side planes. (Pyramid with top cut off).     
-            result_info(bool c = false, unsigned char a = 0x3f) : 
-                culled(c), active_planes(a) 
+
+            //0x3F=b111111 => 6 planes for view frustum. Front, back and 4 side planes. (Pyramid with top cut off).
+            result_info(bool c = false, unsigned char a = 0x3f) :
+                culled(c), active_planes(a)
             { }
     };
-    
+
     bool Cull(result_info ri, const plane frustum[6])
     {
         // check this chunk against the clip planes
@@ -363,11 +363,11 @@ public:
         if (renderme == false)
         {
             n_assert(HasChildren());
-            for (int i = 0; i < 4; i++) {           
+            for (int i = 0; i < 4; i++) {
                 children[i]->Cull(ri, frustum);
             }
         }
-        
+
         return true;
     }
 
@@ -390,13 +390,13 @@ public:
 
             const plane&    p       = frustum[i];
             const vector3 normal    = p.normal();
-            
+
             // Check box against this plane.
             float   d = normal % center + p.d; //Calculate closest distance from center point to plane.
             float   extent_toward_plane = fabsf(extent.x * normal.x)
                 + fabsf(extent.y * normal.y)
                 + fabsf(extent.z * normal.z);
-            if (d < 0) {  
+            if (d < 0) {
                 if (-d > extent_toward_plane) {
                     // Box is culled by plane; it's not visible.
                     return result_info(true, 0);
@@ -528,7 +528,7 @@ public:
         clodmeshname += chunkNamebase;
         char buffer[10];
         clodmeshname += itoa(chunkindex, buffer, 10);
-        this->splatdata = (nCLODSplat *)nKernelServer::ks->New("nclodsplat", clodmeshname.Get());
+        this->splatdata = (nCLODSplat *)nKernelServer::Instance()->New("nclodsplat", clodmeshname.Get());
         this->splatdata->Configure(GetBounds(), heightscale);
 
         // if we alias to meshdata, then we can reuse the meshdata load/unload routines
@@ -576,7 +576,7 @@ public:
                     // offset for the blend texture
                     chunkscale *= 0.5;
                     // chunkextents is only 1/2 the chunk size, compensate with a x2 factor
-                    chunkorigin -= chunkextents * 2.0 * tiledchunk->splatweightbias; 
+                    chunkorigin -= chunkextents * 2.0 * tiledchunk->splatweightbias;
                 }
                 drapematrix.set_translation(-chunkorigin);
                 drapematrix.scale(chunkscale);
@@ -676,11 +676,11 @@ inline unsigned long CalcTreeChunks(unsigned int treeheight)
 /**
 */
 nCLODShapeNode::nCLODShapeNode() :
-    terrainName(), 
+    terrainName(),
     refFileServer("/sys/servers/file2"),
     refGfx2("/sys/servers/gfx"),
     dynmesh(0),
-    quadtreeChunks(NULL), 
+    quadtreeChunks(NULL),
     quadtreeDepth(0),
     terrainFile(NULL),
     tqtFile(NULL),
@@ -823,7 +823,7 @@ nCLODShapeNode::LoadTerrain()
 
         // construct some sort of resource name base for terrain chunks
         nString chunkNamebase = this->terrainName.Get();
-//        chunkNamebase += "_terr"; 
+//        chunkNamebase += "_terr";
 
         // open the terrain file
         if (!this->terrainFile->Open(chunkNamebase.Get(), "rb"))
@@ -836,8 +836,8 @@ nCLODShapeNode::LoadTerrain()
         // read in header data
         const int headersize = 4;
         // nFile::GetS saves space for a null at the end, so we pad the buffer by one byte
-        char header[headersize]; 
-        this->terrainFile->Read(header, headersize); 
+        char header[headersize];
+        this->terrainFile->Read(header, headersize);
 
         short clodversion;
 
@@ -939,7 +939,7 @@ nCLODShapeNode::LoadTerrain()
 
     if (this->dynmesh == NULL)
         this->dynmesh = new nDynamicMesh();
-    
+
     return true;
 }
 
@@ -970,8 +970,8 @@ nCLODShapeNode::LoadTqt()
         // read in header and verify
         // read in header data
         const int headersize = 4;
-        char header[headersize]; 
-        this->tqtFile->Read(header, headersize); 
+        char header[headersize];
+        this->tqtFile->Read(header, headersize);
 
         unsigned int tqtversion, tqttreedepth, tilesize;
 
@@ -1091,7 +1091,7 @@ nCLODShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* render
 
     // remove the mesh from the gfx thingy
     gfx->SetMesh(0, 0);
-    
+
 //  RenderDebug(sceneServer, renderContext);
 
     return true;
@@ -1140,8 +1140,8 @@ void nCLODShapeNode::UpdateChunks(nSceneServer *sceneServer, nRenderContext *ren
 
     // now cull chunks. first, calculate the view frustum planes
     //Setup clipplanes in cameraspace.
-    float minx, maxx, miny, maxy, minz, maxz;    
-    currentcamera.GetViewVolume(minx, maxx, miny, maxy, minz, maxz);                                                    
+    float minx, maxx, miny, maxy, minz, maxz;
+    currentcamera.GetViewVolume(minx, maxx, miny, maxy, minz, maxz);
     vector4 clipPlanes[6];
     // The setup of the planes here are a bit mucky:
     //      0 - front
@@ -1155,7 +1155,7 @@ void nCLODShapeNode::UpdateChunks(nSceneServer *sceneServer, nRenderContext *ren
     float sin_h = sinf(angle_h);
     float angle_v = atanf(maxy / minz);
     float cos_v = cosf(angle_v);
-    float sin_v = sinf(angle_v);        
+    float sin_v = sinf(angle_v);
 
     // D = - dot(p.normal, point_in_plane)
     clipPlanes[0].set(0.0f, 0.0f, -1.0f, 0.0f);
@@ -1166,13 +1166,13 @@ void nCLODShapeNode::UpdateChunks(nSceneServer *sceneServer, nRenderContext *ren
     clipPlanes[3].set(-cos_h, 0.0f, -sin_h, 0.0f);
     clipPlanes[4].set(0.0f, -cos_v, -sin_v, 0.0f);
     clipPlanes[5].set(0.0f, cos_v, -sin_v, 0.0f);
-                    
-    //Transform clipplanes from cameraspace to 
+
+    //Transform clipplanes from cameraspace to
     //(terrain) objectspace.  The plane/vector4 representation requires that we
     // do this via transpose() instread of invert_simple()
     matrix44 inv_viewer = gfx->GetTransform(nGfxServer2::ModelView);
     inv_viewer.transpose();
-    
+
     // Would have used plane but vector4 can be transformed
     plane cullplanes[6];
     for (int i = 0; i < 6; ++i)
@@ -1183,7 +1183,7 @@ void nCLODShapeNode::UpdateChunks(nSceneServer *sceneServer, nRenderContext *ren
         cullplanes[i].c = clipPlanes[i].z;
         cullplanes[i].d = clipPlanes[i].w;
     }
-    
+
     // now cull the nodes
 //  n_printf("culling terrain quadtree\n");
     nCLODQuadTreeNode::result_info clipstatus;  // default construction is "not clipped by any frustum plane"
@@ -1207,7 +1207,7 @@ void nCLODShapeNode::SetCollisionSpace(const char *collisionSpacePath)
 
     n_assert(this->refTerrainSpace.isvalid());
 }
-    
+
 /// get the current NOH path to the collision space used
 const char *nCLODShapeNode::GetCollisionSpace()
 {
@@ -1216,7 +1216,7 @@ const char *nCLODShapeNode::GetCollisionSpace()
     else
         return NULL;
 }
-    
+
 
 /// render some chunk bounding boxes for debugging
 void nCLODShapeNode::RenderDebug(nSceneServer *sceneServer, nRenderContext *renderContext)
@@ -1366,7 +1366,7 @@ nCLODShapeNode::SetTerrainResourceLoader(const char* resourceLoaderPath)
 //------------------------------------------------------------------------------
 /**
     Get the terrain resource loader.
-    
+
     @return resource loader name or null when there is no resource loader
 */
 const char *

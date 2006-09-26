@@ -53,9 +53,9 @@ n_error(const char* msg, ...)
     va_list argList;
     va_start(argList, msg);
     #ifndef __STANDALONE__
-        if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
+        if (nKernelServer::Instance() && nKernelServer::Instance()->GetLogHandler())
         {
-            nKernelServer::ks->GetLogHandler()->Error(msg, argList);
+            nKernelServer::Instance()->GetLogHandler()->Error(msg, argList);
         }
         else
         {
@@ -81,9 +81,9 @@ n_message(const char* msg, ...)
     va_list argList;
     va_start(argList, msg);
     #ifndef __STANDALONE__
-        if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
+        if (nKernelServer::Instance() && nKernelServer::Instance()->GetLogHandler())
         {
-            nKernelServer::ks->GetLogHandler()->Message(msg, argList);
+            nKernelServer::Instance()->GetLogHandler()->Message(msg, argList);
         }
         else
         {
@@ -108,9 +108,9 @@ n_printf(const char *msg, ...)
     va_list argList;
     va_start(argList,msg);
     #ifndef __STANDALONE__
-        if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
+        if (nKernelServer::Instance() && nKernelServer::Instance()->GetLogHandler())
         {
-            nKernelServer::ks->GetLogHandler()->Print(msg, argList);
+            nKernelServer::Instance()->GetLogHandler()->Print(msg, argList);
         }
         else
         {
@@ -135,9 +135,9 @@ n_dbgout(const char *msg, ...)
     va_list argList;
     va_start(argList,msg);
 #ifndef __STANDALONE__
-    if (nKernelServer::ks && nKernelServer::ks->GetLogHandler())
+    if (nKernelServer::Instance() && nKernelServer::Instance()->GetLogHandler())
     {
-        nKernelServer::ks->GetLogHandler()->OutputDebug(msg, argList);
+        nKernelServer::Instance()->GetLogHandler()->OutputDebug(msg, argList);
     }
     else
     {

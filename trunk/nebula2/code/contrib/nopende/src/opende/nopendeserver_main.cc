@@ -16,8 +16,8 @@ nOpendeServer* nOpendeServer::opendeServer = 0;
 //------------------------------------------------------------------------------
 /**
 */
-nOpendeServer::nOpendeServer() : 
-    surfaceArray( 0 ), 
+nOpendeServer::nOpendeServer() :
+    surfaceArray( 0 ),
     numSurfaces( 0 ),
     inBeginSurfaces( false )
 {
@@ -31,7 +31,7 @@ nOpendeServer::~nOpendeServer()
 {
     // release any meshes that may still be around...
     nOpendeTriMesh* mesh;
-    while ( (mesh = (nOpendeTriMesh*)this->meshList.GetHead()) ) 
+    while ( (mesh = (nOpendeTriMesh*)this->meshList.GetHead()) )
     {
         mesh->RemRef();
         if ( 0 == mesh->GetRef() )
@@ -40,34 +40,34 @@ nOpendeServer::~nOpendeServer()
             n_delete( mesh );
         }
     }
-      
+
     dCloseODE(); // get ODE to cleanup
-  
+
     nOpendeServer::opendeServer = 0;
 }
 
 //-------------------------------------------------------------------
 /**
     @brief Creates a new mesh (or reuses an existing one).
-    @param id Identifier for the mesh, the identifier is used to 
+    @param id Identifier for the mesh, the identifier is used to
               share geoms.
     @param file Path to mesh file (n3d2 or nvx2).
     @param group Mesh group index to load.
     @return A pointer to a mesh.
-  
+
     Currently the mesh file must only contain the coord component
     for vertices and no others.
-  
+
     If you want to create multiple mesh geoms that all use a single
     copy of the mesh geometry create all these geoms with the same
     identifier.
-  
+
     NOTE: The mesh geometry will be loaded from file only if it
     hasn't been already. If you try to create two geoms with the
     same identifier but different file paths, only the first file
     will be loaded.
 */
-nOpendeTriMesh* nOpendeServer::NewTriMesh( const char* id, 
+nOpendeTriMesh* nOpendeServer::NewTriMesh( const char* id,
                                            const char* file,
                                            int group )
 {
@@ -75,17 +75,17 @@ nOpendeTriMesh* nOpendeServer::NewTriMesh( const char* id,
 
     // mesh already exists?
     nOpendeTriMesh* mesh = (nOpendeTriMesh*)this->meshList.Find( id );
-    if ( !mesh ) 
+    if ( !mesh )
     {
         mesh = n_new( nOpendeTriMesh( id ) );
         this->meshList.AddTail( mesh );
     }
-  
+
     if ( !mesh->IsLoaded() )
-        mesh->Load( nKernelServer::ks->GetFileServer(), file, group );
-    
+        mesh->Load( nKernelServer::Instance()->GetFileServer(), file, group );
+
     n_assert( mesh->IsLoaded() && "failed to load mesh" );
-    
+
     return mesh;
 }
 
@@ -93,7 +93,7 @@ nOpendeTriMesh* nOpendeServer::NewTriMesh( const char* id,
 /**
     @brief Delete a tri mesh previously created by NewTriMesh().
     @param id A mesh identifier.
-    
+
     The mesh matching the specified id must not be in use (i.e. no tri mesh
     geoms should exist that still reference it), otherwise this will assert.
     If there is no mesh that matches the specified id this will do nothing.
@@ -105,7 +105,7 @@ void nOpendeServer::DeleteTriMesh( const char* id )
     if ( mesh )
     {
         n_assert( (0 == mesh->GetRef()) && "TriMesh is still in use!" );
-    
+
         mesh->Remove();
         n_delete( mesh );
     }
@@ -120,7 +120,7 @@ void nOpendeServer::DeleteTriMesh( const char* id )
 nOpendeTriMesh* nOpendeServer::FindTriMesh( const char* id )
 {
     n_assert( id );
-    
+
     return (nOpendeTriMesh*)this->meshList.Find( id );
 }
 
@@ -163,21 +163,21 @@ nOpendeSurface* nOpendeServer::GetSurface( int index )
 {
     n_assert( this->inBeginSurfaces );
     n_assert( index < this->numSurfaces );
-  
+
     return &(this->surfaceArray[index]);
 }
 
 //------------------------------------------------------------------------------
 /**
     @brief Get the surface index that corresponds to the specified surface.
-  
+
     This does a linear search through all surfaces, so can be slow, ideally
     you should cache the index you get from here and reuse it.
 */
 int nOpendeServer::GetSurfaceIndex( const char* name )
 {
     n_assert( this->inBeginSurfaces );
-  
+
     for ( int i = 0; i < this->numSurfaces; i++ )
         if ( 0 == strcmp( this->surfaceArray[i].GetName(), name ) )
             return i;
@@ -191,9 +191,9 @@ void nOpendeServer::EnableSurfaceParam( int index, const char* param )
 {
     n_assert( this->inBeginSurfaces );
     n_assert( index < this->numSurfaces );
-  
+
     nOpendeSurface* surf = this->GetSurface( index );
-  
+
     if ( 0 == strcmp( param, "fdir1" ) )
         surf->EnableFlag( dContactFDir1 );
     else if ( 0 == strcmp( param, "approxfdir1" ) )
@@ -209,20 +209,20 @@ void nOpendeServer::EnableSurfaceParam( int index, const char* param )
 //-------------------------------------------------------------------
 /**
 */
-void nOpendeServer::SetSurfaceParam( int index, const char* param, 
+void nOpendeServer::SetSurfaceParam( int index, const char* param,
                                      float value )
 {
     n_assert( this->inBeginSurfaces );
     n_assert( index < this->numSurfaces );
-  
+
     nOpendeSurface* surf = this->GetSurface( index );
-  
+
     if ( 0 == strcmp( param, "mu" ) )
     {
         surf->SetMU( value );
     }
     else if ( 0 == strcmp( param, "mu2" ) )
-    {   
+    {
         surf->SetMU2( value );
         surf->EnableFlag( dContactMu2 );
     }
