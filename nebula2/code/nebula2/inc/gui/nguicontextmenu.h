@@ -5,7 +5,7 @@
     @class nGuiContextMenu
     @ingroup Gui
 
-    @brief A context menu base class. Implement OnEvent() behaviour in a
+    @brief A context menu base class. Implement OnEvent() behavior in a
     derived subclass.
 
     (C) 2004 RadonLabs GmbH

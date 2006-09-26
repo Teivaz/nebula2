@@ -113,7 +113,7 @@ public:
     const ContactPoint* GetClosestContactAlongRay(const vector3& pos, const vector3& dir, const FilterSet& excludeSet);
     /// apply an impulse along a ray into the world onto the first object which the ray hits
     bool ApplyImpulseAlongRay(const vector3& pos, const vector3& dir, const FilterSet& excludeSet, float impulse);
-    /// apply an area impule to the world
+    /// apply an area impulse to the world
     void ApplyAreaImpulse(AreaImpulse* impulse);
     /// return all entities within a spherical area
     int GetEntitiesInSphere(const vector3& pos, float radius, const FilterSet& excludeSet, nArray<Ptr<Entity> >& result);

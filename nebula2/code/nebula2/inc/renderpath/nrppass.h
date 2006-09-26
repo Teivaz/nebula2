@@ -74,9 +74,9 @@ public:
     void SetClearStencil(int v);
     /// get clear stencil value
     int GetClearStencil() const;
-    /// set the draw fullscreen quad flag
+    /// set the draw full-screen quad flag
     void SetDrawFullscreenQuad(bool b);
-    /// get the draw fullscreen quad flag
+    /// get the draw full-screen quad flag
     bool GetDrawFullscreenQuad() const;
     /// set the "draw shadow volumes" technique
     void SetDrawShadows(ShadowTechnique t);
@@ -116,7 +116,7 @@ public:
     void End();
     /// convert shadow technique string to enum
     static ShadowTechnique StringToShadowTechnique(const nString& s);
-    /// draw a fullscreen quad
+    /// draw a full-screen quad
     void DrawFullScreenQuad();
 
 #if __NEBULA_STATS__
@@ -167,7 +167,7 @@ private:
     int clearStencil;
     ShadowTechnique shadowTechnique;
 
-    bool drawFullscreenQuad;        // true if pass should render a fullscreen quad
+    bool drawFullscreenQuad;        // true if pass should render a full-screen quad
     bool drawGui;                   // true if this pass should render the gui
     bool shadowEnabledCondition;
     bool occlusionQuery;            // special flag for occlusion query

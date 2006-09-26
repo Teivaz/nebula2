@@ -5,7 +5,7 @@
     @class Game::Property
 
     Properties are attached to game entities to add specific functionality
-    or behaviours to the entity. For instance, you add a GraphicsProperty
+    or behaviors to the entity. For instance, you add a GraphicsProperty
     if the entity should be able render itself, or you add an AudioProperty
     if the entity should be able to emit sound. Properties are derived from
     the Message::Port class and as such may receive and handle
@@ -74,7 +74,7 @@ protected:
     /// Remove entity.
     void ClearEntity();
 
-    Ptr<Entity> entity;
+    Entity* entity;
     bool active;
 };
 

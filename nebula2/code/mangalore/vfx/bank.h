@@ -39,8 +39,8 @@ public:
     virtual GraphicsEffect* CreateGraphicsEffect(const nString& templateEffectName, const matrix44& transform);
     /// find a template effect by name
     GraphicsEffect* FindEffect(const nString& templateEffectName);
-protected:
 
+protected:
     nArray<Ptr<GraphicsEffect> > effectArray;
 	nXmlSpreadSheet xmlSpreadSheet;
 };

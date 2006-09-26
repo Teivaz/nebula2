@@ -47,9 +47,9 @@ public:
     void SetStreaming(bool b);
     /// get static/streaming type
     bool GetStreaming() const;
-    /// set the looping behaviour
+    /// set the looping behavior
     void SetLooping(bool b);
-    /// get the looping behaviour
+    /// get the looping behavior
     bool GetLooping() const;
     /// set the sound priority for voice management
     void SetPriority(int pri);

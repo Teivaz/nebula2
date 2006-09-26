@@ -112,7 +112,7 @@ FiniteStateMachine::ParseTransition(const nString& condition, const nString& tar
 
 //------------------------------------------------------------------------------
 /**
-    Builds the states and transitions from a xml table
+    Builds the states and transitions from a XML table
 */
 bool
 FiniteStateMachine::Load(const nString& filename, const nString& tablename)
@@ -197,7 +197,6 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
             }
         }
     }
-
     return true;
 }
 

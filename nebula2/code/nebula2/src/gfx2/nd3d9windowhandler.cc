@@ -78,7 +78,7 @@ nD3D9WindowHandler::OnToggleFullscreenWindowed()
 {
     n_assert(this->d3d9Server);
 
-    // toggle fullscreen/windowed
+    // toggle full-screen/windowed
     nDisplayMode2 newMode = this->GetDisplayMode();
     if (newMode.GetType() == nDisplayMode2::Fullscreen)
     {
@@ -134,7 +134,7 @@ nD3D9WindowHandler::OnMouseMove(int x, int y)
 {
     if ((this->d3d9Server->GetDisplayMode().GetType() == nDisplayMode2::Fullscreen))
     {
-        // in fullscreen mode, update the cursor position myself
+        // in full-screen mode, update the cursor position myself
         this->d3d9Server->d3d9Device->SetCursorPosition(x, y, 0);
     }
 }

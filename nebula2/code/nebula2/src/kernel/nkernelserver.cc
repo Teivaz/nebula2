@@ -468,7 +468,7 @@ nKernelServer::Print(const char* str, ...)
 //------------------------------------------------------------------------------
 /**
     Show an important message which may require user interaction. The
-    actual behaviour of this method depends on the actual log handler
+    actual behavior of this method depends on the actual log handler
     class (under Win32, a message box could be shown to the user).
 */
 void
@@ -492,7 +492,7 @@ nKernelServer::Message(const char* str, ...)
 //------------------------------------------------------------------------------
 /**
     Show an error message which may require user interaction. The
-    actual behaviour of this method depends on the actual log handler
+    actual behavior of this method depends on the actual log handler
     class (under Win32, a message box could be shown to the user).
 */
 void

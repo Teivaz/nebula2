@@ -791,7 +791,7 @@ tclcmd_Puts(ClientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
     int retval     = TCL_OK;
     bool is_stdout = true;
 
-    // emulate puts behaviour but reroute output into Nebula kernel
+    // emulate puts behavior but reroute output into Nebula kernel
     if (objc > 1)
     {
         bool newline = true;

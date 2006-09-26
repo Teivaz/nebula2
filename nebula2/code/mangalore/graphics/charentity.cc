@@ -138,7 +138,7 @@ CharEntity::GetNumAnimations() const
     Set a new base animation. This is usually a looping animation, like
     Idle, Walking, Running, etc...
 
-    @param  anim                new base animation
+    @param  animName            new base animation
     @param  fadeIn              time to fade from current animation
     @param  timeOffset          optional animation time offset
     @param  onlyIfInactive
@@ -232,7 +232,6 @@ CharEntity::SetBaseAnimationMix(const nArray<nString>& animNames, const nArray<f
     @param  animName            new base animation
     @param  fadeIn              time to fade from current animation
     @param  overrideDuration    if != 0.0, override the animation's duration with this value
-    @param  onlyIfInactive
 */
 void
 CharEntity::SetOverlayAnimation(const nString& animName, nTime fadeIn, nTime overrideDuration, bool onlyIfInactive)

@@ -34,7 +34,7 @@ public:
     bool OpenWindow();
     /// close the application window
     void CloseWindow();
-    /// prepare window for switching between windowd/fullscreen mode
+    /// prepare window for switching between windowd/full-screen mode
     void AdjustWindowForChange();
     /// restore window from minimized state
     void RestoreWindow();

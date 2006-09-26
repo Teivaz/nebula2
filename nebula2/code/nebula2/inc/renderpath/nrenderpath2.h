@@ -86,7 +86,7 @@ public:
 private:
     /// validate render path resources
     void Validate();
-    /// draw a fullscreen quad
+    /// draw a full-screen quad
     void DrawQuad();
 
     bool isOpen;

@@ -254,7 +254,7 @@ nRpPass::Begin()
         nConServer::Instance()->Render();
     }
 
-    // draw the fullscreen quad?
+    // draw the full-screen quad?
     if (this->drawFullscreenQuad)
     {
         this->DrawFullScreenQuad();
@@ -291,7 +291,7 @@ nRpPass::End()
     {
         for (int i=0; i < this->renderTargetNames.Size(); i++)
         {
-            // Disable used rendertargets
+            // Disable used render targets
             nGfxServer2::Instance()->SetRenderTarget(i, 0);
         }
     }
@@ -307,7 +307,7 @@ nRpPass::End()
 
 //------------------------------------------------------------------------------
 /**
-    Renders a fullscreen quad.
+    Renders a full-screen quad.
 */
 void
 nRpPass::DrawFullScreenQuad()

@@ -876,7 +876,7 @@ nSkyNode::UpdateSky(float newTime)
 
 //------------------------------------------------------------------------------
 /**
-    Updates the angle of the element, to ensure beeing faced to viewer
+    Updates the angle of the element, to ensure being faced to viewer
 */
 void
 nSkyNode::SetFaceToViewer(int element)

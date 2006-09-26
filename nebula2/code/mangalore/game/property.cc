@@ -12,7 +12,7 @@ ImplementRtti(Game::Property, Message::Port);
 //------------------------------------------------------------------------------
 /**
 */
-Property::Property() : active(false)
+Property::Property() : active(false), entity(0)
 {
     // empty
 }
@@ -22,7 +22,7 @@ Property::Property() : active(false)
 */
 Property::~Property()
 {
-    n_assert(!this->entity.isvalid());
+    // n_assert(!this->entity.isvalid());
 }
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ Property::GetActiveEntityPools() const
     The deault implementation returns true, i.e. this property is always
     attached to entites, regardless of the given state.
 
-    Properties that do not want this behaviour should override this method and
+    Properties that do not want this behavior should override this method and
     return the correct flag.
 */
 bool

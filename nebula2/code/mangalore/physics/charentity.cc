@@ -201,7 +201,7 @@ CharEntity::GetTransform() const
 bool
 CharEntity::HasTransformChanged() const
 {
-    // compare current look direction and desired lookat direaction
+    // compare current look direction and desired lookat direction
     vector3 curLookAt = -Entity::GetTransform().z_component();
     if (!this->lookatDirection.isequal(curLookAt, 0.01f))
     {

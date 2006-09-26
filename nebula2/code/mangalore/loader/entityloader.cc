@@ -102,5 +102,3 @@ EntityLoader::UpdateProgressIndicator(Game::Entity* gameEntity)
 }
 
 } // namespace Loader
-
-

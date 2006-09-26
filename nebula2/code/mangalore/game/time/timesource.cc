@@ -104,8 +104,4 @@ TimeSource::UpdateTime(nTime frameTime)
     }
 }
 
-
-
-
-
-};
+}

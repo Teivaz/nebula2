@@ -6,7 +6,7 @@
 
     General base class for area impulses. An area impulse applies an impulse
     to all objects within a given area volume. Subclasses implement specific
-    volumes and behaviours. Most useful for explosions and similar stuff.
+    volumes and behaviors. Most useful for explosions and similar stuff.
 
     (C) 2005 Radon Labs GmbH
 */

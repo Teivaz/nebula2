@@ -33,9 +33,9 @@ public:
     virtual ~Server();
     /// get instance pointer
     static Server* Instance();
-    /// open the fx server
+    /// open the FX server
     virtual bool Open();
-    /// close the fx server
+    /// close the FX server
     virtual void Close();
     /// open an effect bank and make it current
     bool OpenEffectBank(const nString& name);

@@ -90,9 +90,9 @@ public:
     void SetBlinkRate(double rate);
     /// get current blinking state
     bool GetBlinking() const;
-    /// set sticky mouse behaviour
+    /// set sticky mouse behavior
     void SetStickyMouse(bool b);
-    /// get sticky mouse behaviour
+    /// get sticky mouse behavior
     bool IsStickyMouse() const;
     /// rendering
     virtual bool Render();
@@ -426,7 +426,7 @@ nGuiWidget::HasFocus() const
 
 //-----------------------------------------------------------------------------
 /**
-    Set sticky mouse behaviour. If sticky mouse is enabled, the widget
+    Set sticky mouse behavior. If sticky mouse is enabled, the widget
     will remain focused even when the mouse has moved outside the
     widget's area. Default is false.
 */
@@ -439,7 +439,7 @@ nGuiWidget::SetStickyMouse(bool b)
 
 //-----------------------------------------------------------------------------
 /**
-    Get the sticky mouse behaviour of the widget.
+    Get the sticky mouse behavior of the widget.
 */
 inline
 bool

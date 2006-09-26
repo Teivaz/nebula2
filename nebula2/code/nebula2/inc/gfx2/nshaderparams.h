@@ -9,7 +9,7 @@
     can be applied to a shader with one call (instead of issuing dozens
     of method calls to set parameters).
 
-    Note that only simple datatypes (not arrays) can be kept in shader
+    Note that only simple data types (not arrays) can be kept in shader
     parameter blocks.
 
     (C) 2003 RadonLabs GmbH

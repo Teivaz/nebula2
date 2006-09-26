@@ -36,7 +36,7 @@ static void n_gettreesize(void*, nCmd*);
 
     @classinfo
     nroot is the superclass of all higher level NOH-dependent Nebula classes
-    and defines this basic behaviour and properties for all
+    and defines this basic behavior and properties for all
     nroot derived classes:
     - linkage into hierarchical name space of objects
     - runtime type information (through nobject)

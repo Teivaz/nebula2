@@ -18,7 +18,7 @@
 
     The net server is a simple message distributor. It either sends messages
     to all clients, or replicates messages from one client to all other clients.
-    Specific communication protocols and behaviour should be implemented in
+    Specific communication protocols and behavior should be implemented in
     subclasses.
 
     This is the net client/server protocol:

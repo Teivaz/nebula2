@@ -56,7 +56,7 @@ public:
 
 private:
     bool noConsoleWindow;
-    nString exec;;
+    nString exec;
     nString dir;
     nString args;
     nString url;

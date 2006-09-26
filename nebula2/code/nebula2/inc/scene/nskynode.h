@@ -136,13 +136,13 @@ typedef struct
 
 
 protected:
-    /// Adds all params from nShaderparams to paramlist
+    /// Adds all params from nShaderparams to param list
     void CollectParams(nShaderParams params, ParamList& paramList);
     /// Returns the index of the searched element
     int FindElement(const nString& name);
     /// Returns the index of the searched state
     int FindState(int elementNr, const nString& stateName);
-    /// Positions an Element by sperical coordinates
+    /// Positions an Element by spherical coordinates
     vector3 GetSphericalCoordinates(vector3 angles);
     /// Rotates element to face the viewer
     void SetFaceToViewer(int element);

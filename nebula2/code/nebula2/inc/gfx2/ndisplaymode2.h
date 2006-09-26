@@ -20,7 +20,7 @@ public:
     enum Type
     {
         Windowed,       // windowed mode
-        Fullscreen,     // fullscreen mode
+        Fullscreen,     // full-screen mode
         AlwaysOnTop,    // windowed, always on top
         ChildWindow,    // windowed, as child window
     };

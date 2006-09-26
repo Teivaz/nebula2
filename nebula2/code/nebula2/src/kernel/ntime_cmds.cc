@@ -171,7 +171,7 @@ static void n_settime(void *o, nCmd *cmd)
     @info
     If DeltaT is greater then 0.0, the frame time will be advanced
     in steps of size DeltaT. A value of 0.0 switches back to the
-    proper timing behaviour. Useful to lock virtual frame rate to
+    proper timing behavior. Useful to lock virtual frame rate to
     a fixed value.
 */
 static void n_lockdeltat(void *o, nCmd *cmd)

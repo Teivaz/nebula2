@@ -27,7 +27,7 @@ public:
     virtual bool OnSetCursor();
     /// called by WinProc on WM_PAINT
     virtual void OnPaint();
-    /// called when fullscreen/windowed should be toggled
+    /// called when full-screen/windowed should be toggled
     virtual void OnToggleFullscreenWindowed();
     /// called when WM_CLOSE is received, return true if app should quit
     virtual bool OnClose();
