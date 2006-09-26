@@ -7,7 +7,7 @@
     A collection of key/value pairs with quick value retrieval
     by key at roughly O(log n). Insertion is O(n), or faster
     if the BeginAdd()/EndAdd() methods are used.
-    Find-by-key behaviour is undefined if several identical
+    Find-by-key behavior is undefined if several identical
     keys are added to the array.
 
     Internally the dictionary is implemented as a sorted array.

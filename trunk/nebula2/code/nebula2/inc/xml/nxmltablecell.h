@@ -10,7 +10,7 @@
 
     If the XML table cell is empty, the method IsEmpty() returns true, and
     all IsValidXXX() method return false. This differs from the previous
-    behaviour, where the string "<invalid>" was returned.
+    behavior, where the string "<invalid>" was returned.
 
     (C) 2004 RadonLabs GmbH
 */
@@ -176,7 +176,7 @@ inline
 int
 nXmlTableCell::AsInt() const
 {
-    return this->value.AsInt();;
+    return this->value.AsInt();
 }
 
 //------------------------------------------------------------------------------

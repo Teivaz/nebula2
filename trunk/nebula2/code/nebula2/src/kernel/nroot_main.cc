@@ -279,7 +279,7 @@ nRoot::SaveAs(const char *name)
     bool retval = false;
     if (ps->BeginObject(this, name, true))
     {
-        // ...the usual behaviour...
+        // ...the usual behavior...
         nRoot *c;
         if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {
@@ -330,7 +330,7 @@ nRoot::Clone(const char *name)
     ps->SetSaveMode(nPersistServer::SAVEMODE_CLONE);
     if (ps->BeginObject(this, name, true))
     {
-        // ...the usual behaviour...
+        // ...the usual behavior...
         nRoot *c;
         if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {

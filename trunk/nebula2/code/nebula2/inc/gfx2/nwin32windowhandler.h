@@ -28,7 +28,7 @@ public:
     void CloseWindow();
     /// set the window title
     void SetWindowTitle(const char* title);
-    /// prepare window for switching between windowd/fullscreen mode
+    /// prepare window for switching between windowd/full-screen mode
     void AdjustWindowForChange();
     /// restore window from minimized state
     void RestoreWindow();
@@ -44,7 +44,7 @@ public:
     virtual bool OnSetCursor();
     /// called by WinProc on WM_PAINT
     virtual void OnPaint();
-    /// called when fullscreen/windowed should be toggled
+    /// called when full-screen/windowed should be toggled
     virtual void OnToggleFullscreenWindowed();
     /// called when WM_SIZE is received
     virtual void OnSize(bool minimize);
@@ -68,7 +68,7 @@ public:
 
     HACCEL hAccel;                  ///< the accelerator table
     DWORD windowedStyle;            ///< WS_* flags for windowed mode
-    DWORD fullscreenStyle;          ///< WS_* flags for fullscreen mode
+    DWORD fullscreenStyle;          ///< WS_* flags for full-screen mode
     DWORD childStyle;               ///< WS_* flags for child mode
 
     enum

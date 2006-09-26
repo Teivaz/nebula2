@@ -63,7 +63,7 @@ private:
 
     nRef<nAnimation> refAnimation;
     matrix44 initialMatrix;
-    float animTime;
+    nTime animTime;
 };
 
 RegisterFactory(PathAnimProperty);

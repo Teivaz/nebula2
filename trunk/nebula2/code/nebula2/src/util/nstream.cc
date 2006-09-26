@@ -444,7 +444,7 @@ nStream::BeginNode(const nString& name)
 //------------------------------------------------------------------------------
 /**
     End a node in write mode. This will set the parent of the current node as
-    new current node so that correct hierarchical behaviour is implemented.
+    new current node so that correct hierarchical behavior is implemented.
 */
 void
 nStream::EndNode()

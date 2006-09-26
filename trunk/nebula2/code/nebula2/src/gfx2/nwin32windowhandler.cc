@@ -180,7 +180,7 @@ nWin32WindowHandler::AdjustWindowForChange()
 
     if (this->displayMode.GetType() == nDisplayMode2::Fullscreen)
     {
-        // adjust for fullscreen mode
+        // adjust for full-screen mode
         SetWindowLong(this->hWnd, GWL_STYLE, this->fullscreenStyle);
     }
     else if (this->displayMode.GetType() == nDisplayMode2::ChildWindow)
@@ -223,7 +223,7 @@ nWin32WindowHandler::RestoreWindow()
         }
     }
 
-    // switch from minimized to fullscreen mode
+    // switch from minimized to full-screen mode
     ShowWindow(this->hWnd, SW_RESTORE);
 
     int x, y, w, h;
@@ -237,7 +237,7 @@ nWin32WindowHandler::RestoreWindow()
     else if (this->displayMode.GetType() == nDisplayMode2::ChildWindow && this->parentHwnd)
     {
         RECT parentRect;
-        // We are child window, so get dimesion from parent
+        // We are child window, so get dimension from parent
         GetClientRect(this->parentHwnd, &parentRect);
 
         //calculate the desired window size
@@ -264,7 +264,7 @@ nWin32WindowHandler::RestoreWindow()
             h = r.bottom - r.top;
         }
 
-        //update the displaymode
+        //update the display mode
         this->displayMode.SetWidth(w);
         this->displayMode.SetHeight(h);
     }
@@ -467,7 +467,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     switch(uMsg)
     {
         case WM_SYSCOMMAND:
-            // prevent moving/sizing and power loss in fullscreen mode
+            // prevent moving/sizing and power loss in full-screen mode
             if (self && (self->GetDisplayMode().GetType() == nDisplayMode2::Fullscreen))
             {
                 switch (wParam)

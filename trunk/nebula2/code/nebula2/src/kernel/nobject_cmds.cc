@@ -30,7 +30,7 @@ static void n_getinstancesize(void*, nCmd*);
 
     @classinfo
     nobject is the superclass of all higher level Nebula classes
-    and defines this basic behaviour and properties for all
+    and defines this basic behavior and properties for all
     nobject derived classes:
     - runtime type information
     - object persistency

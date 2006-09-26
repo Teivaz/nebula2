@@ -1063,7 +1063,7 @@ Tcl_HideCommand(interp, cmdName, hiddenCmdToken)
      * qualifier command name. Thus, hiding foo::bar to foo::bar and then
      * trying to expose or invoke ::foo::bar will NOT work; but if the
      * application always uses the same strings it will get consistent
-     * behaviour.
+     * behavior.
      *
      * But as we currently limit ourselves to the global namespace only
      * for the source, in order to avoid potential confusion,

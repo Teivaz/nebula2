@@ -13,7 +13,7 @@
     (loading resources in a background thread). Not all subclasses may
     support asynchronous resource loading though.
 
-    Default behaviour is synchronous loading (Load() returns when the
+    Default behavior is synchronous loading (Load() returns when the
     resource has been loaded). Asynchronous loading is enabled by
     calling SetAsyncEnabled(true). When async loading is enabled,
     Load() returns immediately with a return value of true but IsValid()
@@ -58,7 +58,7 @@
     Only resources which cannot initializes themselves from a file can go into
     Empty state, for those resources, Empty state will be entered after initializing
     the resource by calling Load(), or for resources which can go into Lost state,
-    if a fullscreen application loses focus (for instance through Alt-TAB).
+    if a full-screen application loses focus (for instance through Alt-TAB).
 
     Resources which don't know how to load themselves may remain in Unloaded state
     after the display has been closed and opened (this happens for instance
@@ -138,9 +138,9 @@ public:
     void SetFilename(const nString& path);
     /// get absolute filename to resource file
     nString GetFilename();
-    /// enable/disable async behaviour
+    /// enable/disable async behavior
     void SetAsyncEnabled(bool b);
-    /// get async behaviour
+    /// get async behavior
     bool GetAsyncEnabled() const;
     /// set the NOH path to an nResourceLoader
     void SetResourceLoader(const nString& resourceLoader);
@@ -261,9 +261,9 @@ nResource::GetFilename()
 
 //------------------------------------------------------------------------------
 /**
-    Enable/disable asynchronous behaviour.
+    Enable/disable asynchronous behavior.
 
-    @param  b   true to enable async behaviour, false for sync behaviour
+    @param  b   true to enable async behavior, false for sync behavior
 */
 inline
 void
@@ -274,7 +274,7 @@ nResource::SetAsyncEnabled(bool b)
 
 //------------------------------------------------------------------------------
 /**
-    Get the async behaviour flag.
+    Get the async behavior flag.
 
     @return     true if async loading is enabled
 */

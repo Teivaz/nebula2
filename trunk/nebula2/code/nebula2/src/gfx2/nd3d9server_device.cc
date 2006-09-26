@@ -231,7 +231,7 @@ nD3D9Server::FindBufferFormats(nDisplayMode2::Bpp bpp, D3DFORMAT& dispFormat, D3
 
     if (this->windowHandler.GetDisplayMode().GetType() == nDisplayMode2::Fullscreen)
     {
-        // find fullscreen buffer formats
+        // find full-screen buffer formats
         dispFormat = D3DFMT_UNKNOWN;
         backFormat = D3DFMT_UNKNOWN;
         zbufFormat = D3DFMT_UNKNOWN;
@@ -380,7 +380,7 @@ nD3D9Server::DeviceOpen()
     // get d3d multisample type
     D3DMULTISAMPLE_TYPE d3dMultiSampleType = this->CheckMultiSampleType(backFormat, zbufFormat, this->windowHandler.GetDisplayMode().GetType() != nDisplayMode2::Fullscreen);
 
-    // define device behaviour flags
+    // define device behavior flags
     this->deviceBehaviourFlags = D3DCREATE_FPU_PRESERVE;
 
     #if N_D3D9_DEBUG

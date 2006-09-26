@@ -1223,7 +1223,7 @@ nMeshBuilder::Split(const plane& clipPlane,
     Build a vertex/triangle map. Lookup the map with the vertex index,
     and find an array of indices of all triangles using that vertex.
     You want to make sure to clean up the mesh before to ensure
-    correct vertex sharing behaviour.
+    correct vertex sharing behavior.
 
     @param  vertexTriangleMap   2D-array to be filled with resulting map
 */

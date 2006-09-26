@@ -224,7 +224,7 @@ PathAnimProperty::UpdateAnimation()
     {
         // get translation, rotation and scale
         vector4 keys[3];
-        this->refAnimation->SampleCurves(this->animTime, 0, 0, 3, &keys[0]);
+        this->refAnimation->SampleCurves((float)this->animTime, 0, 0, 3, &keys[0]);
 
         // build matrix from translation and rotation
         vector3 translate(keys[0].x, keys[0].y, keys[0].z);
@@ -243,7 +243,7 @@ PathAnimProperty::UpdateAnimation()
         this->GetEntity()->SendSync(msg);
 
         // update animation time
-        this->animTime += (float) SystemTimeSource::Instance()->GetFrameTime();
+        this->animTime += SystemTimeSource::Instance()->GetFrameTime();
     }
 }
 

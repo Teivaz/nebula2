@@ -188,7 +188,7 @@ Tcl_InitHashTableEx(tablePtr, keyType, typePtr)
 					 * TCL_CUSTOM_PTR_KEYS,  or an
 					 * integer >= 2. */
     Tcl_HashKeyType *typePtr;		/* Pointer to structure which defines
-					 * the behaviour of this table. */
+					 * the behavior of this table. */
 {
 #if (TCL_SMALL_HASH_TABLE != 4)
     panic("Tcl_InitHashTableEx: TCL_SMALL_HASH_TABLE is %d, not 4\n",

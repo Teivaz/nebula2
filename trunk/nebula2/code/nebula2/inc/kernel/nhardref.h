@@ -161,7 +161,7 @@ nHardRef<TYPE>::invalidate_name()
     MUST be resolved by calling nHardRef::resolve(), the target
     object must exist when this happens. Any operation that requires
     a valid target pointer will fail until resolve() is called
-    (this behaviour is different then nAutoRef and nDynAutoRef).
+    (this behavior is different then nAutoRef and nDynAutoRef).
 
     @param objName      full path name of target object
 

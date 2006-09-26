@@ -84,9 +84,9 @@ App::GetVendorName() const
 
 //------------------------------------------------------------------------------
 /**
-    Return true if this application may only be run in fullscreen mode.
+    Return true if this application may only be run in full-screen mode.
     By default the application may also run in windowed mode. Override this
-    method in your subclass if fullscreen should be enforced.
+    method in your subclass if full-screen should be enforced.
 */
 bool
 App::GetForceFullscreen() const
@@ -324,12 +324,12 @@ App::SetupGameSubsystem()
     this->saveGameManager = Managers::SaveGameManager::Create();
     this->setupManager = Managers::SetupManager::Create();
     this->factoryManager = Managers::FactoryManager::Create();
-    this->gameServer->AttachManager(entityManager);
-    this->gameServer->AttachManager(envQueryManager);
-    this->gameServer->AttachManager(focusManager);
-    this->gameServer->AttachManager(saveGameManager);
-    this->gameServer->AttachManager(setupManager);
-    this->gameServer->AttachManager(factoryManager);
+    this->gameServer->AttachManager(this->entityManager);
+    this->gameServer->AttachManager(this->envQueryManager);
+    this->gameServer->AttachManager(this->focusManager);
+    this->gameServer->AttachManager(this->saveGameManager);
+    this->gameServer->AttachManager(this->setupManager);
+    this->gameServer->AttachManager(this->factoryManager);
 }
 
 //------------------------------------------------------------------------------

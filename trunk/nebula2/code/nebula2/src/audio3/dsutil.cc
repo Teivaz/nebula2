@@ -910,7 +910,7 @@ CStreamingSound::~CStreamingSound()
 
 //-----------------------------------------------------------------------------
 // Name: CStreamingSound::IsSoundPlaying()
-// Desc: Streaming sounds need different behaviour
+// Desc: Streaming sounds need different behavior
 //-----------------------------------------------------------------------------
 BOOL
 CStreamingSound::IsSoundPlaying()

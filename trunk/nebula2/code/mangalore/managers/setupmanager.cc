@@ -133,7 +133,7 @@ SetupManager::SetupWorldFromCurrentLevel()
 /**
     Cleanup the game world. This should undo the stuff in SetupWorld().
     Override this method in a subclass if your app needs different
-    behaviour.
+    behavior.
 */
 void
 SetupManager::CleanupWorld()

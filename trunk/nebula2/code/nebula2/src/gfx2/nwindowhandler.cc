@@ -57,9 +57,9 @@ nWindowHandler::CloseWindow()
 //------------------------------------------------------------------------------
 /**
     Adjust the window for change. This will be called by the gfx server
-    before switching between fullscreen and windowed mode. Subclasses
+    before switching between full-screen and windowed mode. Subclasses
     should inspect the displayMode member for information about the
-    new window behaviour.
+    new window behavior.
 */
 void
 nWindowHandler::AdjustWindowForChange()

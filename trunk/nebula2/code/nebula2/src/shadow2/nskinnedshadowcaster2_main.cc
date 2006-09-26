@@ -221,7 +221,7 @@ nSkinnedShadowCaster2::SetupShadowVolume(const nLight& light, const matrix44& in
     gfxServer->SetVertexRange(meshGroup.GetFirstVertex(), meshGroup.GetNumVertices());
     gfxServer->SetIndexRange(0, this->GetNumDrawIndices());
 
-    // not forgetting: resetting da dirty flags!
+    // not forgetting: resetting the dirty flags!
     this->charSkeletonDirty = false;
 }
 
@@ -229,7 +229,7 @@ nSkinnedShadowCaster2::SetupShadowVolume(const nLight& light, const matrix44& in
 /**
     Actually render the shadow volume. This can be called 1 or 2 times by
     the shadow server, depending on whether 2-sided stencil operations are
-    availalable.
+    available.
 */
 void
 nSkinnedShadowCaster2::RenderShadowVolume()
@@ -240,7 +240,7 @@ nSkinnedShadowCaster2::RenderShadowVolume()
 
 //------------------------------------------------------------------------------
 /**
-    This method performs the actual skinning on the cpu and writes the
+    This method performs the actual skinning on the CPU and writes the
     skinned vertices into the refSkinnedMesh. A valid and uptodate character
     skeleton must be set through
 
@@ -283,7 +283,7 @@ nSkinnedShadowCaster2::UpdateSkinning()
 
         // write skinned vertex to unextruded and extruded vertex position, note, we are filling
         // a dynamic vertex buffer which will be discarded after rendering, so we NEED to write
-        // seeminigly constant data (the extrude weights) as well!
+        // seemingly constant data (the extrude weights) as well!
         *dstVertices++ = v.x; *dstVertices++ = v.y; *dstVertices++ = v.z; *dstVertices++ = 0.0f;
         *dstVertices++ = v.x; *dstVertices++ = v.y; *dstVertices++ = v.z; *dstVertices++ = 1.0f;
 

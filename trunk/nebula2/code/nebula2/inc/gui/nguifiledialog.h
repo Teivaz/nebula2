@@ -6,7 +6,7 @@
     @ingroup Gui
     @brief A file dialog base class.
 
-    Implement OnOk() and OnCancel() behaviour in a derived subclass.
+    Implement OnOk() and OnCancel() behavior in a derived subclass.
 
     (C) 2004 RadonLabs GmbH
 */

@@ -64,6 +64,6 @@ GfxSetVisible::GetVisible() const
     return this->visible;
 }
 
-} // namespace Message
+} // namespace Msg
 //------------------------------------------------------------------------------
 #endif

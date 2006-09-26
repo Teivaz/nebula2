@@ -25,8 +25,6 @@ public:
     virtual void Reset();
     /// check for condition; return value of 0 means it isn't present, 1 it is
     virtual float Check() = 0;
-
-protected:
 };
 
 } // namespace FSM

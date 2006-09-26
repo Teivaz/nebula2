@@ -267,7 +267,7 @@ private:
 
     nD3D9WindowHandler windowHandler; ///< a Win32 window handler object
 
-    DWORD deviceBehaviourFlags;     ///< the behaviour flags at device creation time
+    DWORD deviceBehaviourFlags;     ///< the behavior flags at device creation time
     D3DCAPS9 devCaps;               ///< device caps
     D3DDISPLAYMODE d3dDisplayMode;  ///< the current d3d display mode
     FeatureSet featureSet;

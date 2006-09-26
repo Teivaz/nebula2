@@ -23,8 +23,6 @@ public:
 
     /// called when action should be triggered
     virtual void Trigger() = 0;
-
-protected:
 };
 
 } // namespace FSM

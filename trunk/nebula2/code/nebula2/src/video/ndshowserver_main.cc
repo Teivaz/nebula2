@@ -148,7 +148,7 @@ nDShowServer::PlayFile(const char* filename)
     LONG videoLeft, videoTop, videoWidth, videoHeight;
     if (this->GetEnableScaling())
     {
-        // scale to fullscreen....
+        // scale to full-screen....
         videoLeft   = 0;
         videoTop    = 0;
         videoWidth  = rect.right;

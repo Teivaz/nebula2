@@ -127,7 +127,7 @@ nRpSequence::EndPass()
 //------------------------------------------------------------------------------
 /**
     NOTE: currently, the previous technique is not restored (should this
-    even be the intended behaviour???)
+    even be the intended behavior???)
 */
 void
 nRpSequence::End()

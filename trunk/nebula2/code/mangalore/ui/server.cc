@@ -276,9 +276,9 @@ Server::IsMouseOverGui() const
 {
     if (this->GetActiveWindow() != 0)
     {
-        // TODO: because the canvas always is fullscreen at the moment and
+        // TODO: because the canvas always is full-screen at the moment and
         // because there only one canvas is allowed, the inside check is useless
-        // if a canvas is open the mouse will be over gui.
+        // if a canvas is open the mouse will be over GUI.
         return true;
     }
     return false;

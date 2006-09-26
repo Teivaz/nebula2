@@ -139,7 +139,7 @@ enum Param
     VertexWeights2,                 // float4: weights of streams 5-8
     AlphaBlendEnable,               // bool: enable/disable alpha blending
     AlphaSrcBlend,                  // int: Alpha Source Blend Factor
-    AlphaDstBlend,                  // int: Alpha Dest Blend Factor
+    AlphaDstBlend,                  // int: Alpha Destination Blend Factor
     BumpScale,                      // float
     FresnelBias,                    // float
     FresnelPower,                   // float

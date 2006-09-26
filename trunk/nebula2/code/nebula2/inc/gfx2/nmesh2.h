@@ -142,7 +142,7 @@ public:
 
     enum Usage
     {
-        // read/write behaviour (mutually exclusive)
+        // read/write behavior (mutually exclusive)
         WriteOnce = (1<<0),     ///< (default) CPU only fills the vertex buffer once, and never touches it again
         ReadOnly  = (1<<1),     ///< CPU reads from the vertex buffer, which can never be rendered
         WriteOnly = (1<<2),     ///< CPU writes frequently to vertex buffer, but never read data back

@@ -334,7 +334,7 @@ Entity::GetEntityTime() const
 void
 Entity::UpdateRenderContextVariables()
 {
-    float entityTime = (float) this->GetEntityTime();
+    float entityTime = (float)this->GetEntityTime();
     this->renderContext.SetTransform(this->transform);
     this->renderContext.GetVariable(this->timeVarHandle)->SetFloat(entityTime);
     if (this->shadowResource.IsLoaded())

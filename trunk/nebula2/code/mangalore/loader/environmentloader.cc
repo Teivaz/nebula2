@@ -83,7 +83,7 @@ EnvironmentLoader::Load(Db::Reader* dbReader)
     bool hasEnvironmentNodes = false;
     const nString envCategory = "_Environment";
 
-    // create a segmented gfx util object
+    // create a segmented GFX utility object
     SegmentedGfxUtil segGfxUtil;
 
     // create a single environment graphics and collide property for all
@@ -217,7 +217,7 @@ EnvironmentLoader::UpdateProgressIndicator(const nString& resName)
 {
     Loader::Server* loaderServer = Loader::Server::Instance();
     nString progressText;
-    progressText.Format("Loading env object '%s'...", resName.Get());
+    progressText.Format("Loading environment object '%s'...", resName.Get());
     loaderServer->SetProgressText(progressText);
     loaderServer->AdvanceProgress(1);
     loaderServer->UpdateProgressDisplay();

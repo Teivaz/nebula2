@@ -31,9 +31,9 @@ public:
     nIpcClient();
     /// destructor
     ~nIpcClient();
-    /// set the blocking behaviour
+    /// set the blocking behavior
     void SetBlocking(bool b);
-    /// get the blocking behaviour
+    /// get the blocking behavior
     bool GetBlocking() const;
     /// connect to an ipc server
     bool Connect(nIpcAddress& addr);
