@@ -14,7 +14,7 @@
 #include "kernel/nremoteserver.h"
 #include "kernel/ndefaultloghandler.h"
 
-nKernelServer *nKernelServer::ks = 0;
+nKernelServer *nKernelServer::Singleton = 0;
 
 nNebulaUsePackage(nkernel);
 
@@ -259,7 +259,8 @@ nKernelServer::nKernelServer() :
     curLogHandler(0)
 {
     // initialize static kernelserver pointer
-    ks = this;
+    n_assert(0 == Singleton);
+    Singleton = this;
 
     // initialize the debug memory system
 #ifdef __WIN32__
@@ -391,7 +392,9 @@ nKernelServer::~nKernelServer(void)
     this->defaultLogHandler = 0;
 
     // reset static kernelserver pointer
-    ks = 0;
+    n_assert(0 != Singleton);
+    Singleton = 0;
+
     this->Unlock();
 }
 

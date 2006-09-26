@@ -117,10 +117,9 @@ public:
     /// optionally call to update memory useage variables
     void Trigger(void);
 
-    /// static pointer to nKernelServer object
-    static nKernelServer* ks;
-
 private:
+    static nKernelServer* Singleton;
+
     /// check if a Nebula path is absolute
     bool IsAbsolutePath(const char* path);
     /// create a new Nebula object, and all missing objects leading to it
@@ -165,7 +164,8 @@ inline
 nKernelServer*
 nKernelServer::Instance()
 {
-    return ks;
+    n_assert(Singleton);
+    return Singleton;
 }
 
 //------------------------------------------------------------------------------

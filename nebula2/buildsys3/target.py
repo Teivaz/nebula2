@@ -36,7 +36,7 @@ class Target:
         self.frameworksMacOSX = []
         self.libsWin32DebugAll = [] # libsWin32Debug + libsWin32
         self.libsWin32ReleaseAll = [] # libsWin32Release + libsWin32
-	self.PkgTarget = False
+        self.PkgTarget = False
         # platforms this target can be built on
         self.platforms = {'win32'  : False,
                           'linux'  : False,
@@ -288,7 +288,7 @@ class Target:
                     platformDef = self.buildSys.platformTagDefMap[platformTag]
             if platformDef != '':
                 pkgFile.write('#ifdef ' + platformDef + '\n')
-            pkgFile.write('    nKernelServer::ks->AddModule("' \
+            pkgFile.write('    nKernelServer::Instance()->AddModule("' \
                           + module.name + '",\n')
             safeModName = module.GetFullNameNoColons()
             pkgFile.write((' ' * 33) + 'n_init_%s,\n' % safeModName)

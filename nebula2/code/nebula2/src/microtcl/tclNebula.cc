@@ -14,15 +14,15 @@
  *
  * Tcl_EvalFile --
  *
- *	Read in a file and process the entire file as one gigantic
- *	Tcl command.
+ *  Read in a file and process the entire file as one gigantic
+ *  Tcl command.
  *
  * Results:
- *	A standard Tcl result, which is either the result of executing
- *	the file or an error indicating why the file couldn't be read.
+ *  A standard Tcl result, which is either the result of executing
+ *  the file or an error indicating why the file couldn't be read.
  *
  * Side effects:
- *	Depends on the commands in the file.
+ *  Depends on the commands in the file.
  *
  * - 20-Feb-04  floh    get script buffer size from file size
  * - 19-Mar-04  floh    important bugfix: script buffer must be 1 byte
@@ -38,7 +38,7 @@ Tcl_EvalFile(Tcl_Interp* interp, char* fileName)
     Interp* iPtr = (Interp *) interp;
 
     // get fileobject
-    n_assert(nKernelServer::ks);
+    n_assert(nKernelServer::Instance());
     nFileServer2* fileServer = nKernelServer::Instance()->GetFileServer();
     n_assert(fileServer);
 
@@ -69,17 +69,17 @@ Tcl_EvalFile(Tcl_Interp* interp, char* fileName)
         // handle result
         if (result == TCL_RETURN)
         {
-	        result = TclUpdateReturnInfo(iPtr);
+            result = TclUpdateReturnInfo(iPtr);
         }
         else if (result == TCL_ERROR)
         {
-	        char msg[200 + TCL_INTEGER_SPACE];
+            char msg[200 + TCL_INTEGER_SPACE];
 
-	        /*
-	         * Record information telling where the error occurred.
-	         */
-        	sprintf(msg, "\n    (file \"%.150s\" line %d)", fileName, interp->errorLine);
-	        Tcl_AddErrorInfo(interp, msg);
+            /*
+             * Record information telling where the error occurred.
+             */
+            sprintf(msg, "\n    (file \"%.150s\" line %d)", fileName, interp->errorLine);
+            Tcl_AddErrorInfo(interp, msg);
         }
     }
     else

@@ -42,11 +42,11 @@ nRMN3d2Loader::nRMN3d2Loader() : IRmGeometryLoaderPlugIn()
 
     // The name that the user will see for this plug-in
     RmStrCopyT(this->plugInDesc.strName, _T( "Nebula2GeometryLoader"));
- 
-    if (0 == nKernelServer::ks)
+
+    if (0 == nKernelServer::Instance())
     {
         new nKernelServer();
-    } 
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ void nRMN3d2Loader::Uninitialize()
 //-----------------------------------------------------------------------------
 /**
     RenderMonkey main message handling entry point. RenderMonkey communicates
-    all of its events with the loaded plug-ins via messages. See 
+    all of its events with the loaded plug-ins via messages. See
     Wizard/Include/Core/RmDefines.h for more details on each message.
 
     @return RM_OK if the message was successfully handled and RM_EFAIL otherwise.
@@ -111,13 +111,13 @@ void nRMN3d2Loader::GetSupportedExtensions(RmLinkedList<RmStringT> &formatDescri
 //-----------------------------------------------------------------------------
 /**
     Method checks whether this plug-in can load geometry in the specified file
-    based on its own criteria. Returns true if it can load the file and false 
+    based on its own criteria. Returns true if it can load the file and false
     otherwise.
 */
 bool nRMN3d2Loader::CanLoadGeometry(const RM_TCHAR *filename)
 {
-    // We want to use RenderMonkey specific file open methods to ensure that 
-    // we are always opening file using either unicode or ascii-specific 
+    // We want to use RenderMonkey specific file open methods to ensure that
+    // we are always opening file using either unicode or ascii-specific
     // methods using the application settings automatically:
     FILE *file = RmFileOpenT(filename, _T("r"));
     if (file == NULL)
@@ -164,7 +164,7 @@ bool nRMN3d2Loader::CanLoadGeometry(const RM_TCHAR *filename)
     a particular file ('strFileName') into the specified model data container
     ('pModelContainer')
 */
-bool nRMN3d2Loader::LoadGeometry(const RM_TCHAR       *strFileName, 
+bool nRMN3d2Loader::LoadGeometry(const RM_TCHAR       *strFileName,
                                        RmMeshModelContainer *modelContainer)
 {
     // Actual loading code goes here
