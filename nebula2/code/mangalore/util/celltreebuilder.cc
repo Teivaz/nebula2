@@ -22,7 +22,7 @@ CellTreeBuilder::CellTreeBuilder() :
 
 //------------------------------------------------------------------------------
 /**
-    Create a quad tree of Graphis::Cells and attach them to the
+    Create a quad tree of Graphics::Cells and attach them to the
     provided level.
 */
 void
@@ -81,4 +81,4 @@ CellTreeBuilder::GetNumCellsBuilt() const
     return this->numCellsBuilt;
 }
 
-};
+}

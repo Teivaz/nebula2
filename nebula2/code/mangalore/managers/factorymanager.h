@@ -55,7 +55,7 @@ public:
     /// create new entity from world database using any key attribute
     virtual Game::Entity* CreateEntityByKeyAttr(const Db::Attribute& key, Game::Entity::EntityPool pool = Game::Entity::LivePool) const;
     /// create new entities from world database using the key attributes
-    virtual nArray<Game::Entity*> CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, const nArray<Ptr<Game::Entity> >& filteredEntitys, Game::Entity::EntityPool pool = Game::Entity::LivePool, bool failOnDBError = true) const;
+    virtual nArray<Game::Entity*> CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, const nArray<Ptr<Game::Entity> >& filteredEntities, Game::Entity::EntityPool pool = Game::Entity::LivePool, bool failOnDBError = true) const;
     /// create new entity from world database using GUID as key attribute
     virtual Game::Entity* CreateEntityByGuid(const nString& guid, Game::Entity::EntityPool pool = Game::Entity::LivePool) const;
     /// create a new entity from a row of a database reader (fastest way to load many entities)

@@ -48,7 +48,7 @@ Property::GetActiveEntityPools() const
     Returns whether this property should be attached to entities in the given
     state.
 
-    The deault implementation returns true, i.e. this property is always
+    The default implementation returns true, i.e. this property is always
     attached to entites, regardless of the given state.
 
     Properties that do not want this behavior should override this method and
@@ -116,7 +116,7 @@ Property::OnLoad()
 /**
     This method is called from within Game::Entity::OnStart(). This is the moment
     when the world is complete and the entity can establish connections to other
-    entitys.
+    entities.
 */
 void
 Property::OnStart()

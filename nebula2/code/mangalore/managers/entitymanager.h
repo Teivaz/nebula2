@@ -91,21 +91,21 @@ private:
     bool isInOnFrame;
 
 protected:
-    /// remove entity from registry (handles late dissmiss)
+    /// remove entity from registry (handles late dismiss)
     void RemoveEntityFromRegistry(Game::Entity* entity);
     /// add entity to registry (handles late dismiss)
     void AddEntityToReqistry(Game::Entity* entity);
-    /// update the registry (cleanup dissmissed entitys, attach new entitys)
+    /// update the registry (cleanup dismissed entities, attach new entities)
     void UpdateRegistry();
 
     /// create an on-demand sleeping entities
-    nArray<Game::Entity*> CreateSleepingEntities(const nArray<Db::Attribute>& keyAttributes, const nArray<Ptr<Game::Entity> >& filteredEntitys, bool failOnDBError = true);
+    nArray<Game::Entity*> CreateSleepingEntities(const nArray<Db::Attribute>& keyAttributes, const nArray<Ptr<Game::Entity> >& filteredEntities, bool failOnDBError = true);
 
     nArray<Ptr<Game::Entity> > entities;
     nKeyArray<Game::Entity*> entityRegistry;
 
-    nArray<Ptr<Game::Entity> > newEntitys;
-    nArray<Ptr<Game::Entity> > removedEntitys;
+    nArray<Ptr<Game::Entity> > newEntities;
+    nArray<Ptr<Game::Entity> > removedEntities;
 
     #if __NEBULA_STATS__
     nWatched statsNumEntities;

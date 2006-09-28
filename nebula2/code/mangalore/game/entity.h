@@ -27,7 +27,7 @@
     (like the GraphicsProperty) make only sense for Live entities.
     Properties where the active entity pools mask doesn't match
     the pool of their entity won't even be added, and as such don't
-    cost unecessary memory and processing time.
+    cost unnecessary memory and processing time.
 
     (C) 2003 RadonLabs GmbH
 */
@@ -66,7 +66,7 @@ public:
     enum EntityPool
     {
         LivePool = (1<<0),          // a normal "live" entity
-        SleepingPool = (1<<1),      // a sleeping (external) entity which is just a frontend to database data
+        SleepingPool = (1<<1),      // a sleeping (external) entity which is just a front-end to database data
     };
 
     /// constructor
@@ -116,7 +116,7 @@ public:
     /// called before saving from database happens
     virtual void OnSave();
 
-    //=== access to the embedded dispatcher (to be able to listen to msgs a entitys gets) ===
+    //=== access to the embedded dispatcher (to be able to listen to msgs a entities gets) ===
     /// attach to the embedded dispatcher message port
     void AttachPort(Message::Port* port);
     /// remove from the embedded dispatcher message port

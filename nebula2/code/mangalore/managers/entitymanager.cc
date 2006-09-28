@@ -72,15 +72,15 @@ EntityManager::RemoveEntityFromRegistry(Game::Entity* entity)
     {
         // [mse] 16.05.2006
         // look first in new entities, if entity was added in the same frame
-        nArray<Ptr<Entity> >::iterator iter = this->newEntitys.Find(entity);
+        nArray<Ptr<Entity> >::iterator iter = this->newEntities.Find(entity);
         if(0 != iter)
         {
-            this->newEntitys.Erase(iter);
+            this->newEntities.Erase(iter);
         }
         else
         {
-            // save removed entity in array (to make shure the entity does not get destroyed until end of frame)
-            this->removedEntitys.Append(entity);
+            // save removed entity in array (to make sure the entity does not get destroyed until end of frame)
+            this->removedEntities.Append(entity);
 
             // inside OnFrame, just set the ptrs to 0, so the entity is not longer triggered
             this->entityRegistry.GetElement(entity->GetUniqueId()) = 0;
@@ -112,7 +112,7 @@ EntityManager::AddEntityToReqistry(Game::Entity* entity)
     if (this->isInOnFrame)
     {
         // do not add the entity directly, to prevent a partly OnFrame trigger
-        this->newEntitys.Append(entity);
+        this->newEntities.Append(entity);
     }
     else
     {
@@ -128,8 +128,8 @@ EntityManager::AddEntityToReqistry(Game::Entity* entity)
 void
 EntityManager::UpdateRegistry()
 {
-    // cleanup the removed entitys, they should be destroyed now
-    this->removedEntitys.Clear();
+    // cleanup the removed entities, they should be destroyed now
+    this->removedEntities.Clear();
 
     int entityIndex;
     // remove all 0 ptrs from ID KeyArray
@@ -146,7 +146,7 @@ EntityManager::UpdateRegistry()
         }
     }
 
-    // remove 0 ptrs from entity array and add new entitys
+    // remove 0 ptrs from entity array and add new entities
     for (entityIndex = 0; entityIndex < this->entities.Size(); /*empty*/)
     {
         if (this->entities[entityIndex] != 0)
@@ -157,11 +157,11 @@ EntityManager::UpdateRegistry()
         else
         {
             // 0 ptr found
-            if (this->newEntitys.Size() > 0)
+            if (this->newEntities.Size() > 0)
             {
                 // move one of the new entity at this 0 ptr
-                this->entities[entityIndex] = this->newEntitys.Back();
-                this->newEntitys.Erase(this->newEntitys.Size() - 1);
+                this->entities[entityIndex] = this->newEntities.Back();
+                this->newEntities.Erase(this->newEntities.Size() - 1);
 
                 // add to ID KeyArray
                 this->entityRegistry.Add(this->entities[entityIndex]->GetUniqueId(), this->entities[entityIndex]);
@@ -180,11 +180,11 @@ EntityManager::UpdateRegistry()
     }
 
     // remove remaining 0 ptrs from entity array
-    while (this->newEntitys.Size() > 0)
+    while (this->newEntities.Size() > 0)
     {
-        // move remaining new entitys to entity array
-        this->entities.Append(this->newEntitys.Back());
-        this->newEntitys.Erase(this->newEntitys.Size() - 1);
+        // move remaining new entities to entity array
+        this->entities.Append(this->newEntities.Back());
+        this->newEntities.Erase(this->newEntities.Size() - 1);
 
         // add to ID KeyArray
         this->entityRegistry.Add(this->entities.Back()->GetUniqueId(), this->entities.Back());
@@ -264,7 +264,7 @@ EntityManager::DeleteEntity(Entity* entity)
 void
 EntityManager::RemoveAllEntities()
 {
-    n_assert(!this->isInOnFrame); // make sure the entitys will be deleted, or this would be a endless loop!
+    n_assert(!this->isInOnFrame); // make sure the entities will be deleted, or this would be a endless loop!
     while (this->entities.Size() > 0)
     {
         this->RemoveEntity(this->entities.Back());
@@ -400,7 +400,7 @@ EntityManager::OnFrame()
     n_assert(this->isInOnFrame);
     this->isInOnFrame = false;
 
-    // update the reqistry, delete removed entitys, append new entitys, cleanup 0 ptrs
+    // update the registry, delete removed entities, append new entities, cleanup 0 ptrs
     PROFILER_START(this->profUpdateRegistry);
     this->UpdateRegistry();
     PROFILER_STOP(this->profUpdateRegistry);
@@ -459,15 +459,15 @@ EntityManager::GetEntityByGuid(const nString& guid, bool liveOnly)
     Db::Attribute dbAttr(Attr::GUID);
     dbAttr.SetString(guid);
 
-    nArray<Ptr<Game::Entity> > entitys = this->GetEntitiesByAttr(dbAttr, liveOnly, true);
+    nArray<Ptr<Game::Entity> > entities = this->GetEntitiesByAttr(dbAttr, liveOnly, true);
 
-    if (entitys.Size() > 1)
+    if (entities.Size() > 1)
     {
-        n_error("EntityManager::GetEntityByGuid: found %i entities the GUID '%s'! GUID must be unique!", entitys.Size(), guid.Get());
+        n_error("EntityManager::GetEntityByGuid: found %i entities the GUID '%s'! GUID must be unique!", entities.Size(), guid.Get());
     }
-    else if (entitys.Size() == 1)
+    else if (entities.Size() == 1)
     {
-        return entitys[0];
+        return entities[0];
     }
     return Ptr<Entity>();
 }
@@ -493,15 +493,15 @@ EntityManager::GetEntityByName(const nString& name, bool liveOnly)
     Db::Attribute dbAttr(Attr::Name);
     dbAttr.SetString(name);
 
-    nArray<Ptr<Game::Entity> > entitys = this->GetEntitiesByAttr(dbAttr, liveOnly, true);
+    nArray<Ptr<Game::Entity> > entities = this->GetEntitiesByAttr(dbAttr, liveOnly, true);
 
-    if (entitys.Size() > 1)
+    if (entities.Size() > 1)
     {
-        n_error("EntityManager::GetEntityByName: found %i entities with the name '%s'! name must be unique!", entitys.Size(), name.Get());
+        n_error("EntityManager::GetEntityByName: found %i entities with the name '%s'! name must be unique!", entities.Size(), name.Get());
     }
-    else if (entitys.Size() == 1)
+    else if (entities.Size() == 1)
     {
-        return entitys[0];
+        return entities[0];
     }
     return Ptr<Entity>();
 }
@@ -536,7 +536,7 @@ EntityManager::GetEntitiesByAttr(const Db::Attribute& attr, bool liveOnly, bool 
 bool
 EntityManager::ExistsEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bool liveOnly) const
 {
-    // search in the active entitys
+    // search in the active entities
     int entityIndex;
     int numEntities = this->GetNumEntities();
     for (entityIndex = 0; entityIndex < numEntities; entityIndex++)
@@ -605,14 +605,14 @@ EntityManager::ExistsEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bo
 /**
     Generic function to find entities by attributes.
 
-    @param liveOnly         set if only live enities are requested
+    @param liveOnly         set if only live entities are requested
     @param onlyFirstEntity  set to stop search if the 1st entity was found
 
 */
 nArray<Ptr<Game::Entity> >
 EntityManager::GetEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bool liveOnly, bool onlyFirstEntity, bool failOnDBError)
 {
-    // collect active entitys
+    // collect active entities
     nArray<Ptr<Entity> > entities;
     int entityIndex;
     int numEntities = this->GetNumEntities();
@@ -652,11 +652,11 @@ EntityManager::GetEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bool 
 
     if (!liveOnly)
     {
-        // get entitys from db
-        nArray<Entity*> dbEntitys = this->CreateSleepingEntities(attributes, entities, failOnDBError);
-        for (int i = 0; i < dbEntitys.Size(); i++)
+        // get entities from db
+        nArray<Entity*> dbEntities = this->CreateSleepingEntities(attributes, entities, failOnDBError);
+        for (int i = 0; i < dbEntities.Size(); i++)
         {
-            entities.Append(dbEntitys[i]);
+            entities.Append(dbEntities[i]);
         }
     }
 
@@ -670,13 +670,13 @@ EntityManager::GetEntitiesByAttrs(const nArray<Db::Attribute>& attributes, bool 
     it to the world. Please note that the method may return a array with 0
     elements if such entities are not found in the database!
 
-    If there are filteredEntitys those will be filtered in the DB query by
+    If there are filteredEntities those will be filtered in the DB query by
     GUID.
 */
 nArray<Entity*>
-EntityManager::CreateSleepingEntities(const nArray<Db::Attribute>& keyAttributes, const nArray<Ptr<Game::Entity> >& filteredEntitys, bool failOnDBError)
+EntityManager::CreateSleepingEntities(const nArray<Db::Attribute>& keyAttributes, const nArray<Ptr<Game::Entity> >& filteredEntities, bool failOnDBError)
 {
-    nArray<Entity*> entities = FactoryManager::Instance()->CreateEntitiesByKeyAttrs(keyAttributes, filteredEntitys, Entity::SleepingPool, failOnDBError);
+    nArray<Entity*> entities = FactoryManager::Instance()->CreateEntitiesByKeyAttrs(keyAttributes, filteredEntities, Entity::SleepingPool, failOnDBError);
     for (int i = 0; i < entities.Size(); i++)
     {
         this->AttachEntity(entities[i]);

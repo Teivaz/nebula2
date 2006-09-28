@@ -328,7 +328,7 @@ public:
     void Cleanup(nArray< nArray<int> >* collapseMap);
     /// make triangle-vertices unique, creating redundant vertices, opposite of Cleanup()
     void Inflate();
-    /// build edge information (only works on clean meshes, and it not alowed to change the mesh later)
+    /// build edge information (only works on clean meshes, and it not allowed to change the mesh later)
     void CreateEdges();
     /// optimize for t&l hardware vertex cache
     void Optimize();
@@ -370,7 +370,7 @@ private:
         ushort GroupID;
     };
 
-    /// static userdata pointer for qsort hook
+    /// static user data pointer for qsort hook
     static nMeshBuilder* nMeshBuilder::qsortData;
     /// a qsort() hook for generating a sorted index array
     static int __cdecl VertexSorter(const void* elm0, const void* elm1);
@@ -1285,7 +1285,7 @@ nMeshBuilder::GetEdgeAt(int index) const
     This method copies a triangle with its vertices from the source mesh
     to this mesh. Vertices will only be copied if they don't already exist
     in this mesh. To accomplish this, an indexMap array must be provided. The
-    array must contain int enties and its size must be identical to the
+    array must contain int entries and its size must be identical to the
     number of vertices in the source mesh. The array elements must be
     initialized with -1. The copy method will record any copied vertices
     into the index map, so that it can find out at a later iteration if
