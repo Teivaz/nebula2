@@ -11,7 +11,6 @@
 */
 #include "application/app.h"
 #include "physics/boxshape.h"
-//#include "application/dsaappmsghandler.h"
 //------------------------------------------------------------------------------
 namespace Viewer
 {

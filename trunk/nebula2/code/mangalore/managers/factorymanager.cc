@@ -350,7 +350,7 @@ FactoryManager::CreateEntityByKeyAttr(const Db::Attribute& key, Entity::EntityPo
     FIXME: This method does 1 + numEnities complete queries on the database!!
 */
 nArray<Entity*>
-FactoryManager::CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, const nArray<Ptr<Game::Entity> >& filteredEntitys, Entity::EntityPool entityPool, bool failOnDBError) const
+FactoryManager::CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, const nArray<Ptr<Game::Entity> >& filteredEntities, Entity::EntityPool entityPool, bool failOnDBError) const
 {
     nArray<Entity*> entities;
 
@@ -365,9 +365,9 @@ FactoryManager::CreateEntitiesByKeyAttrs(const nArray<Db::Attribute>& keys, cons
         dbQuery->AddWhereAttr(keys[i]);
     }
     // add filter entities where not clause
-    for (int i = 0; i < filteredEntitys.Size(); i++)
+    for (int i = 0; i < filteredEntities.Size(); i++)
     {
-        dbQuery->AddWhereAttr(filteredEntitys[i]->GetAttr(Attr::GUID), true); // NOT
+        dbQuery->AddWhereAttr(filteredEntities[i]->GetAttr(Attr::GUID), true); // NOT
     }
 
     // define results

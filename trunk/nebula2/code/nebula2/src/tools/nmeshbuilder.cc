@@ -167,7 +167,7 @@ nMeshBuilder::Transform(const matrix44& m44)
 
 //------------------------------------------------------------------------------
 /**
-    Build triangle neighbour data - edges:
+    Build triangle neighbor data - edges:
 
     1 - create TempEdge data, 2 vertexIndex + faceIndex, where vertexIndex1 < vertexIndex2
         for every face and store in array for sorting.
@@ -176,7 +176,7 @@ nMeshBuilder::Transform(const matrix44& m44)
     2 - sort TempEdge data by: groupID vertexIndex1 vertexIndex2 (TempEdgeSorter)
 
     3 - create GroupedEdges, divided by groupedID, merge the 2 tempEdge halfs to a complete edge, or
-        marke border edges with a face index of -1;
+        marked border edges with a face index of -1;
 
     4 - sort GroupedEdges by: GroupID faceIndex1 faceIndex2 (GroupedEdgeSorter)
 
@@ -253,7 +253,7 @@ nMeshBuilder::CreateEdges()
             edge.fIndex[0] = currEdge.fIndex;
             edge.fIndex[1] = nextEdge.fIndex;
 
-            //skip next element becauce we handled it already
+            //skip next element because we handled it already
             i++;
         }
         else
@@ -289,7 +289,7 @@ nMeshBuilder::CreateEdges()
     // sort grouped edges array
     qsort(groupedEdgeArray, groupedEdgeIndex, sizeof(GroupedEdge), nMeshBuilder::GroupedEdgeSorter);
 
-    // all edges that are use from triangles with the same groupID are now in continious chunks
+    // all edges that are use from triangles with the same groupID are now in continuous chunks
     // remove duplicate edges when in the same group
     // don't skip duplicate edges when they are used from triangles with different groups
 
@@ -328,9 +328,9 @@ nMeshBuilder::CreateEdges()
 /**
     qsort() hook for CreateEdges() - sort tempEdges
 
-    the compare is done cross, becuase if 2 faces share the same edge, than
-    the index order for the egde from face1 is i0 - i1,
-    but for face2 the order is allways i1 - i0.
+    the compare is done cross, because if 2 faces share the same edge, than
+    the index order for the edge from face1 is i0 - i1,
+    but for face2 the order is always i1 - i0.
     sort by:
     - groupID
     - 1st vertex index (the 1st vertex index of the tempEdge is the smaller one)
@@ -1393,7 +1393,7 @@ nMeshBuilder::CheckForDuplicatedFaces()
     nArray<nString> emptyArray;
     return emptyArray;
 
-// FIXME: temporarly commented out because of error with quad geometry
+// FIXME: temporarily commented out because of error with quad geometry
 /*
     // create temporary meshbuilder and erase any vertexcomponent but the COORD, then search for duplicated faces
     nMeshBuilder tempBuilder = *this;

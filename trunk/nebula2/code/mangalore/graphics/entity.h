@@ -143,9 +143,9 @@ public:
 
     /// get the cell the entity is currently attached to
     Cell* GetCell() const;
-    /// clear links (decrs refcount)
+    /// clear links (decrease refcount)
     void ClearLinks(LinkType linkType);
-    /// add a link (incs refcount)
+    /// add a link (increase refcount)
     void AddLink(LinkType linkType, Entity* entity);
     /// get number of links
     int GetNumLinks(LinkType linkType) const;
@@ -159,7 +159,7 @@ public:
     void SetRenderFlag(nRenderContext::Flag f, bool b);
     /// get a Nebula2 render flag
     bool GetRenderFlag(nRenderContext::Flag f) const;
-    /// set user data, this is a dirty way to get this physics entity's game entity
+    /// set user data, this is a dirty way to get this graphics entity's game entity
     void SetUserData(int d);
     /// get user data
     int GetUserData() const;
