@@ -207,14 +207,14 @@ endmodule
 
 beginmodule nclientsh
     setdir tools
-    setsources {
+    setfiles {
         nclientsh
     }
 endmodule
 
 beginmodule ncompileshaders
     setdir tools
-    setsources {
+    setfiles {
         ncompileshaders
     }
 endmodule
@@ -256,7 +256,7 @@ endmodule
 
 beginmodule nmasterserversh
     setdir tools
-    setsources {
+    setfiles {
         nmasterserversh
     }
 endmodule
