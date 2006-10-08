@@ -10,7 +10,6 @@ beginworkspace nebula2tools
         nbumprev
         nbundler
         nclientsh
-        ncompileshaders
         ngetcrc
         ngfxtool
         nmakepatch
@@ -23,6 +22,7 @@ beginworkspace nebula2tools
         nstub
     }
 endworkspace
+#       ncompileshaders
 #       nimagetool
 
 begintarget nanalyzeexport
