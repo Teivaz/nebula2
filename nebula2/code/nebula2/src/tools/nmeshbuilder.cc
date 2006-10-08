@@ -573,7 +573,7 @@ nMeshBuilder::Vertex::Compare(const Vertex& rhs) const
 //------------------------------------------------------------------------------
 /**
     Cleanup the mesh. This removes redundant vertices and optionally record
-    the collapse history into a client-provided collapseMap. The collaps map
+    the collapse history into a client-provided collapseMap. The collapse map
     contains at each new vertex index the 'old' vertex indices which have
     been collapsed into the new vertex.
 
