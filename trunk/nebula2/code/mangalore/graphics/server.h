@@ -84,7 +84,7 @@ public:
     void RenderDebug();
     /// finish rendering the scene
     void EndRender();
-    /// set the current graphics level object (incrs refcount)
+    /// set the current graphics level object (increase refcount)
     void SetLevel(Level* level);
     /// get the current graphics level object
     Level* GetLevel() const;
@@ -109,7 +109,7 @@ private:
     friend class Cell;
 
     #if __NEBULA_STATS__
-    /// statistics: num visible entities from light or camers
+    /// statistics: num visible entities from light or cameras
     void AddNumVisibleEntities(Entity::Type observedType, Entity::LinkType linkType, int incr);
     /// statistics: num cells visited for camera visibility checks
     void AddNumVisitedCells(Entity::LinkType linkType, int incr);
@@ -126,7 +126,7 @@ private:
     Ptr<Level> curLevel;
     Ptr<AnimTable> animTable;
 
-    uint frameId;                       // a unique frameId
+    uint frameId;                       // an unique frameId
     nString renderPath;
     nString featureSet;
     nTime time;

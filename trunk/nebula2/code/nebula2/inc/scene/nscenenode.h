@@ -70,7 +70,7 @@ public:
     virtual void RenderContextDestroyed(nRenderContext* renderContext);
     /// called by nSceneServer when object is attached to scene
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// return true if node provides transformion
+    /// return true if node provides transformation
     virtual bool HasTransform() const;
     /// return true if node provides geometry
     virtual bool HasGeometry() const;
@@ -172,7 +172,7 @@ protected:
     Define the local bounding box. Shape node compute their bounding
     box automatically at load time. This method can be used to define
     bounding boxes for other nodes. This may be useful for higher level
-    code like gameframeworks. Nebula itself only uses bounding boxes
+    code like game frameworks. Nebula itself only uses bounding boxes
     defined on shape nodes.
 */
 inline

@@ -6,7 +6,7 @@
 
     Abstract Graphics Property.
 
-    Baseclass for all Graphics Propertys.
+    Base class for all Graphics Properties.
 
     (C) 2006 Radon Labs GmbH
 */
