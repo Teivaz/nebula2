@@ -72,6 +72,6 @@ private:
     nString name;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

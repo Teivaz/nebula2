@@ -91,7 +91,7 @@ DynamicLabel::GetResourceName() const
     return this->resourceName;
 }
 
-}; // namespace UI
+} // namespace UI
 
 //------------------------------------------------------------------------------
 #endif

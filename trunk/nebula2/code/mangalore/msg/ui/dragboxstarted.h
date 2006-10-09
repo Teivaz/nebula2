@@ -22,7 +22,7 @@ class DragBoxStarted : public Msg
 
 RegisterFactory(DragBoxStarted);
 
-}; // namespace Msg
+} // namespace Msg
 //------------------------------------------------------------------------------
 #endif
 

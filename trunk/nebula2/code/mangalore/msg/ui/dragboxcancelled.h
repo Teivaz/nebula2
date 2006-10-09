@@ -22,7 +22,7 @@ class DragBoxCancelled : public Msg
 
 RegisterFactory(DragBoxCancelled);
 
-}; // namespace Msg
+} // namespace Msg
 //------------------------------------------------------------------------------
 #endif
 

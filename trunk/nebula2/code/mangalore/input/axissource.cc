@@ -118,4 +118,4 @@ AxisSource::GetAxisValue() const
     return this->axisFilter.GetFilteredValue();
 }
 
-}; // namespace Input
+} // namespace Input

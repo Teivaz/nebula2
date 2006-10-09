@@ -233,6 +233,6 @@ const char* ParamToString(Param p);
 /// convert string to parameter
 Param StringToParam(const char* str);
 
-}; // namespace nShaderState
+} // namespace nShaderState
 //------------------------------------------------------------------------------
 #endif

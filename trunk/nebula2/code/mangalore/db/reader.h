@@ -80,7 +80,7 @@ Reader::IsOpen() const
     return this->isOpen;
 }
 
-}; // namespace Db
+} // namespace Db
 //------------------------------------------------------------------------------
 #endif
 

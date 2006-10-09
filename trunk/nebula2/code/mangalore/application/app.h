@@ -47,6 +47,7 @@
 //------------------------------------------------------------------------------
 namespace Application
 {
+
 class StateHandler;
 
 class App

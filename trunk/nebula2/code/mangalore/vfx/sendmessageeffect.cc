@@ -42,4 +42,4 @@ SendMessageEffect::OnStart()
     this->OnDeactivate();
 }
 
-}; // namespace VFX
+} // namespace VFX

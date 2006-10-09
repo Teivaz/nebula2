@@ -76,6 +76,6 @@ private:
     bool resetState;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

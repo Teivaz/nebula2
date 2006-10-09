@@ -36,6 +36,6 @@ private:
     int absMousePositionY;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

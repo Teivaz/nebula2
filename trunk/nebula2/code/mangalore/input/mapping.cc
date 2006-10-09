@@ -214,4 +214,4 @@ Mapping::RemoveInputSink(int priority, Message::Port* sink)
     }
 }
 
-}; // namespace Input
+} // namespace Input

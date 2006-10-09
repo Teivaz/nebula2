@@ -34,12 +34,12 @@ namespace Attr
     DeclareString(TimeSourceId);
     DeclareFloat(TimeSourceTime);
     DeclareFloat(TimeSourceFactor);
-};
+}
 
 namespace Managers
 {
     class TimeManager;
-};
+}
 
 //------------------------------------------------------------------------------
 namespace Game
@@ -197,6 +197,6 @@ TimeSource::IsPaused() const
     return (this->pauseCounter > 0);
 }
 
-}; // namespace Game
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

@@ -86,4 +86,4 @@ TextEffect::OnFrame()
     }
 }
 
-}; // namespace VFX
+} // namespace VFX

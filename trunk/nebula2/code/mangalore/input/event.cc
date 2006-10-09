@@ -278,4 +278,4 @@ Event::GetPriority() const
     return this->priority;
 }
 
-}; // namespace Input
+} // namespace Input

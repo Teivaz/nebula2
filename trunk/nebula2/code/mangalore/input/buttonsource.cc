@@ -405,4 +405,4 @@ ButtonSource::GetButtonId() const
     return this->buttonId;
 }
 
-}; // namespace Input
+} // namespace Input

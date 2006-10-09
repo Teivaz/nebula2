@@ -58,7 +58,7 @@ CharacterProfile::Open(const nString& characterProfileName)
     return false;
 }
 
-}; // namespace Loader
+} // namespace Loader
 
 
 

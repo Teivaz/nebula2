@@ -55,4 +55,4 @@ void CeGuiTimeSource::Continue() {
     // just return...
 }
 
-}; // namespace Game
+} // namespace Game

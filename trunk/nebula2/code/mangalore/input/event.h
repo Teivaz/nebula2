@@ -149,6 +149,6 @@ private:
     int priority;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

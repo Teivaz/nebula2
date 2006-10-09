@@ -133,6 +133,6 @@ ProgressBarWindow::GetText() const
     return this->text;
 }
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

@@ -249,6 +249,6 @@ DragBox::GetDragBox2D() const
 
 
 
-}; // namespace UI
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

@@ -42,6 +42,6 @@ CeGuiTimeSource* CeGuiTimeSource::Instance() {
     return Singleton;
 }
 
-}; // namespace CEUI
+} // namespace CEUI
 //------------------------------------------------------------------------------
 #endif

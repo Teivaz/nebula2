@@ -51,6 +51,6 @@ private:
     nAxisFilter axisFilter;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

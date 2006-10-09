@@ -82,4 +82,4 @@ GraphicsEffect::OnFrame()
     }
 }
 
-}; // namespace VFX
+} // namespace VFX
