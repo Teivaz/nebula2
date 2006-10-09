@@ -311,7 +311,7 @@ CompositeLoader::Load(const nString& filename)
         // iterate Universal joints
         if (stream.SetToFirstChild("UniversalJoint")) do
         {
-            // create a Universal joint
+            // create an Universal joint
             Ptr<UniversalJoint> joint = Physics::Server::Instance()->CreateUniversalJoint();
 
             this->ParseJointRigidBodies(composite, stream, joint);

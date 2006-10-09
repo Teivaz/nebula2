@@ -68,6 +68,8 @@ protected:
     nArray<Ptr<Game::TimeSource> > timeSourceArray;
 };
 
+RegisterFactory(TimeManager);
+
 //------------------------------------------------------------------------------
 /**
 */
