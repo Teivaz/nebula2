@@ -6,7 +6,7 @@
     @ingroup Threading
     @brief A thread wrapper class for Nebula.
 
-    Wraps a user defined thread function into a c++ object,
+    Wraps an user defined thread function into a c++ object,
     additionally offers a message list for safe communication
     with the thread function.
 

@@ -90,7 +90,7 @@ public:
     void SetOnlineStatus(BuddySystemOnlineStatus status);
 
 
-    /// creates a user
+    /// creates an user
     void CreateUser(const char* user,const char* pass);
     void Login(const char* user,const char* pass);
     void SendMessage(const char* user,const char* message);

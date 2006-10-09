@@ -5,7 +5,7 @@
     @class nTabComplete
     @ingroup Util
 
-    @brief A utility class for Tab completion.
+    @brief An utility class for Tab completion.
 
     (C) 2004 RadonLabs GmbH
 */

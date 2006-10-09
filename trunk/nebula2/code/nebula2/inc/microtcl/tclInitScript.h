@@ -63,7 +63,7 @@ static char initScript[] = "if {[info proc tclInit]==\"\"} {\n\
 	    }\n\
 	}\n\
     }\n\
-    set msg \"Can't find a usable init.tcl in the following directories: \n\"\n\
+    set msg \"Can't find an usable init.tcl in the following directories: \n\"\n\
     append msg \"    $dirs\n\n\"\n\
     append msg \"$errors\n\n\"\n\
     append msg \"This probably means that Tcl wasn't installed properly.\n\"\n\

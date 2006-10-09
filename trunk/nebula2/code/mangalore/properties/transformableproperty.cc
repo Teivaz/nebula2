@@ -68,7 +68,7 @@ TransformableProperty::HandleMessage(Message::Msg* msg)
     }
     else if (msg->CheckId(Message::SetTransform::Id))
     {
-        // create a update transform msg, to update the transformation
+        // create an update transform msg, to update the transformation
         Message::SetTransform* setTransform = (Message::SetTransform*) msg;
         Ptr<Message::UpdateTransform> updateTransform = Message::UpdateTransform::Create();
         updateTransform->SetMatrix(setTransform->GetMatrix());

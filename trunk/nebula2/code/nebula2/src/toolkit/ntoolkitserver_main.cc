@@ -63,7 +63,7 @@ nToolkitServer::Close()
                           should be applied.
     @param shaderHandler Used to identify the handling function to use, can be
                          "common" or "particle2".
-    @param paramID A unique identifier for the parameter that should be
+    @param paramID An unique identifier for the parameter that should be
                    changed, does not need to be globally unique, but unique
                    for one shader.
     @param paramValue A string containing the new value for the parameter.

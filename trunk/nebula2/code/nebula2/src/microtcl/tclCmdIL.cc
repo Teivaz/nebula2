@@ -2900,7 +2900,7 @@ Tcl_LsortObjCmd(clientData, interp, objc, objv)
  *      A pointer to the head of the list after sorting is returned.
  *
  * Side effects:
- *      None, unless a user-defined comparison command does something
+ *      None, unless an user-defined comparison command does something
  *      weird.
  *
  *----------------------------------------------------------------------
@@ -2958,7 +2958,7 @@ MergeSort(headPtr, infoPtr)
  *      The unified list of SortElement structures.
  *
  * Side effects:
- *      None, unless a user-defined comparison command does something
+ *      None, unless an user-defined comparison command does something
  *      weird.
  *
  *----------------------------------------------------------------------
@@ -3033,7 +3033,7 @@ MergeLists(leftPtr, rightPtr, infoPtr)
  *      are equal and it doesn't matter which comes first.
  *
  * Side effects:
- *      None, unless a user-defined comparison command does something
+ *      None, unless an user-defined comparison command does something
  *      weird.
  *
  *----------------------------------------------------------------------

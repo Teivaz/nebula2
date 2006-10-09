@@ -5,7 +5,7 @@
     @class nUserContext
     @ingroup Network
 
-    Represents a user on the server side.
+    Represents an user on the server side.
 
     (C) 2006 RadonLabs GmbH
 */

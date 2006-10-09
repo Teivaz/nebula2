@@ -24,6 +24,8 @@ public:
     virtual ~Frame();
 };
 
-};
+RegisterFactory(Frame);
+
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

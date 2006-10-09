@@ -794,7 +794,7 @@ nGuiServer::Render()
 
 //-----------------------------------------------------------------------------
 /**
-    Declare a UI font using a system font.
+    Declare an UI font using a system font.
 
     @param  fontName    a font name which identifies this font in the UI system
     @param  typeFace    the typeface name (i.e. "Arial")
@@ -841,7 +841,7 @@ nGuiServer::AddSystemFont(const char* fontName, const char* typeFace, int height
 
 //-----------------------------------------------------------------------------
 /**
-    Declare a UI font using a custom font file.
+    Declare an UI font using a custom font file.
 
     @param  fontName    a font name which identifies this font in the UI system
     @param  fontFile    font filename

@@ -17,9 +17,9 @@
 
 namespace UI
 {
-	ImplementRtti(UI::DragBox,  Foundation::RefCounted);
-	ImplementFactory(UI::DragBox);
 
+ImplementRtti(UI::DragBox,  Foundation::RefCounted);
+ImplementFactory(UI::DragBox);
 
 //------------------------------------------------------------------------------
 /**

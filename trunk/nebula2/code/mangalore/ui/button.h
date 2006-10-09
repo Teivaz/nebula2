@@ -60,6 +60,7 @@ protected:
     bool pressed;
     nFixedArray<nRef<nTransformNode> > visuals;
 };
+
 RegisterFactory(Button);
 
 //------------------------------------------------------------------------------

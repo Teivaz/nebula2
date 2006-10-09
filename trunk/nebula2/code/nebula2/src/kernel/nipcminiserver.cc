@@ -177,7 +177,7 @@ nIpcMiniServer::Poll()
                 // if not a system message, add to user message list
                 if (!systemMessage)
                 {
-                    // a user message, add to msg list of thread
+                    // an user message, add to msg list of thread
                     nMsgNode *msgNode = n_new(nMsgNode((void*) curString, strlen(curString) + 1));
                     msgNode->SetPtr((void*) this->clientId);
                     this->ipcServer->msgList.Lock();

@@ -6,7 +6,7 @@
     @ingroup Kernel
 
     nArg encapsulates a typed argument (float, int, bool, string
-    or object pointer) into a uniform C++ class.
+    or object pointer) into an uniform C++ class.
 
     (C) 2002 RadonLabs GmbH
 */

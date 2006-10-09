@@ -73,7 +73,7 @@ nKeyValuePair<KEYTYPE, VALUETYPE>::nKeyValuePair(const KEYTYPE& k, const VALUETY
 //------------------------------------------------------------------------------
 /**
     This strange constructor is useful for search-by-key if
-    the key-value-pairs are stored in a Util::Array.
+    the key-value-pairs are stored in an Util::Array.
 */
 template<class KEYTYPE, class VALUETYPE>
 nKeyValuePair<KEYTYPE, VALUETYPE>::nKeyValuePair(const KEYTYPE& k) :

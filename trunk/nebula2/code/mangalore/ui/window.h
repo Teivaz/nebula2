@@ -69,6 +69,8 @@ protected:
     bool closedFromEventHandler;
 };
 
+RegisterFactory(Window);
+
 //------------------------------------------------------------------------------
 /**
 */

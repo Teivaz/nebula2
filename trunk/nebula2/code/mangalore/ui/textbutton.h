@@ -27,6 +27,8 @@ protected:
     nString text;
 };
 
+RegisterFactory(TextButton);
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -47,6 +49,6 @@ TextButton::GetText() const
     return this->text;
 }
 
-};
+} // namespace UI
 //------------------------------------------------------------------------------
 #endif

@@ -20,7 +20,7 @@
 
 /*
  * The pageMap is indexed by page number and returns an alternate page number
- * that identifies a unique page of characters.  Many Unicode characters map
+ * that identifies an unique page of characters.  Many Unicode characters map
  * to the same alternate page number.
  */
 
@@ -154,7 +154,7 @@ static unsigned char pageMap[] = {
 
 /*
  * The groupMap is indexed by combining the alternate page number with
- * the page offset and returns a group number that identifies a unique
+ * the page offset and returns a group number that identifies an unique
  * set of character attributes.
  */
 
@@ -489,7 +489,7 @@ static unsigned char groupMap[] = {
 };
 
 /*
- * Each group represents a unique set of character attributes.  The attributes
+ * Each group represents an unique set of character attributes.  The attributes
  * are encoded into a 32-bit value as follows:
  *
  * Bits 0-4	Character category: see the constants listed below.
@@ -497,7 +497,7 @@ static unsigned char groupMap[] = {
  * Bits 5-7	Case delta type: 000 = identity
  *				 010 = add delta for lower
  *				 011 = add delta for lower, add 1 for title
- *				 100 = sutract delta for title/upper
+ *				 100 = subtract delta for title/upper
  *				 101 = sub delta for upper, sub 1 for title
  *				 110 = sub delta for upper, add delta for lower
  *

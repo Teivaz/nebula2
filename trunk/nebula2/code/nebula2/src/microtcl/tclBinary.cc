@@ -54,7 +54,7 @@ static void		UpdateStringOfByteArray _ANSI_ARGS_((Tcl_Obj *listPtr));
  * map between bytes and characters.
  *
  * Converting a ByteArray to a String proceeds by casting each byte in the
- * array to a 16-bit quantity, treating that number as a Unicode character,
+ * array to a 16-bit quantity, treating that number as an Unicode character,
  * and storing the UTF-8 version of that Unicode character in the String.
  * For ByteArrays consisting entirely of values 1..127, the corresponding
  * String representation is the same as the ByteArray representation.

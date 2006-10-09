@@ -129,7 +129,7 @@ public:
     static void Vector3ToOde(const vector3& from, dVector3& to);
     /// convert Ode vector to vector3
     static void OdeToVector3(const dVector3& from, vector3& to);
-    /// get a unique stamp value
+    /// get an unique stamp value
     static uint GetUniqueStamp();
     /// get ode world id
     dWorldID GetOdeWorldId() const;

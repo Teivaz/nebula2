@@ -61,7 +61,7 @@ private:
         int GlobalToLocalJointIndex(int globalJointIndex) const;
 
     private:
-        /// add a unique index to an int array
+        /// add an unique index to an int array
         void AddUniqueJointIndex(nArray<int>& intArray, int index);
         /// get all joint indices of a triangle
         void GetTriangleJoints(const nMeshBuilder::Triangle& tri, nArray<int>& triJoints);
@@ -126,7 +126,7 @@ nSkinPartitioner::Partition::GetGroupId() const
 
 //------------------------------------------------------------------------------
 /**
-    Add a unique index to an int array.
+    Add an unique index to an int array.
 */
 inline
 void

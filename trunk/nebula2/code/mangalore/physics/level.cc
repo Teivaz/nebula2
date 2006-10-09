@@ -376,7 +376,7 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
         RigidBody* rigid1 = shape1->GetRigidBody();
         RigidBody* rigid2 = shape2->GetRigidBody();
 
-        // build a unique key for every colliding shape combination
+        // build an unique key for every colliding shape combination
         if (shape1 < shape2)
         {
             key[0] = shape1;

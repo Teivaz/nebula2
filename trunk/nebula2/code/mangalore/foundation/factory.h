@@ -50,7 +50,7 @@ protected:
 private:
 	static Factory* instance;
 
-	// To be replaced by a useful radonlabs hash table (there is none so far)...
+	// To be replaced by an useful radonlabs hash table (there is none so far)...
 	struct Cell
 	{
 		Cell() : name(""), function(0) {};

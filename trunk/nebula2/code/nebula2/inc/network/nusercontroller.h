@@ -27,7 +27,7 @@ public:
 
     bool AddUser(int ClientId,nString& name,nGuid& gameID);
     void DeleteUser(int ClientId);
-    /// deletes a user by it's name - returns true if found
+    /// deletes an user by it's name - returns true if found
     bool DeleteUser(nString& user);
     nUserContext* GetUserContext(int ClientId);
     bool GetClientID(nString& user,int& id);

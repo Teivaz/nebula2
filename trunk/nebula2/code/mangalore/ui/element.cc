@@ -302,6 +302,4 @@ Element::SetVisible(bool b)
     }
 }
 
-
-
-} // namespace
+} // namespace UI

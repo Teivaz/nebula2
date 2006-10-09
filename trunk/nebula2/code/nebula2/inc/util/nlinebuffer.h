@@ -31,7 +31,7 @@ public:
     int GetNextLine(int) const;
     /// get line number of next line
     int GetPrevLine(int) const;
-    /// fill a user provided array with pointers to lines
+    /// fill an user provided array with pointers to lines
     int GetLines(const char** array, int arraySize) const;
 
 private:

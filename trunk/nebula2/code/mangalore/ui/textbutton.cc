@@ -11,4 +11,4 @@ ImplementFactory(UI::TextButton);
 
 // FIXME: if text is changed it must be reflected in the Nebula2
 // text shape nodes...
-};
+} // namespace UI

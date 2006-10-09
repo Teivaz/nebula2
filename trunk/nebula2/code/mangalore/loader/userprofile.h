@@ -4,7 +4,7 @@
 /**
     @class Loader::UserProfile
 
-    A user profile represents a storage where all user specific
+    An user profile represents a storage where all user specific
     data is kept across application restarts. This usually includes
     save games, options, and other per-user data. Mangalore applications should
     at least support a default profile, but everything is there to

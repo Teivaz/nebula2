@@ -383,7 +383,7 @@ Tcl_UtfToUniChar(str, chPtr)
  * Results:
  *	The return value is a pointer to the Unicode representation of the
  *	UTF-8 string.  Storage for the return value is appended to the
- *	end of dsPtr.  The Unicode string is terminated with a Unicode
+ *	end of dsPtr.  The Unicode string is terminated with an Unicode
  *	NULL character.
  *
  * Side effects:
@@ -603,7 +603,7 @@ Tcl_UtfFindLast(string, ch)
  *
  * Tcl_UtfNext --
  *
- *	Given a pointer to some current location in a UTF-8 string,
+ *	Given a pointer to some current location in an UTF-8 string,
  *	move forward one character.  The caller must ensure that they
  *	are not asking for the next character after the last character
  *	in the string.
@@ -632,7 +632,7 @@ Tcl_UtfNext(str)
  *
  * Tcl_UtfPrev --
  *
- *	Given a pointer to some current location in a UTF-8 string,
+ *	Given a pointer to some current location in an UTF-8 string,
  *	move backwards one character.
  *
  * Results:
@@ -758,7 +758,7 @@ Tcl_UtfAtIndex(src, index)
  *	count of the number of bytes in the backslash sequence.
  *
  * Side effects:
- *	The maximum number of bytes it takes to represent a Unicode
+ *	The maximum number of bytes it takes to represent an Unicode
  *	character in UTF-8 is guaranteed to be less than the number of
  *	bytes used to express the backslash sequence that represents
  *	that Unicode character.  If the target buffer into which the
@@ -898,7 +898,7 @@ Tcl_UtfBackslash(src, readPtr, dst)
  *
  * Tcl_UtfToUpper --
  *
- *	Convert lowercase characters to uppercase characters in a UTF
+ *	Convert lowercase characters to uppercase characters in an UTF
  *	string in place.  The conversion may shrink the UTF string.
  *
  * Results:
@@ -951,7 +951,7 @@ Tcl_UtfToUpper(str)
  *
  * Tcl_UtfToLower --
  *
- *	Convert uppercase characters to lowercase characters in a UTF
+ *	Convert uppercase characters to lowercase characters in an UTF
  *	string in place.  The conversion may shrink the UTF string.
  *
  * Results:
@@ -1004,7 +1004,7 @@ Tcl_UtfToLower(str)
  *
  * Tcl_UtfToTitle --
  *
- *	Changes the first character of a UTF string to title case or
+ *	Changes the first character of an UTF string to title case or
  *	uppercase and the rest of the string to lowercase.  The
  *	conversion happens in place and may shrink the UTF string.
  *
@@ -1250,7 +1250,7 @@ Tcl_UniCharToTitle(ch)
  *
  * Tcl_UniCharLen --
  *
- *	Find the length of a UniChar string.  The str input must be null
+ *	Find the length of an UniChar string.  The str input must be null
  *	terminated.
  *
  * Results:
@@ -1399,7 +1399,7 @@ Tcl_UniCharIsAlpha(ch)
  *
  * Tcl_UniCharIsControl --
  *
- *	Test if a character is a Unicode control character.
+ *	Test if a character is an Unicode control character.
  *
  * Results:
  *	Returns non-zero if character is a control.
@@ -1493,7 +1493,7 @@ Tcl_UniCharIsLower(ch)
  *
  * Tcl_UniCharIsPrint --
  *
- *	Test if a character is a Unicode print character.
+ *	Test if a character is an Unicode print character.
  *
  * Results:
  *	Returns non-zero if character is printable.
@@ -1517,7 +1517,7 @@ Tcl_UniCharIsPrint(ch)
  *
  * Tcl_UniCharIsPunct --
  *
- *	Test if a character is a Unicode punctuation character.
+ *	Test if a character is an Unicode punctuation character.
  *
  * Results:
  *	Returns non-zero if character is punct.
@@ -1576,7 +1576,7 @@ Tcl_UniCharIsSpace(ch)
  *
  * Tcl_UniCharIsUpper --
  *
- *	Test if a character is a uppercase Unicode character.
+ *	Test if a character is an uppercase Unicode character.
  *
  * Results:
  *	Returns non-zero if character is uppercase.

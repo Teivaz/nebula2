@@ -27,7 +27,7 @@ public:
     virtual ~FactoryManager();
     /// get instance pointer
     static FactoryManager* Instance();
-    /// create a user interface element from type string
+    /// create an user interface element from type string
     virtual Element* CreateElement(const nString& type) const;
 
 private:

@@ -151,4 +151,4 @@ SimpleCameraProperty::OnCameraOrbit(Message::CameraOrbit* msg)
     this->relVerticalRotation += msg->GetVerticalRotation();
 }
 
-}; // namespace Properties
+} // namespace Properties

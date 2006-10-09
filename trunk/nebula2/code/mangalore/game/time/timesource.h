@@ -80,7 +80,7 @@ public:
     nTime GetTime() const;
     /// get the current frame time
     nTime GetFrameTime() const;
-    /// get a unique frame id
+    /// get an unique frame id
     uint GetFrameId() const;
 
 protected:

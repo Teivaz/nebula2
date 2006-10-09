@@ -61,6 +61,8 @@ private:
     bool debugTextEnabled;
 };
 
+RegisterFactory(ProgressBarWindow);
+
 //------------------------------------------------------------------------------
 /**
 */

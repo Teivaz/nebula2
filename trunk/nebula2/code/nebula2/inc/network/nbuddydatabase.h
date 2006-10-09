@@ -43,7 +43,7 @@ public:
     bool SetProfileAttr(nString& user,nString& game,nString& key,nString& value);
     /// gets a single profile attribute / returns false if attrbute does not exist
     bool GetProfileAttr(nString& user,nString& game,nString& key,nString& value);
-    /// Creates a user in the Database
+    /// Creates an user in the Database
     bool CreateUser(nString& user,nString& password);
     /// Checks whether user exists or not
     bool DoesUserExist(nString& user);

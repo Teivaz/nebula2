@@ -684,7 +684,7 @@ private:
 
 
 /** An attribute is a name-value pair. Elements have an arbitrary
-	number of attributes, each with a unique name.
+	number of attributes, each with an unique name.
 
 	@note The attributes are not TiXmlNodes, since they are not
 		  part of the tinyXML document object model. There are other
