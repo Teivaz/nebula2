@@ -36,7 +36,7 @@ ProgressBarWindow::~ProgressBarWindow()
 
 //------------------------------------------------------------------------------
 /**
-    This setsup a message of the day string from data/messageoftheday.txt.
+    This setup a message of the day string from data/messageoftheday.txt.
 */
 void
 ProgressBarWindow::SetupMessageOfTheDay()
@@ -162,4 +162,4 @@ ProgressBarWindow::Present()
     }
 }
 
-}; // namespace UI
+} // namespace UI

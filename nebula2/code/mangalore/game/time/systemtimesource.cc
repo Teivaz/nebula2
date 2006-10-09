@@ -56,4 +56,4 @@ SystemTimeSource::UpdateTime(nTime fTime)
     nParticleServer2::Instance()->SetTime(this->time);
 }
 
-}; // namespace Game
+} // namespace Game

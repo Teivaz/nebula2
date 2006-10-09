@@ -70,4 +70,4 @@ GuiEffect::OnFrame()
     Effect::OnFrame();
 }
 
-}; // namespace VFX
+} // namespace VFX

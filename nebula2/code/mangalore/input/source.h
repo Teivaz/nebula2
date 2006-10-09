@@ -72,6 +72,6 @@ private:
     nArray<Ptr<Event> > events;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

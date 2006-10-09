@@ -52,4 +52,4 @@ SoundEffect::OnStart()
     this->OnDeactivate();
 }
 
-}; // namespace VFX
+} // namespace VFX

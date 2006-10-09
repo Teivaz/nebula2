@@ -90,4 +90,4 @@ MouseSource::EndFrame()
 }
 
 
-}; // namespace Input
+} // namespace Input

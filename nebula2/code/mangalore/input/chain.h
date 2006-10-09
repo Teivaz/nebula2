@@ -55,6 +55,6 @@ private:
     nArray<PriorityPort> ports;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

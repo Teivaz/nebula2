@@ -10,7 +10,6 @@
 */
 #include "foundation/refcounted.h"
 #include "db/reader.h"
-#include "ui/progressbarwindow.h"
 
 //------------------------------------------------------------------------------
 namespace Loader

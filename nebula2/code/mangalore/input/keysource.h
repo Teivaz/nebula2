@@ -53,6 +53,6 @@ private:
     bool isCharacterInputSource;
 };
 
-}; // namespace Input
+} // namespace Input
 //------------------------------------------------------------------------------
 #endif

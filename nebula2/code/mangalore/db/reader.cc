@@ -221,4 +221,4 @@ Reader::GetMatrix44(Attr::Matrix44AttributeID attrId) const
     return this->query->GetMatrix44(attrId, this->curRowIndex);
 }
 
-}; // namespace Db
+} // namespace Db

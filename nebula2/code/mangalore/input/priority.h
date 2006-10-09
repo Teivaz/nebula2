@@ -19,6 +19,6 @@ static int const InputPriority_DefaultGamePriority = 50;
 // track the mouse position of the windows mouse cursor
 static int const InputPriority_MousePositionTracking = 0;
 
-}; // namespace Input
+} // namespace Input
 
 #endif

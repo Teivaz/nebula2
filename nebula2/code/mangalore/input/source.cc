@@ -161,4 +161,4 @@ Source::AddEvent(Ptr<Event> newEvent)
     this->events.Append(newEvent);
 }
 
-}; // namespace Input
+} // namespace Input

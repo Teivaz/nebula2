@@ -29,4 +29,4 @@ InputTimeSource::~InputTimeSource()
     Singleton = 0;
 }
 
-}; // namespace Game
+} // namespace Game

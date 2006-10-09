@@ -80,6 +80,6 @@ SoundEffect::GetVolume() const
     return this->volume;
 }
 
-}; // namespace VFX
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

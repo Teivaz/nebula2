@@ -186,6 +186,6 @@ Writer::SetFlushTable(bool flush)
     this->flushTable = flush;
 }
 
-}; // namespace Db
+} // namespace Db
 //------------------------------------------------------------------------------
 #endif

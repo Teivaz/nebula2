@@ -299,8 +299,3 @@ main(int argc, const char** argv)
     delete kernelServer;
     return 0;
 }
-
-
-
-
-

@@ -254,4 +254,4 @@ Property::ClearEntity()
     this->entity = 0;
 }
 
-}; // namespace Game
+} // namespace Game

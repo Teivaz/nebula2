@@ -55,4 +55,4 @@ namespace Attr
     DefineString(AnimSet);
     DefineString(CharacterSet);
     DefineString(SoundSet);
-};
+}

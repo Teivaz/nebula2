@@ -45,6 +45,6 @@ SendMessageEffect::AddMessage(Message::Msg* msg)
     this->messages.Append(msg);
 }
 
-}; // namespace VFX
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

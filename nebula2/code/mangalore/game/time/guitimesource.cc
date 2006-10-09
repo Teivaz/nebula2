@@ -65,4 +65,4 @@ GuiTimeSource::Continue()
     // just return...
 }
 
-}; // namespace Game
+} // namespace Game

@@ -40,5 +40,3 @@ int main(int argc, const char** argv)
 	printf(parser.Parse().Get());
     return 0;
 }
-
-

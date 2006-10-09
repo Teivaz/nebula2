@@ -236,4 +236,4 @@ Chain::GetNumSinks() const
 }
 
 
-}; // namespace Input
+} // namespace Input

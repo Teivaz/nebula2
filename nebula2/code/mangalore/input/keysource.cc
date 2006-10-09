@@ -144,4 +144,4 @@ KeySource::GetKeyId() const
     return this->keyId;
 }
 
-}; // namespace Input
+} // namespace Input

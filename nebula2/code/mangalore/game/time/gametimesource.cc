@@ -42,4 +42,4 @@ GameTimeSource::UpdateTime(nTime fTime)
     TimeSource::UpdateTime(fTime);
 }
 
-}; // namespace Game
+} // namespace Game

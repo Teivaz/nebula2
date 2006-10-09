@@ -205,4 +205,4 @@ Writer::EndRow()
     }
 }
 
-}; // namespace Db
+} // namespace Db
