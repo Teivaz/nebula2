@@ -11,6 +11,9 @@ HINSTANCE hInstance;
 ///have we already initiated the custom controlls?
 int controlsInit = FALSE;
 
+/// Kernel server instance
+nKernelServer* kernelServer = 0;
+
 ///the array where a 'unique' instances of the classDesc are registered
 nArray<registeredClassDesc*>* registeredClassDesc::array = 0;
 
@@ -146,12 +149,12 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
             }
 
             //create a new kernelserver if needed
-            if (nKernelServer::Instance() == 0)
+            if (kernelServer == 0)
             {
-                new nKernelServer();
+                kernelServer = new nKernelServer();
 
                 //setup the new log handler
-                nKernelServer::Instance()->SetLogHandler(static_cast<nLogHandler*>(new nMaxLogHandler()));
+                kernelServer->SetLogHandler(static_cast<nLogHandler*>(new nMaxLogHandler()));
 
                 if (!nMaxPluginInitialize())
                     return FALSE;
@@ -168,10 +171,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
                 n_delete(registeredClassDesc::array);
             }
 
-            if (nKernelServer::Instance())
+            if (kernelServer != 0)
             {
-                delete static_cast<nMaxLogHandler*>(nKernelServer::Instance()->GetLogHandler());
-                delete nKernelServer::Instance();
+                delete static_cast<nMaxLogHandler*>(kernelServer->GetLogHandler());
+                delete kernelServer;
             }
         }
         break;
