@@ -51,7 +51,7 @@ static int indexTypeInitialized = 0;
  *
  * Results:
  *
- *	If the value of objPtr is identical to or a unique abbreviation
+ *	If the value of objPtr is identical to or an unique abbreviation
  *	for one of the entries in objPtr, then the return value is
  *	TCL_OK and the index of the matching entry is stored at
  *	*indexPtr.  If there isn't a proper match, then TCL_ERROR is
@@ -108,7 +108,7 @@ Tcl_GetIndexFromObj(interp, objPtr, tablePtr, msg, flags, indexPtr)
  *
  * Results:
  *
- *	If the value of objPtr is identical to or a unique abbreviation
+ *	If the value of objPtr is identical to or an unique abbreviation
  *	for one of the entries in objPtr, then the return value is
  *	TCL_OK and the index of the matching entry is stored at
  *	*indexPtr.  If there isn't a proper match, then TCL_ERROR is
@@ -281,7 +281,7 @@ SetIndexFromAny(interp, objPtr)
  * Tcl_WrongNumArgs --
  *
  *	This procedure generates a "wrong # args" error message in an
- *	interpreter.  It is used as a utility function by many command
+ *	interpreter.  It is used as an utility function by many command
  *	procedures.
  *
  * Results:

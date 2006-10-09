@@ -136,7 +136,7 @@ nSessionServer::Open()
     // initialize session info broadcaster
     this->ipcBroadcaster = n_new(nIpcPeer(0, (nIpcPeer::CanBroadcast | nIpcPeer::CanSend)));
 
-    // create a unique identifier for this session
+    // create an unique identifier for this session
     this->sessionGuid.Generate();
 
     // initialize server attributes

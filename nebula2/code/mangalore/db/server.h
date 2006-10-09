@@ -96,7 +96,7 @@ public:
     void SaveGlobalAttributes();
 
     // FIXME: make the following methods OBSOLETE?
-    /// create a universal query object
+    /// create an universal query object
     virtual Query* CreateQuery(const nString& sqlStatement) const;
     /// create specialized query which returns the data for all levels in the world database
     virtual Query* CreateLevelsQuery() const;

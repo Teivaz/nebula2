@@ -4,12 +4,11 @@
 /**
     @class UI::Server
 
-    Server for the Mangalore 3D-GUI subsystem.
+    Server for the Mangalore 3D GUI subsystem.
 
     (C) 2005 Radon Labs GmbH
 */
 #include "message/port.h"
-#include "foundation/ptr.h"
 #include "util/narray.h"
 #include "graphics/lightentity.h"
 
@@ -78,7 +77,7 @@ public:
 
     /// get mouse position
     const vector2& GetMousePosition() const;
-    /// is mouse over a UI element
+    /// is mouse over an UI element
     bool IsMouseOverGui() const;
     /// convert a 2D screen space position into a position in view space
     vector3 ScreenSpacePosToViewSpace(const vector2& screenSpacePos);
@@ -110,6 +109,8 @@ private:
     matrix44 guiProjMatrix;
     matrix44 invGuiProjMatrix;
 };
+
+RegisterFactory(Server);
 
 //------------------------------------------------------------------------------
 /**

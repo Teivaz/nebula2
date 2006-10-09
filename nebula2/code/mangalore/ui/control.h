@@ -13,7 +13,7 @@
 namespace Message
 {
     class Msg;
-};
+}
 
 namespace Input
 {

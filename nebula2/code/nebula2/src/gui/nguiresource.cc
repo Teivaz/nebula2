@@ -16,7 +16,7 @@ nGuiResource::Load()
     {
         // dynamic brush, create as render target
         this->refTexture = nGfxServer2::Instance()->NewRenderTarget(
-            0,                                          // Need a unique name.
+            0,                                          // Need an unique name.
             int(this->absUvRect.v1.x),                  // Width.
             int(this->absUvRect.v1.y),                  // Height.
             nTexture2::X8R8G8B8,                        // Format.

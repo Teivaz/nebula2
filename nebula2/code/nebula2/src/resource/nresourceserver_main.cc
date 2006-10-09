@@ -57,7 +57,7 @@ nResourceServer::~nResourceServer()
     just the filename of the resource file. The method strips off the last
     32 characters from the resource name, and replaces any invalid characters
     with underscores. It is valid to provide a 0-rsrcName for unshared resources.
-    A unique rsrc identifier string will then be created.
+    An unique rsrc identifier string will then be created.
 
     @param  rsrcName    a resource name (usually a file path), or an empty string
     @return             a pointer to buf, which contains the result

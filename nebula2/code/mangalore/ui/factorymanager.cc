@@ -38,7 +38,7 @@ FactoryManager::~FactoryManager()
 
 //------------------------------------------------------------------------------
 /**
-    Create a user interface element from a type string.
+    Create an user interface element from a type string.
 */
 Element*
 FactoryManager::CreateElement(const nString& type) const

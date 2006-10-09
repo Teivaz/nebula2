@@ -5,7 +5,7 @@
     @class nAnimClip
     @ingroup Anim2
 
-    @brief An animation clip bundles several animation curves into a unit
+    @brief An animation clip bundles several animation curves into an unit
     and associates them with a weight value.
 
     (C) 2003 RadonLabs GmbH

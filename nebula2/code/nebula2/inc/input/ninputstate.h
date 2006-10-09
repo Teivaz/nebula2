@@ -7,7 +7,7 @@
 
     nInputState objects are named input 'slots' which are
     bound to input events (or a simple combination of ie's)
-    through a user defined mapping table.
+    through an user defined mapping table.
 */
 //-------------------------------------------------------------------
 #include "kernel/ntypes.h"

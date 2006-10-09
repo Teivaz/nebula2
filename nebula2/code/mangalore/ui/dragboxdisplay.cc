@@ -7,7 +7,8 @@
 
 namespace UI
 {
-	ImplementRtti(UI::DragBoxDisplay, UI::Window);
+
+ImplementRtti(UI::DragBoxDisplay, UI::Window);
 
 //------------------------------------------------------------------------------
 /**

@@ -4,7 +4,7 @@
 /**
     @class UI::Canvas
 
-    A canvas is the toplevel object of a ui hierarchy.
+    A canvas is the top-level object of an ui hierarchy.
 
     (C) 2005 Radon Labs GmbH
 */
@@ -44,6 +44,8 @@ private:
     nString resourceName;
     Ptr<Graphics::Entity> graphicsEntity;
 };
+
+RegisterFactory(Canvas);
 
 //------------------------------------------------------------------------------
 /**

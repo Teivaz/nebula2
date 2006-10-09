@@ -829,7 +829,7 @@ nGfxServer2::BeginLines()
 /**
     Draw a 3d line strip using the current transforms.
 
-    The following draws a unit cube with red lines.
+    The following draws an unit cube with red lines.
 
     @code
     vector3 v[8];

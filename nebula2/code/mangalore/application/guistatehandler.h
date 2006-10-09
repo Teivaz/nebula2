@@ -2,7 +2,7 @@
 #define APPLICATION_GUISTATEHANDLER_H
 //------------------------------------------------------------------------------
 /**
-    A state handler which displays and manages a UI subsystem user interface.
+    A state handler which displays and manages an UI subsystem user interface.
 
     (C) 2005 Radon Labs GmbH
 */
@@ -28,7 +28,7 @@ public:
     void SetGuiResource(const nString& res);
     /// get name of gui resource
     const nString& GetGuiResource() const;
-    /// handle a user interface event
+    /// handle an user interface event
     virtual void OnEvent(UI::Event* event);
     /// called when the state represented by this state handler is entered
     virtual void OnStateEnter(const nString& prevState);

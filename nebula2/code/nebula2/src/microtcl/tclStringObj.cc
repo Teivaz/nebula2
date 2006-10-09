@@ -6,7 +6,7 @@
  *	require Unicode format.  Functions that require knowledge of the width
  *	of each character, such as indexing, operate on Unicode data.
  *
- *	A Unicode string is an internationalized string.  Conceptually, a
+ *	An Unicode string is an internationalized string.  Conceptually, a
  *	Unicode string is an array of 16-bit quantities organized as a sequence
  *	of properly formed UTF-8 characters.  There is a one-to-one map between
  *	Unicode and UTF characters.  Because Unicode characters have a fixed
@@ -456,7 +456,7 @@ Tcl_GetUniChar(objPtr, index)
 	/*
 	 * All of the characters in the Utf string are 1 byte chars,
 	 * so we don't store the unicode char.  We get the Utf string
-	 * and convert the index'th byte to a Unicode character.
+	 * and convert the index'th byte to an Unicode character.
 	 */
 
 	Tcl_UtfToUniChar(&objPtr->bytes[index], &unichar);
@@ -473,7 +473,7 @@ Tcl_GetUniChar(objPtr, index)
  *
  *	Get the Unicode form of the String object.  If
  *	the object is not already a String object, it will be converted
- *	to one.  If the String object does not have a Unicode rep, then
+ *	to one.  If the String object does not have an Unicode rep, then
  *	one is create from the UTF string format.
  *
  * Results:
@@ -498,8 +498,8 @@ Tcl_GetUnicode(objPtr)
 
 	/*
 	 * We haven't yet calculated the length, or all of the characters
-	 * in the Utf string are 1 byte chars (so we didn't store the
-	 * unicode str).  Since this function must return a unicode string,
+	 * in the UTF string are 1 byte chars (so we didn't store the
+	 * unicode str).  Since this function must return an unicode string,
 	 * and one has not yet been stored, force the Unicode to be
 	 * calculated and stored now.
 	 */
@@ -930,7 +930,7 @@ Tcl_AppendToObj(objPtr, bytes, length)
  *
  * Tcl_AppendUnicodeToObj --
  *
- *	This procedure appends a Unicode string to an object in the
+ *	This procedure appends an Unicode string to an object in the
  *	most efficient manner possible.  Length must be >= 0.
  *
  * Results:
@@ -1005,7 +1005,7 @@ Tcl_AppendObjToObj(objPtr, appendObjPtr)
     SetStringFromAny(NULL, objPtr);
 
     /*
-     * If objPtr has a valid Unicode rep, then get a Unicode string
+     * If objPtr has a valid Unicode rep, then get an Unicode string
      * from appendObjPtr and append it.
      */
 

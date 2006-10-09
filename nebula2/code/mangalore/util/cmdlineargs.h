@@ -4,7 +4,7 @@
 /**
     @class Util::CmdLineArgs
 
-    A universal cmd line argument parser. The command line string
+    An universal cmd line argument parser. The command line string
     must have the form
 
     cmd arg0[=]value0 arg1[=]value1 arg2[=]value2

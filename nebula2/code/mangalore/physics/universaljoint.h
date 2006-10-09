@@ -4,7 +4,7 @@
 /**
     @class Physics::UniversalJoint
 
-    A universal joint. See ODE docs for details.
+    An universal joint. See ODE docs for details.
 
     (C) 2003 RadonLabs GmbH
 */

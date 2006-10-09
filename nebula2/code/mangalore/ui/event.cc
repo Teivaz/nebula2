@@ -9,4 +9,4 @@ namespace UI
 ImplementRtti(UI::Event, Message::Msg);
 ImplementFactory(UI::Event);
 ImplementMsgId(Event);
-};
+} // namespace UI

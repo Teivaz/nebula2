@@ -21,7 +21,7 @@ namespace Message
 {
     class Msg;
 	class Port;
-};
+}
 
 namespace Input
 {
@@ -38,7 +38,6 @@ class DragBox : public Message::Port
 	DeclareFactory(DragBox);
 
 public:
-
     /// constructor
     DragBox();
     /// destructor
@@ -57,9 +56,9 @@ public:
     /// get the receiver for all the messages this class will send
     Message::Port* GetMsgReceiver() const;
 
-	/// set the dragboxdisplay (will need to visualize the dimensions of the dragbox)
+	/// set the dragbox display (will need to visualize the dimensions of the dragbox)
 	void SetDragBoxDisplay( UI::DragBoxDisplay* d );
-	/// get the dragboxdisplay (will need to visualize the dimensions of the dragbox)
+	/// get the dragbox display (will need to visualize the dimensions of the dragbox)
 	UI::DragBoxDisplay* GetDragBoxDisplay() const;
 
     /// accept input events
@@ -78,7 +77,7 @@ public:
     /// handle right button Up
     virtual bool OnRightButtonUp(const vector2& mousePos);
 
-	/// resets all smartpointers
+	/// resets all smart pointers
 	/// after the call, the settings for the message receiver and the display was lost
 	/// before you can destroy the message receiver you must call this function
 	void Deactivate();
@@ -154,29 +153,29 @@ DragBox::GetMsgReceiver() const
 
 //------------------------------------------------------------------------------
 /**
-    set the dragboxdisplay (will need to visualize the dimensions of the dragbox).
+    set the dragbox display (will need to visualize the dimensions of the dragbox).
 */
 inline
 void
 DragBox::SetDragBoxDisplay( UI::DragBoxDisplay* d )
 {
-	// check if there is a dragboxdisplay
+	// check if there is a dragbox display
     n_assert(d);
-	// set the dragboxdisplay
+	// set the dragbox display
 	this->display = d;
 }
 
 //------------------------------------------------------------------------------
 /**
-    get the dragboxdisplay (will need to visualize the dimensions of the dragbox).
+    get the dragbox display (will need to visualize the dimensions of the dragbox).
 */
 inline
 UI::DragBoxDisplay*
 DragBox::GetDragBoxDisplay() const
 {
-	// check if there is a dragboxdisplay
+	// check if there is a dragbox display
 	n_assert( this->display.isvalid() );
-	// return the dragboxdisplay
+	// return the dragbox display
 	return this->display;
 }
 

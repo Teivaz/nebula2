@@ -5,7 +5,7 @@
     @class nQuadTree
     @ingroup Util
 
-    A simple quad tree. nQuadTree elements have a user data member, and
+    A simple quad tree. nQuadTree elements have an user data member, and
     are inserted and removed from a quadtree by bounding box.
 
     (C) 2004 RadonLabs GmbH

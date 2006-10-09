@@ -4,7 +4,7 @@
 /**
     @class nGuiSkin
     @ingroup Gui
-    @brief A GUI skin object holds a user-defined table of gui resources which
+    @brief A GUI skin object holds an user-defined table of gui resources which
     are used by the GUI widgets to render themselves.
 
     Each gui resource describes a rectangular texture area. That way it is

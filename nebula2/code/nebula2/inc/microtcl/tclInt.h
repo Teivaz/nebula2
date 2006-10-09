@@ -594,7 +594,7 @@ typedef struct CompiledLocal {
 				/* Customized variable resolution info
 				 * supplied by the Tcl_ResolveCompiledVarProc
 				 * associated with a namespace. Each variable
-				 * is marked by a unique ClientData tag
+				 * is marked by an unique ClientData tag
 				 * during compilation, and that same tag
 				 * is used to find the variable at runtime. */
     char name[4];		/* Name of the local variable starts here.
@@ -655,7 +655,7 @@ typedef struct Trace {
  * The structure below defines an entry in the assocData hash table which
  * is associated with an interpreter. The entry contains a pointer to a
  * function to call when the interpreter is deleted, and a pointer to
- * a user-defined piece of data.
+ * an user-defined piece of data.
  */
 
 typedef struct AssocData {

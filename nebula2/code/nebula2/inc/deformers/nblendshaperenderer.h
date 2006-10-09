@@ -4,7 +4,7 @@
 /**
     @class nBlendShapeRenderer
     @ingroup Deformers
-    @brief A unified blend shape renderer (either blends on the CPU or in the
+    @brief An unified blend shape renderer (either blends on the CPU or in the
     vertex shader).
 
     (C) 2004 RadonLabs GmbH

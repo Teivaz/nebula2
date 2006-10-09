@@ -10,7 +10,6 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "message/port.h"
-#include "foundation/ptr.h"
 #include "input/ninputevent.h"
 #include "mathlib/rectangle.h"
 #include "scene/ntransformnode.h"

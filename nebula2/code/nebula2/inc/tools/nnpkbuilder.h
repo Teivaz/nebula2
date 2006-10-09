@@ -5,7 +5,7 @@
     @class nNpkBuilder
     @ingroup Tools
 
-    A utility class which supports packing, diffing, and unpacking
+    An utility class which supports packing, diffing, and unpacking
     npk files.
 
     (C) 2004 RadonLabs GmbH

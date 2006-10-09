@@ -27,7 +27,7 @@ public:
     virtual void Error(const char* msg, va_list argList);
     /// send a message to the debugger window.
     virtual void OutputDebug(const char* msg, va_list argList);
-    /// fill a use
+    /// fill an use
     virtual nLineBuffer* GetLineBuffer();
 
 protected:

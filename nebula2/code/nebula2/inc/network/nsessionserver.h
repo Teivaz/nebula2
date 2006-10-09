@@ -19,7 +19,7 @@
     "~session Guid AppName AppVersion IpAddress IpPort"
 @endverbatim
 
-    The guid is a unique session id understood by the Nebula nGuid
+    The guid is an unique session id understood by the Nebula nGuid
     class. @c Appname and @c Appversion are the respective application
     id strings set by nSessionServer::SetAppName() and
     nSessionServer::SetAppVersion(). Potential clients which

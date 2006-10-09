@@ -175,5 +175,4 @@ DynamicLabel::SetViewSpaceTransform(const matrix44& m)
     this->graphicsEntity->SetTransform(localMatrix);
 }
 
-
 } // namespace UI

@@ -52,6 +52,6 @@ private:
 
 RegisterFactory(SimpleCameraProperty);
 
-}; // namespace Property
+} // namespace Property
 //------------------------------------------------------------------------------
 #endif

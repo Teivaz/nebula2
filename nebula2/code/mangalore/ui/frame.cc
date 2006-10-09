@@ -25,4 +25,4 @@ Frame::~Frame()
     // empty
 }
 
-};
+} // namespace UI

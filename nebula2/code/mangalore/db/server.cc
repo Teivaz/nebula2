@@ -107,7 +107,7 @@ Server::CreateQuery() const
 
 //------------------------------------------------------------------------------
 /**
-    Create a universal query object.
+    Create an universal query object.
 */
 Query*
 Server::CreateQuery(const nString& sqlStatement) const

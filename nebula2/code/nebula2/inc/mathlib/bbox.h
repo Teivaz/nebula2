@@ -89,7 +89,7 @@ public:
     ClipStatus clipstatus(const bbox3& other) const;
     /// check for intersection with projection volume
     ClipStatus clipstatus(const matrix44& viewProjection) const;
-    /// create a matrix which transforms a unit cube to this bounding box
+    /// create a matrix which transforms an unit cube to this bounding box
     matrix44 to_matrix44() const;
     /// return one of the 8 corner points
     vector3 corner_point(int index) const;
@@ -599,7 +599,7 @@ bbox3::clipstatus(const matrix44& viewProjection) const
 
 //------------------------------------------------------------------------------
 /**
-    Create a transform matrix which would transform a unit cube to this
+    Create a transform matrix which would transform an unit cube to this
     bounding box.
 */
 inline

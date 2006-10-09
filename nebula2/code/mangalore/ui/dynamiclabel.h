@@ -17,8 +17,7 @@
 //------------------------------------------------------------------------------
 namespace UI
 {
-class DynamicLabel
-    : public Label
+class DynamicLabel : public Label
 {
     DeclareRtti;
 	DeclareFactory(DynamicLabel);
@@ -92,6 +91,5 @@ DynamicLabel::GetResourceName() const
 }
 
 } // namespace UI
-
 //------------------------------------------------------------------------------
 #endif

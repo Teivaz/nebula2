@@ -1471,7 +1471,7 @@ GetStatBuf(interp, objPtr, statProc, statPtr)
  *
  * StoreStatData --
  *
- *	This is a utility procedure that breaks out the fields of a
+ *	This is an utility procedure that breaks out the fields of a
  *	"stat" structure and stores them in textual form into the
  *	elements of an associative array.
  *

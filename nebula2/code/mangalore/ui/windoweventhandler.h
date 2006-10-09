@@ -35,6 +35,8 @@ private:
     Window* window; // NOTE: not a Ptr<> to prevent cyclic dependency!
 };
 
+RegisterFactory(WindowEventHandler);
+
 //------------------------------------------------------------------------------
 /**
 */

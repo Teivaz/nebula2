@@ -73,7 +73,7 @@ n_initcmds(nClass* cl)
     v
     @info
     Set company name for this application. This is used together with the
-    application name to form a unique place where information is stored.
+    application name to form an unique place where information is stored.
 */
 static void
 n_setcompanyname(void* slf, nCmd* cmd)

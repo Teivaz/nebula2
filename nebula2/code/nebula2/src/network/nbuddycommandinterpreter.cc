@@ -50,7 +50,7 @@ void nBuddyCommandInterpreter::Execute(nString& strResult,nStream& query,int& Cl
              {
                  nString type = query.GetString("type");
 
-                 // message to a user
+                 // message to an user
                  if(type=="message")
                  {
                      query.SetToFirstChild();
