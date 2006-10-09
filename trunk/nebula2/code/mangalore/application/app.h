@@ -132,7 +132,7 @@ protected:
     virtual void SetupFromDefaults();
     /// parse command line args, override in subclass if new args are desired
     virtual void SetupFromCmdLineArgs();
-    /// setup the application from a user profile
+    /// setup the application from an user profile
     virtual void SetupFromProfile();
     /// setup the app's time sources (called by SetupGameSubsystem)
     virtual void SetupTimeSources();
