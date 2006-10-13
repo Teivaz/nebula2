@@ -49,7 +49,6 @@ static dxPosR* s_cachedPosR = 0;
 
 namespace
 {
-
 class DisposeCachedPosr
 {
 public:
