@@ -23,17 +23,17 @@ beginmodule ceui
     setlibs_win32_release {
         CEGUIBase.lib
         CEGUIFalagardWRBase.lib
-        CEGUIExpatParser.lib
+        CEGUITinyXMLParser.lib
         freetype.lib
         pcre.lib
-        libexpat.lib
+        tinyxml.lib
     }
     setlibs_win32_debug {
         CEGUIBase_d.lib
         CEGUIFalagardWRBase_d.lib
-        CEGUIExpatParser_d.lib
+        CEGUITinyXMLParser_d.lib
         freetype_d.lib
         pcre_d.lib
-        libexpat_d.lib
+        tinyxml_d.lib
     }
 endmodule

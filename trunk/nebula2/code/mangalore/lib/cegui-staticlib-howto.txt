@@ -87,18 +87,18 @@ modify this line
 step3: fix XMLParser loading
 CEGUISystem.cpp
 add include header
-#include "../XMLParserModules/expatParser/CEGUIExpatParser.h"
+#include "../XMLParserModules/TinyXMLParser/CEGUITinyXMLParser.h"
 in System::System(Renderer* renderer, ResourceProvider* resourceProvider, XMLParser* xmlParser, ScriptModule*  scriptModule, const String& configFile, const String& logFile)
 modify this line
     //setupXMLParser();
-    d_xmlParser = new ExpatParser();
+    d_xmlParser = new TinyXMLParser();
 in System::~System()
 modify this line
     // cleanupXMLParser();
     delete d_xmlParser;
 
 step4: fix rendererSet loading
-CEGUISceme.cpp
+CEGUIScheme.cpp
 add include header
 #include "../WindowRendererSets/Falagard/include/FalModule.h"
 in Scheme::loadWindowFactories()
