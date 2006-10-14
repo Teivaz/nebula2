@@ -219,6 +219,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 
         case nDI8Device::KEYBOARD:
             diDev->SetDataFormat(&c_dfDIKeyboard);
+            di8SetDWordProp(diDev, DIPROP_BUFFERSIZE, nDI8Server::INPUT_BUFFER_SIZE);
             break;
 
         case nDI8Device::MOUSE:
