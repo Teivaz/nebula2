@@ -10,7 +10,6 @@
 #include "application/statehandler.h"
 #include "loader/entityloader.h"
 #include "loader/environmentloader.h"
-#include "forest/treeloader.h"
 #include "game/time/systemtimesource.h"
 #include "game/time/gametimesource.h"
 #include "game/time/inputtimesource.h"
@@ -325,14 +324,12 @@ App::SetupGameSubsystem()
     this->saveGameManager = Managers::SaveGameManager::Create();
     this->setupManager = Managers::SetupManager::Create();
     this->factoryManager = Managers::FactoryManager::Create();
-    this->forestManager = Forest::ForestManager::Create();
     this->gameServer->AttachManager(this->entityManager);
     this->gameServer->AttachManager(this->envQueryManager);
     this->gameServer->AttachManager(this->focusManager);
     this->gameServer->AttachManager(this->saveGameManager);
     this->gameServer->AttachManager(this->setupManager);
     this->gameServer->AttachManager(this->factoryManager);
-    this->gameServer->AttachManager(this->forestManager);
 }
 
 //------------------------------------------------------------------------------
@@ -342,14 +339,12 @@ App::SetupGameSubsystem()
 void
 App::CleanupGameSubsystem()
 {
-    this->gameServer->RemoveManager(this->forestManager);
     this->gameServer->RemoveManager(this->factoryManager);
     this->gameServer->RemoveManager(this->setupManager);
     this->gameServer->RemoveManager(this->saveGameManager);
     this->gameServer->RemoveManager(this->focusManager);
     this->gameServer->RemoveManager(this->envQueryManager);
     this->gameServer->RemoveManager(this->entityManager);
-    this->forestManager = 0;
     this->factoryManager = 0;
     this->setupManager = 0;
     this->saveGameManager = 0;
@@ -441,14 +436,11 @@ App::SetupSubsystems()
     Ptr<Loader::EnvironmentLoader> environmentloader = Loader::EnvironmentLoader::Create();
     this->loaderServer->AttachLoader(environmentloader);
 
-    Ptr<Forest::TreeLoader> treeloader = Forest::TreeLoader::Create();
-    this->loaderServer->AttachLoader(treeloader);
-
     // setup the GUI subsystem (FIXME)
     nGuiServer* guiServer = nGuiServer::Instance();
     guiServer->SetRootPath("/res/gui");
     vector2 displaySize(float(GetDisplayMode().GetWidth()), float(GetDisplayMode().GetHeight()));
-    guiServer->SetDisplaySize(displaySize); 
+    guiServer->SetDisplaySize(displaySize);
     guiServer->Open();
     this->uiServer = UI::Server::Create();
     this->uiServer->Open();
