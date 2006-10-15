@@ -40,7 +40,7 @@ endmodule
 #-----------------------------------------------------------------------------
 begintarget pynebula
     annotate "Sample DLL for importing into Python"
-    settype dll    
+    settype dll
     setmodules {
         pynebula
         npythonhooks
@@ -48,11 +48,13 @@ begintarget pynebula
     settargetdeps {
         nkernel
         nnebula
+        microtcl
         ndirect3d9
         ndinput8
         nnetwork
         npythonserver
         ngui
+        ntoollib
     }
 endtarget
 #-------------------------------------------------------------------------------
@@ -73,6 +75,7 @@ begintarget npyviewer
         ndshow
         ndsound
         ngui
+        ntoollib
         nnetwork
         npythonserver
     }
@@ -94,6 +97,7 @@ begintarget nshpython
         nnetwork
         npythonserver
         ngui
+        ntoollib
     }
 endtarget
 #-----------------------------------------------------------------------------
@@ -103,16 +107,16 @@ beginworkspace pythonserver
         nshpython
         nkernel
         nnebula
-        ndirect3d9 
+        ndirect3d9
         nnetwork
-        ndinput8 
+        ndinput8
         microtcl
         npythonserver
         pynebula
-        ntoollib
         ndshow
         ndsound
         ngui
+        ntoollib
         npyviewer
     }
 endworkspace
