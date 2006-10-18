@@ -61,6 +61,34 @@
     provided by Discreet as a solution to that problem, at the moment. So it
     is highly recommended to use VC 7.0 if you use 3DS Max 6.0.
 
+    If you use Microsoft Visual C++ .NET 2005(VC 8.0) with 3dsmax8, specify 
+    the following three steps before having futher steps:
+
+    a) Generated projects will not compile out of the box, because Max sdk uses a lot
+    of loop variables checks like this:
+
+    @code
+    for (int i=...)
+    {
+    }
+    do_something(i);
+    @endcode
+
+    To make these compile, the "compliant for loop scope" option have to be turned
+    off in 'C/C++ Properties' > 'Language'.
+     
+    b) Runtime libraries need to be "Multithreaded DLL" and NOT multithreaded
+    debug/multithreaded debug dll. Otherwise bad things will happen (memory
+    problems/crashes/etc). So, if you want to be able to debug the plugin, you need
+    to modify the settings for DEBUG configuration: change runtime libraries to
+    "Multithreaded DLL" and remove _DEBUG preprocessor define for all projects,
+    otherwise it will not link.
+
+    c) To use runtime libraries, manifest linking should be switched to "Yes",
+    otherwise the plugin will not load.
+
+    Now it's time to build the package.
+
     The following list shows the steps of building the plugin:
 
       -# Run @c update.tcl(or @c update.py) to generate workspace.
