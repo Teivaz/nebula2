@@ -155,7 +155,7 @@ App::SetupFromDefaults()
     // setup display mode
     nDisplayMode2 mode;
     nString windowTitle = this->GetVendorName() + " - " + this->GetAppName() + " - " + this->GetAppVersion();
-    mode.SetWindowTitle(windowTitle.Get());
+    mode.SetWindowTitle(windowTitle);
     mode.SetXPos(0);
     mode.SetYPos(0);
     mode.SetWidth(1024);
@@ -365,7 +365,7 @@ App::SetupSubsystems()
 {
     // setup the foundation subsystem
     this->foundationServer->SetProjectDir(this->projDir);
-    if(this->GetStartupPath().IsValid())
+    if (this->GetStartupPath().IsValid())
     {
         this->foundationServer->SetStartupPath(this->GetStartupPath());
     }
@@ -493,7 +493,7 @@ App::CleanupSubsystems()
     this->physicsServer->Close();
     this->physicsServer = 0;
 
-    // cleanup input subsysyem
+    // cleanup input subsystem
     this->inputServer->Close();
     this->inputServer = 0;
 
