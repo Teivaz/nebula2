@@ -88,6 +88,29 @@
     You don't have to use the motion flow editor to create animation states.
     You can manually create it by creating <tt>Note Tracks</tt>.
 
+    You can also use maxscript to create notetrack and key by the way you want.
+    The following maxscript code snip shows how to create and specify notetrack and its key 
+    values for Nebula2 animation state:
+    @verbatim
+    -- create a new notetrack which has "AnimStateNotetrack" for its name
+    newNoteTrack = notetrack "AnimStateNotetrack"
+
+    -- add created notetrack to the max node
+    addNoteTrack $root newNoteTrack
+
+    -- create notetrack's key
+    ntKey = newNoteTrack.keys
+
+    -- add key to the specified location.  
+    addedKey = addNewNoteKey ntKey 12
+
+    -- The animation state which has "Kick" for its name and repeat for its type is created. 
+    -- Also the animation state has 20 and 0.0 for its duration and fade-in-time value. 
+    addedKey.value = "Kick : repeat \r\nduration : 20 \r\nfadeintime : 0.0"
+    @endverbatim
+
+    The following image shows a created notetrack key by the above maxscript:
+    @image html animstate03.jpg
 
     @subsection NMaxHowtoCharactersChangingAnimInViewer Changing Animations in the Viewer
 
