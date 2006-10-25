@@ -315,6 +315,6 @@ Server::UpdateProgressDisplay()
     }
 }
 
-} // namespace Input
+} // namespace Loader
 //------------------------------------------------------------------------------
 #endif

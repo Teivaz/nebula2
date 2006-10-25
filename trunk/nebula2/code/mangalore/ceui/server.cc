@@ -65,7 +65,7 @@ void Server::Close() {
 /**
 */
 static CEGUI::MouseButton Button2CeGuiButton(int button) {
-    switch(button) {
+    switch (button) {
     case 0: return CEGUI::LeftButton;
     case 1: return CEGUI::RightButton;
     case 2: return CEGUI::MiddleButton;
@@ -77,7 +77,7 @@ static CEGUI::MouseButton Button2CeGuiButton(int button) {
 /**
 */
 static CEGUI::uint Key2CeGuiKey(nKey key) {
-    switch(key) {
+    switch (key) {
     case N_KEY_BACK: return CEGUI::Key::Backspace;
     case N_KEY_TAB: return CEGUI::Key::Tab;
     case N_KEY_RETURN: return CEGUI::Key::Return;
@@ -189,10 +189,10 @@ void Server::Trigger() {
     // inject time pulse
     ceGuiSystem->injectTimePulse((float)frameTime);
     // inject input
-    for(nInputEvent* inputEvent = nInputServer::Instance()->FirstEvent(); inputEvent != NULL; inputEvent = nInputServer::Instance()->NextEvent(inputEvent)) {
-        switch(inputEvent->GetDeviceId()) {
+    for (nInputEvent* inputEvent = nInputServer::Instance()->FirstEvent(); inputEvent != NULL; inputEvent = nInputServer::Instance()->NextEvent(inputEvent)) {
+        switch (inputEvent->GetDeviceId()) {
         case N_INPUT_MOUSE(0):
-            switch(inputEvent->GetType()) {
+            switch (inputEvent->GetType()) {
             case N_INPUT_MOUSE_MOVE:
                 ceGuiSystem->injectMousePosition((float)inputEvent->GetAbsXPos(), (float)inputEvent->GetAbsYPos());
                 break;
@@ -205,7 +205,7 @@ void Server::Trigger() {
             }
             break;
         case N_INPUT_KEYBOARD(0):
-            switch(inputEvent->GetType()) {
+            switch (inputEvent->GetType()) {
             case N_INPUT_KEY_DOWN:
                 ceGuiSystem->injectKeyDown(Key2CeGuiKey(inputEvent->GetKey()));
                 break;

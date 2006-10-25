@@ -143,7 +143,7 @@ ActorGraphicsProperty::SetupGraphicsEntities()
     nArray<nString> tokens;
     nString pathToCharSet = GetEntity()->GetString(Attr::Graphics);
     int numTokens = pathToCharSet.Tokenize("/",tokens);
-    if((numTokens == 3) && (tokens[0] == "characters") && (tokens[2] == "skeleton"))
+    if ((numTokens == 3) && (tokens[0] == "characters") && (tokens[2] == "skeleton"))
     {
         pathToCharSet = pathToCharSet.ExtractDirName() + "skinlists/";
         ge->LoadCharacter3Set(nString("gfxlib:")+pathToCharSet+GetEntity()->GetString(Attr::CharacterSet)+".xml");

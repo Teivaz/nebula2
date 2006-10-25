@@ -455,7 +455,7 @@ Server::GetDeviceAttr(const nString& deviceName, const nString& channelName, con
         attributes[i].Tokenize("=", attrTokens);
         n_assert(attrTokens.Size() == 2);
 
-        if(attrTokens[0] == attribute)
+        if (attrTokens[0] == attribute)
         {
             value = attrTokens[1].AsInt();
             found = true;

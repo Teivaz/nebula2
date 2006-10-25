@@ -113,7 +113,7 @@ SkinRayCheckUtil::SetGraphicsEntity(Graphics::Entity* entity, nString meshName)
         this->initialized = true;
     }
     // handle a static Mesh
-    else if(entity->IsA(Graphics::Entity::RTTI) &&
+    else if (entity->IsA(Graphics::Entity::RTTI) &&
             shapeNodes.Size() > 0)
     {
         this->meshType = SkinRayCheckUtil::Static;
@@ -656,7 +656,7 @@ SkinRayCheckUtil::SetVertexColorOfMesh(const vector4& col)
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         ushort startIndex = meshGroup.GetFirstIndex();
@@ -698,7 +698,7 @@ SkinRayCheckUtil::GetAverageVertexColorOfMesh()
     vector4 averageColor(0,0,0,0);
     int numVertices = 0;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         ushort startIndex = meshGroup.GetFirstIndex();
@@ -731,7 +731,7 @@ SkinRayCheckUtil::SetVertexColorOfFace(int faceIndex, const vector4& col)
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         ushort startIndex = meshGroup.GetFirstIndex();
@@ -791,7 +791,7 @@ SkinRayCheckUtil::GetVertexColorOfFace(int faceIndex)
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         ushort startIndex = meshGroup.GetFirstIndex();
@@ -829,7 +829,7 @@ SkinRayCheckUtil::GetVertexColorOfFace(int faceIndex, const vector3& intersectio
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         ushort startIndex = meshGroup.GetFirstIndex();
@@ -870,7 +870,7 @@ SkinRayCheckUtil::HasMeshVertexColor()
     n_assert(this->refResistentMesh);
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color)) return true;
+    if (mesh->HasAllVertexComponents(nMesh2::Color)) return true;
     else return false;
 }
 
@@ -942,7 +942,7 @@ SkinRayCheckUtil::PaintVertexList(const nArray<int> &vertexList, const vector4 &
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         ushort startIndex = meshGroup.GetFirstIndex();
@@ -1207,7 +1207,7 @@ SkinRayCheckUtil::InitVertexColorMap()
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         int numVertices = meshGroup.GetNumVertices();
@@ -1266,7 +1266,7 @@ SkinRayCheckUtil::InitVertexNormalMap()
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Normal))
+    if (mesh->HasAllVertexComponents(nMesh2::Normal))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         int numVertices = meshGroup.GetNumVertices();
@@ -1301,7 +1301,7 @@ SkinRayCheckUtil::UpdateVertexColorMapByList(const nArray<int>& vertexList)
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         int numVertices = meshGroup.GetNumVertices();
@@ -1358,7 +1358,7 @@ SkinRayCheckUtil::UpdateVertexNormalMapByList(const nArray<int>& vertexList)
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Normal))
+    if (mesh->HasAllVertexComponents(nMesh2::Normal))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         int numVertices = meshGroup.GetNumVertices();
@@ -1400,7 +1400,7 @@ SkinRayCheckUtil::UpdateFromVertexColorMap()
     n_assert(this->refResistentMesh.isvalid());
     nMesh2* mesh = this->refResistentMesh;
 
-    if(mesh->HasAllVertexComponents(nMesh2::Color))
+    if (mesh->HasAllVertexComponents(nMesh2::Color))
     {
         const nMeshGroup& meshGroup = mesh->Group(this->meshGroupIndex);
         int numVertices = meshGroup.GetNumVertices();

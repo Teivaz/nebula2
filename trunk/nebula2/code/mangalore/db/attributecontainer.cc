@@ -87,7 +87,7 @@ AttributeContainer::SetAttr(const Attribute& attr)
 const Attribute&
 AttributeContainer::GetAttr(const Attr::AttributeID& attrId) const
 {
-    n_assert( attrId.IsValid() );
+    n_assert(attrId.IsValid());
     int attrIndex = this->FindAttrIndex(attrId);
     if (-1 != attrIndex)
     {

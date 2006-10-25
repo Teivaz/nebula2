@@ -16,9 +16,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "application/statehandler.h"
-#include "gfx2/nmesh2.h"
-#include "gfx2/ntexture2.h"
-#include "gfx2/nshader2.h"
 #include "kernel/nprofiler.h"
 
 //------------------------------------------------------------------------------
@@ -164,6 +161,6 @@ GameStateHandler::GetSaveGame() const
     return this->saveGame;
 }
 
-};
+} // namespace Application
 //------------------------------------------------------------------------------
 #endif

@@ -57,7 +57,7 @@ public:
     Message::Port* GetMsgReceiver() const;
 
 	/// set the dragbox display (will need to visualize the dimensions of the dragbox)
-	void SetDragBoxDisplay( UI::DragBoxDisplay* d );
+	void SetDragBoxDisplay(UI::DragBoxDisplay* d);
 	/// get the dragbox display (will need to visualize the dimensions of the dragbox)
 	UI::DragBoxDisplay* GetDragBoxDisplay() const;
 
@@ -146,7 +146,7 @@ Message::Port*
 DragBox::GetMsgReceiver() const
 {
 	// check if there is receiver
-	n_assert( this->receiver.isvalid() );
+	n_assert(this->receiver.isvalid());
 	// return the receiver
 	return this->receiver;
 }
@@ -157,7 +157,7 @@ DragBox::GetMsgReceiver() const
 */
 inline
 void
-DragBox::SetDragBoxDisplay( UI::DragBoxDisplay* d )
+DragBox::SetDragBoxDisplay(UI::DragBoxDisplay* d)
 {
 	// check if there is a dragbox display
     n_assert(d);
@@ -174,7 +174,7 @@ UI::DragBoxDisplay*
 DragBox::GetDragBoxDisplay() const
 {
 	// check if there is a dragbox display
-	n_assert( this->display.isvalid() );
+	n_assert(this->display.isvalid());
 	// return the dragbox display
 	return this->display;
 }

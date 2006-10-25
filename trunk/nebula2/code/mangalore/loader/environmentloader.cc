@@ -156,7 +156,7 @@ EnvironmentLoader::Load(Db::Reader* dbReader)
 /**
     This method is called if an environment with a path animation is
     encountered. In this case we cannot put the object into the
-    big environment pool, but instead must create a unique game entity.
+    big environment pool, but instead must create an unique game entity.
 */
 void
 EnvironmentLoader::CreateAnimatedEntity(Db::Reader* dbReader)
@@ -183,7 +183,7 @@ EnvironmentLoader::CreateAnimatedEntity(Db::Reader* dbReader)
 //------------------------------------------------------------------------------
 /**
     This method creates a game entity with graphics and physics properties
-    attached. This is a usual passive, bouncing, rolling game entity.
+    attached. This is an usual passive, bouncing, rolling game entity.
 */
 void
 EnvironmentLoader::CreatePhysicsEntity(Db::Reader* dbReader)

@@ -301,21 +301,17 @@ FocusManager::SwitchToFirstCameraFocusEntity()
    bool priorityCameraFound = false;
    bool cameraPropertyEntityFound = false;
 
-   while ( iter != entityArray.End() )
+   while (iter != entityArray.End())
    {
         Entity* entity = *iter;
         CameraProperty* cameraProperty = (CameraProperty*) entity->FindProperty(CameraProperty::RTTI);
-        bool isPriorityCamera = ( 0 != entity->FindProperty(VideoCameraProperty::RTTI) );
+        bool isPriorityCamera = (0 != entity->FindProperty(VideoCameraProperty::RTTI));
 
-        if ( 0 != cameraProperty )
+        if (0 != cameraProperty)
         {
-            if ( cameraProperty->HasFocus() ) cameraProperty->OnLoseFocus();
+            if (cameraProperty->HasFocus()) cameraProperty->OnLoseFocus();
 
-            if
-            (
-                !cameraPropertyEntityFound
-                || ( !priorityCameraFound && isPriorityCamera )
-            )
+            if (!cameraPropertyEntityFound || (!priorityCameraFound && isPriorityCamera))
             {
                 this->newCameraFocusEntity = entity;
                 cameraPropertyEntityFound = true;

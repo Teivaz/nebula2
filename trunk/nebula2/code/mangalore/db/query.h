@@ -214,9 +214,9 @@ inline
 bool
 Query::GetBool(const Attr::BoolAttributeID& attrId, int rowIndex) const
 {
-    const Attribute& attribute = this->GetAttr( attrId, rowIndex );
-    n_assert2( attribute.IsValid(), "Attribute is in result table at given rowindex" );
-    n_assert2( attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type" );
+    const Attribute& attribute = this->GetAttr(attrId, rowIndex);
+    n_assert2(attribute.IsValid(), "Attribute is in result table at given rowindex");
+    n_assert2(attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type");
 
     return attribute.GetBool();
 }
@@ -231,9 +231,9 @@ inline
 int
 Query::GetInt(const Attr::IntAttributeID& attrId, int rowIndex) const
 {
-    const Attribute& attribute = this->GetAttr( attrId, rowIndex );
-    n_assert2( attribute.IsValid(), "Attribute is in result table at given rowindex" );
-    n_assert2( attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type" );
+    const Attribute& attribute = this->GetAttr(attrId, rowIndex);
+    n_assert2(attribute.IsValid(), "Attribute is in result table at given rowindex");
+    n_assert2(attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type");
 
     return attribute.GetInt();
 }
@@ -248,9 +248,9 @@ inline
 float
 Query::GetFloat(const Attr::FloatAttributeID& attrId, int rowIndex) const
 {
-    const Attribute& attribute = this->GetAttr( attrId, rowIndex );
-    n_assert2( attribute.IsValid(), "Attribute is in result table at given rowindex" );
-    n_assert2( attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type" );
+    const Attribute& attribute = this->GetAttr(attrId, rowIndex);
+    n_assert2(attribute.IsValid(), "Attribute is in result table at given rowindex");
+    n_assert2(attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type");
 
     return attribute.GetFloat();
 }
@@ -265,9 +265,9 @@ inline
 nString
 Query::GetString(const Attr::StringAttributeID& attrId, int rowIndex) const
 {
-    const Attribute& attribute = this->GetAttr( attrId, rowIndex );
-    n_assert2( attribute.IsValid(), "Attribute is in result table at given rowindex" );
-    n_assert2( attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type" );
+    const Attribute& attribute = this->GetAttr(attrId, rowIndex);
+    n_assert2(attribute.IsValid(), "Attribute is in result table at given rowindex");
+    n_assert2(attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type");
 
     return attribute.GetString();
 }
@@ -282,9 +282,9 @@ inline
 vector3
 Query::GetVector3(const Attr::Vector3AttributeID& attrId, int rowIndex) const
 {
-    const Attribute& attribute = this->GetAttr( attrId, rowIndex );
-    n_assert2( attribute.IsValid(), "Attribute is in result table at given rowindex" );
-    n_assert2( attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type" );
+    const Attribute& attribute = this->GetAttr(attrId, rowIndex);
+    n_assert2(attribute.IsValid(), "Attribute is in result table at given rowindex");
+    n_assert2(attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type");
 
     return attribute.GetVector3();
 }
@@ -299,9 +299,9 @@ inline
 vector4
 Query::GetVector4(const Attr::Vector4AttributeID& attrId, int rowIndex) const
 {
-    const Attribute& attribute = this->GetAttr( attrId, rowIndex );
-    n_assert2( attribute.IsValid(), "Attribute is in result table at given rowindex" );
-    n_assert2( attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type" );
+    const Attribute& attribute = this->GetAttr(attrId, rowIndex);
+    n_assert2(attribute.IsValid(), "Attribute is in result table at given rowindex");
+    n_assert2(attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type");
 
     return attribute.GetVector4();
 }
@@ -316,9 +316,9 @@ inline
 matrix44
 Query::GetMatrix44(const Attr::Matrix44AttributeID& attrId, int rowIndex) const
 {
-    const Attribute& attribute = this->GetAttr( attrId, rowIndex );
-    n_assert2( attribute.IsValid(), "Attribute is in result table at given rowindex" );
-    n_assert2( attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type" );
+    const Attribute& attribute = this->GetAttr(attrId, rowIndex);
+    n_assert2(attribute.IsValid(), "Attribute is in result table at given rowindex");
+    n_assert2(attribute.GetAttributeID() == attrId, "Attribute of correct AttributeID type");
 
     return attribute.GetMatrix44();
 }

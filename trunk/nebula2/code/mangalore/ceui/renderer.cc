@@ -188,7 +188,7 @@ void Renderer::doRender() {
     float* vertices;
     int maxVetices;
     mesh.Begin(vertices, maxVetices);
-    for(nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
+    for (nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
         nArray<CeGuiRectangle>& widgetRects = (*i)->widgetRects;
         if (!widgetRects.Empty()) {
             mesh.GetShader()->SetTexture(nShaderState::DiffMap0, (*i)->getTexture2());
@@ -212,7 +212,7 @@ void Renderer::doRender() {
 /**
 */
 void Renderer::clearRenderList() {
-    for(nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
+    for (nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
         (*i)->widgetRects.Reset();
     }
 }

@@ -55,7 +55,7 @@ public:
     /// return true if open
     bool IsOpen() const;
     /// lookup animation info by name
-    const AnimInfo& Lookup(const nString& column, const nString& animName, bool random = true ) const;
+    const AnimInfo& Lookup(const nString& column, const nString& animName, bool random = true) const;
 
 private:
     static AnimTable* Singleton;

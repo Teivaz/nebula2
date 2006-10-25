@@ -67,6 +67,5 @@ private:
 RegisterFactory(PathFinder);
 
 } // namespace Navigation
-
 //------------------------------------------------------------------------------
 #endif

@@ -83,7 +83,7 @@ LightEntity::OnActivate()
     nKernelServer* kernelServer = nKernelServer::Instance();
     Foundation::Server* fndServer = Foundation::Server::Instance();
 
-    // create a unique category/object name
+    // create an unique category/object name
     nString lightName = "lights/light";
     lightName.AppendInt(this->uniqueLightId++);
 

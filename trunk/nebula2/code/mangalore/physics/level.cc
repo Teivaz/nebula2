@@ -352,7 +352,7 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
         bool validCollision = true;
         validCollision &= shape1->OnCollide(shape2);
         validCollision &= shape2->OnCollide(shape1);
-        if(!validCollision)
+        if (!validCollision)
         {
             return;
         }

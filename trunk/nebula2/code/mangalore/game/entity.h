@@ -99,6 +99,8 @@ public:
     virtual void OnActivate();
     /// called when removed from world
     virtual void OnDeactivate();
+    /// get entity activated status
+    bool IsActivated() const;
     /// called at the beginning of the frame
     virtual void OnBeginFrame();
     /// called before movement
@@ -466,6 +468,16 @@ Entity::EntityPool
 Entity::GetEntityPool() const
 {
     return this->entityPool;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+Entity::IsActivated() const
+{
+    return this->activated;
 }
 
 } // namespace Game
