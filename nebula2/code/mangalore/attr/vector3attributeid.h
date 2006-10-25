@@ -27,7 +27,7 @@ public:
     /// inequality operator
     friend bool operator!=(const Vector3AttributeID& lhs, const Vector3AttributeID& rhs);
 
-    static Vector3AttributeID FindVector3AttributeID( const nString& name );
+    static Vector3AttributeID FindVector3AttributeID(const nString& name);
 };
 
 //------------------------------------------------------------------------------

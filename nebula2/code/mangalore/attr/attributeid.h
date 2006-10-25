@@ -14,26 +14,26 @@
 
     - to declare(add) a new attribute ID use:
 
-      DeclareBool( attributeTypeName );
-      DeclareString( attributeTypeName );
+      DeclareBool(attributeTypeName);
+      DeclareString(attributeTypeName);
       ..
 
-      ( possible types are: Void, Bool, Int, Float, String, Vector3, Vector4, Matrix44 )
+      (possible types are: Void, Bool, Int, Float, String, Vector3, Vector4, Matrix44)
 
     - you then have to define the attribute ID with:
 
-      DefineBool( attributeTypeName );
-      DefineString( attributeTypeName );
+      DefineBool(attributeTypeName);
+      DefineString(attributeTypeName);
 
       or
 
-      DefineBoolStorable( attributeTypeName );
-      DefineStringStorable( attributeTypeName );
+      DefineBoolStorable(attributeTypeName);
+      DefineStringStorable(attributeTypeName);
 
     - e.g.:
 
-      DeclareIntAttribute( Hitpoints );
-      DefineIntAttribute( Hitpoints );
+      DeclareIntAttribute(Hitpoints);
+      DefineIntAttribute(Hitpoints);
 */
 #include "attr/_attridtyped.h"
 #include "attr/attributeclasses.h"
@@ -171,7 +171,7 @@ AttributeID::AttributeID(const nString& name)
 {
     const AttributeID& existingID = AttributeID::FindAttributeID(name);
 
-    if ( !existingID.IsValid() )
+    if (!existingID.IsValid())
     {
         n_error("Error: Attribute ID of name \"%s\" not found!", name.Get());
     }

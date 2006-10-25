@@ -233,7 +233,7 @@ Control::OnFrame()
                 this->mouseWithinTime = time;
                 this->mouseWithin = true;
             }
-            else if(time > this->mouseWithinTime + this->GetTooltipDelay())
+            else if (time > this->mouseWithinTime + this->GetTooltipDelay())
             {
                 uiServer->ShowToolTip(this->GetTooltip());
             }

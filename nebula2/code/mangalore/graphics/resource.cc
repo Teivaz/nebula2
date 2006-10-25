@@ -144,7 +144,7 @@ Resource::Load()
     {
         n_assert(!this->refRootNode.isvalid());
         this->refNode->AddRef();
-        if(char3mode)
+        if (char3mode)
         {
             this->refRootNode = this->refNode;
         }

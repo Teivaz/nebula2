@@ -84,7 +84,7 @@ inline
 void
 WaveBank::SetFilename(const nString& fileName)
 {
-	if(fileName.IsEmpty())
+	if (fileName.IsEmpty())
 	{
 		n_error("Audio::WaveBank::SetFilename(): got no filename!");
 	}

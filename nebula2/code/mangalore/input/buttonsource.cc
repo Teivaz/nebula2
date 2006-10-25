@@ -162,7 +162,7 @@ ButtonSource::Consume(nInputEvent* rawEvent)
     // listen to lose/obtain focus msgs
     if (rawEvent->GetType() == N_INPUT_LOSE_FOCUS || rawEvent->GetType() == N_INPUT_OBTAIN_FOCUS)
     {
-        while(this->buttonDownEvents.Size() > this->buttonUpEvents.Size())
+        while (this->buttonDownEvents.Size() > this->buttonUpEvents.Size())
         {
             // create button up events until the button is relased
             this->ButtonUp();

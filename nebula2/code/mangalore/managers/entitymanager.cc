@@ -73,7 +73,7 @@ EntityManager::RemoveEntityFromRegistry(Game::Entity* entity)
         // [mse] 16.05.2006
         // look first in new entities, if entity was added in the same frame
         nArray<Ptr<Entity> >::iterator iter = this->newEntities.Find(entity);
-        if(0 != iter)
+        if (0 != iter)
         {
             this->newEntities.Erase(iter);
         }

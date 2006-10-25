@@ -194,6 +194,5 @@ WayPoint::GetActivity() const
 }
 
 } // namespace Navigation
-
 //------------------------------------------------------------------------------
 #endif

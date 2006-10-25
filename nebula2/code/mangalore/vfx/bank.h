@@ -54,7 +54,7 @@ inline
 void
 Bank::SetFilename(const nString& fileName)
 {
-	if(fileName.IsEmpty())
+	if (fileName.IsEmpty())
 	{
 		n_error("VFX::Bank::SetFilename(): got no filename!", fileName);
 	}

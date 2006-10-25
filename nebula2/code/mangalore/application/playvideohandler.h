@@ -111,6 +111,6 @@ PlayVideoHandler::GetEnableScaling() const
     return this->enableScaling;
 }
 
-};
+} // namespace Application
 //------------------------------------------------------------------------------
 #endif

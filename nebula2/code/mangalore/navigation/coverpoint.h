@@ -169,6 +169,5 @@ CoverPoint::ProvidesCoverAgainst(const vector3& attacker) const
 
 
 } // namespace Navigation
-
 //------------------------------------------------------------------------------
 #endif

@@ -438,6 +438,6 @@ App::GetStartupPath() const
     return "";
 }
 
-};
+} // namespace Application
 //------------------------------------------------------------------------------
 #endif

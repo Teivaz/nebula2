@@ -241,6 +241,6 @@ UserProfile::GetVector4(const nString& name) const
     return this->stream.GetVector4(name);
 }
 
-};
+} // namespace Loader
 //------------------------------------------------------------------------------
 #endif

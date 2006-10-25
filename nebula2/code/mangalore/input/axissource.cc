@@ -45,7 +45,7 @@ AxisSource::Consume(nInputEvent* rawEvent)
 {
     n_assert(rawEvent);
 
-    if(rawEvent->GetDeviceId() == this->GetDeviceId())
+    if (rawEvent->GetDeviceId() == this->GetDeviceId())
     {
         if (rawEvent->GetType() == N_INPUT_AXIS_MOVE)
         {

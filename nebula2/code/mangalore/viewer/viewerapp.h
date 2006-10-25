@@ -199,7 +199,8 @@ ViewerApp::GetForceTempAssigns() const
 {
     return this->forceTempAssigns;
 }
-};
+
+} // namespace Viewer
 //------------------------------------------------------------------------------
 #endif
 

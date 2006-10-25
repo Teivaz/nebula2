@@ -311,7 +311,7 @@ Server::RenderDebug()
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->BeginShapes();
-    for(int i = 0; i < this->managers.Size(); i++)
+    for (int i = 0; i < this->managers.Size(); i++)
     {
         n_assert(this->managers[i].isvalid());
         if (this->managers[i]->IsActive())

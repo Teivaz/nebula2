@@ -26,7 +26,7 @@ public:
 
     // FIXME: [np] make protected with friend function, if possible
     /// find an id object by name
-    static _attridTyped<_AttrIdType>* Find( const nString& name );
+    static _attridTyped<_AttrIdType>* Find(const nString& name);
 
 protected:
     /// default constructor is protected
@@ -42,47 +42,47 @@ protected:
 
 //------------------------------------------------------------------------------
 
-#define _DeclareAttribute( id, type )   extern const type id ## Data; extern const type* id
+#define _DeclareAttribute(id, type)   extern const type id ## Data; extern const type* id
 
-#define _DefineAttribute( id, typeConstant, type )\
+#define _DefineAttribute(id, typeConstant, type)\
     const type id ## Data (#id, typeConstant, _attrid::Read|_attrid::Write);\
     const type* id = & id ## Data
 
-#define _DefineStorableAttribute( id, typeConstant, type )\
+#define _DefineStorableAttribute(id, typeConstant, type)\
     const type id ## Data (#id, typeConstant, _attrid::Read|_attrid::Write|_attrid::Store);\
     const type* id = & id ## Data
 
-#define DeclareVoid(id)         _DeclareAttribute( id, _attridTyped<attr::VoidT> );
-#define DefineVoid(id)          _DefineAttribute( id, _attrid::Void, _attridTyped<attr::VoidT> );
-#define DefineStorableVoid(id)  _DefineStorableAttribute( id, _attrid::Void, _attridTyped<attr::VoidT> );
+#define DeclareVoid(id)         _DeclareAttribute(id, _attridTyped<attr::VoidT>);
+#define DefineVoid(id)          _DefineAttribute(id, _attrid::Void, _attridTyped<attr::VoidT>);
+#define DefineStorableVoid(id)  _DefineStorableAttribute(id, _attrid::Void, _attridTyped<attr::VoidT>);
 
-#define DeclareBool(id)         _DeclareAttribute( id, _attridTyped<attr::BoolT> );
-#define DefineBool(id)          _DefineAttribute( id, _attrid::Bool, _attridTyped<attr::BoolT> );
-#define DefineStorableBool(id)  _DefineStorableAttribute( id, _attrid::Bool, _attridTyped<attr::BoolT> );
+#define DeclareBool(id)         _DeclareAttribute(id, _attridTyped<attr::BoolT>);
+#define DefineBool(id)          _DefineAttribute(id, _attrid::Bool, _attridTyped<attr::BoolT>);
+#define DefineStorableBool(id)  _DefineStorableAttribute(id, _attrid::Bool, _attridTyped<attr::BoolT>);
 
-#define DeclareInt(id)          _DeclareAttribute( id, _attridTyped<attr::IntT> );
-#define DefineInt(id)           _DefineAttribute( id, _attrid::Int, _attridTyped<attr::IntT> );
-#define DefineStorableInt(id)   _DefineStorableAttribute( id, _attrid::Int, _attridTyped<attr::IntT> );
+#define DeclareInt(id)          _DeclareAttribute(id, _attridTyped<attr::IntT>);
+#define DefineInt(id)           _DefineAttribute(id, _attrid::Int, _attridTyped<attr::IntT>);
+#define DefineStorableInt(id)   _DefineStorableAttribute(id, _attrid::Int, _attridTyped<attr::IntT>);
 
-#define DeclareFloat(id)        _DeclareAttribute( id, _attridTyped<attr::FloatT> );
-#define DefineFloat(id)         _DefineAttribute( id, _attrid::Float, _attridTyped<attr::FloatT> );
-#define DefineStorableFloat(id) _DefineStorableAttribute( id, _attrid::Float, _attridTyped<attr::FloatT> );
+#define DeclareFloat(id)        _DeclareAttribute(id, _attridTyped<attr::FloatT>);
+#define DefineFloat(id)         _DefineAttribute(id, _attrid::Float, _attridTyped<attr::FloatT>);
+#define DefineStorableFloat(id) _DefineStorableAttribute(id, _attrid::Float, _attridTyped<attr::FloatT>);
 
-#define DeclareString(id)       _DeclareAttribute( id, _attridTyped<attr::StringT> );
-#define DefineString(id)        _DefineAttribute( id, _attrid::String, _attridTyped<attr::StringT> );
-#define DefineStorableString(id)  _DefineStorableAttribute( id, _attrid::String, _attridTyped<attr::StringT> );
+#define DeclareString(id)       _DeclareAttribute(id, _attridTyped<attr::StringT>);
+#define DefineString(id)        _DefineAttribute(id, _attrid::String, _attridTyped<attr::StringT>);
+#define DefineStorableString(id)  _DefineStorableAttribute(id, _attrid::String, _attridTyped<attr::StringT>);
 
-#define DeclareVector3(id)    _DeclareAttribute( id, _attridTyped<attr::Vector3T> );
-#define DefineVector3(id)     _DefineAttribute( id, _attrid::Vector3, _attridTyped<attr::Vector3T> );
-#define DefineStorableVector3(id)  _DefineStorableAttribute( id, _attrid::Vector3, _attridTyped<attr::Vector3T> );
+#define DeclareVector3(id)    _DeclareAttribute(id, _attridTyped<attr::Vector3T>);
+#define DefineVector3(id)     _DefineAttribute(id, _attrid::Vector3, _attridTyped<attr::Vector3T>);
+#define DefineStorableVector3(id)  _DefineStorableAttribute(id, _attrid::Vector3, _attridTyped<attr::Vector3T>);
 
-#define DeclareVector4(id)    _DeclareAttribute( id, _attridTyped<attr::Vector4T> );
-#define DefineVector4(id)     _DefineAttribute( id, _attrid::Vector4, _attridTyped<attr::Vector4T> );
-#define DefineStorableVector4(id)  _DefineStorableAttribute( id, _attrid::Vector4, _attridTyped<attr::Vector4T> );
+#define DeclareVector4(id)    _DeclareAttribute(id, _attridTyped<attr::Vector4T>);
+#define DefineVector4(id)     _DefineAttribute(id, _attrid::Vector4, _attridTyped<attr::Vector4T>);
+#define DefineStorableVector4(id)  _DefineStorableAttribute(id, _attrid::Vector4, _attridTyped<attr::Vector4T>);
 
-#define DeclareMatrix44(id)    _DeclareAttribute( id, _attridTyped<attr::Matrix44T> );
-#define DefineMatrix44(id)     _DefineAttribute( id, _attrid::Matrix44, _attridTyped<attr::Matrix44T> );
-#define DefineStorableMatrix44(id)  _DefineStorableAttribute( id, _attrid::Matrix44, _attridTyped<attr::Matrix44T> );
+#define DeclareMatrix44(id)    _DeclareAttribute(id, _attridTyped<attr::Matrix44T>);
+#define DefineMatrix44(id)     _DefineAttribute(id, _attrid::Matrix44, _attridTyped<attr::Matrix44T>);
+#define DefineStorableMatrix44(id)  _DefineStorableAttribute(id, _attrid::Matrix44, _attridTyped<attr::Matrix44T>);
 
 //------------------------------------------------------------------------------
 /**
@@ -107,7 +107,7 @@ nArray<_attridTyped<_AttrIdType>*>* _attridTyped<_AttrIdType>::attrIdRegistry = 
 */
 template <class _AttrIdType>
 _attridTyped<_AttrIdType>::_attridTyped(const char* n, Type t, uchar f) :
-    _attrid( n, t, f )
+    _attrid(n, t, f)
 {
     AddToRegistry();
 }
@@ -172,7 +172,7 @@ _attridTyped<_AttrIdType>::RemoveFromRegistry()
 */
 template <class _AttrIdType>
 _attridTyped<_AttrIdType>*
-_attridTyped<_AttrIdType>::Find( const nString& n )
+_attridTyped<_AttrIdType>::Find(const nString& n)
 {
     // check if any elements of this id type:
     if (!attrIdRegistry) return 0;

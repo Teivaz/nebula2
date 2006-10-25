@@ -134,7 +134,7 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
 
     n_assert(xmlSpreadSheet.NumTables() > 0);
     nXmlTable* xmlTable = xmlSpreadSheet.FindTable(tablename);
-    if(!xmlTable)
+    if (!xmlTable)
     {
         n_error("FSM::FiniteStateMachine::LoadXMLTable(): table '%s' does not exists in xml file '%s'", tablename.Get(), path.Get());
         return false;
@@ -240,7 +240,7 @@ FiniteStateMachine::Trigger()
 
     // try all transitions
     int numTransitions = this->currentState->transitions.Size();
-    for(int index = 0; index < numTransitions; index++)
+    for (int index = 0; index < numTransitions; index++)
     {
         Transition* transition = this->currentState->transitions[index];
 

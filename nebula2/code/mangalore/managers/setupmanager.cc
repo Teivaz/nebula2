@@ -29,7 +29,7 @@ SetupManager* SetupManager::Singleton = 0;
 /**
 */
 SetupManager::SetupManager() :
-    worldBox(vector3(0.0f, 0.0f, 0.0f), vector3(500.0f, 100.0, 500.0f))
+    worldBox(vector3(0.0f, 0.0f, 0.0f), vector3(500.0f, 100.0f, 500.0f))
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -179,9 +179,9 @@ SetupManager::IsRandomEncounterLevel(const nString& n)
         int rowIndex = 0;
         int numRows = query->GetNumRows();
 
-		if( numRows )
+		if (numRows)
 		{
-			if(query->HasAttr(Attr::RandomEncounterLevel, rowIndex))
+			if (query->HasAttr(Attr::RandomEncounterLevel, rowIndex))
 			{
 				return query->GetBool(Attr::RandomEncounterLevel, rowIndex);
 			}

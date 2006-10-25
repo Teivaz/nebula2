@@ -140,10 +140,10 @@ Server::GetWayPointList(const nString& name) const
     int numWayPointLists = this->wayPointLists.Size();
     int index;
 
-    for(index = 0; index < numWayPointLists; index++)
+    for (index = 0; index < numWayPointLists; index++)
     {
         n_assert(this->wayPointLists[index].isvalid());
-        if(strcmp(this->wayPointLists[index]->GetName().Get(), name.Get()) == 0)
+        if (strcmp(this->wayPointLists[index]->GetName().Get(), name.Get()) == 0)
         {
             return this->wayPointLists[index].get();
         }
@@ -176,11 +176,9 @@ Server::FindCoverPoint(const vector3& position, const vector3& enemy, float rang
 
         float distance = (cover.GetPosition() - position).len();
 
-        if (
-            !cover.IsClaimed()
+        if (!cover.IsClaimed()
             && (distance <= range) && (distance < bestDistance)
-            && cover.ProvidesCoverAgainst(enemy)
-        )
+            && cover.ProvidesCoverAgainst(enemy))
         {
             bestCover = &cover;
             bestDistance = distance;

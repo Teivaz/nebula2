@@ -235,18 +235,7 @@ Attribute::Attribute(const Attribute& rhs) :
 */
 inline
 Attribute::Attribute(const Attr::AttributeID& id) :
-    attrId( id ),
-    empty( true )
-{
-    // empty
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-inline
-Attribute::Attribute(const Attr::VoidAttributeID& i) :
-    attrId( i ),
+    attrId(id),
     empty(true)
 {
     // empty
@@ -256,8 +245,19 @@ Attribute::Attribute(const Attr::VoidAttributeID& i) :
 /**
 */
 inline
-Attribute::Attribute( const Attr::StringAttributeID& i, const nString& v) :
-    attrId( i ),
+Attribute::Attribute(const Attr::VoidAttributeID& i) :
+    attrId(i),
+    empty(true)
+{
+    // empty
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+Attribute::Attribute(const Attr::StringAttributeID& i, const nString& v) :
+    attrId(i),
     empty(false),
     value(v.Get())
 {
@@ -268,8 +268,8 @@ Attribute::Attribute( const Attr::StringAttributeID& i, const nString& v) :
 /**
 */
 inline
-Attribute::Attribute( const Attr::IntAttributeID& i, int v) :
-    attrId( i ),
+Attribute::Attribute(const Attr::IntAttributeID& i, int v) :
+    attrId(i),
     empty(false),
     value(v)
 {
@@ -280,8 +280,8 @@ Attribute::Attribute( const Attr::IntAttributeID& i, int v) :
 /**
 */
 inline
-Attribute::Attribute( const Attr::FloatAttributeID& i, float v) :
-    attrId( i ),
+Attribute::Attribute(const Attr::FloatAttributeID& i, float v) :
+    attrId(i),
     empty(false),
     value(v)
 {
@@ -292,8 +292,8 @@ Attribute::Attribute( const Attr::FloatAttributeID& i, float v) :
 /**
 */
 inline
-Attribute::Attribute( const Attr::BoolAttributeID& i, bool v) :
-    attrId( i ),
+Attribute::Attribute(const Attr::BoolAttributeID& i, bool v) :
+    attrId(i),
     empty(false),
     value(v)
 {
@@ -304,8 +304,8 @@ Attribute::Attribute( const Attr::BoolAttributeID& i, bool v) :
 /**
 */
 inline
-Attribute::Attribute( const Attr::Vector3AttributeID& i, const vector3& v) :
-    attrId( i ),
+Attribute::Attribute(const Attr::Vector3AttributeID& i, const vector3& v) :
+    attrId(i),
     empty(false),
     value(v)
 {
@@ -316,8 +316,8 @@ Attribute::Attribute( const Attr::Vector3AttributeID& i, const vector3& v) :
 /**
 */
 inline
-Attribute::Attribute( const Attr::Vector4AttributeID& i, const vector4& v) :
-    attrId( i ),
+Attribute::Attribute(const Attr::Vector4AttributeID& i, const vector4& v) :
+    attrId(i),
     empty(false),
     value(v)
 {
@@ -328,8 +328,8 @@ Attribute::Attribute( const Attr::Vector4AttributeID& i, const vector4& v) :
 /**
 */
 inline
-Attribute::Attribute( const Attr::Matrix44AttributeID& i, const matrix44& m) :
-    attrId( i ),
+Attribute::Attribute(const Attr::Matrix44AttributeID& i, const matrix44& m) :
+    attrId(i),
     empty(false),
     value(m)
 {

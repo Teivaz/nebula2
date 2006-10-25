@@ -92,25 +92,25 @@ AnimTable::Open()
                             //this->animInfos.At(colIndex, rowIndex).animName = attrValueTokens[1];
 
                             AnimInfo info;
-                            n_assert( attrValueTokens[1].IsValid() );
+                            n_assert(attrValueTokens[1].IsValid());
                             info.animName=attrValueTokens[1];
 
                             // Check if next token has a hot spot for this animation
-                            if(tokens.Size() > (i+1) )
+                            if (tokens.Size() > (i+1))
                             {
                                 nString nextToken = tokens.At(i+1);
                                 nArray<nString> nextAttrValueTokens;
                                 nextToken.Tokenize("= \t", nextAttrValueTokens);
-                                if(nextAttrValueTokens[0] == "hotspot")
+                                if (nextAttrValueTokens[0] == "hotspot")
                                 {
-                                    n_assert( nextAttrValueTokens[1].IsValid() );
+                                    n_assert(nextAttrValueTokens[1].IsValid());
                                     info.hotSpotTime = nextAttrValueTokens[1].AsFloat();
                                     i++;
                                 }
                             }
 
                             n_assert(info.GetAnimName().IsValid());
-                            n_assert(info.GetHotSpotTime() >= 0.0f );
+                            n_assert(info.GetHotSpotTime() >= 0.0f);
                             this->animInfos.At(colIndex, rowIndex).At(animCounter) = info;
                             animCounter++;
 
@@ -129,7 +129,7 @@ AnimTable::Open()
                     {
                         // old style string, just the animation name
                         AnimInfo info;
-                        n_assert( tokens[i].IsValid() );
+                        n_assert(tokens[i].IsValid());
                         info.animName = tokens[i];
                         this->animInfos.At(colIndex, rowIndex).Append(info);
                     }
@@ -179,7 +179,7 @@ AnimTable::Lookup(const nString& id, const nString& animName, bool random) const
     }
 
     int idx=0;
-    if(random == true)
+    if (random == true)
     {
         idx = rand() % this->animInfos.At(colIndex, rowIndex).Size();
         //idx = n_rand(1.0f, (float) this->animInfos.At(colIndex, rowIndex).Size());

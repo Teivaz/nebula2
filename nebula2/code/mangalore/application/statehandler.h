@@ -72,6 +72,6 @@ StateHandler::GetName() const
     return this->stateName;
 }
 
-};
+} // namespace Application
 //------------------------------------------------------------------------------
 #endif

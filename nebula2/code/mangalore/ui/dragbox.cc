@@ -135,7 +135,7 @@ DragBox::HandleMessage(Message::Msg* msg)
 								// in the case of LeftMouseButton
                                 case Input::Event::LeftMouseButton:
                                 {
-									if( this->dragBoxCancelled )
+									if (this->dragBoxCancelled)
 									{
 										this->dragBoxCancelled = false;
 
@@ -281,49 +281,49 @@ DragBox::OnMouseMove(const vector2& mousePos)
             {
 				// if not ...
 				// check if there is a dragboxdisplay
-				if( this->display.isvalid() )
+				if (this->display.isvalid())
 				{
 					// check if the dragboxdisplay is not open
-					if( !this->display->IsOpen() )
+					if (!this->display->IsOpen())
 					{
 						// if not ...
 						this->display->Open();
 					}
 				}
 				// check if there is a receiver
-				if( this->receiver.isvalid() )
+				if (this->receiver.isvalid())
 				{
 					// create a DragBoxStarted message
 					Ptr<Message::DragBoxStarted> dragBoxStarted = Message::DragBoxStarted::Create();
 					// check if the message is handled
-					if( this->receiver->Accepts( dragBoxStarted ) )
+					if (this->receiver->Accepts(dragBoxStarted))
 					{
 						// send the message
-						this->receiver->HandleMessage( dragBoxStarted );
+						this->receiver->HandleMessage(dragBoxStarted);
 					}
 				}
                 this->dragBoxStartedSent = true;
             }
 			// check if there is a receiver
-			if( this->receiver.isvalid() )
+			if (this->receiver.isvalid())
 			{
 				// create a DragBoxUpdated message
 				Ptr<Message::DragBoxUpdated> dragBoxUpdated = Message::DragBoxUpdated::Create();
 				// check if the message is handled
-				if( this->receiver->Accepts( dragBoxUpdated ) )
+				if (this->receiver->Accepts(dragBoxUpdated))
 				{
 					// send the message
-					this->receiver->HandleMessage( dragBoxUpdated );
+					this->receiver->HandleMessage(dragBoxUpdated);
 				}
 			}
         }
 		else
 		{
 			// check if there is a dragboxdisplay
-			if( this->display.isvalid() )
+			if (this->display.isvalid())
 			{
 				// check if the dragboxdisplay is open
-				if( this->display->IsOpen() )
+				if (this->display->IsOpen())
 				{
 					// if open ...
 					this->display->Close();
@@ -375,15 +375,15 @@ DragBox::OnLeftButtonUp(const vector2& mousePos)
         if (this->dragBoxValid)
         {
 			// check if there is a receiver
-			if( this->receiver.isvalid() )
+			if (this->receiver.isvalid())
 			{
 				// create a DragBoxReady message
 				Ptr<Message::DragBoxReady> dragBoxReady = Message::DragBoxReady::Create();
 				// check if the message is handled
-				if( this->receiver->Accepts( dragBoxReady ) )
+				if (this->receiver->Accepts(dragBoxReady))
 				{
 					// send the message
-					this->receiver->HandleMessage( dragBoxReady );
+					this->receiver->HandleMessage(dragBoxReady);
 				}
 			}
 
@@ -413,15 +413,15 @@ DragBox::OnRightButtonDown(const vector2& mousePos)
         this->CancelDragging();
 
 		// check if there is a receiver
-		if( this->receiver.isvalid() )
+		if (this->receiver.isvalid())
 		{
 			// create a DragBoxCancelled message
 			Ptr<Message::DragBoxCancelled> dragBoxCancelled = Message::DragBoxCancelled::Create();
 			// check if the message is handled
-			if( this->receiver->Accepts( dragBoxCancelled ) )
+			if (this->receiver->Accepts(dragBoxCancelled))
 			{
 				// send the message
-				this->receiver->HandleMessage( dragBoxCancelled );
+				this->receiver->HandleMessage(dragBoxCancelled);
 			}
 		}
 
@@ -458,10 +458,10 @@ DragBox::CancelDragging()
 		this->dragBoxCancelled = true;
 
 		// check if there is a dragboxdisplay
-		if( this->display.isvalid() )
+		if (this->display.isvalid())
 		{
 			// check if the dragboxdisplay is open
-			if( this->display->IsOpen() )
+			if (this->display->IsOpen())
 			{
 				// if open ...
 				this->display->Close();
@@ -497,10 +497,10 @@ DragBox::UpdateDragBox(const vector2& mousePos)
     }
 
 	// check if there is a dragboxdisplay
-	if( this->display.isvalid() )
+	if (this->display.isvalid())
 	{
 		// update the dragboxdisplay
-		this->display->Update( this->dragBox2D );
+		this->display->Update(this->dragBox2D);
 	}
 }
 
@@ -536,10 +536,10 @@ DragBox::Deactivate()
 	this->receiver = 0;
 
 	// check if there is a display
-	if( this->display.isvalid() )
+	if (this->display.isvalid())
 	{
 		// check if the display is open
-		if( this->display->IsOpen() )
+		if (this->display->IsOpen())
 		{
 			// if open ...
 			this->display->Close();

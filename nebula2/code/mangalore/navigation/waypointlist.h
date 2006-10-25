@@ -78,6 +78,5 @@ WayPointList::GetName() const
 }
 
 } // namespace Navigation
-
 //------------------------------------------------------------------------------
 #endif

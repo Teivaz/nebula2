@@ -34,7 +34,6 @@ public:
 
 RegisterFactory(CharacterProfile);
 
-
-};
+} // namespace Loader
 //------------------------------------------------------------------------------
 #endif
