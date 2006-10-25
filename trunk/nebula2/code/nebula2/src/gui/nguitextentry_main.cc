@@ -89,7 +89,7 @@ void
 nGuiTextEntry::SetOverstrike(bool overstrike)
 {
     this->overstrikeDefault = overstrike;
-    this->lineEditor->SetOverstrike( overstrike );
+    this->lineEditor->SetOverstrike(overstrike);
 }
 
 //------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ nGuiTextEntry::SetOverstrike(bool overstrike)
 */
 void nGuiTextEntry::SetInitialCursorPos(Alignment pos)
 {
-    n_assert( pos != Center )
+    n_assert(pos != Center)
     this->initialCursorPos = pos;
 }
 //------------------------------------------------------------------------------
@@ -181,13 +181,13 @@ nGuiTextEntry::SetActive(bool b)
             // this->refInputServer->SetMute(true);
             this->active = true;
             this->firstFrameActive = true;
-            switch( this->initialCursorPos )
+            switch (this->initialCursorPos)
             {
                 case Left:  this->lineEditor->CursorHome(); break;
                 case Right: this->lineEditor->CursorEnd(); break;
                 default:
-                    n_error( "Invalid initialCursorPos: %d",
-                             this->initialCursorPos );
+                    n_error("Invalid initialCursorPos: %d",
+                            this->initialCursorPos);
             }
         }
     }
@@ -503,9 +503,9 @@ nGuiTextEntry::Render()
 bool nGuiTextEntry::IsCursorVisible() const
 {
     bool retVal = false;
-    if( this->active )
+    if (this->active)
     {
-        if( this->blinking )
+        if (this->blinking)
         {
             double time = nGuiServer::Instance()->GetTime();
             if (fmod(time, this->blinkRate) > this->blinkRate/2.0)

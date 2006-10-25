@@ -121,12 +121,12 @@ nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndentio
       const char* pcValue = pNode->Value();
 
       /*
-      for(int i=0; i<iIndention; ++i)
+      for (int i = 0; i < iIndention; ++i)
       {
            rsString += "\t";
       } */
 
-      switch(pNode->Type())
+      switch (pNode->Type())
       {
       case TiXmlNode::COMMENT:
            //assert(pNode->NoChildren()  &&  "Node Type COMMENT should not have children");
@@ -150,7 +150,7 @@ nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndentio
            rsString += "<";
            rsString += pcValue;
 
-           for(const TiXmlAttribute* pAttr = pNode->ToElement()->FirstAttribute(); pAttr!= 0; pAttr = pAttr->Next())
+           for (const TiXmlAttribute* pAttr = pNode->ToElement()->FirstAttribute(); pAttr!= 0; pAttr = pAttr->Next())
            {
                 rsString += " ";
                 rsString += pAttr->Name();
@@ -159,7 +159,7 @@ nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndentio
                 rsString += "\"";
            }
 
-           if(pNode->FirstChild()  &&  pNode->FirstChild()->NextSibling() == 0  &&
+           if (pNode->FirstChild() && pNode->FirstChild()->NextSibling() == 0 &&
               pNode->FirstChild()->Type() == TiXmlNode::TEXT)
            {
                 rsString += ">";
@@ -171,7 +171,7 @@ nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndentio
                 return;
            }
 
-           if(pNode->NoChildren())
+           if (pNode->NoChildren())
            {
                 rsString += "/>";
            }
@@ -198,16 +198,16 @@ nStream::AddNode2String(nString& rsString, const TiXmlNode* pNode, int iIndentio
            return;
       }
 
-      if(pNode->Type() == TiXmlNode::ELEMENT  &&  !pNode->NoChildren())
+      if (pNode->Type() == TiXmlNode::ELEMENT && !pNode->NoChildren())
       {
-           for(const TiXmlNode* pChild = pNode->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
+           for (const TiXmlNode* pChild = pNode->FirstChild(); pChild != 0; pChild = pChild->NextSibling())
            {
                 AddNode2String(rsString, pChild, iIndention + 1);
            }
 
 
            /*
-           for(int i=0; i<iIndention; ++i)
+           for (int i = 0; i < iIndention; ++i)
            {
                 rsString += "\t";
            } */
@@ -646,9 +646,9 @@ nStream::SetToNodeByAttribute(const nString& nodeName, const nString& attribute,
     n_assert(value.IsValid());
 
     this->SetToNode(nodeName);
-    while(this->GetString(attribute) != value)
+    while (this->GetString(attribute) != value)
     {
-        if(this->SetToNextChild() == false)
+        if (this->SetToNextChild() == false)
         {
             return;
         }

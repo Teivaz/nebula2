@@ -59,7 +59,7 @@ bool
 nBlendShapeNode::LoadResources()
 {
     nMaterialNode::LoadResources();
-    if(!this->refMeshArray.isvalid())
+    if (!this->refMeshArray.isvalid())
     {
         this->refMeshArray = nGfxServer2::Instance()->NewMeshArray(0);
     }
@@ -76,7 +76,7 @@ nBlendShapeNode::LoadResources()
     // update shape bounding boxes
     if (true == this->resourcesValid)
     {
-        for(i = 0; i < this->GetNumShapes(); i++)
+        for (i = 0; i < this->GetNumShapes(); i++)
         {
             nMesh2* mesh = this->refMeshArray->GetMeshAt(i);
             if (0 != mesh)

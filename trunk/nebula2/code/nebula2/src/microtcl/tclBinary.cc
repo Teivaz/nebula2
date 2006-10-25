@@ -380,7 +380,7 @@ SetByteArrayFromAny(interp, objPtr)
 	srcEnd = src + length;
 
 	byteArrayPtr = (ByteArray *) ckalloc(BYTEARRAY_SIZE(length));
-	for (dst = byteArrayPtr->bytes; src < srcEnd; ) {
+	for (dst = byteArrayPtr->bytes; src < srcEnd;) {
 	    src += Tcl_UtfToUniChar(src, &ch);
 	    *dst++ = (unsigned char) ch;
 	}
@@ -1106,7 +1106,7 @@ Tcl_BinaryObjCmd(dummy, interp, objc, objv)
 			    Tcl_DecrRefCount(valuePtr);	/* unneeded */
 			    return TCL_ERROR;
 			}
-			offset += (count + 7 ) / 8;
+			offset += (count + 7) / 8;
 			break;
 		    }
 		    case 'h':

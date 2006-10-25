@@ -141,7 +141,7 @@ nGuiFileDialog::OnShow()
         textEntry->SetPressedBrush("textentry_p");
         textEntry->SetHighlightBrush("textentry_h");
         textEntry->SetCursorBrush("textcursor");
-        textEntry->SetColor( this->entryTextColor );
+        textEntry->SetColor(this->entryTextColor);
         textEntry->SetMinSize(vector2(0.0f, textEntry->GetTextExtent().y * 1.5f));
         textEntry->SetMaxSize(vector2(1.0f, textEntry->GetTextExtent().y * 1.5f));
         textEntry->SetFileMode(true);
@@ -182,7 +182,7 @@ nGuiFileDialog::OnShow()
         layout->AttachWidget(dirLister, nGuiFormLayout::Bottom, okButton, 0.005f);
     }
 
-    if ( this->initialSelection )
+    if (this->initialSelection)
     {
         dirLister->SetSelectionIndex(0);
     }
@@ -412,7 +412,7 @@ nGuiFileDialog::DeleteFile()
     path.Append("/");
     path.Append(this->GetFilename());
 
-    if(nFileServer2::Instance()->DeleteFile(path.Get()))
+    if (nFileServer2::Instance()->DeleteFile(path.Get()))
     {
         return true;
     }

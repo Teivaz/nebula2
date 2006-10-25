@@ -166,7 +166,7 @@ nAudioServer3::NewSound()
 nString
 nAudioServer3::CategoryToString(Category cat)
 {
-    switch(cat)
+    switch (cat)
     {
         case Effect: return "effect";
         case Music:  return "music";
@@ -226,7 +226,7 @@ nAudioServer3::Mute()
 	for (i = 0; i < NumCategorys; i++)
 	{
 		this->masterVolumeMuted[i] = this->GetMasterVolume((Category)i);
-		this->SetMasterVolume((Category)i , 0.0f );
+		this->SetMasterVolume((Category)i , 0.0f);
 	}
 
 	this->isMuted = true;

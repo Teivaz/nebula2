@@ -47,7 +47,7 @@ void
 nTextureAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
 {
     n_assert(sceneNode);
-    n_assert(sceneNode->IsA( kernelServer->FindClass("nabstractshadernode")));
+    n_assert(sceneNode->IsA(kernelServer->FindClass("nabstractshadernode")));
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
     n_assert(nShaderState::InvalidParameter != this->shaderParam);

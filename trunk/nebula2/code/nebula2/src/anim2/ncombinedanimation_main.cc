@@ -32,7 +32,7 @@ nCombinedAnimation::LoadResource()
 {
     bool success = false;
     success = nAnimation::LoadResource();
-    if(success)
+    if (success)
     {
         this->SetState(Valid);
     };
@@ -80,7 +80,7 @@ nCombinedAnimation::EndAnims()
     int i,k;
     int numGroups = 0;
     int numKeys = 0;
-    for( i = 0; i < this->animPtrs.Size(); i++)
+    for (i = 0; i < this->animPtrs.Size(); i++)
     {
         numGroups += this->animPtrs[i]->GetNumGroups();
         numKeys += this->animPtrs[i]->GetKeyArray().Size();
@@ -93,44 +93,44 @@ nCombinedAnimation::EndAnims()
     int currentGroup = 0;
     int currentKey = 0;
     int keyAnimOffset;
-    for( i = 0; i < this->animPtrs.Size(); i++)
+    for (i = 0; i < this->animPtrs.Size(); i++)
     {
         keyAnimOffset = currentKey;
 
-        for( k = 0; k < this->animPtrs[i]->GetNumGroups(); k++)
+        for (k = 0; k < this->animPtrs[i]->GetNumGroups(); k++)
         {
             nAnimation::Group &srcGroup = this->animPtrs[i]->GetGroupAt(k);
             nAnimation::Group &dstGroup = this->GetGroupAt(currentGroup);
 
-            dstGroup.SetNumCurves( srcGroup.GetNumCurves() );
-            dstGroup.SetStartKey( srcGroup.GetStartKey());
-            dstGroup.SetNumKeys( srcGroup.GetNumKeys() );
-            dstGroup.SetKeyStride( srcGroup.GetKeyStride() );
-            dstGroup.SetKeyTime( srcGroup.GetKeyTime() );
-            dstGroup.SetLoopType( srcGroup.GetLoopType() );
+            dstGroup.SetNumCurves(srcGroup.GetNumCurves());
+            dstGroup.SetStartKey(srcGroup.GetStartKey());
+            dstGroup.SetNumKeys(srcGroup.GetNumKeys());
+            dstGroup.SetKeyStride(srcGroup.GetKeyStride());
+            dstGroup.SetKeyTime(srcGroup.GetKeyTime());
+            dstGroup.SetLoopType(srcGroup.GetLoopType());
 
             // copy curves
             int c;
-            for( c = 0; c < srcGroup.GetNumCurves(); c++)
+            for (c = 0; c < srcGroup.GetNumCurves(); c++)
             {
                 nAnimation::Curve &srcCurve = srcGroup.GetCurveAt(c);
                 nAnimation::Curve &dstCurve = dstGroup.GetCurveAt(c);
-                dstCurve.SetIpolType( srcCurve.GetIpolType() );
+                dstCurve.SetIpolType(srcCurve.GetIpolType());
                 int srcFirstKey = srcCurve.GetFirstKeyIndex();
-                if(srcFirstKey != -1)
+                if (srcFirstKey != -1)
                 {
                     // add offset
                     srcFirstKey += keyAnimOffset;
                 };
-                dstCurve.SetFirstKeyIndex( srcFirstKey );
-                dstCurve.SetConstValue( srcCurve.GetConstValue() );
-                dstCurve.SetIsAnimated( srcCurve.IsAnimated() );
+                dstCurve.SetFirstKeyIndex(srcFirstKey);
+                dstCurve.SetConstValue(srcCurve.GetConstValue());
+                dstCurve.SetIsAnimated(srcCurve.IsAnimated());
             };
 
             currentGroup++;
         };
         // copy keys
-        for( k = 0; k < this->animPtrs[i]->GetKeyArray().Size(); k++)
+        for (k = 0; k < this->animPtrs[i]->GetKeyArray().Size(); k++)
         {
             this->keyArray[currentKey] = this->animPtrs[i]->GetKeyArray().At(k);
             currentKey++;
@@ -140,7 +140,7 @@ nCombinedAnimation::EndAnims()
     // lets print some stats
     int numg = this->GetNumGroups();
     n_printf("Combined Animation Stats : %i Groups\n",numg);
-    for( i = 0; i < numg; i++)
+    for (i = 0; i < numg; i++)
     {
         nAnimation::Group &group = this->GetGroupAt(i);
         n_printf("Group %i : Duration = %i, NumKeys = %i, StartKey = %i",i,group.GetDuration(),group.GetNumKeys(),group.GetStartKey());

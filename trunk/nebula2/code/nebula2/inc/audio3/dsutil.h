@@ -34,9 +34,9 @@ class CStreamingSound;
 //#define WAVEFILE_READ   1
 //#define WAVEFILE_WRITE  2
 
-#define DSUtil_StopSound(s)         { if(s) s->Stop(); }
-#define DSUtil_PlaySound(s)         { if(s) s->Play( 0, 0 ); }
-#define DSUtil_PlaySoundLooping(s)  { if(s) s->Play( 0, DSBPLAY_LOOPING ); }
+#define DSUtil_StopSound(s)         { if (s) s->Stop(); }
+#define DSUtil_PlaySound(s)         { if (s) s->Play(0, 0); }
+#define DSUtil_PlaySoundLooping(s)  { if (s) s->Play(0, DSBPLAY_LOOPING); }
 
 //-----------------------------------------------------------------------------
 // Name: class CSoundManager
@@ -51,15 +51,15 @@ public:
     CSoundManager();
     ~CSoundManager();
 
-    HRESULT Initialize( HWND hWnd, DWORD dwCoopLevel );
+    HRESULT Initialize(HWND hWnd, DWORD dwCoopLevel);
     inline  LPDIRECTSOUND8 GetDirectSound() { return m_pDS; }
-    HRESULT SetPrimaryBufferFormat( DWORD dwPrimaryChannels, DWORD dwPrimaryFreq, DWORD dwPrimaryBitRate );
-    HRESULT Get3DListenerInterface( LPDIRECTSOUND3DLISTENER* ppDSListener );
+    HRESULT SetPrimaryBufferFormat(DWORD dwPrimaryChannels, DWORD dwPrimaryFreq, DWORD dwPrimaryBitRate);
+    HRESULT Get3DListenerInterface(LPDIRECTSOUND3DLISTENER* ppDSListener);
 
-    HRESULT Create( CSound** ppSound, LPTSTR strWaveFileName, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
-    HRESULT CreateFromMemory( CSound** ppSound, BYTE* pbData, ULONG ulDataSize, LPWAVEFORMATEX pwfx, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1 );
-    HRESULT CreateStreaming( CStreamingSound** ppStreamingSound, LPTSTR strWaveFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize );
-    HRESULT CreateStreamingOgg( CStreamingSound** ppStreamingSound, LPTSTR strOggFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize );
+    HRESULT Create(CSound** ppSound, LPTSTR strWaveFileName, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1);
+    HRESULT CreateFromMemory(CSound** ppSound, BYTE* pbData, ULONG ulDataSize, LPWAVEFORMATEX pwfx, DWORD dwCreationFlags = 0, GUID guid3DAlgorithm = GUID_NULL, DWORD dwNumBuffers = 1);
+    HRESULT CreateStreaming(CStreamingSound** ppStreamingSound, LPTSTR strWaveFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize);
+    HRESULT CreateStreamingOgg(CStreamingSound** ppStreamingSound, LPTSTR strOggFileName, DWORD dwCreationFlags, GUID guid3DAlgorithm, DWORD dwNotifyCount, DWORD dwNotifySize);
 };
 
 //-----------------------------------------------------------------------------
@@ -75,19 +75,19 @@ protected:
     DWORD                m_dwNumBuffers;
     DWORD                m_dwCreationFlags;
 
-    HRESULT RestoreBuffer( LPDIRECTSOUNDBUFFER pDSB, BOOL* pbWasRestored );
+    HRESULT RestoreBuffer(LPDIRECTSOUNDBUFFER pDSB, BOOL* pbWasRestored);
 
 public:
-    CSound( LPDIRECTSOUNDBUFFER* apDSBuffer, DWORD dwDSBufferSize, DWORD dwNumBuffers, nAudioFile* pWaveFile, DWORD dwCreationFlags );
+    CSound(LPDIRECTSOUNDBUFFER* apDSBuffer, DWORD dwDSBufferSize, DWORD dwNumBuffers, nAudioFile* pWaveFile, DWORD dwCreationFlags);
     virtual ~CSound();
 
-    virtual HRESULT Get3DBufferInterface( DWORD dwIndex, LPDIRECTSOUND3DBUFFER* ppDS3DBuffer );
-    virtual HRESULT FillBufferWithSound( LPDIRECTSOUNDBUFFER pDSB, BOOL bRepeatWavIfBufferLarger );
+    virtual HRESULT Get3DBufferInterface(DWORD dwIndex, LPDIRECTSOUND3DBUFFER* ppDS3DBuffer);
+    virtual HRESULT FillBufferWithSound(LPDIRECTSOUNDBUFFER pDSB, BOOL bRepeatWavIfBufferLarger);
     virtual LPDIRECTSOUNDBUFFER GetFreeBuffer(DWORD& index);
-    virtual LPDIRECTSOUNDBUFFER GetBuffer( DWORD dwIndex );
+    virtual LPDIRECTSOUNDBUFFER GetBuffer(DWORD dwIndex);
 
-    virtual HRESULT Play( DWORD dwPriority, DWORD dwFlags, LONG lVolume, LONG lFrequency, LONG lPan, DWORD& outIndex);
-    virtual HRESULT Play3D( LPDS3DBUFFER p3DBuffer, DWORD dwPriority, DWORD dwFlags, LONG lVolume, LONG lFrequency, DWORD& outIndex);
+    virtual HRESULT Play(DWORD dwPriority, DWORD dwFlags, LONG lVolume, LONG lFrequency, LONG lPan, DWORD& outIndex);
+    virtual HRESULT Play3D(LPDS3DBUFFER p3DBuffer, DWORD dwPriority, DWORD dwFlags, LONG lVolume, LONG lFrequency, DWORD& outIndex);
     virtual HRESULT Stop();                     // stops all sound buffers
     virtual HRESULT Stop(DWORD index);          // stops only indexed sound buffer
     virtual HRESULT Reset();                    // resets all sound buffers
@@ -119,10 +119,10 @@ protected:
     DWORD stopCount;
 
 public:
-    CStreamingSound( LPDIRECTSOUNDBUFFER pDSBuffer, DWORD dwDSBufferSize, nAudioFile* pWaveFile, DWORD dwNotifySize, DWORD dwCreationFlags );
+    CStreamingSound(LPDIRECTSOUNDBUFFER pDSBuffer, DWORD dwDSBufferSize, nAudioFile* pWaveFile, DWORD dwNotifySize, DWORD dwCreationFlags);
     virtual ~CStreamingSound();
 
-    virtual HRESULT HandleWaveStreamNotification( BOOL bLoopedPlay );
+    virtual HRESULT HandleWaveStreamNotification(BOOL bLoopedPlay);
     virtual HRESULT Reset();
     virtual BOOL IsSoundPlaying();              // returns true if any sound buffer is playing
 

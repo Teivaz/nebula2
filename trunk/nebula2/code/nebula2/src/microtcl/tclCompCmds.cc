@@ -1730,7 +1730,7 @@ TclCompileSetCmd(interp, parsePtr, envPtr)
 	name = varTokenPtr[1].start;
 	nameChars = varTokenPtr[1].size;
 	/* last char is ')' => potential array reference */
-	if ( *(name + nameChars - 1) == ')') {
+	if (*(name + nameChars - 1) == ')') {
 	    for (i = 0, p = name;  i < nameChars;  i++, p++) {
 		if (*p == '(') {
 		    elName = p + 1;

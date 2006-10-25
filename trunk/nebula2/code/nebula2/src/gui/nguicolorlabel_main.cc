@@ -77,7 +77,7 @@ nGuiColorLabel::Render()
 
         // render the texture
         static const rectangle uvs(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
-        nGuiServer::Instance()->DrawTexture(this->GetScreenSpaceRect(), uvs, this->color, this->refTexture.get() );
+        nGuiServer::Instance()->DrawTexture(this->GetScreenSpaceRect(), uvs, this->color, this->refTexture.get());
         return true;
     }
     return false;

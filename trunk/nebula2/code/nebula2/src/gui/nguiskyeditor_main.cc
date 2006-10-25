@@ -615,7 +615,7 @@ nGuiSkyEditor::ShowCloud()
                 vector4 vec = this->refElement->GetVector(nShaderState::Move);
                 vector2 dirvec = vector2(vec.x,vec.y);
 				if (dirvec.x == 0) dirvec.x = 0.0001f;
-                float dir =(float)( 90-((atan(fabs(dirvec.y)/fabs(dirvec.x))*180)/N_PI));
+                float dir =(float)(90-((atan(fabs(dirvec.y)/fabs(dirvec.x))*180)/N_PI));
                 if      ((dirvec.x > 0)&&(dirvec.y < 0)) dir += 90;
                 else if ((dirvec.x < 0)&&(dirvec.y < 0)) dir += 180;
                 else if ((dirvec.x < 0)&&(dirvec.y > 0)) dir += 270;
@@ -1923,7 +1923,7 @@ nGuiSkyEditor::OnFrame()
     }
 
 	// Don't update skytime slider, if it was moved
-    if (this->updateSkyTime && this->refSkyTimeSlider.isvalid() && this->refSky.isvalid() )
+    if (this->updateSkyTime && this->refSkyTimeSlider.isvalid() && this->refSky.isvalid())
     {
         this->refSkyTimeSlider->SetValue(this->refSky->GetSkyTime());
     }
@@ -2014,7 +2014,7 @@ nGuiSkyEditor::FindSkyNode(nRoot* node)
 	else
 	{
 		nRoot* child = node->GetHead();
-		while(child)
+		while (child)
 		{
 			this->FindSkyNode(child);
 			child = child->GetSucc();

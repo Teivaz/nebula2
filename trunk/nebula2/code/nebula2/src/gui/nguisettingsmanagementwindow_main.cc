@@ -189,7 +189,7 @@ nGuiSettingsManagementWindow::OnShow()
     textEntry->SetFileMode(true);
     textEntry->SetInitialCursorPos(nGuiTextLabel::Right);
     layout->AttachWidget(textEntry, nGuiFormLayout::Top, this->refFileLabel, border);
-    layout->AttachForm(textEntry, nGuiFormLayout::Left, border );
+    layout->AttachForm(textEntry, nGuiFormLayout::Left, border);
     layout->AttachWidget(textEntry, nGuiFormLayout::Right, this->refBrowseButton, border);
     textEntry->OnShow();
     this->refFilenameEntry = textEntry;
@@ -287,7 +287,7 @@ nGuiSettingsManagementWindow::OnShow()
     kernelServer->PopCwd();
 
     // try to create default directory "home:work/save"
-    if(!this->CheckDirAndCreate())
+    if (!this->CheckDirAndCreate())
     {
         this->SetInfoText("Default directory could not be created!", true);
     }
@@ -308,51 +308,51 @@ nGuiSettingsManagementWindow::OnShow()
 void
 nGuiSettingsManagementWindow::OnHide()
 {
-    if(this->refWindowSelectionLabel.isvalid())
+    if (this->refWindowSelectionLabel.isvalid())
     {
         this->refWindowSelectionLabel->Release();
     }
-    if(this->refWindowSelectionTextView.isvalid())
+    if (this->refWindowSelectionTextView.isvalid())
     {
         this->refWindowSelectionTextView->Release();
     }
-    if(this->refResetButton.isvalid())
+    if (this->refResetButton.isvalid())
     {
         this->refResetButton->Release();
     }
-    if(this->refSaveButton.isvalid())
+    if (this->refSaveButton.isvalid())
     {
         this->refSaveButton->Release();
     }
-    if(this->refLoadButton.isvalid())
+    if (this->refLoadButton.isvalid())
     {
         this->refLoadButton->Release();
     }
-    if(this->refBrowseButton.isvalid())
+    if (this->refBrowseButton.isvalid())
     {
         this->refBrowseButton->Release();
     }
-    if(this->refSetDefaultButton.isvalid())
+    if (this->refSetDefaultButton.isvalid())
     {
         this->refSetDefaultButton->Release();
     }
-    if(this->refFilenameEntry.isvalid())
+    if (this->refFilenameEntry.isvalid())
     {
         this->refFilenameEntry->Release();
     }
-    if(this->refDefaultLabel.isvalid())
+    if (this->refDefaultLabel.isvalid())
     {
         this->refDefaultLabel->Release();
     }
-    if(this->refFileLabel.isvalid())
+    if (this->refFileLabel.isvalid())
     {
         this->refFileLabel->Release();
     }
-    if(this->refMessageBox.isvalid())
+    if (this->refMessageBox.isvalid())
     {
         this->refMessageBox->Release();
     }
-    if(this->refInfoLabel.isvalid())
+    if (this->refInfoLabel.isvalid())
     {
         this->refInfoLabel->Release();
     }
@@ -377,7 +377,7 @@ nGuiSettingsManagementWindow::OnEvent(const nGuiEvent& event)
     else if ((event.GetType() == nGuiEvent::ButtonUp) &&
             (event.GetWidget() == this->refLoadButton))
     {
-        if(!strlen(refFilenameEntry->GetText()) == 0)
+        if (!strlen(refFilenameEntry->GetText()) == 0)
         {
             this->LoadValuesFromFile(refFilenameEntry->GetText());
         }
@@ -389,7 +389,7 @@ nGuiSettingsManagementWindow::OnEvent(const nGuiEvent& event)
     else if ((event.GetType() == nGuiEvent::ButtonUp) &&
             (event.GetWidget() == this->refSaveButton))
     {
-        if(!strlen(refFilenameEntry->GetText()) == 0)
+        if (!strlen(refFilenameEntry->GetText()) == 0)
         {
             this->SaveValuesToFile(refFilenameEntry->GetText());
         }
@@ -422,22 +422,22 @@ nGuiSettingsManagementWindow::ResetValues()
 
     // first try to load values from registry
     nPrefServer* prefServer = nPrefServer::Instance();
-    if(!prefServer->IsOpen())
+    if (!prefServer->IsOpen())
     {
-        if(prefServer->Open())
+        if (prefServer->Open())
         {
-            if(strcmp(refWindowSelectionTextView->GetSelection(), sceneControlString) == 0)
+            if (strcmp(refWindowSelectionTextView->GetSelection(), sceneControlString) == 0)
             {
-                if(false == (this->ResetSceneControls(prefServer)))
+                if (false == (this->ResetSceneControls(prefServer)))
                 {
                     // error occured
                     prefServer->Close();
                     return;
                 }
             }
-            else if(strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
+            else if (strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
             {
-                if(false == (this->ResetDisplayAdjustments(prefServer)))
+                if (false == (this->ResetDisplayAdjustments(prefServer)))
                 {
                     // error occured
                     prefServer->Close();
@@ -479,7 +479,7 @@ nGuiSettingsManagementWindow::ResetDisplayAdjustments(nPrefServer* prefServer)
 
     // get pointer to display adjustments window and check
     nGuiAdjustDisplayWindow* adjustWindow = (nGuiAdjustDisplayWindow*)nGuiServer::Instance()->FindWindowByClass("nguiadjustdisplaywindow", 0);
-    if(0 == adjustWindow)
+    if (0 == adjustWindow)
     {
         this->SetInfoText("No 'Display Adjustments' window was found!\nMaybe no one is open?", true);
         return false;
@@ -489,67 +489,67 @@ nGuiSettingsManagementWindow::ResetDisplayAdjustments(nPrefServer* prefServer)
     n_assert(adjustWindow);
 
     // read from registry and assign to window
-    if(prefServer->KeyExists(daSaturateSlider))
+    if (prefServer->KeyExists(daSaturateSlider))
     {
         adjustWindow->refSaturateSlider->SetValue(prefServer->ReadFloat(daSaturateSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daBalanceColorSlider))
+    if (prefServer->KeyExists(daBalanceColorSlider))
     {
         adjustWindow->refBalanceSlider->SetColor(prefServer->ReadVector4(daBalanceColorSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daHDRIntesitySlider))
+    if (prefServer->KeyExists(daHDRIntesitySlider))
     {
         adjustWindow->refHdrBloomIntensitySlider->SetValue(prefServer->ReadFloat(daHDRIntesitySlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daHDRThresholdSlider))
+    if (prefServer->KeyExists(daHDRThresholdSlider))
     {
         adjustWindow->refHdrBrightPassThresholdSlider->SetValue(prefServer->ReadFloat(daHDRThresholdSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daHDROffsetSlider))
+    if (prefServer->KeyExists(daHDROffsetSlider))
     {
         adjustWindow->refHdrBrightPassOffsetSlider->SetValue(prefServer->ReadFloat(daHDROffsetSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daFogColorSlider))
+    if (prefServer->KeyExists(daFogColorSlider))
     {
         adjustWindow->refFogColorSlider->SetColor(prefServer->ReadVector4(daFogColorSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daFogNearSlider))
+    if (prefServer->KeyExists(daFogNearSlider))
     {
         adjustWindow->refFogNearSlider->SetValue(prefServer->ReadFloat(daFogNearSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daFogFarSlider))
+    if (prefServer->KeyExists(daFogFarSlider))
     {
         adjustWindow->refFogFarSlider->SetValue(prefServer->ReadFloat(daFogFarSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daFocusDistSlider))
+    if (prefServer->KeyExists(daFocusDistSlider))
     {
         adjustWindow->refFocusDistSlider->SetValue(prefServer->ReadFloat(daFocusDistSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daFocusLengthSlider))
+    if (prefServer->KeyExists(daFocusLengthSlider))
     {
         adjustWindow->refFocusLengthSlider->SetValue(prefServer->ReadFloat(daFocusLengthSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daNoiseItensitySlider))
+    if (prefServer->KeyExists(daNoiseItensitySlider))
     {
         adjustWindow->refNoiseIntensitySlider->SetValue(prefServer->ReadFloat(daNoiseItensitySlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daNoiseScaleSlider))
+    if (prefServer->KeyExists(daNoiseScaleSlider))
     {
-        adjustWindow->refNoiseScaleSlider->SetValue( prefServer->ReadFloat(daNoiseScaleSlider));
+        adjustWindow->refNoiseScaleSlider->SetValue(prefServer->ReadFloat(daNoiseScaleSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(daNoiseFreqSlider))
+    if (prefServer->KeyExists(daNoiseFreqSlider))
     {
         adjustWindow->refNoiseFrequencySlider->SetValue(prefServer->ReadFloat(daNoiseFreqSlider));
         iCount++;
@@ -558,7 +558,7 @@ nGuiSettingsManagementWindow::ResetDisplayAdjustments(nPrefServer* prefServer)
     adjustWindow->UpdateValuesFromSliders();
 
     // check if all done
-    if(13 != iCount)
+    if (13 != iCount)
     {
         this->SetInfoText("The number of read values differs the number of values in dialog!\nMaybe no default settings were never saved!", true);
         return false;
@@ -584,7 +584,7 @@ nGuiSettingsManagementWindow::ResetSceneControls(nPrefServer* prefServer)
 
     // get pointer to scene window and check
     nGuiSceneControlWindow* sceneWindow = (nGuiSceneControlWindow*)nGuiServer::Instance()->FindWindowByClass("nguiscenecontrolwindow", 0);
-    if(0 == sceneWindow)
+    if (0 == sceneWindow)
     {
         this->SetInfoText("No 'Scene Control' window was found!\nMaybe no one is open?", true);
         return false;
@@ -594,34 +594,34 @@ nGuiSettingsManagementWindow::ResetSceneControls(nPrefServer* prefServer)
     n_assert(sceneWindow);
 
     // read keys from registry and assign to window
-    if(prefServer->KeyExists(scAmbientColorSlider))
+    if (prefServer->KeyExists(scAmbientColorSlider))
     {
         sceneWindow->refAmbientSlider->SetColor(prefServer->ReadVector4(scAmbientColorSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(scDiffueColorSlider))
+    if (prefServer->KeyExists(scDiffueColorSlider))
     {
         sceneWindow->refDiffuseSlider->SetColor(prefServer->ReadVector4(scDiffueColorSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(scSpeculaColorSlider))
+    if (prefServer->KeyExists(scSpeculaColorSlider))
     {
         sceneWindow->refSpecularSlider->SetColor(prefServer->ReadVector4(scSpeculaColorSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(scLightDirectionSlider))
+    if (prefServer->KeyExists(scLightDirectionSlider))
     {
         sceneWindow->refLightDirection->SetValue(prefServer->ReadFloat(scLightDirectionSlider));
         iCount++;
     }
-    if(prefServer->KeyExists(scLightHeightSlider))
+    if (prefServer->KeyExists(scLightHeightSlider))
     {
         sceneWindow->refLightHeight->SetValue(prefServer->ReadFloat(scLightHeightSlider));
         iCount++;
     }
 
      // check if all done
-    if(5 != iCount)
+    if (5 != iCount)
     {
         this->SetInfoText("The number of read values differs the number of values in dialog!\nMaybe no default settings were never saved!", true);
         return false;
@@ -639,7 +639,7 @@ void
 nGuiSettingsManagementWindow::CreateFileDialog()
 {
     // try to create default directory "home:work/save"
-    if(!this->CheckDirAndCreate())
+    if (!this->CheckDirAndCreate())
     {
         this->SetInfoText("Default directory could not be created!", true);
         return;
@@ -658,7 +658,7 @@ void
 nGuiSettingsManagementWindow::LoadValuesFromFile(nString filename)
 {
     // try to create default directory "home:work/save"
-    if(!this->CheckDirAndCreate())
+    if (!this->CheckDirAndCreate())
     {
         this->SetInfoText("Default directory could not be created!", true);
         return;
@@ -668,14 +668,14 @@ nGuiSettingsManagementWindow::LoadValuesFromFile(nString filename)
     filename = defaultDirectory +filename;
 
     // check if file exists
-    if(!(nFileServer2::Instance()->FileExists(filename)))
+    if (!(nFileServer2::Instance()->FileExists(filename)))
     {
         this->SetInfoText("The specified file does not exists!", true);
         return;
     }
 
     // check if file is a xml file
-    if(!filename.CheckExtension("xml"))
+    if (!filename.CheckExtension("xml"))
     {
         this->SetInfoText("The specified file is no xml file!", true);
         return;
@@ -687,14 +687,14 @@ nGuiSettingsManagementWindow::LoadValuesFromFile(nString filename)
     stream.Open(nStream::Read);
 
     // open file
-    if(!stream.IsOpen())
+    if (!stream.IsOpen())
     {
         this->SetInfoText("The xml file could not be opened, or is not well-formed!", true);
         return;
     }
 
     // check root element
-    if(!stream.HasNode("/Settings"))
+    if (!stream.HasNode("/Settings"))
     {
         this->SetInfoText("The xml file doesn't contain the root element <Settings>!", true);
         stream.Close();
@@ -703,17 +703,17 @@ nGuiSettingsManagementWindow::LoadValuesFromFile(nString filename)
     stream.SetToNode("/Settings");
 
     // check which part should be loaded
-    if(strcmp(refWindowSelectionTextView->GetSelection(), sceneControlString) == 0)
+    if (strcmp(refWindowSelectionTextView->GetSelection(), sceneControlString) == 0)
     {
-        if(false == (this->LoadSceneControlsFromStream(&stream)))
+        if (false == (this->LoadSceneControlsFromStream(&stream)))
         {
             stream.Close();
             return;
         }
     }
-    else if(strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
+    else if (strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
     {
-        if(false == (this->LoadDisplayAdjustmentsFromStream(&stream)))
+        if (false == (this->LoadDisplayAdjustmentsFromStream(&stream)))
         {
             stream.Close();
             return;
@@ -743,7 +743,7 @@ nGuiSettingsManagementWindow::LoadSceneControlsFromStream(nStream* stream)
 
     // get the pointer to window and check
     nGuiSceneControlWindow* sceneWindow = (nGuiSceneControlWindow*)nGuiServer::Instance()->FindWindowByClass("nguiscenecontrolwindow", 0);
-    if(0 == sceneWindow)
+    if (0 == sceneWindow)
     {
         this->SetInfoText("No 'Scene Control' window was found!\nMaybe no one is open?", true);
         return false;
@@ -751,7 +751,7 @@ nGuiSettingsManagementWindow::LoadSceneControlsFromStream(nStream* stream)
     n_assert(sceneWindow);
 
     // check if the node exists
-    if(!stream->HasNode(scXMLRoot))
+    if (!stream->HasNode(scXMLRoot))
     {
         this->SetInfoText("No 'Scene Control' window was found!\nMaybe no one is open?", true);
         return false;
@@ -759,40 +759,40 @@ nGuiSettingsManagementWindow::LoadSceneControlsFromStream(nStream* stream)
     stream->SetToNode(scXMLRoot);
 
     // try to set first child
-    if(stream->SetToFirstChild())
+    if (stream->SetToFirstChild())
     {
-        for(int iCount = 0; iCount < 5; iCount++)
+        for (int iCount = 0; iCount < 5; iCount++)
         {
-            if(stream->GetCurrentNodeName() == scXMLAmbientColor && stream->GetAttrs()[0] == colorSliderString)
+            if (stream->GetCurrentNodeName() == scXMLAmbientColor && stream->GetAttrs()[0] == colorSliderString)
             {
                 sceneWindow->refAmbientSlider->SetColor(stream->GetVector4(colorSliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == scXMLDiffuceColor && stream->GetAttrs()[0] == colorSliderString)
+            else if (stream->GetCurrentNodeName() == scXMLDiffuceColor && stream->GetAttrs()[0] == colorSliderString)
             {
                 sceneWindow->refDiffuseSlider->SetColor(stream->GetVector4(colorSliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == scXMLSpecularColor && stream->GetAttrs()[0] == colorSliderString)
+            else if (stream->GetCurrentNodeName() == scXMLSpecularColor && stream->GetAttrs()[0] == colorSliderString)
             {
                 sceneWindow->refSpecularSlider->SetColor(stream->GetVector4(colorSliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == scXMLLightDirection && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == scXMLLightDirection && stream->GetAttrs()[0] == sliderString)
             {
                 sceneWindow->refLightDirection->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == scXMLLightHeight && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == scXMLLightHeight && stream->GetAttrs()[0] == sliderString)
             {
                 sceneWindow->refLightHeight->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
 
             // trie to set next child
-            if(5 > iFoundEntries)
+            if (5 > iFoundEntries)
             {
-                if(!stream->SetToNextChild())
+                if (!stream->SetToNextChild())
                 {
                     this->SetInfoText("The childs of the sub element <Scene_Control>\ncontains not the required amount of elements!", true);
                     return false;
@@ -801,7 +801,7 @@ nGuiSettingsManagementWindow::LoadSceneControlsFromStream(nStream* stream)
         }
 
         // check if the number of read values equals the number of needed values
-        if(5 != iFoundEntries)
+        if (5 != iFoundEntries)
         {
             this->SetInfoText("Not all required settings could be read!", true);
             return false;
@@ -830,7 +830,7 @@ nGuiSettingsManagementWindow::LoadDisplayAdjustmentsFromStream(nStream* stream)
 
     // get the pointer to the window and check
     nGuiAdjustDisplayWindow* adjustWindow = (nGuiAdjustDisplayWindow*)nGuiServer::Instance()->FindWindowByClass("nguiadjustdisplaywindow", 0);
-    if(0 == adjustWindow)
+    if (0 == adjustWindow)
     {
         this->SetInfoText("No 'Display Adjustments' window was found!\nMaybe no one is open?", true);
         return false;
@@ -838,7 +838,7 @@ nGuiSettingsManagementWindow::LoadDisplayAdjustmentsFromStream(nStream* stream)
     n_assert(adjustWindow);
 
     // check the node, if exists, assign as actuall
-    if(!stream->HasNode(daXMLRoot))
+    if (!stream->HasNode(daXMLRoot))
     {
         this->SetInfoText("The xml file doesn't contain the \nsub element <DisplayAdjustments>!", true);
         return false;
@@ -846,81 +846,81 @@ nGuiSettingsManagementWindow::LoadDisplayAdjustmentsFromStream(nStream* stream)
     stream->SetToNode(daXMLRoot);
 
     // try to get childs
-    if(stream->SetToFirstChild())
+    if (stream->SetToFirstChild())
     {
         // repeat for each
-        for(int iCount = 0; iCount < 13; iCount++)
+        for (int iCount = 0; iCount < 13; iCount++)
         {
-            if(stream->GetCurrentNodeName() == daXMLSaturate && stream->GetAttrs()[0] == sliderString)
+            if (stream->GetCurrentNodeName() == daXMLSaturate && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refSaturateSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLBalance && stream->GetAttrs()[0] == colorSliderString)
+            else if (stream->GetCurrentNodeName() == daXMLBalance && stream->GetAttrs()[0] == colorSliderString)
             {
                 adjustWindow->refBalanceSlider->SetColor(stream->GetVector4(colorSliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLHDRIntesity && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLHDRIntesity && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refHdrBloomIntensitySlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLHDRThreshold && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLHDRThreshold && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refHdrBrightPassThresholdSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLHDROffset && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLHDROffset && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refHdrBrightPassOffsetSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLFogColor && stream->GetAttrs()[0] == colorSliderString)
+            else if (stream->GetCurrentNodeName() == daXMLFogColor && stream->GetAttrs()[0] == colorSliderString)
             {
                 adjustWindow->refFogColorSlider->SetColor(stream->GetVector4(colorSliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLFogNear && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLFogNear && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refFogNearSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLFogFar && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLFogFar && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refFogFarSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLFocusDist && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLFocusDist && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refFocusDistSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLFocusLenght && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLFocusLenght && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refFocusLengthSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLNoiseIntesity && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLNoiseIntesity && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refNoiseIntensitySlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLNoiseScale && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLNoiseScale && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refNoiseScaleSlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
-            else if(stream->GetCurrentNodeName() == daXMLNoiseFreq && stream->GetAttrs()[0] == sliderString)
+            else if (stream->GetCurrentNodeName() == daXMLNoiseFreq && stream->GetAttrs()[0] == sliderString)
             {
                 adjustWindow->refNoiseFrequencySlider->SetValue(stream->GetFloat(sliderString));
                 iFoundEntries++;
             }
 
             // trie to set next child
-            if(13 > iFoundEntries)
+            if (13 > iFoundEntries)
             {
-                if(!stream->SetToNextChild())
+                if (!stream->SetToNextChild())
                 {
                     this->SetInfoText("The childs of the sub element <Display_Adjustments>\ncontains not the required amount of elements!", true);
                     return false;
@@ -928,7 +928,7 @@ nGuiSettingsManagementWindow::LoadDisplayAdjustmentsFromStream(nStream* stream)
             }
         }
         // check if the number of read values is correct
-        if(13 != iFoundEntries)
+        if (13 != iFoundEntries)
         {
             this->SetInfoText("Not all required settings could be read!", true);
             return false;
@@ -954,7 +954,7 @@ void
 nGuiSettingsManagementWindow::SaveValuesToFile(nString filename)
 {
     // try to create default directory "user:options"
-    if(!this->CheckDirAndCreate())
+    if (!this->CheckDirAndCreate())
     {
         this->SetInfoText("Default directory could not be created!", true);
         return;
@@ -962,7 +962,7 @@ nGuiSettingsManagementWindow::SaveValuesToFile(nString filename)
 
     // get pointer to window
     nGuiSceneControlWindow* sceneWindow = (nGuiSceneControlWindow*)nGuiServer::Instance()->FindWindowByClass("nguiscenecontrolwindow", 0);
-    if(0 == sceneWindow)
+    if (0 == sceneWindow)
     {
         this->SetInfoText("No 'Scene Control' window was found!\nMaybe no one is open?", true);
         return;
@@ -971,7 +971,7 @@ nGuiSettingsManagementWindow::SaveValuesToFile(nString filename)
 
     // get pointer to window
     nGuiAdjustDisplayWindow* adjustWindow = (nGuiAdjustDisplayWindow*)nGuiServer::Instance()->FindWindowByClass("nguiadjustdisplaywindow", 0);
-    if(0 == adjustWindow)
+    if (0 == adjustWindow)
     {
         this->SetInfoText("No 'Display Adjustments' window was found!\nMaybe no one is open?", true);
         return;
@@ -979,7 +979,7 @@ nGuiSettingsManagementWindow::SaveValuesToFile(nString filename)
     n_assert(adjustWindow);
 
     // check extension
-    if(!filename.CheckExtension("xml"))
+    if (!filename.CheckExtension("xml"))
     {
         filename.StripExtension();
         filename.Append(".xml");
@@ -994,7 +994,7 @@ nGuiSettingsManagementWindow::SaveValuesToFile(nString filename)
     nStream stream;
     stream.SetFilename(filename);
     stream.Open(nStream::Write);
-    if(!stream.IsOpen())
+    if (!stream.IsOpen())
     {
         this->SetInfoText("The file could not be opended. Check your permissions!", true);
         return;
@@ -1102,14 +1102,14 @@ nGuiSettingsManagementWindow::SaveValuesAsDefault()
     // get pref server, and check if open, if not open
     nPrefServer* prefServer = nPrefServer::Instance();
 
-    if(!prefServer->IsOpen())
+    if (!prefServer->IsOpen())
     {
-        if(prefServer->Open())
+        if (prefServer->Open())
         {
-            if(strcmp(refWindowSelectionTextView->GetSelection(), sceneControlString) == 0)
+            if (strcmp(refWindowSelectionTextView->GetSelection(), sceneControlString) == 0)
             {
                 nGuiSceneControlWindow* sceneWindow = (nGuiSceneControlWindow*)nGuiServer::Instance()->FindWindowByClass("nguiscenecontrolwindow", 0);
-                if(0 == sceneWindow)
+                if (0 == sceneWindow)
                 {
                     this->SetInfoText("No 'Scene Control' window was found!\nMaybe no one is open?", true);
                     prefServer->Close();
@@ -1122,10 +1122,10 @@ nGuiSettingsManagementWindow::SaveValuesAsDefault()
                 prefServer->WriteFloat(scLightDirectionSlider,       sceneWindow->refLightDirection->GetValue());
                 prefServer->WriteFloat(scLightHeightSlider,          sceneWindow->refLightHeight->GetValue());
             }
-            else if(strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
+            else if (strcmp(refWindowSelectionTextView->GetSelection(), displayAdjustmentString) == 0)
             {
                 nGuiAdjustDisplayWindow* adjustWindow = (nGuiAdjustDisplayWindow*)nGuiServer::Instance()->FindWindowByClass("nguiadjustdisplaywindow", 0);
-                if(0 == adjustWindow)
+                if (0 == adjustWindow)
                 {
                     this->SetInfoText("No 'Display Adjustments' window was found!\nMaybe no one is open?", true);
                     prefServer->Close();
@@ -1184,7 +1184,7 @@ void
 nGuiSettingsManagementWindow::SetInfoText(const nString filename, bool criticalError)
 {
     // set color to red if this is an critical error
-    if(true == criticalError)
+    if (true == criticalError)
     {
         refInfoLabel->SetColor(vector4(0.8f, 0.0f, 0.0f, 1.0f));
     }
@@ -1215,7 +1215,7 @@ nGuiSettingsManagementWindow::AddSupportedWindowsToList()
 bool
 nGuiSettingsManagementWindow::CheckDirAndCreate()
 {
-    if(!(nFileServer2::Instance()->DirectoryExists(defaultDirectory)))
+    if (!(nFileServer2::Instance()->DirectoryExists(defaultDirectory)))
     {
         return nFileServer2::Instance()->MakePath(defaultDirectory);
     }

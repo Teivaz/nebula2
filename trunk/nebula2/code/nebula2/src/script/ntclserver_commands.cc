@@ -252,7 +252,7 @@ _getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
         {
             bool arg_ok = false;
             arg = cmd->In();
-            switch(arg->GetType())
+            switch (arg->GetType())
             {
                 case nArg::Int:
                 {

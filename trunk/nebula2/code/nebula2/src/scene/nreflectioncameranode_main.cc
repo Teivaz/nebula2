@@ -56,7 +56,7 @@ nReflectionCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matr
                      +_modelWorldMatrix.y_component().y * (camPosWorldSpace.y + modelWorldMatrix.pos_component().y)
                      +_modelWorldMatrix.y_component().z * (camPosWorldSpace.z + modelWorldMatrix.pos_component().z);
 
-    if(distance < 0.0)
+    if (distance < 0.0)
     {
         //front side of plane
         isOnFrontSideOfPlane = true;
@@ -93,16 +93,16 @@ nReflectionCameraNode::ComputeReflectionViewMatrix(const matrix44& viewMatrix, c
     reflectionMatrix.y_component().norm();
     angles.set(reflectionMatrix.y_component());
 
-    //if(reflectionMatrix.z_component().y < 0)
+    //if (reflectionMatrix.z_component().y < 0)
     float test = polar2(reflectionMatrix.z_component()).rho;
 
-    if( viewMatrix.y_component().z > 0)
+    if (viewMatrix.y_component().z > 0)
     {
         reflectionMatrix.rotate_x(-2*(angles.theta));
     }
     else
     {
-        reflectionMatrix.rotate_x( 2*(angles.theta));
+        reflectionMatrix.rotate_x(2*angles.theta);
     }
 
     // compute position

@@ -1040,7 +1040,7 @@ inline
 bool
 nMeshBuilder::Triangle::Equals(nMeshBuilder::Triangle &other) const
 {
-    if( ((this->vertexIndex[0] == other.vertexIndex[0])||
+    if (((this->vertexIndex[0] == other.vertexIndex[0])||
          (this->vertexIndex[0] == other.vertexIndex[1])||
          (this->vertexIndex[0] == other.vertexIndex[2])) &&
         ((this->vertexIndex[1] == other.vertexIndex[0])||

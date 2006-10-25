@@ -100,14 +100,14 @@ noise::gen(float x, float y, float z)
     int BB = perm[B+1] + Z;
 
     // add blended results from 8 corners of cube
-    return lerp(w, lerp(v, lerp(u, grad(perm[AA  ], x  , y  , z   ),
-                                   grad(perm[BA  ], x-1, y  , z   )),
-                           lerp(u, grad(perm[AB  ], x  , y-1, z   ),
-                                   grad(perm[BB  ], x-1, y-1, z   ))),
-                   lerp(v, lerp(u, grad(perm[AA+1], x  , y  , z-1 ),
-                                   grad(perm[BA+1], x-1, y  , z-1 )),
-                           lerp(u, grad(perm[AB+1], x  , y-1, z-1 ),
-                                   grad(perm[BB+1], x-1, y-1, z-1 ))));
+    return lerp(w, lerp(v, lerp(u, grad(perm[AA  ], x  , y  , z  ),
+                                   grad(perm[BA  ], x-1, y  , z  )),
+                           lerp(u, grad(perm[AB  ], x  , y-1, z  ),
+                                   grad(perm[BB  ], x-1, y-1, z  ))),
+                   lerp(v, lerp(u, grad(perm[AA+1], x  , y  , z-1),
+                                   grad(perm[BA+1], x-1, y  , z-1)),
+                           lerp(u, grad(perm[AB+1], x  , y-1, z-1),
+                                   grad(perm[BB+1], x-1, y-1, z-1))));
 }
 
 //------------------------------------------------------------------------------

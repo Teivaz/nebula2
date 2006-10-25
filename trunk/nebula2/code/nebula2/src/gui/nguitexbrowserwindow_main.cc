@@ -146,7 +146,7 @@ nGuiTexBrowserWindow::OnHide()
     {
         this->refTexView->Release();
     }
-    if(this->refTextureIndexEntry.isvalid())
+    if (this->refTextureIndexEntry.isvalid())
     {
         this->refTextureIndexEntry->Release();
     }
@@ -161,13 +161,13 @@ nGuiTexBrowserWindow::OnHide()
 void
 nGuiTexBrowserWindow::OnKeyUp(nKey key)
 {
-    if(key == N_KEY_RETURN)
+    if (key == N_KEY_RETURN)
     {
         nString str = this->refTextureIndexEntry->GetText();
 
         int index = str.AsInt();
 
-        if(index >= 0)
+        if (index >= 0)
         {
             this->SetTextureByIndex(index);
         }
@@ -196,15 +196,15 @@ nGuiTexBrowserWindow::OnEvent(const nGuiEvent& event)
             this->SetNextTexture();
         }
     }
-    /*if(event.GetType() == nGuiEvent::KeyUp)
+    /*if (event.GetType() == nGuiEvent::KeyUp)
     {
-        if(event.GetWidget() == this->refTextureIndexEntry.get())
+        if (event.GetWidget() == this->refTextureIndexEntry.get())
         {
             nString str = this->refTextureIndexEntry->GetText();
 
             int index = str.AsInt();
 
-            if(index >= 0)
+            if (index >= 0)
             {
                 this->SetTextureByIndex(index);
             }
@@ -228,7 +228,7 @@ void
 nGuiTexBrowserWindow::SetNextTexture()
 {
     int numTextures = this->CountTextures();
-    if((this->curTexturePosition+1) <= numTextures)
+    if ((this->curTexturePosition+1) <= numTextures)
     {
         this->SetTextureByIndex(this->curTexturePosition+1);
     }
@@ -280,7 +280,7 @@ nGuiTexBrowserWindow::SetTextureByIndex(int index)
 
     int numTextures = this->CountTextures();
 
-    if(index > numTextures)
+    if (index > numTextures)
     {
         char text[16];
         sprintf(text, "%d", numTextures);
@@ -295,7 +295,7 @@ nGuiTexBrowserWindow::SetTextureByIndex(int index)
     for (child = this->refTextureRoot->GetHead(); child; child = child->GetSucc())
     {
         counter++;
-        if(counter == index)
+        if (counter == index)
         {
             this->refCurrentTexture = (nTexture2*) child;
             break;
@@ -341,7 +341,7 @@ void
 nGuiTexBrowserWindow::SetPrevTexture()
 {
     int numTextures = this->CountTextures();
-    if((this->curTexturePosition-1) > 0)
+    if ((this->curTexturePosition-1) > 0)
     {
         this->SetTextureByIndex(this->curTexturePosition-1);
     }

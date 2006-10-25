@@ -71,8 +71,8 @@ inline int n_iclamp(int val, int minVal, int maxVal)
 */
 inline float n_acos(float x)
 {
-    if(x >  1.0f) x =  1.0f;
-    if(x < -1.0f) x = -1.0f;
+    if (x >  1.0f) x =  1.0f;
+    if (x < -1.0f) x = -1.0f;
     return (float)acos(x);
 }
 
@@ -82,8 +82,8 @@ inline float n_acos(float x)
 */
 inline float n_asin(float x)
 {
-    if(x >  1.0f) x =  1.0f;
-    if(x < -1.0f) x = -1.0f;
+    if (x >  1.0f) x =  1.0f;
+    if (x < -1.0f) x = -1.0f;
     return (float)asin(x);
 }
 
@@ -292,7 +292,7 @@ lerp<float>(float & result, const float & val0, const float & val1, float lerpVa
 */
 inline float n_normangle(float a)
 {
-    while(a < 0.0f)
+    while (a < 0.0f)
     {
         a += n_deg2rad(360.0f);
     }

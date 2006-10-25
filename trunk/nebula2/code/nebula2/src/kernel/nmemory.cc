@@ -289,12 +289,12 @@ void *nMemManager::Malloc(int size, const char *src_name, int src_line)
 */
 void *nMemManager::Realloc(void *oldp, int size, const char *src_name, int src_line)
 {
-    if(oldp == NULL)
+    if (oldp == NULL)
     {
         return this->Malloc(size, src_name, src_line);
     }
 
-    if(size == 0)
+    if (size == 0)
     {
         this->Free(oldp);
     }
@@ -306,7 +306,7 @@ void *nMemManager::Realloc(void *oldp, int size, const char *src_name, int src_l
 
     void *p = this->Malloc(size, src_name, src_line);
 
-    if(p != NULL)
+    if (p != NULL)
     {
         memcpy(p, oldp, (size > old_size) ? old_size : size);
         this->Free(oldp);

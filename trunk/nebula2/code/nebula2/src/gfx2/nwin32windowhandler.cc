@@ -464,7 +464,7 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     // user data of windows contains 'this' pointer
     nWin32WindowHandler* self = (nWin32WindowHandler*) GetWindowLong(hWnd, 0);
 
-    switch(uMsg)
+    switch (uMsg)
     {
         case WM_SYSCOMMAND:
             // prevent moving/sizing and power loss in full-screen mode
@@ -757,7 +757,7 @@ nKey
 nWin32WindowHandler::TranslateKey(int vkey)
 {
     nKey nk;
-    switch(vkey)
+    switch (vkey)
     {
         case VK_LBUTTON:    nk=N_KEY_LBUTTON; break;
         case VK_RBUTTON:    nk=N_KEY_RBUTTON; break;

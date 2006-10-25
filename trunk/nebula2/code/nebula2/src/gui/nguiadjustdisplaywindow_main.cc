@@ -315,83 +315,83 @@ nGuiAdjustDisplayWindow::OnShow()
 void
 nGuiAdjustDisplayWindow::OnHide()
 {
-    if(this->refSaturateSlider.isvalid())
+    if (this->refSaturateSlider.isvalid())
     {
         this->refSaturateSlider->Release();
     }
-    if(this->refBalanceSlider.isvalid())
+    if (this->refBalanceSlider.isvalid())
     {
         this->refBalanceSlider->Release();
     }
-    if(this->refHdrBloomIntensitySlider.isvalid())
+    if (this->refHdrBloomIntensitySlider.isvalid())
     {
          this->refHdrBloomIntensitySlider->Release();
     }
-    if(this->refHdrBrightPassOffsetSlider.isvalid())
+    if (this->refHdrBrightPassOffsetSlider.isvalid())
     {
         this->refHdrBrightPassOffsetSlider->Release();
     }
-    if(this->refHdrBrightPassThresholdSlider.isvalid())
+    if (this->refHdrBrightPassThresholdSlider.isvalid())
     {
         this->refHdrBrightPassThresholdSlider->Release();
     }
-    if(this->refFogColorSlider.isvalid())
+    if (this->refFogColorSlider.isvalid())
     {
         this->refFogColorSlider->Release();
     }
-    if(this->refFogNearSlider.isvalid())
+    if (this->refFogNearSlider.isvalid())
     {
         this->refFogNearSlider->Release();
     }
-    if(this->refFogFarSlider.isvalid())
+    if (this->refFogFarSlider.isvalid())
     {
         this->refFogFarSlider->Release();
     }
-    if(this->refFocusDistSlider.isvalid())
+    if (this->refFocusDistSlider.isvalid())
     {
         this->refFocusDistSlider->Release();
     }
-    if(this->refFocusLengthSlider.isvalid())
+    if (this->refFocusLengthSlider.isvalid())
     {
         this->refFocusLengthSlider->Release();
     }
-    if(this->refNoiseIntensitySlider.isvalid())
+    if (this->refNoiseIntensitySlider.isvalid())
     {
         this->refNoiseIntensitySlider->Release();
     }
-    if(this->refNoiseScaleSlider.isvalid())
+    if (this->refNoiseScaleSlider.isvalid())
     {
         this->refNoiseScaleSlider->Release();
     }
-    if(this->refNoiseFrequencySlider.isvalid())
+    if (this->refNoiseFrequencySlider.isvalid())
     {
         this->refNoiseFrequencySlider->Release();
     }
-/*    if(this->refResetButton.isvalid())
+/*    if (this->refResetButton.isvalid())
     {
         this->refResetButton->Release();
     }
-    if(this->refSaveButton.isvalid())
+    if (this->refSaveButton.isvalid())
     {
         this->refSaveButton->Release();
     }
-    if(this->refLoadButton.isvalid())
+    if (this->refLoadButton.isvalid())
     {
         this->refLoadButton->Release();
     }
-    if(this->refMessageBox.isvalid())
+    if (this->refMessageBox.isvalid())
     {
         this->refMessageBox->Release();
     }
-    if(this->refBrowseButton.isvalid())
+    if (this->refBrowseButton.isvalid())
     {
         this->refBrowseButton->Release();
     }
-    if(this->refFilenameEntry.isvalid())
+    if (this->refFilenameEntry.isvalid())
     {
         this->refFilenameEntry->Release();
     }
-    if(this->refSetDefaultButton.isvalid())
+    if (this->refSetDefaultButton.isvalid())
     {
         this->refSetDefaultButton->Release();
     }*/
@@ -447,7 +447,7 @@ nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
         else if ((event.GetType() == nGuiEvent::ButtonUp) &&
                 (event.GetWidget() == this->refLoadButton))
         {
-            if(!strlen(refFilenameEntry->GetText()) == 0)
+            if (!strlen(refFilenameEntry->GetText()) == 0)
             {
                 this->LoadValuesFromFile(refFilenameEntry->GetText());
             }
@@ -455,7 +455,7 @@ nGuiAdjustDisplayWindow::OnEvent(const nGuiEvent& event)
         else if ((event.GetType() == nGuiEvent::ButtonUp) &&
                 (event.GetWidget() == this->refSaveButton))
         {
-            if(!strlen(refFilenameEntry->GetText()) == 0)
+            if (!strlen(refFilenameEntry->GetText()) == 0)
             {
                 this->SaveValuesToFile(refFilenameEntry->GetText());
             }

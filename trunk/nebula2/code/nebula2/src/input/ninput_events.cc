@@ -111,7 +111,7 @@ bool nInputServer::IsIdenticalEvent(nInputEvent *e0, nInputEvent *e1)
     bool eq = false;
     if (e0->GetDeviceId() == e1->GetDeviceId())
     {
-        switch(e0->GetType()) {
+        switch (e0->GetType()) {
             case N_INPUT_KEY_DOWN:
             case N_INPUT_KEY_UP:
                 if (((e1->GetType() == N_INPUT_KEY_DOWN) ||

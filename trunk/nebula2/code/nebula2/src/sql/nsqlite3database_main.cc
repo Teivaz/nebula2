@@ -213,7 +213,7 @@ nSQLite3Database::CreateTable(const nString& tableName, const nArray<nString>& c
     sql.Append("( ");
     int i;
     const int num = columns.Size();
-    for(i = 0; i < num; i++)
+    for (i = 0; i < num; i++)
     {
         if (i > 0)
         {

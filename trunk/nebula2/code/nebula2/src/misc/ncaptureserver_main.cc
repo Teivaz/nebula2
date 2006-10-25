@@ -267,7 +267,7 @@ nCaptureServer::SetCorrectRenderpathOffset(int numTilesX, int numTilesY, int til
 {
 	nFloat4 offset;
 	nShader2* shaderParameter = (nShader2*)nResourceServer::Instance()->FindResourceA("shared", nResource::Shader);
-	if(reset == false)
+	if (reset == false)
 	{
 		float X0 = (float)tileXNum / (float)numTilesX;
 		float X1 =  X0 + 1 / (float)numTilesX;

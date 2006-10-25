@@ -61,7 +61,7 @@ nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
     nRoot* child = shapeNode->GetHead();
 
     // return if no child
-    if(0 == child)
+    if (0 == child)
     {
         return false;
     }
@@ -71,24 +71,24 @@ nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
     bool refract1Found = false;
     bool refract2Found = false;
 
-    while(0 != child && !(reflect1Found && refract1Found && refract2Found))
+    while (0 != child && !(reflect1Found && refract1Found && refract2Found))
     {
         // check
         n_assert(child);
 
         // check if this child is a reflection camera (a reflection camera is a refraction(clipping) camera too!!!)
-        if(child->IsA(reqReflectClass))
+        if (child->IsA(reqReflectClass))
         {
             reflect1Found = true;
 
             // check if this child is a refraction(clipping) camera
-            if(child->IsA(reqRefractClass))
+            if (child->IsA(reqRefractClass))
             {
                 refract1Found = true;
             }
         }
         // check if this is a pure refraction(clipping) camer
-        else if(child->IsA(reqRefractClass))
+        else if (child->IsA(reqRefractClass))
         {
             refract2Found = true;
         }
@@ -119,10 +119,10 @@ nSceneServer::IsShapesBBVisible(const Group& groupNode)
 
     // get bounding box
     bbox3 bBox = groupNode.sceneNode->GetLocalBox();
-    bBox.transform( groupNode.modelTransform );
+    bBox.transform(groupNode.modelTransform);
 
     // compute clipping for box
-    int clipStat = bBox.clipstatus( viewProj );
+    int clipStat = bBox.clipstatus(viewProj);
     return (clipStat != 0);
 }
 
@@ -153,11 +153,11 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     // calc position to the corner vertex of bounding box
     float retVal;
     float tVal = l12.closestpoint(viewerPos);
-    if(tVal < 0.0f)
+    if (tVal < 0.0f)
     {
         retVal = vector3::distance(viewerPos, v1);
     }
-    else if(tVal > 1.0f)
+    else if (tVal > 1.0f)
     {
         retVal = vector3::distance(viewerPos, v2);
     }
@@ -169,11 +169,11 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     // get next to compare
     float tempVal;
     tVal = l24.closestpoint(viewerPos);
-    if(tVal < 0.0f)
+    if (tVal < 0.0f)
     {
         tempVal = vector3::distance(viewerPos, v2);
     }
-    else if(tVal > 1.0f)
+    else if (tVal > 1.0f)
     {
         tempVal = vector3::distance(viewerPos, v4);
     }
@@ -187,11 +187,11 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
 
     // get next distance to next line
     tVal = l43.closestpoint(viewerPos);
-    if(tVal < 0.0f)
+    if (tVal < 0.0f)
     {
         tempVal = vector3::distance(viewerPos, v4);
     }
-    else if(tVal > 1.0f)
+    else if (tVal > 1.0f)
     {
         tempVal = vector3::distance(viewerPos, v3);
     }
@@ -205,11 +205,11 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
 
     // get next to compare
     tVal = l31.closestpoint(viewerPos);
-    if(tVal < 0.0f)
+    if (tVal < 0.0f)
     {
         tempVal = vector3::distance(viewerPos, v3);
     }
-    else if(tVal > 1.0f)
+    else if (tVal > 1.0f)
     {
         tempVal = vector3::distance(viewerPos, v1);
     }
@@ -239,13 +239,13 @@ nSceneServer::ParsePriority(const Group& groupNode)
     bool visible = true;// this->IsShapesBBVisible(groupNode);
 
     // do only if it is                                  //////////////////////////////// FIRST CONDITION - visibility
-    if(true == visible)
+    if (true == visible)
     {
         // get actual distance viewer<->edge of bounding box
         float tempDistance = CalculateDistanceToBoundingBox(groupNode);
 
         // if there is no chosen one                     //////////////////////////////// SECOND CONDITION - no other assigned
-        if(0 == this->renderContextPtr)
+        if (0 == this->renderContextPtr)
         {
             // this is the new one
             this->renderContextPtr = groupNode.renderContext;
@@ -254,7 +254,7 @@ nSceneServer::ParsePriority(const Group& groupNode)
         }
 
         // if this is allready the chosen one to render  //////////////////////////////// THIRD CONDITION - not allready assigned
-        if(this->renderContextPtr == groupNode.renderContext)
+        if (this->renderContextPtr == groupNode.renderContext)
         {
             // assign new distance
             this->renderedReflectorDistance = tempDistance;
@@ -264,7 +264,7 @@ nSceneServer::ParsePriority(const Group& groupNode)
         }
 
         // if this is not the chosen one to render, check if it will be new one
-        if(tempDistance < this->renderedReflectorDistance) ///////////////////////////// FOURTH CONDITION - nearer then assigned OR assigned is invisible
+        if (tempDistance < this->renderedReflectorDistance) ///////////////////////////// FOURTH CONDITION - nearer then assigned OR assigned is invisible
         {
             // assign new nearest sea object
             this->renderedReflectorDistance = tempDistance;
@@ -276,7 +276,7 @@ nSceneServer::ParsePriority(const Group& groupNode)
     else
     {
         // if this was the assigned reflector
-        if(groupNode.renderContext == this->renderContextPtr)
+        if (groupNode.renderContext == this->renderContextPtr)
         {
             // this is no longer the chosen one
             this->renderContextPtr = 0;

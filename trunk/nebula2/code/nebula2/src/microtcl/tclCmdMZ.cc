@@ -594,7 +594,7 @@ static void             TraceCommandProc _ANSI_ARGS_((ClientData clientData,
          */
 
         numMatches = 0;
-        for ( ; offset < wlen; ) {
+        for (; offset < wlen;) {
 
             /*
              * The flags argument is set if string is part of a larger string,
@@ -952,7 +952,7 @@ Tcl_SplitObjCmd(dummy, interp, objc, objv)
          * Handle the special case of splitting on every character.
          */
 
-        for ( ; string < end; string += len) {
+        for (; string < end; string += len) {
             len = Tcl_UtfToUniChar(string, &ch);
             objPtr = Tcl_NewStringObj(string, len);
             Tcl_ListObjAppendElement(NULL, listPtr, objPtr);
@@ -2012,7 +2012,7 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
                 for (p = string1; p < end; p += offset) {
                     offset = Tcl_UtfToUniChar(p, &ch);
 
-                    for (check = string2; ; ) {
+                    for (check = string2; ;) {
                         if (check >= checkEnd) {
                             p = end;
                             break;
@@ -2036,10 +2036,10 @@ Tcl_StringObjCmd(dummy, interp, objc, objv)
                  * and length1 marks the last non-trim character.
                  */
 
-                for (p = string1 + length1; p > end; ) {
+                for (p = string1 + length1; p > end;) {
                     p = Tcl_UtfPrev(p, string1);
                     offset = Tcl_UtfToUniChar(p, &ch);
-                    for (check = string2; ; ) {
+                    for (check = string2; ;) {
                         if (check >= checkEnd) {
                             p = end;
                             break;
@@ -3193,7 +3193,7 @@ Tcl_CommandTraceInfo(interp, cmdName, flags, proc, prevClientData)
 
     tracePtr = cmdPtr->tracePtr;
     if (prevClientData != NULL) {
-        for ( ;  tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
+        for (;  tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
             if ((tracePtr->clientData == prevClientData)
                     && (tracePtr->traceProc == proc)) {
                 tracePtr = tracePtr->nextPtr;
@@ -3201,7 +3201,7 @@ Tcl_CommandTraceInfo(interp, cmdName, flags, proc, prevClientData)
             }
         }
     }
-    for ( ;  tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
+    for (;  tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
         if (tracePtr->traceProc == proc) {
             return tracePtr->clientData;
         }

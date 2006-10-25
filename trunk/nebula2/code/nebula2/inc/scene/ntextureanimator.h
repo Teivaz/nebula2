@@ -39,7 +39,7 @@ private:
     /// Returns the number of textures that have been added so far
     int GetNumTextures() const;
     /// Returns the nth texture in the (zero based) array
-    nTexture2* GetTextureAt( int n ) const;
+    nTexture2* GetTextureAt(int n) const;
     /// a convenience function for SaveCmds
     const char* GetShaderParam() const;
 

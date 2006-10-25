@@ -39,7 +39,7 @@ inline
 bool
 nGuiSlide::HasPicture()
 {
-    if(this->defaultBrush.GetName().IsEmpty())
+    if (this->defaultBrush.GetName().IsEmpty())
     {
         return false;
     }

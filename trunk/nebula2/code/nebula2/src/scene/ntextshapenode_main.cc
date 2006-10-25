@@ -31,7 +31,7 @@ nTextShapeNode::~nTextShapeNode()
 bool
 nTextShapeNode::LoadResources()
 {
-    if(nShapeNode::LoadResources())
+    if (nShapeNode::LoadResources())
     {
         return this->LoadFont();
     }

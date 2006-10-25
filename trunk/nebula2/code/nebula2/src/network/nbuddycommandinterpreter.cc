@@ -51,13 +51,13 @@ void nBuddyCommandInterpreter::Execute(nString& strResult,nStream& query,int& Cl
                  nString type = query.GetString("type");
 
                  // message to an user
-                 if(type=="message")
+                 if (type=="message")
                  {
                      query.SetToFirstChild();
                      TransferMessage(strResult,query,ClientID,MessageID);
                  }
                  // a get query
-                 else if(type=="get")
+                 else if (type=="get")
                  {
                      if (query.SetToFirstChild())
                      {
@@ -419,7 +419,7 @@ void nBuddyCommandInterpreter::GetBuddyList(nString& strResult,nStream& query,in
         result.BeginNode("servermessage");
         result.SetString("message","buddylist");
 
-        for(int i=0;i<buddylist.Size();i++)
+        for (int i = 0; i < buddylist.Size(); i++)
         {
             result.BeginNode("buddy");
             result.SetString("name",buddylist[i]);

@@ -47,7 +47,7 @@ static void
 n_addtexture(void* slf, nCmd* cmd)
 {
     nTextureAnimator* self = (nTextureAnimator*) slf;
-    self->AddTexture( cmd->In()->GetS() );
+    self->AddTexture(cmd->In()->GetS());
 }
 
 //------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ static void
 n_setshaderparam(void* slf, nCmd* cmd)
 {
     nTextureAnimator* self = (nTextureAnimator*) slf;
-    self->SetShaderParam( cmd->In()->GetS() );
+    self->SetShaderParam(cmd->In()->GetS());
 }
 
 //------------------------------------------------------------------------------
@@ -83,12 +83,12 @@ nTextureAnimator::SaveCmds(nPersistServer* ps)
         for (int curKey = 0; curKey < numKeys; ++curKey)
         {
             cmd = ps->GetCmd(this, 'ATEX');
-            cmd->In()->SetS( this->GetTextureAt(curKey)->GetName() );
+            cmd->In()->SetS(this->GetTextureAt(curKey)->GetName());
             ps->PutCmd(cmd);
         }
         //--- setshaderparam ---
         cmd = ps->GetCmd(this, 'SHAD');
-        cmd->In()->SetS( this->GetShaderParam() );
+        cmd->In()->SetS(this->GetShaderParam());
         ps->PutCmd(cmd);
 
         return true;

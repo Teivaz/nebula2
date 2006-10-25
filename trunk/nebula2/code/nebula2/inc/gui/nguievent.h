@@ -140,7 +140,7 @@ inline
 const char*
 nGuiEvent::TypeToString(Type t)
 {
-    switch(t)
+    switch (t)
     {
         case ButtonDown:          return "ButtonDown";
         case ButtonUp:            return "ButtonUp";
@@ -180,53 +180,53 @@ inline
 nGuiEvent::Type
 nGuiEvent::StringToType(const char* str)
 {
-    if( strcmp(str, "ButtonDown") == 0)          return ButtonDown;
+    if (strcmp(str, "ButtonDown") == 0)          return ButtonDown;
     else
-    if( strcmp(str, "ButtonUp") == 0)            return ButtonUp;
+    if (strcmp(str, "ButtonUp") == 0)            return ButtonUp;
     else
-    if( strcmp(str, "RButtonDown") == 0)         return RButtonDown;
+    if (strcmp(str, "RButtonDown") == 0)         return RButtonDown;
     else
-    if( strcmp(str, "RButtonUp") == 0)           return RButtonUp;
+    if (strcmp(str, "RButtonUp") == 0)           return RButtonUp;
     else
-    if( strcmp(str, "DoubleClick") == 0)         return DoubleClick;
+    if (strcmp(str, "DoubleClick") == 0)         return DoubleClick;
     else
-    if( strcmp(str, "Char") == 0)                return Char;
+    if (strcmp(str, "Char") == 0)                return Char;
     else
-    if( strcmp(str, "KeyDown") == 0)             return KeyDown;
+    if (strcmp(str, "KeyDown") == 0)             return KeyDown;
     else
-    if( strcmp(str, "KeyUp") == 0)               return KeyUp;
+    if (strcmp(str, "KeyUp") == 0)               return KeyUp;
     else
-    if( strcmp(str, "Show") == 0)                return Show;
+    if (strcmp(str, "Show") == 0)                return Show;
     else
-    if( strcmp(str, "Action") == 0)              return Action;
+    if (strcmp(str, "Action") == 0)              return Action;
     else
-    if( strcmp(str, "Enabled") == 0)             return Enabled;
+    if (strcmp(str, "Enabled") == 0)             return Enabled;
     else
-    if( strcmp(str, "Disabled") == 0)            return Disabled;
+    if (strcmp(str, "Disabled") == 0)            return Disabled;
     else
-    if( strcmp(str, "SliderChanged") == 0)       return SliderChanged;
+    if (strcmp(str, "SliderChanged") == 0)       return SliderChanged;
     else
-    if( strcmp(str, "SelectionChanged") == 0)    return SelectionChanged;
+    if (strcmp(str, "SelectionChanged") == 0)    return SelectionChanged;
     else
-    if( strcmp(str, "SelectionDblClicked") == 0) return SelectionDblClicked;
+    if (strcmp(str, "SelectionDblClicked") == 0) return SelectionDblClicked;
     else
-    if( strcmp(str, "DialogCancel") == 0)        return DialogCancel;
+    if (strcmp(str, "DialogCancel") == 0)        return DialogCancel;
     else
-    if( strcmp(str, "DialogOk") == 0)            return DialogOk;
+    if (strcmp(str, "DialogOk") == 0)            return DialogOk;
     else
-    if( strcmp(str, "WheelUp") == 0)             return WheelUp;
+    if (strcmp(str, "WheelUp") == 0)             return WheelUp;
     else
-    if( strcmp(str, "WheelDown") == 0)           return WheelDown;
+    if (strcmp(str, "WheelDown") == 0)           return WheelDown;
     else
-    if( strcmp(str, "MenuEntrySelected") == 0)   return MenuEntrySelected;
+    if (strcmp(str, "MenuEntrySelected") == 0)   return MenuEntrySelected;
     else
-    if( strcmp(str, "DragBoxFinished") == 0)     return DragBoxFinished;
+    if (strcmp(str, "DragBoxFinished") == 0)     return DragBoxFinished;
     else
-    if( strcmp(str, "DragBoxCancelled") == 0)    return DragBoxCancelled;
+    if (strcmp(str, "DragBoxCancelled") == 0)    return DragBoxCancelled;
     else
-    if( strcmp(str, "DragBoxUpdated") == 0)      return DragBoxUpdated;
+    if (strcmp(str, "DragBoxUpdated") == 0)      return DragBoxUpdated;
     else
-    if( strcmp(str, "DragBoxStarted") == 0)      return DragBoxStarted;
+    if (strcmp(str, "DragBoxStarted") == 0)      return DragBoxStarted;
     else                                         return InvalidType;
 }
 //------------------------------------------------------------------------------

@@ -421,7 +421,7 @@ nSceneNode::RemoveAnimator(const char* relPath)
     int i;
     for (i = 0; i < numAnimators; i++)
     {
-        if (!strcmp( relPath, this->animatorArray[i]->GetName()))
+        if (!strcmp(relPath, this->animatorArray[i]->GetName()))
         {
             this->animatorArray[i].set(0); //unset/clear the nDynAutoRef
             this->animatorArray.Erase(i);  //delete the nDynAutoRef from array

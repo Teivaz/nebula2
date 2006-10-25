@@ -86,7 +86,7 @@ nSubdivShapeNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* rend
 	nGfxServer2* gfx = nGfxServer2::Instance();
 
 	// only done on DirectX 9 cards
-	if(gfx->GetFeatureSet() >= nGfxServer2::DX9)
+	if (gfx->GetFeatureSet() >= nGfxServer2::DX9)
 	{
 		// TODO call geometry manipulators!
 

@@ -17,7 +17,7 @@ nSignalRegistry::~nSignalRegistry()
     if (this->signalList)
     {
         nSignal * signal;
-        while ( 0 != (signal = static_cast<nSignal *> (this->signalList->RemHead())))
+        while (0 != (signal = static_cast<nSignal *> (this->signalList->RemHead())))
         {
             // Native signals are statically allocated while
             // signals defined from scripting are dynamically allocated
@@ -93,10 +93,10 @@ nSignalRegistry::AddSignal(const char * proto_def, nFourCC id)
     // even if no begin signals was issued
     if (!this->signalList)
     {
-        if( numSignals > 0 )
+        if (numSignals > 0)
         {
-        this->signalList = n_new(nHashList(numSignals));
-    }
+            this->signalList = n_new(nHashList(numSignals));
+        }
         else
         {
             // create the hash list with minimun space

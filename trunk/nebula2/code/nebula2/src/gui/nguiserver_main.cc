@@ -826,10 +826,10 @@ nGuiServer::AddSystemFont(const char* fontName, const char* typeFace, int height
 
     // change the font's desc if it already exists
     // otherwise, create the font
-    nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource( fontName, nResource::Font );
+    nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource(fontName, nResource::Font);
     if (pFont)
     {
-        pFont->SetFontDesc( fontDesc );
+        pFont->SetFontDesc(fontDesc);
         pFont->Unload();
     }
     else
@@ -875,10 +875,10 @@ nGuiServer::AddCustomFont(const char* fontName, const char* fontFile, const char
 
     // change the font's desc if it already exists
     // otherwise, create the font
-    nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource( fontName, nResource::Font );
+    nFont2* pFont = (nFont2*)nResourceServer::Instance()->FindResource(fontName, nResource::Font);
     if (pFont)
     {
-        pFont->SetFontDesc( fontDesc );
+        pFont->SetFontDesc(fontDesc);
         pFont->Unload();
     }
     else
@@ -1019,7 +1019,7 @@ nGuiServer::ShowToolTip(const char* text, const vector4& textColor)
     {
         // initialize the optional tooltip
         this->refToolTip = (nGuiToolTip*) this->refGui->Find("Tooltip");
-        if(this->refToolTip.isvalid())
+        if (this->refToolTip.isvalid())
         {
             this->refToolTip->Hide();
         }
@@ -1027,12 +1027,12 @@ nGuiServer::ShowToolTip(const char* text, const vector4& textColor)
     else
     {
         // update tool tip
-        if(strcmp(this->refToolTip->GetText(), text) != 0)
+        if (strcmp(this->refToolTip->GetText(), text) != 0)
         {
             this->refToolTip->SetColor(textColor);
             this->refToolTip->SetText(text);
         }
-        if(!this->refToolTip->IsShown())
+        if (!this->refToolTip->IsShown())
         {
             this->refToolTip->Show();
         }

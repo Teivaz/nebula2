@@ -154,7 +154,7 @@
         > argspace ## NUMBER(NCMDPROTO_INARG(NUMBER));                              \
     nGetCmdArg<                                                                     \
         typename n_remove_modifiers_and_reference<NCMDPROTO_INARG_TYPE(NUMBER)>::Type \
-    >( cmd, (NCMDPROTO_INARG(NUMBER)) );
+    >(cmd, (NCMDPROTO_INARG(NUMBER)));
 
 #define NCMDPROTO_OUTARG_TYPE(NUMBER)    Traits::TPO ## NUMBER
 #define NCMDPROTO_OUTARG(NUMBER)         outarg ## NUMBER
@@ -169,12 +169,12 @@
 #define NCMDPROTO_OUTARG_POST(NUMBER)                                                       \
     nSetCmdArg<                                                                             \
         typename n_remove_modifiers_and_reference<NCMDPROTO_OUTARG_TYPE(NUMBER)>::Type      \
-    >( cmd, outarg ## NUMBER );
+    >(cmd, outarg ## NUMBER);
 
 #define NCMDPROTO_RETCMDARG()                                                               \
     nSetCmdArg<                                                                             \
         typename n_remove_modifiers_and_reference<TR>::Type                                 \
-    >( cmd, ret );
+    >(cmd, ret);
 
 #define NCMDPROTO_ALLARG_TYPE(NUMBER)   typename Traits::TPA ## NUMBER
 #define NCMDPROTO_ALLARG(NUMBER)        arg ## NUMBER
@@ -260,7 +260,7 @@
     }
 
 //------------------------------------------------------------------------------
-#pragma warning ( disable : 4127 4100 )
+#pragma warning (disable : 4127 4100)
 
 template <class TR, class TListIn, class TListOut>
 class nCmdProtoTraits
@@ -321,7 +321,7 @@ public:
         if (!fourcc)
         {
             nCRC crc;
-            fourcc = crc.Checksum( (uchar *)cmdname, static_cast<unsigned int>( strlen(cmdname) ) );
+            fourcc = crc.Checksum((uchar *)cmdname, static_cast<unsigned int>(strlen(cmdname)));
         }
 
         return fourcc;
@@ -344,33 +344,33 @@ public:
         // return type signature
         if (!ReturnsVoid || !NumOutArgs)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TR) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TR));
         }
 
         // outparameter signature
         if (NumOutArgs >= 1)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO1) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO1));
         }
         if (NumOutArgs >= 2)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO2) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO2));
         }
         if (NumOutArgs >= 3)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO3) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO3));
         }
         if (NumOutArgs >= 4)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO4) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO4));
         }
         if (NumOutArgs >= 5)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO5) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO5));
         }
         if (NumOutArgs >= 6)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO6) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO6));
         }
 
         // separator
@@ -381,7 +381,7 @@ public:
         const char * ptrname = cmdname;
         while (*ptrname)
         {
-            *ptr++ = static_cast<char>( tolower(*ptrname++) );
+            *ptr++ = static_cast<char>(tolower(*ptrname++));
         }
         *ptr = 0;
 
@@ -395,27 +395,27 @@ public:
         }
         if (NumInArgs >= 1)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI1) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI1));
         }
         if (NumInArgs >= 2)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI2) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI2));
         }
         if (NumInArgs >= 3)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI3) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI3));
         }
         if (NumInArgs >= 4)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI4) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI4));
         }
         if (NumInArgs >= 5)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI5) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI5));
         }
         if (NumInArgs >= 6)
         {
-            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI6) );
+            strcat(ptr, NCMDPROTO_GETSIGNATURE(TPI6));
         }
 
         return signature;
@@ -573,7 +573,7 @@ public:
 
 };
 
-#pragma warning ( default : 4127 4100  )
+#pragma warning (default : 4127 4100)
 
 //------------------------------------------------------------------------------
 #undef NCMDPROTO_REPEATIO_INOUTARG

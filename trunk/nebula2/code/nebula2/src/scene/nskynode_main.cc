@@ -121,7 +121,7 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
     newElement.lastRefresh = this->skyTime;
     newElement.refreshTime = 0;
 
-    switch(type)
+    switch (type)
     {
         case nSkyNode::SkyElement:
         {
@@ -472,7 +472,7 @@ nSkyNode::FindElement(const nString& name)
     int i;
     for (i=0; i < this->elements.Size() ; i++)
     {
-        if (name == nString(elements[i].refElement->GetName()) ) return i;
+        if (name == nString(elements[i].refElement->GetName())) return i;
     }
     return -1;
 }
@@ -488,7 +488,7 @@ nSkyNode::FindState(int elementNr, const nString& stateName)
     int i;
     for (i=0; i < this->elements[elementNr].states.Size() ; i++)
     {
-        if (stateName == nString(elements[elementNr].states[i].refState->GetName()) ) return i;
+        if (stateName == nString(elements[elementNr].states[i].refState->GetName())) return i;
     }
     return -1;
 }
@@ -513,7 +513,7 @@ nSkyNode::FindStates(int element, float time, int& state0, int& state1)
                 state1 = 0;
                 break;
             }
-            else if ( this->elements[element].states[iSt+1].time > time )
+            else if (this->elements[element].states[iSt+1].time > time)
             {
                 state0 = iSt;
                 state1 = iSt + 1;
@@ -574,7 +574,7 @@ nSkyNode::ComputeWeight(int element, float time, int state0, int state1)
 {
     float stateTime0 = this->elements[element].states[state0].time;
     float stateTime1 = this->elements[element].states[state1].time;
-    if ( stateTime0  > stateTime1 ) stateTime1 += this->timePeriode;    //carry from previous periode;
+    if (stateTime0  > stateTime1) stateTime1 += this->timePeriode;    //carry from previous periode;
     float statePeriode = stateTime1 - stateTime0;
     float relTime = time - stateTime0;
     if (relTime < 0) relTime += this->timePeriode;
@@ -610,7 +610,7 @@ nSkyNode::UpdateSky(float newTime)
         // only update element if refreshtime elapsed
         // never update element if refreshtime is set to -1
         if ((this->elements[iEl].refreshTime != -1) &&
-        ((this->elements[iEl].lastRefresh + this->elements[iEl].refreshTime) <= this->worldTime) )
+        ((this->elements[iEl].lastRefresh + this->elements[iEl].refreshTime) <= this->worldTime))
         {
             // only update element, if it owns states
             if (this->elements[iEl].states.Size() > 0)
@@ -655,7 +655,7 @@ nSkyNode::UpdateSky(float newTime)
                             vec1 = this->elements[iEl].states[state1].refState->GetVector(paramList.vectorParams[iPa]);
                         else vec1 = this->elements[iEl].states[state0].refState->GetVector(paramList.vectorParams[iPa]);
 
-                        this->elements[iEl].refElement->SetVector(paramList.vectorParams[iPa],  vec0*(1-stateWeight) + vec1*stateWeight );
+                        this->elements[iEl].refElement->SetVector(paramList.vectorParams[iPa],  vec0*(1-stateWeight) + vec1*stateWeight);
                     }
                 }
 
@@ -672,7 +672,7 @@ nSkyNode::UpdateSky(float newTime)
                             flt1 = this->elements[iEl].states[state1].refState->GetFloat(paramList.floatParams[iPa]);
                         else flt1 = this->elements[iEl].states[state0].refState->GetFloat(paramList.floatParams[iPa]);
 
-                        this->elements[iEl].refElement->SetFloat(paramList.floatParams[iPa],  flt0*(1-stateWeight) + flt1*stateWeight );
+                        this->elements[iEl].refElement->SetFloat(paramList.floatParams[iPa],  flt0*(1-stateWeight) + flt1*stateWeight);
                     }
                 }
 
@@ -689,7 +689,7 @@ nSkyNode::UpdateSky(float newTime)
                             int1 = this->elements[iEl].states[state1].refState->GetInt(paramList.intParams[iPa]);
                         else int1 = this->elements[iEl].states[state0].refState->GetInt(paramList.intParams[iPa]);
 
-                        this->elements[iEl].refElement->SetInt(paramList.intParams[iPa],  n_frnd(int0*(1-stateWeight) + int1*stateWeight) );
+                        this->elements[iEl].refElement->SetInt(paramList.intParams[iPa],  n_frnd(int0*(1-stateWeight) + int1*stateWeight));
                     }
                 }
 
@@ -862,9 +862,7 @@ nSkyNode::UpdateSky(float newTime)
                             break;
                         }
                     default:
-                        {
-                            break;
-                        }
+                        break;
                 }
             }
             // remember last refresh

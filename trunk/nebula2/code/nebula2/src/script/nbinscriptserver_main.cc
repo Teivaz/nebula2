@@ -571,7 +571,7 @@ nBinScriptServer::GetInArgs(nFile* file, nCmd* cmd)
         bool notEof = true;
         nArg* arg = cmd->In();
 
-        switch(arg->GetType())
+        switch (arg->GetType())
         {
 
             case nArg::Int:

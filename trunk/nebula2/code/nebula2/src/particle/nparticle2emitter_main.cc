@@ -391,7 +391,7 @@ int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
 
     nParticle2* particle = this->particles;
     int particlePitch = 1;
-    if(this->renderOldestFirst)
+    if (this->renderOldestFirst)
     {
         // reverse iterating order
         particlePitch = -1;
@@ -407,7 +407,7 @@ int nParticle2Emitter::RenderPure(float* dstVertices,int maxVertices)
     myVertex.vel = viewer.x_component();
 
     int p;
-    for( p = 0; p < particleCount ; p++)
+    for (p = 0; p < particleCount ; p++)
     {
         // life-time-check is not needed, it is assured that the relative age is >=0 and <1
         curveIndex = (int)((particle->lifeTime * particle->oneDivMaxLifeTime) * (float)ParticleTimeDetail);
@@ -471,7 +471,7 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
 
     int particlePitch = 1;
     int particleOffset = 0;
-    if(this->renderOldestFirst)
+    if (this->renderOldestFirst)
     {
         // reverse iterating order
         particlePitch = -1;
@@ -479,14 +479,14 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
     };
 
     float viewFadeOut = 0.0f;
-    if(this->viewAngleFade) viewFadeOut = 256.0f;
+    if (this->viewAngleFade) viewFadeOut = 256.0f;
 
     tParticleVertex*    destPtr = (tParticleVertex*)dstVertices;
 
     // ok, let's stretch
     vector3 stretchPos;
     int p;
-    for( p = 0; p < particleCount ; p++)
+    for (p = 0; p < particleCount ; p++)
     {
         nParticle2* particle = &particles[particleOffset];
         float relParticleAge = particle->lifeTime * particle->oneDivMaxLifeTime;
@@ -497,9 +497,9 @@ int nParticle2Emitter::RenderStretched(float* dstVertices,int maxVertices)
         // life-time-check is not needed, it is assured that the relative age is >=0 and <1
 
         float stretchTime = this->particleStretch;
-        if(stretchTime>particle->lifeTime) stretchTime = particle->lifeTime;
+        if (stretchTime>particle->lifeTime) stretchTime = particle->lifeTime;
         stretchPos = particle->position - (particle->velocity-particle->acc*(stretchTime*0.5f)) * (stretchTime*curCurves[ParticleVelocityFactor]);
-        if(this->stretchToStart) stretchPos = particle->startPos;
+        if (this->stretchToStart) stretchPos = particle->startPos;
 
         float alpha = curCurves[ParticleAlpha] + viewFadeOut;
 
@@ -562,7 +562,7 @@ int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
 
     int particlePitch = 1;
     int particleOffset = 0;
-    if(this->renderOldestFirst)
+    if (this->renderOldestFirst)
     {
         // reverse iterating order
         particlePitch = -1;
@@ -578,12 +578,12 @@ int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
 
     // set coded flag for viewangle fading
     float viewFadeOut = 0.0f;
-    if(this->viewAngleFade) viewFadeOut = 256.0f;
+    if (this->viewAngleFade) viewFadeOut = 256.0f;
 
     tParticleVertex*    destPtr = (tParticleVertex*)dstVertices;
 
     int p;
-    for( p = 0; p < this->particleCount ; p++)
+    for (p = 0; p < this->particleCount ; p++)
     {
         nParticle2* particle = &particles[particleOffset];
         float relParticleAge = particle->lifeTime * particle->oneDivMaxLifeTime;
@@ -593,7 +593,7 @@ int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
 
         // calculate stretch steps
         float stretchTime = this->particleStretch;
-        if(stretchTime>particle->lifeTime) stretchTime = particle->lifeTime;
+        if (stretchTime>particle->lifeTime) stretchTime = particle->lifeTime;
         float stretchStep = -(stretchTime * oneDivStretchDetail);
         velPitch = particle->acc * stretchStep;
         velPitchHalf = velPitch * 0.5f;
@@ -611,7 +611,7 @@ int nParticle2Emitter::RenderStretchedSmooth(float* dstVertices,int maxVertices)
         myVertex.scale = scale;
 
         int d;
-        for(d = 0;d<this->stretchDetail;d++)
+        for (d = 0; d < this->stretchDetail; d++)
         {
             // life-time-check is not needed, it is assured that the relative age is >=0 and <1
             myVertex.u = particle->uvmin.x;
@@ -661,7 +661,7 @@ void nParticle2Emitter::Render(float curTime)
 {
     if ((!this->IsSetup())||(!this->IsValid())) return;
 
-    if(this->isSleeping)    // do we have to wakeup ?
+    if (this->isSleeping)    // do we have to wakeup ?
     {
         this->isSleeping = false;
         // reallocate particles
@@ -688,12 +688,12 @@ void nParticle2Emitter::Render(float curTime)
     int remVertices = 0;
     this->particleMesh.Begin(dstVertices, maxVertices);
 
-    if((this->particleStretch == 0.0f)&&(!this->stretchToStart))
+    if ((this->particleStretch == 0.0f)&&(!this->stretchToStart))
         remVertices = RenderPure(dstVertices,maxVertices);
     else
     {
 
-        if(this->stretchToStart || (this->stretchDetail == 1) )
+        if (this->stretchToStart || (this->stretchDetail == 1))
         {
             remVertices = RenderStretched(dstVertices,maxVertices);
         } else {
@@ -719,11 +719,11 @@ nParticle2Emitter::Initialize()
     // calculate maximum number of particles
     float maxFreq = 0 , maxLife = 0;
     int i;
-    for( i = 0; i < ParticleTimeDetail ; i++)
+    for (i = 0; i < ParticleTimeDetail ; i++)
     {
-        if(this->pStaticCurves[i*CurveTypeCount+EmissionFrequency] > maxFreq)
+        if (this->pStaticCurves[i*CurveTypeCount+EmissionFrequency] > maxFreq)
             maxFreq = this->pStaticCurves[i*CurveTypeCount+EmissionFrequency];
-        if(this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
+        if (this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
             maxLife = this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime];
     }
     this->maxParticleCount = (int)(maxFreq * maxLife);
@@ -746,17 +746,17 @@ nParticle2Emitter::NotifyCurvesChanged()
 {
     n_assert(0 != this->pStaticCurves);
 
-    if(this->particles != 0)
+    if (this->particles != 0)
     {
         // we need to rearrange the particlearray, because the curves have changed
 
         float maxFreq = 0 , maxLife = 0;
         int i;
-        for( i = 0; i < ParticleTimeDetail; i++)
+        for (i = 0; i < ParticleTimeDetail; i++)
         {
-            if(this->pStaticCurves[i*CurveTypeCount+EmissionFrequency] > maxFreq)
+            if (this->pStaticCurves[i*CurveTypeCount+EmissionFrequency] > maxFreq)
                 maxFreq = this->pStaticCurves[i*CurveTypeCount+EmissionFrequency];
-            if(this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
+            if (this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
                 maxLife = this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime];
         }
         int newMaxParticleCount = (int)(maxFreq * maxLife);
@@ -765,7 +765,7 @@ nParticle2Emitter::NotifyCurvesChanged()
         n_assert(0 != newPtr);
 
         int partsToCopy = this->particleCount;
-        if(partsToCopy > newMaxParticleCount)
+        if (partsToCopy > newMaxParticleCount)
             partsToCopy = newMaxParticleCount;
 
         memcpy(newPtr,this->particles,partsToCopy*sizeof(nParticle2));

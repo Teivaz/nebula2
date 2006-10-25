@@ -281,7 +281,7 @@ n_setemissionfrequency(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::EmissionFrequency, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -304,7 +304,7 @@ n_setparticlelifetime(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleLifeTime, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -327,7 +327,7 @@ n_setparticlestartvelocity(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleStartVelocity, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -350,7 +350,7 @@ n_setparticlerotationvelocity(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleRotationVelocity, nEnvelopeCurve(
         n_deg2rad(values[0]), n_deg2rad(values[1]), n_deg2rad(values[2]), n_deg2rad(values[3]),
         values[4], values[5], values[6], values[7],
@@ -373,7 +373,7 @@ n_setparticlescale(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleScale, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -396,7 +396,7 @@ n_setparticleweight(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleWeight, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -419,7 +419,7 @@ n_setparticlergb(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[14];
-    for(int i = 0; i < 14; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 14; i++) values[i] = cmd->In()->GetF();
     self->SetRGBCurve(nVector3EnvelopeCurve(
         vector3(values[0], values[1], values[2]),
         vector3(values[3], values[4], values[5]),
@@ -444,7 +444,7 @@ n_setparticlealpha(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleAlpha, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -468,7 +468,7 @@ n_setparticlesidevelocity1(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleSideVelocity1, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -492,7 +492,7 @@ n_setparticlesidevelocity2(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleSideVelocity2, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -515,7 +515,7 @@ n_setparticleairresistance(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleAirResistance, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],
@@ -538,7 +538,7 @@ n_setparticlevelocityfactor(void* slf, nCmd* cmd)
 {
     nParticleShapeNode* self = (nParticleShapeNode*) slf;
     float values[8];
-    for(int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
+    for (int i = 0; i < 8; i++) values[i] = cmd->In()->GetF();
     self->SetCurve(nParticleEmitter::ParticleVelocityFactor, nEnvelopeCurve(
         values[0], values[1], values[2], values[3],
         values[4], values[5], values[6], values[7],

@@ -61,7 +61,7 @@
 #endif
 
 #ifdef _MSC_VER
-#pragma warning( disable : 4996 )       // _CRT_INSECURE_DEPRECATE
+#pragma warning(disable : 4996)       // _CRT_INSECURE_DEPRECATE
 #endif
 
 /*

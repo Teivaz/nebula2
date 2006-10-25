@@ -343,7 +343,7 @@ nSkyNode::SaveCmds(nPersistServer* ps)
         int k;
         for (i=0; i < this->elements.Size(); i++)
         {
-            for(k=0; k < this->elements[i].linkTo.Size(); k++)
+            for (k=0; k < this->elements[i].linkTo.Size(); k++)
             {
                 cmd = ps->GetCmd(this, 'LKSL');
                 cmd->In()->SetS(this->elements[i].refElement->GetName());
@@ -355,7 +355,7 @@ nSkyNode::SaveCmds(nPersistServer* ps)
         //--- addState ---
         for (i=0; i < this->elements.Size(); i++)
         {
-            for(k=0; k < this->elements[i].states.Size(); k++)
+            for (k=0; k < this->elements[i].states.Size(); k++)
             {
                 cmd = ps->GetCmd(this, 'ADDS');
                 cmd->In()->SetS(this->elements[i].refElement->GetName());

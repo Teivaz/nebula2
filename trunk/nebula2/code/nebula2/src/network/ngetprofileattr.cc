@@ -66,7 +66,7 @@ void nGetProfileAttr::EvaluateResult(nStream& result)
              }
 
          }
-         else if(type=="error")
+         else if (type=="error")
          {
              this->curStatus = COMMAMD_ERROR;
 

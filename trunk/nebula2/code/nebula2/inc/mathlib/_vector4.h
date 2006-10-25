@@ -484,7 +484,7 @@ _vector4::saturate()
 inline
 float _vector4::dot(const _vector4& v0) const
 {
-    return ( x * v0.x + y * v0.y + z * v0.z + w * v0.w );
+    return (x * v0.x + y * v0.y + z * v0.z + w * v0.w);
 }
 
 //------------------------------------------------------------------------------

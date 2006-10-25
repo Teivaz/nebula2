@@ -109,6 +109,6 @@ Property::HasEntity() const
     return this->entity != 0;
 }
 
-} // namespace Property
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

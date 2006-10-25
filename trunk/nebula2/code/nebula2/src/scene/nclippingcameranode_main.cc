@@ -51,7 +51,7 @@ nClippingCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix
 
     clipPlaneNormal.norm();
 
-    if(distance < 0.0)
+    if (distance < 0.0)
     {
         //front side of plane
         clipPlaneNormal = -clipPlaneNormal;

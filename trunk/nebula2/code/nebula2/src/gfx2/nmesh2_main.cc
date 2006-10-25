@@ -380,7 +380,7 @@ nMesh2::GetByteSize()
     (includes a trailing '|')
 */
 nString
-nMesh2::ConvertUsageFlagsToString( int usageFlags )
+nMesh2::ConvertUsageFlagsToString(int usageFlags)
 {
     nString usageString;
     if (usageFlags)
@@ -410,7 +410,7 @@ nMesh2::ConvertUsageStringToFlags(const char* usageFlagsString)
     if (!workingString.IsEmpty())
     {
         workingString.ToLower();
-        const char* flagString = workingString.GetFirstToken( "|" );
+        const char* flagString = workingString.GetFirstToken("|");
         while (flagString)
         {
             if (!strcmp(flagString, "writeonce"))

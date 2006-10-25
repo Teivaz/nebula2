@@ -36,7 +36,7 @@ nGuiCheckButtonGroup2::OnShow()
 {
     n_assert(this->options.Size() > 0);
 
-    if(this->refCheckButtons.Size() > 0) this->refCheckButtons.Clear();
+    if (this->refCheckButtons.Size() > 0) this->refCheckButtons.Clear();
 
     nGuiFormLayout::OnShow();
     nGuiSkin* skin = nGuiServer::Instance()->GetSkin();

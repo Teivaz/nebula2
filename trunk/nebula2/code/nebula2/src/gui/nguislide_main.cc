@@ -30,7 +30,7 @@ nGuiSlide::~nGuiSlide()
 void
 nGuiSlide::SetRenderColor(vector4 color)
 {
-    if(!this->defaultBrush.GetName().IsEmpty())
+    if (!this->defaultBrush.GetName().IsEmpty())
     {
         nGuiResource* res = this->defaultBrush.GetGuiResource();
         res->SetColor(color);

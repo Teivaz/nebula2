@@ -371,7 +371,7 @@ nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
     size numEdges * 4 * sizeof(ushort).
     The edge data is: ushort vertexIndex1, vertexIndex2, faceIndex1, faceIndex2;
     If a face Indicie is invalid (a border edge with only on face connected)
-    the value is nMeshBuilder::InvalidIndex ( == -1).
+    the value is nMeshBuilder::InvalidIndex (== -1).
 */
 inline
 bool

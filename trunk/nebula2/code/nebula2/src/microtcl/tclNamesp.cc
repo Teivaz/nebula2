@@ -1826,7 +1826,7 @@ TclGetNamespaceForQualName(interp, qualName, cxtNsPtr, flags,
      */
 
     if ((flags & FIND_ONLY_NS)
-	    || ((end > start ) && (*(end-1) != ':'))) {
+	    || ((end > start) && (*(end-1) != ':'))) {
 	*simpleNamePtr = NULL; /* found namespace name */
     } else {
 	*simpleNamePtr = end;  /* found cmd/var: points to empty string */

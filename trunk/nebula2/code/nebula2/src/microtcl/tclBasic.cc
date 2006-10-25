@@ -906,7 +906,7 @@ DeleteInterpProc(interp)
      */
 
     hPtr = Tcl_FirstHashEntry(hTablePtr, &search);
-    for ( ; hPtr != NULL; hPtr = Tcl_NextHashEntry(&search)) {
+    for (; hPtr != NULL; hPtr = Tcl_NextHashEntry(&search)) {
         Tcl_DeleteCommandFromToken(interp,
             (Tcl_Command) Tcl_GetHashValue(hPtr));
     }
@@ -1094,7 +1094,7 @@ Tcl_HideCommand(interp, cmdName, hiddenCmdToken)
      * Check that the command is really in global namespace
      */
 
-    if ( cmdPtr->nsPtr != iPtr->globalNsPtr ) {
+    if (cmdPtr->nsPtr != iPtr->globalNsPtr) {
         Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
                 "can only hide global namespace commands",
         " (use rename then hide)", (char *) NULL);
@@ -1248,7 +1248,7 @@ Tcl_ExposeCommand(interp, hiddenCmdToken, cmdName)
      * check. (If it was not, we would not really know how to
      * handle it).
      */
-    if ( cmdPtr->nsPtr != iPtr->globalNsPtr ) {
+    if (cmdPtr->nsPtr != iPtr->globalNsPtr) {
     /*
      * This case is theoritically impossible,
      * we might rather panic() than 'nicely' erroring out ?

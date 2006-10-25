@@ -39,7 +39,7 @@ nCharacter3Set::Init(nCharacter3Node* characterNode)
 
     this->selectedVariation = -1;
     int i;
-    for( i = 0; i < this->numAvailableSkins; i++)
+    for (i = 0; i < this->numAvailableSkins; i++)
     {
         this->selectedSkins.Append(false);
     }
@@ -71,20 +71,20 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
 
         // set skins
         int i,k;
-        for( i = 0; i < this->numAvailableSkins; i++)
+        for (i = 0; i < this->numAvailableSkins; i++)
         {
             nArray<nString> nameTokens;
             int numTokens = loadedSkins[i].Tokenize("/",nameTokens);
 
             bool visible = false;
 
-            if(numTokens == 3)
+            if (numTokens == 3)
             {
-                for(k = 0; k < skin.Size(); k += 3)
+                for (k = 0; k < skin.Size(); k += 3)
                 {
-                    if( (skin[k] == nameTokens[0]) &&
+                    if ((skin[k] == nameTokens[0]) &&
                         (skin[k+1] == nameTokens[1]) &&
-                        (skin[k+2] == nameTokens[2]) )
+                        (skin[k+2] == nameTokens[2]))
                     {
                         visible = true;
                     }

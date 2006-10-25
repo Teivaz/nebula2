@@ -142,7 +142,7 @@ nRpXmlParser::ParseShaders()
     nStream newXmlStream;
 	n_assert(this->mangledPath.Get());
     newXmlStream.SetFilename(this->mangledPath);
-	if(!newXmlStream.Open(nStream::Read))
+	if (!newXmlStream.Open(nStream::Read))
     {
         n_error(nString("Failed to open " + this->mangledPath + "\n").Get());
     }
@@ -154,7 +154,7 @@ nRpXmlParser::ParseShaders()
 	newXmlStream.SetToFirstChild();
     do
     {
-		if(newXmlStream.HasAttr("name") && newXmlStream.HasAttr("file"))
+		if (newXmlStream.HasAttr("name") && newXmlStream.HasAttr("file"))
 		{
 			nRpShader newShader;
 			nString name = newXmlStream.GetString("name");
@@ -169,7 +169,7 @@ nRpXmlParser::ParseShaders()
 			break;
 		}
     }
-    while(newXmlStream.SetToNextChild());
+    while (newXmlStream.SetToNextChild());
 }
 
 //------------------------------------------------------------------------------

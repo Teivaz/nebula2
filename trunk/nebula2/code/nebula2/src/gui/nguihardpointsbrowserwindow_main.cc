@@ -139,9 +139,9 @@ nGuiHardpointsBrowserWindow::OnEvent(const nGuiEvent& event)
     int             jointIndex;
     bool            validJointSelected = false;
 
-    if(this->refHardpointsLister.isvalid())
+    if (this->refHardpointsLister.isvalid())
     {
-        if(this->refHardpointsLister->GetSelectedJoint(animator,jointIndex))
+        if (this->refHardpointsLister->GetSelectedJoint(animator,jointIndex))
             validJointSelected = true;
     };
 
@@ -181,7 +181,7 @@ nGuiHardpointsBrowserWindow::AddObject(const nString& objPath,int jointIndex)
 {
     n_assert(!objPath.IsEmpty());
 
-    n_assert( nNodeList::Instance() != 0 );
+    n_assert(nNodeList::Instance() != 0);
 
     // Load Object in /usr/scene
     nNodeList::Instance()->LoadObjectAndAttachToHardpoint(objPath,jointIndex);

@@ -62,20 +62,20 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
     if (!this->curvesValid)
     {
         int c,s;
-        for( c = 0; c < nParticle2Emitter::CurveTypeCount ; c++)
-            for( s = 0; s < nParticle2Emitter::ParticleTimeDetail; s++)
+        for (c = 0; c < nParticle2Emitter::CurveTypeCount ; c++)
+            for (s = 0; s < nParticle2Emitter::ParticleTimeDetail; s++)
                 staticCurve[s][c] = curves[c].GetValue((float)s / (float)nParticle2Emitter::ParticleTimeDetail);
         // encode colors
-        for( s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
+        for (s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
         {
             vector3 col = rgbCurve.GetValue((float)s / (float)nParticle2Emitter::ParticleTimeDetail);
             staticCurve[s][nParticle2Emitter::StaticRGBCurve] = (float)((((uint)(col.x*255.0f)) << 16) |
                                                     (((uint)(col.y*255.0f)) << 8) |
-                                                    (((uint)(col.z*255.0f)) )) ;
+                                                    (((uint)(col.z*255.0f))));
         };
 
         // encode alpha values from [0,1] to [0,255]
-        for( s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
+        for (s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
             staticCurve[s][nParticle2Emitter::ParticleAlpha] = (float)(((int)(staticCurve[s][nParticle2Emitter::ParticleAlpha] * 255.0f)));
 
         this->curvesValid = true;
@@ -213,7 +213,7 @@ nParticleShapeNode2::RenderGeometry(nSceneServer* sceneServer, nRenderContext* r
 
     nParticle2Emitter* emitter = (nParticle2Emitter*)varEmitter.GetObj();
     n_assert(0 != emitter);
-    if(!this->invisible)
+    if (!this->invisible)
         emitter->Render(curTime);
 
     return true;

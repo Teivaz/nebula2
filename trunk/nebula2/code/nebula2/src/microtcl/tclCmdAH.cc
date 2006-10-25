@@ -2286,12 +2286,12 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
 		        char padChar = (gotZero ? '0' : ' ');
 		        ptr = dst;
 		        if (!gotMinus) {
-			    for ( ; --width > 0; ptr++) {
+			    for (; --width > 0; ptr++) {
 			        *ptr = padChar;
 			    }
 		        }
 		        ptr += Tcl_UniCharToUtf(intValue, ptr);
-		        for ( ; --width > 0; ptr++) {
+		        for (; --width > 0; ptr++) {
 			    *ptr = padChar;
 		        }
 		        *ptr = '\0';
@@ -2338,7 +2338,7 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
         }
 
         Tcl_SetObjResult(interp, resultPtr);
-        if(dst != staticBuf) {
+        if (dst != staticBuf) {
             ckfree(dst);
         }
         return TCL_OK;
@@ -2358,7 +2358,7 @@ Tcl_ForeachObjCmd(dummy, interp, objc, objv)
         }
 
         fmtError:
-        if(dst != staticBuf) {
+        if (dst != staticBuf) {
             ckfree(dst);
         }
         Tcl_DecrRefCount(resultPtr);

@@ -95,7 +95,7 @@ static void n_getsignals(void *o, nCmd *cmd)
 
     nArg* args = n_new_array(nArg, numSignals);
     int i = 0;
-    while ( 0 != (node = signalList.RemHead()))
+    while (0 != (node = signalList.RemHead()))
     {
         args[i++].SetS(((nSignal*) node->GetPtr())->GetProtoDef());
         n_delete(node);

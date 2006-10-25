@@ -416,13 +416,13 @@ nSceneServer::SplitNodes()
                 nMaterialNode* shapeNode = (nMaterialNode*) group.sceneNode;
 
                 // if this is a reflecting shape, parse for render priority
-                if(this->IsAReflectingShape(shapeNode))
+                if (this->IsAReflectingShape(shapeNode))
                 {
                     // reset complex flag (we think this one is not the one to be rendered complex)
                     group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 0);
 
                     // check if this one is the new (or old) node to be rendered complex
-                    if(true == this->ParsePriority(group))
+                    if (true == this->ParsePriority(group))
                     {
                         this->cameraArray.Reset();
                         group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 1);
@@ -460,11 +460,11 @@ nSceneServer::SplitNodes()
             const nRenderContext* renderCandidate = (nRenderContext*) group.renderContext;
 
             // check if one reflecting camera has priority to be rendered
-            if(this->renderContextPtr != 0)
+            if (this->renderContextPtr != 0)
             {
 
                 // if this is the chosen one to be rendered
-                if(renderCandidate == this->renderContextPtr)
+                if (renderCandidate == this->renderContextPtr)
                 {
                     // HACK!!!: at the moment the cameras are only used for water, and all use
                     // the same render target (because this is defined in the section, not by the

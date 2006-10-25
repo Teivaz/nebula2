@@ -65,12 +65,12 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdP
 
     nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdProto, priority));
     bool result = false;
-    if( binding )
+    if (binding)
     {
         result = this->BindSignal(signal4cc, binding);
-        if( !result )
+        if (!result)
         {
-            n_delete( binding );
+            n_delete(binding);
         }
     }
     return result;
@@ -87,12 +87,12 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourC
 
     nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdFourCC, priority, rebind));
     bool result = false;
-    if( binding )
+    if (binding)
     {
         result = this->BindSignal(signal4cc, binding);
-        if( !result )
+        if (!result)
         {
-            n_delete( binding );
+            n_delete(binding);
         }
     }
     return result;
@@ -110,12 +110,12 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, const char * cmd
 
     nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdName, priority, rebind));
     bool result = false;
-    if( binding )
+    if (binding)
     {
         result = this->BindSignal(signal4cc, binding);
-        if( !result )
+        if (!result)
         {
-            n_delete( binding );
+            n_delete(binding);
         }
     }
     return result;
@@ -276,7 +276,7 @@ nSignalEmitter::UnbindTargetObject(const nObject * object)
     n_assert(object);
     bool found = false;
 
-    for(int i = 0;i < this->bindingSets->Size();i++)
+    for (int i = 0; i < this->bindingSets->Size(); i++)
     {
         nSignalBindingSet * bs = this->bindingSets->GetElementAt(i);
         n_assert(bs);
@@ -349,7 +349,7 @@ nSignalEmitter::GetSignals(nHashList *signal_list) const
                 signal_list->AddTail(node);
             }
         }
-    } while ( 0 != (cl = cl->GetSuperClass()));
+    } while (0 != (cl = cl->GetSuperClass()));
 }
 
 //------------------------------------------------------------------------------

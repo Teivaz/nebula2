@@ -135,8 +135,8 @@ public:
             float f_sqy = q.y * q.y;
             float f_sqz = q.z * q.z;
 
-            x = n_atan2(2.0f * q.x * q.w - 2.0f * q.y * q.z, 1.0f - 2.0f * f_sqx - 2.0f * f_sqz );
-            y = n_atan2(2.0f * q.y * q.w - 2.0f * q.x * q.z, 1.0f - 2.0f * f_sqy - 2.0f * f_sqz );
+            x = n_atan2(2.0f * q.x * q.w - 2.0f * q.y * q.z, 1.0f - 2.0f * f_sqx - 2.0f * f_sqz);
+            y = n_atan2(2.0f * q.y * q.w - 2.0f * q.x * q.z, 1.0f - 2.0f * f_sqy - 2.0f * f_sqz);
             z = n_asin(2.0f * f_test);
         }
     }

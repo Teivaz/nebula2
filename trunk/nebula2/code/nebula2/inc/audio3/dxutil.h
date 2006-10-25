@@ -12,9 +12,9 @@
 //-----------------------------------------------------------------------------
 // Miscellaneous helper functions
 //-----------------------------------------------------------------------------
-#define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-#define SAFE_RELEASE(p)      { if(p) { (p)->Release(); (p)=NULL; } }
+#define SAFE_DELETE(p)       { if (p) { delete (p);     (p)=NULL; } }
+#define SAFE_DELETE_ARRAY(p) { if (p) { delete[] (p);   (p)=NULL; } }
+#define SAFE_RELEASE(p)      { if (p) { (p)->Release(); (p)=NULL; } }
 
 
 #ifndef UNDER_CE
@@ -23,10 +23,10 @@
 // Desc: Returns the DirectX SDK path, as stored in the system registry
 //       during the SDK install.
 //-----------------------------------------------------------------------------
-HRESULT DXUtil_GetDXSDKMediaPathCch( TCHAR* strDest, int cchDest );
-HRESULT DXUtil_GetDXSDKMediaPathCb( TCHAR* szDest, int cbDest );
-HRESULT DXUtil_FindMediaFileCch( TCHAR* strDestPath, int cchDest, TCHAR* strFilename );
-HRESULT DXUtil_FindMediaFileCb( TCHAR* szDestPath, int cbDest, TCHAR* strFilename );
+HRESULT DXUtil_GetDXSDKMediaPathCch(TCHAR* strDest, int cchDest);
+HRESULT DXUtil_GetDXSDKMediaPathCb(TCHAR* szDest, int cbDest);
+HRESULT DXUtil_FindMediaFileCch(TCHAR* strDestPath, int cchDest, TCHAR* strFilename);
+HRESULT DXUtil_FindMediaFileCb(TCHAR* szDestPath, int cbDest, TCHAR* strFilename);
 #endif // !UNDER_CE
 
 
@@ -34,16 +34,16 @@ HRESULT DXUtil_FindMediaFileCb( TCHAR* szDestPath, int cbDest, TCHAR* strFilenam
 // Name: DXUtil_Read*RegKey() and DXUtil_Write*RegKey()
 // Desc: Helper functions to read/write a string registry key
 //-----------------------------------------------------------------------------
-HRESULT DXUtil_WriteStringRegKey( HKEY hKey, TCHAR* strRegName, TCHAR* strValue );
-HRESULT DXUtil_WriteIntRegKey( HKEY hKey, TCHAR* strRegName, DWORD dwValue );
-HRESULT DXUtil_WriteGuidRegKey( HKEY hKey, TCHAR* strRegName, GUID guidValue );
-HRESULT DXUtil_WriteBoolRegKey( HKEY hKey, TCHAR* strRegName, BOOL bValue );
+HRESULT DXUtil_WriteStringRegKey(HKEY hKey, TCHAR* strRegName, TCHAR* strValue);
+HRESULT DXUtil_WriteIntRegKey(HKEY hKey, TCHAR* strRegName, DWORD dwValue);
+HRESULT DXUtil_WriteGuidRegKey(HKEY hKey, TCHAR* strRegName, GUID guidValue);
+HRESULT DXUtil_WriteBoolRegKey(HKEY hKey, TCHAR* strRegName, BOOL bValue);
 
-HRESULT DXUtil_ReadStringRegKeyCch( HKEY hKey, TCHAR* strRegName, TCHAR* strDest, DWORD cchDest, TCHAR* strDefault );
-HRESULT DXUtil_ReadStringRegKeyCb( HKEY hKey, TCHAR* strRegName, TCHAR* strDest, DWORD cbDest, TCHAR* strDefault );
-HRESULT DXUtil_ReadIntRegKey( HKEY hKey, TCHAR* strRegName, DWORD* pdwValue, DWORD dwDefault );
-HRESULT DXUtil_ReadGuidRegKey( HKEY hKey, TCHAR* strRegName, GUID* pGuidValue, GUID& guidDefault );
-HRESULT DXUtil_ReadBoolRegKey( HKEY hKey, TCHAR* strRegName, BOOL* pbValue, BOOL bDefault );
+HRESULT DXUtil_ReadStringRegKeyCch(HKEY hKey, TCHAR* strRegName, TCHAR* strDest, DWORD cchDest, TCHAR* strDefault);
+HRESULT DXUtil_ReadStringRegKeyCb(HKEY hKey, TCHAR* strRegName, TCHAR* strDest, DWORD cbDest, TCHAR* strDefault);
+HRESULT DXUtil_ReadIntRegKey(HKEY hKey, TCHAR* strRegName, DWORD* pdwValue, DWORD dwDefault);
+HRESULT DXUtil_ReadGuidRegKey(HKEY hKey, TCHAR* strRegName, GUID* pGuidValue, GUID& guidDefault);
+HRESULT DXUtil_ReadBoolRegKey(HKEY hKey, TCHAR* strRegName, BOOL* pbValue, BOOL bDefault);
 
 
 //-----------------------------------------------------------------------------
@@ -60,44 +60,44 @@ HRESULT DXUtil_ReadBoolRegKey( HKEY hKey, TCHAR* strRegName, BOOL* pbValue, BOOL
 //-----------------------------------------------------------------------------
 enum TIMER_COMMAND { TIMER_RESET, TIMER_START, TIMER_STOP, TIMER_ADVANCE,
                      TIMER_GETABSOLUTETIME, TIMER_GETAPPTIME, TIMER_GETELAPSEDTIME };
-FLOAT __stdcall DXUtil_Timer( TIMER_COMMAND command );
+FLOAT __stdcall DXUtil_Timer(TIMER_COMMAND command);
 
 
 //-----------------------------------------------------------------------------
 // UNICODE support for converting between CHAR, TCHAR, and WCHAR strings
 //-----------------------------------------------------------------------------
-HRESULT DXUtil_ConvertAnsiStringToWideCch( WCHAR* wstrDestination, const CHAR* strSource, int cchDestChar );
-HRESULT DXUtil_ConvertWideStringToAnsiCch( CHAR* strDestination, const WCHAR* wstrSource, int cchDestChar );
-HRESULT DXUtil_ConvertGenericStringToAnsiCch( CHAR* strDestination, const TCHAR* tstrSource, int cchDestChar );
-HRESULT DXUtil_ConvertGenericStringToWideCch( WCHAR* wstrDestination, const TCHAR* tstrSource, int cchDestChar );
-HRESULT DXUtil_ConvertAnsiStringToGenericCch( TCHAR* tstrDestination, const CHAR* strSource, int cchDestChar );
-HRESULT DXUtil_ConvertWideStringToGenericCch( TCHAR* tstrDestination, const WCHAR* wstrSource, int cchDestChar );
-HRESULT DXUtil_ConvertAnsiStringToWideCb( WCHAR* wstrDestination, const CHAR* strSource, int cbDestChar );
-HRESULT DXUtil_ConvertWideStringToAnsiCb( CHAR* strDestination, const WCHAR* wstrSource, int cbDestChar );
-HRESULT DXUtil_ConvertGenericStringToAnsiCb( CHAR* strDestination, const TCHAR* tstrSource, int cbDestChar );
-HRESULT DXUtil_ConvertGenericStringToWideCb( WCHAR* wstrDestination, const TCHAR* tstrSource, int cbDestChar );
-HRESULT DXUtil_ConvertAnsiStringToGenericCb( TCHAR* tstrDestination, const CHAR* strSource, int cbDestChar );
-HRESULT DXUtil_ConvertWideStringToGenericCb( TCHAR* tstrDestination, const WCHAR* wstrSource, int cbDestChar );
+HRESULT DXUtil_ConvertAnsiStringToWideCch(WCHAR* wstrDestination, const CHAR* strSource, int cchDestChar);
+HRESULT DXUtil_ConvertWideStringToAnsiCch(CHAR* strDestination, const WCHAR* wstrSource, int cchDestChar);
+HRESULT DXUtil_ConvertGenericStringToAnsiCch(CHAR* strDestination, const TCHAR* tstrSource, int cchDestChar);
+HRESULT DXUtil_ConvertGenericStringToWideCch(WCHAR* wstrDestination, const TCHAR* tstrSource, int cchDestChar);
+HRESULT DXUtil_ConvertAnsiStringToGenericCch(TCHAR* tstrDestination, const CHAR* strSource, int cchDestChar);
+HRESULT DXUtil_ConvertWideStringToGenericCch(TCHAR* tstrDestination, const WCHAR* wstrSource, int cchDestChar);
+HRESULT DXUtil_ConvertAnsiStringToWideCb(WCHAR* wstrDestination, const CHAR* strSource, int cbDestChar);
+HRESULT DXUtil_ConvertWideStringToAnsiCb(CHAR* strDestination, const WCHAR* wstrSource, int cbDestChar);
+HRESULT DXUtil_ConvertGenericStringToAnsiCb(CHAR* strDestination, const TCHAR* tstrSource, int cbDestChar);
+HRESULT DXUtil_ConvertGenericStringToWideCb(WCHAR* wstrDestination, const TCHAR* tstrSource, int cbDestChar);
+HRESULT DXUtil_ConvertAnsiStringToGenericCb(TCHAR* tstrDestination, const CHAR* strSource, int cbDestChar);
+HRESULT DXUtil_ConvertWideStringToGenericCb(TCHAR* tstrDestination, const WCHAR* wstrSource, int cbDestChar);
 
 
 //-----------------------------------------------------------------------------
 // Readme functions
 //-----------------------------------------------------------------------------
-VOID DXUtil_LaunchReadme( HWND hWnd, TCHAR* strLoc = NULL );
+VOID DXUtil_LaunchReadme(HWND hWnd, TCHAR* strLoc = NULL);
 
 //-----------------------------------------------------------------------------
 // GUID to String converting
 //-----------------------------------------------------------------------------
-HRESULT DXUtil_ConvertGUIDToStringCch( const GUID* pGuidSrc, TCHAR* strDest, int cchDestChar );
-HRESULT DXUtil_ConvertGUIDToStringCb( const GUID* pGuidSrc, TCHAR* strDest, int cbDestChar );
-HRESULT DXUtil_ConvertStringToGUID( const TCHAR* strIn, GUID* pGuidOut );
+HRESULT DXUtil_ConvertGUIDToStringCch(const GUID* pGuidSrc, TCHAR* strDest, int cchDestChar);
+HRESULT DXUtil_ConvertGUIDToStringCb(const GUID* pGuidSrc, TCHAR* strDest, int cbDestChar);
+HRESULT DXUtil_ConvertStringToGUID(const TCHAR* strIn, GUID* pGuidOut);
 
 
 //-----------------------------------------------------------------------------
 // Debug printing support
 // See dxerr9.h for more debug printing support
 //-----------------------------------------------------------------------------
-VOID    DXUtil_Trace( TCHAR* strMsg, ... );
+VOID    DXUtil_Trace(TCHAR* strMsg, ...);
 
 #if defined(DEBUG) | defined(_DEBUG)
     #define DXTRACE           DXUtil_Trace
@@ -131,14 +131,14 @@ protected:
     UINT m_NumEntriesAllocated;
 
 public:
-    CArrayList( ArrayListType Type, UINT BytesPerEntry = 0 );
-    ~CArrayList( void );
-    HRESULT Add( void* pEntry );
-    void Remove( UINT Entry );
-    void* GetPtr( UINT Entry );
-    UINT Count( void ) { return m_NumEntries; }
-    bool Contains( void* pEntryData );
-    void Clear( void ) { m_NumEntries = 0; }
+    CArrayList(ArrayListType Type, UINT BytesPerEntry = 0);
+    ~CArrayList(void);
+    HRESULT Add(void* pEntry);
+    void Remove(UINT Entry);
+    void* GetPtr(UINT Entry);
+    UINT Count(void) { return m_NumEntries; }
+    bool Contains(void* pEntryData);
+    void Clear(void) { m_NumEntries = 0; }
 };
 
 //-----------------------------------------------------------------------------

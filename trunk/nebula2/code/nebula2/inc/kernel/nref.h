@@ -49,7 +49,7 @@ public:
     /// assign nRef object
     nRef& operator=(const nRef& rhs);
     /// equality operator
-    bool operator==( const nRef& rhs);
+    bool operator==(const nRef& rhs);
     /// inequality operator
     bool operator!=(const nRef<TYPE>& rhs);
     /// shortcut equality operator

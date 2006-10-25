@@ -82,7 +82,7 @@ nD3D9Server::ClearLight(int index)
     nGfxServer2::ClearLight(index);
 
     uint maxLights = this->devCaps.MaxActiveLights;
-    if(index < (int) maxLights)
+    if (index < (int) maxLights)
     {
         HRESULT hr = this->d3d9Device->LightEnable(index, FALSE);
         n_assert(SUCCEEDED(hr));
@@ -665,7 +665,7 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
     {
         // clear vertex streams
         int i;
-        for(i = 0; i < MaxVertexStreams; i++)
+        for (i = 0; i < MaxVertexStreams; i++)
         {
             hr = this->d3d9Device->SetStreamSource(i, 0, 0, 0);
             n_dxtrace(hr, "SetStreamSource() on D3D device failed!");

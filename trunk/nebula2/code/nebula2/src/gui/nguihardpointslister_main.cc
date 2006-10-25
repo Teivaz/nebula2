@@ -56,7 +56,7 @@ nGuiHardpointsLister::OnFrame()
 void nGuiHardpointsLister::FindHardpointsAndAddToList(nRoot* node)
 {
     nRoot* subNode = node->GetHead();
-    while( 0 != subNode )
+    while (0 != subNode)
     {
         if (subNode->IsA("nskinanimator"))
         {
@@ -64,7 +64,7 @@ void nGuiHardpointsLister::FindHardpointsAndAddToList(nRoot* node)
             int numJoints = skinAnimator->GetNumJoints();
 
             int j;
-            for( j = 0 ; j < numJoints ; j++ )
+            for (j = 0 ; j < numJoints ; j++)
             {
                 int         parentJointIndex;
                 vector3     poseTranslate;
@@ -89,7 +89,7 @@ void nGuiHardpointsLister::FindHardpointsAndAddToList(nRoot* node)
 */
 bool nGuiHardpointsLister::GetSelectedJoint(nSkinAnimator* &skinAnimator,int &index)
 {
-    if(this->GetNumLines() == 0)
+    if (this->GetNumLines() == 0)
         return false;
 
     int nr = this->GetSelectionIndex();
@@ -108,14 +108,14 @@ void
 nGuiHardpointsLister::UpdateContent()
 {
     nNodeList* nodeList = nNodeList::Instance();
-    n_assert( nodeList != 0 );
+    n_assert(nodeList != 0);
 
     int nodesCount = nodeList->GetCount();
 
     this->BeginAppend();
 
     int i;
-    for( i=0 ; i<nodesCount ; i++)
+    for (i = 0 ; i<nodesCount ; i++)
     {
         nTransformNode* node = nodeList->GetNodeAt(i);
         this->FindHardpointsAndAddToList(node);
