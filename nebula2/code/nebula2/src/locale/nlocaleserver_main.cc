@@ -141,7 +141,7 @@ nLocaleServer::AddLocaleTable(const char* filename)
 
     // parse table entrys
     int row;
-    for(row = 1; row < numRows; row++)
+    for (row = 1; row < numRows; row++)
     {
         nString ID = table.Cell(row, "ID").AsString();
 

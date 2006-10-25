@@ -29,7 +29,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
 
         // handle format
         int width = 0;
-        for ( ; *fm_tmp != '\0'; ++fm_tmp)
+        for (; *fm_tmp != '\0'; ++fm_tmp)
         {
             // check for valid flags
             if (*fm_tmp == '#')
@@ -55,7 +55,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
             width = atoi(fm_tmp);
 
             // and skip it
-            while(*fm_tmp != '\0' && isdigit(*fm_tmp))
+            while (*fm_tmp != '\0' && isdigit(*fm_tmp))
             {
                 ++fm_tmp;
             }
@@ -77,7 +77,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
             {
                 precision = atoi(fm_tmp);
 
-                while(*fm_tmp != '\0' && isdigit(*fm_tmp))
+                while (*fm_tmp != '\0' && isdigit(*fm_tmp))
                 {
                        ++fm_tmp;
                 }
@@ -186,7 +186,7 @@ nString::GetFormattedStringLength(const char* format, va_list argList) const
                     str_temp = (char*)n_malloc(n_max(width, 312+precision+6));
 
                     f = va_arg(argList, double);
-                    sprintf( str_temp, "%*.*f", width, precision+6, f );
+                    sprintf(str_temp, "%*.*f", width, precision+6, f);
                     item_len = strlen(str_temp);
 
                     n_free(str_temp);

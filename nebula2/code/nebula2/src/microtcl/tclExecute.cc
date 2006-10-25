@@ -4058,7 +4058,7 @@ ExprRandFunc(interp, eePtr, clientData)
     /*
      * Generate the random number using the linear congruential
      * generator defined by the following recurrence:
-     *          seed = ( IA * seed ) mod IM
+     *          seed = (IA * seed) mod IM
      * where IA is 16807 and IM is (2^31) - 1.  In order to avoid
      * potential problems with integer overflow, the  code uses
      * additional constants IQ and IR such that

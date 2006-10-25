@@ -166,7 +166,7 @@ nCmd::CopyInArgsFrom(va_list marker)
 {
     va_list markerCopy;
     va_copy(markerCopy, marker);
-    for(int i = 0;i < this->GetNumInArgs();i++)
+    for (int i = 0; i < this->GetNumInArgs(); i++)
     {
         nArg * arg = this->In();
         arg->Copy(&markerCopy);
@@ -186,7 +186,7 @@ nCmd::CopyInArgsFrom(nCmd * cmd)
     this->Rewind();
 
     // copy the arguments from the cmd provided
-    for(int i = 0;i < cmd->GetNumInArgs();i++)
+    for (int i = 0; i < cmd->GetNumInArgs(); i++)
     {
         nArg * argSrc = cmd->In();
         nArg * argDst = this->In();

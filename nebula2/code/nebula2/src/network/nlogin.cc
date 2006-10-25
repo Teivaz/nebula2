@@ -27,7 +27,7 @@ nLogin::~nLogin()
 */
 bool nLogin::Execute()
 {
-    if(this->username.IsEmpty() || this->password.IsEmpty()) return false;
+    if (this->username.IsEmpty() || this->password.IsEmpty()) return false;
 
     nStream xmlStream;
     xmlStream.SetFilename("MyData");
@@ -68,7 +68,7 @@ void nLogin::EvaluateResult(nStream& result)
 
              this->curStatus = COMMAMD_RESULT;
          }
-         else if(type=="error")
+         else if (type=="error")
          {
              this->curStatus = COMMAMD_ERROR;
          }

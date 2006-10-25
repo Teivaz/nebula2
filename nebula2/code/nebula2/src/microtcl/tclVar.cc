@@ -2573,7 +2573,7 @@ Tcl_VarTraceInfo2(interp, part1, part2, flags, proc, prevClientData)
 
     tracePtr = varPtr->tracePtr;
     if (prevClientData != NULL) {
-        for ( ;  tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
+        for (; tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
             if ((tracePtr->clientData == prevClientData)
                     && (tracePtr->traceProc == proc)) {
                 tracePtr = tracePtr->nextPtr;
@@ -2581,7 +2581,7 @@ Tcl_VarTraceInfo2(interp, part1, part2, flags, proc, prevClientData)
             }
         }
     }
-    for ( ;  tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
+    for (; tracePtr != NULL;  tracePtr = tracePtr->nextPtr) {
         if (tracePtr->traceProc == proc) {
             return tracePtr->clientData;
         }
@@ -4008,7 +4008,7 @@ Tcl_GlobalObjCmd(dummy, interp, objc, objv)
                  * consecutive ":" characters).
                  */
 
-                for (tail = cp = varName;  *cp != '\0'; ) {
+                for (tail = cp = varName; *cp != '\0';) {
                     if (*cp++ == ':') {
                         while (*cp == ':') {
                             tail = ++cp;
@@ -4095,7 +4095,7 @@ Tcl_GlobalObjCmd(dummy, interp, objc, objv)
          * MakeUpvar to do all the work of linking it to the local variable.
          */
 
-        for ( ;  objc > 0;  objc -= 2, objv += 2) {
+        for (; objc > 0; objc -= 2, objv += 2) {
             myVarName = TclGetString(objv[1]);
             otherVarName = TclGetString(objv[0]);
             for (p = otherVarName;  *p != 0;  p++) {

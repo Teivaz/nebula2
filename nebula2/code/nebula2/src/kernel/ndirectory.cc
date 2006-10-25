@@ -229,7 +229,7 @@ nDirectory::GetEntryType()
     n_assert(this->handle);
     n_assert(this->handle != INVALID_HANDLE_VALUE);
 
-    if(this->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+    if (this->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
         return DIRECTORY;
     else
         return FILE;

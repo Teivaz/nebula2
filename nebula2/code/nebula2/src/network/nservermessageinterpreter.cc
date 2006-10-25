@@ -53,7 +53,7 @@ void nServerMessageInterpreter::Execute(nStream& query)
                  // unrequested stuff here
 
                  //update
-                 else if(type=="update")
+                 else if (type=="update")
                  {
                      query.SetToFirstChild();
 
@@ -100,7 +100,7 @@ void nServerMessageInterpreter::AddPendingCommand(nCommand* command)
 
 void nServerMessageInterpreter::HandleResponse(nStream& query,int& MessageId)
 {
-    for(int i=0;i<this->PendingCommands.Size();i++)
+    for (int i = 0; i < this->PendingCommands.Size(); i++)
     {
         if (this->PendingCommands[i]->GetId()==MessageId)
         {

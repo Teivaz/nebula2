@@ -68,7 +68,7 @@ void nSendMessage::EvaluateResult(nStream& result)
              }
 
          }
-         else if(type=="error")
+         else if (type=="error")
          {
              this->curStatus = COMMAMD_ERROR;
          }
@@ -87,7 +87,7 @@ void nSendMessage::MaskXMLChars(nString& message)
     ' &apos; */
 
     nString new_message;
-    for(int i=0;i<message.Length();i++)
+    for (int i = 0; i < message.Length(); i++)
     {
         char current_str[2];
         current_str[0] = message[i];

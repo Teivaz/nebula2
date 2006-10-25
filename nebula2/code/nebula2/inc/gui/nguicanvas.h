@@ -193,17 +193,17 @@ void
 nGuiCanvas::AppendLineToCurve(line2 line)
 {
     this->isDirty = true;
-    n_assert( this->inCurve );
-    n_assert( this->activeCurveID >= 0 );
+    n_assert(this->inCurve);
+    n_assert(this->activeCurveID >= 0);
 
-    if ( this->activeCurveID == this->curvearray.Size() )
+    if (this->activeCurveID == this->curvearray.Size())
     {
         nGuiCanvas::LineArray thecurve(line, this->currentCurveColor, this->activeCurveID);
         this->curvearray.Append(thecurve);
     }
     else
     {
-        curvearray.At( this->activeCurveID ).AppendLineToCurve( line );
+        curvearray.At(this->activeCurveID).AppendLineToCurve(line);
     }
 }
 

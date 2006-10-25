@@ -315,11 +315,11 @@ nSkinShapeNode::SaveCmds(nPersistServer* ps)
         nCmd* cmd;
 
         //--- setchar3variationflag ---
-        if(this->isChar3AndBoundToVariation)
+        if (this->isChar3AndBoundToVariation)
         {
             cmd = ps->GetCmd(this, 'SCVF');
             ps->PutCmd(cmd);
-        };
+        }
 
         //--- setskinanimator ---
         cmd = ps->GetCmd(this, 'SSKA');

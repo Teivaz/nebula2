@@ -647,7 +647,7 @@ InterpInfoDeleteProc(clientData, interp)
 	        iiPtr = (InterpInfo *) ((Interp *) slaveInterp)->interpInfo;
 	        resultPtr = Tcl_GetObjResult(interp);
 	        hPtr = Tcl_FirstHashEntry(&iiPtr->master.slaveTable, &hashSearch);
-	        for ( ; hPtr != NULL; hPtr = Tcl_NextHashEntry(&hashSearch)) {
+	        for (; hPtr != NULL; hPtr = Tcl_NextHashEntry(&hashSearch)) {
 		    string = Tcl_GetHashKey(&iiPtr->master.slaveTable, hPtr);
 		    Tcl_ListObjAppendElement(NULL, resultPtr,
 			    Tcl_NewStringObj(string, -1));
@@ -1348,7 +1348,7 @@ AliasList(interp, slaveInterp)
     resultPtr = Tcl_GetObjResult(interp);
 
     entryPtr = Tcl_FirstHashEntry(&slavePtr->aliasTable, &hashSearch);
-    for ( ; entryPtr != NULL; entryPtr = Tcl_NextHashEntry(&hashSearch)) {
+    for (; entryPtr != NULL; entryPtr = Tcl_NextHashEntry(&hashSearch)) {
         aliasPtr = (Alias *) Tcl_GetHashValue(entryPtr);
         Tcl_ListObjAppendElement(NULL, resultPtr, aliasPtr->namePtr);
     }
@@ -2268,7 +2268,7 @@ Tcl_IsSafe(interp)
     }
     iPtr = (Interp *) interp;
 
-    return ( (iPtr->flags) & SAFE_INTERP ) ? 1 : 0 ;
+    return ((iPtr->flags) & SAFE_INTERP) ? 1 : 0 ;
 }
 
 /*

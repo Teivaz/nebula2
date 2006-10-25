@@ -241,7 +241,7 @@ nDSoundServer3::EndScene()
 
     // update sound
     int cat;
-    for(cat = 0; cat < NumCategorys; cat++)
+    for (cat = 0; cat < NumCategorys; cat++)
     {
         if (this->masterVolumeDirty[cat])
         {

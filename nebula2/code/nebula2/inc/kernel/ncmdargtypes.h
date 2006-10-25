@@ -55,7 +55,7 @@ const char * nGetSignatureStr< TYPE >()             \
 template <>                                                         \
 inline                                                              \
 void                                                                \
-nGetCmdArg< TYPE >( nCmd * cmd, TYPE & value )                      \
+nGetCmdArg< TYPE >(nCmd * cmd, TYPE & value)                        \
 {                                                                   \
     (GETCMD);                                                       \
 };
@@ -64,7 +64,7 @@ nGetCmdArg< TYPE >( nCmd * cmd, TYPE & value )                      \
 template <>                                                             \
 inline                                                                  \
 void                                                                    \
-nSetCmdArg< TYPE >( nCmd * cmd, TYPE const & value )                    \
+nSetCmdArg< TYPE >(nCmd * cmd, TYPE const & value)                      \
 {                                                                       \
     (SETCMD);                                                           \
 };
@@ -186,7 +186,7 @@ const char * nGetSignatureStr()
 template <typename T>
 inline
 void
-nGetCmdArg( nCmd * cmd, T & ret )
+nGetCmdArg(nCmd * cmd, T & ret)
 {
     ret = static_cast<T> (cmd->In()->GetO());
 };
@@ -194,7 +194,7 @@ nGetCmdArg( nCmd * cmd, T & ret )
 template <typename T>
 inline
 void
-nSetCmdArg( nCmd * cmd, T const & val )
+nSetCmdArg(nCmd * cmd, T const & val)
 {
     cmd->Out()->SetO(static_cast<nObject *> (val));
 };
@@ -205,10 +205,10 @@ nSetCmdArg( nCmd * cmd, T const & val )
 N_CMDARGTYPE_NEW_SIGNATURE(void, "v");
 
 // Basic standard types
-N_CMDARGTYPE_NEW_TYPE(bool, "b", ( value = (bool) (cmd->In()->GetB()) ), ( cmd->Out()->SetB(value)) );
-N_CMDARGTYPE_NEW_TYPE(int, "i", (value = (int) cmd->In()->GetI()), (cmd->Out()->SetI(value))  );
-N_CMDARGTYPE_NEW_TYPE(float, "f", (value = (float) cmd->In()->GetF()), (cmd->Out()->SetF(value)) );
-N_CMDARGTYPE_NEW_TYPE(char *, "s", (value = (char *) cmd->In()->GetS()), (cmd->Out()->SetS(value)) );
+N_CMDARGTYPE_NEW_TYPE(bool, "b", (value = (bool) (cmd->In()->GetB())), (cmd->Out()->SetB(value)));
+N_CMDARGTYPE_NEW_TYPE(int, "i", (value = (int) cmd->In()->GetI()), (cmd->Out()->SetI(value)) );
+N_CMDARGTYPE_NEW_TYPE(float, "f", (value = (float) cmd->In()->GetF()), (cmd->Out()->SetF(value)));
+N_CMDARGTYPE_NEW_TYPE(char *, "s", (value = (char *) cmd->In()->GetS()), (cmd->Out()->SetS(value)));
 
 //------------------------------------------------------------------------------
 /**
@@ -216,53 +216,53 @@ N_CMDARGTYPE_NEW_TYPE(char *, "s", (value = (char *) cmd->In()->GetS()), (cmd->O
 */
 
 N_CMDARGTYPE_NEW_TYPE(nString, "s",
-    (value.Set( (char *) cmd->In()->GetS()) ),
-    (cmd->Out()->SetS( value.Get() ))
+    (value.Set((char *) cmd->In()->GetS())),
+    (cmd->Out()->SetS(value.Get()))
 );
 
 N_CMDARGTYPE_NEW_TYPE_POINTER(nString *, "s",
-    (value->Set( cmd->In()->GetS())),
-    ((value)?(cmd->Out()->SetS( value->Get())):(cmd->Out()->SetS( 0 )))
+    (value->Set(cmd->In()->GetS())),
+    ((value)?(cmd->Out()->SetS(value->Get())):(cmd->Out()->SetS(0)))
 );
 
 N_CMDARGTYPE_NEW_TYPE(vector2, "ff",
-    (value.x = cmd->In()->GetF(), value.y = cmd->In()->GetF() ),
-    (cmd->Out()->SetF( value.x ), cmd->Out()->SetF( value.y ) )
+    (value.x = cmd->In()->GetF(), value.y = cmd->In()->GetF()),
+    (cmd->Out()->SetF(value.x), cmd->Out()->SetF(value.y))
 );
 
 N_CMDARGTYPE_NEW_TYPE_POINTER(vector2 *, "ff",
-    (value->x = cmd->In()->GetF(), value->y = cmd->In()->GetF() ),
-    (cmd->Out()->SetF( value->x ), cmd->Out()->SetF( value->y ) )
+    (value->x = cmd->In()->GetF(), value->y = cmd->In()->GetF()),
+    (cmd->Out()->SetF(value->x), cmd->Out()->SetF(value->y))
 );
 
 N_CMDARGTYPE_NEW_TYPE(vector3, "fff",
     (value.x = cmd->In()->GetF(), value.y = cmd->In()->GetF(), value.z = cmd->In()->GetF()),
-    (cmd->Out()->SetF( value.x ), cmd->Out()->SetF( value.y ), cmd->Out()->SetF( value.z ))
+    (cmd->Out()->SetF(value.x), cmd->Out()->SetF(value.y), cmd->Out()->SetF(value.z))
 );
 
 N_CMDARGTYPE_NEW_TYPE_POINTER(vector3 *, "fff",
     (value->x = cmd->In()->GetF(), value->y = cmd->In()->GetF(), value->z = cmd->In()->GetF()),
-    (cmd->Out()->SetF( value->x ), cmd->Out()->SetF( value->y ), cmd->Out()->SetF( value->z ))
+    (cmd->Out()->SetF(value->x), cmd->Out()->SetF(value->y), cmd->Out()->SetF(value->z))
 );
 
 N_CMDARGTYPE_NEW_TYPE(vector4, "ffff",
     (value.x = cmd->In()->GetF(), value.y = cmd->In()->GetF(), value.z = cmd->In()->GetF(), value.w = cmd->In()->GetF()),
-    (cmd->Out()->SetF( value.x ), cmd->Out()->SetF( value.y ), cmd->Out()->SetF( value.z ), cmd->Out()->SetF( value.w ))
+    (cmd->Out()->SetF(value.x), cmd->Out()->SetF(value.y), cmd->Out()->SetF(value.z), cmd->Out()->SetF(value.w))
 );
 
 N_CMDARGTYPE_NEW_TYPE_POINTER(vector4 *, "ffff",
     (value->x = cmd->In()->GetF(), value->y = cmd->In()->GetF(), value->z = cmd->In()->GetF(), value->w = cmd->In()->GetF()),
-    (cmd->Out()->SetF( value->x ), cmd->Out()->SetF( value->y ), cmd->Out()->SetF( value->z ), cmd->Out()->SetF( value->w ))
+    (cmd->Out()->SetF(value->x), cmd->Out()->SetF(value->y), cmd->Out()->SetF(value->z), cmd->Out()->SetF(value->w))
 );
 
 N_CMDARGTYPE_NEW_TYPE(quaternion, "ffff",
     (value.x = cmd->In()->GetF(), value.y = cmd->In()->GetF(), value.z = cmd->In()->GetF(), value.w = cmd->In()->GetF()),
-    (cmd->Out()->SetF( value.x ), cmd->Out()->SetF( value.y ), cmd->Out()->SetF( value.z ), cmd->Out()->SetF( value.w ))
+    (cmd->Out()->SetF(value.x), cmd->Out()->SetF(value.y), cmd->Out()->SetF(value.z), cmd->Out()->SetF(value.w))
 );
 
 N_CMDARGTYPE_NEW_TYPE_POINTER(quaternion *, "ffff",
     (value->x = cmd->In()->GetF(), value->y = cmd->In()->GetF(), value->z = cmd->In()->GetF(), value->w = cmd->In()->GetF()),
-    (cmd->Out()->SetF( value->x ), cmd->Out()->SetF( value->y ), cmd->Out()->SetF( value->z ), cmd->Out()->SetF( value->w ))
+    (cmd->Out()->SetF(value->x), cmd->Out()->SetF(value->y), cmd->Out()->SetF(value->z), cmd->Out()->SetF(value->w))
 );
 
 /**

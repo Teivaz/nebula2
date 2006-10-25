@@ -133,7 +133,7 @@ nEvent::TimedWait(int ms)
         return (WAIT_TIMEOUT == r) ? false : true;
     #else
         // HACK
-        while(ms > 0)
+        while (ms > 0)
         {
             if (0 == sem_trywait(&(this->sem)))
             {

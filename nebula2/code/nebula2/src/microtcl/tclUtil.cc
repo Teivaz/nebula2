@@ -580,7 +580,7 @@ Tcl_ScanCountedElement(string, length, flagPtr)
     if ((p == lastChar) || (*p == '{') || (*p == '"')) {
 	flags |= USE_BRACES;
     }
-    for ( ; p < lastChar; p++) {
+    for (; p < lastChar; p++) {
 	switch (*p) {
 	    case '{':
 		nestingLevel++;
@@ -710,7 +710,7 @@ Tcl_ConvertCountedElement(src, length, dst, flags)
     if ((flags & USE_BRACES) && !(flags & TCL_DONT_USE_BRACES)) {
 	*p = '{';
 	p++;
-	for ( ; src != lastChar; src++, p++) {
+	for (; src != lastChar; src++, p++) {
 	    *p = *src;
 	}
 	*p = '}';
@@ -1800,7 +1800,7 @@ Tcl_PrintDouble(interp, value, dst)
      * values from being converted to integers unintentionally.
      */
 
-    for (p = dst; *p != 0; ) {
+    for (p = dst; *p != 0;) {
 	p += Tcl_UtfToUniChar(p, &ch);
 	c = UCHAR(ch);
 	if ((c == '.') || isalpha(UCHAR(c))) {	/* INTL: ISO only. */

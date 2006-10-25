@@ -164,10 +164,10 @@ nGuiColorPicker::Inside(const vector2& p)
             const float rise = (float)(n_tan(2*N_PI/3)*1/sideRatio);
 
             // test if the mouse pointer do not lie in the death edges
-            if(     (relMousePos.y >  rise * relMousePos.x + 0.5f )
-                &&  (relMousePos.y < -rise * relMousePos.x + 0.5f )
-                &&  (relMousePos.y > -rise * relMousePos.x + 0.5f + rise )
-                &&  (relMousePos.y <  rise * relMousePos.x + 0.5f - rise ))
+            if ((relMousePos.y >  rise * relMousePos.x + 0.5f)
+                &&  (relMousePos.y < -rise * relMousePos.x + 0.5f)
+                &&  (relMousePos.y > -rise * relMousePos.x + 0.5f + rise)
+                &&  (relMousePos.y <  rise * relMousePos.x + 0.5f - rise))
             {
                 return true;
             }
@@ -187,26 +187,26 @@ nGuiColorPicker::CalculateColorValue(const vector2& relativeCoordinates)
 
     vector2 relCoor = relativeCoordinates;
     //x and y have to be between 0.0f and 1.0f
-    relCoor.x = ( 0.0f > relCoor.x )? 0.0f: relCoor.x;
-    relCoor.x = ( 1.0f < relCoor.x )? 1.0f: relCoor.x;
-    relCoor.y = ( 0.0f > relCoor.y )? 0.0f: relCoor.y;
-    relCoor.y = ( 1.0f < relCoor.y )? 1.0f: relCoor.y;
+    relCoor.x = (0.0f > relCoor.x)? 0.0f: relCoor.x;
+    relCoor.x = (1.0f < relCoor.x)? 1.0f: relCoor.x;
+    relCoor.y = (0.0f > relCoor.y)? 0.0f: relCoor.y;
+    relCoor.y = (1.0f < relCoor.y)? 1.0f: relCoor.y;
 
     //left offset because of the hexagon texture - startpoint of the colorplane
     float offSetX=0.0f;
     float colorValue;
 
     //decide if y is over the middle or under - calculate the left offset with y coordinate
-    if( texturHeight/2 >  relCoor.y ) offSetX = (texturWidth / 4) * 2 * ( texturHeight / 2-relCoor.y) / texturHeight;
-    if( texturHeight/2 <= relCoor.y ) offSetX = (texturWidth / 4) * 2 * (-texturHeight / 2+relCoor.y) / texturHeight;
+    if (texturHeight/2 >  relCoor.y) offSetX = (texturWidth / 4) * 2 * ( texturHeight / 2-relCoor.y) / texturHeight;
+    if (texturHeight/2 <= relCoor.y) offSetX = (texturWidth / 4) * 2 * (-texturHeight / 2+relCoor.y) / texturHeight;
 
     //subtract with the offset
     relCoor.x -= offSetX;
 
     //decide if the color value have to be calculated or not
-    if(0>relCoor.x)                                 colorValue=0.0f;
-    if(texturWidth/2<relCoor.x)                     colorValue=1.0f;
-    if(0<=relCoor.x && texturWidth/2>=relCoor.x)    colorValue=relCoor.x/(texturWidth/2);
+    if (0>relCoor.x)                                 colorValue=0.0f;
+    if (texturWidth/2<relCoor.x)                     colorValue=1.0f;
+    if (0<=relCoor.x && texturWidth/2>=relCoor.x)    colorValue=relCoor.x/(texturWidth/2);
 
     return colorValue;
 }

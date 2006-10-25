@@ -1169,7 +1169,7 @@ void nD3D9Server::RestoreGamma()
     {
         HWND hwnd = GetDesktopWindow();
         HDC hdc = GetDC(hwnd);
-        SetDeviceGammaRamp(hdc, &ramp );
+        SetDeviceGammaRamp(hdc, &ramp);
         ReleaseDC(hwnd, hdc);
     }
 }
@@ -1189,7 +1189,7 @@ void nD3D9Server::RestoreGamma()
 */
 void nD3D9Server::CreateDisplayModeEnvVars()
 {
-    if (!kernelServer->Lookup( "/sys/share/display" ))
+    if (!kernelServer->Lookup("/sys/share/display"))
     {
         nRoot* cwd = kernelServer->GetCwd();
 
@@ -1205,60 +1205,60 @@ void nD3D9Server::CreateDisplayModeEnvVars()
         char modeSubDirStr[64];
         for (uint adapterIdx = 0; adapterIdx < numAdapters; ++adapterIdx)
         {
-            sprintf( adaptorDirStr, "/sys/share/display/adapter%u", adapterIdx );
-            nRoot* adaptorDir = kernelServer->New( "nroot", adaptorDirStr );
-            kernelServer->SetCwd( adaptorDir );
+            sprintf(adaptorDirStr, "/sys/share/display/adapter%u", adapterIdx);
+            nRoot* adaptorDir = kernelServer->New("nroot", adaptorDirStr);
+            kernelServer->SetCwd(adaptorDir);
 
             // Adapter identifier info
-            hr = this->d3d9->GetAdapterIdentifier( adapterIdx, 0, &identifier );
+            hr = this->d3d9->GetAdapterIdentifier(adapterIdx, 0, &identifier);
             n_dxtrace(hr, "GetAdapterIdentifier() failed in CreateDisplayModeEnvVars.");
-            nEnv* envVar = (nEnv*)kernelServer->New( "nenv", "deviceName" );
-            envVar->SetS( identifier.DeviceName );
-            envVar = (nEnv*)kernelServer->New( "nenv", "description" );
-            envVar->SetS( identifier.Description );
+            nEnv* envVar = (nEnv*)kernelServer->New("nenv", "deviceName");
+            envVar->SetS(identifier.DeviceName);
+            envVar = (nEnv*)kernelServer->New("nenv", "description");
+            envVar->SetS(identifier.Description);
 
             // adapter mode enumeration
-            const uint numModes = this->d3d9->GetAdapterModeCount( adapterIdx, dispFormat );
+            const uint numModes = this->d3d9->GetAdapterModeCount(adapterIdx, dispFormat);
             for (uint modeIdx = 0; modeIdx < numModes; ++modeIdx)
             {
-                sprintf( modeSubDirStr, "modes/mode%u", modeIdx );
-                nRoot* modeSubDir = kernelServer->New( "nroot", modeSubDirStr );
-                kernelServer->SetCwd( modeSubDir );
+                sprintf(modeSubDirStr, "modes/mode%u", modeIdx);
+                nRoot* modeSubDir = kernelServer->New("nroot", modeSubDirStr);
+                kernelServer->SetCwd(modeSubDir);
 
-                hr = this->d3d9->EnumAdapterModes( adapterIdx, dispFormat, modeIdx, &mode );
-                n_dxtrace( hr, "EnumAdapterModes failed in CreateDisplayModeEnvVars." )
-                envVar = (nEnv*)kernelServer->New( "nenv", "width" );
-                envVar->SetI( mode.Width );
-                envVar = (nEnv*)kernelServer->New( "nenv", "height" );
-                envVar->SetI( mode.Height );
-                envVar = (nEnv*)kernelServer->New( "nenv", "refreshRate" );
-                envVar->SetI( mode.RefreshRate );
+                hr = this->d3d9->EnumAdapterModes(adapterIdx, dispFormat, modeIdx, &mode);
+                n_dxtrace(hr, "EnumAdapterModes failed in CreateDisplayModeEnvVars.")
+                envVar = (nEnv*)kernelServer->New("nenv", "width");
+                envVar->SetI(mode.Width);
+                envVar = (nEnv*)kernelServer->New("nenv", "height");
+                envVar->SetI(mode.Height);
+                envVar = (nEnv*)kernelServer->New("nenv", "refreshRate");
+                envVar->SetI(mode.RefreshRate);
 
-                kernelServer->SetCwd( adaptorDir );
+                kernelServer->SetCwd(adaptorDir);
             }
 
             // device caps info
-            nRoot* capsSubDir = kernelServer->New( "nroot", "caps" );
-            kernelServer->SetCwd( capsSubDir );
-            hr = this->d3d9->GetDeviceCaps( adapterIdx, N_D3D9_DEVICETYPE, &caps );
+            nRoot* capsSubDir = kernelServer->New("nroot", "caps");
+            kernelServer->SetCwd(capsSubDir);
+            hr = this->d3d9->GetDeviceCaps(adapterIdx, N_D3D9_DEVICETYPE, &caps);
             n_dxtrace(hr, "GetDeviceCaps() failed in CreateDisplayModeEnvVars.");
 
             // the caps that appear here are those that I thought might be useful;
             // feel free to extend it if you need to know something else.
-            envVar = (nEnv*)kernelServer->New( "nenv", "maxTexHeight" );
-            envVar->SetI( caps.MaxTextureHeight );
-            envVar = (nEnv*)kernelServer->New( "nenv", "maxTexWidth" );
-            envVar->SetI( caps.MaxTextureWidth );
-            envVar = (nEnv*)kernelServer->New( "nenv", "pixelShader/majorVerNum" );
-            envVar->SetI( D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion) );
-            envVar = (nEnv*)kernelServer->New( "nenv", "pixelShader/minorVerNum" );
-            envVar->SetI( D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion) );
-            envVar = (nEnv*)kernelServer->New( "nenv", "vertexShader/majorVerNum" );
-            envVar->SetI( D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion) );
-            envVar = (nEnv*)kernelServer->New( "nenv", "vertexShader/minorVerNum" );
-            envVar->SetI( D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion) );
+            envVar = (nEnv*)kernelServer->New("nenv", "maxTexHeight");
+            envVar->SetI(caps.MaxTextureHeight);
+            envVar = (nEnv*)kernelServer->New("nenv", "maxTexWidth");
+            envVar->SetI(caps.MaxTextureWidth);
+            envVar = (nEnv*)kernelServer->New("nenv", "pixelShader/majorVerNum");
+            envVar->SetI(D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion));
+            envVar = (nEnv*)kernelServer->New("nenv", "pixelShader/minorVerNum");
+            envVar->SetI(D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion));
+            envVar = (nEnv*)kernelServer->New("nenv", "vertexShader/majorVerNum");
+            envVar->SetI(D3DSHADER_VERSION_MAJOR(caps.PixelShaderVersion));
+            envVar = (nEnv*)kernelServer->New("nenv", "vertexShader/minorVerNum");
+            envVar->SetI(D3DSHADER_VERSION_MINOR(caps.PixelShaderVersion));
         }
 
-        kernelServer->SetCwd( cwd );
+        kernelServer->SetCwd(cwd);
     }
 }

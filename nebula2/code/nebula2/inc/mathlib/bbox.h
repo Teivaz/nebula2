@@ -425,7 +425,7 @@ bbox3::transform(const matrix44& m)
     corners[6].x = this->vmin.x; corners[6].y = this->vmin.y; corners[6].z = this->vmax.z;
     corners[7].x = this->vmax.x; corners[7].y = this->vmin.y; corners[7].z = this->vmax.z;
 
-    for(i = 0; i < 8; ++i)
+    for (i = 0; i < 8; ++i)
     {
         // Transform and check extents
         temp = m * corners[i];
@@ -464,7 +464,7 @@ bbox3::transform_divw(const matrix44& m)
     corners[6].x = this->vmin.x; corners[6].y = this->vmin.y; corners[6].z = this->vmax.z;
     corners[7].x = this->vmax.x; corners[7].y = this->vmin.y; corners[7].z = this->vmax.z;
 
-    for(i = 0; i < 8; ++i)
+    for (i = 0; i < 8; ++i)
     {
         // Transform and check extents
         temp = m.mult_divw(corners[i]);

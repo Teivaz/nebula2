@@ -274,7 +274,7 @@ nCharacter3SkinAnimator::UnloadResources()
         // NOTE Floh: this should already have happened
         // in LoadResources when the source anims have been
         // combined
-        for(i = 0; i < this->animationAnims.Size(); i++)
+        for (i = 0; i < this->animationAnims.Size(); i++)
         {
             if (this->animationAnims[i].isvalid())
             {

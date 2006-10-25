@@ -120,7 +120,7 @@ n_setrootwindow(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
     const char* rootWindow = cmd->In()->GetS();
-    if( rootWindow && rootWindow[0] == 0 )
+    if (rootWindow && rootWindow[0] == 0)
         rootWindow = 0;
     self->SetRootWindow(rootWindow);
 }
@@ -359,9 +359,9 @@ n_computescreenspacebrushsize(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
     const vector2& brushSize =
-        self->ComputeScreenSpaceBrushSize( cmd->In()->GetS() );
-    cmd->Out()->SetF( brushSize.x );
-    cmd->Out()->SetF( brushSize.y );
+        self->ComputeScreenSpaceBrushSize(cmd->In()->GetS());
+    cmd->Out()->SetF(brushSize.x);
+    cmd->Out()->SetF(brushSize.y);
 }
 
 //-----------------------------------------------------------------------------

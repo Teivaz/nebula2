@@ -238,12 +238,12 @@ nMeshBuilder::CreateEdges()
     int groupedEdgeIndex = 0;
 
     // create the sorted edges array
-    for(i = 0; i < numEdges - 1; i++)
+    for (i = 0; i < numEdges - 1; i++)
     {
         const TempEdge& currEdge = tempEdgeArray[i];
         const TempEdge& nextEdge = tempEdgeArray[i+1];
 
-        if ( currEdge.vIndex[0] == nextEdge.vIndex[1] && currEdge.vIndex[1] == nextEdge.vIndex[0] && currEdge.GroupID == nextEdge.GroupID)
+        if (currEdge.vIndex[0] == nextEdge.vIndex[1] && currEdge.vIndex[1] == nextEdge.vIndex[0] && currEdge.GroupID == nextEdge.GroupID)
         {
             //current edge and next edge share the same vertex indices (cross compare) - copy only once
             GroupedEdge& edge =  groupedEdgeArray[groupedEdgeIndex++];
@@ -271,7 +271,7 @@ nMeshBuilder::CreateEdges()
     //fix last element
     const TempEdge& prevEdge = tempEdgeArray[numEdges-2];
     const TempEdge& currEdge = tempEdgeArray[numEdges-1];
-    if ( !(currEdge.vIndex[0] == prevEdge.vIndex[1] && currEdge.vIndex[1] == prevEdge.vIndex[0]) )
+    if (!(currEdge.vIndex[0] == prevEdge.vIndex[1] && currEdge.vIndex[1] == prevEdge.vIndex[0]))
     {
         // if the last and the previous are not the same than the last must be added, else this was handled before
         //must be a edge with only used by only one face
@@ -1407,7 +1407,7 @@ nMeshBuilder::CheckForDuplicatedFaces()
     int offset = 0;
 
     // erase duplicated
-    for(i = 0;i < dupFaces.Size();i++)
+    for (i = 0; i < dupFaces.Size(); i++)
     {
         this->triangleArray.Erase(dupFaces[i]-offset);
         offset++;
@@ -1439,7 +1439,7 @@ nMeshBuilder::SearchDuplicatedFaces()
     triangleReferences.SetFixedSize(this->vertexArray.Size());
 
     // now insert face references
-    for(i=0;i<this->triangleArray.Size();i++)
+    for (i = 0; i < this->triangleArray.Size(); i++)
     {
         int index0 = this->triangleArray[i].vertexIndex[0];
         int index1 = this->triangleArray[i].vertexIndex[1];
@@ -1449,15 +1449,15 @@ nMeshBuilder::SearchDuplicatedFaces()
         // the size of the list at index0 should be low for the average case
         int k;
         bool found = false;
-        for( k = 0; k < triangleReferences[index0].Size(); k++ )
+        for (k = 0; k < triangleReferences[index0].Size(); k++)
         {
-            if( triangleReferences[index0].At(k)->Equals( this->triangleArray[i] ) )
+            if (triangleReferences[index0].At(k)->Equals(this->triangleArray[i]))
             {
                 found = true;
             };
         };
 
-        if(found)
+        if (found)
         {
             // ok, we found a triangle that is equal to the current
             result.Append(i);

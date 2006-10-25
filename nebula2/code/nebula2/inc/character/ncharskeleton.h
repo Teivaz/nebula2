@@ -159,7 +159,7 @@ nCharSkeleton::BeginJoints(int num)
 */
 inline
 void
-nCharSkeleton::SetJoint(int index, int parentIndex, const vector3& poseTranslate, const quaternion& poseRotate, const vector3& poseScale, const nString& name )
+nCharSkeleton::SetJoint(int index, int parentIndex, const vector3& poseTranslate, const quaternion& poseRotate, const vector3& poseScale, const nString& name)
 {
     nCharJoint newJoint;
     newJoint.SetParentJointIndex(parentIndex);

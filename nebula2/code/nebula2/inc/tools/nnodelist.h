@@ -128,7 +128,7 @@ inline
 nRenderContext*
 nNodeList::GetRenderContextAt(uint index) const
 {
-    n_assert( index < numElements);
+    n_assert(index < numElements);
     return &renderContexts[index];
 }
 
@@ -140,8 +140,8 @@ inline
 nTransformNode*
 nNodeList::GetNodeAt(uint index) const
 {
-    n_assert( index < numElements);
-    n_assert( refNodes[index].isvalid() );
+    n_assert(index < numElements);
+    n_assert(refNodes[index].isvalid());
     return refNodes[index];
 }
 

@@ -121,7 +121,7 @@ template<class TYPE>
 void
 nRingBuffer<TYPE>::Copy(const nRingBuffer<TYPE>& src)
 {
-    if(0 != this->start)
+    if (0 != this->start)
     {
         int capacity = src.end - src.start;
         this->start = n_new_array(TYPE, capacity+1);

@@ -295,9 +295,9 @@ void
 nGfxServer2::ClearPointLights()
 {
     int index;
-    for(index = 0; index < this->lightArray.Size(); index++)
+    for (index = 0; index < this->lightArray.Size(); index++)
     {
-        if(nLight::Point == this->lightArray[index].GetType())
+        if (nLight::Point == this->lightArray[index].GetType())
         {
             this->ClearLight(index);
         }

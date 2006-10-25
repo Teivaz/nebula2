@@ -178,7 +178,7 @@ nNodeList::LoadObject(const nString& objPath)
     // load new object
     nKernelServer* kernelServer = nKernelServer::Instance();
     kernelServer->PushCwd(this->refUsrScene);
-    kernelServer->SetCwd( this->refNodes.Back() );
+    kernelServer->SetCwd(this->refNodes.Back());
     kernelServer->Load(objPath.Get());
     kernelServer->PopCwd();
 
@@ -199,14 +199,14 @@ nNodeList::GetCharacter()
     const nVariable* charVar = 0;
 
     int i;
-    for( i = 0 ; i < renderContexts.Size() ; i++)
+    for (i = 0; i < renderContexts.Size(); i++)
     {
         charVar = renderContexts.At(i).FindLocalVar(charHandle);
-        if( 0 != charVar ) break;
+        if (0 != charVar) break;
     };
 
     // break if there is no characterVariable in the current context
-    if(charVar == 0) return 0;
+    if (charVar == 0) return 0;
 
     nCharacter2* curCharacter = (nCharacter2*) charVar->GetObj();
     n_assert(curCharacter);
@@ -231,7 +231,7 @@ nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex)
     // load new object
     nKernelServer* kernelServer = nKernelServer::Instance();
     kernelServer->PushCwd(this->refUsrScene);
-    kernelServer->SetCwd( this->refNodes.Back() );
+    kernelServer->SetCwd(this->refNodes.Back());
     kernelServer->Load(objPath.Get());
     kernelServer->PopCwd();
 
@@ -265,15 +265,15 @@ nNodeList::Trigger(double time, uint frameId)
     if (this->hardpointObjectsCnt > 0)
     {
         nCharacter2* curChar = this->GetCharacter();
-        if( 0 != curChar )
+        if (0 != curChar)
         {
             nCharSkeleton& skel = curChar->GetSkeleton();
             int i;
-            for( i = 0 ; i < hardpointObjectsCnt ; i++ )
+            for (i = 0; i < hardpointObjectsCnt; i++)
             {
                 nCharJoint joint = skel.GetJointAt(this->hardpointJointIndex.At(i));
                 nSceneNode* currentNode = this->hardpointPtr.At(i);
-                if(currentNode->HasTransform())
+                if (currentNode->HasTransform())
                 {
                     nTransformNode* transformNode = (nTransformNode*) currentNode;
                     transformNode->SetTransform(joint.GetMatrix());

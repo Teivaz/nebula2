@@ -68,7 +68,7 @@ nDSoundResource::LoadResource()
         int blockSize = (1<<17) / numNotifications;
 
         /*
-        if((this->GetFilename().CheckExtension("ogg"))||
+        if ((this->GetFilename().CheckExtension("ogg"))||
            (this->GetFilename().CheckExtension("OGG")))
         {
             hr = soundManager->CreateStreamingOgg(&(this->dsStreamingSound), (LPTSTR) mangledPath.Get(), creationFlags,

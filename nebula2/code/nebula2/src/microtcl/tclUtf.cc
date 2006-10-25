@@ -254,7 +254,7 @@ Tcl_UniCharToUtfDString(wString, numChars, dsPtr)
 
     p = string;
     wEnd = wString + numChars;
-    for (w = wString; w < wEnd; ) {
+    for (w = wString; w < wEnd;) {
 	p += Tcl_UniCharToUtf(*w, p);
 	w++;
     }
@@ -421,7 +421,7 @@ Tcl_UtfToUniCharDString(string, length, dsPtr)
 
     w = wString;
     end = string + length;
-    for (p = string; p < end; ) {
+    for (p = string; p < end;) {
 	p += Tcl_UtfToUniChar(p, w);
 	w++;
     }
@@ -1298,7 +1298,7 @@ Tcl_UniCharNcmp(cs, ct, n)
     CONST Tcl_UniChar *ct;		/* Unicode string cs is compared to. */
     unsigned long n;			/* Number of unichars to compare. */
 {
-    for ( ; n != 0; n--, cs++, ct++) {
+    for (; n != 0; n--, cs++, ct++) {
 	if (*cs != *ct) {
 	    return (*cs - *ct);
 	}
@@ -1333,7 +1333,7 @@ Tcl_UniCharNcasecmp(cs, ct, n)
     CONST Tcl_UniChar *ct;		/* Unicode string cs is compared to. */
     unsigned long n;			/* Number of unichars to compare. */
 {
-    for ( ; n != 0; n--, cs++, ct++) {
+    for (; n != 0; n--, cs++, ct++) {
 	if ((*cs != *ct) &&
 		(Tcl_UniCharToLower(*cs) != Tcl_UniCharToLower(*ct))) {
 	    return (*cs - *ct);

@@ -154,12 +154,12 @@ public:
         @param from source unit vector
         @param to destination unit vector
     */
-    void set_from_axes( const vector3& from, const vector3& to )
+    void set_from_axes(const vector3& from, const vector3& to)
     {
         vector3 c(from * to);
         set(c.x, c.y, c.z, from % to);
         w += 1.0f;      // reducing angle to halfangle
-        if( w <= TINY ) // angle close to PI
+        if (w <= TINY) // angle close to PI
         {
             if ((from.z * from.z) > (from.x * from.x))
                 set(0, from.z, -from.y, w);
@@ -180,13 +180,13 @@ public:
         @param from source vector
         @param to destination vector
     */
-    void set_from_axes2( const vector3& from, const vector3& to )
+    void set_from_axes2(const vector3& from, const vector3& to)
     {
         vector3 c(from * to);
         set(c.x, c.y, c.z, from % to);
         normalize();    // if "from" or "to" not unit, normalize quat
         w += 1.0f;      // reducing angle to halfangle
-        if( w <= TINY ) // angle close to PI
+        if (w <= TINY) // angle close to PI
         {
             if ((from.z * from.z) > (from.x * from.x))
                 set(0, from.z, -from.y, w);
@@ -287,8 +287,8 @@ public:
                 // Otherwise, do spherical interpolation
                 float fTheta    = n_acos(fCosTheta);
                 float fSinTheta = n_sin(fTheta);
-                fScale1 = n_sin( fTheta * (1.0f-l) ) / fSinTheta;
-                fScale2 = n_sin( fTheta * l ) / fSinTheta;
+                fScale1 = n_sin(fTheta * (1.0f-l)) / fSinTheta;
+                fScale2 = n_sin(fTheta * l) / fSinTheta;
             }
         }
         else
@@ -297,8 +297,8 @@ public:
             B.y =  A.x;
             B.z = -A.w;
             B.w =  A.z;
-            fScale1 = n_sin( PI * (0.5f - l) );
-            fScale2 = n_sin( PI * l );
+            fScale1 = n_sin(PI * (0.5f - l));
+            fScale2 = n_sin(PI * l);
         }
 
         x = fScale1 * A.x + fScale2 * B.x;

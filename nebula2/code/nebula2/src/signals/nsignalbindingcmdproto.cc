@@ -15,7 +15,7 @@
 nCmdProto *
 nSignalBindingCmdProto::GetCmdProto() const
 {
-    switch(this->rebind)
+    switch (this->rebind)
     {
     case DontRebind:
         return this->cmdProto;

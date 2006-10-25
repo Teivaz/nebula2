@@ -176,8 +176,8 @@ void
 nBitStream::Clear()
 {
     // require
-    n_assert( stream != 0 );
-    n_assert( streamSize > 0 );
+    n_assert(stream != 0);
+    n_assert(streamSize > 0);
 
     memset(stream, 0, streamSize);
 }
@@ -615,16 +615,16 @@ nBitStream::Print(int lines)
         char ch = stream[i];
         for (int j = 0; j < 8; j++)
         {
-            if ( ch & ( 1 << ( 7 - j ) ) )
+            if (ch & (1 << (7 - j)))
             {
-                n_printf( "%d", 1 );
+                n_printf("%d", 1);
             }
             else
             {
-                n_printf( "%d", 0 );
+                n_printf("%d", 0);
             }
         }
-        n_printf( "\n" );
+        n_printf("\n");
     }
 }
 

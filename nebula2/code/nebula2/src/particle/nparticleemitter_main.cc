@@ -102,7 +102,7 @@ nParticleEmitter::Trigger(float curTime)
 
         // trigger living particles and update the bounding box
         this->box.begin_extend();
-        while(bufferElement)
+        while (bufferElement)
         {
             (*bufferElement)->Trigger(this, float(curTime), frameTime, globalAccel);
             this->box.extend((*bufferElement)->GetPosition());

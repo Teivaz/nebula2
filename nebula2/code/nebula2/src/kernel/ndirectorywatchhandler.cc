@@ -126,7 +126,7 @@ nDirectoryWatchHandler::WatchThreadFunc(nThread* thread)
                 }
 
                 currentOffset += notification->NextEntryOffset;
-            } while(notification->NextEntryOffset);
+            } while (notification->NextEntryOffset);
 
             ResetEvent(event);
         }

@@ -64,7 +64,7 @@ nDShowServer::Close()
 {
     n_assert(this->IsOpen());
 
-    while(videoPlayers.Size()>0)
+    while (videoPlayers.Size()>0)
     {
         this->DeleteVideoPlayer(videoPlayers.At(0));
     }
@@ -239,22 +239,22 @@ nDShowServer::Trigger()
     n_assert(this->IsOpen());
 
     nTime time = nTimeServer::Instance()->GetTime();
-    if(!timeSet)
+    if (!timeSet)
     {
         oldTime=time;
         timeSet = true;
     };
 
     // check if time-reset occured
-    if(time < oldTime)
+    if (time < oldTime)
     {
         oldTime = time;
         // rewind players
         int i;
-        for( i = 0; i<videoPlayers.Size() ; i++)
+        for (i = 0; i<videoPlayers.Size() ; i++)
         {
             nVideoPlayer*   currentPlayer = videoPlayers.At(i);
-            if(currentPlayer->IsOpen())
+            if (currentPlayer->IsOpen())
                 currentPlayer->Rewind();
         };
 
@@ -264,10 +264,10 @@ nDShowServer::Trigger()
     oldTime = time;
 
     int i;
-    for( i = 0; i<videoPlayers.Size() ; i++)
+    for (i = 0; i<videoPlayers.Size() ; i++)
     {
         nVideoPlayer*   currentPlayer = videoPlayers.At(i);
-        if(currentPlayer->IsOpen())
+        if (currentPlayer->IsOpen())
             currentPlayer->Decode(deltaTime);
     };
 
@@ -340,13 +340,13 @@ nDShowServer::DeleteVideoPlayer(nVideoPlayer* player)
 {
     n_assert(player);
     int i;
-    for( i = 0; i<videoPlayers.Size() ; i++)
-        if(videoPlayers.At(i) == player)
+    for (i = 0; i<videoPlayers.Size() ; i++)
+        if (videoPlayers.At(i) == player)
         {
             videoPlayers.Erase(i);
             break;
         };
-    if(player->IsOpen())
+    if (player->IsOpen())
         player->Close();
     player->Release();
 };

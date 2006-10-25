@@ -92,7 +92,7 @@ nMultiLayeredNode::SaveCmds(nPersistServer* ps)
 
         // save uvStretch-values for DX9
         int i;
-        for(i=0;i<this->texCount;i++)
+        for (i = 0; i < this->texCount; i++)
         {
             cmd = ps->GetCmd(this, 'STUS');
             cmd->In()->SetI((int) i);
@@ -101,7 +101,7 @@ nMultiLayeredNode::SaveCmds(nPersistServer* ps)
         };
 
         // save uvStretch-values for DX7
-        for(i=0;i<this->texCount;i++)
+        for (i = 0; i < this->texCount; i++)
         {
             cmd = ps->GetCmd(this, 'SDUS');
             cmd->In()->SetI((int) i);

@@ -223,7 +223,7 @@ n_setcursorvisibility(void *slf, nCmd *cmd)
         n_error("setcursorvisibility: invalid string '%s'\n", str);
         return;
     }
-    self->SetCursorVisibility( visibility );
+    self->SetCursorVisibility(visibility);
 }
 
 //------------------------------------------------------------------------------
@@ -248,7 +248,7 @@ n_setmousecursor(void *slf, nCmd *cmd)
     cursor.SetFilename(cmd->In()->GetS());
     cursor.SetHotspotX(cmd->In()->GetI());
     cursor.SetHotspotY(cmd->In()->GetI());
-    self->SetMouseCursor( cursor );
+    self->SetMouseCursor(cursor);
 }
 
 

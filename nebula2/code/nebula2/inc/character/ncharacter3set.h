@@ -72,7 +72,7 @@ inline
 void
 nCharacter3Set::SetSkinVisibleAtIndex(int index, bool value)
 {
-    n_assert( (index >= 0) && (index < this->numAvailableSkins));
+    n_assert((index >= 0) && (index < this->numAvailableSkins));
     this->selectedSkins[index] = value;
 }
 
@@ -98,7 +98,7 @@ inline
 bool
 nCharacter3Set::IsSkinVisibleAtIndex(int index)
 {
-    n_assert( (index >= 0) && (index < this->numAvailableSkins));
+    n_assert((index >= 0) && (index < this->numAvailableSkins));
     return this->selectedSkins[index];
 }
 
@@ -183,7 +183,7 @@ void
 nCharacter3Set::SetCurrentVariationIndexed(int index)
 {
     // allow -1 for "no variation"
-    n_assert( (index >= -1) && (index < this->numAvailableVariations) );
+    n_assert((index >= -1) && (index < this->numAvailableVariations));
     this->selectedVariation = index;
 }
 
@@ -207,9 +207,9 @@ nCharacter3Set::ConvertSkinNameToIndex(const nString& name)
     int result = -1;
 
     int i;
-    for( i = 0; i < this->skinNames.Size(); i++)
+    for (i = 0; i < this->skinNames.Size(); i++)
     {
-        if(name == this->skinNames[i])
+        if (name == this->skinNames[i])
         {
             result = i;
             break;
@@ -229,9 +229,9 @@ nCharacter3Set::ConvertVariationNameToIndex(const nString& name)
     int result = -1;
 
     int i;
-    for( i = 0; i < this->variationNames.Size(); i++)
+    for (i = 0; i < this->variationNames.Size(); i++)
     {
-        if(name == this->variationNames[i])
+        if (name == this->variationNames[i])
         {
             result = i;
             break;

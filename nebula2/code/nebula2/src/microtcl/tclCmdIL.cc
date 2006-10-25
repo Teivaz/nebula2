@@ -2923,7 +2923,7 @@ MergeSort(headPtr, infoPtr)
     SortElement *elementPtr;
     int i;
 
-    for(i = 0; i < NUM_LISTS; i++){
+    for (i = 0; i < NUM_LISTS; i++) {
         subList[i] = NULL;
     }
     while (headPtr != NULL) {

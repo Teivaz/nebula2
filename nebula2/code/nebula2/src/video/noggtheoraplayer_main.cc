@@ -45,7 +45,7 @@ nOggTheoraPlayer::buffer_data(nFile *in,ogg_sync_state *oy)
 int
 nOggTheoraPlayer::queue_page(ogg_page * /*page*/)
 {
-    if(theora_p)ogg_stream_pagein(&to,&og);
+    if (theora_p)ogg_stream_pagein(&to,&og);
     return 0;
 };
 
@@ -56,7 +56,7 @@ nOggTheoraPlayer::queue_page(ogg_page * /*page*/)
 void
 nOggTheoraPlayer::Rewind()
 {
-    if(this->theoraLoaded)
+    if (this->theoraLoaded)
         StopTheora();
 
     // go back to the beginning of the file
@@ -100,15 +100,15 @@ nOggTheoraPlayer::Rewind()
         before entering the main decode loop. */
 
     /* Only interested in Theora streams */
-    while(!stateflag)
+    while (!stateflag)
     {
         int ret=buffer_data(infile,&oy);
-        if(ret==0)break;
-        while(ogg_sync_pageout(&oy,&og)>0)
+        if (ret==0)break;
+        while (ogg_sync_pageout(&oy,&og) > 0)
         {
             ogg_stream_state test;
             /* is this a mandated initial header? If not, stop parsing */
-            if(!ogg_page_bos(&og)){
+            if (!ogg_page_bos(&og)){
             /* don't leak the page; get it into the appropriate stream */
             queue_page(&og);
             stateflag=1;
@@ -118,7 +118,7 @@ nOggTheoraPlayer::Rewind()
             ogg_stream_pagein(&test,&og);
             ogg_stream_packetout(&test,&op);
             /* identify the codec: try theora */
-            if(!theora_p && theora_decode_header(&ti,&tc,&op)>=0){
+            if (!theora_p && theora_decode_header(&ti,&tc,&op)>=0){
             /* it is theora -- save this stream state */
             memcpy(&to,&test,sizeof(test));
             theora_p=1;
@@ -131,28 +131,28 @@ nOggTheoraPlayer::Rewind()
     }
 
     /* we're expecting more header packets. */
-    while(theora_p && theora_p<3)
+    while (theora_p && theora_p < 3)
     {
         int ret;
 
         /* look for further theora headers */
-        while(theora_p && (theora_p<3) && (ret=ogg_stream_packetout(&to,&op)))
+        while (theora_p && (theora_p < 3) && (ret = ogg_stream_packetout(&to,&op)))
         {
             // "Error parsing Theora stream headers; corrupt stream?" ?
             n_assert(ret >= 0);
 
             // "Error parsing Theora stream headers; corrupt stream?" ?
-            n_assert( theora_decode_header(&ti,&tc,&op) == 0 );
+            n_assert(theora_decode_header(&ti,&tc,&op) == 0);
 
             theora_p++;
-            if(theora_p==3)break;
+            if (theora_p==3)break;
         }
 
 
         /* The header pages/packets will arrive before anything else we
             care about, or the stream is not obeying spec */
 
-        if(ogg_sync_pageout(&oy,&og)>0)
+        if (ogg_sync_pageout(&oy,&og)>0)
         {
             queue_page(&og); /* demux into the stream state */
         }
@@ -165,7 +165,7 @@ nOggTheoraPlayer::Rewind()
     }
 
     /* Now we have all the required headers. initialize the decoder. */
-    if(theora_p)
+    if (theora_p)
     {
         theora_decode_init(&td,&ti);
         /*
@@ -206,7 +206,7 @@ nOggTheoraPlayer::Rewind()
     stateflag=0; /* playback has not begun */
     /* queue any remaining pages from data we buffered but that did not
         contain headers */
-    while(ogg_sync_pageout(&oy,&og)>0)
+    while (ogg_sync_pageout(&oy,&og) > 0)
     {
         queue_page(&og);
     };
@@ -222,7 +222,7 @@ void
 nOggTheoraPlayer::StopTheora()
 {
     n_assert(this->theoraLoaded);
-    if(theora_p)
+    if (theora_p)
     {
         ogg_stream_clear(&to);
         theora_clear(&td);
@@ -240,7 +240,7 @@ nOggTheoraPlayer::StopTheora()
 bool
 nOggTheoraPlayer::Open()
 {
-    n_assert( this->filename != "" );
+    n_assert(this->filename != "");
     // open file
     infile = nFileServer2::Instance()->NewFileObject();
     infile->Open(this->filename.Get(),"rb");
@@ -264,13 +264,13 @@ nOggTheoraPlayer::DecodeYUV(yuv_buffer& yuv,unsigned char* rgbBuffer)
 {
     int rgbIndex=0;
     int y;
-    for(y=0;y<yuv.y_height;y++)
+    for (y = 0; y < yuv.y_height; y++)
     {
         int xsize=yuv.y_width;
         int uvy = (y/2) * yuv.uv_stride;
         int yy = y * yuv.y_stride;
         int x;
-        for(x=0;x<xsize;x++)
+        for (x = 0; x < xsize; x++)
         {
             int Y = yuv.y[ yy + x] -16;
             int U = yuv.u[uvy + (x/2)] - 128;
@@ -278,9 +278,9 @@ nOggTheoraPlayer::DecodeYUV(yuv_buffer& yuv,unsigned char* rgbBuffer)
             int R = ((298*Y         + 409*V + 128)>>8);
             int G = ((298*Y - 100*U - 208*V + 128)>>8);
             int B = ((298*Y + 516*U         + 128)>>8);
-            if(R<0) R=0; if(R>255) R=255;
-            if(G<0) G=0; if(G>255) G=255;
-            if(B<0) B=0; if(B>255) B=255;
+            if (R<0) R=0; if (R>255) R=255;
+            if (G<0) G=0; if (G>255) G=255;
+            if (B<0) B=0; if (B>255) B=255;
             rgbBuffer[rgbIndex++] = (unsigned char)B;
             rgbBuffer[rgbIndex++] = (unsigned char)G;
             rgbBuffer[rgbIndex++] = (unsigned char)R;
@@ -296,7 +296,7 @@ nOggTheoraPlayer::DecodeYUV(yuv_buffer& yuv,unsigned char* rgbBuffer)
 void
 nOggTheoraPlayer::UpdateTexture()
 {
-    n_assert( this->texturePtr != 0 );
+    n_assert(this->texturePtr != 0);
     // Decode Theora Frame
     theora_decode_YUVout(&td,&yuv);
     DecodeYUV(yuv,rgbBuffer);
@@ -304,15 +304,15 @@ nOggTheoraPlayer::UpdateTexture()
     int width = texturePtr->GetWidth();
     int height = texturePtr->GetHeight();
     int line=this->videoWidth;
-    if(line > width) line = width;
-    if(height > (int)this->videoHeight) height = this->videoHeight;
+    if (line > width) line = width;
+    if (height > (int)this->videoHeight) height = this->videoHeight;
     // lock texture
     nTexture2::LockInfo info;
     texturePtr->Lock(nTexture2::WriteOnly,0,info);
     unsigned char* surfPtr=(unsigned char*)info.surfPointer;
     // update texture
     int i;
-    for(i = 0;i < height;i++)
+    for (i = 0; i < height; i++)
         memcpy(&surfPtr[i*info.surfPitch],&rgbBuffer[i*this->videoWidth*4],line*4);
     // and unlock it
     texturePtr->Unlock(0);
@@ -327,12 +327,12 @@ nOggTheoraPlayer::DecodeNextFrame()
 {
     n_assert(this->isOpen);
     videobuf_ready = 0;
-    while(!videobuf_ready)
+    while (!videobuf_ready)
     {
-        while(theora_p && !videobuf_ready)
+        while (theora_p && !videobuf_ready)
         {
             /* theora is one in, one out... */
-            if(ogg_stream_packetout(&to,&op)>0)
+            if (ogg_stream_packetout(&to,&op) > 0)
             {
 
                 theora_decode_packetin(&td,&op);
@@ -343,9 +343,9 @@ nOggTheoraPlayer::DecodeNextFrame()
             }else
                 break;
         }
-        if(!videobuf_ready && infile->Eof())
+        if (!videobuf_ready && infile->Eof())
         {
-            if(this->loopType == Repeat)
+            if (this->loopType == Repeat)
             {
                 Rewind();
             } else {
@@ -355,24 +355,24 @@ nOggTheoraPlayer::DecodeNextFrame()
             };
         };
 
-        if(!videobuf_ready)
+        if (!videobuf_ready)
         {
             /* no data yet for somebody.  Grab another page */
             int ret=buffer_data(infile,&oy);
-            while(ogg_sync_pageout(&oy,&og)>0)
+            while (ogg_sync_pageout(&oy,&og) > 0)
             {
                 queue_page(&og);
             }
             videobuf_ready = 0;
         };
     };
-    if(videobuf_ready == 0)
+    if (videobuf_ready == 0)
     {
         return;
     }
     frameNr++;
     decodedFrames++;
-    if(this->doTextureUpdate)
+    if (this->doTextureUpdate)
         this->UpdateTexture();
     return;
 };
@@ -396,14 +396,14 @@ nOggTheoraPlayer::Decode(nTime deltaTime)
     this->SetTextureUpdate(false);
     // now decode
     uint i;
-    for( i=0 ; i<framesToDo ; i++)
+    for (i = 0; i < framesToDo; i++)
     {
-        if(!this->isPlaying) break;
+        if (!this->isPlaying) break;
         this->DecodeNextFrame();
     };
     // and update once
     this->SetTextureUpdate(oldTexUpdate);
-    if(this->doTextureUpdate)
+    if (this->doTextureUpdate)
         this->UpdateTexture();
 };
 
@@ -418,7 +418,7 @@ nOggTheoraPlayer::Close()
     n_assert(this->isOpen);
     infile->Close();
     infile->Release();
-    if(this->theoraLoaded)
+    if (this->theoraLoaded)
         this->StopTheora();
     delete rgbBuffer;
     rgbBuffer = 0;

@@ -279,7 +279,7 @@ bool nBuddyClient::SendCommand(nCommand* command)
 {
     if (this->clientStatus != Connected) return false;
 
-    if (this->ipcClient->Send(nIpcBuffer( command->GetRequest().Get())))
+    if (this->ipcClient->Send(nIpcBuffer(command->GetRequest().Get())))
     {
         command->curStatus = nCommand::COMMAMD_PENDING;
         this->CommandInterpreter.AddPendingCommand(command);

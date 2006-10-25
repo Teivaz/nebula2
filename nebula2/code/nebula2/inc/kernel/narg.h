@@ -170,7 +170,7 @@ nArg::Copy(const nArg& rhs)
         this->Delete();
     }
     this->type = rhs.type;
-    switch(this->type)
+    switch (this->type)
     {
         case Void:
             break;
@@ -251,7 +251,7 @@ inline
 void
 nArg::Copy(va_list * marker)
 {
-    switch(this->type)
+    switch (this->type)
     {
         case Void:
             break;
@@ -313,7 +313,7 @@ nArg::Copy(va_list * marker)
             }
             else
             {
-                this->m44 = n_new(matrix44( *mat ));
+                this->m44 = n_new(matrix44(*mat));
             }
             break;
     }
@@ -400,7 +400,7 @@ nArg::operator==(const nArg& rhs) const
             case List:
                 if ((this->l && rhs.l) && (this->listLen == rhs.listLen))
                 {
-                    for(int i = 0; i < this->listLen; i++)
+                    for (int i = 0; i < this->listLen; i++)
                     {
                         if (!(this->l[i] == rhs.l[i]))
                             return false;

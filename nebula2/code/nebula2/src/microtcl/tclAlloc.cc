@@ -215,7 +215,7 @@ TclFinalizeAllocSubsystem()
     }
     blockList = NULL;
 
-    for (blockPtr = bigBlocks.nextPtr; blockPtr != &bigBlocks; ) {
+    for (blockPtr = bigBlocks.nextPtr; blockPtr != &bigBlocks;) {
     nextPtr = blockPtr->nextPtr;
     TclpSysFree(blockPtr);
     blockPtr = nextPtr;
@@ -322,7 +322,7 @@ TclpAlloc(nbytes)
     }
     bucket++;
     }
-    ASSERT( bucket < NBUCKETS );
+    ASSERT(bucket < NBUCKETS);
 
     /*
      * If nothing in hash bucket right now,
@@ -460,7 +460,7 @@ TclpFree(cp)
     RANGE_ASSERT(op->ov_rmagic == RMAGIC);
     RANGE_ASSERT(*(unsigned short *)((caddr_t)(op + 1) + op->ov_size) == RMAGIC);
     size = op->ov_index;
-    if ( size == 0xff ) {
+    if (size == 0xff) {
 #ifdef MSTATS
     nmalloc[NBUCKETS]--;
 #endif
@@ -569,9 +569,9 @@ TclpRealloc(cp, nbytes)
     }
     maxsize = 1 << (i+3);
     expensive = 0;
-    if ( nbytes + OVERHEAD > maxsize ) {
+    if (nbytes + OVERHEAD > maxsize) {
     expensive = 1;
-    } else if ( i > 0 && nbytes + OVERHEAD < (maxsize/2) ) {
+    } else if (i > 0 && nbytes + OVERHEAD < (maxsize/2)) {
     expensive = 1;
     }
 
@@ -581,11 +581,11 @@ TclpRealloc(cp, nbytes)
 //    Tcl_MutexUnlock(allocMutexPtr);
 
     newp = TclpAlloc(nbytes);
-    if ( newp == NULL ) {
+    if (newp == NULL) {
         return NULL;
     }
     maxsize -= OVERHEAD;
-    if ( maxsize < nbytes )
+    if (maxsize < nbytes)
         nbytes = maxsize;
     memcpy((VOID *) newp, (VOID *) cp, (size_t) nbytes);
     TclpFree(cp);

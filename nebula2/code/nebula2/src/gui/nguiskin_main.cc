@@ -211,7 +211,7 @@ const char*
 nGuiSkin::GetSound(const char* name) const
 {
     int index = this->soundNames.FindIndex(name);
-    if(-1 != index) return this->soundNames[index].Get();
+    if (-1 != index) return this->soundNames[index].Get();
     return 0;
 }
 
@@ -222,7 +222,7 @@ void
 nGuiSkin::SetSoundVolume(const char* name, float volume)
 {
     nSound3* sound = this->GetSoundObject(name);
-    if(sound)
+    if (sound)
     {
         sound->SetVolume(volume);
     }

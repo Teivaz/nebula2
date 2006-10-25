@@ -63,12 +63,12 @@ nGuiWidget::GetOwnerWindow()
     {
         // search for the first parent, which is a window
         nGuiWidget* parent = (nGuiWidget*) this->GetParent();
-        while(parent && !parent->IsA(windowClass))
+        while (parent && !parent->IsA(windowClass))
         {
             parent = (nGuiWidget*) parent->GetParent();
         }
 
-        if(!parent)
+        if (!parent)
         {
             // no parent window found
             return 0;
@@ -410,12 +410,12 @@ nGuiWidget::OnFrame()
         if (this->Inside(nGuiServer::Instance()->GetMousePos())/* && this->HasFocus()*/ && !this->tooltip.IsEmpty())
         {
             nTime time = nTimeServer::Instance()->GetTime();
-            if(!this->mouseWithin)
+            if (!this->mouseWithin)
             {
                 this->mouseWithinTime = time;
                 this->mouseWithin = true;
             }
-            else if(time > this->mouseWithinTime + nGuiServer::Instance()->GetToolTipActivationTime())
+            else if (time > this->mouseWithinTime + nGuiServer::Instance()->GetToolTipActivationTime())
             {
                 nGuiServer::Instance()->ShowToolTip(this->tooltip.Get(), vector4(0.0f, 0.0f, 0.0f, 1.0f));
             }

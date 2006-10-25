@@ -247,7 +247,7 @@ nGuiColorAdjust::UpdateColor()
     this->color.set(this->color.x * (this->brightness) * normFactor,
                     this->color.y * (this->brightness) * normFactor,
                     this->color.z * (this->brightness) * normFactor,
-                    this->color.w );
+                    this->color.w);
 
     // set dirtyflags
     this->noManualRedChange = true;

@@ -1099,7 +1099,7 @@ TclCompileTokens(interp, tokenPtr, count, envPtr)
     Tcl_DStringInit(&textBuffer);
     maxDepth = 0;
     numObjsToConcat = 0;
-    for ( ;  count > 0;  count--, tokenPtr++) {
+    for (; count > 0; count--, tokenPtr++) {
 	switch (tokenPtr->type) {
 	    case TCL_TOKEN_TEXT:
 		Tcl_DStringAppend(&textBuffer, tokenPtr->start,

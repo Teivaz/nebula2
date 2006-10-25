@@ -1313,7 +1313,7 @@ TclProcCleanupProc(procPtr)
     if (bodyPtr != NULL) {
 	Tcl_DecrRefCount(bodyPtr);
     }
-    for (localPtr = procPtr->firstLocalPtr;  localPtr != NULL;  ) {
+    for (localPtr = procPtr->firstLocalPtr; localPtr != NULL;) {
 	CompiledLocal *nextPtr = localPtr->nextPtr;
 
         resVarInfo = localPtr->resolveInfo;

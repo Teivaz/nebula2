@@ -182,7 +182,7 @@ inline static void AddCmd_ ## NAME (nClass * cl)                        \
 
 //------------------------------------------------------------------------------
 
-#pragma warning ( disable : 4127 4100 )
+#pragma warning (disable : 4127 4100)
 
 template < class TClass, class TR, class TListIn, class TListOut, class TClassCast >
 class nCmdProtoNativeCPP : public nCmdProto
@@ -194,7 +194,7 @@ public:
     typedef typename Traits::TCmdDispatcher<TClass> TDispatcher;
 
     /// constructor
-    nCmdProtoNativeCPP( const char * signature, int fourcc, typename TDispatcher::TMemberFunction memf ) :
+    nCmdProtoNativeCPP(const char * signature, int fourcc, typename TDispatcher::TMemberFunction memf) :
         nCmdProto(signature, fourcc),
         memf_(memf)
     {
@@ -202,7 +202,7 @@ public:
     }
 
     /// constructor with const method
-    nCmdProtoNativeCPP( const char * signature, int fourcc, typename TDispatcher::TMemberFunctionConst memf ) :
+    nCmdProtoNativeCPP(const char * signature, int fourcc, typename TDispatcher::TMemberFunctionConst memf) :
         nCmdProto(signature, fourcc),
         memf_(reinterpret_cast<typename TDispatcher::TMemberFunction> (memf))
     {
@@ -228,7 +228,7 @@ private:
 
 };
 
-#pragma warning ( default : 4127 4100  )
+#pragma warning (default : 4127 4100)
 
 //------------------------------------------------------------------------------
 

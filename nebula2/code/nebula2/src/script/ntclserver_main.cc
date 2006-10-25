@@ -404,7 +404,7 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
         nString str(" ");
         arg = cmd->In();
 
-        switch(arg->GetType()) {
+        switch (arg->GetType()) {
 
             case nArg::Int:
                 str.AppendInt(arg->GetI());

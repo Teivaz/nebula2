@@ -42,7 +42,7 @@ nGuiScrollButtonList::OnShow()
 {
     n_assert(this->options.Size() > 0);
 
-    if(this->refCheckButtons.Size() > 0) this->refCheckButtons.Clear();
+    if (this->refCheckButtons.Size() > 0) this->refCheckButtons.Clear();
 
     nGuiFormLayout::OnShow();
     nGuiSkin* skin = nGuiServer::Instance()->GetSkin();
@@ -365,7 +365,7 @@ nGuiScrollButtonList::OnEvent(const nGuiEvent& event)
         {
             replicateEvent = true;
             this->btnIndex = this->btnIndex - this->scrollSize;
-            if (this->btnIndex < 0 )
+            if (this->btnIndex < 0)
             {
                 if (this->visibleButtons < this->options.Size())
                 {
@@ -402,7 +402,7 @@ nGuiScrollButtonList::OnEvent(const nGuiEvent& event)
 nGuiCheckButton*
 nGuiScrollButtonList::GetSelectedListButton() const
 {
-    if(this->allButtonsDeselected)
+    if (this->allButtonsDeselected)
     {
         return 0;
     }
@@ -441,7 +441,7 @@ nGuiScrollButtonList::UpdateCheckButtons()
             this->refCheckButtons[i]->SetState(false);
         }
 
-        if(!this->allButtonsDeselected)
+        if (!this->allButtonsDeselected)
         {
             // set active check button
             this->refCheckButtons[this->selIndex]->SetState(true);

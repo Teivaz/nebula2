@@ -75,7 +75,7 @@ nSignalServer::nSignalServer()
     n_assert(0 == Singleton);
     Singleton = this;
 
-    for(int i = 0;i < N_SIGNALSERVER_MAX_SIGNALS;i++)
+    for (int i = 0; i < N_SIGNALSERVER_MAX_SIGNALS; i++)
     {
         this->freeSignals.AddTail(&this->signals[i]);
     }
@@ -120,7 +120,7 @@ inline
 bool
 nSignalServer::AreSignalsPending()const
 {
-    return ( ! this->postedSignals.IsEmpty() );
+    return (! this->postedSignals.IsEmpty());
 }
 
 //------------------------------------------------------------------------------

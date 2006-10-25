@@ -14,7 +14,7 @@ static void n_gethead(void *, nCmd *);
 static void n_gettail(void *, nCmd *);
 static void n_getsucc(void *, nCmd *);
 static void n_getpred(void *, nCmd *);
-static void n_getchildren( void *, nCmd *);
+static void n_getchildren(void *, nCmd *);
 static void n_setname(void *, nCmd *);
 static void n_getname(void *, nCmd *);
 static void n_getfullname(void *, nCmd *);

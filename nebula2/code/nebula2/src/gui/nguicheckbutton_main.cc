@@ -34,7 +34,7 @@ nGuiCheckButton::~nGuiCheckButton()
 bool
 nGuiCheckButton::OnMouseMoved(const vector2& mousePos)
 {
-    if(!this->IsPartOfGroup())
+    if (!this->IsPartOfGroup())
     {
         nGuiServer* guiServer = nGuiServer::Instance();
         // check if there exist a top most modal window
@@ -141,7 +141,7 @@ nGuiCheckButton::Render()
         {
             brush = &this->pressedBrush;
         }
-        else if ( this->GetMouseOver() )
+        else if (this->GetMouseOver())
         {
             brush = &this->highlightBrush;
         }

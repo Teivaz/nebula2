@@ -248,7 +248,7 @@ nGuiTextView::OnKeyDown(nKey key)
 
             if (key == N_KEY_UP)
             {
-                if ( this->selectionIndex < 1 )
+                if (this->selectionIndex < 1)
                 {
                     return true;
                 }
@@ -262,7 +262,7 @@ nGuiTextView::OnKeyDown(nKey key)
             }
             if (key == N_KEY_DOWN)
             {
-                if ( this->selectionIndex >= this->GetNumLines()-1 )
+                if (this->selectionIndex >= this->GetNumLines()-1)
                 {
                     return true;
                 }
@@ -277,7 +277,7 @@ nGuiTextView::OnKeyDown(nKey key)
 
             // LookUp starts here
 
-            if ( ! this->GetLookUpEnabled() ) return true;
+            if (! this->GetLookUpEnabled()) return true;
             if (key > N_KEY_Z) return true;
             if (key < N_KEY_1) return true;
 
@@ -285,11 +285,11 @@ nGuiTextView::OnKeyDown(nKey key)
 
             if (key >= N_KEY_A)
             {
-                for ( index=0; index<this->GetNumLines() ;index++)
+                for (index=0; index<this->GetNumLines() ;index++)
                 {
-                    if(textArray[index].Length() > 0)
+                    if (textArray[index].Length() > 0)
                     {
-                        if(textArray[index][0] >= ('a'+key-N_KEY_A) ) break;
+                        if (textArray[index][0] >= ('a'+key-N_KEY_A)) break;
                     }
                 }
             }

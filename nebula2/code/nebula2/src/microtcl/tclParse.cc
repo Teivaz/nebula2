@@ -1172,7 +1172,7 @@ Tcl_EvalTokens(interp, tokenPtr, count)
      */
 
     resultPtr = NULL;
-    for ( ; count > 0; count--, tokenPtr++) {
+    for (; count > 0; count--, tokenPtr++) {
         valuePtr = NULL;
 
         /*
@@ -1778,7 +1778,7 @@ Tcl_ParseVarName(interp, string, numBytes, parsePtr, append)
             }
             if ((parsePtr->term == end) || (*parsePtr->term != ')')) {
                 if (parsePtr->interp != NULL) {
-                    Tcl_SetResult(parsePtr->interp, "missing )",
+                    Tcl_SetResult(parsePtr->interp, "missing)",
                             TCL_STATIC);
                 }
                 parsePtr->errorType = TCL_PARSE_MISSING_PAREN;
@@ -2027,7 +2027,7 @@ Tcl_ParseBraces(interp, string, numBytes, parsePtr, append, termPtr)
              *  the same line.
              */
             openBrace = 0;
-            while (src > string ) {
+            while (src > string) {
                 switch (*src) {
                     case '{':
                         openBrace = 1;

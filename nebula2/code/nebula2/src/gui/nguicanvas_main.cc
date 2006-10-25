@@ -66,7 +66,7 @@ nGuiCanvas::EndCurve()
 rectangle
 nGuiCanvas::GetLabelRect(int id)
 {
-    if (id < textarray.Size() )
+    if (id < textarray.Size())
     {
         const Text& label = this->textarray.At(id);
         vector2 pos = label.GetPosition();
@@ -135,25 +135,25 @@ nGuiCanvas::Render()
             // Determine how much screenspace the textlabel needs
             textextent = nGfxServer2::Instance()->GetTextExtent(this->textarray.At(i).GetContent().Get());
 
-            textRect = rectangle( vector2(
+            textRect = rectangle(vector2(
                                         screenSpaceRect.v0.x + textarray.At(i).GetPosition().x,
                                         screenSpaceRect.v0.y + textarray.At(i).GetPosition().y),
                                   vector2(
                                         screenSpaceRect.v0.x + textarray.At(i).GetPosition().x + textextent.x,
-                                        screenSpaceRect.v0.y + textarray.At(i).GetPosition().y + textextent.y )
+                                        screenSpaceRect.v0.y + textarray.At(i).GetPosition().y + textextent.y)
                                 );
 
             // Draw the content of the textlabel
             vector4 textcolor = textarray.At(i).GetColor();
             textcolor.w = activeWindowColor.w;
-            nGuiServer::Instance()->DrawText( textarray.At(i).GetContent().Get(),
-                                              textcolor,
-                                              textRect,
-                                              renderFlags );
+            nGuiServer::Instance()->DrawText(textarray.At(i).GetContent().Get(),
+                                             textcolor,
+                                             textRect,
+                                             renderFlags);
         }
 
         // Do we have to update the line-coordinates?
-        if(this->isDirty)
+        if (this->isDirty)
         {
             this->Update();
         }
@@ -161,11 +161,11 @@ nGuiCanvas::Render()
         // Render the curves
         nGfxServer2::Instance()->BeginLines();
 
-        for(i = 0; i < this->curveDescArray.Size(); i++)
+        for (i = 0; i < this->curveDescArray.Size(); i++)
         {
             curveDesc cd = this->curveDescArray.At(i);
             cd.color.w = activeWindowColor.w;
-            nGfxServer2::Instance()->DrawLines2d( vertexPtr + cd.first, cd.num, cd.color);
+            nGfxServer2::Instance()->DrawLines2d(vertexPtr + cd.first, cd.num, cd.color);
         }
         nGfxServer2::Instance()->EndLines();
 
@@ -196,12 +196,12 @@ nGuiCanvas::Update()
 
         int i;
         int num = this->curvearray.Size();
-        for(i = 0; i < this->curvearray.Size(); i++)
+        for (i = 0; i < this->curvearray.Size(); i++)
         {
             num += this->curvearray.At(i).GetCurve().Size() + 1;
         }
 
-        if ( this->vertexBasePtr != 0 )
+        if (this->vertexBasePtr != 0)
         {
             n_delete_array(this->vertexBasePtr);
             this->vertexBasePtr = 0;

@@ -96,7 +96,7 @@ nD3D9Texture::UnloadResource()
         this->textureCube = 0;
     }
 
-    if( this->usage & Video )
+    if (this->usage & Video)
     {
         nVideoServer::Instance()->DeleteVideoPlayer(this->videoPlayer);
     };
@@ -363,7 +363,7 @@ nD3D9Texture::QueryD3DTextureAttributes()
         hr = this->texture2D->GetLevelDesc(0, &desc);
         n_dxtrace(hr, "QueryD3DTextureAttributes() failed");
 
-        switch(desc.Format)
+        switch (desc.Format)
         {
             case D3DFMT_R8G8B8:
             case D3DFMT_X8R8G8B8:       this->SetFormat(X8R8G8B8); break;
@@ -404,7 +404,7 @@ nD3D9Texture::QueryD3DTextureAttributes()
         hr = this->textureCube->GetLevelDesc(0, &desc);
         n_dxtrace(hr, "GetLevelDesc() failed");
 
-        switch(desc.Format)
+        switch (desc.Format)
         {
             case D3DFMT_R8G8B8:
             case D3DFMT_X8R8G8B8:       this->SetFormat(X8R8G8B8); break;

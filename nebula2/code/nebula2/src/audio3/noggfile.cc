@@ -175,7 +175,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                         (-1.<=range<=1.) to whatever PCM format and write it out */
                         float **pcm;
                         int samples = 0;
-                        while ( (samples = vorbis_synthesis_pcmout(&vDecoderState, &pcm)) > 0)
+                        while ((samples = vorbis_synthesis_pcmout(&vDecoderState, &pcm)) > 0)
                         {
                             int i,j;
                             int clipFlag = 0;
@@ -219,7 +219,7 @@ nOggFile::Read(void* buffer, uint bytesToRead)
                             /* tell libvorbis how many samples we actually consumed */
                             vorbis_synthesis_read(&vDecoderState, samplesOut);
 
-                            if(samplesLeft <= 0)
+                            if (samplesLeft <= 0)
                             {
                                 readEarlyLoopExit=true;
                                 int byteSize=2*vBitStreamInfo.channels*samplesWritten;
@@ -255,12 +255,12 @@ nOggFile::Read(void* buffer, uint bytesToRead)
     m_bFileEndReached = true;
 
     // maybe there is still some data left which doesnt fill a block
-    if(samplesWritten != 0)
+    if (samplesWritten != 0)
     {
         return bytesToRead;
     }
 
-    if(this->keepAlive > 0)
+    if (this->keepAlive > 0)
     {
         // fake that buffer got filled
         this->keepAlive--;
@@ -436,7 +436,7 @@ nOggFile::InitOGG()
             vBitStreamInfo.rate);
         n_printf("COggFile::Open:Encoded by: %s\n\n", vComments.vendor);
 
-        ZeroMemory( &this->wfx, sizeof(WAVEFORMATEX) );
+        ZeroMemory(&this->wfx, sizeof(WAVEFORMATEX));
         this->wfx.nChannels         = vBitStreamInfo.channels;
         this->wfx.nSamplesPerSec    = vBitStreamInfo.rate;
         this->wfx.wBitsPerSample    = 16;

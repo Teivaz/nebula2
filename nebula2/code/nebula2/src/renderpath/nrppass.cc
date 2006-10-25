@@ -173,7 +173,7 @@ nRpPass::Begin()
     n_assert(this->renderPath);
 
     #if __NEBULA_STATS__
-    if(!this->GetDrawShadows() && !this->GetOcclusionQuery())
+    if (!this->GetDrawShadows() && !this->GetOcclusionQuery())
     {
         this->prof.Start();
     }
@@ -298,7 +298,7 @@ nRpPass::End()
     this->inBegin = false;
 
     #if __NEBULA_STATS__
-    if(!this->GetDrawShadows() && !this->GetOcclusionQuery())
+    if (!this->GetDrawShadows() && !this->GetOcclusionQuery())
     {
         this->prof.Stop();
     }

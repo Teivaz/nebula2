@@ -108,7 +108,7 @@ void
 nSignalBindingSet::RemoveAllBindings()
 {
     nSignalBinding * binding;
-    while ( 0 != (binding = static_cast<nSignalBinding *> (this->bindings.RemHead())))
+    while (0 != (binding = static_cast<nSignalBinding *> (this->bindings.RemHead())))
     {
         n_delete(binding);
     }

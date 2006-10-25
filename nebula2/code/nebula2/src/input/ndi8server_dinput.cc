@@ -200,7 +200,7 @@ di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
     }
 
     // set data format on DirectInput device
-    switch(type)
+    switch (type)
     {
         int minRange, maxRange;
 
