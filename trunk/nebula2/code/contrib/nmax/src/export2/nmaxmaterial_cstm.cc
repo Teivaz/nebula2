@@ -168,7 +168,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
-                                if (control)
+                                if (control && control->NumKeys())
                                 {
                                     // the parameter was animated.
                                     nFloatAnimator* animator = 0;
@@ -213,12 +213,20 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 result = pblock2->GetValue(j, 0, value, interval);
 
                                 if (result)
-                                    shapeNode->SetInt(shaderParam, value);
+                                {
+                                    if (strcmp(name, "RenderPri") == 0)
+                                    {
+                                        shapeNode->SetRenderPri(value);
+                                        break;
+                                    }
+                                    else
+                                        shapeNode->SetInt(shaderParam, value);
+                                }
                                 else
                                     n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
-                                if (control)
+                                if (control && control->NumKeys())
                                 {
                                     // the parameter was animated.
                                     nIntAnimator* animator = 0;
@@ -297,7 +305,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
-                                if (control)
+                                if (control && control->NumKeys())
                                 {
                                     // the parameter was animated.
                                     nVectorAnimator* animator = 0;
@@ -334,7 +342,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
                                 Control* control = pblock2->GetController(paramID);
-                                if (control)
+                                if (control && control->NumKeys())
                                 {
                                     // the parameter was animated.
                                     nVectorAnimator* animator = 0;
