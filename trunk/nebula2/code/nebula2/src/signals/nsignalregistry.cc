@@ -134,7 +134,7 @@ nSignalRegistry::AddSignal(const char * proto_def, nFourCC id)
     End definition of signals
 */
 void
-nSignalRegistry::EndSignals(void)
+nSignalRegistry::EndSignals()
 {
     /// empty
 }

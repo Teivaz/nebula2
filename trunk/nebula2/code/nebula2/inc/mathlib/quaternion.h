@@ -54,14 +54,14 @@ public:
     };
 
     //-- misc operations --------------------------------------------
-    void ident(void) {
+    void ident() {
         x = 0.0f;
         y = 0.0f;
         z = 0.0f;
         w = 1.0f;
     };
 
-    void conjugate(void) {
+    void conjugate() {
         x = -x;
         y = -y;
         z = -z;
@@ -74,23 +74,23 @@ public:
         w *= s;
     };
 
-    float norm(void) {
+    float norm() {
         return x*x + y*y + z*z + w*w;
     };
 
-    float magnitude(void) {
+    float magnitude() {
         float n = norm();
         if (n > 0.0f) return n_sqrt(n);
         else          return 0.0f;
     };
 
-    void invert(void) {
+    void invert() {
         float n = norm();
         if (n > 0.0f) scale(1.0f / norm());
         conjugate();
     };
 
-    void normalize(void) {
+    void normalize() {
         float l = magnitude();
         if (l > 0.0f) scale(1.0f / l);
         else          set(0.0f,0.0f,0.0f,1.0f);

@@ -311,7 +311,7 @@ nKernelServer::nKernelServer() :
      - 07-Feb-00   floh    + more detailed shutdown messages
      - 15-Sep-04   floh    + reset log handler at beginning of destructor
 */
-nKernelServer::~nKernelServer(void)
+nKernelServer::~nKernelServer()
 {
     this->Lock();
     this->SetLogHandler(0);
@@ -885,7 +885,7 @@ nKernelServer::AddPackage(void(*_func)())
 void
 nKernelServer::AddModule(const char *name,
                          bool (*_init_func)(nClass *, nKernelServer *),
-                         void *(*_new_func)(void))
+                         void *(*_new_func)())
 {
     this->Lock();
     nClass *cl = (nClass *) this->classList.Find(name);

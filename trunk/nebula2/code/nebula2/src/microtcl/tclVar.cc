@@ -50,7 +50,7 @@ static int              MakeUpvar _ANSI_ARGS_((
                             Interp *iPtr, CallFrame *framePtr,
                             char *otherP1, char *otherP2, int otherFlags,
                             char *myName, int myFlags));
-static Var *            NewVar _ANSI_ARGS_((void));
+static Var *            NewVar _ANSI_ARGS_(());
 static ArraySearch *    ParseSearchId _ANSI_ARGS_((Tcl_Interp *interp,
                             Var *varPtr, char *varName, char *string));
 static void             VarErrMsg _ANSI_ARGS_((Tcl_Interp *interp,

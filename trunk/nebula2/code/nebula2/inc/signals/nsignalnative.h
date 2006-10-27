@@ -62,7 +62,7 @@ public:
     virtual ~nSignalNative();
 
     /// delete signal in the case it is possible
-    virtual void Release(void);
+    virtual void Release();
 
     /// Emit a signal from scripting
     virtual bool Dispatch(void * obj, nCmd * cmd);
@@ -119,7 +119,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::~nSignalNative()
 */
 template <class TR, class TListIn, class TListOut, int signal4cc>
 void
-nSignalNative<TR,TListIn,TListOut,signal4cc>::Release(void)
+nSignalNative<TR,TListIn,TListOut,signal4cc>::Release()
 {
     /// empty
 }

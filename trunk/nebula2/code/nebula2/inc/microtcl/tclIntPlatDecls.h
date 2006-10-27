@@ -72,7 +72,7 @@ EXTERN int		TclWinGetSockOpt _ANSI_ARGS_((SOCKET s, int level,
 				int optname, char FAR * optval,
 				int FAR * optlen));
 /* 4 */
-EXTERN HINSTANCE	TclWinGetTclInstance _ANSI_ARGS_((void));
+EXTERN HINSTANCE	TclWinGetTclInstance _ANSI_ARGS_(());
 /* Slot 5 is reserved */
 /* 6 */
 EXTERN u_short		TclWinNToHS _ANSI_ARGS_((u_short ns));
@@ -83,7 +83,7 @@ EXTERN int		TclWinSetSockOpt _ANSI_ARGS_((SOCKET s, int level,
 /* 8 */
 EXTERN unsigned long	TclpGetPid _ANSI_ARGS_((Tcl_Pid pid));
 /* 9 */
-EXTERN int		TclWinGetPlatformId _ANSI_ARGS_((void));
+EXTERN int		TclWinGetPlatformId _ANSI_ARGS_(());
 /* Slot 10 is reserved */
 /* 11 */
 EXTERN void		TclGetAndDetachPids _ANSI_ARGS_((Tcl_Interp * interp,
@@ -123,7 +123,7 @@ EXTERN char *		TclpGetTZName _ANSI_ARGS_((int isdst));
 /* 24 */
 EXTERN char *		TclWinNoBackslash _ANSI_ARGS_((char * path));
 /* 25 */
-EXTERN TclPlatformType * TclWinGetPlatform _ANSI_ARGS_((void));
+EXTERN TclPlatformType * TclWinGetPlatform _ANSI_ARGS_(());
 /* 26 */
 EXTERN void		TclWinSetInterfaces _ANSI_ARGS_((int wide));
 #endif /* __WIN32__ */
@@ -164,7 +164,7 @@ EXTERN int		FSpLocationFromPath _ANSI_ARGS_((int length,
 EXTERN OSErr		FSpPathFromLocation _ANSI_ARGS_((FSSpecPtr theSpec,
 				int * length, Handle * fullPath));
 /* 13 */
-EXTERN void		TclMacExitHandler _ANSI_ARGS_((void));
+EXTERN void		TclMacExitHandler _ANSI_ARGS_(());
 /* 14 */
 EXTERN void		TclMacInitExitToShell _ANSI_ARGS_((int usePatch));
 /* 15 */
@@ -186,7 +186,7 @@ EXTERN int		TclMacRegisterResourceFork _ANSI_ARGS_((
 EXTERN short		TclMacUnRegisterResourceFork _ANSI_ARGS_((
 				char * tokenPtr, Tcl_Obj * resultPtr));
 /* 22 */
-EXTERN int		TclMacCreateEnv _ANSI_ARGS_((void));
+EXTERN int		TclMacCreateEnv _ANSI_ARGS_(());
 /* 23 */
 EXTERN FILE *		TclMacFOpenHack _ANSI_ARGS_((CONST char * path,
 				CONST char * mode));
@@ -216,12 +216,12 @@ typedef struct TclIntPlatStubs {
     void (*tclWinConvertWSAError) _ANSI_ARGS_((DWORD errCode)); /* 1 */
     struct servent * (*tclWinGetServByName) _ANSI_ARGS_((CONST char * nm, CONST char * proto)); /* 2 */
     int (*tclWinGetSockOpt) _ANSI_ARGS_((SOCKET s, int level, int optname, char FAR * optval, int FAR * optlen)); /* 3 */
-    HINSTANCE (*tclWinGetTclInstance) _ANSI_ARGS_((void)); /* 4 */
+    HINSTANCE (*tclWinGetTclInstance) _ANSI_ARGS_(()); /* 4 */
     void *reserved5;
     u_short (*tclWinNToHS) _ANSI_ARGS_((u_short ns)); /* 6 */
     int (*tclWinSetSockOpt) _ANSI_ARGS_((SOCKET s, int level, int optname, CONST char FAR * optval, int optlen)); /* 7 */
     unsigned long (*tclpGetPid) _ANSI_ARGS_((Tcl_Pid pid)); /* 8 */
-    int (*tclWinGetPlatformId) _ANSI_ARGS_((void)); /* 9 */
+    int (*tclWinGetPlatformId) _ANSI_ARGS_(()); /* 9 */
     void *reserved10;
     void (*tclGetAndDetachPids) _ANSI_ARGS_((Tcl_Interp * interp, Tcl_Channel chan)); /* 11 */
     int (*tclpCloseFile) _ANSI_ARGS_((TclFile file)); /* 12 */
@@ -237,7 +237,7 @@ typedef struct TclIntPlatStubs {
     TclFile (*tclpCreateTempFile) _ANSI_ARGS_((CONST char * contents)); /* 22 */
     char * (*tclpGetTZName) _ANSI_ARGS_((int isdst)); /* 23 */
     char * (*tclWinNoBackslash) _ANSI_ARGS_((char * path)); /* 24 */
-    TclPlatformType * (*tclWinGetPlatform) _ANSI_ARGS_((void)); /* 25 */
+    TclPlatformType * (*tclWinGetPlatform) _ANSI_ARGS_(()); /* 25 */
     void (*tclWinSetInterfaces) _ANSI_ARGS_((int wide)); /* 26 */
 #endif /* __WIN32__ */
 #ifdef MAC_TCL
@@ -254,7 +254,7 @@ typedef struct TclIntPlatStubs {
     pascal void (*fSpCreateResFileCompat) _ANSI_ARGS_((CONST FSSpec * spec, OSType creator, OSType fileType, ScriptCode scriptTag)); /* 10 */
     int (*fSpLocationFromPath) _ANSI_ARGS_((int length, CONST char * path, FSSpecPtr theSpec)); /* 11 */
     OSErr (*fSpPathFromLocation) _ANSI_ARGS_((FSSpecPtr theSpec, int * length, Handle * fullPath)); /* 12 */
-    void (*tclMacExitHandler) _ANSI_ARGS_((void)); /* 13 */
+    void (*tclMacExitHandler) _ANSI_ARGS_(()); /* 13 */
     void (*tclMacInitExitToShell) _ANSI_ARGS_((int usePatch)); /* 14 */
     OSErr (*tclMacInstallExitToShellPatch) _ANSI_ARGS_((ExitToShellProcPtr newProc)); /* 15 */
     int (*tclMacOSErrorToPosixError) _ANSI_ARGS_((int error)); /* 16 */
@@ -263,7 +263,7 @@ typedef struct TclIntPlatStubs {
     int (*tclMacTimerExpired) _ANSI_ARGS_((void * timerToken)); /* 19 */
     int (*tclMacRegisterResourceFork) _ANSI_ARGS_((short fileRef, Tcl_Obj * tokenPtr, int insert)); /* 20 */
     short (*tclMacUnRegisterResourceFork) _ANSI_ARGS_((char * tokenPtr, Tcl_Obj * resultPtr)); /* 21 */
-    int (*tclMacCreateEnv) _ANSI_ARGS_((void)); /* 22 */
+    int (*tclMacCreateEnv) _ANSI_ARGS_(()); /* 22 */
     FILE * (*tclMacFOpenHack) _ANSI_ARGS_((CONST char * path, CONST char * mode)); /* 23 */
     void *reserved24;
     int (*tclMacChmod) _ANSI_ARGS_((char * path, int mode)); /* 25 */

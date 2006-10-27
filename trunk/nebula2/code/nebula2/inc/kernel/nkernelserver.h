@@ -103,7 +103,7 @@ public:
     /// add an extension class package to the kernel
     void AddPackage(void (*)());
     /// add a code module to the kernel
-    void AddModule(const char *, bool (*_init_func)(nClass *, nKernelServer *), void* (*_new_func)(void));
+    void AddModule(const char *, bool (*_init_func)(nClass *, nKernelServer *), void* (*_new_func)());
     /// get pointer to hard ref server
     nHardRefServer* GetHardRefServer() const;
     /// get pointer to file server
@@ -115,7 +115,7 @@ public:
     /// get pointer to time server
     nTimeServer* GetTimeServer() const;
     /// optionally call to update memory useage variables
-    void Trigger(void);
+    void Trigger();
 
 private:
     static nKernelServer* Singleton;

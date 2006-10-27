@@ -35,7 +35,7 @@ nInputMapping::nInputMapping(nInputServer *_iserv,
 //------------------------------------------------------------------------------
 /**
 */
-nInputMapping::~nInputMapping(void)
+nInputMapping::~nInputMapping()
 {
     // n_printf("~nInputMapping('%s')\n",this->GetName());
     if (this->ie)  this->iserv->ReleaseEvent(ie);
@@ -47,7 +47,7 @@ nInputMapping::~nInputMapping(void)
 /**
 */
 void
-nInputMapping::ReleaseInputState(void)
+nInputMapping::ReleaseInputState()
 {
     n_assert(this->is);
     this->is->Release();
@@ -63,7 +63,7 @@ nInputMapping::ReleaseInputState(void)
 /**
 */
 void
-nInputMapping::ReleaseCmdString(void)
+nInputMapping::ReleaseCmdString()
 {
     n_assert(this->cmd);
     n_free((void *)this->cmd);
@@ -169,7 +169,7 @@ nInputMapping::PreTrigger(double tstamp)
                         a double click
 */
 void
-nInputMapping::PostTrigger(void)
+nInputMapping::PostTrigger()
 {
     if (this->flags & N_IMF_BTN_DOWN)
     {

@@ -40,15 +40,15 @@ public:
     /// set a vector3
     void SetV3(const vector3& v);
     /// Returns the integer value
-    int GetI(void);
+    int GetI();
     /// Returns the boolean value
-    bool GetB(void);
+    bool GetB();
     /// Returns the float value
-    float GetF(void);
+    float GetF();
     /// Returns the string
-    const char *GetS(void);
+    const char *GetS();
     /// Returns the object
-    nRoot *GetO(void);
+    nRoot *GetO();
     /// get float4 value
     const nFloat4& GetF4();
     /// get vector4 value
@@ -65,7 +65,7 @@ private:
 */
 inline
 nArg::Type
-nEnv::GetType(void)
+nEnv::GetType()
 {
     return this->arg.GetType();
 }

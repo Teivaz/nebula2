@@ -12,7 +12,7 @@ nNodeList* nNodeList::Singleton = 0;
 //-----------------------------------------------------------------------------
 /**
 */
-nNodeList::nNodeList(void):
+nNodeList::nNodeList():
     refScriptServer("/sys/servers/script"),
     numElements(0),
     isOpen(false),
@@ -51,7 +51,7 @@ nNodeList::Open ()
     Releases all Resources
 */
 void
-nNodeList::Close ()
+nNodeList::Close()
 {
     n_assert(this->IsOpen());
 

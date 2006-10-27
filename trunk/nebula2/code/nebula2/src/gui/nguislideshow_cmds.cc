@@ -96,7 +96,7 @@ n_addpicture(void* slf, nCmd* cmd)
     @cmd
     removeallpictures
     @input
-    v (void)
+    v ()
     @output
     v
     @info

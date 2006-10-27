@@ -36,20 +36,20 @@ public:
     };
 
     //--- get the face normal of the triangle ---------------------------------
-    vector3 normal(void) const {
+    vector3 normal() const {
         vector3 cross(e0*e1);
         cross.norm();
         return cross;
     };
 
     //--- get the midpoint (center of gravity) of the triangle ----------------
-    vector3 midpoint(void) const {
+    vector3 midpoint() const {
         const float oneThird = 1.0f / 3.0f;
         return b + ((e0+e1) * oneThird);
     };
 
     //--- get the plane of the triangle ---------------------------------------
-    plane getplane(void) const {
+    plane getplane() const {
         return plane(b,b+e0,b+e1);
     };
 

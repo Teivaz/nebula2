@@ -35,7 +35,7 @@ public:
     /// per frame trigger
     virtual void Trigger(double time);
     /// create a new input event object
-    nInputEvent *NewEvent(void);
+    nInputEvent *NewEvent();
     /// release an input event object
     void ReleaseEvent(nInputEvent* event);
     /// link input event object into global input event list
@@ -43,13 +43,13 @@ public:
     /// unlink input event object from global input event list
     void UnlinkEvent(nInputEvent* event);
     /// flush (clear) global input event list
-    void FlushEvents(void);
+    void FlushEvents();
     /// return pointer to first input event in global input event list
-    nInputEvent *FirstEvent(void);
+    nInputEvent *FirstEvent();
     /// return pointer to next event in global input event list
     nInputEvent *NextEvent(nInputEvent *);
     /// begin mapping input events
-    void BeginMap(void);
+    void BeginMap();
     /// map an input event to an input state
     bool Map(const char* event, const char* state);
     /// finish mapping input
@@ -63,17 +63,17 @@ public:
     /// start logging input
     void StartLogging();
     /// stop logging input
-    void StopLogging(void);
+    void StopLogging();
     /// is currently logging input?
-    bool IsLogging(void);
+    bool IsLogging();
     /// set the long pressed time
     void SetLongPressedTime(float);
     /// get the long pressed time
-    float GetLongPressedTime(void);
+    float GetLongPressedTime();
     /// set the double click time
     void SetDoubleClickTime(float);
     /// get the double click time
-    float GetDoubleClickTime(void);
+    float GetDoubleClickTime();
     /// set mouse sensitivity
     void SetMouseFactor(float s);
     /// get mouse sensitivity
@@ -83,9 +83,9 @@ public:
     /// get invert mouse flag
     bool GetMouseInvert() const;
     /// call when input focus obtained
-    void ObtainFocus(void);
+    void ObtainFocus();
     /// call when input focus lost
-    void LoseFocus(void);
+    void LoseFocus();
     /// flush entire input mapping
     void FlushInput();
     /// set mute mode on/off
@@ -101,13 +101,13 @@ protected:
     /// return pointer to next matching event
     nInputEvent *NextIdenticalEvent(nInputEvent *pattern, nInputEvent *cur);
     /// do actual input mapping
-    void DoInputMapping(void);
+    void DoInputMapping();
     /// begin adding a script to execute
-    void BeginScripts(void);
+    void BeginScripts();
     /// add a script to execute
     void AddScript(const char* script);
     /// finish adding script
-    void EndScripts(void);
+    void EndScripts();
     /// check if events are identical
     bool IsIdenticalEvent(nInputEvent* event0, nInputEvent* event1);
     /// log a single event
@@ -121,9 +121,9 @@ protected:
 
 #ifndef __XBxX__
     /// export the default keyboard
-    void ExportDefaultKeyboard(void);
+    void ExportDefaultKeyboard();
     /// export the default mouse
-    void ExportDefaultMouse(void);
+    void ExportDefaultMouse();
 #endif
 
     /// build an input mapping name

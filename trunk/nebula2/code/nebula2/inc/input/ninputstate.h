@@ -32,14 +32,14 @@ public:
     ~nInputState() {
         // n_printf("~nInputState(%s)\n",this->GetName());
     };
-    void AddRef(void) {
+    void AddRef() {
         this->refCount++;
     };
-    void Release(void) {
+    void Release() {
         n_assert(this->refCount > 0);
         this->refCount--;
     };
-    int GetRefCount(void) {
+    int GetRefCount() {
         return this->refCount;
     };
     void SetButton(bool b) {
@@ -53,10 +53,10 @@ public:
         if (this->val > 1.0f)      this->val = 1.0f;
         else if (this->val < 0.0f) this->val = 0.0f;
     };
-    bool GetButton(void) {
+    bool GetButton() {
         return this->btn;
     };
-    float GetSlider(void) {
+    float GetSlider() {
         return this->val;
     };
     /// clear input state

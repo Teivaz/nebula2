@@ -39,7 +39,7 @@ nInputServer::AddInputState(const char *n)
 /**
 */
 void
-nInputServer::BeginMap(void)
+nInputServer::BeginMap()
 {
     n_assert(!this->in_begin_map);
 
@@ -178,7 +178,7 @@ bool nInputServer::Map(const char *ie_str, const char *is_str)
 /**
 */
 void
-nInputServer::EndMap(void)
+nInputServer::EndMap()
 {
     n_assert(this->in_begin_map);
     this->in_begin_map = false;
@@ -261,7 +261,7 @@ nInputServer::GetButton(const char *n)
 /**
 */
 void
-nInputServer::DoInputMapping(void)
+nInputServer::DoInputMapping()
 {
     nInputMapping *im;
 
@@ -317,7 +317,7 @@ nInputServer::DoInputMapping(void)
 //------------------------------------------------------------------------------
 /**
 */
-void nInputServer::ObtainFocus(void)
+void nInputServer::ObtainFocus()
 {
     // all active input mappings must be reset
     nInputMapping *im;
@@ -339,7 +339,7 @@ void nInputServer::ObtainFocus(void)
 //------------------------------------------------------------------------------
 /**
 */
-void nInputServer::LoseFocus(void)
+void nInputServer::LoseFocus()
 {
     // all active input mappings must be reset
     nInputMapping *im;

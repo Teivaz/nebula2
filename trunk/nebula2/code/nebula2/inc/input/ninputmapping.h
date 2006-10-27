@@ -50,41 +50,41 @@ public:
         N_IMSTATE_DOUBLECLICKED = (1<<5),
     };
     nInputMapping(nInputServer *, const char *, nInputEvent *, double, double, int);
-    ~nInputMapping(void);
+    ~nInputMapping();
 
     void PreTrigger(double);
-    void PostTrigger(void);
+    void PostTrigger();
     void SetInputState(nInputState *);
     void SetCmdString(const char *);
-    void ReleaseInputState(void);
-    void ReleaseCmdString(void);
+    void ReleaseInputState();
+    void ReleaseCmdString();
 
-    void SetButtonDown(void) {
+    void SetButtonDown() {
         this->flags |= N_IMF_BTN_DOWN;
     };
-    void SetButtonUp(void) {
+    void SetButtonUp() {
         this->flags |= N_IMF_BTN_UP;
     };
-    nInputState *GetInputState(void) {
+    nInputState *GetInputState() {
         return this->is;
     };
-    const char *GetCmdString(void) {
+    const char *GetCmdString() {
         return this->cmd;
     };
-    nInputEvent *GetInputEvent(void) {
+    nInputEvent *GetInputEvent() {
         return this->ie;
     };
-    bool GetButtonState(void) {
+    bool GetButtonState() {
         return (this->state & N_IMSTATE_PRESSED) ? true : false;
     };
     void SetKillMe(bool b) {
         if (b) this->flags |= N_IMF_KILLME;
         else   this->flags &= ~N_IMF_KILLME;
     };
-    bool GetKillMe(void) {
+    bool GetKillMe() {
         return (this->flags & N_IMF_KILLME) ? true : false;
     };
-    bool IsActive(void) {
+    bool IsActive() {
         // ONLY VALID AFTER PostTrigger()!
         n_assert(this->state_valid);
         return (this->state & this->mask) ? true : false;
@@ -92,7 +92,7 @@ public:
     void SetSlider(float f) {
         this->slider_val = f;
     };
-    float GetSlider(void) {
+    float GetSlider() {
         return this->slider_val;
     };
     /// clear buttonDown/Up flags

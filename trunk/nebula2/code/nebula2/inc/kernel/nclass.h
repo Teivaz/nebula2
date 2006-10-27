@@ -25,7 +25,7 @@ class nClass : public nHashNode, public nSignalRegistry
 {
 public:
     /// constructor
-    nClass(const char* name, nKernelServer *ks, bool (*initFunc)(nClass *, nKernelServer *), void* (*newFunc)(void));
+    nClass(const char* name, nKernelServer *ks, bool (*initFunc)(nClass *, nKernelServer *), void* (*newFunc)());
     /// class destructor
     ~nClass();
     /// create a new instance of the class
@@ -89,7 +89,7 @@ private:
     int instanceSize;
 
     bool (*n_init_ptr)(nClass *, nKernelServer *);      // pointer to class init function
-    void *(*n_new_ptr)(void);                           // pointer to object construction function
+    void *(*n_new_ptr)();                               // pointer to object construction function
 };
 
 //------------------------------------------------------------------------------

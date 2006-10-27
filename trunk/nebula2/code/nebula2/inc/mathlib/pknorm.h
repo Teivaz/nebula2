@@ -26,7 +26,7 @@ public:
     };
 
     //--- unpack into vector3 ---------------------------------------
-    vector3 unpack(void) {
+    vector3 unpack() {
         const float r = 31.999f;
         float ix = float((n>>10) & 31);
         float iy = float((n>>5) & 31);
@@ -44,7 +44,7 @@ public:
     };
 
     //-- get/set packed representation ------------------------------
-    ushort getpacked(void) {
+    ushort getpacked() {
         return n;
     };
     void setpacked(ushort _n) {

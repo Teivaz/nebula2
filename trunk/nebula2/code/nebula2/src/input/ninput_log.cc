@@ -11,7 +11,7 @@
 /**
 */
 void
-nInputServer::StartLogging(void)
+nInputServer::StartLogging()
 {
     if (this->log_events)
     {
@@ -27,7 +27,7 @@ nInputServer::StartLogging(void)
 /**
 */
 void
-nInputServer::StopLogging(void)
+nInputServer::StopLogging()
 {
     if (this->log_events)
     {
@@ -42,7 +42,7 @@ nInputServer::StopLogging(void)
 //------------------------------------------------------------------------------
 /**
 */
-bool nInputServer::IsLogging(void)
+bool nInputServer::IsLogging()
 {
     return this->log_events;
 }
@@ -104,7 +104,7 @@ void nInputServer::LogSingleEvent(nInputEvent *ie)
 //------------------------------------------------------------------------------
 /**
 */
-void nInputServer::LogEvents(void)
+void nInputServer::LogEvents()
 {
     nInputEvent *ie;
     for (ie = (nInputEvent *) this->events.GetHead();

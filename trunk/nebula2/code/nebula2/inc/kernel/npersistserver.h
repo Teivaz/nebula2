@@ -85,11 +85,11 @@ public:
     /// set the save mode
     void SetSaveMode(nSaveMode);
     /// get the save mode
-    nSaveMode GetSaveMode(void);
+    nSaveMode GetSaveMode();
     /// set the save level
     void SetSaveLevel(int);
     /// get the save level
-    int GetSaveLevel(void);
+    int GetSaveLevel();
     /// set the script server class which should be used for saving
     bool SetSaverClass(const nString& saverClass);
     /// get the script server class which is currently used for saving
@@ -107,7 +107,7 @@ public:
     /// finish a persistent object
     bool EndObject(bool);
     /// return cloned object
-    nObject *GetClone(void);
+    nObject *GetClone();
     /// load a object from persistency stream
     nObject *LoadObject(const char *fileName, const char* objName);
 
