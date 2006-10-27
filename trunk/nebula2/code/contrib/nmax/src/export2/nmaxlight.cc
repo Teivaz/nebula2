@@ -84,7 +84,26 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
     switch(lightState.type)
     {
     case OMNI_LIGHT:  // point light.
-        light->SetType(nLight::Point);
+        {
+            float size = 0;
+            light->SetType(nLight::Point);
+            if (lightState.useAtten)
+            {
+                size = lightState.attenEnd;
+            }
+            else if (lightState.useNearAtten)
+            {
+                size = lightState.attenEnd;
+            }
+            else
+            {
+                size = 500.f; // use default
+            }
+            light->SetFloat(nShaderState::LightRange, size);
+            bbox3 box;
+            box.set(vector3(), vector3(size, size, size));
+            light->SetLocalBox(box);
+        }
         break;
 
     case DIR_LIGHT:   // directional light.
@@ -111,6 +130,9 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
         light->SetActive(true);
     else
         light->SetActive(false);
+
+    // cast shadows
+    light->SetCastShadows(lightState.shadow != FALSE);
 
     // light intensity. (The multiplier applied to the color)
     float intensity = lightState.intens;
