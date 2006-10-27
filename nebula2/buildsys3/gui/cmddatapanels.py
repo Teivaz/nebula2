@@ -5,8 +5,7 @@
 # Contents are licensed under the Nebula license.
 #------------------------------------------------------------------------------
 
-from wxPython.wx import *
-from wxPython.xrc import *
+import wx
 import wx.lib.dialogs
 import types
 

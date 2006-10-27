@@ -23,32 +23,15 @@ class CmdEditorPanel(wx.Panel):
         self.buildSys = buildSys
         self.codeDir = buildSys.GetAbsPathFromRel('code')
 
-##        self.tree = gizmos.TreeListCtrl(self, -1, style =
-##                                        #wx.TR_DEFAULT_STYLE
-##                                        wx.TR_TWIST_BUTTONS
-##                                        #| wx.TR_ROW_LINES
-##                                        #| wx.TR_NO_LINES
-##                                        #| wx.TR_AQUA_BUTTONS
-##                                        | wx.TR_HIDE_ROOT
-##                                        | wx.TR_FULL_ROW_HIGHLIGHT
-##                                        | wx.TR_NO_BUTTONS
-##
-##                                        # By default the style will be adjusted on
-##                                        # Mac to use twisty buttons and no lines.  If
-##                                        # you would rather control this yourself then
-##                                        # add this style.
-##                                        #| wx.TR_DONT_ADJUST_MAC
-##                                   )
-
         self.xrcRootItem = None
         xrcLoadPanel(self, parent, 'CmdEditorPanel')
 
         # extracting controls
         treePanel       = xrcCTRLUnpack(self, "TreePanel")
         self.fileName   = xrcCTRLUnpack(self, "FileName")
-        self.previewBtn = xrcCTRLUnpack(self, "Preview", {EVT_BUTTON:self.OnPreview})
-        self.convertBtn = xrcCTRLUnpack(self, "Convert", {EVT_BUTTON:self.OnConvert})
-        self.applyBtn   = xrcCTRLUnpack(self, "Apply", {EVT_BUTTON:self.OnApply})
+        self.previewBtn = xrcCTRLUnpack(self, "Preview", {wx.EVT_BUTTON:self.OnPreview})
+        self.convertBtn = xrcCTRLUnpack(self, "Convert", {wx.EVT_BUTTON:self.OnConvert})
+        self.applyBtn   = xrcCTRLUnpack(self, "Apply", {wx.EVT_BUTTON:self.OnApply})
         self.workPanel  = xrcCTRLUnpack(self, "WorkPanel")
         self.statusLine = xrcCTRLUnpack(self, "StatusLine")
 
