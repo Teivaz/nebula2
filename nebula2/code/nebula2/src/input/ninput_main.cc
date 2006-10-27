@@ -22,7 +22,7 @@ nInputServer* nInputServer::Singleton = 0;
 */
 #ifndef __XBxX__
 void
-nInputServer::ExportDefaultKeyboard(void)
+nInputServer::ExportDefaultKeyboard()
 {
     nRoot *o;
     nEnv *env;
@@ -61,7 +61,7 @@ nInputServer::ExportDefaultKeyboard(void)
 */
 #ifndef __XBxX__
 void
-nInputServer::ExportDefaultMouse(void)
+nInputServer::ExportDefaultMouse()
 {
     nRoot *o;
     nEnv *env;
@@ -168,7 +168,7 @@ nInputServer::Open()
 /**
 */
 void
-nInputServer::BeginScripts(void)
+nInputServer::BeginScripts()
 {
     n_assert(this->act_script == 0);
 }
@@ -189,7 +189,7 @@ nInputServer::AddScript(const char *str)
 /**
 */
 void
-nInputServer::EndScripts(void)
+nInputServer::EndScripts()
 {
     int i;
     for (i=0; i<this->act_script; i++)
@@ -219,7 +219,7 @@ nInputServer::SetLongPressedTime(float f)
 /**
 */
 float
-nInputServer::GetLongPressedTime(void)
+nInputServer::GetLongPressedTime()
 {
     return (float) this->long_pressed_time;
 }
@@ -236,7 +236,7 @@ nInputServer::SetDoubleClickTime(float f)
 //------------------------------------------------------------------------------
 /**
 */
-float nInputServer::GetDoubleClickTime(void)
+float nInputServer::GetDoubleClickTime()
 {
     return (float) this->double_click_time;
 }

@@ -557,7 +557,7 @@ nTclServer::RunScript(const char *filename, nString& result)
     The MicroTcl implementation on the xbox doesnt implement the event system.
 */
 bool
-nTclServer::Trigger(void)
+nTclServer::Trigger()
 {
 #ifndef __MICROTCL__
     while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT));

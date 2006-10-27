@@ -60,7 +60,7 @@ public:
     /// set if loop emitter or not
     void SetLoop(bool b);
     /// is it a loop emitter ?
-    bool GetLoop(void) const;
+    bool GetLoop() const;
     /// set the activity distance
     void SetActivityDistance(float f);
     /// get the distance to the viewer beyond which the emitter stops emitting

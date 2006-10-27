@@ -43,7 +43,7 @@ nPersistServer::SetSaveLevel(int l)
 /**
 */
 int
-nPersistServer::GetSaveLevel(void)
+nPersistServer::GetSaveLevel()
 {
     return this->saveLevel;
 }

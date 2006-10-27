@@ -260,7 +260,7 @@ nPersistServer::EndCloneObject(bool isObjNamed)
      - 08-Nov-04   enlight now returns nObject* instead of nRoot*
 */
 nObject*
-nPersistServer::GetClone(void)
+nPersistServer::GetClone()
 {
     return this->cloneTarget;
 }

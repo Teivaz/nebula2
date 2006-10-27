@@ -758,7 +758,7 @@ EXTERN void		TclExpandCodeArray _ANSI_ARGS_((
 			    CompileEnv *envPtr));
 EXTERN void		TclExpandJumpFixupArray _ANSI_ARGS_((
                             JumpFixupArray *fixupArrayPtr));
-EXTERN void		TclFinalizeAuxDataTypeTable _ANSI_ARGS_((void));
+EXTERN void		TclFinalizeAuxDataTypeTable _ANSI_ARGS_(());
 EXTERN int		TclFindCompiledLocal _ANSI_ARGS_((char *name,
         		    int nameChars, int create, int flags,
 			    Proc *procPtr));
@@ -770,10 +770,10 @@ EXTERN int		TclFixupForwardJump _ANSI_ARGS_((
 EXTERN void		TclFreeCompileEnv _ANSI_ARGS_((CompileEnv *envPtr));
 EXTERN void		TclFreeJumpFixupArray _ANSI_ARGS_((
   			    JumpFixupArray *fixupArrayPtr));
-EXTERN void		TclInitAuxDataTypeTable _ANSI_ARGS_((void));
+EXTERN void		TclInitAuxDataTypeTable _ANSI_ARGS_(());
 EXTERN void		TclInitByteCodeObj _ANSI_ARGS_((Tcl_Obj *objPtr,
 			    CompileEnv *envPtr));
-EXTERN void		TclInitCompilation _ANSI_ARGS_((void));
+EXTERN void		TclInitCompilation _ANSI_ARGS_(());
 EXTERN void		TclInitCompileEnv _ANSI_ARGS_((Tcl_Interp *interp,
 			    CompileEnv *envPtr, char *string,
 			    int numBytes));

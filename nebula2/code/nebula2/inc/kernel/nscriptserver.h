@@ -80,7 +80,7 @@ public:
     bool GetQuitRequested() const;
 
     /// trigger server (should be called frequently)
-    virtual bool Trigger(void);
+    virtual bool Trigger();
 
 #ifndef __XBxX__
     /// generate a prompt string for interactive mode

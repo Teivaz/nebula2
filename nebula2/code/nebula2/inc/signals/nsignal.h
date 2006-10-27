@@ -42,7 +42,7 @@ public:
     /// destructor
     virtual ~nSignal();
     /// Delete signal if possible
-    virtual void Release(void);
+    virtual void Release();
 
     /** @name Invocation
         Methods for invoking a signal. */
@@ -93,7 +93,7 @@ nSignal::~nSignal()
 */
 inline
 void
-nSignal::Release(void)
+nSignal::Release()
 {
     n_delete(this);
 }

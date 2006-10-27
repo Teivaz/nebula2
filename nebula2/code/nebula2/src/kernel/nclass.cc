@@ -20,7 +20,7 @@
 nClass::nClass(const char *name,
                nKernelServer *kserv,
                bool (*initFunc)(nClass *, nKernelServer *),
-               void *(*newFunc)(void)) :
+               void *(*newFunc)()) :
     nSignalRegistry(),
     nHashNode(name),
     kernelServer(kserv),
@@ -43,7 +43,7 @@ nClass::nClass(const char *name,
                            Objekte freigegeben...
      - 18-Feb-00   floh    + cmd_table is now a nKeyArray
 */
-nClass::~nClass(void)
+nClass::~nClass()
 {
     // if I'm still connected to a superclass, unlink from superclass
     if (this->superClass)
@@ -88,7 +88,7 @@ nClass::~nClass(void)
      - 07-Nov-04   enlight now returns nObject* instead of nRoot*
 */
 nObject*
-nClass::NewObject(void)
+nClass::NewObject()
 {
     nObject *obj = (nObject *) this->n_new_ptr();
     n_assert(obj);
@@ -102,7 +102,7 @@ nClass::NewObject(void)
      - 08-Aug-99   floh    created
 */
 void
-nClass::BeginCmds(void)
+nClass::BeginCmds()
 {
     n_assert(0 == this->cmdTable);
     n_assert(0 == this->cmdList);
@@ -159,7 +159,7 @@ nClass::AddCmd(const char *proto_def, nFourCC id, void (*cmd_proc)(void *, nCmd 
      - 18-Feb-00   floh    cmd_table now a nKeyArray
 */
 void
-nClass::EndCmds(void)
+nClass::EndCmds()
 {
     n_assert(0 == this->cmdTable);
     n_assert(this->cmdList);

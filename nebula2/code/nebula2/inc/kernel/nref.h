@@ -188,7 +188,7 @@ nRef<TYPE>::get_unsafe() const
 template<class TYPE>
 inline
 bool
-nRef<TYPE>::isvalid(void) const
+nRef<TYPE>::isvalid() const
 {
     return this->targetObject ? true : false;
 }

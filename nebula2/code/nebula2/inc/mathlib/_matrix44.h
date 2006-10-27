@@ -64,9 +64,9 @@ public:
     /// determinant
     float det();
     /// full invert
-    void invert(void);
+    void invert();
     /// quick invert (if 3x3 rotation and translation)
-    void invert_simple(void);
+    void invert_simple();
     /// quick multiplication, assumes that M14==M24==M34==0 and M44==1
     void mult_simple(const _matrix44& m1);
     /// transform vector3, projecting back into w=1

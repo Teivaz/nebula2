@@ -260,7 +260,7 @@ nTimeServer::Trigger()
 //------------------------------------------------------------------------------
 /**
 */
-void nTimeServer::EnableFrameTime(void)
+void nTimeServer::EnableFrameTime()
 {
     this->frame_enabled = true;
     this->frame_time = this->GetTime();
@@ -269,7 +269,7 @@ void nTimeServer::EnableFrameTime(void)
 //------------------------------------------------------------------------------
 /**
 */
-void nTimeServer::DisableFrameTime(void)
+void nTimeServer::DisableFrameTime()
 {
     this->frame_enabled = false;
 }
@@ -277,7 +277,7 @@ void nTimeServer::DisableFrameTime(void)
 //------------------------------------------------------------------------------
 /**
 */
-double nTimeServer::GetFrameTime(void)
+double nTimeServer::GetFrameTime()
 {
     if (this->frame_enabled) return this->frame_time;
     else                     return this->GetTime();

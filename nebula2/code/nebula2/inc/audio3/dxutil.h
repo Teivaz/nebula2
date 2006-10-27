@@ -132,13 +132,13 @@ protected:
 
 public:
     CArrayList(ArrayListType Type, UINT BytesPerEntry = 0);
-    ~CArrayList(void);
+    ~CArrayList();
     HRESULT Add(void* pEntry);
     void Remove(UINT Entry);
     void* GetPtr(UINT Entry);
-    UINT Count(void) { return m_NumEntries; }
+    UINT Count() { return m_NumEntries; }
     bool Contains(void* pEntryData);
-    void Clear(void) { m_NumEntries = 0; }
+    void Clear() { m_NumEntries = 0; }
 };
 
 //-----------------------------------------------------------------------------
