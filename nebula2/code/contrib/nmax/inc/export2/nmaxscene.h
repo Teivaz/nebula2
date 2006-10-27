@@ -28,9 +28,12 @@ class nMaxBoneManager;
 class nMaxScene
 {
 public:
+    ///
     nMaxScene();
+    ///
     virtual ~nMaxScene();
 
+    ///
     bool Export(INode* inode);
 
 protected:
@@ -58,7 +61,7 @@ protected:
     // @}
 
     /// To be overrided if needed.
-    virtual nString GetMeshFileNameToSave(nString& meshPath);
+    virtual nString GetMeshFileNameToSave(nString& meshPath, nMaxMesh::Type type, bool isSkinned) const;
     /// To be overrided if needed.
     virtual nString GetAnimFileNameToSaveBase();
     ///
@@ -102,6 +105,9 @@ protected:
     ///
     virtual void ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName);
 
+    //
+    void AddMeshByType(nMaxMesh* mesh);
+
 protected:
     /// variable server
     nRef<nVariableServer> varServer;
@@ -116,11 +122,22 @@ protected:
     /// Nebula object name of the scene base object.
     nSceneNode* exportRoot;
 
-    /// array for exported nMaxMesh instances.
+    /// mesh array where meshes that exported from nMaxMesh instance are stored.
     nArray<nMaxMesh*> meshArray;
+    nArray<nMaxMesh*> skinnedMeshArray;
+    nArray<nMaxMesh*> shadowMeshArray;
+    nArray<nMaxMesh*> skinnedShadowMeshArray;
+    nArray<nMaxMesh*> collisionMeshArray;
 
     /// Mesh builder for meshes in the mesh array.
     nMeshBuilder globalMeshBuilder;
+    /// Mesh builder for meshes in the skinned mesh array.
+    nMeshBuilder globalSkinnedMeshBuilder;
+    /// Mesh builder for meshes in the shadow mesh array.
+    nMeshBuilder globalShadowMeshBuilder;
+    /// Mesh builder for meshes in the skinned shadow mesh array.
+    nMeshBuilder globalSkinnedShadowMeshBuilder;
+
 
     /// array for top level nodes.
     nArray<INode*> topLevelNodes;

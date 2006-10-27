@@ -62,14 +62,23 @@ public:
 
     nSceneNode* Export(INode* inode);
 
+    ///
     int GetNumGroupMeshes() const;
+    ///
     const nMaxSkinMeshData& GetGroupMesh(const int index);
 
     /// Retrieve mesh type.
     Type GetType() const;
 
+    ///
     nMeshBuilder& GetMeshBuilder();
+    ///
     void SetBaseGroupIndex(int baseGroupIndex);
+
+    ///
+    static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
+    ///
+    static void CheckGeometryErrors(nMeshBuilder& meshBuilder, nString& meshName);
 
     /// Retrieve directory path where the mesh will be located.
     nString GetMeshPath() const;
@@ -79,6 +88,14 @@ public:
 
     /// Retrieve 3dsmax node name for this mesh.
     nString GetNodeName() const;
+
+    ///
+    static nString AppendMeshPostfixByType(Type type, bool isSkinned);
+
+    ///
+    bool IsSkinned();
+    ///
+    bool IsPhysique();
 
 protected:
     Mesh* LockMesh(INode* node);
@@ -119,19 +136,21 @@ protected:
     ///@name physique and skin functions.
     ///@{
     bool BeginSkin(INode *node);
+    ///
     void EndSkin();
-
-    bool IsSkinned();
-    bool IsPhysique();
-
+    ///
     IPhyVertexExport* GetVertexInterface(int vertexId);
+    ///
     void ReleaseVertexInterface(IPhyVertexExport* phyVertexExport);
-
+    ///
     ISkinContextData* GetSkinContextData();
+    ///
     ISkin* GetSkin();
     ///@}
 
+    ///
     int GetNumPoints();
+    ///
     int GetNumBones();
 
     ///@name physique and skin variables.

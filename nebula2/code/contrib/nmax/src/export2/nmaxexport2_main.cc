@@ -4,7 +4,11 @@
 //  (c)2004 Kim, Hyoun Woo
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
+
+#include "tools/nmeshbuilder.h"
+
 #include "base/nmaxlistener.h"
+#include "export2/nmaxmesh.h"
 #include "export2/nmaxexport2.h"
 #include "tools/nmeshbuilder.h"
 #include "export2/nmaxscene.h"
