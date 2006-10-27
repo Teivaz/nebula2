@@ -62,6 +62,9 @@
     the <b>3DSMax Toolkit</b> pages of <b>Asset Toolchain</b> section in <b>Nebula2</b> 
     document.
 
+    See the @ref NMaxKnownIusses page if you want to know any the toolkit related issues 
+    or current limitations about it.
+
 
     @section NMaxIntroCredits Credits
 
