@@ -110,7 +110,7 @@
     @endverbatim
 
     The following image shows a created notetrack key by the above maxscript:
-    @image html animstate03.jpg
+    @image html animstate03.png
 
     @subsection NMaxHowtoCharactersChangingAnimInViewer Changing Animations in the Viewer
 
