@@ -14,6 +14,7 @@
 #include "scene/nshapenode.h"
 #include "scene/nuvanimator.h"
 #include "kernel/nfileserver2.h"
+#include "export2/nmaxmaterial_shd.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -117,29 +118,47 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         // For example, standard material has two texmap objects, one for diffuse map 
         // and the other for bump map. 
         // The warning will be shown If you set only diffuse map.
-        n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
-
-        // specify defaultl texture if no texture map is assigned.
-        nString shdParam = nShaderState::ParamToString(param);
-
-        nString texmap;
-
-        // FIXME: any other good idea to avoid this hard coding? :-)
-        if (strstr(shdParam.Get(), "DiffMap"))
-            texmap = "textures:system/white.dds";
+        switch(param)
+        {
+        case nShaderState::DiffMap0:                       // texture: diffuse map layer 0
+        case nShaderState::DiffMap1:                       // texture: diffuse map layer 1
+        case nShaderState::DiffMap2:                       // texture: diffuse map layer 2
+        case nShaderState::DiffMap3:                       // texture: diffuse map layer 3
+        case nShaderState::DiffMap4:
+        case nShaderState::DiffMap5:
+        case nShaderState::DiffMap6:
+        case nShaderState::DiffMap7:
+        case nShaderState::SpecMap0:                       // texture: specular map layer 0
+        case nShaderState::SpecMap1:                       // texture: specular map layer 1
+        case nShaderState::SpecMap2:                       // texture: specular map layer 2
+        case nShaderState::SpecMap3:                       // texture: specular map layer 3
+        case nShaderState::AmbientMap0:                    // texture: ambient map layer 1
+        case nShaderState::AmbientMap1:                    // texture: ambient map layer 2
+        case nShaderState::AmbientMap2:                    // texture: ambient map layer 3
+        case nShaderState::AmbientMap3:                    // texture: ambient map layer 4
+        case nShaderState::BumpMap0:                       // texture: bump map layer 0
+        case nShaderState::BumpMap1:                       // texture: bump map layer 1
+        case nShaderState::BumpMap2:                       // texture: bump map layer 2
+        case nShaderState::BumpMap3:                       // texture: bump map layer 3
+        case nShaderState::CubeMap0:                       // texture: cube map layer 0
+        case nShaderState::CubeMap1:                       // texture: cube map layer 1
+        case nShaderState::CubeMap2:                       // texture: cube map layer 2
+        case nShaderState::CubeMap3:                       // texture: cube map layer 3
+            {
+                nString defValue;
+                if (GetDefaultValueFromDataBase(shapeNode->GetShader(), nShaderState::ParamToString(param), defValue) && defValue.IsValid())
+                {
+                    shapeNode->SetTexture(param, defValue.Get());
+                    n_maxlog(Low, "The texmap for '%s' is null. Use default '%s'", nShaderState::ParamToString(param), defValue.Get());
+                }
         else
-        if (strstr(shdParam.Get(), "BumpMap"))
-            texmap = "textures:system/nobump.dds";
-        else
-        if (strstr(shdParam.Get(), "CubeMap"))
-            texmap = "textures:system/cube.dds";
-        else
-            texmap = "textures:system/white.dds";
-
-        n_maxlog(Warning, "Warning: The '%s' file is used for the default one.", texmap.Get());
-
-        shapeNode->SetTexture(param, texmap.Get());
-
+                    n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
+            }
+            break;
+        default:
+            n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
+            break;
+        }
         return;
     }
 

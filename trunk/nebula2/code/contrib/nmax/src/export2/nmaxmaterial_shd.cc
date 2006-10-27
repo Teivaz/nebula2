@@ -19,6 +19,7 @@
 #include "misc/niniprefserver.h"
 #include "util/nstring.h"
 #include "tinyxml/tinyxml.h"
+#include "gfx2/nshaderstate.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -365,6 +366,7 @@ nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
     {
         handler += GetStringForDefault(shdName, "common", paramName);
     }
+    //texture map
     else
     if (strstr(paramName.Get(), "DiffMap") ||
         strstr(paramName.Get(), "BumpMap") ||
@@ -416,63 +418,48 @@ nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
 static
 nString GetEventHandler(const nString &shdName, const nString &paramName)
 {
+    bool validParam = true;
     nString handler;
 
     handler += "\t\ton ";
     handler += paramName;
     handler += " set val do \n";
     handler += "\t\t(\n";
-
-    if (paramName == "MatAmbient")
+    nShaderState::Param param = nShaderState::StringToParam(paramName.Get());
+    switch(param)
     {
+    case nShaderState::MatAmbient:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
         //handler += "\t\t\tcurMaterial.delegate.ambient = val\n";
-
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (paramName == "MatDiffuse")
-    {
+        break;
+    case nShaderState::MatDiffuse:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
         //handler += "\t\t\tcurMaterial.delegate.diffuse = val\n";
-
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (paramName == "MatSpecular")
-    {
+        break;
+    case nShaderState::MatSpecular:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
         //handler += "\t\t\tcurMaterial.delegate.specular = val\n";
-
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (paramName == "MatEmissive")
-    {
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (paramName == "MatEmissiveIntensity")
-    {
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (paramName == "MatSpecularPower")
-    {
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (paramName == "AlphaSrcBlend" ||
-        paramName == "AlphaDstBlend")
-    {
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (strstr(paramName.Get(), "DiffMap"))
-    {
+        break;
+    case nShaderState::MatEmissive:
+        break;
+    case nShaderState::MatEmissiveIntensity:
+        break;
+    case nShaderState::MatSpecularPower:
+        break;
+    case nShaderState::AlphaSrcBlend:
+    case nShaderState::AlphaDstBlend:
+        break;
+    case nShaderState::DiffMap0:
+    case nShaderState::DiffMap1:
+    case nShaderState::DiffMap2:
+    case nShaderState::DiffMap3:
+    case nShaderState::DiffMap4:
+    case nShaderState::DiffMap5:
+    case nShaderState::DiffMap6:
+    case nShaderState::DiffMap7:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
 
         //FIXME: should assign map channel to delegate.
@@ -483,12 +470,11 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         //handler += "\t\t\tcurMaterial.delegate.diffuseMap = val\n";
         //handler += "\t\t\tif curMaterial.delegate.diffuseMap != undefined do\n";
         //handler += "\t\t\t\tcurMaterial.delegate.diffuseMapEnable = true\n";
-
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (strstr(paramName.Get(), "BumpMap"))
-    {
+        break;
+    case nShaderState::BumpMap0:
+    case nShaderState::BumpMap1:
+    case nShaderState::BumpMap2:
+    case nShaderState::BumpMap3:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         
         //FIXME: should assign map channel to delegate.
@@ -497,12 +483,11 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         //handler += "\t\t\tcurMaterial.delegate.bumpMap = val\n";
         //handler += "\t\t\tif curMaterial.delegate.bumpMap != undefined do\n";
         //handler += "\t\t\t\tcurMaterial.delegate.bumpMapEnable = true\n";
-
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (strstr(paramName.Get(), "CubeMap"))
-    {
+        break;
+    case nShaderState::CubeMap0:
+    case nShaderState::CubeMap1:
+    case nShaderState::CubeMap2:
+    case nShaderState::CubeMap3:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
 
         //FIXME: should assign map channel to delegate.
@@ -514,12 +499,11 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         //handler += "if delegate.diffuseMap != undefined do\n";
         //handler += "\t\t\t\t";
         //handler += "delegate.diffuseMapEnable = true\n";
-
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    if (strstr(paramName.Get(), "SpecMap"))
-    {
+        break;
+    case nShaderState::SpecMap0:
+    case nShaderState::SpecMap1:
+    case nShaderState::SpecMap2:
+    case nShaderState::SpecMap3:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
         //FIXME: should assign map channel to delegate.
 
@@ -528,13 +512,16 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
         //handler += "\t\t\tcurMaterial.delegate.specularMap  = val\n";
         //handler += "\t\t\tif curMaterial.delegate.specularMap != undefined do\n";
         //handler += "\t\t\t\tcurMaterial.delegate.specularMapEnable = true\n";
-
-        handler += GetIpcEventHandler(shdName, paramName);
-    }
-    else
-    {
+        break;
+    default:
+    case nShaderState::InvalidParameter:
         // put empty handler.
-        ;
+        validParam = false;
+        break;
+    }
+    if (validParam)
+    {
+        handler += GetIpcEventHandler(shdName, paramName);
     }
 
     handler += "\t\t) \n";
@@ -722,6 +709,83 @@ nString AddPluginEventHandlers()
     script += "\t)\n";
 
     return script;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Retrieve all shader names from xml file (e.g. shader.xml)
+*/
+TiXmlHandle GetShaderFromDataBase(TiXmlHandle& xmlHandle, const nString &shader)
+{
+    // retrieves all shader names in xml file.
+    TiXmlElement* child = xmlHandle.FirstChild("NebulaShaderDatabase").FirstChild("shader").Element();
+    for (child; child; child=child->NextSiblingElement())
+    {
+        // get shader name.
+        nString name = child->Attribute("file");
+        if (name == shader)
+        {
+            return child;
+        }
+    }
+    return TiXmlHandle(0);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Retrieve parameter from given shader.
+*/
+TiXmlHandle GetParamFromShader(TiXmlHandle& shader, const nString &param)
+{
+    TiXmlElement* child = shader.FirstChild("param").Element();
+    for (child; child; child=child->NextSiblingElement())
+    {
+        nString name = child->Attribute("name");
+        if (name == param)
+            return TiXmlHandle(child);
+    }
+    return TiXmlHandle(0);
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Retrieve default value which is defined in shader database file(shader.xml)
+    It is needed when the toolkit set default value if the parameter has not any value.
+
+    e.g) The toolkit specifies "nobump.dds" if there is no bump map is specified 
+    in the material editor when it exports.
+*/
+bool GetDefaultValueFromDataBase(const nString &shader, const nString &param, nString &outvalue)
+{
+    // Get the full path of '$nebula/data/shaders/shaders.xml' file.
+    nString shdXmlFilePath = GetShaderXmlPath();
+    if (shdXmlFilePath.IsEmpty())
+    {
+        n_listener("Cannot find shaders.xml file.\n");
+        return false;
+    }
+
+    TiXmlDocument xmlDoc;
+
+    // Load the shaders.xml file
+    if (!xmlDoc.LoadFile(shdXmlFilePath.Get()))
+    {
+        n_listener("Filed to load %s.", shdXmlFilePath.Get());
+        return false;
+    }
+
+    TiXmlHandle xmlHandle(&xmlDoc);
+    TiXmlElement* pElem = GetParamFromShader(GetShaderFromDataBase(xmlHandle, shader), param).Element();
+    if (pElem == 0)
+        return false;
+
+    const char *attr = pElem->Attribute("def");
+    if (attr == 0)
+        return false;
+    
+    outvalue = attr;
+
+    return true;
 }
 
 //-----------------------------------------------------------------------------
