@@ -120,11 +120,8 @@ class MainFrame(wx.Frame):
         # get the sizers to sort out the frame's size
         sizerA.Fit(self.mainPanel)
         self.mainPanel.SetSizer(sizerA)
+        self.mainPanel.Layout()
         self.Fit()
-        # if we wanted to set the size of the frame manually, we'd do this:
-        #self.mainPanel.SetSizer(sizerA)
-        #self.mainPanel.Layout()
-        #self.Fit()
 
         # Load the workspace list in a separate thread
         thread.start_new_thread(self.LoadWorkspaceList, ())
