@@ -4,6 +4,17 @@
     This section of the document lists the change history of The Nebula2 3dsmax
     Toolkit.
 
+    @section N2ChangeLog_2006_10 2006.10.
+
+    - Updated to append postfix to mesh file name by its type.
+    - Changed to merge meshes by its type. (shape, skinned shape, shadow, skinnedshape, collision)
+    - Updated to append postfix at the end of mesh file. (e.g. _skinned for the skinned shape mesh file)
+    - Changed to read default texture values from the "shaders:shaders.xml" file.
+    - Updated to export RenderPri parameter if it is set in nebula2 materials of 
+      3dsmax material editor. 
+    - Updated to use 3dsmax Omni Light's properties to setup the LightRange and 
+      castshadows parameters of nLight. Now you can export Omni Light directly into scene.
+
     @section N2ChangeLog_2006_08 2006.08.
 
     - Added NSIS install script for nmaxtoolbox installation.
