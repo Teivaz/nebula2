@@ -31,17 +31,17 @@ public:
     /// get the display mode
     const nDisplayMode2& GetDisplayMode() const;
     /// open the application window
-    bool OpenWindow();
+    virtual bool OpenWindow();
     /// close the application window
-    void CloseWindow();
-    /// prepare window for switching between windowd/full-screen mode
-    void AdjustWindowForChange();
+    virtual void CloseWindow();
+    /// prepare window for switching between windowed/full-screen mode
+    virtual void AdjustWindowForChange();
     /// restore window from minimized state
-    void RestoreWindow();
+    virtual void RestoreWindow();
     /// minimize the window
-    void MinimizeWindow();
+    virtual void MinimizeWindow();
     /// call this method per frame, returns false if app should shut down
-    bool Trigger();
+    virtual bool Trigger();
     /// return true if window is open
     bool IsWindowOpen() const;
     /// return true if window is minimized

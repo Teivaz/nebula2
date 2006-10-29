@@ -7,6 +7,8 @@
 #include "gfx2/nwin32windowhandler.h"
 #include "kernel/nenv.h"
 
+nArray<WndProc> nWin32WindowHandler::wndProcList;
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -450,6 +452,14 @@ nWin32WindowHandler::OnClose()
     return false;
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nWin32WindowHandler::OnMouseMove(int x, int y)
+{
+}
+
 //-----------------------------------------------------------------------------
 /**
     The winproc, does the usual housekeeping, and also generates mouse and keyboard
@@ -459,6 +469,14 @@ LONG
 WINAPI
 nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    for (int i = 0; i < wndProcList.Size(); i++)
+    {
+        if ((*(wndProcList[i]))(hWnd, uMsg, wParam, lParam) == 0)
+        {
+            return 0;
+        }
+    }
+
     LONG retval = 1;
 
     // user data of windows contains 'this' pointer
@@ -748,6 +766,14 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 //------------------------------------------------------------------------------
 /**
+*/
+void
+nWin32WindowHandler::RegisterWndProc(WndProc wndProc) {
+    wndProcList.PushBack(wndProc);
+}
+
+//------------------------------------------------------------------------------
+/**
     Translate a win32 keycode into a Nebula keycode.
 
     -24-Aug-05    kims    Fixed the bug #128, Added additional key mapping.
@@ -882,14 +908,6 @@ nWin32WindowHandler::TranslateKey(int vkey)
         default:            nk=N_KEY_NONE; break;
     }
     return nk;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-void
-nWin32WindowHandler::OnMouseMove(int x, int y)
-{
 }
 
 #endif __WIN32__

@@ -14,6 +14,8 @@
 */
 #include "gfx2/nwindowhandler.h"
 
+typedef LRESULT (*WndProc)(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
 //------------------------------------------------------------------------------
 class nWin32WindowHandler : public nWindowHandler
 {
@@ -23,19 +25,19 @@ public:
     /// destructor
     ~nWin32WindowHandler();
     /// open the application window
-    bool OpenWindow();
+    virtual bool OpenWindow();
     /// close the application window
-    void CloseWindow();
+    virtual void CloseWindow();
     /// set the window title
-    void SetWindowTitle(const char* title);
+    virtual void SetWindowTitle(const char* title);
     /// prepare window for switching between windowed/full-screen mode
-    void AdjustWindowForChange();
+    virtual void AdjustWindowForChange();
     /// restore window from minimized state
-    void RestoreWindow();
+    virtual void RestoreWindow();
     /// minimize the window
-    void MinimizeWindow();
+    virtual void MinimizeWindow();
     /// call this method per frame, returns false if app should shut down
-    bool Trigger();
+    virtual bool Trigger();
     /// get the app window's hWnd
     HWND GetHwnd() const;
     /// get parent hWnd
@@ -55,13 +57,16 @@ public:
 
     /// the WinProc
     static LONG WINAPI WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    static void RegisterWndProc(WndProc wndProc);
 
-public:
-    // NOTE: public because WinProc needs access!
-
+private:
     /// translate win32 keycode into Nebula keycode
     nKey TranslateKey(int vkey);
 
+private:
+    static nArray<WndProc> wndProcList;
+
+protected:
     HINSTANCE hInst;                ///< application instance handle
     HWND hWnd;                      ///< handle of this window
     HWND parentHwnd;                ///< handle of parent window  (child mode)
