@@ -351,7 +351,7 @@ bool
 nWin32WindowHandler::Trigger()
 {
     // just skip message loop such a case of the window is embedded
-    // to other system like intergating Nebula with wxWindow.
+    // to other system like integrating Nebula with wxWindow.
     if (IsSkipMsgLoop())
         return true;
 
@@ -768,8 +768,25 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /**
 */
 void
-nWin32WindowHandler::RegisterWndProc(WndProc wndProc) {
-    wndProcList.PushBack(wndProc);
+nWin32WindowHandler::RegisterWndProc(WndProc wndProc)
+{
+    if (!wndProcList.Find(wndProc))
+    {
+        wndProcList.PushBack(wndProc);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nWin32WindowHandler::UnregisterWndProc(WndProc wndProc)
+{
+    int index = wndProcList.FindIndex(wndProc);
+    if (index != -1)
+    {
+        wndProcList.Erase(index);
+    }
 }
 
 //------------------------------------------------------------------------------
