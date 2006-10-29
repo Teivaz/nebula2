@@ -58,6 +58,7 @@ public:
     /// the WinProc
     static LONG WINAPI WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     static void RegisterWndProc(WndProc wndProc);
+    static void UnregisterWndProc(WndProc wndProc);
 
 private:
     /// translate win32 keycode into Nebula keycode
