@@ -25,8 +25,7 @@ Logger::~Logger() {
 */
 void Logger::logEvent(const CEGUI::String& message, CEGUI::LoggingLevel level) {
     if (level <= getLoggingLevel()) {
-        switch (level)
-        {
+        switch (level) {
         case CEGUI::Errors:
             nKernelServer::Instance()->Error("%s\n", message.c_str());
             break;

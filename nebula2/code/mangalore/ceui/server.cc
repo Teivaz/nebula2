@@ -43,8 +43,8 @@ Server::~Server() {
 /**
 */
 bool Server::Open() {
-    n_new(CEUI::Logger);
-    renderer = n_new(CEUI::Renderer);
+    n_new(Logger);
+    renderer = n_new(Renderer);
     ceGuiSystem = n_new(CEGUI::System(renderer));
     CEGUI::Logger::getSingleton().setLoggingLevel(CEGUI::Standard);
     nGfxServer2::Instance()->SetCursorVisibility(nGfxServer2::Custom);
@@ -233,8 +233,8 @@ void Server::Render() {
 /**
     create GUI font
 */
-void Server::CreateFont(const nString& fontName) {
-    CEGUI::FontManager::getSingleton().createFont(fontName.Get());
+CEGUI::Font* Server::CreateFont(const nString& fontName) {
+    return CEGUI::FontManager::getSingleton().createFont(fontName.Get());
 }
 
 //------------------------------------------------------------------------------

@@ -458,7 +458,7 @@ ViewerApp::SetupCeGui()
     ceuiServer->LoadScheme("cegui:schemes/TaharezLook.scheme");
     ceuiServer->SetDefaultMouseCursor("TaharezLook", "MouseArrow");
     CEGUI::Window* window = ceuiServer->LoadWindowLayout("cegui:layouts/mviewer.layout");
-    CEGUI::System::getSingleton().setGUISheet(window);
+    ceuiServer->SetRootWindow(window);
     ceuiServer->DisplayGui();
 }
 
