@@ -28,7 +28,7 @@ public:
     void CloseWindow();
     /// set the window title
     void SetWindowTitle(const char* title);
-    /// prepare window for switching between windowd/full-screen mode
+    /// prepare window for switching between windowed/full-screen mode
     void AdjustWindowForChange();
     /// restore window from minimized state
     void RestoreWindow();

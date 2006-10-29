@@ -92,7 +92,9 @@ public:
     virtual FeatureSet GetFeatureSet();
     /// return true if vertex shader run in software emulation
     virtual bool AreVertexShadersEmulated();
-    /// parent window handle
+    /// get window handle
+    virtual HWND GetHwnd() const;
+    /// get parent window handle
     virtual HWND GetParentHwnd() const;
     /// returns the number of available stencil bits
     virtual int GetNumStencilBits() const;
@@ -442,6 +444,16 @@ nD3D9Server::GetD3DPrimTypeAndNum(PrimitiveType primType, D3DPRIMITIVETYPE& d3dP
             break;
     }
     return d3dNumPrimitives;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+HWND
+nD3D9Server::GetHwnd() const
+{
+    return this->windowHandler.GetHwnd();
 }
 
 //------------------------------------------------------------------------------
