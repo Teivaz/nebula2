@@ -46,7 +46,7 @@ public:
     /// render the user interface
     void Render();
     /// create GUI font
-    void CreateFont(const nString& fontName);
+    CEGUI::Font* CreateFont(const nString& fontName);
     /// destroy GUI font
     void DestroyFont(const nString& fontName);
     /// destroy all GUI fonts
@@ -72,7 +72,7 @@ public:
     /// destroy all windows
     void DestroyAllWindows();
     /// load window layout
-    CEGUI::Window* LoadWindowLayout(const nString& resName, const nString& prefix="");
+    CEGUI::Window* LoadWindowLayout(const nString& resName, const nString& prefix = "");
     /// set root window
     void SetRootWindow(CEGUI::Window* window);
     /// get root window
