@@ -454,7 +454,7 @@ nD3D9Server::DeviceOpen()
     this->presentParams.MultiSampleType                 = d3dMultiSampleType;
     this->presentParams.MultiSampleQuality              = 0;
     this->presentParams.SwapEffect                      = D3DSWAPEFFECT_DISCARD;
-    this->presentParams.hDeviceWindow                   = this->windowHandler.GetHwnd();
+    this->presentParams.hDeviceWindow                   = this->windowHandler.GetAppHwnd();
     this->presentParams.EnableAutoDepthStencil          = TRUE;
     this->presentParams.AutoDepthStencilFormat          = zbufFormat;
     this->presentParams.FullScreen_RefreshRateInHz      = D3DPRESENT_RATE_DEFAULT;
@@ -462,7 +462,7 @@ nD3D9Server::DeviceOpen()
     // create d3d device
     hr = this->d3d9->CreateDevice(N_D3D9_ADAPTER,
                                   N_D3D9_DEVICETYPE,
-                                  this->windowHandler.GetHwnd(),
+                                  this->windowHandler.GetAppHwnd(),
                                   this->deviceBehaviourFlags,
                                   &(this->presentParams),
                                   &(this->d3d9Device));
@@ -526,7 +526,7 @@ nD3D9Server::DeviceClose()
     n_assert(this->effectPool);
     n_assert(this->d3dxLine);
     n_assert(this->windowHandler.IsWindowOpen());
-    n_assert(this->windowHandler.GetHwnd());
+    n_assert(this->windowHandler.GetAppHwnd());
 
     n_printf("nD3D9Server::DeviceClose()\n");
 
@@ -1137,7 +1137,7 @@ void nD3D9Server::AdjustGamma()
     }
     else
     {
-        HWND hwnd = this->windowHandler.GetHwnd();
+        HWND hwnd = this->windowHandler.GetAppHwnd();
         HDC hdc = GetDC(hwnd);
         SetDeviceGammaRamp(hdc, &ramp);
         ReleaseDC(hwnd, hdc);

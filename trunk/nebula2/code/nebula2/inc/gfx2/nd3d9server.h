@@ -93,7 +93,7 @@ public:
     /// return true if vertex shader run in software emulation
     virtual bool AreVertexShadersEmulated();
     /// get window handle
-    virtual HWND GetHwnd() const;
+    virtual HWND GetAppHwnd() const;
     /// get parent window handle
     virtual HWND GetParentHwnd() const;
     /// returns the number of available stencil bits
@@ -451,9 +451,9 @@ nD3D9Server::GetD3DPrimTypeAndNum(PrimitiveType primType, D3DPRIMITIVETYPE& d3dP
 */
 inline
 HWND
-nD3D9Server::GetHwnd() const
+nD3D9Server::GetAppHwnd() const
 {
-    return this->windowHandler.GetHwnd();
+    return this->windowHandler.GetAppHwnd();
 }
 
 //------------------------------------------------------------------------------
