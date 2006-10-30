@@ -512,7 +512,8 @@ AddSetDirDlg(TiXmlElement* elemParam)
     uiScript += "\"";
     uiScript += "Dest Folder : ";
     uiScript += "\"";
-    uiScript += " align:#left fieldWidth:180 across:2 readonly:true \n";
+    //uiScript += " align:#left fieldWidth:180 across:2 readonly:true \n";
+    uiScript += " align:#left fieldWidth:180 across:2 \n";
 
     // script code for 'button' control
     uiScript += "\t\t";

@@ -602,7 +602,7 @@ bool nMaxScene::Postprocess()
     TiXmlDocument xmlDoc;
     nMaxCustAttrib custAttrib;
 
-    // HACK: sceneRoot is root node of 
+    // HACK: sceneRoot is root node in the current 3dsmax viewport.
     if (!custAttrib.Convert(sceneRoot, xmlDoc))
     {
         TiXmlHandle xmlHandle(&xmlDoc);
@@ -618,25 +618,27 @@ bool nMaxScene::Postprocess()
             child = xmlHandle.FirstChild(dirParamName).FirstChild("gfxDir").Child("", 0).Element();
             if (child)
             {
-                const char* scenePath = child->Attribute("value");
-                if (scenePath)
+                nString scenePath = child->Attribute("value");
+
+                // The directory parameter has "" for default string. It is absolutely necessary in Max6.
+                // Without that, the exporter is not usable as the panels that have those controls in them don't work.
+                if (scenePath == "")
+                {
+                    // The given scene (which to be exported) has already scene option custom attribute
+                    // but the directory is not specified so we just use default gfx assign value for it.
+                    // (the directory path which is specified in "Directory Setting Dialog".)
+                    this->sceneDir = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetGfxLibAssign());
+                }
+                else
                 {
                     this->sceneDir = scenePath;
-
-                    //HACK: if the path has "<<NULL>>" for its value,
-                    //      we convert it to the default mesh export directory.
-                    //      See nMaxCustAttrib::StringToXml() function in the nmaxcustattrib.cc file.
-                    if (this->sceneDir == "<<NULL>>")
-                    {
-                        this->sceneDir = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetGfxLibAssign());
-                    }
                 }
             }
         }
     }
     else
     {
-        n_maxlog(Warning, "A directory for gfxlib is not specified.");
+        n_maxlog(Low, "A scene option custom attribute is not specified.");
     }
 
     // we only save .n2 gfx object in the case that there are nodes to export exist.

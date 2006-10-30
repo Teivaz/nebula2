@@ -13,13 +13,13 @@ nAnimOptionsCA = attributes "nAnimOptions"
 (
     parameters AnimDirSetting rollout:rOptions
     (
-        animDir type:#string default:"" ui:edtAnimDirSetting
+        animDir type:#string default:"" animatable:true ui:edtAnimDirSetting
     )
 
     rollout rOptions "Nebula2 Anim Options"
     (
         label lblAnimDirSetting "Dest Directory for a Animation : " align:#left
-        edittext edtAnimDirSetting "" align:#left fieldWidth:100 across:2 readonly:true 
+        edittext edtAnimDirSetting "" align:#left fieldWidth:100 across:2 
         button btnAnimDirSetting  "<<" align:#right width:20 height:18
         on btnAnimDirSetting pressed do
         (

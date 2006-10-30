@@ -30,7 +30,8 @@ nMeshOptionsCA = attributes "nMeshOptions"
 
     parameters MeshDirSetting rollout:rOptions
     (
-        meshDir type:#string default:"" ui:edtDirSetting
+        meshDir type:#string default:"" animatable:true ui:edtMeshDirSetting
+        gfxDir  type:#string default:"" animatable:true ui:edtGfxDirSetting
     )
     
     rollout rOptions "Nebula2 Mesh Options"
@@ -49,15 +50,27 @@ nMeshOptionsCA = attributes "nMeshOptions"
         checkbox chkTangent "Tangent" align:#left
 
         -- destination directory setting
-        label lblDirSetting "Destination Directory : " align:#left
-        edittext edtDirSetting "" align:#left fieldWidth:100 across:2 readonly:true 
-        button btnDirSetting  "<<" align:#right width:20 height:18
-        on btnDirSetting pressed do
+        label lblMeshDirSetting "Dest Directory for a Mesh : " align:#left
+        edittext edtMeshDirSetting "" align:#left fieldWidth:100 across:2 
+        button btnMeshDirSetting  "<<" align:#right width:20 height:18
+        on btnMeshDirSetting pressed do
         (
-            mapPath = getSavePath caption:"Select path where the mesh to be exported."
-            if mapPath != undefined then 
+            meshPath = getSavePath caption:"Select a directory where the mesh to be exported."
+            if meshPath != undefined then 
             (
-                edtDirSetting.text = mapPath
+                edtMeshDirSetting.text = meshPath
+            )
+        ) 
+
+        label lblGfxDirSetting "Dest Directory for a Gfx : " align:#left
+        edittext edtGfxDirSetting "" align:#left fieldWidth:100 across:2 
+        button btnGfxDirSetting  "<<" align:#right width:20 height:18
+        on btnGfxDirSetting pressed do
+        (
+            gfxPath = getSavePath caption:"Select a directory where the .n2 gfx file to be exported."
+            if gfxPath != undefined then 
+            (
+                edtGfxDirSetting.text = gfxPath
             )
         ) 
         
