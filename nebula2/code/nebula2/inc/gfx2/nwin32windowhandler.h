@@ -39,7 +39,7 @@ public:
     /// call this method per frame, returns false if app should shut down
     virtual bool Trigger();
     /// get the app window's hWnd
-    HWND GetHwnd() const;
+    HWND GetAppHwnd() const;
     /// get parent hWnd
     HWND GetParentHwnd() const;
     /// called by WinProc on WM_SETCURSOR
@@ -88,7 +88,7 @@ protected:
 */
 inline
 HWND
-nWin32WindowHandler::GetHwnd() const
+nWin32WindowHandler::GetAppHwnd() const
 {
     return this->hWnd;
 }
