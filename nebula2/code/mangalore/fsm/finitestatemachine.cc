@@ -119,9 +119,8 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
 {
     n_assert(0 == this->currentState);
 
-    nString path = "data:tables/";
-    path.Append(filename);
-    path.Append(".xml");
+    nString path;
+    path.Format("data:tables/%s.xml", filename);
 
     // load file into spread sheet object
     nXmlSpreadSheet xmlSpreadSheet;
