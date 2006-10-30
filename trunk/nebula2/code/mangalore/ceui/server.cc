@@ -234,7 +234,9 @@ void Server::Render() {
     create GUI font
 */
 CEGUI::Font* Server::CreateFont(const nString& fontName) {
-    return CEGUI::FontManager::getSingleton().createFont(fontName.Get());
+    nString fullName;
+    fullName.Format("cegui:fonts/%s.font", fontName);
+    return CEGUI::FontManager::getSingleton().createFont(fullName.Get());
 }
 
 //------------------------------------------------------------------------------
@@ -258,7 +260,9 @@ void Server::DestroyAllFonts() {
     load GUI scheme
 */
 void Server::LoadScheme(const nString& schemeName) {
-    CEGUI::SchemeManager::getSingleton().loadScheme(schemeName.Get());
+    nString fullName;
+    fullName.Format("cegui:schemes/%s.scheme", schemeName);
+    CEGUI::SchemeManager::getSingleton().loadScheme(fullName.Get());
 }
 
 //------------------------------------------------------------------------------
@@ -322,7 +326,9 @@ void Server::DestroyAllWindows() {
     load window layout from XML and display GUI
 */
 CEGUI::Window* Server::LoadWindowLayout(const nString& resName, const nString& prefix) {
-    return CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get(), prefix.Get());
+    nString fullName;
+    fullName.Format("cegui:layouts/%s.layout", resName);
+    return CEGUI::WindowManager::getSingleton().loadWindowLayout(fullName.Get(), prefix.Get());
 }
 
 //------------------------------------------------------------------------------

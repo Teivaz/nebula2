@@ -317,9 +317,7 @@ bool ViewerApp::CreateViewedEntity()
         //make sure that there is a physics file available
         nFileServer2* fileServer = nFileServer2::Instance();
         nString filename;
-        filename.Append("physics:");
-        filename.Append(this->GetObjectResourceName());
-        filename.Append(".xml");
+        filename.Format("physics:%s.xml", this->GetObjectResourceName());
 
         if (fileServer->FileExists(filename))
         {
@@ -454,10 +452,10 @@ ViewerApp::SetupGui()
 void
 ViewerApp::SetupCeGui()
 {
-    ceuiServer->CreateFont("cegui:fonts/Commonwealth-10.font");
-    ceuiServer->LoadScheme("cegui:schemes/TaharezLook.scheme");
+    ceuiServer->CreateFont("Commonwealth-10");
+    ceuiServer->LoadScheme("TaharezLook");
     ceuiServer->SetDefaultMouseCursor("TaharezLook", "MouseArrow");
-    CEGUI::Window* window = ceuiServer->LoadWindowLayout("cegui:layouts/mviewer.layout");
+    CEGUI::Window* window = ceuiServer->LoadWindowLayout("mviewer");
     ceuiServer->SetRootWindow(window);
     ceuiServer->DisplayGui();
 }
