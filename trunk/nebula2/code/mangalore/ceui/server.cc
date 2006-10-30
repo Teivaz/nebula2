@@ -235,7 +235,7 @@ void Server::Render() {
 */
 CEGUI::Font* Server::CreateFont(const nString& fontName) {
     nString fullName;
-    fullName.Format("cegui:fonts/%s.font", fontName);
+    fullName.Format("cegui:fonts/%s.font", fontName.Get());
     return CEGUI::FontManager::getSingleton().createFont(fullName.Get());
 }
 
@@ -261,7 +261,7 @@ void Server::DestroyAllFonts() {
 */
 void Server::LoadScheme(const nString& schemeName) {
     nString fullName;
-    fullName.Format("cegui:schemes/%s.scheme", schemeName);
+    fullName.Format("cegui:schemes/%s.scheme", schemeName.Get());
     CEGUI::SchemeManager::getSingleton().loadScheme(fullName.Get());
 }
 
@@ -327,7 +327,7 @@ void Server::DestroyAllWindows() {
 */
 CEGUI::Window* Server::LoadWindowLayout(const nString& resName, const nString& prefix) {
     nString fullName;
-    fullName.Format("cegui:layouts/%s.layout", resName);
+    fullName.Format("cegui:layouts/%s.layout", resName.Get());
     return CEGUI::WindowManager::getSingleton().loadWindowLayout(fullName.Get(), prefix.Get());
 }
 

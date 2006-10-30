@@ -120,7 +120,7 @@ FiniteStateMachine::Load(const nString& filename, const nString& tablename)
     n_assert(0 == this->currentState);
 
     nString path;
-    path.Format("data:tables/%s.xml", filename);
+    path.Format("data:tables/%s.xml", filename.Get());
 
     // load file into spread sheet object
     nXmlSpreadSheet xmlSpreadSheet;

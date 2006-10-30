@@ -317,7 +317,7 @@ bool ViewerApp::CreateViewedEntity()
         //make sure that there is a physics file available
         nFileServer2* fileServer = nFileServer2::Instance();
         nString filename;
-        filename.Format("physics:%s.xml", this->GetObjectResourceName());
+        filename.Format("physics:%s.xml", this->GetObjectResourceName().Get());
 
         if (fileServer->FileExists(filename))
         {
@@ -460,4 +460,4 @@ ViewerApp::SetupCeGui()
     ceuiServer->DisplayGui();
 }
 
-}; // namespace Viewer
+} // namespace Viewer
