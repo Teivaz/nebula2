@@ -16,7 +16,9 @@
 #include "export2/nmaxintanimator.h"
 #include "export2/nmaxfloatanimator.h"
 #include "export2/nmaxvectoranimator.h"
+#include "export2/nmaxoptions.h"
 
+#include "kernel/nfileserver2.h"
 #include "scene/nshapenode.h"
 #include "scene/nintanimator.h"
 #include "scene/nvectoranimator.h"
@@ -370,6 +372,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 BOOL result0, result1;
                                 Texmap* value;
                                 TCHAR* mapDir = NULL;
+                                nString texDir;
                                 Interval interval0, interval1;
                                 
                                 // access to texture directory setting parameter block.
@@ -378,12 +381,19 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 int pbType = pblock2->GetParameterType(j+1);
                                 if (pbType == TYPE_STRING)
                                 {
-                                    result0 = pblock2->GetValue(j+1, 0, mapDir, interval0);                                    
+                                    result0 = pblock2->GetValue(j+1, 0, mapDir, interval0);
                                     if (!result0)
                                     {
                                         n_maxlog(Error, "The next parameter block of texturemap should be texture directory setting");
                                         continue;
                                     }
+
+                                    texDir = mapDir;
+
+                                    // if the texture map directory is not specified, we use default assigned one
+                                    // in the directory setting dialog.
+                                    if (texDir == "")
+                                        texDir = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetTextureAssign());
                                 }
                                 else
                                 {
@@ -394,7 +404,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result1)
                                 {
                                     nMaxTexture texture;
-                                    texture.Export(value, shaderParam, shapeNode, mapDir);
+                                    texture.Export(value, shaderParam, shapeNode, texDir);
                                 }
                                 else
                                 {

@@ -320,15 +320,14 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
         child = xmlHandle.FirstChild(dirParamName).FirstChild("meshDir").Child("", 0).Element();
         if (child)
         {
-            const char* meshPath = child->Attribute("value");
-            if (meshPath)
+            const char* path = child->Attribute("value");
+            if (path)
             {
-                this->meshPath = meshPath;
+                this->meshPath = path;
 
-                //HACK: if the path has "<<NULL>>" for its value,
-                //      we convert it to the default mesh export directory.
-                //      See nMaxCustAttrib::StringToXml() function in the nmaxcustattrib.cc file.
-                if (this->meshPath == "<<NULL>>")
+                // The directory parameter has "" for default string. It is absolutely necessary in Max6.
+                // Without that, the exporter is not usable as the panels that have those controls in them don't work.
+                if (this->meshPath == "")
                 {
                     this->meshPath = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetMeshesAssign());
                 }

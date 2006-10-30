@@ -604,7 +604,11 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
         strParamBlock += " ";
 
         strParamBlock += "type:#string ";
+
+        // The directory parameter has "" for default string. It is absolutely necessary in Max6.
+        // Without that, the exporter is not usable as the panels that have those controls in them don't work.
         strParamBlock += "default:\"\" ";
+
         strParamBlock += "ui:";
         strParamBlock += "edtFld";
         strParamBlock += paramName;

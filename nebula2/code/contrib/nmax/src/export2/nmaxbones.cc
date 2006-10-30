@@ -977,10 +977,9 @@ bool nMaxBoneManager::GetCustAttrib(Animatable* obj)
             {
                 this->animPath = path;
 
-                //HACK: if the path has "<<NULL>>" for its value,
-                //      we convert it to the default mesh export directory.
-                //      See nMaxCustAttrib::StringToXml() function in the nmaxcustattrib.cc file.
-                if (this->animPath == "<<NULL>>")
+                // The directory parameter has "" for default string. It is absolutely necessary in Max6.
+                // Without that, the exporter is not usable as the panels that have those controls in them don't work.
+                if (this->animPath == "")
                 {
                     this->animPath = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetAnimAssign());
                 }

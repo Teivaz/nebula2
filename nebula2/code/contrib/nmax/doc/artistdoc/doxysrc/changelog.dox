@@ -6,6 +6,9 @@
 
     @section N2ChangeLog_2006_10 2006.10.
 
+    - Changed attribute of directory setting edit text controls to writable.
+    - Changed to used default assigned values in the directory setting dialog if no values are  
+      spefied in the direcotry setting edit text control for mesh, texture, gfx and so on.
     - Updated to append postfix to mesh file name by its type.
     - Changed to merge meshes by its type. (shape, skinned shape, shadow, skinnedshape, collision)
     - Updated to append postfix at the end of mesh file. (e.g. _skinned for the skinned shape mesh file)

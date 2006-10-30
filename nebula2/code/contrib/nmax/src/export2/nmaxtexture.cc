@@ -106,6 +106,8 @@ void nMaxTexture::Export(Texmap* texmap, int subID, nShapeNode* shapeNode)
     @param shapeNode - Nebula node for this texture file will be attached.
     @param texPath   - directory path where the texture to be copied.
 
+    -26-Oct-06  kims  Changed to read default texture map from shader.xml 
+                      instead of using hard coded one.
     -21-Aug-06  kims  Changed to support to recognize subdirectories under 
                       the 'export/textures'directory.
 */
@@ -124,10 +126,10 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         case nShaderState::DiffMap1:                       // texture: diffuse map layer 1
         case nShaderState::DiffMap2:                       // texture: diffuse map layer 2
         case nShaderState::DiffMap3:                       // texture: diffuse map layer 3
-        case nShaderState::DiffMap4:
-        case nShaderState::DiffMap5:
-        case nShaderState::DiffMap6:
-        case nShaderState::DiffMap7:
+        case nShaderState::DiffMap4:                       // texture: diffuse map layer 4 
+        case nShaderState::DiffMap5:                       // texture: diffuse map layer 5
+        case nShaderState::DiffMap6:                       // texture: diffuse map layer 6
+        case nShaderState::DiffMap7:                       // texture: diffuse map layer 7
         case nShaderState::SpecMap0:                       // texture: specular map layer 0
         case nShaderState::SpecMap1:                       // texture: specular map layer 1
         case nShaderState::SpecMap2:                       // texture: specular map layer 2
@@ -151,7 +153,7 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
                     shapeNode->SetTexture(param, defValue.Get());
                     n_maxlog(Low, "The texmap for '%s' is null. Use default '%s'", nShaderState::ParamToString(param), defValue.Get());
                 }
-        else
+                else
                     n_maxlog(Warning, "Warning: The texmap for '%s' is null.", nShaderState::ParamToString(param));
             }
             break;
