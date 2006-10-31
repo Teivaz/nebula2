@@ -1042,10 +1042,20 @@ bool EvalCustomMaterialPlugin()
     mainRollout += "\t\ton " + uiShdName + " " + "selected i do \n";
     mainRollout += "\t\t(\n";
     mainRollout += "\t\t\tcurMaterial = medit.GetCurMtl() \n";
+
     mainRollout += "\t\t\tif customAttributes[paramCurShader] != undefine do \n";
     mainRollout += "\t\t\t(\n";
-    mainRollout += "\t\t\t\tcustAttributes.delete curMaterial customAttributes[paramCurShader] \n";
+    mainRollout += "\t\t\t\tnumCustAttr = custAttributes.count curMaterial \n";
+    mainRollout += "\t\t\t\tfor i = 1 to numCustAttr do\n";
+    mainRollout += "\t\t\t\t(\n";
+    mainRollout += "\t\t\t\t\tattrDef = custAttributes.getdef curMaterial i \n";
+    mainRollout += "\t\t\t\t\tif attrDef != undefined and attrDef.name == customAttributes[paramCurShader].name do \n";
+    mainRollout += "\t\t\t\t\t(\n";
+    mainRollout += "\t\t\t\t\t\tcustAttributes.delete curMaterial i \n";
+    mainRollout += "\t\t\t\t\t)\n";
+    mainRollout += "\t\t\t\t)\n"; // end of for
     mainRollout += "\t\t\t)\n";
+
     mainRollout += "\t\t\tif customAttributes[i] != undefined then \n";
     mainRollout += "\t\t\t(\n";
     mainRollout += "\t\t\t\tcustAttributes.add curMaterial customAttributes[i] \n";
