@@ -34,7 +34,7 @@ bool nMaxMeshImport::Import(const char* path, ImpInterface *i)
     nMeshBuilder meshBuilder;
     if (!meshBuilder.Load(nFileServer2::Instance(), path))
     {
-        n_message("");
+        n_message("Failed to load %s mesh file.", path);
         return false;
     }
 
