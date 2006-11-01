@@ -154,6 +154,9 @@ bool nMaxScene::Preprocess(INode* root)
     }
 
     this->globalMeshBuilder.Clear();
+    this->globalShadowMeshBuilder.Clear();
+    this->globalSkinnedMeshBuilder.Clear();
+    this->globalSkinnedShadowMeshBuilder.Clear();
 
     // Disable physique modifier to get skin in the initial pose.
     // ...
