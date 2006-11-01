@@ -323,7 +323,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     }
                                     else
                                     {
-                                        n_maxlog(Error, "Failed to create nVectorAnimator %s", animator->GetName());
+                                        n_maxlog(Error, "Failed to create nVectorAnimator %s", name);
                                     }
                                 }
                             }
@@ -360,7 +360,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                     }
                                     else
                                     {
-                                        n_maxlog(Error, "Failed to create nVectorAnimator %s", animator->GetName());
+                                        n_maxlog(Error, "Failed to create nVectorAnimator %s", name);
                                     }
                                 }
                             }
