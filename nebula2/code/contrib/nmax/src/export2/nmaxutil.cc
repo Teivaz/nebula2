@@ -301,6 +301,7 @@ nMaxUtil::CorrectName(nString &string)
     char* temp = n_new_array(char, string.Length() + 1);
     strcpy(temp, string.Get());
     string.Set(CorrectName(temp));
+    n_delete_array(temp);
     return string;
 }
 
@@ -314,6 +315,7 @@ nMaxUtil::CorrectName(const char* string)
     char* temp = n_new_array(char, strlen(string) + 1);
     strcpy(temp, string);
     temp = CorrectName(temp);
+    // FIXME : when will the temp be deleted ?
     return temp;
 }
 
@@ -417,6 +419,7 @@ void nMaxUtil::PutVertexInfo(nMeshBuilder& meshBuilder)
     {
         msg += "jindices";
     }
+    msg.TrimRight(" ");
 
     n_maxlog(Low, "Vertex components: %s", msg.Get());
 }
@@ -481,15 +484,15 @@ nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
 {
     // retrieve texture path and append destination texture path to the end of the directory.
     nString ret, assign;
-    
+
     assign = GetAssignFromType(type);
     assign.StripTrailingSlash();
 
     nString manglePath = nFileServer2::Instance()->ManglePath(assign);
-    
+
     nString a = manglePath;
     a.ToLower();
-    
+
     path.ConvertBackslashes();
 
     nString b = path;
