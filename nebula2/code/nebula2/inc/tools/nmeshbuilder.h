@@ -309,6 +309,10 @@ public:
     void UpdateTriangleIds(const nArray<Group>& groupMap);
     /// copy triangle with its vertices, do not generate redundant vertices
     void CopyTriangle(const nMeshBuilder& srcMesh, int triIndex, nArray<int>& indexMap);
+    /// copy group from source mesh group
+    void CopyGroup(nMeshBuilder& srcMesh, int groupId);
+    /// change group id
+    void ChangeGroupId(int srcGroupId, int dstGroupId);
     /// @}
 
     /// @name mesh operations
@@ -1048,7 +1052,7 @@ nMeshBuilder::Triangle::Equals(nMeshBuilder::Triangle &other) const
          (this->vertexIndex[1] == other.vertexIndex[2])) &&
         ((this->vertexIndex[2] == other.vertexIndex[0])||
          (this->vertexIndex[2] == other.vertexIndex[1])||
-         (this->vertexIndex[2] == other.vertexIndex[2])) )
+         (this->vertexIndex[2] == other.vertexIndex[2])))
     {
         // all vertexIndices of this triangle are also in the other
         // that means that they are equal

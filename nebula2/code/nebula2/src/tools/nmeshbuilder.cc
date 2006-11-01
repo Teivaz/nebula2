@@ -1505,3 +1505,28 @@ nMeshBuilder::Inflate()
     // dump edge array
     this->edgeArray.Clear();
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+void nMeshBuilder::CopyGroup(nMeshBuilder& srcMesh, int groupId) {
+    nArray<int> indexMap(0, 0);
+    indexMap.SetFixedSize(srcMesh.GetNumVertices());
+    indexMap.Fill(0, indexMap.Size(), -1);
+    for (int i = 0; i < srcMesh.triangleArray.Size(); i++) {
+        if (srcMesh.triangleArray[i].GetGroupId() == groupId) {
+            this->CopyTriangle(srcMesh, i, indexMap);
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void nMeshBuilder::ChangeGroupId(int srcGroupId, int dstGroupId) {
+    for (int i = 0; i < this->triangleArray.Size(); i++) {
+        if (this->triangleArray[i].GetGroupId() == srcGroupId) {
+            this->triangleArray[i].SetGroupId(dstGroupId);
+        }
+    }
+}
