@@ -17,6 +17,7 @@
 #define VS_PROFILE vs_2_0
 #define PS_PROFILE ps_2_0
 */
+#line 2 "shaders.fx"
 
 #define DIRLIGHTS_ENABLEOPPOSITECOLOR 1
 #define DIRLIGHTS_OPPOSITECOLOR float3(0.45f, 0.52f, 0.608f)
@@ -1134,7 +1135,11 @@ vsOutputStaticColor vsUVAnimColor(const vsInputStaticColor vsIn)
     VS_SETSCREENPOS(vsOut.position);
 
     // animate uv
+    /*
     vsOut.uv0 = vsIn.uv0 + (Velocity.xy * Time);
+
+    */
+    vsOut.uv0 = mul(float3(vsIn.uv0, 1), TextureTransform0).xy;
 
     vsLight(vsIn.position, vsIn.normal, vsIn.tangent, vsIn.binormal, ModelEyePos, ModelLightPos, vsOut.lightVec, vsOut.modelLightVec, vsOut.halfVec, vsOut.eyePos);
     return vsOut;
@@ -2938,7 +2943,7 @@ technique tUVAnimationAlpha
 
 //------------------------------------------------------------------------------
 /**
-    Techniques for shader "alpha"
+    Techniques for shader "alpha_soft"
 */
 technique tSoftAlphaColor
 {

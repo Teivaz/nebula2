@@ -9,6 +9,9 @@
 
     See also @ref N2ScriptInterface_nuvanimator
 
+    -01-Nov-06  kims Changed vector2 to vector3 type on AddEulerKey() and 
+                     GetEulerKeyAt() functions. The changes were done for uv animation.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nanimator.h"
@@ -33,7 +36,7 @@ public:
     /// add a position key
     void AddPosKey(uint texLayer, float time, const vector2& key);
     /// add a euler angle key
-    void AddEulerKey(uint texLayer, float time, const vector2& key);
+    void AddEulerKey(uint texLayer, float time, const vector3& key);
     /// add a scale key
     void AddScaleKey(uint texLayer, float time, const vector2& key);
     /// get number of position keys
@@ -43,7 +46,7 @@ public:
     /// get number of euler angle keys
     int GetNumEulerKeys(uint texLayer) const;
     /// get euler key at index
-    void GetEulerKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key) const;
+    void GetEulerKeyAt(uint texLayer, uint keyIndex, float& time, vector3& key) const;
     /// get number of scale keys
     int GetNumScaleKeys(uint texLayer) const;
     /// get scale key at index
@@ -51,7 +54,7 @@ public:
 
 private:
     nAnimKeyArray<nAnimKey<vector2> > posArray[nGfxServer2::MaxTextureStages];
-    nAnimKeyArray<nAnimKey<vector2> > eulerArray[nGfxServer2::MaxTextureStages];
+    nAnimKeyArray<nAnimKey<vector3> > eulerArray[nGfxServer2::MaxTextureStages];
     nAnimKeyArray<nAnimKey<vector2> > scaleArray[nGfxServer2::MaxTextureStages];
 };
 
@@ -63,19 +66,20 @@ void
 nUvAnimator::AddPosKey(uint texLayer, float time, const vector2& key)
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    nAnimKey<vector2> newKey(time, vector2(key.x, key.y));
+    nAnimKey<vector2> newKey(time, key);
     this->posArray[texLayer].Append(newKey);
 }
 
 //------------------------------------------------------------------------------
 /**
+    -01-Nov-06  kims Changed to have vector3 in-arg for uv animation.
 */
 inline
 void
-nUvAnimator::AddEulerKey(uint texLayer, float time, const vector2& key)
+nUvAnimator::AddEulerKey(uint texLayer, float time, const vector3& key)
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    nAnimKey<vector2> newKey(time, vector2(key.x, key.y));
+    nAnimKey<vector3> newKey(time, key);
     this->eulerArray[texLayer].Append(newKey);
 }
 
@@ -87,7 +91,7 @@ void
 nUvAnimator::AddScaleKey(uint texLayer, float time, const vector2& key)
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    nAnimKey<vector2> newKey(time, vector2(key.x, key.y));
+    nAnimKey<vector2> newKey(time, key);
     this->scaleArray[texLayer].Append(newKey);
 }
 
@@ -147,6 +151,8 @@ nUvAnimator::GetPosKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key
 /**
     Obtain a euler key by its index.
 
+    -01-Nov-06  kims Changed to have vector3 in-arg for uv animation.
+
     @param  texLayer    [in]    texture layer index
     @param  keyIndex    [in]    index of key to get
     @param  time        [out]   the time stamp of the key
@@ -154,10 +160,10 @@ nUvAnimator::GetPosKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key
 */
 inline
 void
-nUvAnimator::GetEulerKeyAt(uint texLayer, uint keyIndex, float& time, vector2& key) const
+nUvAnimator::GetEulerKeyAt(uint texLayer, uint keyIndex, float& time, vector3& key) const
 {
     n_assert(texLayer < nGfxServer2::MaxTextureStages);
-    const nAnimKey<vector2>& k = this->eulerArray[texLayer][keyIndex];
+    const nAnimKey<vector3>& k = this->eulerArray[texLayer][keyIndex];
     time = k.GetTime();
     key = k.GetValue();
 }
@@ -182,4 +188,5 @@ nUvAnimator::GetScaleKeyAt(uint texLayer, uint keyIndex, float& time, vector2& k
 }
 //------------------------------------------------------------------------------
 #endif
+
 

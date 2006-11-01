@@ -48,6 +48,7 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
     nArray<nMaxSampleKey> vScaleKeys;
     nArray<nMaxSampleKey> uAngleKeys;
     nArray<nMaxSampleKey> vAngleKeys;
+    nArray<nMaxSampleKey> wAngleKeys;
 
     // W Angle unsupported by nebula... TO DO: add it
     Control* c = GetControlFromAnimatable(texmap, "U Offset");
@@ -86,9 +87,16 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
         nMaxControl::GetSampledKey(c, vAngleKeys, sampleRate, nMaxFloat, true);
     }
     
+    c = GetControlFromAnimatable(texmap, "W Angle");
+    if(c && c->NumKeys())
+    {
+        nMaxControl::GetSampledKey(c, wAngleKeys, sampleRate, nMaxFloat, true);
+    }
+
+    
     if(uOffsetKeys.Size() || vOffsetKeys.Size() ||
        uScaleKeys.Size()  || vScaleKeys.Size()  ||
-       uAngleKeys.Size()  || vAngleKeys.Size())
+       uAngleKeys.Size()  || vAngleKeys.Size()  || wAngleKeys.Size())
     {
         // create UV anim
         nUvAnimator* createdAnimator = static_cast<nUvAnimator*>(CreateNebulaObject("nuvanimator", "uvanimator"));
@@ -188,38 +196,47 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
         }
 
         // add UV Angles
-        key = vector2();
+        vector3 key3 = vector3();
         time = 0.0f;
         u = 0;
         v = 0;
-        while((u < uAngleKeys.Size()) || (v < vAngleKeys.Size()))
+        int w = 0;
+        while(u < uAngleKeys.Size() || v < vAngleKeys.Size() || w < wAngleKeys.Size())
         {
             float uTime = 10000000000.0f;
             float vTime = 10000000000.0f;
+            float wTime = 10000000000.0f;
 
             if(u < uAngleKeys.Size())
             {
                 uTime = uAngleKeys[u].time;
+                if (uTime <= vTime)
+                {
+                    key3.x = uAngleKeys[u].fval;
+                    ++u;
+                }
             }
             if(v < vAngleKeys.Size())
             {
                 vTime = vAngleKeys[v].time;
+                if (vTime <= uTime)
+                {
+                    key3.y = vAngleKeys[v].fval;
+                    ++v;
+                }
             }
-
-            if((uTime <= vTime))
+            if(w < wAngleKeys.Size())
             {
-                key.x = uAngleKeys[u].fval;
-                ++u;
+                wTime = wAngleKeys[w].time;
+                if (wTime <= uTime || wTime <= vTime)
+                {
+                    key3.z = -wAngleKeys[w].fval;
+                    ++w;
+                }
             }
 
-            if((vTime <= uTime))
-            {
-                key.y = vAngleKeys[v].fval;
-                ++v;
-            }
-
-            time = n_min(uTime, vTime);
-            createdAnimator->AddEulerKey(mapChannel, time, key);
+            time = n_min(n_min(uTime, vTime), wTime);
+            createdAnimator->AddEulerKey(mapChannel, time, key3);
         }
 
         createdAnimator->SetChannel("time");

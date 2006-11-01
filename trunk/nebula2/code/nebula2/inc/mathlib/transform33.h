@@ -7,6 +7,10 @@
 
     A 3x3 matrix which is described by 2D translation, rotation and scale.
 
+    -01-Nov-06  kims Changed seteulerrotation() to have vector3 animation instead of 
+                     vector2 and return vector3 type for geteulerrotation().  
+		     The change were made for uv animation.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "mathlib/matrix.h"
@@ -23,11 +27,13 @@ public:
     /// get translation
     const vector2& gettranslation() const;
     /// set euler rotation
-    void seteulerrotation(const vector2& v);
+    void seteulerrotation(const vector3& v);
     /// get euler rotation
-    const vector2& geteulerrotation() const;
+    const vector3& geteulerrotation() const;
     /// return true if the transformation matrix is dirty
     bool isdirty() const;
+    /// HACK: set the dirty bit
+    void setdirty(bool dirty);
     /// set scale
     void setscale(const vector2& v);
     /// get scale
@@ -36,6 +42,8 @@ public:
     const matrix33& getmatrix33();
     /// get resulting 4x4 matrix, with 3x3 matrix cast to the upper-left corner
     void getmatrix44(matrix44& out);
+    /// set resulting 3x3 matrix
+    void setmatrix33(const matrix33& mx);
 
 private:
     /// update internal matrix
@@ -46,7 +54,7 @@ private:
         Dirty = (1<<0),
     };
     vector2 translation;
-    vector2 euler;
+    vector3 euler;
     vector2 scale;
     matrix33 matrix;
     uchar flags;
@@ -89,7 +97,7 @@ transform33::gettranslation() const
 */
 inline
 void
-transform33::seteulerrotation(const vector2& v)
+transform33::seteulerrotation(const vector3& v)
 {
     this->euler = v;
     this->flags |= Dirty;
@@ -99,7 +107,7 @@ transform33::seteulerrotation(const vector2& v)
 /**
 */
 inline
-const vector2&
+const vector3&
 transform33::geteulerrotation() const
 {
     return this->euler;
@@ -139,6 +147,7 @@ transform33::update()
         this->matrix.scale(vector3(this->scale.x, this->scale.y, 1.0f));
         this->matrix.rotate_x(this->euler.x);
         this->matrix.rotate_y(this->euler.y);
+        this->matrix.rotate_z(this->euler.z);
         this->matrix.translate(this->translation);
         this->flags &= ~Dirty;
     }
@@ -171,6 +180,18 @@ transform33::getmatrix44(matrix44& out)
 
 //------------------------------------------------------------------------------
 /**
+    -01-Nov-06  kims Added for uv animation.
+*/
+inline
+void
+transform33::setmatrix33(const matrix33& mx)
+{
+    this->matrix = mx;
+    this->flags |= Dirty;
+}
+
+//------------------------------------------------------------------------------
+/**
 */
 inline
 bool
@@ -180,5 +201,24 @@ transform33::isdirty() const
 }
 
 //------------------------------------------------------------------------------
+/**
+    -01-Nov-06  kims Added for uv animation.
+*/
+inline
+void
+transform33::setdirty(bool dirty)
+{
+    if (dirty)
+    {
+        this->flags |= Dirty;
+    }
+    else
+    {
+        this->flags &= ~Dirty;
+    }
+}
+
+//------------------------------------------------------------------------------
 #endif
+
 

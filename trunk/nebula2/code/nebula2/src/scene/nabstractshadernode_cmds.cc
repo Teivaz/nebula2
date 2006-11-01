@@ -37,6 +37,9 @@ static void n_getparams(void* slf, nCmd* cmd);
     @classinfo
     Parent class for shader related scene node classes. Don't use this
     class directly, instead use its subclasses.
+    
+    -01-Nov-06  kims  Changed n_setuveuler and n_getuveuler to have three float type 
+                      for uv animation. 
 */
 void
 n_initcmds(nClass* cl)
@@ -44,8 +47,8 @@ n_initcmds(nClass* cl)
     cl->BeginCmds();
     cl->AddCmd("v_setuvpos_iff",    'SUVP', n_setuvpos);
     cl->AddCmd("ff_getuvpos_i",     'GUVP', n_getuvpos);
-    cl->AddCmd("v_setuveuler_iff",  'SUVE', n_setuveuler);
-    cl->AddCmd("ff_getuveuler_i",   'GUVE', n_getuveuler);
+    cl->AddCmd("v_setuveuler_ifff",  'SUVE', n_setuveuler);
+    cl->AddCmd("fff_getuveuler_i",   'GUVE', n_getuveuler);
     cl->AddCmd("v_setuvscale_iff",  'SUVS', n_setuvscale);
     cl->AddCmd("ff_getuvscale_i",   'GUVS', n_getuvscale);
     cl->AddCmd("v_settexture_ss",   'STXT', n_settexture);
@@ -114,15 +117,18 @@ n_getuvpos(void* slf, nCmd* cmd)
     v
     @info
     Set uv coordinate euler rotation for given uv set.
+
+    -01-Nov-06  kims  Changed to have three float type for uv animation.
 */
 static void
 n_setuveuler(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    static vector2 v;
+    static vector3 v;
     int i = cmd->In()->GetI();
     v.x = cmd->In()->GetF();
     v.y = cmd->In()->GetF();
+    v.z = cmd->In()->GetF();
     self->SetUvEuler(i, v);
 }
 
@@ -136,14 +142,17 @@ n_setuveuler(void* slf, nCmd* cmd)
     fff(EulerAngles)
     @info
     Get uv coordinate euler rotation for given uv set.
+
+    -01-Nov-06  kims  Changed to have three float type for uv animation.
 */
 static void
 n_getuveuler(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    const vector2& v = self->GetUvEuler(cmd->In()->GetI());
+    const vector3& v = self->GetUvEuler(cmd->In()->GetI());
     cmd->Out()->SetF(v.x);
     cmd->Out()->SetF(v.y);
+    cmd->Out()->SetF(v.z);
 }
 
 //------------------------------------------------------------------------------
@@ -218,12 +227,22 @@ n_settexture(void* slf, nCmd* cmd)
     s(TextureResource)
     @info
     Get a texture resource shader variable.
+
+    -01-Nov-06  kims  Changed to check it has the shader param.
 */
 static void
 n_gettexture(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetS(self->GetTexture(nShaderState::StringToParam(cmd->In()->GetS())));
+    nShaderState::Param param = nShaderState::StringToParam(cmd->In()->GetS());
+    if (self->HasParam(param))
+    {
+        cmd->Out()->SetS(self->GetTexture(param));
+    }
+    else
+    {
+        cmd->Out()->SetS("");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -256,12 +275,22 @@ n_setint(void* slf, nCmd* cmd)
     i(IntVal)
     @info
     Get a integer shader variable.
+
+    -01-Nov-06  kims  Changed to check it has the shader param.
 */
 static void
 n_getint(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetI(self->GetInt(nShaderState::StringToParam(cmd->In()->GetS())));
+    nShaderState::Param param = nShaderState::StringToParam(cmd->In()->GetS());
+    if (self->HasParam(param))
+    {
+        cmd->Out()->SetI(self->GetInt(param));
+    }
+    else
+    {
+        cmd->Out()->SetI(0);
+    }
 }
 //------------------------------------------------------------------------------
 /**
@@ -293,12 +322,22 @@ n_setbool(void* slf, nCmd* cmd)
     b(BoolVal)
     @info
     Get a boolean shader variable.
+
+    -01-Nov-06  kims  Changed to check it has the shader param.
 */
 static void
 n_getbool(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetB(self->GetBool(nShaderState::StringToParam(cmd->In()->GetS())));
+    nShaderState::Param param = nShaderState::StringToParam(cmd->In()->GetS());
+    if (self->HasParam(param))
+    {
+        cmd->Out()->SetB(self->GetBool(param));
+    }
+    else
+    {
+        cmd->Out()->SetB(false);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -331,12 +370,20 @@ n_setfloat(void* slf, nCmd* cmd)
     f(FloatVal)
     @info
     Get a float shader variable.
+
+    -01-Nov-06  kims Changed to check it has the shader param.
 */
 static void
 n_getfloat(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    cmd->Out()->SetF(self->GetFloat(nShaderState::StringToParam(cmd->In()->GetS())));
+    nShaderState::Param param = nShaderState::StringToParam(cmd->In()->GetS());
+    float f = 0;
+    if (self->HasParam(param))
+    {
+        f = self->GetFloat(param);
+    }
+    cmd->Out()->SetF(f);
 }
 
 //------------------------------------------------------------------------------
@@ -373,12 +420,19 @@ n_setvector(void* slf, nCmd* cmd)
     f(X), f(Y), f(Z), f(W)
     @info
     Get a 4d vector shader variable.
+
+    -01-Nov-06  kims  Changed to check it has the shader param.
 */
 static void
 n_getvector(void* slf, nCmd* cmd)
 {
     nAbstractShaderNode* self = (nAbstractShaderNode*) slf;
-    vector4 v = self->GetVector(nShaderState::StringToParam(cmd->In()->GetS()));
+    nShaderState::Param param = nShaderState::StringToParam(cmd->In()->GetS());
+    vector4 v;
+    if (self->HasParam(param))
+    {
+        v = self->GetVector(param);
+    }
     cmd->Out()->SetF(v.x);
     cmd->Out()->SetF(v.y);
     cmd->Out()->SetF(v.z);
@@ -431,7 +485,7 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
         for (i = 0; i < nGfxServer2::MaxTextureStages; i++)
         {
             const vector2& p = this->textureTransform[i].gettranslation();
-            const vector2& e = this->textureTransform[i].geteulerrotation();
+            const vector3& e = this->textureTransform[i].geteulerrotation();
             const vector2& s = this->textureTransform[i].getscale();
             if (!p.isequal(vector2::zero, 0.0f))
             {
@@ -441,12 +495,13 @@ nAbstractShaderNode::SaveCmds(nPersistServer* ps)
                 cmd->In()->SetF(p.y);
                 ps->PutCmd(cmd);
             }
-            if (!e.isequal(vector2::zero, 0.0f))
+            if (!e.isequal(vector3::zero, 0.0f))
             {
                 cmd = ps->GetCmd(this, 'SUVE');
                 cmd->In()->SetI(i);
                 cmd->In()->SetF(e.x);
                 cmd->In()->SetF(e.y);
+                cmd->In()->SetF(e.z);
                 ps->PutCmd(cmd);
             }
             if (!s.isequal(oneVec, 0.0f))
