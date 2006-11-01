@@ -21,7 +21,7 @@
 */
 int nMaxTransformAnimator::ExportPosition(Control *control, nTransformAnimator* animator)
 {
-    if (control->NumKeys())
+    if (control && control->NumKeys())
     {
     
         IKeyControl* iKeyControl = GetKeyControlInterface(control);

@@ -46,7 +46,7 @@ nAnimator* nMaxVectorAnimator::Export(const char* paramName, Control* control)
 
     // the number of the keys in the control should be checked cause some of 
     // the node has control even it has no animations.
-    if (control->NumKeys())
+    if (control && control->NumKeys())
     {
         nShaderState::Param param = nShaderState::StringToParam(paramName);
         if (param == nShaderState::InvalidParameter)
