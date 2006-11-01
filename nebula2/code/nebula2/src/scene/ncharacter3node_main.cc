@@ -357,7 +357,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
             if (!stream.SetToFirstChild())
             {
                 // something went wrong, return
-                return "failed";
+                return false;
             }
 
             current = stream.GetCurrentNodeName();
@@ -366,7 +366,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
             if (!stream.SetToFirstChild())
             {
                 // something went wrong, return
-                return "failed";
+                return false;
             }
 
             current = stream.GetCurrentNodeName();
