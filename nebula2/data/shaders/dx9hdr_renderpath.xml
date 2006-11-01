@@ -164,7 +164,7 @@
                 <Sequence shader="alpha" technique="tStaticAlphaColorHDRShadow"   firstLightAlpha="Yes" mvpOnly="Yes">
                     <Texture name="AmbientMap1" value="Shadow" />
                 </Sequence>
-                <Sequence shader="alpha_uvanimation" technique="tUVAnimationAlpha" firstLightAlpha="Yes" mvpOnly="Yes" />
+                <Sequence shader="alpha_uvanimation" technique="tUVAnimationAlpha" firstLightAlpha="Yes" mvpOnly="No" />
                 <Sequence shader="alpha_soft" technique="tSoftAlphaColorHDRShadow" firstLightAlpha="Yes" mvpOnly="Yes" />
                 <Sequence shader="alpha2" technique="tStaticAlpha2ColorHDRShadow" firstLightAlpha="Yes" mvpOnly="Yes"/>
                 <Sequence shader="skinned_alpha" technique="tSkinnedAlphaColorHDRShadow" firstLightAlpha="Yes" mvpOnly="Yes"/>
@@ -291,7 +291,7 @@
             </Phase>
             <Phase name="alpha" shader="phases" technique="tPhaseAlpha" sort="BackToFront" lightMode="Shader">
                 <Sequence shader="alpha" technique="tStaticAlphaColor"   firstLightAlpha="Yes" mvpOnly="Yes" />
-                <Sequence shader="alpha_uvanimation" technique="tUVAnimationAlpha" firstLightAlpha="Yes" mvpOnly="Yes" />
+                <Sequence shader="alpha_uvanimation" technique="tUVAnimationAlpha" firstLightAlpha="Yes" mvpOnly="No" />
                 <Sequence shader="alpha_soft" technique="tSoftAlphaColor" firstLightAlpha="Yes" mvpOnly="Yes" />
                 <Sequence shader="alpha2" technique="tStaticAlpha2Color" firstLightAlpha="Yes" mvpOnly="Yes"/>
                 <Sequence shader="skinned_alpha" technique="tSkinnedAlphaColor" firstLightAlpha="Yes" mvpOnly="Yes"/>

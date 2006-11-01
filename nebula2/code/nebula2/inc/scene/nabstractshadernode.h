@@ -43,9 +43,9 @@ public:
     /// get uv position for texture layer
     const vector2& GetUvPos(uint layer) const;
     /// set uv euler rotation for texture layer
-    void SetUvEuler(uint layer, const vector2& p);
+    void SetUvEuler(uint layer, const vector3& p);
     /// get uv euler rotation for texture layer
-    const vector2& GetUvEuler(uint layer) const;
+    const vector3& GetUvEuler(uint layer) const;
     /// set uv scale for texture layer
     void SetUvScale(uint layer, const vector2& p);
     /// get uv scale for texture layer
@@ -158,10 +158,11 @@ nAbstractShaderNode::GetUvPos(uint layer) const
 
 //------------------------------------------------------------------------------
 /**
+    -01-Nov-06  kims  Changed to have vector3 in-args for uv animation.
 */
 inline
 void
-nAbstractShaderNode::SetUvEuler(uint layer, const vector2& e)
+nAbstractShaderNode::SetUvEuler(uint layer, const vector3& e)
 {
     n_assert(layer < nGfxServer2::MaxTextureStages);
     this->textureTransform[layer].seteulerrotation(e);
@@ -169,9 +170,10 @@ nAbstractShaderNode::SetUvEuler(uint layer, const vector2& e)
 
 //------------------------------------------------------------------------------
 /**
+    -01-Nov-06  kims  Changed to return vector3 type for uv animation.
 */
 inline
-const vector2&
+const vector3&
 nAbstractShaderNode::GetUvEuler(uint layer) const
 {
     n_assert(layer < nGfxServer2::MaxTextureStages);

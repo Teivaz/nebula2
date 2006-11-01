@@ -291,15 +291,17 @@ void nMaxTexture::ExportUVTransform(StdUVGen* uvGen, nShapeNode* shapeNode)
     float scale_v  = uvGen->GetVScl(t);
     float rot_u    = uvGen->GetUAng(t); // radian value.
     float rot_v    = uvGen->GetVAng(t); // radian value.
+    float rot_w    = uvGen->GetWAng(t); // radian value.
 
     int mapChannel = uvGen->GetMapChannel() - 1; // TO DO: there must be a way to get the channel automatically from the shader material??
 
     // nebula needs degree value for its uv euler angle.
     float angle_u = n_rad2deg(rot_u);
     float angle_v = n_rad2deg(rot_v);
+    float angle_w = n_rad2deg(rot_w);
 
     shapeNode->SetUvPos(mapChannel, vector2(offset_u, offset_v));
-    shapeNode->SetUvEuler(mapChannel, vector2(angle_u, angle_v));
+    shapeNode->SetUvEuler(mapChannel, vector3(angle_u, angle_v, angle_w));
     shapeNode->SetUvScale(mapChannel, vector2(scale_u, scale_v));
 }
 

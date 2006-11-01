@@ -28,19 +28,22 @@ static void n_getscalekeyat(void* slf, nCmd* cmd);
 
     @classinfo
     Animate UV coordinates of a shape node.
+
+    -01-Nov-06  kims  Changed n_addeulerkey and n_geteulerkeyat to have three float type 
+                      for uv animation. 
 */
 void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_addposkey_ifff",     'ADPK', n_addposkey);
-    cl->AddCmd("v_addeulerkey_ifff",   'ADEK', n_addeulerkey);
+    cl->AddCmd("v_addeulerkey_iffff",  'ADEK', n_addeulerkey);
     cl->AddCmd("v_addscalekey_ifff",   'ADSK', n_addscalekey);
     cl->AddCmd("i_getnumposkeys_i",    'GNPK', n_getnumposkeys);
     cl->AddCmd("i_getnumeulerkeys_i",  'GNEK', n_getnumeulerkeys);
     cl->AddCmd("i_getnumscalekeys_i",  'GNSK', n_getnumscalekeys);
     cl->AddCmd("fff_getposkeyat_ii",   'GPKA', n_getposkeyat);
-    cl->AddCmd("fff_geteulerkeyat_ii", 'GEKA', n_geteulerkeyat);
+    cl->AddCmd("ffff_geteulerkeyat_ii",'GEKA', n_geteulerkeyat);
     cl->AddCmd("fff_getscalekeyat_ii", 'GSKA', n_getscalekeyat);
     cl->EndCmds();
 }
@@ -73,21 +76,24 @@ n_addposkey(void* slf, nCmd* cmd)
     @cmd
     addeulerkey
     @input
-    i(TextureLayer), f(Time), f(EulerU), f(EulerV)
+    i(TextureLayer), f(Time), f(EulerU), f(EulerV), f(EulerW)
     @output
     v
     @info
     Add a euler angle key to the position key array.
+
+    -01-Nov-06  kims  Changed to have three float type for uv animation.    
 */
 static void
 n_addeulerkey(void* slf, nCmd* cmd)
 {
     nUvAnimator* self = (nUvAnimator*) slf;
-    vector2 v0;
+    vector3 v0;
     int i0 = cmd->In()->GetI();
     float f0 = cmd->In()->GetF();
     v0.x = n_deg2rad(cmd->In()->GetF());
     v0.y = n_deg2rad(cmd->In()->GetF());
+    v0.z = n_deg2rad(cmd->In()->GetF());
     self->AddEulerKey(i0, f0, v0);
 }
 
@@ -200,22 +206,25 @@ n_getposkeyat(void* slf, nCmd* cmd)
     @input
     i(TextureLayer), i(KeyIndex)
     @output
-    f(Time), f(EulerU), f(EulerV)
+    f(Time), f(EulerU), f(EulerV), f(EulerW)
     @info
     Get euler key attributes at given index.
+
+    -01-Nov-06  kims  Changed to have three float type for uv animation.    
 */
 static void
 n_geteulerkeyat(void* slf, nCmd* cmd)
 {
     nUvAnimator* self = (nUvAnimator*) slf;
     float f0;
-    vector2 v0;
+    vector3 v0;
     int i0 = cmd->In()->GetI();
     int i1 = cmd->In()->GetI();
     self->GetEulerKeyAt(i0, i1, f0, v0);
     cmd->Out()->SetF(f0);
     cmd->Out()->SetF(n_rad2deg(v0.x));
     cmd->Out()->SetF(n_rad2deg(v0.y));
+    cmd->Out()->SetF(n_rad2deg(v0.z));
 }
 
 //------------------------------------------------------------------------------
@@ -245,6 +254,8 @@ n_getscalekeyat(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    -01-Nov-06  kims  Changed GetEulerKeyAt()s parameter to have vector3 type 
+                      for uv animation.
 */
 bool
 nUvAnimator::SaveCmds(nPersistServer* ps)
@@ -253,6 +264,7 @@ nUvAnimator::SaveCmds(nPersistServer* ps)
     {
         int texLayer;
         vector2 val;
+        vector3 val3;
         for (texLayer = 0; texLayer < nGfxServer2::MaxTextureStages; texLayer++)
         {
             nCmd* cmd;
@@ -279,11 +291,12 @@ nUvAnimator::SaveCmds(nPersistServer* ps)
             {
                 float time;
                 cmd = ps->GetCmd(this, 'ADEK');
-                this->GetEulerKeyAt(texLayer, curKey, time, val);
+                this->GetEulerKeyAt(texLayer, curKey, time, val3);
                 cmd->In()->SetI(texLayer);
                 cmd->In()->SetF(time);
-                cmd->In()->SetF(n_rad2deg(val.x));
-                cmd->In()->SetF(n_rad2deg(val.y));
+                cmd->In()->SetF(n_rad2deg(val3.x));
+                cmd->In()->SetF(n_rad2deg(val3.y));
+                cmd->In()->SetF(n_rad2deg(val3.z));
                 ps->PutCmd(cmd);
             }
 
@@ -306,5 +319,6 @@ nUvAnimator::SaveCmds(nPersistServer* ps)
     }
     return false;
 }
+
 
 
