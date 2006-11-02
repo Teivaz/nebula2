@@ -126,6 +126,7 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
             }
             else
             {
+                n_delete(prsTM);
                 return NULL;
             }
         }
@@ -139,4 +140,5 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 
     return createdNode;
 }
+
 
