@@ -159,7 +159,7 @@ void ReleaseSingletons()
     n_delete(intf);
 
     // idle until user click 'ok' button of log dialog.
-    logDlg->Wait();
+    //logDlg->Wait();
     //FIXME: 
     //n_delete(logDlg);
 }
@@ -167,6 +167,10 @@ void ReleaseSingletons()
 //-----------------------------------------------------------------------------
 /**
     Export the given scene or node.
+
+    -02-Nov-06  kims  Fixed to delete nMaxLogDlg at the end of export stage.
+                      Now, if the plugin already has log dialog just clear instead 
+                      of doing creat it again. Thank ZHANG Zikai for the patch.
 
     @param name filename to save a exported scene(or node).
     @param inf  pointer to Interface class instance.
@@ -184,7 +188,18 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
 
     // create log dialog.
     nMaxLogDlg* logDlg = nMaxLogDlg::Instance();
-    logDlg->Create();
+    if (logDlg->GetHWnd() != 0)
+    {
+        // if the logDlg has already create, do not create it again
+        // just clear the edit box
+        logDlg->ClearMessage();
+        ::ShowWindow(logDlg->GetHWnd(), SW_SHOWNORMAL);
+        ::UpdateWindow(logDlg->GetHWnd());
+    }
+    else
+    {
+        logDlg->Create();
+    }
 
     // create max interface.
     nMaxInterface* intf = nMaxInterface::Instance();

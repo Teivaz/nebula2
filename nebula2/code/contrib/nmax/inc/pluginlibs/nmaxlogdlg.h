@@ -28,12 +28,14 @@ public:
 
     void LogMessage(int verboseLevel, const char* msg, ...);
     void LogMessage(const nString &str);
+    void ClearMessage();
 
     void Wait();
 
 protected:
     virtual BOOL OnCommand(int wParamLow, int wParamHigh, long lParam);
     bool OnOK();
+    void OnClose();
 
     bool endWait;
 
