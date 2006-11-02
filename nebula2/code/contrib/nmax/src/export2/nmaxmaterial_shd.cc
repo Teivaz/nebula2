@@ -91,6 +91,9 @@ nString GetShaderXmlPath()
 /**
     Retrieves parameter type based on the given shader type.
 
+    -02-Nov-06  kims  Replaced point4 to floattab to retrieve valid values from 3dsmax control.
+                      Thank ZHANG Zikai for the patch.
+
     @param shdType shader type which described in xml file.
     @return string which represent parameter type. 
 */
@@ -120,11 +123,11 @@ nString GetParameterType(const nString &shdType)
 #endif
     else
     if (shdType == "Vector")
-#if MAX_RELEASE >= 6000
-        return "#point4";
-#else
-        return "#floatTab";
-#endif
+//#if MAX_RELEASE >= 6000
+//        return "#point4";
+//#else
+        return "#floatTab tabSize:4 tabSizeVariable:false";
+//#endif
     else
     if (shdType == "Texture")
         return "#texturemap";
@@ -476,7 +479,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
     case nShaderState::BumpMap2:
     case nShaderState::BumpMap3:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-        
+
         //FIXME: should assign map channel to delegate.
 
         //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
@@ -533,6 +536,8 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
 /**
     Generate script plug-in script.(part of 'param' element in xml)
     
+    -02-Nov-06  kims  Changd to 'Vector' type correctly. Thank ZHANG Zikai for the patch.
+                      
     @param name 'name' attribute in param element
                  The followings are known names:
                  'name', 'label', 'type', 'gui', 'export', 'min', 'max', 'def', 'enum'
@@ -564,13 +569,20 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
         strParamBlock += " ";
     }
 
-    // specify default value of the parameter.
-    nString defaultValue = GetDefault(elemParam);
-    if (!defaultValue.IsEmpty())
+    if (paramType == "Vector")
     {
-        strParamBlock += "default:";
-        strParamBlock += defaultValue;
-        strParamBlock += " ";
+        //strParamBlock.AppendFloat(atof(defaultValue.GetFirstToken(" \t\n")));
+    }
+    else
+    {
+        // specify default value of the parameter.
+        nString defaultValue = GetDefault(elemParam);
+        if (!defaultValue.IsEmpty())
+        {
+            strParamBlock += "default:";
+            strParamBlock += defaultValue;
+            strParamBlock += " ";
+        }
     }
 
     // if there's gui, we create ui in the given rollout.
@@ -580,8 +592,31 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
     {
         // 'ui' name should be same as parameter name.
         strParamBlock += "ui:";
-        strParamBlock += paramName;
-        strParamBlock += " \n";
+        // combine the 4 spinner into a parameter
+        if (paramType == "Vector")
+        {
+            // names should be same as the spinners
+            // see AddVector4Spinner
+            nString name = paramName;
+            strParamBlock += "(";
+            name.AppendInt(0);
+            strParamBlock += name;
+            strParamBlock += ", ";
+            name.AppendInt(1);
+            strParamBlock += name;
+            strParamBlock += ", ";
+            name.AppendInt(2);
+            strParamBlock += name;
+            strParamBlock += ", ";
+            name.AppendInt(3);
+            strParamBlock += name;
+            strParamBlock += ")\n";
+        }
+        else
+        {
+            strParamBlock += paramName;
+            strParamBlock += " \n";
+        }
 
         strRollout += GetUIFromType(elemParam, paramType);
     }

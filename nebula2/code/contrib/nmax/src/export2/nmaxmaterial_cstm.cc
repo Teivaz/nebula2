@@ -56,6 +56,9 @@ bool IsPredefinedCA(TCHAR* caName)
     Retrieves material values from Mtl's parameter block's parameters then
     specifies it to the given shape node.
 
+    -02-Nov-06  kims  Added the case TYPE_FLOAT_TAB for parameter type.
+                      Thank ZHANG Zikai for the patch.
+
     @param mtl pointer to the Mtl which contains material of the node.
     @param shapeNode pointer to the nebula shape node to be specified its material.
 */
@@ -112,6 +115,37 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                         
                         // find nShaderState::Param which match to parameter name.
                         shaderParam = this->GetShaderParam(name);
+
+                        // HACK: 3dsmax internally changes some name of parameters.
+                        //       known names are
+                        //           "Move"->"move"
+                        //           "Velocity"->"velocity"
+                        //           "Position"->"position"
+                        //       As seen from above, the first capital characters are changed to lower characters.
+                        if (shaderParam == nShaderState::InvalidParameter)
+                        {
+                            TCHAR *names[][2] = 
+                            {
+                                "Move",     "move",
+                                "Velocity", "velocity",
+                                "Position", "position",
+                                0,          0, // keep the tail zeros
+                            };
+
+                            for (int i=0; names[i][0]; i++)
+                            {
+                                if (strcmp(names[i][1], name) == 0)
+                                {
+                                    name = names[i][0];
+                                    // find the parameter name again
+                                    shaderParam = this->GetShaderParam(name);
+
+                                    // should not happen!
+                                    n_assert(shaderParam != nShaderState::InvalidParameter);
+                                    break;
+                                }
+                            }
+                        }
 
                         // filter it if the given parameter name does not match
                         // to nebula's shader state parameter.
@@ -330,11 +364,20 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                             break;
 
                         case TYPE_POINT4:
+                        case TYPE_FLOAT_TAB:
                             {
                                 BOOL result;
                                 Point4 pt4;
                                 Interval interval;
-                                result = pblock2->GetValue(j, 0, pt4, interval);
+                                if (paramType == TYPE_FLOAT_TAB)
+                                {
+                                    result = pblock2->GetValue(j, 0, pt4.x, interval, 0);
+                                    result &= pblock2->GetValue(j, 0, pt4.y, interval, 1);
+                                    result &= pblock2->GetValue(j, 0, pt4.z, interval, 2);
+                                    result &= pblock2->GetValue(j, 0, pt4.w, interval, 3);
+                                }
+                                else
+                                    result = pblock2->GetValue(j, 0, pt4, interval);
 
                                 vector4 value;
                                 value.set(pt4.x, pt4.y, pt4.z, pt4.w);
@@ -343,17 +386,45 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 else
                                     n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
 
-                                Control* control = pblock2->GetController(paramID);
-                                if (control && control->NumKeys())
+                                // In the case that we have point4 type, only first control array element, control[0] is used and 
+                                // for floattab, all control array elements are used.
+                                Control *control[4];
+                                BOOL hasKey = FALSE;
+                                control[0] = pblock2->GetController(paramID);
+                                if (control[0] && control[0]->NumKeys())
+                                    hasKey = TRUE;
+                                if (paramType == TYPE_FLOAT_TAB)
+                                {
+                                    control[1] = pblock2->GetController(paramID, 1);
+                                    if (control[1] && control[1]->NumKeys())
+                                        hasKey = TRUE;
+                                    control[2] = pblock2->GetController(paramID, 2);
+                                    if (control[2] && control[2]->NumKeys())
+                                        hasKey = TRUE;
+                                    control[3] = pblock2->GetController(paramID, 3);
+                                    if (control[3] && control[3]->NumKeys())
+                                        hasKey = TRUE;
+                                }
+                                if (hasKey)
                                 {
                                     // the parameter was animated.
                                     nVectorAnimator* animator = 0;
 
                                     nMaxVectorAnimator vectorAnimator;
-                                    animator = static_cast<nVectorAnimator*>(vectorAnimator.Export(name, control));
+
+                                    if (paramType == TYPE_FLOAT_TAB)
+                                    {
+                                        animator = static_cast<nVectorAnimator*>(vectorAnimator.Export(name,
+                                            control[0], control[1], control[2], control[3]));
+                                    }
+                                    else
+                                    {
+                                        animator = static_cast<nVectorAnimator*>(vectorAnimator.Export(name, control[0]));
+                                    }
+
                                     if (animator)
                                     {
-                                        // add the animator to the shapenode.
+                                        // add the created animator to the shapenode.
                                         shapeNode->AddAnimator(animator->GetName());
 
                                         nKernelServer::Instance()->PopCwd();

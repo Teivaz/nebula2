@@ -10,6 +10,8 @@
 #include "export2/nmax.h"
 #include "util/nstring.h"
 #include "export2/nmaxmaterial_ui.h"
+#include "pluginlibs/nmaxdlg.h"
+#include "pluginlibs/nmaxlogdlg.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -376,6 +378,8 @@ AddMapButton(TiXmlElement* elemParam, nString defaultVal)
 /**
     Add four spinner UI script to rollout clause for 'Vector' type.
 
+    -02-Nov-06  kims Changed to correctly handle 'Vectory' type. Thank ZHANG Zikai for the patch.
+
     Example:
     @verbatim
     label TexGenS "Texture Scale " align:#left across:5
@@ -390,6 +394,7 @@ AddVector4Spinner(TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
     nString caption    = elemParam->Attribute("label"); // UI caption 
+    nString def        = elemParam->Attribute("def"); // UI caption 
 
     nString uiScript;
 
@@ -398,6 +403,17 @@ AddVector4Spinner(TiXmlElement* elemParam)
     uiScript += AddLabel(paramName, caption, 5);
 
     nString index, label;
+    nArray<nString> defs;
+    int count = def.Tokenize(" \t\n", defs);
+    if (count != 4)
+    {
+        n_maxlog(Error, "Failed to load default values of Vector parameter '%s', using [0, 0, 0, 0]", paramName);
+        defs.Clear();
+        defs.Append("0");
+        defs.Append("0");
+        defs.Append("0");
+        defs.Append("0");
+    }
 
     // create four spinner for vector type.
     for (int i=0; i<4; i++)
@@ -422,6 +438,8 @@ AddVector4Spinner(TiXmlElement* elemParam)
         uiScript += "align:#left";
         uiScript += " ";
         uiScript += "fieldwidth:36";
+        uiScript += " ";
+        uiScript += "range:[-100000, 100000, " + defs[i] + "]";
         uiScript += "\n";
 
         //if (i==1)
