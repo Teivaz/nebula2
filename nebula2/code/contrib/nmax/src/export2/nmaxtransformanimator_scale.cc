@@ -210,7 +210,7 @@ int nMaxTransformAnimator::ExportSampledScale(nTransformAnimator* animator)
 
     nArray<nMaxSampleKey> sampleKeyArray;
 
-    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxScale);
+    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxScale, true);
 
     // assign sample keys to animator.
     for (int i=0; i<sampleKeyArray.Size(); i++)

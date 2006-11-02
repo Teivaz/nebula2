@@ -11,7 +11,10 @@
 #include "export2/nmaxoptions.h"
 
 #include "kernel/ntypes.h"
+#include "mathlib/vector.h"
 
+
+const float nMaxControl::key_tolerance = TINY * 5;
 //-----------------------------------------------------------------------------
 /**
 */
@@ -34,7 +37,7 @@ nMaxControl::~nMaxControl()
     - 21-Feb-05 kims Fixed transform scale.
 */
 void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyArray, 
-                                    int sampleRate, nMaxControlType type)
+                                    int sampleRate, nMaxControlType type, bool optimize)
 {
     if (type != nMaxTM  && 
         type != nMaxPos && 
@@ -115,6 +118,37 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
 
         sampleKeyArray.Append(sampleKey);
     }
+
+    if (optimize)
+    {
+        // remove redundant keys
+        nArray<nMaxSampleKey> tmpKeyArray;
+
+        for(int i = 0; i < sampleKeyArray.Size(); ++i)
+        {
+            if((i == 0) || (i == sampleKeyArray.Size() - 1))
+            {
+                // first and last keys are important
+                tmpKeyArray.Append(sampleKeyArray[i]);
+            }
+            else
+            {
+                // current key is important if keys on either side are different to it.
+                nMaxSampleKey previousKey = sampleKeyArray[i - 1];
+                nMaxSampleKey currentKey = sampleKeyArray[i];
+                nMaxSampleKey nextKey = sampleKeyArray[i + 1];
+                if(/*!AreKeysEqual(currentKey, previousKey, type) || 
+                    !AreKeysEqual(currentKey, nextKey, type) ||*/
+                    !AreKeysLerp(currentKey, previousKey, nextKey, type))
+                {
+                    tmpKeyArray.Append(currentKey);
+                }
+            }
+        }
+
+        sampleKeyArray.Clear();
+        sampleKeyArray = tmpKeyArray;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -128,6 +162,8 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
 void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sampleKeyArray, 
                                     int sampleRate, nMaxControlType type, bool optimize)
 {
+    n_assert(control);
+
     TimeValue t;
     TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
     TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
@@ -225,8 +261,9 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
                 nMaxSampleKey previousKey = sampleKeyArray[i - 1];
                 nMaxSampleKey currentKey = sampleKeyArray[i];
                 nMaxSampleKey nextKey = sampleKeyArray[i + 1];
-                if(!AreKeysEqual(currentKey, previousKey, type) || 
-                   !AreKeysEqual(currentKey, nextKey, type))
+                if(/*!AreKeysEqual(currentKey, previousKey, type) || 
+                   !AreKeysEqual(currentKey, nextKey, type) ||*/
+                   !AreKeysLerp(currentKey, previousKey, nextKey, type))
                 {
                     tmpKeyArray.Append(currentKey);
                 }
@@ -241,25 +278,124 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
 //-----------------------------------------------------------------------------
 /**
 */
-bool nMaxControl::AreKeysEqual(nMaxSampleKey& key1, nMaxSampleKey& key2, nMaxControlType type)
+bool nMaxControl::AreKeysEqual(const nMaxSampleKey& key1, const nMaxSampleKey& key2, nMaxControlType type)
 {
-    if(type == nMaxPoint4)
+    switch (type)
     {
-        return (key1.pt4.Equals(key2.pt4) != 0);
-    }
-    else if(type == nMaxPoint3)
-    {
-        return (key1.pos.Equals(key2.pos) != 0);
-    }
-    else if(type == nMaxFloat)
-    {
+    case nMaxPoint4:
+        // 3dsmax sdk, Point4 has no const Equals method
+        return const_cast<Point4&>(key1.pt4).Equals(key2.pt4) != 0;
+    case nMaxPoint3:
+        return key1.pos.Equals(key2.pos) != 0;
+    case nMaxFloat:
         return key1.fval == key2.fval;
+    case nMaxPos:
+        return key1.pos.Equals(key2.pos) != 0;
+    case nMaxScale:
+        return key1.scale.Equals(key2.scale) != 0;
+    case nMaxRot:
+        return key1.rot.Equals(key2.rot) != 0;
+    case nMaxTM:
+        return key1.pos.Equals(key2.pos) != 0 && key1.scale.Equals(key2.scale) != 0 && key1.rot.Equals(key2.rot) != 0;
     }
 
-    // TO DO: support other types 
     return false;
 }
 
+//-----------------------------------------------------------------------------
+/**
+*/
+bool
+nMaxControl::AreKeysLerp(const vector4& p, const vector4& p1, const vector4& p2, float lerpVal)
+{
+    vector4 ptmp;
+    ptmp.lerp(p1, p2, lerpVal);
+
+    // use proportion tolerance instead of neubla2 vector's difference tolerance
+    vector4 tolerance(p * key_tolerance);
+
+    return fabs(p.x - ptmp.x) <= tolerance.x && fabs(p.y - ptmp.y) <= tolerance.y &&
+        fabs(p.z - ptmp.z) <= tolerance.z && fabs(p.w - ptmp.w) <= tolerance.w;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+bool
+nMaxControl::AreKeysLerp(const vector3& p, const vector3& p1, const vector3& p2, float lerpVal)
+{
+    vector3 ptmp;
+    ptmp.lerp(p1, p2, lerpVal);
+
+    // use proportion tolerance instead of neubla2 vector's difference tolerance
+    vector3 tolerance(p * key_tolerance);
+    return fabs(p.x - ptmp.x) <= tolerance.x && fabs(p.y - ptmp.y) <= tolerance.y &&
+        fabs(p.z - ptmp.z) <= tolerance.z;
+}
+
+//-----------------------------------------------------------------------------
+/** 
+    since nebula2 use lerp interpolation, keys that matchs the lerp will be redundant
+*/
+bool nMaxControl::AreKeysLerp(const nMaxSampleKey& key, const nMaxSampleKey& key1, const nMaxSampleKey& key2, nMaxControlType type)
+{
+    float lerpVal = (key.time - key1.time) / (key2.time - key1.time);
+    switch (type)
+    {
+    case nMaxPoint4:
+        {
+            vector4 p(key.pt4.x, key.pt4.y, key.pt4.z, key.pt4.w);
+            vector4 p1(key1.pt4.x, key1.pt4.y, key1.pt4.z, key1.pt4.w);
+            vector4 p2(key2.pt4.x, key2.pt4.y, key2.pt4.z, key2.pt4.w);
+            return AreKeysLerp(p, p1, p2, lerpVal);
+        }
+        break;
+    case nMaxRot:
+        {
+            vector4 p(key.rot.x, key.rot.y, key.rot.z, key.rot.w);
+            vector4 p1(key1.rot.x, key1.rot.y, key1.rot.z, key1.rot.w);
+            vector4 p2(key2.rot.x, key2.rot.y, key2.rot.z, key2.rot.w);
+            return AreKeysLerp(p, p1, p2, lerpVal);
+        }
+        break;
+    case nMaxScale:
+        {
+            vector3 p(key.scale.x, key.scale.y, key.scale.z);
+            vector3 p1(key1.scale.x, key1.scale.y, key1.scale.z);
+            vector3 p2(key2.scale.x, key2.scale.y, key2.scale.z);
+            return AreKeysLerp(p, p1, p2, lerpVal);
+        }
+        break;
+    case nMaxPos:
+        // nMaxPos is acctually the same with nMaxPoint3
+    case nMaxPoint3:
+        {
+            vector3 p(key.pos.x, key.pos.y, key.pos.z);
+            vector3 p1(key1.pos.x, key1.pos.y, key1.pos.z);
+            vector3 p2(key2.pos.x, key2.pos.y, key2.pos.z);
+            return AreKeysLerp(p, p1, p2, lerpVal);
+        }
+        break;
+    case nMaxFloat:
+        {
+            float p = key.fval;
+            float p1 = key1.fval;
+            float p2 = key2.fval;
+            float ptmp = n_lerp(p1, p2, lerpVal);
+            // use proportion tolerance instead of neubla2 vector's difference tolerance
+            return fabs(p - ptmp) <= key_tolerance;
+        }
+        break;
+    case nMaxTM:
+        {
+            return AreKeysLerp(key, key1, key2, nMaxPos) &&
+                AreKeysLerp(key, key1, key2, nMaxRot) &&
+                AreKeysLerp(key, key1, key2, nMaxScale);
+        }
+        break;
+    }
+    return false;
+}
 //-----------------------------------------------------------------------------
 /**
     Get Controller type with given Control.

@@ -188,7 +188,7 @@ int nMaxTransformAnimator::ExportSampledKeyRotation(nTransformAnimator* animator
 
     nArray<nMaxSampleKey> sampleKeyArray;
 
-    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxRot);
+    nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxRot, true);
 
     // assign sample keys to animator.
     for (int i=0; i<sampleKeyArray.Size(); i++)
