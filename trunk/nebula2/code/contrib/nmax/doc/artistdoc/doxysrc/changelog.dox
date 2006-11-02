@@ -4,7 +4,16 @@
     This section of the document lists the change history of The Nebula2 3dsmax
     Toolkit.
 
-    @section N2ChangeLog_2006_10 2006.11.
+    @section N2ChangeLog_2006_11 2006.11.
+
+    - Fixed the problem of closing log dialog at the end of export stage. 
+      Now, the plug-in just clear window if the log dialog already exist 
+      instead of close previous one and recreating it again. 
+    - Changed to remove redundant sampled keys. Now the plugin can export
+    optimized sampled animation keys.
+    - Fixed to handle correctly 'Vector' type which is represented as point4
+    type in 3dsmax. The problem of that is that it cannot be retrieved valid animation 
+    keys so it was replaced to floattab type.
     - Updated to be enable uv animation. Now nuvanimator can be exported.
 
     @section N2ChangeLog_2006_10 2006.10.
