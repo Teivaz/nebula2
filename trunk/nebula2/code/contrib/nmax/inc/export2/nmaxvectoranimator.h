@@ -20,10 +20,15 @@ class nAnimator;
 class nMaxVectorAnimator : public nMaxNode
 {
 public:
+    /// Constructor.
     nMaxVectorAnimator();
+    /// Destructor.
     virtual ~nMaxVectorAnimator();
 
+    /// Function to export point4 type values.
     nAnimator* Export(const char* paramName, Control* control);
+    /// Function to export floattab type, mostly four float type values.
+    nAnimator* Export(const char* paramName, Control* control_x, Control* control_y, Control* control_z, Control* control_w);
 
 };
 //-----------------------------------------------------------------------------
