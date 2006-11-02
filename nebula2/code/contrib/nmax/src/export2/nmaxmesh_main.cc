@@ -1304,7 +1304,7 @@ void nMaxMesh::SetMeshFile(nSceneNode* createdNode)
         meshFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Mesh, this->meshPath, meshname);
 
         // append postfix to the mesh file name.
-        nMaxMesh::AppendMeshPostfixByType(this->meshType, 
+        meshFileName += nMaxMesh::AppendMeshPostfixByType(this->meshType, 
             ((this->IsSkinned() || this->IsPhysique()) ? true : false));
         
         // add file extension (.n3d2 or .nvx2)
