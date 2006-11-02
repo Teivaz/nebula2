@@ -40,7 +40,9 @@ nSceneNode* nMaxLight::Export(INode* inode, Object* obj)
 {
     nLightNode* createdNode = 0;
 
-    nString lightname = nMaxUtil::CorrectName(inode->GetName());
+    const char *tmp = nMaxUtil::CorrectName(inode->GetName());
+    nString lightname = tmp;
+    n_delete_array(tmp);
     createdNode = static_cast<nLightNode*>(CreateNebulaObject("nlightnode", lightname.Get()));
     if (createdNode)
     {

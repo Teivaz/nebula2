@@ -390,11 +390,13 @@ void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode
 {
     Bone bone;
 
+    const char *tmp = nMaxUtil::CorrectName(node->GetName());
     bone.localTransform = nMaxTransform::GetLocalTM(node, 0);
     bone.parentID       = parentID;
     bone.id             = this->skeletonsArray[skeleton].Size();
-    bone.name           = nMaxUtil::CorrectName(node->GetName());
+    bone.name           = tmp;
     bone.node           = node;
+    n_delete_array(tmp);
 
     // add only known bone.
     if (boneNodeArray.Find(node)) 
