@@ -5,6 +5,8 @@
 //------------------------------------------------------------------------------
 #include "base/nmaxdll.h"
 #include "export2/nmaxoptions.h"
+#include "pluginlibs/nmaxdlg.h"
+#include "pluginlibs/nmaxlogdlg.h"
 
 nNebulaUsePackage(nnebula);
 
@@ -34,6 +36,8 @@ bool nMaxPluginInitialize()
 //------------------------------------------------------------------------------
 /**
     called when the plugin dll is unloaded.
+
+    -02-Nov-06  kims  Fixed to close log dialog even if it is opened when we close 3dsmax.
 */
 void nMaxPluginUninitialize()
 {
@@ -45,5 +49,12 @@ void nMaxPluginUninitialize()
         options->SaveUtilityOptions();
 
         n_delete(options);
+    }
+
+    // close log dialog if it is still alive.
+    nMaxLogDlg* logDlg = nMaxLogDlg::Instance();
+    if (logDlg)
+    {
+        n_delete(logDlg);
     }
 }

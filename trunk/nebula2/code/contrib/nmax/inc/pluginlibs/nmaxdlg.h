@@ -13,7 +13,9 @@
 class nMaxDlg
 {
 public:
+    /// Constructor.
     nMaxDlg(WORD resID, HINSTANCE hInst, HWND hwndParent);
+    /// Destructor.
     virtual ~nMaxDlg();
   
     void Create();
@@ -38,10 +40,17 @@ protected:
     static BOOL CALLBACK DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 protected:
+    /// Use this function to hide the windows EndDialog api.
+    /// This will check whether the dialog is modal or modeless.
+    static BOOL EndDialog(HWND hDlg, INT_PTR nResult);
+
     WORD resourceID;
     HINSTANCE hInstance;
     HWND hWndParent;
     HWND hWnd;
+
+    /// Determine whether the dialog is created as a modal or modeless dialog box.
+    BOOL bModal;
 
 };
 //-----------------------------------------------------------------------------

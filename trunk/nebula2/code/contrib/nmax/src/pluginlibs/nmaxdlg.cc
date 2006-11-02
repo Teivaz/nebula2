@@ -51,6 +51,7 @@ void nMaxDlg::Create()
     UpdateWindow(hwnd);
 
     this->hWnd = hwnd;
+    this->bModal = FALSE;
 }
 
 //-----------------------------------------------------------------------------
@@ -79,6 +80,7 @@ int nMaxDlg::DoModal()
     {
         DWORD dwError = GetLastError();
     }
+    this->bModal = TRUE;
 
     return result;
 }
@@ -105,6 +107,7 @@ void nMaxDlg::OnClose()
 void nMaxDlg::OnDestroy()
 {
     // empty.
+    this->hWnd = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -142,7 +145,6 @@ BOOL CALLBACK nMaxDlg::DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
         SetWindowLong(hwnd, GWL_USERDATA, (long)lParam);
         dlg->OnInitDialog();
         UpdateWindow(hwnd);
-        DefWindowProc(hwnd, msg, wParam, lParam);
         break;
 
     case WM_COMMAND:
@@ -157,6 +159,7 @@ BOOL CALLBACK nMaxDlg::DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
         {
             dlg->OnClose();
         }
+
         EndDialog(hwnd, IDCANCEL);
         break;
 
@@ -165,7 +168,6 @@ BOOL CALLBACK nMaxDlg::DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
         {
             dlg->OnDestroy();
         }
-        EndDialog(hwnd, IDCANCEL);
         break;
 
     default:
@@ -177,4 +179,27 @@ BOOL CALLBACK nMaxDlg::DlgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam
     }
 
     return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+
+//-----------------------------------------------------------------------------
+/** 
+    Use this function to prevent from calling EndDialog to a modeless dialog box
+*/
+BOOL nMaxDlg::EndDialog(HWND hDlg, INT_PTR nResult)
+{
+    nMaxDlg* dlg = (nMaxDlg*)GetWindowLong(hDlg, GWL_USERDATA);
+    if (dlg == 0)
+    {
+        n_assert(0 && "Invalid nMaxDlg");
+        return ::EndDialog(hDlg, nResult);
+    }
+
+    if (dlg->bModal)
+    {
+        return ::EndDialog(hDlg, nResult);
+    }
+
+    dlg->Destroy();
+    return TRUE;
 }

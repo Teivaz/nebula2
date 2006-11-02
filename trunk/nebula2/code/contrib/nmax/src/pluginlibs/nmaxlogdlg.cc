@@ -96,6 +96,14 @@ bool nMaxLogDlg::OnOK()
 //-----------------------------------------------------------------------------
 /**
 */
+void nMaxLogDlg::OnClose()
+{
+    this->endWait = true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
 void nMaxLogDlg::LogMessage(int logLevel, const char* msg, ...)
 {
     n_assert(Singleton);
@@ -133,6 +141,20 @@ void nMaxLogDlg::LogMessage(const nString &str)
 
     SendMessage(hWndEdit, EM_SETSEL, -1, -1);
     SendMessage(hWndEdit, EM_REPLACESEL, 0/*no undo*/, (LPARAM)str.Get()/*new text to replace*/);
+    SendMessage(hWndEdit, EM_SCROLL, SB_PAGEDOWN, 0/*unused*/);
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nMaxLogDlg::ClearMessage()
+{
+    n_assert(Singleton);
+
+    HWND hWndEdit = GetDlgItem(this->hWnd, IDC_LOG_EDIT);
+
+    SendMessage(hWndEdit, EM_SETSEL, 0, -1);
+    SendMessage(hWndEdit, EM_REPLACESEL, 0/*no undo*/, (LPARAM)""/*new text to replace*/);
     SendMessage(hWndEdit, EM_SCROLL, SB_PAGEDOWN, 0/*unused*/);
 }
 
