@@ -31,7 +31,7 @@ ODE_API Opcode::Model* dGeomTriMeshGetOpcodeModel(dGeomID g);
 
 Change #3: Function definition
 ------------------------------
-In ode\src\collision_trimesh.cpp, add this function to the bottom of the file:
+In ode\src\collision_trimesh_opcode.cpp, add this function to the bottom of the file:
 
 Opcode::Model* dGeomTriMeshGetOpcodeModel(dGeomID g) {
     dxTriMesh* Geom = (dxTriMesh*)g;
