@@ -74,6 +74,7 @@ void
 Level::OnActivate()
 {
     // initialize ODE
+    dInitODE();
     this->odeWorldId = dWorldCreate();
     dWorldSetQuickStepNumIterations(this->odeWorldId, 20);
 
