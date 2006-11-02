@@ -8,6 +8,7 @@
 //-----------------------------------------------------------------------------
 #include "export2/nmaxnode.h"
 #include "util/narray.h"
+#include "mathlib/vector.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -79,20 +80,26 @@ public:
         EulerRotation,
         Unknown,
 	};
+    static const float key_tolerance;
 
     nMaxControl();
     virtual ~nMaxControl();
 
     static void GetSampledKey(INode* node, nArray<nMaxSampleKey> & sampleKeyArray, 
-                           int sampleRate, nMaxControlType type);
+                           int sampleRate, nMaxControlType type, bool optimize = false);
 
     static void GetSampledKey(Control* control, nArray<nMaxSampleKey> & sampleKeyArray, 
         int sampleRate, nMaxControlType type, bool optimize = false);
 
 	static Type GetType(Control *control);
 
-static bool AreKeysEqual(nMaxSampleKey& key1, nMaxSampleKey& key2, nMaxControlType type);
+    static bool AreKeysEqual(const nMaxSampleKey& key1, const nMaxSampleKey& key2, nMaxControlType type);
 
+    static bool AreKeysLerp(const nMaxSampleKey& key, const nMaxSampleKey& key1, const nMaxSampleKey& key2, nMaxControlType type);
+
+protected:
+    static bool AreKeysLerp(const vector4& key, const vector4& key1, const vector4& key2, float lerpVal);
+    static bool AreKeysLerp(const vector3& key, const vector3& key1, const vector3& key2, float lerpVal);
 };
 //-----------------------------------------------------------------------------
 #endif
