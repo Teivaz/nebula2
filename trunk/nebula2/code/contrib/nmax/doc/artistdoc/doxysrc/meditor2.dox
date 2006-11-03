@@ -23,6 +23,10 @@
     @note
     changing texture file does not directly reflected on the viewer at the moment.
 
+    @note
+    You can see any errors on the connection of IPC or its status in the 3dsmax MaxScript listener.
+
+
     Enjoy!
 
 */
