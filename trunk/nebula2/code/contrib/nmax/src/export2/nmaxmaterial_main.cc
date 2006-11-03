@@ -164,7 +164,20 @@ void nMaxMaterial::CreateDefaultMaterial(nShapeNode* shapeNode)
         shapeNode->SetShader("static");
     }
 
-    shapeNode->SetTexture(nShaderState::DiffMap0, "textures:examples/brick.bmp");
+    // we only assign diffuse map on using default material.
+    nString defValue;
+    if (GetDefaultValueFromDataBase(shapeNode->GetShader(), nShaderState::ParamToString(nShaderState::DiffMap0), defValue) && 
+        defValue.IsValid())
+    {
+        shapeNode->SetTexture(nShaderState::DiffMap0, defValue.Get());
+        n_maxlog(Low, "The texmap for '%s' is null. Use default '%s'", 
+            nShaderState::ParamToString(nShaderState::DiffMap0), defValue.Get());
+    }
+    else
+    {
+        n_maxlog(Warning, "Warning: The texmap for '%s' is null.", 
+            nShaderState::ParamToString(nShaderState::DiffMap0));
+    }
 
     vector4 ambient(0.9f, 0.9f, 0.9f, 1.0f);
     vector4 diffuse(1.0f, 1.0f, 1.0f, 1.0f);
