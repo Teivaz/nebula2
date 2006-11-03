@@ -4,6 +4,7 @@
 #-------------------------------------------------------------------------------
 beginbundle kernel::util
     setmodules {
+        narray
         nbuffer
         nhttpformdatawrapper
         nhttpsession
