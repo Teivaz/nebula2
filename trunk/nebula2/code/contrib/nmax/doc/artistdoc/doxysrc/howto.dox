@@ -20,6 +20,7 @@
     - @ref NMaxHowtoAnimations
     - @ref NMaxLOD
     - @ref NMaxHowtoExport
+    - @ref NMaxHowtoHotLoading
     - @ref NMaxHowtoImport
     - @ref NMaxScriptExtension
     - @ref NMaxHowtoExpose

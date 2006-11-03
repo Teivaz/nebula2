@@ -143,6 +143,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
 // @{
 bool nChangeShaderParameter(const char* toolkitShaderName, const char* shaderHandling, 
                             const char* paramID, const char* value);
+bool nDoHotLoading(const char* objPath);
 bool nConnectIpc(const char* host, const char* port);
 void nDisConnectIpc();
 bool nSendMsgIpc(const char* msg);

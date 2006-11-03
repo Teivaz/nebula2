@@ -42,6 +42,10 @@
     into <i>Nebula2 Exporter Logs</i> dialog. You can check the progress and the status of
     the exporting task if you need. Also some warnings or errors will be shown on the dialog
     if they are. 
+    The messages have different color by its type. The following represents each type of color for log messages:
+      - Normal  : Black
+      - Warning : Orange
+      - Error   : Red
 
     At the end of the task, the toolkit plugin launches specified viewer to show you the 
     exported model how that is shown on the Nebula engine. 

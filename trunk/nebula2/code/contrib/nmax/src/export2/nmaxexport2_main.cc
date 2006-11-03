@@ -21,6 +21,13 @@
 #include "tools/napplauncher.h"
 #include "tools/nwinmaincmdlineargs.h"
 
+#include <Tlhelp32.h>
+
+///
+static bool LaunchViewer(const char* sceneFile, nMaxViewerOptions& viewerOptions);
+///
+static bool CheckExistingViewer(nString& viewerName);
+
 //-----------------------------------------------------------------------------
 /**
 */
@@ -54,24 +61,8 @@ int	nMaxExport2::DoExport(const TCHAR *name,
     Launch preview application.  
 */
 static
-bool LaunchViewer(const char* sceneFile)
+bool LaunchViewer(const char* sceneFile, nMaxViewerOptions& viewerOptions)
 {
-    // read viewer options.
-    nMaxViewerOptions viewerOptions;
-
-    if (nMaxOptions::Instance()->UseDefaultViewer())
-        viewerOptions.SetViewerType(nMaxViewerOptions::ViewerType::Default);
-    else
-        viewerOptions.SetViewerType(nMaxViewerOptions::ViewerType::Custom);
-
-    viewerOptions.SetSceneFileName(sceneFile);
-
-    if (!viewerOptions.Read())
-    {
-        n_message("Failed to read viewer option.");
-        return false;
-    }
-
     // viewer arguments.
     nString appArgs;
     appArgs += viewerOptions.GetArguments();
@@ -249,17 +240,107 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
         nString saveFile = name;
         nString sceneFile = saveFile.ExtractFileName();
 
-        if (LaunchViewer(sceneFile.Get()))
+        // read viewer options.
+        nMaxViewerOptions viewerOptions;
+
+        if (nMaxOptions::Instance()->UseDefaultViewer())
+            viewerOptions.SetViewerType(nMaxViewerOptions::ViewerType::Default);
+        else
+            viewerOptions.SetViewerType(nMaxViewerOptions::ViewerType::Custom);
+
+        viewerOptions.SetSceneFileName(sceneFile.Get());
+
+        if (!viewerOptions.Read())
         {
-            n_maxlog(Medium, "Launched viewer application.");
+            n_message("Failed to read viewer option.");
+            return false;
+        }
+
+        // first we check there is any viewer already opened.
+        // TODO: there might be needs to run several viewer. so we need it to be set explicitly
+        //       on utility panel or inside .ini file.
+        bool useHotLoading = true;
+
+        nString viewerName = viewerOptions.GetExecutable();
+
+        if (useHotLoading && CheckExistingViewer(viewerName))
+        {
+            if (!nIsConnectedIpc())
+            {
+                //! Be careful to use exact port name.
+                nString port = viewerOptions.GetExecutable();
+                port.StripExtension();
+                port.ToLower();
+                nConnectIpc("localhost", port.Get());
+            }
+
+            nString objPath;
+            objPath += nMaxOptions::Instance()->GetGfxLibAssign();
+            //TODO: if we have any gfx subdirectories, append it
+            // ...
+            objPath += sceneFile;
+
+            nDoHotLoading(objPath.Get());
         }
         else
         {
-            n_maxlog(Medium, "Failed to launch viewer application.");
+            // we launch a new viewer.
+            if (LaunchViewer(sceneFile.Get(), viewerOptions))
+            {
+                n_maxlog(Medium, "Launched viewer application.");
+            }
+            else
+            {
+                n_maxlog(Medium, "Failed to launch viewer application.");
+            }
         }
     }
 
     ReleaseSingletons();
 
     return 1;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+static
+bool CheckExistingViewer(nString& viewerName)
+{
+    int numViewer = 0;
+    HANDLE snapshot = 0;
+    PROCESSENTRY32 procEntry;
+    nString process;
+
+    viewerName.ToUpper();
+
+    // create a handle for processes information.
+    snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    procEntry.dwSize = sizeof (PROCESSENTRY32);
+
+    if (Process32First(snapshot, &procEntry))
+    {
+        do
+        {
+            nString path, filename;
+
+            path = procEntry.szExeFile;
+
+            filename = path.ExtractFileName();
+            filename.ToUpper();
+
+            if (filename == viewerName)
+                ++numViewer;
+        }
+        while(Process32Next(snapshot, &procEntry));
+    }
+
+    CloseHandle(snapshot);
+    
+    //if (numViewer > 0)
+    //    return true;
+
+    //return false;
+    return ((numViewer > 0) ? true : false);
 }

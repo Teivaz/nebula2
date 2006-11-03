@@ -7,6 +7,7 @@
 
     For Remote Access
 
+    -03-Nov-06  kims  Add DoHotLoading() function.
     -20-Mar-06  kims  Renamed nMayaToolkitServer to nToolkitServer.
 
     (C) 2005 RadonLabs GmbH
@@ -43,6 +44,8 @@ public:
                                   const nString& shaderHandling,
                                   const nString& paramID,
                                   const nString& paramValue);
+    /// load nebula object
+    void DoHotLoading(const nString& objPath);
 
 private:
     /// @name Toolkit Remote Shader-Parameter-Change-Functions
