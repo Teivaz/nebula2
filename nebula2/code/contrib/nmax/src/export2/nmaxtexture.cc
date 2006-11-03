@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
 #include "export2/nmaxinterface.h"
+#include "export2/nmaxmaterial.h"
 #include "export2/nmaxtexture.h"
 #include "export2/nmaxutil.h"
 #include "pluginlibs/nmaxdlg.h"
