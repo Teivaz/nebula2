@@ -37,7 +37,9 @@
 class nMaxExport2 : public SceneExport
 {
 public:
+    /// Constructor.
     nMaxExport2();
+    /// Destructor.
     virtual ~nMaxExport2();
 
     /// @name Overridden functions from 3dsmax
@@ -57,8 +59,7 @@ public:
     /// @}
 
 protected:
-    bool LaunchViewer(const char* sceneFile);
-
+    ///
     void Close();
 
 protected:

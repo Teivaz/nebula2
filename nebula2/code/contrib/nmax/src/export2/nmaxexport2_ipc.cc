@@ -58,6 +58,27 @@ bool nChangeShaderParameter(const char* toolkitShaderName, const char* shaderHan
 
 //-----------------------------------------------------------------------------
 /**
+    Do hotloading through IPC.
+*/
+bool nDoHotLoading(const char* objPath)
+{
+    nString msg;
+
+    msg += "/sys/servers/toolkit.dohotloading";
+    msg += " ";
+    msg += "\"";
+    msg += objPath;
+    msg += "\"";
+
+#ifdef _DEBUG
+    n_listener("%s\n", msg.Get());
+#endif
+
+    return nSendMsgIpc(msg.Get());
+}
+
+//-----------------------------------------------------------------------------
+/**
     Connnet IPC with the given host and port.
 
     The following maxscript try to connect IPC to the nviewer in local.

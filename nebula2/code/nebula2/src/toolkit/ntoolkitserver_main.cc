@@ -449,3 +449,27 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
     }
     return result;
 };
+
+//------------------------------------------------------------------------------
+/**
+    Clear existing scene objects and load given objects.
+
+    -03-Nov-06  kims Created.
+
+    @param objPath - .n2 objects to load.
+    
+*/
+void
+nToolkitServer::DoHotLoading(const nString& objPath)
+{
+    nNodeList* nodeList = nNodeList::Instance();
+
+    // remove all objects under '/usr/scene'.
+    nodeList->Clear();
+
+    // add default entry.(default scene light is created)
+    nodeList->AddDefaultEntry();
+
+    // load object with the given path.
+    nodeList->LoadObject(objPath);
+}
