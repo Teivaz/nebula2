@@ -10,6 +10,11 @@
 #include "cegui/CEGUIFontManager.h"
 #include "cegui/CEGUISchemeManager.h"
 #include "cegui/CEGUIWindowManager.h"
+#include "cegui/CEGUIDefaultResourceProvider.h"
+#include "cegui/CEGUIImageset.h"
+#include "cegui/CEGUIScheme.h"
+#include "cegui/CEGUIScriptModule.h"
+#include "cegui/falagard/CEGUIFalWidgetLookManager.h"
 
 namespace CEUI
 {
@@ -47,6 +52,19 @@ bool Server::Open() {
     renderer = n_new(Renderer);
     ceGuiSystem = n_new(CEGUI::System(renderer));
     CEGUI::Logger::getSingleton().setLoggingLevel(CEGUI::Standard);
+    CEGUI::DefaultResourceProvider* resProvider = static_cast<CEGUI::DefaultResourceProvider*>(ceGuiSystem->getResourceProvider());
+    resProvider->setResourceGroupDirectory("schemes", "cegui:schemes/");
+    resProvider->setResourceGroupDirectory("imagesets", "cegui:imagesets/");
+    resProvider->setResourceGroupDirectory("fonts", "cegui:fonts/");
+    resProvider->setResourceGroupDirectory("layouts", "cegui:layouts/");
+    resProvider->setResourceGroupDirectory("looknfeels", "cegui:looknfeel/");
+    resProvider->setResourceGroupDirectory("lua_scripts", "cegui:lua_scripts/");
+    CEGUI::Imageset::setDefaultResourceGroup("imagesets");
+    CEGUI::Font::setDefaultResourceGroup("fonts");
+    CEGUI::Scheme::setDefaultResourceGroup("schemes");
+    CEGUI::WidgetLookManager::setDefaultResourceGroup("looknfeels");
+    CEGUI::WindowManager::setDefaultResourceGroup("layouts");
+    CEGUI::ScriptModule::setDefaultResourceGroup("lua_scripts");
     nGfxServer2::Instance()->SetCursorVisibility(nGfxServer2::Custom);
     isOpen = true;
     return isOpen;
@@ -231,38 +249,10 @@ void Server::Render() {
 
 //------------------------------------------------------------------------------
 /**
-    create GUI font
-*/
-CEGUI::Font* Server::CreateFont(const nString& fontName) {
-    nString fullName;
-    fullName.Format("cegui:fonts/%s.font", fontName.Get());
-    return CEGUI::FontManager::getSingleton().createFont(fullName.Get());
-}
-
-//------------------------------------------------------------------------------
-/**
-    destroy GUI font
-*/
-void Server::DestroyFont(const nString& fontName) {
-    CEGUI::FontManager::getSingleton().destroyFont(fontName.Get());
-}
-
-//------------------------------------------------------------------------------
-/**
-    destroy all GUI fonts
-*/
-void Server::DestroyAllFonts() {
-    CEGUI::FontManager::getSingleton().destroyAllFonts();
-}
-
-//------------------------------------------------------------------------------
-/**
     load GUI scheme
 */
 void Server::LoadScheme(const nString& schemeName) {
-    nString fullName;
-    fullName.Format("cegui:schemes/%s.scheme", schemeName.Get());
-    CEGUI::SchemeManager::getSingleton().loadScheme(fullName.Get());
+    CEGUI::SchemeManager::getSingleton().loadScheme(schemeName.Get(), "schemes");
 }
 
 //------------------------------------------------------------------------------
@@ -279,6 +269,54 @@ void Server::UnloadScheme(const nString& schemeName) {
 */
 void Server::UnloadAllSchemes() {
     CEGUI::SchemeManager::getSingleton().unloadAllSchemes();
+}
+
+//------------------------------------------------------------------------------
+/**
+    create GUI image set
+*/
+void Server::CreateImageSet(const nString& imagesetName, const nString& fileName) {
+    CEGUI::ImagesetManager::getSingleton().createImagesetFromImageFile(imagesetName.Get(), fileName.Get(), "imagesets");
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy GUI image set
+*/
+void Server::DestroyImageSet(const nString& imagesetName) {
+    CEGUI::ImagesetManager::getSingleton().destroyImageset(imagesetName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy all GUI image sets
+*/
+void Server::DestroyAllImageSets() {
+    CEGUI::ImagesetManager::getSingleton().destroyAllImagesets();
+}
+
+//------------------------------------------------------------------------------
+/**
+    create GUI font
+*/
+CEGUI::Font* Server::CreateFont(const nString& fontName) {
+    return CEGUI::FontManager::getSingleton().createFont(fontName.Get(), "fonts");
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy GUI font
+*/
+void Server::DestroyFont(const nString& fontName) {
+    CEGUI::FontManager::getSingleton().destroyFont(fontName.Get());
+}
+
+//------------------------------------------------------------------------------
+/**
+    destroy all GUI fonts
+*/
+void Server::DestroyAllFonts() {
+    CEGUI::FontManager::getSingleton().destroyAllFonts();
 }
 
 //------------------------------------------------------------------------------
@@ -326,9 +364,7 @@ void Server::DestroyAllWindows() {
     load window layout from XML and display GUI
 */
 CEGUI::Window* Server::LoadWindowLayout(const nString& resName, const nString& prefix) {
-    nString fullName;
-    fullName.Format("cegui:layouts/%s.layout", resName.Get());
-    return CEGUI::WindowManager::getSingleton().loadWindowLayout(fullName.Get(), prefix.Get());
+    return CEGUI::WindowManager::getSingleton().loadWindowLayout(resName.Get(), prefix.Get());
 }
 
 //------------------------------------------------------------------------------
