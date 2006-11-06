@@ -452,11 +452,11 @@ ViewerApp::SetupGui()
 void
 ViewerApp::SetupCeGui()
 {
-    ceuiServer->CreateFont("Commonwealth-10");
-    ceuiServer->LoadScheme("TaharezLook");
+    ceuiServer->CreateFont("Commonwealth-10.font");
+    ceuiServer->LoadScheme("TaharezLook.scheme");
     ceuiServer->SetDefaultMouseCursor("TaharezLook", "MouseArrow");
-    CEGUI::Window* window = ceuiServer->LoadWindowLayout("mviewer");
-    ceuiServer->SetRootWindow(window);
+    CEGUI::Window* rootWnd = ceuiServer->LoadWindowLayout("mviewer.layout");
+    ceuiServer->SetRootWindow(rootWnd);
     ceuiServer->DisplayGui();
 }
 

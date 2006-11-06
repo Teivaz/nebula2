@@ -45,18 +45,24 @@ public:
     void Trigger();
     /// render the user interface
     void Render();
-    /// create GUI font
-    CEGUI::Font* CreateFont(const nString& fontName);
-    /// destroy GUI font
-    void DestroyFont(const nString& fontName);
-    /// destroy all GUI fonts
-    void DestroyAllFonts();
     /// load GUI scheme
     void LoadScheme(const nString& schemeName);
     /// unload GUI scheme
     void UnloadScheme(const nString& schemeName);
     /// unload all GUI scheme
     void UnloadAllSchemes();
+    /// create GUI image set
+    void CreateImageSet(const nString& imagesetName, const nString& fileName);
+    /// destroy GUI image set
+    void DestroyImageSet(const nString& imagesetName);
+    /// destroy all GUI image sets
+    void DestroyAllImageSets();
+    /// create GUI font
+    CEGUI::Font* CreateFont(const nString& fontName);
+    /// destroy GUI font
+    void DestroyFont(const nString& fontName);
+    /// destroy all GUI fonts
+    void DestroyAllFonts();
 
 #ifdef CreateWindow
 #undef CreateWindow

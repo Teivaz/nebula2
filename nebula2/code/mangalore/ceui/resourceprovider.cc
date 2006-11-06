@@ -26,7 +26,7 @@ ResourceProvider::~ResourceProvider() {
 */
 void ResourceProvider::loadRawDataContainer(const CEGUI::String& fileName, CEGUI::RawDataContainer& output, const CEGUI::String& resGroup) {
     nFile* file = nFileServer2::Instance()->NewFileObject();
-    n_verify(file->Open(fileName.c_str(), "r"));
+    n_verify(file->Open(getFinalFilename(fileName, resGroup).c_str(), "r"));
     int size = file->GetSize();
     uchar* data = n_new_array(uchar, size);
     file->Read(data, size);
