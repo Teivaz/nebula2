@@ -32,7 +32,7 @@ public:
         //empty
     }
 
-    /// constuctor with initial size and grow size of the internal elements nArray
+    /// constructor with initial size and grow size of the internal elements nArray
     nIpolKeyArray(int initialSize, int grow) :
         keyArray(initialSize, grow)
     {

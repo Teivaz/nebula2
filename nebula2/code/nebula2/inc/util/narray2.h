@@ -8,6 +8,7 @@
 
     (C) 2004 RadonLabs GmbH
 */
+#include "kernel/ntypes.h"
 
 //------------------------------------------------------------------------------
 template<class TYPE>
