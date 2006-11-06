@@ -14,6 +14,7 @@
 #include "export2/nmaxscene.h"
 #include "export2/nmaxoptions.h"
 #include "export2/nmaxcamera.h"
+#include "export2/nmaxutil.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "pluginlibs/nmaxvieweroptions.h"
@@ -21,12 +22,8 @@
 #include "tools/napplauncher.h"
 #include "tools/nwinmaincmdlineargs.h"
 
-#include <Tlhelp32.h>
-
 ///
 static bool LaunchViewer(const char* sceneFile, nMaxViewerOptions& viewerOptions);
-///
-static bool CheckExistingViewer(nString& viewerName);
 
 //-----------------------------------------------------------------------------
 /**
@@ -263,7 +260,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
 
         nString viewerName = viewerOptions.GetExecutable();
 
-        if (useHotLoading && CheckExistingViewer(viewerName))
+        if (useHotLoading && nMaxUtil::CheckExistingViewer(viewerName))
         {
             if (!nIsConnectedIpc())
             {
@@ -301,46 +298,3 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
     return 1;
 }
 
-//-----------------------------------------------------------------------------
-/**
-*/
-static
-bool CheckExistingViewer(nString& viewerName)
-{
-    int numViewer = 0;
-    HANDLE snapshot = 0;
-    PROCESSENTRY32 procEntry;
-    nString process;
-
-    viewerName.ToUpper();
-
-    // create a handle for processes information.
-    snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-
-    procEntry.dwSize = sizeof (PROCESSENTRY32);
-
-    if (Process32First(snapshot, &procEntry))
-    {
-        do
-        {
-            nString path, filename;
-
-            path = procEntry.szExeFile;
-
-            filename = path.ExtractFileName();
-            filename.ToUpper();
-
-            if (filename == viewerName)
-                ++numViewer;
-        }
-        while(Process32Next(snapshot, &procEntry));
-    }
-
-    CloseHandle(snapshot);
-    
-    //if (numViewer > 0)
-    //    return true;
-
-    //return false;
-    return ((numViewer > 0) ? true : false);
-}
