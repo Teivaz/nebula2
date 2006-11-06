@@ -15,6 +15,8 @@
 
 #include "tools/nmeshbuilder.h"
 
+#include <Tlhelp32.h>
+
 //-----------------------------------------------------------------------------
 /**
     Retrieves Object from the given node.
@@ -529,4 +531,47 @@ nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
     ret += fileName.ExtractFileName();
 
     return ret;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+bool nMaxUtil::CheckExistingViewer(nString& viewerName)
+{
+    int numViewer = 0;
+    HANDLE snapshot = 0;
+    PROCESSENTRY32 procEntry;
+    nString process;
+
+    viewerName.ToUpper();
+
+    // create a handle for processes information.
+    snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+
+    procEntry.dwSize = sizeof (PROCESSENTRY32);
+
+    if (Process32First(snapshot, &procEntry))
+    {
+        do
+        {
+            nString path, filename;
+
+            path = procEntry.szExeFile;
+
+            filename = path.ExtractFileName();
+            filename.ToUpper();
+
+            if (filename == viewerName)
+                ++numViewer;
+        }
+        while(Process32Next(snapshot, &procEntry));
+    }
+
+    CloseHandle(snapshot);
+    
+    //if (numViewer > 0)
+    //    return true;
+
+    //return false;
+    return ((numViewer > 0) ? true : false);
 }

@@ -49,7 +49,11 @@ public:
         Texture
     };
 
+    ///
     static nString RelacePathToAssign(nAssignType type, nString& path, nString& fileName);
+
+    ///
+    static bool nMaxUtil::CheckExistingViewer(nString& viewerName);
 
 protected:
     ///
