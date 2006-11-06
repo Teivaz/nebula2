@@ -16,7 +16,6 @@
     (C) 2002 RadonLabs GmbH
 */
 #include "kernel/ntypes.h"
-#include <algorithm>
 
 //------------------------------------------------------------------------------
 template<class TYPE> class nArray
@@ -49,9 +48,9 @@ public:
     /// inequality operator
     bool operator!=(const nArray<TYPE>& rhs) const;
 
-    /// set behaviour flags
+    /// set behavior flags
     void SetFlags(int f);
-    /// get behaviour flags
+    /// get behavior flags
     int GetFlags() const;
     /// clear contents and set a fixed size
     void SetFixedSize(int size);
@@ -380,7 +379,7 @@ nArray<TYPE>::Grow()
     int growToSize;
     if ((DoubleGrowSize & this->flags) != 0)
     {
-        // double growth behaviour
+        // double growth behavior
         if (0 == this->allocSize)
         {
             growToSize = growSize;
@@ -392,7 +391,7 @@ nArray<TYPE>::Grow()
     }
     else
     {
-        // classic linear growth behaviour
+        // classic linear growth behavior
         growToSize = this->allocSize + this->growSize;
     }
     this->GrowTo(growToSize);

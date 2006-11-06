@@ -199,6 +199,7 @@ enum Param
     ScaleVector,
     Map0uvRes,
     Map1uvRes,
+    BumpFactor,
 
     NumParameters,                  // keep this always at the end!
     InvalidParameter,

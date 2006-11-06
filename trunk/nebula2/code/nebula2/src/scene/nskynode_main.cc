@@ -266,6 +266,8 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
                 newNode->SetVector(nShaderState::Position, vector4(1.0f,3.0f,1.0f,0));
             if (!newNode->HasParam(nShaderState::Weight))
                 newNode->SetFloat(nShaderState::Weight, 0.7f);
+            if (!newNode->HasParam(nShaderState::BumpFactor))
+                newNode->SetFloat(nShaderState::BumpFactor, 4.0f);
             break;
         }
         case nSkyNode::StarElement:
@@ -1142,7 +1144,7 @@ void
 nSkyNode::CollectParams(nShaderParams params, ParamList& paramList)
 {
     int i;
-    for(i = 0; i < params.GetNumValidParams(); i++)
+    for (i = 0; i < params.GetNumValidParams(); i++)
     {
         switch (params.GetArgByIndex(i).GetType())
         {

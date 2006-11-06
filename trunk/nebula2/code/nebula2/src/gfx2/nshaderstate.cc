@@ -180,6 +180,7 @@ static const char* StateTable[nShaderState::NumParameters] =
     "ScaleVector",
     "Map0uvRes",
     "Map1uvRes",
+    "BumpFactor",
 };
 
 //------------------------------------------------------------------------------

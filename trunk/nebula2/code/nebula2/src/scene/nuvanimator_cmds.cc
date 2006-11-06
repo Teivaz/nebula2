@@ -320,5 +320,3 @@ nUvAnimator::SaveCmds(nPersistServer* ps)
     return false;
 }
 
-
-

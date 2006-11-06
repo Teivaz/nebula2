@@ -189,4 +189,3 @@ nUvAnimator::GetScaleKeyAt(uint texLayer, uint keyIndex, float& time, vector2& k
 //------------------------------------------------------------------------------
 #endif
 
-
