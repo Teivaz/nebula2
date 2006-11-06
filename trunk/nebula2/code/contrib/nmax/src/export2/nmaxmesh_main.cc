@@ -918,7 +918,9 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 
                         if (bone)
                         {
-                            nString boneName = nMaxUtil::CorrectName(bone->GetName());
+                            const char *tmp = nMaxUtil::CorrectName(bone->GetName());
+                            nString boneName = tmp;
+                            n_delete_array(tmp);
                             int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 
                             if (boneID >= 0)
@@ -948,7 +950,9 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 
                     if (bone)
                     {
-                        nString boneName = nMaxUtil::CorrectName(bone->GetName());
+                        const char *tmp = nMaxUtil::CorrectName(bone->GetName());
+                        nString boneName = tmp;
+                        n_delete_array(tmp);
                         int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 
                         if (boneID >= 0)
@@ -1001,7 +1005,9 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 
             if (bone)
             {
-                nString boneName = nMaxUtil::CorrectName(bone->GetName());
+                const char *tmp = nMaxUtil::CorrectName(bone->GetName());
+                nString boneName = tmp;
+                n_delete_array(tmp);
                 int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 
                 if (boneID >= 0)
@@ -1042,7 +1048,9 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 //
 //            if (bone)
 //            {
-//                nString boneName = nMaxUtil::CorrectName(bone->GetName());
+//                const char *tmp = nMaxUtil::CorrectName(bone->GetName());
+//                nString boneName = tmp;
+//                n_delete_array(tmp);
 //                int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 //
 //                if (boneID >= 0)
@@ -1398,7 +1406,7 @@ void nMaxMesh::CheckGeometryErrors(nMeshBuilder& meshBuilder, nString& meshName)
         errlogfilename.StripExtension();
         errlogfilename += ".error";
 
-        n_maxlog(Warning, "Warning: The exported mesh file '%s' has geometry errors.");
+        n_maxlog(Warning, "Warning: The exported mesh file '%s' has geometry errors.", meshName.Get());
         n_maxlog(Warning, "    - See the file '%s' for the details.", errlogfilename.Get());
 
         nFile* errFile = nFileServer2::Instance()->NewFileObject();
