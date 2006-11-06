@@ -51,7 +51,7 @@ public:
         float refreshTime;
         float lastRefresh;
     } ElementGroup;
-typedef struct
+    typedef struct
     {
         nArray<nShaderState::Param> vectorParams;
         nArray<nShaderState::Param> floatParams;
@@ -167,4 +167,5 @@ protected:
 };
 
 #endif
+
 
