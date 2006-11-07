@@ -85,6 +85,7 @@ nDynAutoRef<TYPE>::~nDynAutoRef()
     if (this->targetName)
     {
         n_free((void *)this->targetName);
+        this->targetName = 0;
     }
 }
 
