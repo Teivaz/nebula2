@@ -121,11 +121,7 @@ template<class TYPE>
 inline
 nRef<TYPE>::~nRef()
 {
-    if (this->targetObject)
-    {
-        ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced> *)this);
-        this->targetObject = 0;
-    }
+    this->invalidate();
 }
 
 //------------------------------------------------------------------------------
@@ -139,8 +135,8 @@ nRef<TYPE>::invalidate()
     if (this->targetObject)
     {
         ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced> *)this);
+        this->targetObject = 0;
     }
-    this->targetObject = 0;
 }
 
 //------------------------------------------------------------------------------
