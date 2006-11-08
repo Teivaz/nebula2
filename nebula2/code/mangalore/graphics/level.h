@@ -10,7 +10,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
 #include "foundation/server.h"
 #include "graphics/cameraentity.h"
 #include "kernel/nprofiler.h"
@@ -41,7 +40,7 @@ public:
     void AttachEntity(Entity* entity);
     /// remove a dynamic graphics entity from the level
     void RemoveEntity(Entity* entity);
-    /// set the current camera entity (incr refcount)
+    /// set the current camera entity (increase refcount)
     void SetCamera(CameraEntity* camera);
     /// get the current camera entity
     CameraEntity* GetCamera() const;

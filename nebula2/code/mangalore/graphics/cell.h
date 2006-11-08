@@ -24,10 +24,7 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
-#include "util/narray.h"
 #include "mathlib/matrix.h"
-#include "mathlib/vector.h"
 #include "mathlib/bbox.h"
 #include "graphics/entity.h"
 

@@ -14,7 +14,6 @@ class nInputEvent;
 
 namespace Input
 {
-class Chain;
 class Mapping;
 class Event;
 

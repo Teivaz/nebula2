@@ -73,7 +73,7 @@ CompositeLoader::ParseShapes(nStream& stream, RigidBody * body, Composite * comp
         vector3 pos = stream.GetVector3("pos");
         vector4 rot = stream.GetVector4("rot");
         vector3 size = stream.GetVector3("size");
-        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
+        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat"));
 
         matrix44 m(quaternion(rot.x, rot.y, rot.z, rot.w));
         m.translate(pos);
@@ -96,7 +96,7 @@ CompositeLoader::ParseShapes(nStream& stream, RigidBody * body, Composite * comp
     {
         vector3 pos  = stream.GetVector3("pos");
         float radius = stream.GetFloat("radius");
-        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
+        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat"));
 
         matrix44 m;
         m.translate(pos);
@@ -120,7 +120,7 @@ CompositeLoader::ParseShapes(nStream& stream, RigidBody * body, Composite * comp
         vector4 rot  = stream.GetVector4("rot");
         float radius = stream.GetFloat("radius");
         float length = stream.GetFloat("length");
-        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
+        MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat"));
 
         matrix44 m(quaternion(rot.x, rot.y, rot.z, rot.w));
         m.translate(pos);
@@ -500,7 +500,7 @@ CompositeLoader::Load(const nString& filename)
         if (stream.SetToFirstChild("MeshShape"))
         {
             nString filename = stream.GetString("file");
-            MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat").Get());
+            MaterialType matType = MaterialTable::StringToMaterialType(stream.GetString("mat"));
             Ptr<MeshShape> meshShape = Physics::Server::Instance()->CreateMeshShape(matrix44::identity, matType, filename);
             composite->AddShape(meshShape.get());
         }

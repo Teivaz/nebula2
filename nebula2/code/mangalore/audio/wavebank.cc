@@ -2,11 +2,10 @@
 //  audio/wavebank.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "audio3/naudioserver3.h"
-#include "audio/waveresource.h"
 #include "audio/wavebank.h"
+#include "audio/waveresource.h"
 #include "kernel/nfileserver2.h"
-#include "foundation/factory.h"
+#include "audio3/naudioserver3.h"
 
 namespace Audio
 {

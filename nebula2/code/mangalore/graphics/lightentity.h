@@ -11,7 +11,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "graphics/entity.h"
-#include "gfx2/ncamera2.h"
 #include "gfx2/nlight.h"
 
 class nLightNode;

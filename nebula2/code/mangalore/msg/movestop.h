@@ -23,6 +23,6 @@ class MoveStop : public Msg
 
 RegisterFactory(MoveStop);
 
-}
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

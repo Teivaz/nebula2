@@ -20,9 +20,8 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#include "util/nstring.h"
-#include "foundation/server.h"
 #include "foundation/refcounted.h"
+#include "foundation/server.h"
 
 class nTransformNode;
 class nRenderContext;

@@ -3,6 +3,7 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "game/manager.h"
+#include "message/server.h"
 
 namespace Game
 {

@@ -9,7 +9,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "physics/shape.h"
-#include "util/nstring.h"
 #include "mathlib/sphere.h"
 #include "mathlib/line.h"
 #define BAN_OPCODE_AUTOLINK

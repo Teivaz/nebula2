@@ -3,7 +3,6 @@
 //  (C) 2005 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "message/dispatcher.h"
-#include "message/port.h"
 
 namespace Message
 {

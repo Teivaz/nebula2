@@ -28,7 +28,6 @@
 
     (C) 2005 RadonLabs GmbH
 */
-#include "foundation/ptr.h"
 #include "message/port.h"
 
 //------------------------------------------------------------------------------

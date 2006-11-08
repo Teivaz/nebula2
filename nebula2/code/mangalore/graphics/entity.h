@@ -9,12 +9,9 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
 #include "foundation/server.h"
-#include "kernel/ntypes.h"
 #include "mathlib/matrix.h"
 #include "mathlib/bbox.h"
-#include "util/nstring.h"
 #include "scene/nrendercontext.h"
 #include "graphics/resource.h"
 #include "misc/nwatched.h"

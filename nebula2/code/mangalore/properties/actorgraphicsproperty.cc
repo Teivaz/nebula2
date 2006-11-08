@@ -437,9 +437,7 @@ ActorGraphicsProperty::SetCharacterSet(const nString& characterSetName)
         pathToCharSet = pathToCharSet.ExtractDirName() + "skinlists/";
 
         nString filename;
-        filename.Format("gfxlib:%s%s.xml",
-            pathToCharSet.Get(),
-            characterSetName.Get());
+        filename.Format("gfxlib:%s%s.xml", pathToCharSet.Get(), characterSetName.Get());
 
         charEntity->LoadCharacter3Set(filename);
     }

@@ -11,9 +11,9 @@
 
     (C) 2006 RadonLabs GmbH
 */
+#include "foundation/refcounted.h"
 #include "loader/userprofile.h"
 #include "loader/characterprofile.h"
-#include "foundation/ptr.h"
 #include "loader/entityloaderbase.h"
 #include "db/reader.h"
 #include "ui/progressbarwindow.h"

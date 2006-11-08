@@ -3,7 +3,6 @@
 //  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "loader/server.h"
-#include "foundation/factory.h"
 #include "loader/levelloader.h"
 
 namespace Loader

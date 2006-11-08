@@ -89,6 +89,6 @@ CameraOrbit::GetVerticalRotation() const
     return this->vertAngle;
 }
 
-};
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

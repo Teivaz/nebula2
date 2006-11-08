@@ -22,6 +22,6 @@ class CameraReset : public Msg
 
 RegisterFactory(CameraReset);
 
-};
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

@@ -278,5 +278,6 @@ GfxSetAnimation::GetOverlayAnimStop() const
     return this->stopOverlayAnim;
 }
 
-} // namespace Msg
+} // namespace Message
+//------------------------------------------------------------------------------
 #endif

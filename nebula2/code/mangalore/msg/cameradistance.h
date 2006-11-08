@@ -63,7 +63,7 @@ CameraDistance::GetRelativeDistanceChange() const
     return this->relDistChange;
 }
 
-};
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif
 

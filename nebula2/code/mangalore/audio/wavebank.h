@@ -10,8 +10,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
-#include "util/narray.h"
 #include "xml/nxmlspreadsheet.h"
 
 // windows.h hack

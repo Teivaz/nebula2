@@ -46,6 +46,6 @@ GuiTimeSource::Instance()
     return Singleton;
 }
 
-};
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

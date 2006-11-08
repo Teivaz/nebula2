@@ -4,7 +4,6 @@
 //------------------------------------------------------------------------------
 #include "vfx/soundeffect.h"
 #include "audio/server.h"
-#include "attr/attributes.h"
 
 namespace VFX
 {

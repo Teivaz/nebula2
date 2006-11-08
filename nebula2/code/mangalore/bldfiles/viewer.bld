@@ -11,10 +11,10 @@ endmodule
 
 beginmodule viewerapp
     setdir viewer
-    setfiles {
+    setheaders {
         viewerapp
     }
-    setheaders {
+    setfiles {
         viewerapp
     }
 endmodule

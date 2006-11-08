@@ -64,6 +64,6 @@ GfxSetCharacterSet::GetCharacterSet() const
     return this->characterSet;
 }
 
-} // namespace Msg
+} // namespace Message
 //------------------------------------------------------------------------------
 #endif

@@ -9,8 +9,6 @@
 
     (C) 2003 RadonLabs GmbH
 */
-#include "kernel/nref.h"
-#include "foundation/server.h"
 #include "message/port.h"
 #include "input/ninputevent.h"
 

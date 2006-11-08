@@ -12,11 +12,9 @@
     (C) 2004 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
-#include "physics/entity.h"
 #include "physics/contactpoint.h"
-#include "ode/ode.h"
 #include "util/npfeedbackloop.h"
+#include "ode/ode.h"
 
 //------------------------------------------------------------------------------
 namespace Physics

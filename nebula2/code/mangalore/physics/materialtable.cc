@@ -62,11 +62,11 @@ MaterialTable::Setup()
     n_assert(frictionTable->NumColumns() == materialCount + 1);
     for (int row = 2; row < frictionTable->NumRows(); ++row)
     {
-        MaterialType mat1 = StringToMaterialType(frictionTable->Cell(row, 0).AsString().Get());
+        MaterialType mat1 = StringToMaterialType(frictionTable->Cell(row, 0).AsString());
 
         for (int col = row - 2 + 1; col < frictionTable->NumColumns(); ++col)
         {
-            MaterialType mat2 = StringToMaterialType(frictionTable->Cell(0, col).AsString().Get());
+            MaterialType mat2 = StringToMaterialType(frictionTable->Cell(0, col).AsString());
 
             interactions[mat1 * materialCount + mat2].friction = frictionTable->Cell(row, col).AsFloat();
             interactions[mat2 * materialCount + mat1].friction = frictionTable->Cell(row, col).AsFloat();
@@ -80,11 +80,11 @@ MaterialTable::Setup()
     n_assert(bounceTable->NumColumns() == materialCount + 1);
     for (int row = 2; row < bounceTable->NumRows(); ++row)
     {
-        MaterialType mat1 = StringToMaterialType(bounceTable->Cell(row, 0).AsString().Get());
+        MaterialType mat1 = StringToMaterialType(bounceTable->Cell(row, 0).AsString());
 
         for (int col = row - 2 + 1; col < bounceTable->NumColumns(); ++col)
         {
-            MaterialType mat2 = StringToMaterialType(bounceTable->Cell(0, col).AsString().Get());
+            MaterialType mat2 = StringToMaterialType(bounceTable->Cell(0, col).AsString());
 
             interactions[mat1 * materialCount + mat2].bouncyness = bounceTable->Cell(row, col).AsFloat();
             interactions[mat2 * materialCount + mat1].bouncyness = bounceTable->Cell(row, col).AsFloat();
@@ -99,11 +99,11 @@ MaterialTable::Setup()
         n_assert(soundTable->NumColumns() == materialCount + 1);
         for (int row = 2; row < soundTable->NumRows(); ++row)
         {
-            MaterialType mat1 = StringToMaterialType(soundTable->Cell(row, 0).AsString().Get());
+            MaterialType mat1 = StringToMaterialType(soundTable->Cell(row, 0).AsString());
 
             for (int col = row - 2 + 1; col < soundTable->NumColumns(); ++col)
             {
-                MaterialType mat2 = StringToMaterialType(soundTable->Cell(0, col).AsString().Get());
+                MaterialType mat2 = StringToMaterialType(soundTable->Cell(0, col).AsString());
 
                 if (soundTable->Cell(row, col).AsString() != "")
                 {
@@ -118,12 +118,12 @@ MaterialTable::Setup()
             }
         }
     }
-};
+}
 
 //------------------------------------------------------------------------------
 /**
 */
-const char*
+nString
 MaterialTable::MaterialTypeToString(MaterialType t)
 {
     if (-1 == t)
@@ -133,7 +133,7 @@ MaterialTable::MaterialTypeToString(MaterialType t)
     else
     {
         n_assert(t >= 0 && t < materialCount);
-        return materials[t].name.Get();
+        return materials[t].name;
     }
 }
 
@@ -141,7 +141,7 @@ MaterialTable::MaterialTypeToString(MaterialType t)
 /**
 */
 MaterialType
-MaterialTable::StringToMaterialType(const char* str)
+MaterialTable::StringToMaterialType(const nString& str)
 {
     for (int i = 0; i < materialCount; ++i)
     {

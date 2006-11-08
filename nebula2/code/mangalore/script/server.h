@@ -10,7 +10,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
 #include "script/ntclserver.h"
 
 //------------------------------------------------------------------------------

@@ -7,9 +7,7 @@
     (C) 2005 RadonLabs GmbH
 */
 
-#include "mathlib/vector.h"
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
 #include "navigation/path3d.h"
 #include "navigation/map.h"
 
