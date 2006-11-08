@@ -64,4 +64,4 @@ ShakeEffectHelper::Update()
     }
 }
 
-};
+} // namespace VFX

@@ -73,7 +73,6 @@ Bank::GetFilename() const
 	return this->xmlSpreadSheet.GetFilename();
 }
 
-
 } // namespace VFX
 //------------------------------------------------------------------------------
 #endif

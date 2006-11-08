@@ -11,7 +11,6 @@
 */
 #include "vfx/effect.h"
 #include "message/msg.h"
-#include "util/narray.h"
 
 //------------------------------------------------------------------------------
 namespace VFX
@@ -33,6 +32,8 @@ public:
 private:
     nArray<Ptr<Message::Msg> > messages;
 };
+
+RegisterFactory(SendMessageEffect);
 
 //------------------------------------------------------------------------------
 /**
