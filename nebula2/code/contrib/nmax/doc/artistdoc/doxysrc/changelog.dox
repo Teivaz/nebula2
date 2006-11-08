@@ -6,6 +6,8 @@
 
     @section N2ChangeLog_2006_11 2006.11.
 
+    - Added hotloading stuff. Now the plug-in does not need to open a new viewer
+    whenever it exports assets.
     - Fixed the problem of closing log dialog at the end of export stage. 
       Now, the plug-in just clear window if the log dialog already exist 
       instead of close previous one and recreating it again. 

@@ -18,7 +18,8 @@
     - @ref NMaxHowtoHierarchyNode 
     - @ref NMaxHowtoShadows 
     - @ref NMaxHowtoAnimations
-    - @ref NMaxLOD
+    - @ref NMaxHowtoLOD
+    - @ref NMaxHowtoSky
     - @ref NMaxHowtoExport
     - @ref NMaxHowtoHotLoading
     - @ref NMaxHowtoImport
