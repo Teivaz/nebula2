@@ -9,7 +9,6 @@
     (C) 2006 Radon Labs GmbH
 */
 #include "vfx/effect.h"
-#include "foundation/ptr.h"
 #include "graphics/entity.h"
 
 //------------------------------------------------------------------------------
@@ -40,6 +39,8 @@ private:
     Ptr<Graphics::Entity> graphicsEntity;
 };
 
+RegisterFactory(GraphicsEffect);
+
 //------------------------------------------------------------------------------
 /*
 */
@@ -60,6 +61,6 @@ GraphicsEffect::GetResourceName() const
     return this->resName;
 }
 
-};
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

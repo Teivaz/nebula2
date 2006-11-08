@@ -45,6 +45,8 @@ private:
     matrix44 offsetMatrix;
 };
 
+RegisterFactory(AttachmentEffect);
+
 //------------------------------------------------------------------------------
 /**
 */

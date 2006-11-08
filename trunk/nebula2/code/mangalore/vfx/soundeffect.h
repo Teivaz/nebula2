@@ -37,8 +37,9 @@ public:
 private:
     nString soundName;
     float volume;
-
 };
+
+RegisterFactory(SoundEffect);
 
 //------------------------------------------------------------------------------
 /**

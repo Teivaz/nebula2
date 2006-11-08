@@ -54,6 +54,8 @@ protected:
     vector4 color;
 };
 
+RegisterFactory(TextEffect);
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -114,7 +116,7 @@ TextEffect::GetColor() const
     return this->color;
 }
 
-};
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif
 

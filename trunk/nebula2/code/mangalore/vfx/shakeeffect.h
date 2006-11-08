@@ -11,7 +11,6 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "vfx/effect.h"
-#include "mathlib/nmath.h"
 
 //------------------------------------------------------------------------------
 namespace VFX
@@ -46,6 +45,8 @@ private:
     float intensity;
     float curIntensity;     // current intensity, updated by Trigger
 };
+
+RegisterFactory(ShakeEffect);
 
 //------------------------------------------------------------------------------
 /**

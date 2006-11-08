@@ -9,7 +9,6 @@
     (C) 2006 Radon Labs GmbH
 */
 #include "vfx/effect.h"
-#include "foundation/ptr.h"
 #include "ui/window.h"
 
 //------------------------------------------------------------------------------
@@ -40,6 +39,8 @@ private:
     Ptr<UI::Window> window;
 };
 
+RegisterFactory(GuiEffect);
+
 //------------------------------------------------------------------------------
 /*
 */
@@ -60,6 +61,6 @@ GuiEffect::GetResourceName() const
     return this->resName;
 }
 
-};
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif

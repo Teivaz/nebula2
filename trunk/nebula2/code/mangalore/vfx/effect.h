@@ -95,6 +95,8 @@ protected:
     bool isFinished;
 };
 
+RegisterFactory(Effect);
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -276,6 +278,6 @@ Effect::GetHotspotTime() const
     return this->hotspotTime;
 }
 
-};
+} // namespace VFX
 //------------------------------------------------------------------------------
 #endif
