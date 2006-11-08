@@ -189,12 +189,12 @@ MaterialTable::GetBounce(MaterialType t0, MaterialType t1)
 //------------------------------------------------------------------------------
 /**
 */
-const char*
+const nString&
 MaterialTable::GetCollisionSound(MaterialType t0, MaterialType t1)
 {
     n_assert(t0 >= 0 && t0 < materialCount);
     n_assert(t1 >= 0 && t1 < materialCount);
-    return interactions[t0 * materialCount + t1].collSound.Get();
+    return interactions[t0 * materialCount + t1].collSound;
 }
 
 } // namespace Physics

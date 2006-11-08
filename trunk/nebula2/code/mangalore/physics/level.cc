@@ -391,13 +391,8 @@ Level::OdeNearCallback(void* data, dGeomID o1, dGeomID o2)
 
         if ((now - level->collisionSounds.At(key, sizeof(key))) > 0.25)
         {
-            const char* sound = Physics::MaterialTable::GetCollisionSound(shape1->GetMaterialType(), shape2->GetMaterialType());
-            if (
-                (
-                    (0 != rigid1 && rigid1->IsEnabled()) ||
-                    (0 != rigid2 && rigid2->IsEnabled())
-                ) && strcmp(sound, "")
-            )
+            const nString& sound = Physics::MaterialTable::GetCollisionSound(shape1->GetMaterialType(), shape2->GetMaterialType());
+            if ((0 != rigid1 && rigid1->IsEnabled() || 0 != rigid2 && rigid2->IsEnabled()) && sound.IsEmpty())
             {
                 vector3 normal(contact[0].geom.normal[0], contact[0].geom.normal[1], contact[0].geom.normal[2]);
                 vector3 velocity =
