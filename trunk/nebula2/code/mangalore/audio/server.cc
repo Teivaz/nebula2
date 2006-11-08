@@ -2,12 +2,12 @@
 //  audio/server.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "audio3/naudioserver3.h"
-#include "kernel/nfileserver2.h"
-#include "audio/waveresource.h"
 #include "audio/server.h"
 #include "audio/entity.h"
-#include "foundation/factory.h"
+#include "audio/waveresource.h"
+#include "message/server.h"
+#include "kernel/nfileserver2.h"
+#include "audio3/naudioserver3.h"
 
 namespace Audio
 {

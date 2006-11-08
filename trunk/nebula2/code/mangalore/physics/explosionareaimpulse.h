@@ -13,7 +13,6 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "physics/areaimpulse.h"
-#include "util/narray.h"
 #include "physics/entity.h"
 
 //------------------------------------------------------------------------------

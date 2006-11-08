@@ -9,13 +9,11 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "anim2/nanimeventhandler.h"
-#include "foundation/ptr.h"
+#include "graphics/entity.h"
 
 //------------------------------------------------------------------------------
 namespace Graphics
 {
-class Entity;
-
 class CharAnimEventHandler : public nAnimEventHandler
 {
 public:

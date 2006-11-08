@@ -10,7 +10,7 @@
     (C) 2006 RadonLabs GmbH
 */
 #include "loader/entityloaderbase.h"
-#include "db/query.h"
+#include "db/reader.h"
 
 //------------------------------------------------------------------------------
 namespace Loader

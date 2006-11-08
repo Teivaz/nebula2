@@ -9,10 +9,9 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
 #include "audio/wavebank.h"
 #include "audio/listener.h"
-#include "audio3/nsound3.h"
+#include "audio/entity.h"
 #include "audio/soundfxhandler.h"
 
 //------------------------------------------------------------------------------

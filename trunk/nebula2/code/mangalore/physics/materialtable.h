@@ -25,9 +25,9 @@ public:
     static void Setup();
 
     /// translate material type to string
-    static const char* MaterialTypeToString(MaterialType t);
+    static nString MaterialTypeToString(MaterialType t);
     /// translate string to material type
-    static MaterialType StringToMaterialType(const char* str);
+    static MaterialType StringToMaterialType(const nString& str);
 
     /// get density for a material type
     static float GetDensity(MaterialType t);

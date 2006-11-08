@@ -6,7 +6,6 @@
 #include "graphics/server.h"
 #include "graphics/level.h"
 #include "game/entity.h"
-#include "attr/attributes.h"
 #include "msg/updatetransform.h"
 
 namespace Properties

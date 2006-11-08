@@ -457,14 +457,15 @@ App::SetupSubsystems()
 void
 App::CleanupSubsystems()
 {
-    // cleanup gui stuff
-    nGuiServer::Instance()->Close();
-    this->uiServer->Close();
-    this->uiServer = 0;
 #ifdef USE_MCEGUI
     this->ceuiServer->Close();
     this->ceuiServer = 0;
 #endif
+
+    // cleanup gui stuff
+    nGuiServer::Instance()->Close();
+    this->uiServer->Close();
+    this->uiServer = 0;
 
     // cleanup loader subsystem
     this->loaderServer->Close();

@@ -3,6 +3,7 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "message/msg.h"
+#include "message/server.h"
 
 namespace Message
 {

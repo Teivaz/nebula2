@@ -10,7 +10,6 @@
     (C) 2005 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
 
 //------------------------------------------------------------------------------
 namespace Message

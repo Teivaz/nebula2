@@ -50,7 +50,6 @@ private:
 
 RegisterFactory(PointNClickInputProperty);
 
-};
-
+} // namespace Properties
 //------------------------------------------------------------------------------
 #endif

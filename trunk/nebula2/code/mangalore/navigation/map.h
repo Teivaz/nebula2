@@ -7,9 +7,6 @@
     (C) 2005 RadonLabs GmbH
 */
 
-#include "mathlib/vector.h"
-#include "util/narray.h"
-#include "util/nstring.h"
 #include "foundation/refcounted.h"
 
 //------------------------------------------------------------------------------

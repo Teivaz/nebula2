@@ -3,8 +3,6 @@
 //  (C) 2005 Radon Labs GmbH
 //------------------------------------------------------------------------------
 #include "vfx/shakeeffect.h"
-#include "vfx/server.h"
-#include "message/server.h"
 
 namespace VFX
 {

@@ -19,7 +19,6 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "foundation/refcounted.h"
-#include "message/server.h"
 #include "message/id.h"
 
 //------------------------------------------------------------------------------

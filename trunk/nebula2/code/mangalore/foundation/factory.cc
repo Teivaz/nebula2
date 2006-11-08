@@ -3,7 +3,6 @@
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "foundation/factory.h"
-#include "foundation/refcounted.h"
 
 namespace Foundation
 {

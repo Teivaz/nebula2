@@ -46,6 +46,6 @@ SystemTimeSource::Instance()
     return Singleton;
 }
 
-};
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

@@ -7,7 +7,6 @@
     (C) 2005 RadonLabs GmbH
 */
 
-#include "mathlib/vector.h"
 #include "mathlib/polar.h"
 
 //------------------------------------------------------------------------------

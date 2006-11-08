@@ -72,7 +72,6 @@ UpdateTransform::GetMatrix() const
     return this->transform;
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */

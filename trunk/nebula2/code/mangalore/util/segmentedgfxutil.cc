@@ -5,7 +5,6 @@
 #include "util/segmentedgfxutil.h"
 #include "graphics/server.h"
 #include "scene/ntransformnode.h"
-#include "foundation/factory.h"
 
 namespace Util
 {

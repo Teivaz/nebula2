@@ -14,8 +14,6 @@
     (C) 2003 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
-#include "util/narray.h"
 #include "physics/joint.h"
 #include "physics/materialtable.h"
 #include "util/nhashmap2.h"

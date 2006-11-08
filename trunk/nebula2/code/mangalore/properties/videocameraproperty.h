@@ -9,7 +9,6 @@
 
     (C) 2005 Radon Labs GmbH
 */
-#include "game/property.h"
 #include "properties/cameraproperty.h"
 #include "tools/nmayacamcontrol.h"
 

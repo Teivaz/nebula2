@@ -4,7 +4,7 @@
 /**
     @class Input::Event
 
-    Input::Event's are Messages that where emited from the Input::Source
+    Input::Event's are Messages that where emitted from the Input::Source
     to the Input::Sinks - the attached Msg::Ports
 
     (C) 2006 RadonLabs GmbH

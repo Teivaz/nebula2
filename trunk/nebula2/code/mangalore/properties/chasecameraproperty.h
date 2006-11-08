@@ -11,7 +11,6 @@
 #include "properties/cameraproperty.h"
 #include "mathlib/polar.h"
 #include "util/npfeedbackloop.h"
-#include "mathlib/vector.h"
 
 //------------------------------------------------------------------------------
 namespace Attr

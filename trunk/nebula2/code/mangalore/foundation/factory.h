@@ -29,11 +29,11 @@ public:
 	/// Optional destructor.
 	/// static void Destroy();
 
-	/// Map factory function `function' to class name `className'.
+	/// Map factory function 'function' to class name 'className'.
 	void Add(FactoryFunction function, const nString& className);
-	/// Is a factory function associated with class name `className'?
+	/// Is a factory function associated with class name 'className'?
 	bool Has(const nString& className) const;
-	/// Create object associated with `className'.
+	/// Create object associated with 'className'.
 	RefCounted* Create(const nString& className) const;
 
     /// Get the total number of known classes.
@@ -50,7 +50,7 @@ protected:
 private:
 	static Factory* instance;
 
-	// To be replaced by an useful radonlabs hash table (there is none so far)...
+	// To be replaced by an useful RadonLabs hash table (there is none so far)...
 	struct Cell
 	{
 		Cell() : name(""), function(0) {};

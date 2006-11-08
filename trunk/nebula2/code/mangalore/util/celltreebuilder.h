@@ -12,10 +12,9 @@
 
     (C) 2005 Radon Labs GmbH
 */
-#include "kernel/nref.h"
 #include "graphics/level.h"
-#include "util/nquadtree.h"
 #include "graphics/cell.h"
+#include "util/nquadtree.h"
 
 //------------------------------------------------------------------------------
 namespace Util

@@ -40,6 +40,6 @@ InputTimeSource::Instance()
     return Singleton;
 }
 
-};
+} // namespace Game
 //------------------------------------------------------------------------------
 #endif

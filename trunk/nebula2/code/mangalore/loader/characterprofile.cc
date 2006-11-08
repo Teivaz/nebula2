@@ -38,8 +38,8 @@ bool
 CharacterProfile::Open(const nString& characterProfileName)
 {
     // build filename of character profile file
-    nString filename;
-    filename.Format("%s/character/", Loader::Server::Instance()->GetUserProfile()->GetProfileDirectory().Get());
+    nString filename = Server::Instance()->GetUserProfile()->GetProfileDirectory();
+    filename += "/character/";
     filename += characterProfileName;
     filename += ".xml";
 

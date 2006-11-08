@@ -28,17 +28,19 @@
 #include "misc/nprefserver.h"
 #include "sql/nsqlserver.h"
 
-using namespace Foundation;
-
-nList Server::refCountedList;
-Server* Server::Singleton = 0;
-
 nNebulaUsePackage(nnebula);
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndsound);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(ndshow);
+
+//------------------------------------------------------------------------------
+namespace Foundation
+{
+
+nList Server::refCountedList;
+Server* Server::Singleton = 0;
 
 //------------------------------------------------------------------------------
 /**
@@ -249,3 +251,5 @@ Server::Close()
 
     this->isOpen = false;
 }
+
+} // namespace Foundation

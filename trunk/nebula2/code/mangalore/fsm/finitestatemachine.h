@@ -7,7 +7,6 @@
     (C) 2005 RadonLabs GmbH
 */
 #include "foundation/refcounted.h"
-#include "foundation/ptr.h"
 #include "fsm/fsmfactory.h"
 #include "util/nhashmap2.h"
 

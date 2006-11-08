@@ -4,19 +4,16 @@
 //------------------------------------------------------------------------------
 #include "loader/levelloader.h"
 #include "loader/server.h"
-#include "physics/server.h"
-#include "physics/level.h"
-#include "graphics/server.h"
-#include "foundation/factory.h"
-#include "util/celltreebuilder.h"
-#include "db/server.h"
-#include "db/query.h"
-#include "attr/attributes.h"
 #include "loader/environmentloader.h"
 #include "loader/entityloader.h"
 #include "loader/navmaploader.h"
+#include "physics/server.h"
+#include "physics/level.h"
+#include "graphics/server.h"
+#include "util/celltreebuilder.h"
+#include "db/server.h"
+#include "db/query.h"
 #include "game/server.h"
-#include "loader/server.h"
 
 namespace Loader
 {

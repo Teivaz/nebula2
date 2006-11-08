@@ -15,7 +15,6 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "game/manager.h"
-#include "foundation/ptr.h"
 #include "util/narray.h"
 #include "util/nkeyarray.h"
 #include "game/entity.h"

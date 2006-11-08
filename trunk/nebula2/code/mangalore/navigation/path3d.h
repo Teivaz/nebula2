@@ -9,9 +9,8 @@
     (C) 2003 RadonLabs GmbH
 */
 
-#include "util/narray.h"
-#include "mathlib/vector.h"
 #include "foundation/refcounted.h"
+#include "util/narray.h"
 
 //------------------------------------------------------------------------------
 namespace Navigation

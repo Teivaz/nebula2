@@ -7,7 +7,6 @@
 
     (C) 2005 Radon Labs GmbH
 */
-#include "attr/attributeid.h"
 #include "foundation/refcounted.h"
 
 //------------------------------------------------------------------------------

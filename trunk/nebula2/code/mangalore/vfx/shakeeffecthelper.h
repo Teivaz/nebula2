@@ -12,7 +12,6 @@
 */
 #include "kernel/ntypes.h"
 #include "mathlib/matrix.h"
-#include "mathlib/vector.h"
 
 //------------------------------------------------------------------------------
 namespace VFX
