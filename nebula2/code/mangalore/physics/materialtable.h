@@ -36,7 +36,7 @@ public:
     /// get bounce for 2 materials
     static float GetBounce(MaterialType t0, MaterialType t1);
     /// get collision sound for two material
-    static const char* GetCollisionSound(MaterialType t0, MaterialType t1);
+    static const nString& GetCollisionSound(MaterialType t0, MaterialType t1);
 
 private:
     /// constructor
