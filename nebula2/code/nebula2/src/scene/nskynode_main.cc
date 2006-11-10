@@ -18,9 +18,9 @@ const float nSkyNode::CloudSpeedFactor = 0.0005f;
 */
 nSkyNode::nSkyNode() :
     timeFactor(24),
-    timePeriode(86400),
+    timePeriod(86400),
     startTime(0),
-    sunSpeedFactor(360.0f/this->timePeriode),
+    sunSpeedFactor(360.0f/this->timePeriod),
     skyTime(0),
     worldTime(0),
     jumpTime(0)
@@ -576,10 +576,10 @@ nSkyNode::ComputeWeight(int element, float time, int state0, int state1)
 {
     float stateTime0 = this->elements[element].states[state0].time;
     float stateTime1 = this->elements[element].states[state1].time;
-    if (stateTime0  > stateTime1) stateTime1 += this->timePeriode;    //carry from previous periode;
+    if (stateTime0  > stateTime1) stateTime1 += this->timePeriod;    //carry from previous period;
     float statePeriode = stateTime1 - stateTime0;
     float relTime = time - stateTime0;
-    if (relTime < 0) relTime += this->timePeriode;
+    if (relTime < 0) relTime += this->timePeriod;
 
     return (relTime / statePeriode);
 }
@@ -596,8 +596,8 @@ nSkyNode::UpdateSky(float newTime)
     this->worldTime = newTime;
     time *= this->timeFactor;
     time += this->skyTime + this->jumpTime;
-    while (time < 0) time += this->timePeriode;
-    time = (float)fmod(time,this->timePeriode);
+    while (time < 0) time += this->timePeriod;
+    time = (float)fmod(time,this->timePeriod);
     this->skyTime = time;
 
 
@@ -970,22 +970,22 @@ nSkyNode::GetRefreshTime(const nString& name)
 
 //------------------------------------------------------------------------------
 /**
-    Sets the time periode for a day
+    Sets the time period for a day
 */
 void
-nSkyNode::SetTimePeriode(float periode)
+nSkyNode::SetTimePeriod(float period)
 {
-   this->timePeriode = periode;
+   this->timePeriod = period;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Gets the time periode for a day
+    Gets the time period for a day
 */
 float
-nSkyNode::GetTimePeriode()
+nSkyNode::GetTimePeriod()
 {
-   return this->timePeriode;
+   return this->timePeriod;
 }
 
 //------------------------------------------------------------------------------
