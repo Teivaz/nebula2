@@ -196,7 +196,7 @@ new nskynode nsky
     sel ..
     .setlockviewer true
     .settimefactor 25.051270
-    .settimeperiode 86400.000000
+    .settimeperiod 86400.000000
     .setstarttime 77331.187500
     .addelement "sun" "sun"
     .addelement "sun" "moon"

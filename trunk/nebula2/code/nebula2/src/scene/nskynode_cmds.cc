@@ -48,8 +48,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_deleteelement_s",          'DELE', n_deleteelement);
     cl->AddCmd("v_linkto_ss",                'LKSL', n_linkto);
     cl->AddCmd("v_setrefreshtime_sf",        'SRFT', n_setrefreshtime);
-    cl->AddCmd("v_settimeperiod_f",         'STPD', n_settimeperiod);
-    cl->AddCmd("f_gettimeperiod_v",         'GTPD', n_gettimeperiod);
+    cl->AddCmd("v_settimeperiod_f",          'STPD', n_settimeperiod);
+    cl->AddCmd("f_gettimeperiod_v",          'GTPD', n_gettimeperiod);
     cl->EndCmds();
 }
 
