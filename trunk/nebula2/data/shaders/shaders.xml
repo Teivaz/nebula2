@@ -471,5 +471,65 @@
         <param name="MatAmbient" label="Ambient Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
         <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
     </shader>
-
+    <shader name="SkyNode: Cloud" shaderType="default" meshType="default" file="cloud">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="Map0uvRes" label="Map0uvRes" type="Float" gui="1" export="1"  min="0.0" max="10.0" def="1" />
+        <param name="Map1uvRes" label="Map1uvRes" type="Float" gui="1" export="1"  min="0.0" max="10.0" def="1" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="Move" label="Move" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="CloudMod" label="CloudMod" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="CloudPos" label="CloudPos" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="SunRange" label="SunRange" type="Float" gui="1" export="1" min="0.0" max="1000000.0" def="1" />
+        <param name="Density" label="Density" type="Float" gui="1" export="1" min="0.0" max="1000000.0" def="1" />
+        <param name="Lightness" label="Lightness" type="Float" gui="1" export="1" min="0.0" max="1000000.0" def="1" />
+        <param name="Glow" label="Glow" type="Float" gui="1" export="1" min="0.0" max="1000000.0" def="1" />
+        <param name="Position" label="Position" type="Vector" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="Weight" label="Weight" type="Float" gui="1" export="1" min="0.0" max="1000000.0" def="1" />
+        <param name="BumpMap0" label="Bump Map" type="Texture" gui="1" export="1" def="textures:environment/cloud_bump_ripple.dds" />
+        <param name="BumpFactor" label="BumpFactor" type="Float" gui="1" export="1" min="0.0" max="1000000.0" def="1" />
+        <param name="DiffMap0" label="Texture Map 0" type="Texture" gui="1" export="1" def="textures:environment/cloud_map_cloudy.dds" />
+        <param name="LightDiffuse" label="Light Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="DiffMap1" label="Texture Map 1" type="Texture" gui="1" export="1" def="textures:environment/cloud_map_cloudy1.dds" />
+        <param name="LightDiffuse1" label="Light Diffuse Color1" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="CullMode" label="Cull Mode" type="Enum" gui="1" export="1" enum="None=1:CW:CCW" def="1" />
+    </shader>
+    <shader name="SkyNode: Sun" shaderType="default" meshType="default" file="sun">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="Intensity0" label="Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1" />
+        <param name="Move" label="Move" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="Position" label="Position" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="ScaleVector" label="ScaleVector" type="Vector" gui="1" export="1" def="1.000000 1.000000 1.000000 1.650260" />
+        <param name="DiffMap0" label="Texture Map 0" type="Texture" gui="1" export="1" def="textures:environment/sun.dds" />
+        <param name="LightDiffuse" label="Light Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="LightDiffuse1" label="Light Diffuse Color1" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+    </shader>
+    <shader name="SkyNode: Sky" shaderType="default" meshType="default" file="sky">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="Intensity0" label="Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1" />
+        <param name="SunFlat" label="SunFlat" type="Float" gui="1" export="1" min="0.0" max="10.0" def="0" />
+        <param name="SunRange" label="SunRange" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1" />
+        <param name="SkyBottom" label="SkyBottom" type="Float" gui="1" export="1" min="0.0" max="10.0" def="0" />
+        <param name="Saturation" label="Saturation" type="Vector" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="Brightness" label="Brightness" type="Vector" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="TopColor" label="TopColor" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="BottomColor" label="BottomColor" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="SunColor" label="SunColor" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="Position" label="Position" type="Vector" gui="1" export="1" def="0.0 0.0 0.0 1.0" />
+    </shader>
+    <shader name="SkyNode: Horizon" shaderType="default" meshType="default" file="horizon">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="Intensity0" label="Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="1" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="DiffMap0" label="Texture Map 0" type="Texture" gui="1" export="1" def="textures:environment/Cubemap_Berge.dds" />
+    </shader>
+    <shader name="SkyNode: Stars" shaderType="default" meshType="default" file="stars">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="Intensity0" label="Intensity" type="Float" gui="1" export="1" min="0.0" max="10.0" def="10" />
+        <param name="Saturation" label="Saturation" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="Brightness" label="Brightness" type="Color" gui="1" export="1" def="0.0 0.0 0.0 0.0" />
+        <param name="DiffMap0" label="Texture Map 0" type="Texture" gui="1" export="1" def="textures:environment/stars_tile.dds" />
+        <param name="MatDiffuse" label="Diffuse Color" type="Color" gui="1" export="1" def="1.0 1.0 1.0 1.0" />
+        <param name="DiffMap1" label="Texture Map 1" type="Texture" gui="1" export="1" def="textures:environment/stars_spread.dds" />
+    </shader>
 </NebulaShaderDatabase>

@@ -6,8 +6,54 @@
 
     @section NMaxHowtoSkyNode Add Sky Node
 
+    Frist thing to do is making nskynode object.
+    See Helper panel of 3dsmax and you can find a new custom Nebula2 buttons,
+    nSkyNode and nSkyState which are for sky system are there. 
+
+    <i>Helper panel image here...</i>
+
+    Click nSkyNode button and create a sky node object in the viewport.
+    Next, select modifier and you can find some custom attributes for the created sky node.
+
+    <i>Modifier panel image here...</i>
+
+      - lock viewer -
+      - time factor - 
+      - time period -
+      - start time  - 
+
     @section NMaxHowtoSkyElement Add Sky Element 
+
+    A sky node can have several sky elements under its hierarchy.
+    A sky element is ...
+
+    See the material editor. There are Nebula2 custom materials for sky elements.
+    Select appropriate mateiral and assign it to the currently selected sky element. 
+
+    <i>3dsmax material image here...</i>
+
+    And click "mesh option" menu item in the Nebula2 menu.
+    It adds custom attributes to the sky element.
+    Select mesh type option for 'Sky' type.
+
+    <i>3dmax mesh option custom attributes image here ...</i>
+
+    Before we go futher, be sure that any sky elements should be a child of sky node 
+    which we've already created.
+    3dsmax provide link method which is a way that make a node to be a child node.
+    Select "Select and Link" button and make a sky element to be a child node of a sky node 
+    one by one.
+    Note that all sky elements should be child of a sky node.
+
+    <i>schematic graph image for a sky node and sky elements here...</i>
 
     @section NMaxHowtoSkyState Add Sky State
 
+    Nebula2 sky system changes its state over time, it is handled by sky state.
+
+    <i>Helper panel for sky state image here ...</i>
+
+    Like sky element, any sky state also should be a child of sky node.
+
 */
+

@@ -255,6 +255,9 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
             case 4:
                 this->meshType = Collision;
                 break;
+            case 5:
+                this->meshType = Sky;
+                break;
             case 0:
             default:
                 this->meshType = None;
@@ -306,6 +309,21 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
                 if (flag)
                     this->vertexFlag |= VertexTangent;
             }
+        }
+    }
+
+    // parameter block name for picked sky element to link.
+    const char* skyElemParamName = "SkyLinkedElem";
+
+    e = xmlHandle.FirstChild(skyElemParamName).Element();
+    if (e)
+    {
+        TiXmlElement* child;
+        child = xmlHandle.FirstChild(voParamName).FirstChild("linkedElem").Child("", 0).Element();
+        if (child)
+        {
+            const char* linkedElemName = child->Attribute("value");
+            this->skyLinkElemName = linkedElemName;
         }
     }
 

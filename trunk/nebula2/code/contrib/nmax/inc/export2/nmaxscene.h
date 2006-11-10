@@ -19,6 +19,7 @@
 
 */
 
+class nMaxDummy;
 class nMaxMesh;
 class nVariableServer;
 class nSceneNode;
@@ -104,9 +105,13 @@ protected:
 
     ///
     virtual void ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName);
-
-    //
+    ///
     void AddMeshByType(nMaxMesh* mesh);
+
+    ///
+    void ProcessOnSkyNode();
+    ///
+    void AddDummyByType(nMaxDummy* dummy);
 
 protected:
     /// variable server
@@ -128,6 +133,7 @@ protected:
     nArray<nMaxMesh*> shadowMeshArray;
     nArray<nMaxMesh*> skinnedShadowMeshArray;
     nArray<nMaxMesh*> collisionMeshArray;
+    nArray<nMaxMesh*> skyMeshArray;
 
     /// Mesh builder for meshes in the mesh array.
     nMeshBuilder globalMeshBuilder;
@@ -138,6 +144,9 @@ protected:
     /// Mesh builder for meshes in the skinned shadow mesh array.
     nMeshBuilder globalSkinnedShadowMeshBuilder;
 
+    ///hashmap for skystates.
+    //HashMap2<nMaxDummy*> skyStateMap;
+    nKeyArray<nMaxDummy*> skyStateArray;
 
     /// array for top level nodes.
     nArray<INode*> topLevelNodes;

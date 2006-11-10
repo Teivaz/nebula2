@@ -9,8 +9,11 @@
 #include "pluginlibs/nmaxlogdlg.h"
 #include "export2/nmaxutil.h"
 
+#include "variable/nvariableserver.h"
+#include "util/nkeyarray.h"
 #include "tools/nmeshbuilder.h"
 
+#include "export2/nmaxdummy.h"
 #include "export2/nmaxmesh.h"
 #include "export2/nmaxscene.h"
 #include "export2/nmaxoptions.h"
@@ -31,6 +34,17 @@
 #include "variable/nvariableserver.h"
 #include "scene/ntransformnode.h"
 #include "scene/nskinshapenode.h"
+//begin nskynode
+#include "scene/nskynode.h"
+#include "scene/nskystate.h"
+//#include "scene/nanimator.h"
+//#include "scene/ntransformanimator.h"
+//#include "scene/nshaderanimator.h"
+//#include "scene/nblendshapeanimator.h"
+//#include "scene/nfloatanimator.h"
+//#include "scene/nintanimator.h"
+//#include "scene/nvectoranimator.h"
+//end nskynode
 
 //-----------------------------------------------------------------------------
 /**
@@ -303,22 +317,40 @@ bool nMaxScene::End()
         nMaxMesh* mesh = this->meshArray[i];
         n_delete(mesh);
     }
+
+    // shadow meshes.
     for (int i=0;i<this->shadowMeshArray.Size(); i++)
     {
         nMaxMesh* mesh = this->shadowMeshArray[i];
         n_delete(mesh);
     }
 
+    // skinned shadow meshes.
     for (int i=0;i<this->skinnedShadowMeshArray.Size(); i++)
     {
         nMaxMesh* mesh = this->skinnedShadowMeshArray[i];
         n_delete(mesh);
     }
 
+    // collision meshes
     for (int i=0; i<this->collisionMeshArray.Size(); i++)
     {
         nMaxMesh* mesh = this->collisionMeshArray[i];
         n_delete(mesh);
+    }
+
+    // sky meshes.
+    for (int i=0; i<this->skyMeshArray.Size(); i++)
+    {
+        nMaxMesh* mesh = this->skyMeshArray[i];
+        n_delete(mesh);
+    }
+
+    // dummy nodes used for sky state.
+    for (int i=0; i<this->skyStateArray.Size(); i++)
+    {
+        nMaxDummy* dummy = this->skyStateArray[i];
+        n_delete(dummy);
     }
 
     // remove bone manager.
@@ -373,6 +405,8 @@ bool nMaxScene::CloseNebula()
 bool nMaxScene::Postprocess()
 {
     //this->UnInitializeNodes(this->sceneRoot);
+
+    ProcessOnSkyNode();
 
     nFileServer2* fileServer = nKernelServer::Instance()->GetFileServer();
     nString globalMeshPath;
@@ -847,8 +881,13 @@ nSceneNode* nMaxScene::ExportNodesHook(SClass_ID sID, INode* inode, Object* obj)
 */
 nSceneNode* nMaxScene::ExportDummy(INode* inode, Object* obj) 
 {
-    nMaxDummy dummyNode;
-    return dummyNode.Export(inode);
+    nSceneNode* createdNode = 0;
+
+    nMaxDummy* dummy = n_new(nMaxDummy);
+    createdNode =  dummy->Export(inode);
+    AddDummyByType(dummy);
+
+    return createdNode;
 }
 
 //-----------------------------------------------------------------------------
@@ -966,7 +1005,46 @@ void nMaxScene::AddMeshByType(nMaxMesh* mesh)
             this->collisionMeshArray.Append(mesh);
         }
         break;
+    case nMaxMesh::Sky:
+        {
+            this->skyMeshArray.Append(mesh);
+        }
+        break;
     default:
+        n_maxlog(Warning, "Unknown mesh type : %s.", mesh->GetNodeName().Get());
+        n_delete(mesh);
+        break;
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nMaxScene::AddDummyByType(nMaxDummy* dummy)
+{
+    if (0 == dummy)
+        return;
+
+    switch(dummy->GetType())
+    {
+    case nMaxDummy::Lod:
+        //
+        break;
+
+    case nMaxDummy::SkyNode:
+        //
+        break;
+
+    case nMaxDummy::SkyState:
+        {
+            nFourCC key = nVariableServer::Instance()->StringToFourCC(dummy->GetNodeName().Get());
+            skyStateArray.Add(key, dummy);
+        }
+        break;
+
+    default:
+        n_maxlog(Warning, "Unknown dummy type : %s.", dummy->GetNodeName().Get());
+        n_delete(dummy);
         break;
     }
 }
@@ -1156,4 +1234,115 @@ void nMaxScene::ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMes
             meshBuilder.Transform(m);
         }
     }
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nMaxScene::ProcessOnSkyNode()
+{
+    // skynode post process
+    n_assert(this->exportRoot);
+    for (nRoot *child = this->exportRoot->GetHead(); child; child = child->GetSucc())
+    {
+        if (!child->IsA("nskynode"))
+            continue;
+
+        nSkyNode *skyNode = (nSkyNode*)child;
+
+        // add sky elements to skynode if exist
+        for (nRoot *child = skyNode->GetHead(); child; child = child->GetSucc())
+        {
+            if (!child->IsA("nscenenode"))
+                continue;
+
+            nSceneNode *sceneNode = (nSceneNode*)child;
+
+            // sky element.
+            nSkyNode::ElementType elementType = nSkyNode::InvalidElement;
+            if (sceneNode->IsA("nshapenode"))
+            {
+                nShapeNode *skyElement = (nShapeNode *)sceneNode;
+                
+                // find element's type by assigned shader.
+                nString shadername = skyElement->GetShader();
+                shadername.ToLower();
+
+                if (shadername == "sun")
+                    elementType = nSkyNode::SunElement;
+                else
+                if (shadername == "sky")
+                    elementType = nSkyNode::SkyElement;
+                else
+                if (shadername == "cloud")
+                    elementType = nSkyNode::CloudElement;
+                else
+                if (shadername == "stars")
+                    elementType = nSkyNode::StarElement;
+                else
+                    elementType = nSkyNode::GenericElement;
+
+                // specify element.
+                skyNode->AddElement(elementType, sceneNode->GetName());
+            }
+            else
+            if (sceneNode->IsA("nlightnode"))
+            {
+                elementType = nSkyNode::LightElement;
+
+                skyNode->AddElement(elementType, sceneNode->GetName());
+            }
+            else
+            if (sceneNode->IsA("nskystate"))
+            {
+                // see if the child is nskystate.
+                if (sceneNode->IsA("nskystate"))
+                {
+                    // find proper nMaxDummy with the given child node name in the skyStateMap.
+
+                    //HACK: Be sure that there are no nskystate objects which has same name!
+                    //      even we use fourcc, each of first four characters are different.
+                    const char* skyStateName = sceneNode->GetName();
+                    nFourCC key = nVariableServer::Instance()->StringToFourCC(skyStateName);
+
+                    nMaxDummy* dummy = 0;
+                    if (skyStateArray.Find(key, dummy))
+                    {
+                        if (dummy)
+                        {
+                            // retrieve picked element's name form the skystate.
+                            nString destName = dummy->GetElemOfState();
+                            float stateTime  = dummy->GetSkyStateTime();
+
+                            // add element and state to the skynode.
+                            skyNode->AddState(destName, nString(skyStateName), stateTime);
+                        }
+                    }
+                    else
+                    {
+                        // cannnot find skystate
+                        n_maxlog(Error, "Failed to find sky state: %s", skyStateName);
+                    }
+                }
+            }
+            else
+            {
+                n_maxlog(Warning, "Invalid Node under nSkyNode: %s", sceneNode->GetName());
+            }
+
+            // link each of elements if it is neccessary.
+            for (int i=0; i<this->skyMeshArray.Size(); i++)
+            {
+                nMaxMesh* mesh = skyMeshArray[i];
+
+                if (mesh && sceneNode->GetName() == mesh->GetNodeName())
+                {
+                    // found sky element to link
+                    if (!mesh->GetSkyElementNameToLink().IsEmpty())
+                        skyNode->LinkTo(sceneNode->GetName(), mesh->GetSkyElementNameToLink());
+                }
+            }
+
+        }// end of for each sky elements.
+    }// end of for each nebula objects.
 }
