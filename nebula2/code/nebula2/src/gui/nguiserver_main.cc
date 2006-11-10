@@ -1403,4 +1403,3 @@ nGuiServer::PushClipRect(rectangle& cr)
     }
 }
 
-
