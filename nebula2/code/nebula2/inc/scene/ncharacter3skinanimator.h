@@ -44,7 +44,7 @@ private:
     /// release character set
     virtual void DeleteCharacterSet(nRenderContext* renderContext);
 
-    nArray<nString> LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation>>& outAnimArray);
+    nArray<nString> LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation> >& outAnimArray);
     nArray<nCharJoint> EvaluateVariation(nMemoryAnimation* variation);
 
     nRef<nCombinedAnimation> animations;

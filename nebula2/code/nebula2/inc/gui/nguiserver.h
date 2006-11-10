@@ -202,7 +202,7 @@ private:
 
     bool guiMouseCursorEnabled;
 
-    nArray< nRef<nGuiWidget> > eventListeners;
+    nArray<nRef<nGuiWidget> > eventListeners;
 
     // system GUI stuff
     nRef<nGuiWindow> refSystemRootWindow;       // the default system root window

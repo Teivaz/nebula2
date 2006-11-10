@@ -38,7 +38,7 @@ public:
 
 protected:
     nArray<nString> entryArray;
-    nArray< nRef<nGuiTextButton> > buttonArray;
+    nArray<nRef<nGuiTextButton> > buttonArray;
     int selectedIndex;
 };
 
