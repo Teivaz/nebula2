@@ -15,11 +15,6 @@ namespace Message
     class Msg;
 }
 
-namespace Input
-{
-    class Mapping;
-}
-
 //------------------------------------------------------------------------------
 namespace UI
 {

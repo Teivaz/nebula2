@@ -126,7 +126,7 @@ private:
         numTextLabels = 8
     };
 
-    nArray< nRef < nGuiTextLabel > > refTextLabel;
+    nArray<nRef<nGuiTextLabel> > refTextLabel;
     nRef<nGuiCanvas> refCanvas;
 
     bool hasHeader;

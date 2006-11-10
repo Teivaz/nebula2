@@ -41,7 +41,7 @@ private:
     bool LoadTexture(const char* resId, int dataOffset, int dataSize, int flags, nFile* dataFile);
 
     nAutoRef<nAnimationServer> refAnimServer;
-    nArray< nRef<nResource> > bundleResources;  // resource objects associated with this bundle
+    nArray<nRef<nResource> > bundleResources;  // resource objects associated with this bundle
 };
 //------------------------------------------------------------------------------
 #endif

@@ -378,7 +378,7 @@ nGuiServer::Trigger()
 
         // check for invalid listener references (listeners which
         // have disappeared and did not unregister themselves)
-        nArray< nRef<nGuiWidget> >::iterator iter = this->eventListeners.Begin();
+        nArray<nRef<nGuiWidget> >::iterator iter = this->eventListeners.Begin();
         for (; iter != this->eventListeners.End();)
         {
             if (!iter->isvalid())
@@ -1115,7 +1115,7 @@ void
 nGuiServer::UnregisterEventListener(nGuiWidget* w)
 {
     nRef<nGuiWidget> refWidget(w);
-    nArray< nRef<nGuiWidget> >::iterator iter = this->eventListeners.Find(refWidget);
+    nArray<nRef<nGuiWidget> >::iterator iter = this->eventListeners.Find(refWidget);
     if (0 != iter)
     {
         // NOTE: just invalidate the nRef here, the array
@@ -1402,4 +1402,5 @@ nGuiServer::PushClipRect(rectangle& cr)
         this->clipRectStack.Append(cr);
     }
 }
+
 

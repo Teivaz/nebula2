@@ -52,7 +52,7 @@ protected:
 
 private:
     /// References to the current and next slide
-    nArray< nRef<nGuiSlide> > refSlides;
+    nArray<nRef<nGuiSlide> > refSlides;
     /// Holds the names of the slideshow pictures
     nArray<nString> pictures;
     /// The interval between two pictures (in milliseconds)

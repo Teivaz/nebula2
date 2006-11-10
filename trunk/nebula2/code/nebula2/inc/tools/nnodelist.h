@@ -85,7 +85,7 @@ private:
     static nNodeList* Singleton;
     uint numElements;
     nArray<nRenderContext> renderContexts;
-    nArray< nRef<nTransformNode> >  refNodes;
+    nArray<nRef<nTransformNode> >  refNodes;
     nAutoRef<nScriptServer> refScriptServer;
     nRef<nSceneNode> refUsrScene;
     bool isOpen;

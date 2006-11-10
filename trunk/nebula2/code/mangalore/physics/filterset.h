@@ -44,7 +44,7 @@ public:
     bool CheckRigidBodyId(uint id) const;
     /// return true if material type is in set
     bool CheckMaterialType(uint t) const;
-    /// check a shape for exlusion
+    /// check a shape for exclusion
     bool CheckShape(Shape* shape) const;
 
 private:

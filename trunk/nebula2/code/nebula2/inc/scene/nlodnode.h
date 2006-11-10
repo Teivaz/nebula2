@@ -39,7 +39,7 @@ public:
     float GetMaxDistance() const;
 
 protected:
-    nArray< nRef<nSceneNode> > lods;
+    nArray<nRef<nSceneNode> > lods;
     nArray<float> thresholds;
     float maxDistance;
     float minDistance;

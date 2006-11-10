@@ -295,7 +295,7 @@ nCharacter3SkinAnimator::UnloadResources()
     - 20-Apr-06 floh    cleaned up
 */
 nArray<nString>
-nCharacter3SkinAnimator::LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation>>& outAnimArray)
+nCharacter3SkinAnimator::LoadAnimationsFromFolder(const nString& path, nArray<nRef<nMemoryAnimation> >& outAnimArray)
 {
     nArray<nString> result;
     nArray<nString> files = nFileServer2::Instance()->ListFiles(path);

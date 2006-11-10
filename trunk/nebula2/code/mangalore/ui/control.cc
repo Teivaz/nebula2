@@ -6,7 +6,6 @@
 #include "ui/server.h"
 #include "input/server.h"
 #include "input/event.h"
-#include "input/mapping.h"
 #include "input/priority.h"
 
 namespace UI
