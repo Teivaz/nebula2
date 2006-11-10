@@ -8,6 +8,8 @@
 --  custom attributes for mesh options.
 --  executed in 'Mesh Options' menu item of 'Nebula2' menu
 --  'Custom Attributes' are shown in modifier panel
+-- 
+--  10-Nov-06  kims  Added stuff for sky system.
 -------------------------------------------------------------------------------
 nMeshOptionsCA = attributes "nMeshOptions"
 (
