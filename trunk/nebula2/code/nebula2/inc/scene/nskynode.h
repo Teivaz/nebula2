@@ -98,9 +98,9 @@ public:
     /// get refresh time
     float GetRefreshTime(const nString& name);              //Fehlt
     /// set time periode
-    void SetTimePeriode(float periode);
+    void SetTimePeriod(float periode);
     /// get time periode
-    float GetTimePeriode();
+    float GetTimePeriod();
     /// get actual sky time
     float GetSkyTime();
 
@@ -156,7 +156,7 @@ protected:
     vector3 GetCameraPos();
 
     nArray<ElementGroup> elements;
-    float timePeriode;
+    float timePeriod;
     float timeFactor;
     float sunSpeedFactor;
     float startTime;

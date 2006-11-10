@@ -148,13 +148,13 @@ nGuiSkyEditor::ShowSky()
         slider->SetRightText("%f");
         slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
         slider->SetMinValue(0.0f);
-        slider->SetMaxValue(this->refSky->GetTimePeriode());
+        slider->SetMaxValue(this->refSky->GetTimePeriod());
         slider->SetValue(this->refSky->GetSkyTime());
-        slider->SetKnobSize(this->refSky->GetTimePeriode()/10);
+        slider->SetKnobSize(this->refSky->GetTimePeriod()/10);
         slider->SetIncrement(1.0f);
         slider->SetLeftWidth(leftWidth);
         slider->SetRightWidth(rightWidth);
-        this->AttachWidget(slider, nGuiFormLayout::Top,this->refSaveButton, 3 * border);  // Animation prüfen
+        this->AttachWidget(slider, nGuiFormLayout::Top,this->refSaveButton, 3 * border);  // Animation pr?en
         this->AttachForm(slider, nGuiFormLayout::Left, border);
         this->AttachForm(slider, nGuiFormLayout::Right, border);
         slider->OnShow();
@@ -495,7 +495,7 @@ nGuiSkyEditor::CreateCloud()
 
     slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "CloudMapDirSlider");
     slider->SetLeftText("Cloud Dir");
-    slider->SetRightText("%f°");
+    slider->SetRightText("%f");
     slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
     slider->SetMinValue(0.0f);
     slider->SetMaxValue(360.0f);
@@ -1871,9 +1871,9 @@ nGuiSkyEditor::OnFrame()
                 }
                 this->activeType = type;
                 this->refElementLabel->SetText(this->refElement->GetName());
-                this->refStateTimeSlider->SetMaxValue(this->refSky->GetTimePeriode());
+                this->refStateTimeSlider->SetMaxValue(this->refSky->GetTimePeriod());
                 this->refStateTimeSlider->SetValue(this->refSky->GetStateTime(this->activeElement, this->activeState));
-                this->refStateTimeSlider->SetKnobSize(this->refSky->GetTimePeriode()/10);
+                this->refStateTimeSlider->SetKnobSize(this->refSky->GetTimePeriod()/10);
                 this->refStateTimeSlider->OnShow();
             }
             else if ((this->activeState == -1) && (this->activeElement > -1))

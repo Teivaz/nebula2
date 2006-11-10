@@ -16,8 +16,8 @@ static void n_addelement(void* slf, nCmd* cmd);
 static void n_deleteelement(void* slf, nCmd* cmd);
 static void n_linkto(void* slf, nCmd* cmd);
 static void n_setrefreshtime(void* slf, nCmd* cmd);
-static void n_settimeperiode(void* slf, nCmd* cmd);
-static void n_gettimeperiode(void* slf, nCmd* cmd);
+static void n_settimeperiod(void* slf, nCmd* cmd);
+static void n_gettimeperiod(void* slf, nCmd* cmd);
 
 //------------------------------------------------------------------------------
 /**
@@ -48,8 +48,8 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_deleteelement_s",          'DELE', n_deleteelement);
     cl->AddCmd("v_linkto_ss",                'LKSL', n_linkto);
     cl->AddCmd("v_setrefreshtime_sf",        'SRFT', n_setrefreshtime);
-    cl->AddCmd("v_settimeperiode_f",         'STPD', n_settimeperiode);
-    cl->AddCmd("f_gettimeperiode_v",         'GTPD', n_gettimeperiode);
+    cl->AddCmd("v_settimeperiod_f",         'STPD', n_settimeperiod);
+    cl->AddCmd("f_gettimeperiod_v",         'GTPD', n_gettimeperiod);
     cl->EndCmds();
 }
 
@@ -259,11 +259,11 @@ n_getstarttime(void* slf, nCmd* cmd)
     set time periode
 */
 static void
-n_settimeperiode(void* slf, nCmd* cmd)
+n_settimeperiod(void* slf, nCmd* cmd)
 {
     nSkyNode* self = (nSkyNode*) slf;
     float t = cmd->In()->GetF();
-    self->SetTimePeriode(t);
+    self->SetTimePeriod(t);
 }
 
 //------------------------------------------------------------------------------
@@ -278,10 +278,10 @@ n_settimeperiode(void* slf, nCmd* cmd)
     get time periode
 */
 static void
-n_gettimeperiode(void* slf, nCmd* cmd)
+n_gettimeperiod(void* slf, nCmd* cmd)
 {
     nSkyNode* self = (nSkyNode*) slf;
-    cmd->Out()->SetF(self->GetTimePeriode());
+    cmd->Out()->SetF(self->GetTimePeriod());
 }
 
 //------------------------------------------------------------------------------
@@ -321,7 +321,7 @@ nSkyNode::SaveCmds(nPersistServer* ps)
 
         //--- TimePeriode ---
         cmd = ps->GetCmd(this, 'STPD');
-        cmd->In()->SetF(this->GetTimePeriode());
+        cmd->In()->SetF(this->GetTimePeriod());
         ps->PutCmd(cmd);
 
         //--- StartTime ---
