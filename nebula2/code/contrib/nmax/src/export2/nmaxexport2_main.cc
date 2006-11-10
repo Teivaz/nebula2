@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------------
 #include "export2/nmax.h"
 
+#include "util/nkeyarray.h"
 #include "tools/nmeshbuilder.h"
 
 #include "base/nmaxlistener.h"

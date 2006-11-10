@@ -37,7 +37,7 @@ nMeshOptionsCA = attributes "nMeshOptions"
     rollout rOptions "Nebula2 Mesh Options"
     (
         -- mesh types
-        radiobuttons rdoMeshTypes "Mesh Types" align:#left labels:#("Normal", "Swing", "Shadow", "Collision") columns:1
+        radiobuttons rdoMeshTypes "Mesh Types" align:#left labels:#("Normal", "Swing", "Shadow", "Collision", "Sky") columns:1
         
         --checkbox chkAttachedNode "Attached Node" align:#left
         

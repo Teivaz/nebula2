@@ -53,6 +53,7 @@ public:
         Swing     = 2,  /// swing shape node
         Shadow    = 3,  /// shadow mesh
         Collision = 4,  /// collision mesh only
+        Sky       = 5,  /// sky node, this will contain some sky elements
     };
 
     /// Constructor.
@@ -88,6 +89,9 @@ public:
 
     /// Retrieve 3dsmax node name for this mesh.
     nString GetNodeName() const;
+
+    /// Retrieve skynode link element's name
+    nString GetSkyElementNameToLink() const;
 
     ///
     static nString AppendMeshPostfixByType(Type type, bool isSkinned);
@@ -220,6 +224,9 @@ protected:
     /// 3dsmax node name.
     nString nodeName;
 
+    /// 3dsmax node name which was picked for sky element to link.
+    nString skyLinkElemName;
+
 };
 //-----------------------------------------------------------------------------
 /**
@@ -286,6 +293,12 @@ inline
 nString nMaxMesh::GetNodeName() const
 {
     return this->nodeName;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxMesh::GetSkyElementNameToLink() const
+{
+    return this->skyLinkElemName;
 }
 //-----------------------------------------------------------------------------
 #endif
