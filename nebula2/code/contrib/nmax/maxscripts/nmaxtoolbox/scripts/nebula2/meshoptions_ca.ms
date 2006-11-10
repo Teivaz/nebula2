@@ -15,17 +15,22 @@ nMeshOptionsCA = attributes "nMeshOptions"
     parameters MeshTypes rollout:rOptions
     (
         -- default value of a radiobutton is '1'
-        meshtype type:#integer default:1 animatable:false ui:rdoMeshTypes
-        --attachednode type:#boolean default:false animatable:false ui:chkAttachedNode
+        meshtype type:#integer default:1 animatable:true ui:rdoMeshTypes
+        --attachednode type:#boolean default:false animatable:true ui:chkAttachedNode
     )
 
     -- parameters for vertex options
     parameters VertexOptions rollout:rOptions
     (
-        normal  type:#boolean default:true animatable:false ui:chkNormal
-        color   type:#boolean default:true animatable:false ui:chkColor
-        uvs     type:#boolean default:true animatable:false ui:chkUvs
-        tangent type:#boolean default:false animatable:false ui:chkTangent
+        normal  type:#boolean default:true animatable:true ui:chkNormal
+        color   type:#boolean default:true animatable:true ui:chkColor
+        uvs     type:#boolean default:true animatable:true ui:chkUvs
+        tangent type:#boolean default:false animatable:true ui:chkTangent
+    )
+
+    parameters SkyLinkedElem rollout:rOptions
+    (
+        linkedElem type:#string default:"" animatable:true ui:edtLinkedElem 
     )
 
     parameters MeshDirSetting rollout:rOptions
@@ -37,22 +42,55 @@ nMeshOptionsCA = attributes "nMeshOptions"
     rollout rOptions "Nebula2 Mesh Options"
     (
         -- mesh types
-        radiobuttons rdoMeshTypes "Mesh Types" align:#left labels:#("Normal", "Swing", "Shadow", "Collision", "Sky") columns:1
+        group "Mesh Types"
+        (
+        radiobuttons rdoMeshTypes "" align:#left labels:#("Normal", "Swing", "Shadow", "Collision", "Sky") columns:1
+        )
         
         --checkbox chkAttachedNode "Attached Node" align:#left
         
+        group "Vertex Options"
+        (
         -- vertex options
-        label lblVertexOption "Vertex Options" align:#left
+        --label lblVertexOption "Vertex Options" align:#left
         
         checkbox chkNormal "Normal" align:#left
         checkbox chkColor "Color" align:#left
         checkbox chkUvs "Uvs" align:#left
         checkbox chkTangent "Tangent" align:#left
+        )
 
+        --filter out all objects except objects its superclass is GeometryClass:
+        fn pickerFilter obj = superClassOf obj == GeometryClass 
+
+        group "SkyNode Link Element"
+        (
+        edittext edtLinkedElem "Picked Elem: " align:#left
+        pickbutton linkElemPicker "Pick Sky Element"  filter:pickerFilter
+        )
+        on linkElemPicker picked obj do
+        (
+            if obj != undefined do
+            (
+                obj.wirecolor = red
+                --linkElemPicker.text = obj.name
+                linkedElem = obj.name
+                edtLinkedElem.text = obj.name
+            )
+        )
+
+        group "Mesh Path"
+        (
         -- destination directory setting
         label lblMeshDirSetting "Dest Directory for a Mesh : " align:#left
         edittext edtMeshDirSetting "" align:#left fieldWidth:100 across:2 
         button btnMeshDirSetting  "<<" align:#right width:20 height:18
+
+        label lblGfxDirSetting "Dest Directory for a Gfx : " align:#left
+        edittext edtGfxDirSetting "" align:#left fieldWidth:100 across:2 
+        button btnGfxDirSetting  "<<" align:#right width:20 height:18
+        )
+
         on btnMeshDirSetting pressed do
         (
             meshPath = getSavePath caption:"Select a directory where the mesh to be exported."
@@ -62,9 +100,6 @@ nMeshOptionsCA = attributes "nMeshOptions"
             )
         ) 
 
-        label lblGfxDirSetting "Dest Directory for a Gfx : " align:#left
-        edittext edtGfxDirSetting "" align:#left fieldWidth:100 across:2 
-        button btnGfxDirSetting  "<<" align:#right width:20 height:18
         on btnGfxDirSetting pressed do
         (
             gfxPath = getSavePath caption:"Select a directory where the .n2 gfx file to be exported."
@@ -88,6 +123,8 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 chkColor.enabled = true
                 chkUvs.enabled = true 
                 chkTangent.enabled = true 
+
+                linkElemPicker.enabled = false
             )
             -- 'swing' mesh type
             if state == 2 do
@@ -101,6 +138,8 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 chkColor.enabled = true
                 chkUvs.enabled = true 
                 chkTangent.enabled = true 
+
+                linkElemPicker.enabled = false
             )
             -- 'shadow' mesh type
             if state == 3 do
@@ -115,6 +154,8 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 chkColor.enabled   = false
                 chkUvs.enabled     = false 
                 chkTangent.enabled = false
+
+                linkElemPicker.enabled = false
             )
             -- 'collision' mesh type
             if state == 4 do
@@ -128,6 +169,13 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 chkColor.enabled = false
                 chkUvs.enabled = false
                 chkTangent.enabled = false
+
+                linkElemPicker.enabled = false
+            )
+            -- 'sky' mesh type
+            if state == 5 do
+            (
+                linkElemPicker.enabled = true
             )
         )         
     )    
