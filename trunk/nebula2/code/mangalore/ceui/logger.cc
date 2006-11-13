@@ -30,7 +30,11 @@ void Logger::logEvent(const CEGUI::String& message, CEGUI::LoggingLevel level) {
             nKernelServer::Instance()->Error("%s\n", message.c_str());
             break;
         case CEGUI::Standard:
+            nKernelServer::Instance()->Print("%s\n", message.c_str());
+            break;
         case CEGUI::Informative:
+            nKernelServer::Instance()->Print("%s\n", message.c_str());
+            break;
         case CEGUI::Insane:
             nKernelServer::Instance()->Print("%s\n", message.c_str());
             break;

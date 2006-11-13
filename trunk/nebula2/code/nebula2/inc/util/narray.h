@@ -34,7 +34,7 @@ public:
     /// constructor with initial size and grow size
     nArray(int initialSize, int initialGrow);
     /// constructor with initial size, grow size and initial values
-    nArray(int initialSize, int initialGrow, TYPE initialValue);
+    nArray(int initialSize, int initialGrow, const TYPE& initialValue);
     /// copy constructor
     nArray(const nArray<TYPE>& rhs);
     /// destructor
@@ -105,7 +105,7 @@ public:
     /// clear contents and preallocate with new attributes
     void Reallocate(int initialSize, int grow);
     /// returns new array with elements which are not in rhs (slow!)
-    nArray<TYPE> Difference(const nArray<TYPE>& rhs);
+    nArray<TYPE> Difference(const nArray<TYPE>& rhs) const;
     /// sort the array
     void Sort();
     /// do a binary search, requires a sorted array
@@ -114,6 +114,10 @@ public:
 private:
     /// check if index is in valid range, and grow array if necessary
     void CheckIndex(int);
+    /// construct an element (call placement new)
+    void Construct(TYPE* elm);
+    /// construct an element (call placement new)
+    void Construct(TYPE* elm, const TYPE& val);
     /// destroy an element (call destructor without freeing memory)
     void Destroy(TYPE* elm);
     /// copy content
@@ -163,7 +167,7 @@ nArray<TYPE>::nArray(int initialSize, int grow) :
     n_assert(initialSize >= 0);
     if (initialSize > 0)
     {
-        this->elements = n_new_array(TYPE,this->allocSize);
+        this->elements = (TYPE*)n_malloc(sizeof(TYPE) * this->allocSize);
     }
     else
     {
@@ -176,7 +180,7 @@ nArray<TYPE>::nArray(int initialSize, int grow) :
     Note: 'grow' can be zero to create a static preallocated array.
 */
 template<class TYPE>
-nArray<TYPE>::nArray(int initialSize, int grow, TYPE initialValue) :
+nArray<TYPE>::nArray(int initialSize, int grow, const TYPE& initialValue) :
     growSize(grow),
     allocSize(initialSize),
     numElements(initialSize),
@@ -185,11 +189,11 @@ nArray<TYPE>::nArray(int initialSize, int grow, TYPE initialValue) :
     n_assert(initialSize >= 0);
     if (initialSize > 0)
     {
-        this->elements = n_new_array(TYPE, this->allocSize);
+        this->elements = (TYPE*)n_malloc(sizeof(TYPE) * this->allocSize);
         int i;
         for (i = 0; i < initialSize; i++)
         {
-            this->elements[i] = initialValue;
+            this->Construct(this->elements + i, initialValue);
         }
     }
     else
@@ -213,11 +217,11 @@ nArray<TYPE>::Copy(const nArray<TYPE>& src)
     this->flags       = src.flags;
     if (this->allocSize > 0)
     {
-        this->elements = n_new_array(TYPE, this->allocSize);
+        this->elements = (TYPE*)n_malloc(sizeof(TYPE) * this->allocSize);
         int i;
         for (i = 0; i < this->numElements; i++)
         {
-            this->elements[i] = src.elements[i];
+            this->Construct(this->elements + i, src.elements[i]);
         }
     }
 }
@@ -229,25 +233,56 @@ template<class TYPE>
 void
 nArray<TYPE>::Delete()
 {
+    if (this->elements)
+    {
+        for (int i = 0; i < this->numElements; i++)
+        {
+            this->Destroy(this->elements + i);
+        }
+        n_free(this->elements);
+        this->elements = 0;
+    }
     this->growSize = 0;
     this->allocSize = 0;
     this->numElements = 0;
     this->flags = 0;
-    if (this->elements)
-    {
-        n_delete_array(this->elements);
-        this->elements = 0;
-    }
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 template<class TYPE>
-void
+inline void
 nArray<TYPE>::Destroy(TYPE* elm)
 {
     elm->~TYPE();
+}
+
+//------------------------------------------------------------------------------
+/**
+construct an element (call placement new)
+*/
+template<class TYPE>
+inline void
+nArray<TYPE>::Construct(TYPE* elm)
+{
+    n_placement_new(elm, TYPE);
+}
+
+//------------------------------------------------------------------------------
+/**
+    construct an element (call placement new)
+*/
+template<class TYPE>
+inline void
+nArray<TYPE>::Construct(TYPE* elm, const TYPE &val)
+{
+    // FIXME: since the nebula2 code have been assuming nArray to have demand on TYPE::operator =
+    // it will be better to keep the assumption to avoid errors
+    // copy constructor will better in efficient
+    //   n_placement_new(elm, TYPE(val));
+    n_placement_new(elm, TYPE);
+    *elm = val;
 }
 
 //------------------------------------------------------------------------------
@@ -306,7 +341,7 @@ nArray<TYPE>::Reallocate(int initialSize, int grow)
     this->numElements = 0;
     if (initialSize > 0)
     {
-        this->elements = n_new_array(TYPE, initialSize);
+        this->elements = (TYPE*)n_malloc(sizeof(TYPE) * initialSize);
     }
     else
     {
@@ -326,6 +361,12 @@ nArray<TYPE>::SetFixedSize(int size)
 {
     this->Reallocate(size, 0);
     this->numElements = size;
+
+    // must construct the elements
+    for (int i = 0; i < size; i++)
+    {
+        this->Construct(this->elements + i);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -350,19 +391,19 @@ template<class TYPE>
 void
 nArray<TYPE>::GrowTo(int newAllocSize)
 {
-    TYPE* newArray = n_new_array(TYPE, newAllocSize);
+    TYPE* newArray = (TYPE*)n_malloc(sizeof(TYPE) * newAllocSize);
 
     if (this->elements)
     {
         // copy over contents
-        int i;
-        for (i = 0; i < this->numElements; i++)
+        for (int i = 0; i < this->numElements; i++)
         {
-            newArray[i] = this->elements[i];
+            this->Construct(newArray + i, this->elements[i]);
+            this->Destroy(this->elements + i);
         }
 
         // discard old array and update contents
-        n_delete_array(this->elements);
+        n_free(this->elements);
     }
     this->elements  = newArray;
     this->allocSize = newAllocSize;
@@ -429,32 +470,60 @@ nArray<TYPE>::Move(int fromIndex, int toIndex)
     if (fromIndex > toIndex)
     {
         // this is a backward move
-        int i;
-        for (i = 0; i < num; i++)
+        // create front elements first
+        int createCount = fromIndex - toIndex;
+        TYPE* from = this->elements + fromIndex;
+        TYPE* to = this->elements + toIndex;
+        for (int i = 0; i < createCount; i++)
         {
-            this->elements[toIndex + i] = this->elements[fromIndex + i];
+            this->Construct(to + i, from[i]);
+        }
+
+        // copy remaining elements
+        int copyCount = num - createCount;
+        from = this->elements + fromIndex + createCount;
+        to = this->elements + toIndex + createCount;
+        for (int i = 0; i < copyCount; i++) 
+        {
+            to[i] = from[i];
         }
 
         // destroy remaining elements
-        for (i = (fromIndex + i) - 1; i < this->numElements; i++)
+        for (int i = toIndex + num; i < this->numElements; i++)
         {
-            this->Destroy(&(this->elements[i]));
+            this->Destroy(this->elements + i);
         }
     }
     else
     {
         // this is a forward move
-        int i;
-        for (i = num - 1; i >= 0; --i)
+        // create front elements first
+        int createCount = toIndex - fromIndex;
+        TYPE* from = this->elements + fromIndex + num - createCount;
+        TYPE* to = this->elements + fromIndex + num;
+        for (int i = 0; i < createCount; i++)
         {
-            this->elements[toIndex + i] = this->elements[fromIndex + i];
+            this->Construct(to + i, from[i]);
+        }
+
+        // copy remaining elements, this time backward copy
+        int copyCount = num - createCount;
+        from = (TYPE*)this->elements + fromIndex;
+        to = (TYPE*)this->elements + toIndex;
+        for (i = copyCount - 1; i >= 0; i--) 
+        {
+            to[i] = from[i];
         }
 
         // destroy freed elements
-        for (i = fromIndex; i < toIndex; i++)
+        for (int i = fromIndex; i < toIndex; i++)
         {
-            this->Destroy(&(this->elements[i]));
+            this->Destroy(this->elements + i);
         }
+
+        // be aware of these uninitialized element slots
+        // as far as I known, this part is only used in nArray::Insert
+        // and it will fill in the blank element slot
     }
 
     // adjust array size
@@ -483,7 +552,7 @@ nArray<TYPE>::MoveQuick(int fromIndex, int toIndex)
     }
 
     // do a direct memory move
-    memmove(&(this->elements[toIndex]), &(this->elements[fromIndex]), num * sizeof(TYPE));
+    memmove(this->elements + toIndex, this->elements + fromIndex, sizeof(TYPE) * num);
 
     // adjust array size
     this->numElements = toIndex + num;
@@ -502,7 +571,7 @@ nArray<TYPE>::PushBack(const TYPE& elm)
         this->Grow();
     }
     n_assert(this->elements);
-    this->elements[this->numElements] = elm;
+    this->Construct(this->elements + this->numElements, elm);
     return this->elements[this->numElements++];
 }
 
@@ -519,7 +588,7 @@ nArray<TYPE>::Append(const TYPE& elm)
         this->Grow();
     }
     n_assert(this->elements);
-    this->elements[this->numElements++] = elm;
+    this->Construct(this->elements + this->numElements++, elm);
 }
 
 //------------------------------------------------------------------------------
@@ -531,6 +600,10 @@ nArray<TYPE>::AppendArray(const nArray<TYPE>& rhs)
 {
     int i;
     int num = rhs.Size();
+    if (this->numElements + num > this->allocSize)
+    {
+        this->GrowTo(this->numElements + num);
+    }
     for (i = 0; i < num; i++)
     {
         this->Append(rhs[i]);
@@ -549,13 +622,17 @@ nArray<TYPE>::Reserve(int num)
 {
     n_assert(num > 0);
     int maxElement = this->numElements + num;
-    while (maxElement >= this->allocSize)
+    if (maxElement > this->allocSize)
     {
-        this->Grow();
+        this->GrowTo(maxElement);
     }
     n_assert(this->elements);
     iterator iter = this->elements + this->numElements;
-    this->numElements += num;
+    for (int i = this->numElements; i < maxElement; i++)
+    {
+        this->Construct(this->elements + i);
+    }
+    this->numElements = maxElement;
     return iter;
 }
 
@@ -576,6 +653,11 @@ nArray<TYPE>::CheckIndex(int index)
             n_assert(this->growSize > 0);
             this->GrowTo(index + this->growSize);
         }
+        n_assert(index < this->allocSize);
+        for (int i = this->numElements; i <= index; i++)
+        {
+            this->Construct(this->elements + i);
+        }
         // update number of contained elements
         this->numElements = index + 1;
     }
@@ -594,7 +676,7 @@ nArray<TYPE>::Set(int index, const TYPE& elm)
 {
     this->CheckIndex(index);
     this->elements[index] = elm;
-    return this->elements[index];
+    return elm;
 }
 
 //------------------------------------------------------------------------------
@@ -639,7 +721,7 @@ template<class TYPE>
 TYPE&
 nArray<TYPE>::operator[](int index) const
 {
-    n_assert(this->elements && (index >= 0) && (index < this->numElements));
+    n_assert(this->elements && index >= 0 && index < this->numElements);
     return this->elements[index];
 }
 
@@ -690,7 +772,7 @@ template<class TYPE>
 TYPE&
 nArray<TYPE>::Front() const
 {
-    n_assert(this->elements && (this->numElements > 0));
+    n_assert(this->elements && this->numElements > 0);
     return this->elements[0];
 }
 
@@ -701,7 +783,7 @@ template<class TYPE>
 TYPE&
 nArray<TYPE>::Back() const
 {
-    n_assert(this->elements && (this->numElements > 0));
+    n_assert(this->elements && this->numElements > 0);
     return this->elements[this->numElements - 1];
 }
 
@@ -712,7 +794,7 @@ template<class TYPE>
 bool
 nArray<TYPE>::Empty() const
 {
-    return (this->numElements == 0);
+    return this->numElements == 0;
 }
 
 //------------------------------------------------------------------------------
@@ -722,15 +804,16 @@ template<class TYPE>
 void
 nArray<TYPE>::Erase(int index)
 {
-    n_assert(this->elements && (index >= 0) && (index < this->numElements));
-    if (index == (this->numElements - 1))
+    n_assert(this->elements && index >= 0 && index < this->numElements);
+    if (index == this->numElements - 1)
     {
         // special case: last element
-        this->Destroy(&(this->elements[index]));
+        this->Destroy(this->elements + index);
         this->numElements--;
     }
     else
     {
+        this->Destroy(this->elements + index);
         this->Move(index + 1, index);
     }
 }
@@ -744,8 +827,8 @@ template<class TYPE>
 void
 nArray<TYPE>::EraseQuick(int index)
 {
-    n_assert(this->elements && (index >= 0) && (index < this->numElements));
-    if (index == (this->numElements - 1))
+    n_assert(this->elements && index >= 0 && index < this->numElements);
+    if (index == this->numElements - 1)
     {
         // special case: last element
         this->numElements--;
@@ -763,7 +846,7 @@ template<class TYPE>
 typename nArray<TYPE>::iterator
 nArray<TYPE>::Erase(typename nArray<TYPE>::iterator iter)
 {
-    n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
+    n_assert(this->elements && iter >= this->elements && iter < this->elements + this->numElements);
     this->Erase(int(iter - this->elements));
     return iter;
 }
@@ -777,7 +860,7 @@ template<class TYPE>
 typename nArray<TYPE>::iterator
 nArray<TYPE>::EraseQuick(typename nArray<TYPE>::iterator iter)
 {
-    n_assert(this->elements && (iter >= this->elements) && (iter < (this->elements + this->numElements)));
+    n_assert(this->elements && iter >= this->elements && iter < this->elements + this->numElements);
     this->EraseQuick(int(iter - this->elements));
     return iter;
 }
@@ -790,7 +873,7 @@ template<class TYPE>
 void
 nArray<TYPE>::Insert(int index, const TYPE& elm)
 {
-    n_assert((index >= 0) && (index <= this->numElements));
+    n_assert(index >= 0 && index <= this->numElements);
     if (index == this->numElements)
     {
         // special case: append element to back
@@ -799,7 +882,7 @@ nArray<TYPE>::Insert(int index, const TYPE& elm)
     else
     {
         this->Move(index, index + 1);
-        this->elements[index] = elm;
+        this->Construct(this->elements + index, elm);
     }
 }
 
@@ -815,7 +898,7 @@ nArray<TYPE>::Clear()
     int i;
     for (i = 0; i < this->numElements; i++)
     {
-        this->Destroy(&(this->elements[i]));
+        this->Destroy(this->elements + i);
     }
     this->numElements = 0;
 }
@@ -869,7 +952,7 @@ nArray<TYPE>::Find(const TYPE& elm) const
     {
         if (this->elements[index] == elm)
         {
-            return &(this->elements[index]);
+            return this->elements + index;
         }
     }
     return 0;
@@ -911,14 +994,28 @@ template<class TYPE>
 void
 nArray<TYPE>::Fill(int first, int num, const TYPE& elm)
 {
-    if ((first + num) > this->numElements)
+    n_assert(first >= 0 && first <= this->numElements && num >= 0);
+    int end = first + num;
+    if (end > this->numElements)
     {
-        this->GrowTo(first + num);
+        // only allocate memory when needed
+        if (end > this->allocSize)
+        {
+            this->GrowTo(end);
+        }
+        // fill the tailing elements
+        for (int i = this->numElements; i < end; i++)
+        {
+            this->Construct(this->elements + i, elm);
+        }
+        // the rest
+        end = this->numElements;
+        this->numElements = first + num;
     }
-    int i;
-    for (i = first; i < (first + num); i++)
+    for (int i = first; i < end; i++)
     {
-        this->elements[i] = elm;
+        this->Destroy(this->elements + i);
+        this->Construct(this->elements + i, elm);
     }
 }
 
@@ -929,7 +1026,7 @@ nArray<TYPE>::Fill(int first, int num, const TYPE& elm)
 */
 template<class TYPE>
 nArray<TYPE>
-nArray<TYPE>::Difference(const nArray<TYPE>& rhs)
+nArray<TYPE>::Difference(const nArray<TYPE>& rhs) const
 {
     nArray<TYPE> diff;
     int i;
