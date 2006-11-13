@@ -11,6 +11,8 @@
 
 include "nebula2/menu.ms"
 
+
+
 ---------------------------------------------------------------------------------
 -- startup function
 ---------------------------------------------------------------------------------
@@ -18,8 +20,12 @@ fn startUp =
 (
     -- Load 'Nebula2' menu
     nLoadMenu()
+
+    -- create scripted plugins
+    fileIn "nebula2/skynode.ms"
+    fileIn "nebula2/skystate.ms"
     
-    -- Generate Nebula2 custom material script plugin script and evaluate. 
+    -- Generate Nebula2 custom material script pugin script and evaluate. 
     nCreateCustomMaterialPlugin()
 )
 
