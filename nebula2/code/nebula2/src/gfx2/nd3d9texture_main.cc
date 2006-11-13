@@ -207,7 +207,7 @@ nD3D9Texture::OnRestored()
     Check a pixel or depth stencil format for compatibility on the current
     device.
 
-    @param  d3d9            pointer to Direct3D9 inteface
+    @param  d3d9            pointer to Direct3D9 interface
     @param  d3d9Device      pointer to Direct3D9 device
     @param  usage           D3DUSAGE_DEPTHSTENCIL or D3DUSAGE_RENDERTARGET
     @param  pixelFormat     D3DFORMAT member
@@ -454,7 +454,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     IDirect3DDevice9* d3d9Dev = this->refGfxServer->d3d9Device;
     n_assert(d3d9Dev);
 
-    // read file into temp mem buffer
+    // read file into temp memory buffer
     nFile* file = nFileServer2::Instance()->NewFileObject();
     if (!file->Open(this->GetFilename().Get(), "rb"))
     {

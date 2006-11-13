@@ -103,6 +103,21 @@ operator new(size_t size, const char* file, int line)
 
 //------------------------------------------------------------------------------
 /**
+Placement global new operator without location reporting. This
+catches calls which don't use n_new for some reason.
+*/
+void* operator new(size_t size, void *place, const char* file, int line)
+{
+    void *res = place;
+    if (nMemoryLoggingEnabled)
+    {
+        n_printf("%lx = new(size=%d, place=0x%x, file=%s, line=%d)\n", res, size, place, file, line);
+    }
+    return res;
+}
+
+//------------------------------------------------------------------------------
+/**
     Replacement global new[] operator without location reporting.
 */
 void*
@@ -159,6 +174,17 @@ operator delete(void* p, const char* /*file*/, int /*line*/)
         n_printf("delete(ptr=%lx)\n", p);
     }
     _free_dbg(p, _NORMAL_BLOCK);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Placement global delete operator to match the new with location
+    reporting. do nothing
+*/
+void
+operator delete(void*, void*, const char* /*file*/, int /*line*/)
+{
+    return;
 }
 
 //------------------------------------------------------------------------------

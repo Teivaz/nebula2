@@ -44,6 +44,8 @@ public:
     ///
     virtual void loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight, CEGUI::Texture::PixelFormat pixelFormat);
     ///
+    virtual void updateFromMemory(const void* bufPtr, uint xOffset, uint yOffset, uint subWidth, uint subHeight);
+    ///
     virtual CEGUI::ushort getWidth() const;
     ///
     virtual CEGUI::ushort getHeight() const;

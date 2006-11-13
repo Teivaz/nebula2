@@ -135,12 +135,14 @@ STR_PROJ_CONFIG_LINKER_TOOL_S1 = '''\
 '''
 
 STR_PROJ_CONFIG_LINKER_TOOL_S2_DEBUG = '''\
+                IgnoreDefaultLibraryNames="libcmtd"
                 GenerateDebugInformation="TRUE"
                 LinkIncremental="2"
                 ProgramDatabaseFile="%s"
 '''
 
 STR_PROJ_CONFIG_LINKER_TOOL_S2_RELEASE = '''\
+                IgnoreDefaultLibraryNames="libcmt"
                 LinkIncremental="1"
                 OptimizeReferences="2"
                 EnableCOMDATFolding="2"

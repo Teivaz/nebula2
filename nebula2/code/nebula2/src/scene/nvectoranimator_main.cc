@@ -70,8 +70,8 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(sceneNode);
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
+    n_assert(sceneNode->IsA("nabstractshadernode"));
 
-    // FIXME: dirty cast, make sure that it is a nAbstractShaderNode!
     nAbstractShaderNode* targetNode = (nAbstractShaderNode*) sceneNode;
 
     // get the sample time from the render context
@@ -86,19 +86,4 @@ nVectorAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         targetNode->SetVector(this->param, key.GetValue());
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

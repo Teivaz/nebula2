@@ -19,8 +19,8 @@ Renderer::Renderer() {
     n_verify(shader->Load());
     mesh.SetShader(shader);
     mesh.Initialize(nGfxServer2::TriangleList, nMesh2::Coord | nMesh2::Uv0 | nMesh2::Color, nMesh2::WriteOnly | nMesh2::NeedsVertexShader, false);
-    transform.scale(vector3(2.0f/getWidth(), -2.0f/getHeight(), 1.0f));
-    transform.set_translation(vector3(-1.0f/getWidth() - 1.0f, -1.0f/getHeight() + 1.0f, 0.0f));
+    transform.scale(vector3(2.0f / getWidth(), -2.0f / getHeight(), 1.0f));
+    transform.set_translation(vector3(-1.0f / getWidth() - 1.0f, -1.0f / getHeight() + 1.0f, 0.0f));
     resourceProvider = 0;
     queueingEnabled = false;
     d_identifierString = "CEGUI::MangaloreRenderer - Nebula 2 renderer module for CEGUI";
@@ -152,22 +152,22 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
         ((Texture*)texture)->widgetRects.PushBack(rect);
     } else if (texRect != cursorRect) {
         cursorRect = texRect;
-        uint width = uint(texture->getWidth()*texRect.getWidth());
-        uint height = uint(texture->getHeight()*texRect.getHeight());
+        uint width = uint(texture->getWidth() * texRect.getWidth());
+        uint height = uint(texture->getHeight() * texRect.getHeight());
         nTexture2* srcTexture = ((Texture*)texture)->getTexture2();
         nMouseCursor cursor;
         cursor.CreateEmpty(32, 32);
         nTexture2* dstTexture = cursor.GetTexture();
 
-        struct nTexture2::LockInfo srcLockInfo;
-        struct nTexture2::LockInfo dstLockInfo;
+        nTexture2::LockInfo srcLockInfo;
+        nTexture2::LockInfo dstLockInfo;
         if (srcTexture->Lock(nTexture2::ReadOnly, 0, srcLockInfo), dstTexture->Lock(nTexture2::WriteOnly, 0, dstLockInfo)) {
-            uint startX = uint(texture->getWidth()*texRect.d_left);
-            uint startY = uint(texture->getHeight()*texRect.d_top);
+            uint startX = uint(texture->getWidth() * texRect.d_left);
+            uint startY = uint(texture->getHeight() * texRect.d_top);
             for (uint y = 0; y < height; y++) {
-                memcpy((CEGUI::uint8*)dstLockInfo.surfPointer + dstLockInfo.surfPitch*y,
-                    (CEGUI::uint8*)srcLockInfo.surfPointer + srcLockInfo.surfPitch*(startY + y) + sizeof(CEGUI::uint32)*startX,
-                    sizeof(CEGUI::uint32)*width);
+                CEGUI::uint8* dstBuf = (CEGUI::uint8*)dstLockInfo.surfPointer + y * dstLockInfo.surfPitch;
+                CEGUI::uint8* srcBuf = (CEGUI::uint8*)srcLockInfo.surfPointer + (startY + y) * srcLockInfo.surfPitch;
+                memcpy(dstBuf, srcBuf + sizeof(CEGUI::uint32) * startX, sizeof(CEGUI::uint32) * width);
             }
             srcTexture->Unlock(0);
             dstTexture->Unlock(0);
@@ -194,9 +194,9 @@ void Renderer::doRender() {
             mesh.GetShader()->SetTexture(nShaderState::DiffMap0, (*i)->getTexture2());
             int curRect = 0;
             while (curRect < widgetRects.Size()) {
-                int numRects = min(maxVetices/6, widgetRects.Size() - curRect);
-                memcpy(vertices, &widgetRects[curRect], sizeof(CeGuiRectangle)*numRects);
-                mesh.Swap(6*numRects, vertices);
+                int numRects = min(maxVetices / 6, widgetRects.Size() - curRect);
+                memcpy(vertices, &widgetRects[curRect], sizeof(CeGuiRectangle) * numRects);
+                mesh.Swap(6 * numRects, vertices);
                 curRect += numRects;
             }
         }
@@ -213,7 +213,7 @@ void Renderer::doRender() {
 */
 void Renderer::clearRenderList() {
     for (nArray<Texture*>::iterator i = textures.Begin(); i != textures.End(); i++) {
-        (*i)->widgetRects.Reset();
+        (*i)->widgetRects.Clear();
     }
 }
 

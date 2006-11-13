@@ -41,7 +41,7 @@ void Texture::loadFromFile(const CEGUI::String& fileName, const CEGUI::String& r
 */
 void Texture::loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight, CEGUI::Texture::PixelFormat pixelFormat) {
     texture = nGfxServer2::Instance()->NewTexture(0);
-    texture->SetUsage(nTexture2::CreateEmpty);
+    texture->SetUsage(nTexture2::CreateEmpty | nTexture2::Dynamic);
     texture->SetType(nTexture2::TEXTURE_2D);
     switch (pixelFormat) {
     case PF_RGB:
@@ -54,14 +54,32 @@ void Texture::loadFromMemory(const void* bufPtr, uint bufWidth, uint bufHeight, 
     texture->SetWidth(bufWidth);
     texture->SetHeight(bufHeight);
     texture->Load();
-    struct nTexture2::LockInfo lockInfo;
+    nTexture2::LockInfo lockInfo;
     if (texture->Lock(nTexture2::WriteOnly, 0, lockInfo)) {
         for (uint y = 0; y < bufHeight; y++) {
-            memcpy((CEGUI::uint8*)lockInfo.surfPointer + y*lockInfo.surfPitch, (CEGUI::uint32*)bufPtr + y*bufWidth, sizeof(CEGUI::uint32)*bufWidth);
+            CEGUI::uint8* dstBuf = (CEGUI::uint8*)lockInfo.surfPointer + y * lockInfo.surfPitch;
+            CEGUI::uint32* srcBuf = (CEGUI::uint32*)bufPtr + y * bufWidth;
+            memcpy(dstBuf, srcBuf, sizeof(CEGUI::uint32) * bufWidth);
         }
         texture->Unlock(0);
     }
     fromMemory = true;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void Texture::updateFromMemory(const void* bufPtr, uint xOffset, uint yOffset, uint subWidth, uint subHeight) {
+    n_assert(fromMemory);
+    nTexture2::LockInfo lockInfo;
+    if (texture->Lock(nTexture2::WriteOnly, 0, lockInfo)) {
+        for (uint y = 0; y < subHeight; y++) {
+            CEGUI::uint8* dstBuf = (CEGUI::uint8*)lockInfo.surfPointer + (yOffset + y) * lockInfo.surfPitch;
+            CEGUI::uint32* srcBuf = (CEGUI::uint32*)bufPtr + y * subWidth;
+            memcpy(dstBuf + sizeof(CEGUI::uint32) * xOffset, srcBuf, sizeof(CEGUI::uint32) * subWidth);
+        }
+        texture->Unlock(0);
+    }
 }
 
 } // namespace CEUI

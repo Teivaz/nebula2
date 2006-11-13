@@ -9,6 +9,7 @@
 #ifndef __XBxX__
 #include <errno.h>
 #include <stdio.h>
+#include <new>
 #endif
 
 #include "kernel/nsystem.h"
@@ -157,10 +158,12 @@ nMemoryStats n_dbgmemgetstats();    // defined in ndbgalloc.cc
 // implemented in ndbgalloc.cc
 void* operator new(size_t size);
 void* operator new(size_t size, const char* file, int line);
+void* operator new(size_t size, void* place, const char* file, int line);
 void* operator new[](size_t size);
 void* operator new[](size_t size, const char* file, int line);
 void operator delete(void* p);
 void operator delete(void* p, const char* file, int line);
+void operator delete(void*, void*, const char* file, int line);
 void operator delete[](void* p);
 void operator delete[](void* p, const char* file, int line);
 void* n_malloc_dbg(size_t size, const char* file, int line);
@@ -170,6 +173,7 @@ void n_free_dbg(void* memblock, const char* file, int line);
 
 #if defined(_DEBUG) && defined(__WIN32__)
 #define n_new(type) new(__FILE__,__LINE__) type
+#define n_placement_new(place, type) new(place, __FILE__,__LINE__) type
 #define n_new_array(type,size) new(__FILE__,__LINE__) type[size]
 #define n_delete(ptr) delete ptr
 #define n_delete_array(ptr) delete[] ptr
@@ -179,6 +183,7 @@ void n_free_dbg(void* memblock, const char* file, int line);
 #define n_free(memblock) n_free_dbg(memblock, __FILE__, __LINE__)
 #else
 #define n_new(type) new type
+#define n_placement_new(place, type) new(place) type
 #define n_new_array(type,size) new type[size]
 #define n_delete(ptr) delete ptr
 #define n_delete_array(ptr) delete[] ptr
