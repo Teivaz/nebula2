@@ -296,42 +296,18 @@ int nMaxUtil::GetNumMaterials(INode* inode)
 //------------------------------------------------------------------------------
 /**
     Correct the given node's name to make it can be used in Nebula.
+    If the node has prohibited characters for its name, it is replaced to underbar 
+    '_' character.
 */
 nString
 nMaxUtil::CorrectName(nString &string)
 {
-    char* temp = n_new_array(char, string.Length() + 1);
-    strcpy(temp, string.Get());
-    string.Set(CorrectName(temp));
-    n_delete_array(temp);
-    return string;
-}
+    nString tmp = string;
+    int i = 0;
 
-
-//------------------------------------------------------------------------------
-/**
-*/
-char*
-nMaxUtil::CorrectName(const char* string)
-{
-    char* temp = n_new_array(char, strlen(string) + 1);
-    strcpy(temp, string);
-    temp = CorrectName(temp);
-    // FIXME : when will the temp be deleted ?
-    return temp;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-char*
-nMaxUtil::CorrectName(char* string)
-{
-    char *t = string;
-    char *s = t;
-    while(*t)
+    while(tmp[i])
     {
-        switch(*t)
+        switch(tmp[i])
         {
         case '>':	//bad character
         case '<':	//bad character
@@ -346,18 +322,17 @@ nMaxUtil::CorrectName(char* string)
         case '\n':	//newline
         case '\r':	//carriage return
         case '\t':	//tab
-            if(*(t+1) == 0 ) *s = 0;
-            else *s = '_';
-            s++;
+            if(tmp[i+1] == 0 ) 
+                tmp[i] = 0;
+            else 
+                tmp[i] = '_';
             break;
         default:
-            *s = *t;
-            s++;
             break;
         }
-        t++;
+        i++;
     }
-    return string;
+    return tmp;
 }
 
 //------------------------------------------------------------------------------
