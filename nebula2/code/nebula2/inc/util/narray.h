@@ -510,7 +510,7 @@ nArray<TYPE>::Move(int fromIndex, int toIndex)
         int copyCount = num - createCount;
         from = (TYPE*)this->elements + fromIndex;
         to = (TYPE*)this->elements + toIndex;
-        for (i = copyCount - 1; i >= 0; i--) 
+        for (int i = copyCount - 1; i >= 0; i--) 
         {
             to[i] = from[i];
         }
@@ -676,7 +676,7 @@ nArray<TYPE>::Set(int index, const TYPE& elm)
 {
     this->CheckIndex(index);
     this->elements[index] = elm;
-    return elm;
+    return this->elements[index];
 }
 
 //------------------------------------------------------------------------------
