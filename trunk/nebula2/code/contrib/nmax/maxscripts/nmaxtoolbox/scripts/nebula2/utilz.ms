@@ -18,18 +18,22 @@ fn nCheckObjectName =
         append o i
     )
 
-    -- iterate collected objects and see if there are objects which have same name.
+    -- iterate collected nodes and see if there are objects which have same name.
     for i=1 to o.count do
     (
         for j=1 to o.count do
         (
-            if i != j then
+            -- no need to check for hidden node
+            if o[j].isHidden == false then
             (
-                if o[i].name == o[j].name then
+                if i != j then
                 (
-                    local msg = stringstream ""
-                    format "There are multiple objects with the same name : %" o[i].name to:msg
-                    messageBox msg title:"Warning"                
+                    if o[i].name == o[j].name then
+                    (
+                        local msg = stringstream ""
+                        format "There are multiple objects with the same name : %" o[i].name to:msg
+                        messageBox msg title:"Warning"                
+                    )
                 )
             )
         )
