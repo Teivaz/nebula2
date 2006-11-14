@@ -92,7 +92,7 @@ nShaderParams::Clear()
     {
         this->paramIndex[i] = -1;
     }
-    // kaikai: paramArray is should Clear instead of Reset, because
+    // kaikai: paramArray should Clear instead of Reset, because
     //  nShaderArg has nRef<Texture2> which need to be destroyed.
     this->paramArray.Clear();
 }
