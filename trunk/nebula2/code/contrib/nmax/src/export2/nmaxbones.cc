@@ -241,7 +241,8 @@ bool nMaxBoneManager::BuildBones(INode* node)
 
         // if there are no animation states, we add a default one.
         // (skin animator needs to have at least one)
-        if (this->noteTracksArray[i].GetNumStates() <= 0) {
+        if (this->noteTracksArray[i].GetNumStates() <= 0) 
+        {
             //FIXME: fix to get proper first frame.
             int firstframe   = 0;
             int duration     = nMaxInterface::Instance()->GetNumFrames();
@@ -267,11 +268,13 @@ bool nMaxBoneManager::BuildBones(INode* node)
 }
 
 //-----------------------------------------------------------------------------
-int nMaxBoneManager::GetSkelForNode(INode* inode) {
+int nMaxBoneManager::GetSkelForNode(INode* inode) 
+{
     std::map<INode*, int>::iterator fj;
     n_assert(inode);
     fj = nodeToSkel.find(inode);
-    if (fj != nodeToSkel.end()) {
+    if (fj != nodeToSkel.end()) 
+    {
        return fj->second;
     }
     return -1;
@@ -390,13 +393,11 @@ void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode
 {
     Bone bone;
 
-    const char *tmp = nMaxUtil::CorrectName(node->GetName());
     bone.localTransform = nMaxTransform::GetLocalTM(node, 0);
     bone.parentID       = parentID;
     bone.id             = this->skeletonsArray[skeleton].Size();
-    bone.name           = tmp;
+    bone.name           = nMaxUtil::CorrectName(nString(node->GetName()));
     bone.node           = node;
-    n_delete_array(tmp);
 
     // add only known bone.
     if (boneNodeArray.Find(node)) 
@@ -704,11 +705,12 @@ bool nMaxBoneManager::IsDummy(INode* inode)
 */
 int nMaxBoneManager::FindBoneIDByNode(INode* inode)
 {
-    for (int s=0; s<this->skeletonsArray.Size(); s++) {
-        for (int i=0; i<this->skeletonsArray[s].Size(); i++)
+    for (int s=0; s<this->skeletonsArray.Size(); s++) 
     {
-            if (skeletonsArray[s][i].node == inode)
+        for (int i=0; i<this->skeletonsArray[s].Size(); i++)
         {
+            if (skeletonsArray[s][i].node == inode)
+            {
                 return skeletonsArray[s][i].id;
             }
         }
@@ -724,11 +726,12 @@ int nMaxBoneManager::FindBoneIDByNode(INode* inode)
 */
 int nMaxBoneManager::FindBoneIDByName(const nString &name)
 {
-    for (int s=0; s<this->skeletonsArray.Size(); s++) {
-        for (int i=0; i<this->skeletonsArray[s].Size(); i++)
+    for (int s=0; s<this->skeletonsArray.Size(); s++) 
     {
-            if (this->skeletonsArray[s][i].name == name)
+        for (int i=0; i<this->skeletonsArray[s].Size(); i++)
         {
+            if (this->skeletonsArray[s][i].name == name)
+            {
                 return this->skeletonsArray[s][i].id;
             }
         }

@@ -47,9 +47,7 @@ nMaxNode::CreateNebulaObject(const char* classname, const char* objectname)
 
     nKernelServer* kernelServer = nKernelServer::Instance();
 
-    const char *tmp = nMaxUtil::CorrectName(objectname);
-    nString objectName = tmp;
-    n_delete_array(tmp);
+    nString objectName = nMaxUtil::CorrectName(nString(objectname));
 
     // append (material) id if the given node has multi-material.
     //if (useID)

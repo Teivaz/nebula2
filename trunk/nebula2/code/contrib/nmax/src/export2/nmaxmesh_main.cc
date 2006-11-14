@@ -936,9 +936,8 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 
                         if (bone)
                         {
-                            const char *tmp = nMaxUtil::CorrectName(bone->GetName());
-                            nString boneName = tmp;
-                            n_delete_array(tmp);
+                            nString boneName = nMaxUtil::CorrectName(nString(bone->GetName()));
+
                             int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 
                             if (boneID >= 0)
@@ -968,9 +967,7 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 
                     if (bone)
                     {
-                        const char *tmp = nMaxUtil::CorrectName(bone->GetName());
-                        nString boneName = tmp;
-                        n_delete_array(tmp);
+                        nString boneName = nMaxUtil::CorrectName(nString(bone->GetName()));
                         int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 
                         if (boneID >= 0)
@@ -1023,9 +1020,8 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 
             if (bone)
             {
-                const char *tmp = nMaxUtil::CorrectName(bone->GetName());
-                nString boneName = tmp;
-                n_delete_array(tmp);
+                nString boneName = nMaxUtil::CorrectName(nString(bone->GetName()));
+
                 int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 
                 if (boneID >= 0)
@@ -1066,9 +1062,7 @@ void nMaxMesh::GetVertexWeight(int vertexIdx, vector4 &jointIndices, vector4 &we
 //
 //            if (bone)
 //            {
-//                const char *tmp = nMaxUtil::CorrectName(bone->GetName());
-//                nString boneName = tmp;
-//                n_delete_array(tmp);
+//                nString boneName = nMaxUtil::CorrectName(nString(bone->GetName()));
 //                int boneID = nMaxBoneManager::Instance()->FindBoneIDByName(boneName);
 //
 //                if (boneID >= 0)

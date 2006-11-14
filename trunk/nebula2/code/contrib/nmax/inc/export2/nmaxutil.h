@@ -35,8 +35,6 @@ public:
     static int GetNumMaterials(INode* inode);
 
     static nString CorrectName(nString &string);
-    static char* CorrectName(const char* string);
-    static char* CorrectName(char* string);
 
     static void PutVertexInfo(nMeshBuilder& meshBuilder);
 
