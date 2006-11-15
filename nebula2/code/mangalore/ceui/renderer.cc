@@ -150,7 +150,7 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
             rect.tri[1].vert[2] = vertices[3];
         }
         ((Texture*)texture)->widgetRects.PushBack(rect);
-    } else if (texRect != cursorRect) {
+    } else if (texRect.getPosition() != cursorRect.getPosition()) {
         cursorRect = texRect;
         uint width = uint(texture->getWidth() * texRect.getWidth());
         uint height = uint(texture->getHeight() * texRect.getHeight());
@@ -161,16 +161,23 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
 
         nTexture2::LockInfo srcLockInfo;
         nTexture2::LockInfo dstLockInfo;
-        if (srcTexture->Lock(nTexture2::ReadOnly, 0, srcLockInfo), dstTexture->Lock(nTexture2::WriteOnly, 0, dstLockInfo)) {
-            uint startX = uint(texture->getWidth() * texRect.d_left);
-            uint startY = uint(texture->getHeight() * texRect.d_top);
-            for (uint y = 0; y < height; y++) {
-                CEGUI::uint8* dstBuf = (CEGUI::uint8*)dstLockInfo.surfPointer + y * dstLockInfo.surfPitch;
-                CEGUI::uint8* srcBuf = (CEGUI::uint8*)srcLockInfo.surfPointer + (startY + y) * srcLockInfo.surfPitch;
-                memcpy(dstBuf, srcBuf + sizeof(CEGUI::uint32) * startX, sizeof(CEGUI::uint32) * width);
+        if (srcTexture->Lock(nTexture2::ReadOnly, 0, srcLockInfo)) {
+            if (dstTexture->Lock(nTexture2::WriteOnly, 0, dstLockInfo)) {
+                uint xOffset = uint(texture->getWidth() * texRect.d_left);
+                uint yOffset = uint(texture->getHeight() * texRect.d_top);
+                for (uint y = 0; y < height; y++) {
+                    CEGUI::uint8* dstBuf = (CEGUI::uint8*)dstLockInfo.surfPointer + y * dstLockInfo.surfPitch;
+                    CEGUI::uint8* srcBuf = (CEGUI::uint8*)srcLockInfo.surfPointer + (yOffset + y) * srcLockInfo.surfPitch;
+                    // d3d cursor can only accept 0.0 or 1.0 alpha channel values
+                    memcpy(dstBuf, srcBuf + sizeof(CEGUI::uint32) * xOffset, sizeof(CEGUI::uint32) * width);
+                    for (uint x = 0; x < width; x++) {
+                        CEGUI::uint8* alpha = dstBuf + sizeof(CEGUI::uint32) * x + 3;
+                        *alpha = *alpha > 0x80 ? 0xff : 0x00;
+                    }
+                }
+                dstTexture->Unlock(0);
             }
             srcTexture->Unlock(0);
-            dstTexture->Unlock(0);
         }
         nGfxServer2::Instance()->SetMouseCursor(cursor);
     }

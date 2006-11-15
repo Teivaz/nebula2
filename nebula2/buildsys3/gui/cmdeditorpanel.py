@@ -36,7 +36,7 @@ class CmdEditorPanel(wx.Panel):
         self.statusLine = xrcCTRLUnpack(self, "StatusLine")
 
         self.tree = gizmos.TreeListCtrl(treePanel, -1,
-                    style = wx.TR_TWIST_BUTTONS|wx.TR_HIDE_ROOT|wx.TR_FULL_ROW_HIGHLIGHT|wx.TR_NO_BUTTONS)
+                    style = wx.TR_HIDE_ROOT|wx.TR_FULL_ROW_HIGHLIGHT|wx.TR_NO_BUTTONS)
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(self.tree, 1, wx.EXPAND|wx.ALL)
         sizer.Fit(treePanel)
