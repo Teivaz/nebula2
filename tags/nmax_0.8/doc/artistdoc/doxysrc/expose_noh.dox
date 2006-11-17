@@ -1,0 +1,157 @@
+/**
+    @defgroup NMaxHowtoExposeNOH Nebula2 Named Object Hierarchy Viewer
+
+    @section NMaxHowtoExposeNOHOverview Overview
+
+    This tutorial demonstrates how to create a <b>Nebula2 Named Object Hierarchy</b>
+    with MaxScript and TreeView ActiveX control. 
+    It is a simple demonstration of the Nebula2 3DS Max Expose plugin but you will 
+    get to know that it is powerful and can extend it in a various ways for your
+    purpose.
+   
+    The MaxScript source code of this tutorial <i>nohviewer_demo.ms</i> can be found in 
+    <i><tt>'$nebula2/code/contrib/nmax/maxscripts/</tt></i> directory.
+
+    You can open and run the script in <i>Utilities > MAXScript</i> panel of 3DS Max. 
+    The following image is the result of the script.
+
+    @image html nohviewer01.png
+
+    @section NMaxHowtoExposeNOHMaxScript MaxScript
+
+    The following is MaxScript code for this tutorial:
+
+@verbatim
+rollout NOHTreeViewer "Nebula Object Viewer" width:355 height:540
+(
+    ActiveXControl tv "MSComctlLib.TreeCtrl.2" pos:[5,52] width:343 height:478
+	
+    function addChild parentTreeNodeIndex parentNodeName objectName = 
+    (
+        cmd = parentNodeName + ".getchildren"
+        children = nebula2.callv cmd
+	
+        for i in children do
+        (
+            cmd = i + ".getname"
+            objName = nebula2.callv cmd
+	
+            o = tv.nodes.add parentTreeNodeIndex 4 "" objName[1]
+			
+            addChild o.index i objName
+        )
+    )
+
+    on NOHTreeViewer open do
+    (
+        nebula2.sel "/"
+        root = tv.nodes.add()
+        root.text = "/"
+		
+        r = nebula2.callv ".getchildren"
+        addChild root.index root.text root.text
+    )
+)
+
+rollpage = newRolloutFloater "Nebula Object Viewer" 355 540
+addRollout NOHTreeViewer rollpage 
+@endverbatim
+
+    Next <b>Step by Step</b> section will shows you that how the above script works. 
+
+
+    @section NMaxHowtoExposeNOHStepByStep Step By Step
+
+@verbatim
+rollout NOHTreeViewer "Nebula Object Viewer" width:355 height:540
+(
+@endverbatim
+    This is the rollout to be created when the script is executed. 
+    It will display the title "Nebula Object Viewer". 
+    The variable <tt>NOHTreeViewer</tt> will be used later on to create a dialog out of 
+    the rollout definition.
+    
+@verbatim
+ActiveXControl tv "MSComctlLib.TreeCtrl.2" pos:[5,52] width:343 height:478
+@endverbatim
+    This code creates a <tt>TreeView ActiveX control</tt> in the rollout.
+
+@verbatim
+    function addChild parentTreeNodeIndex parentNodeName objectName = 
+    (
+@endverbatim
+This function recursively collects Nebula objects and add it for a child node of the 
+TreeView.
+
+@verbatim
+        cmd = parentNodeName + ".getchildren"
+        children = nebula2.callv cmd
+@endverbatim
+First, the function collects all child objects of the given Nebula objects by calling
+<i>'getchildren'</i> Nebula2 script command.
+
+@verbatim
+        for i in children do
+        (
+            cmd = i + ".getname"
+            objName = nebula2.callv cmd
+@endverbatim
+For each collected child, we get the each of the child object's name.
+
+@verbatim
+            o = tv.nodes.add parentTreeNodeIndex 4 "" objName[1]
+@endverbatim
+Add retrieved name of the object to the TreeView for its item.
+
+@verbatim
+            addChild o.index i objName
+        )
+@endverbatim
+We recursively call <i>addChild</i> to collect all Nebula objects and add it to TreeView.
+
+@verbatim
+    on NOHTreeViewer open do
+    (
+@endverbatim
+When the rollout is opening (this is when the CreateDialog function is called)...
+
+@verbatim
+        nebula2.sel "/"
+        root = tv.nodes.add()
+        root.text = "/"
+@endverbatim
+First, we add root node '/' for the TreeView item cause Nebula uses '/' for its root node.
+
+@verbatim
+        r = nebula2.callv ".getchildren"
+@endverbatim
+This code collects all child objects of the root node.
+
+@verbatim
+        addChild root.index root.text root.text
+    )
+@endverbatim
+And we call <i>addchild</i> script function to recursively collect all child objects
+and add it for the TreeView item.
+
+@verbatim
+rollpage = newRolloutFloater "Nebula Object Viewer" 355 540
+addRollout NOHTreeViewer rollpage 
+@endverbatim
+Finally, we create a new Dialog using the rollout definition.
+
+
+    @section NMaxHowtoExposeNOHSeeAlso See Also
+
+    See @ref NMaxExposeReference for supported commands.
+
+    If you want to know more about <b>MaxScript</b> and supported <b>TreeView ActiveX</b> 
+    control, find the followings in a <b>MaxScript Reference</b>.
+    (<i>only available on 3DS Max7</i>)
+
+        - <i>ActiveX Controls in MAXScript Rollouts</i> 
+        - <i>TreeView ActiveX Control</i> 
+        - <i>How to - Practical Examples > How To...Develop a Scene Browser using TreeView
+          ActiveX Control</i> 
+    
+*/

@@ -1,0 +1,26 @@
+/**
+    @defgroup NMaxHowtoAnimations Animations How to
+
+    @section NMaxHowtoAnimationsOverview Overview
+
+    The Nebula 3DSMax Toolkit exports various types of animation in 3DSMax.
+
+    See @ref NMaxHowtoCharacters section for the details of <tt>Biped</tt>
+    and <tt>Bones</tt> animations.
+ 
+    @section NMaxHowtoAnimationSupportedTypes Supported Animation Types
+
+    The followings are supported controller types:
+      - Position, Rotation and Scale(PRS) controller
+      - Color controller
+      - Texture UV animatable controller
+      - Biped
+      - Bones
+      - Lookat controller (<i>It will be integrated in near future</i>)
+      - IK controller (<i>It will be integrated in near future</i>)
+
+    @note
+    Use <i>Linear</i> controller as it possible.
+    The toolkit does not support <i>TCB</i> based controller.
+    
+*/

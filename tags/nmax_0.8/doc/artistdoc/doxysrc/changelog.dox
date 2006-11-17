@@ -1,0 +1,172 @@
+/**
+    @page NMaxChangeLog Change Logs
+
+    This section of the document lists the change history of The Nebula2 3dsmax
+    Toolkit.
+
+    @section N2ChangeLog_2006_11 2006.11.
+
+    - Added hotloading stuff. Now the plug-in does not need to open a new viewer
+    whenever it exports assets.
+    - Fixed the problem of closing log dialog at the end of export stage. 
+      Now, the plug-in just clear window if the log dialog already exist 
+      instead of close previous one and recreating it again. 
+    - Changed to remove redundant sampled keys. Now the plugin can export
+    optimized sampled animation keys.
+    - Fixed to handle correctly 'Vector' type which is represented as point4
+    type in 3dsmax. The problem of that is that it cannot be retrieved valid animation 
+    keys so it was replaced to floattab type.
+    - Updated to be enable uv animation. Now nuvanimator can be exported.
+
+    @section N2ChangeLog_2006_10 2006.10.
+
+    - Changed attribute of directory setting edit text controls to writable.
+    - Changed to used default assigned values in the directory setting dialog if no values are  
+      spefied in the direcotry setting edit text control for mesh, texture, gfx and so on.
+    - Updated to append postfix to mesh file name by its type.
+    - Changed to merge meshes by its type. (shape, skinned shape, shadow, skinnedshape, collision)
+    - Updated to append postfix at the end of mesh file. (e.g. _skinned for the skinned shape mesh file)
+    - Changed to read default texture values from the "shaders:shaders.xml" file.
+    - Updated to export RenderPri parameter if it is set in nebula2 materials of 
+      3dsmax material editor. 
+    - Updated to use 3dsmax Omni Light's properties to setup the LightRange and 
+      castshadows parameters of nLight. Now you can export Omni Light directly into scene.
+
+    @section N2ChangeLog_2006_08 2006.08.
+
+    - Added NSIS install script for nmaxtoolbox installation.
+    - Updated nmaxtoolbox to be compatible new animation subsystem. 
+    - Updated to specify a destination directory of gfx object.
+    - Changed to collect all skinned node even the skin node has no vertices
+    affected by the node. This is useful when you've got various dummy bones
+    that are just there for the purpose of using them as hard points. Thank
+    you bruce for pointing it out. (Resolved #366 on bugzilla.)
+    - Updated to see if there are multiple objects which has same object name
+    for its name and if there are, it put a messagebox to warn. When these are
+    exported, they end up overwriting each other so that only one is present. (Resolved #355 on bugzilla.)
+    - Removed attachment node. (Resolved #360 on bugzilla)
+    - Changed to make it possible to export multiple meshes which have different vertex components at once. 
+    - Changed the current format to support fade-in-time for skinned mesh animation.
+    - Updated to support specifying a destination directory of an animation file.
+    - The addition of default:"" to the new UI things for the directories is absolutely necessary in Max6.  
+      Without that, the exporter is not usable as the panels that have those controls in them don't work.
+    - Resolved the bug #375 which cannot get custom attributes from any modifier applied object.
+      (solved a problem that shadow node is not to export)
+    - Changed to select binary script server in the utility option panel.
+    - Changed put an error message instead of an assertion in the case of that the texture to copy is not exist.
+    - Updated to support specifying a destination directory of a mesh.
+    - Fixed to assign default bumpamp if no bumpmap was specified. (Fixed #354 on bugzilla.)
+    - Updated to support specifying destination texture directory.
+
+    @section N2ChangeLog_2006_07 2006.07.
+
+    - Changed to support to specify animations loop type. 
+
+    @section N2ChangeLog_2006_06 2006.06.
+
+    - Changed to clamp value of color such as diffues, emissive and specular if its value exceeds 1.0.
+    - Fixed to add bone at any time to resolve the problem which is nskinshapenode cannot 
+      find correct nskinanimator if there are multiple nskinanimator.
+    - Fixed to use second key value when the first one is not exist in animation control.
+    
+
+    @section N2ChangeLog_2006_04 2006.04.
+
+    - Fixed to extract exact start frame and duration of clip even it is not start from 0.
+
+    @section N2ChangeLog_2006_03 2006.03.
+
+    - Updated to adjust shader parameters of viewer from 3dsmax in realtime with IPC.
+
+    @section N2ChangeLog_2006_02 2006.02.
+
+    - Resolved to export xform correctly when the object is mirrored. (Fix of #344 on bugzilla)
+    - Changed not to export xform for skinned object. (Fix of #344 on bugzilla)
+    - Resolved not to faile when the scene has mixed object - static and skinned object. (Fix of #344 on bugzilla)
+    - Added some virtual methods to nmaxscene class.
+    - Changed to export object which has 'alpha' or 'skinned_alpha' for its shader.
+    - Added exporting of several skinned models.
+
+    @section N2ChangeLog_2006_01 2006.01.
+
+    - Fixed to create nshadownode not nshadowshapenode. Fix of #340 on bugzilla.
+    
+    @section N2ChangeLog_2005_10 2005.10.
+
+    - Added and updated document page for multiple-uvs. 
+
+    @section N2ChangeLog_2005_09 2005.09.
+
+    - Fixed wrong rotation problem of non-biped mirrored bone.(#322 on Bugzilla)
+    - Updated to suppport that user can specify verbose level. 
+    - Fixed the bug that unsaved project with unnamed max object does not work with preview.
+    - Added notes about setting binary path of directory setting dialog.
+
+    @section N2ChangeLog_2005_07 2005.07.
+    
+    - Added nmaximport package.
+
+    @section N2ChangeLog_2005_06 2005.06.
+
+    - Updated to extract viewport information from currently selected 3dsmax viewport.
+    - Fixed a bug in UV tiling. The default value should be 1.0f not 0.0f. 
+
+    @section N2ChangeLog_2005_05 2005.05.
+
+    - Changed to support ram file which enables to preview mode.
+    - Updated to support adjusting viewer options.
+    - Fixed to do scale transform when it exports PRS transform so not it can do
+    scale transform for bones.
+    - Changed to use rich text edit cotnrol for log and format export log messages as RTF.
+    - Fixed not to go futher if the scene has no child nodes to export.
+    - Updated to support batch exporting.
+     
+    @section N2ChangeLog_2005_04 2005.04.
+
+    - Added 'Help' menu item into 3dsmax nebula2 menu. It shows 
+    <tt>nmaxtoolbox.chm</tt> compiled html help file up.
+    - Added character animation state editor dialog and changed to create
+    animation state from 3dsmax motion flow.
+    - Changed to get proper resources not to causes a bug in 3dsmax. Fix #270 on bugzzilla. 
+    - Added to support joint and skeletal animation scaling in 3dsmax utility panel.
+
+    @section N2ChangeLog_2005_03 2005.03.
+    
+    - Added to support XForm
+    - Added nmaxtoolbox doxygen document for artists.
+    - Added nlua package to support lua script language.
+    - Added module to export uv animation. 
+    - Added get/set access funtions for geometry scaling.
+    - Added float animator module to export float animation type.
+    - Changed the package's name to nmaxtoolbox. 
+    - Updated to export shadow node.
+    - Updated option to add joint name.
+    - Changed not to add dummy type of bones
+    - Changed to collect atually used bones only in the given scene.
+
+    @section N2ChangeLog_2005_02 2005.02.
+
+    - Updated to support dummy object for a bone if it has modifier.
+    - Changed to log handler to redirect message from nebula to 3dsmax.
+    - Added terrain editor item.
+    - Added nebula2 attachment node stuff.
+    - Fixed a bug not to export controller which has no animation key.
+    - Added module to export uv animation.
+    - Updated code to be able to access 3dsmax bitmap info.
+    - Updated to optimize animation key by removing redundant keys.
+    - Added module to export 3dsmax light object.
+    - Added spinner control for animation sample rate option in 3dsmax utility panel.
+    - Added 'Shell' material type which is used for exporting baked texture.
+      (just interface only not all implementaions yet)
+    - Updated to export material animation
+    - Updated to export ambient, diffuse and specular shader animation
+    - Updated to export nTransformAnimator
+    - Added nmaxvectoranimator module which exports nVectorAnimator.
+    - Added nmaxskinanimator module which exports nSkinAnimator.
+    - Added nmaxintaniamtor module which exports nIntAnimator.
+    - Changed nmaxcontrol support to Point4 type 2005.2.19.
+    - Changed to support 3dsmax7 
+    - Added module which can convert nebula object to 3dsmax custom attribute.
+    - Initial submit. (2005.02.16)
+
+*/

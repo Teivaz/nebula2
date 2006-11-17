@@ -1,0 +1,74 @@
+/**
+    @defgroup NMaxScriptGen Auto Script Generator
+
+    <i>Note: This feature of the toolkit is alpha stage at the moment.</i>
+
+    @section NMaxScriptGenOverview Overview 
+
+    To make a full featured game, you need tools or eidtors in addition  
+    game engine. But writing tools or editors are not a simple task even
+    it may takes more time than to write game eninge.
+    One of the solution is to use and extend existing package such as 3DSMax 
+    for the editors or tools. 
+    3DSMax provides various and powerful features for those purpose via
+    its custom attributes and max script. But extending 3DSMax also requires
+    to write bunch of code though it does not as much as writing it from scratch.
+
+    <b>The Auto Script Generator</b> was made to solve this problem.
+    The Auto Script Generator of the toolkit automatically generates 
+    max script code which contains custom attributes and UI code on the given
+    Nebula2 objects.
+    With this fuculty you dont have to write bunch of the code to extend 3DSMax.
+    Any one of the your team member who is programmer may write code or libarary 
+    with C++ for the game entities and that will have scripting interfaces
+    to extend it and to be callable within script.
+    (This means that the entity class will be derived from <tt>nroot</tt> class)
+    The toolkit provides automatic scripting generation fuculty on any Nebula 
+    objects. So you may can directly construct your entity editor within 3DSMax 
+    only with small of writing max script code.
+    It also helpful in the middle of the time of the project.  
+    The entity system will be frequaently changed and a new entities will be 
+    added either. Even some of those may be removed.  
+    But that's not a problem. Any changes of the entity system can be rapidly applied
+    to the editor and your artist or designer does not need to wait until the editor
+    is modified. Even it may be possible to extend or construct editor by artists or
+    designers not by programmers if he or she has basic knowlege about max script
+    and their entity system.
+    In a long term, you dont need to write or modify your editors or tools whenever
+    you start a new project. Write and build entity system first and you will have
+    editors or tools which you need.
+ 
+    Auto Script Generator can be more easily used and extended with Nebula 3DSMax 
+    Exposing system. See @ref NMaxHowtoExpose for the details.
+    
+
+    @section NMaxScriptGenUsage Usage
+
+      - <b>GetScriptFromNebulaObject</b> <i>[object pathl]</i>
+        Generate max script for the given nebula object and return generated
+        script code. <br>
+        <br>
+        example:
+@verbatim
+    code = GetScriptFromNebulaObject "usr/myentity"
+@endverbatim
+
+
+    @section NMaxScriptGenInArgs Supported In-Argument Types 
+
+      - float
+      - string
+      - bool
+      - vector2
+      - vector3
+      - vector4
+      - rgb
+      - rgba
+      - various
+
+
+    @section NMaxScriptGenFiltering Filtering Script Commands
+    ...
+
+*/
+

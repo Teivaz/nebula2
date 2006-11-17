@@ -1,0 +1,34 @@
+/** 
+    @defgroup NMaxHowtoStaticScene Static Scenes How to
+
+    @section NMaxHowtoStaticSceneOverview Overview
+
+    Static scenes consist of non-animated editable mesh geometry and transform
+    groups in 3DSMax.
+
+    Material can be assigned per-shape or per-face. The plugin will create one 
+    Nebula2 shape object for each material group and usually one mesh file(.n3d2 
+    or .nvx2 file) for the whole scene. This is the most optimal format for 
+    rendering the scene in Nebula2.
+    (See @ref NMaxHowtoMEditorMultiSubMaterials section for multiple materials)
+
+    A mesh which exported from a scene is represented by a <tt>nshapenode</tt>.
+    A <tt>nshapenode</tt> contains all of the per-vertex information of the geometry 
+    including vertex positions, normals, vertex colors and uv coordinates.
+    Normally a single mesh in a scene corresponds to a <tt>nshapenode</tt>.
+    The toolkit plugin also can export hierarchy scene node in a scene.
+    See the section @ref NMaxHowtoHierarchyNode for exporting hierarchy node in a
+    scene.
+    Any <i>XForm</i> which assigned to a mesh node also will be exported.
+
+    @section NMaxHowtoStaticSceneAdditionalNotes Additional Notes 
+
+      - You can use as many different materials as you want, but fewer materials 
+        are better for rendering performance.
+      - Remember that your textures textures must be sized 2^N. 
+      - Nebula2 uses normal maps for bump mapping. You can use the NVIDIA plugin 
+        for Photoshop coming with the toolkit to convert conventional greyscale 
+        bump maps to normal maps.
+      - Bump mapping is only supported in the DX9 render path.
+
+*/

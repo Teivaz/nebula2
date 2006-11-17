@@ -1,0 +1,152 @@
+/**
+    @defgroup NMaxHowtoUsingMaterialEditor Using Material Editor
+
+    - @ref NMaxHowtoMEditorOverview
+    - @ref NMaxHowtoMEditorMaterialEditor
+    - @ref NMaxHowtoMEditorSupportedMaterialTypes
+      - @ref NMaxHowtoMEditorMultiSubMaterials
+      - @ref NMaxHowtoMEditorShellMaterials
+      - @ref NMaxHowtoMEditorCubemap
+    - @ref NMaxHowtoMEditorOverviewExistingShaders
+    - @ref NMaxHowtoMEditorShaderXMLFile
+
+    @section NMaxHowtoMEditorOverview Overview
+
+    Nebula2 uses standard D3D FX files as its shader file format. FX files define 
+    all necessary render states, texture unit states, vertex/pixel shader programs 
+    and allow fallback paths for older hardware.
+
+
+    @section NMaxHowtoMEditorMaterialEditor The Nebula2 Custom Material Editor 
+
+
+    @image html meditor01.png "Setup material"
+
+    Click @b Standard 3DS Max shader button. It will show up <b>Material/Map Browser</b>
+    dialog.
+
+    @image html meditor02.png "Select Nebula2 custom material in the Material Browser"
+
+    Select @b Nebula2 material and click 'Ok' button.
+
+    <b>IMPORTANT:</b> The Nebula 3DS Max Toolkit also supports <b>Standard</b> material 
+    type in <tt>Material/Map Browser</tt> which is native material type of 3DS Max.
+    But the <b>Standard</b> material is remained for the purpose of backward compatiable or
+    testing only. It is highly recommended to use Nebula custom material which is provided 
+    by the Nebula 3DSMax Toolkit.
+
+    @image html meditor03.png "Nebula2 custom material rollout"
+    
+    This will bring <b>Nebula2 custom material editor</b> to you. By default, there is
+    'None' for <b>Nebula2 Shader Types</b> rollout panel and nothings for <b>Parameters</b> 
+    rollout.
+    
+    Select any one of the shaders in dropdown listbox and then its parameters will come 
+    out.
+
+
+    @section NMaxHowtoMEditorSupportedMaterialTypes Supported Material and Map Types
+
+    The Nebula 3DSMax Tookit material editor supports several types of the 3DSMax material
+    other than standard material type of the 3DSMax. 
+
+ 
+
+    @subsection NMaxHowtoMEditorMultiSubMaterials Multi-Sub Materials
+    
+    Nebula is available to use only one single material for its <tt>nshapenode</tt>.
+    If your model has multiple material, you should use multi-sub material for its material.
+    If the model has multi-sub material, the toolkit create a <tt>ntransformnode</tt> 
+    for the parent node and put each sub material becomes its child node and create a 
+    <tt>nshapenode</tt> for each sub materials.
+
+    @image html multisub01.png "Multi/Sub material on the Material Editor"
+
+    The toolkit plugin will create <tt>ntransformnode</tt> for the multi-sub material 
+    and then place each <tt>nshapenode</tt> under the created <tt>ntransformnode</tt>. 
+    The toolkit plugin will use object's name for its creating a <tt>ntransformnode</tt> 
+    and automatically add index number at the end of the per its child <tt>nshapenode</tt>. 
+    The added index number will be automatically counted and increased by the toolkit plugin. 
+    The number of child <tt>nshapenodes</tt> are same as the number of the sub material.
+
+    The above multi-sub material on the image which contains ten sub materials for its 
+    material will be result the following when it exported: 
+@verbatim
+    ntransformnode <object_name>
+     |
+     +- nshapenode <object_name_0>
+     |
+     +- nshapenode <object_name_1>
+     |
+     +- ...
+     |
+     +- nshapenode <object_name_10>
+@endverbatim
+
+    @subsection NMaxHowtoMEditorShellMaterials Shell Materials
+    ...
+
+    @subsection NMaxHowtoMEditorCubemap CubeMap
+    ...
+    
+
+    @section NMaxHowtoMEditorOverviewExistingShaders Overview of Existing Shaders
+
+    The toolkit comes from the current CVS. You are encouraged to add your own shaders, 
+    or even implement a completely new shader library.
+
+    - <b>Standard</b> the default shader with ambient, diffuse and specular lighting 
+      components, alpha testing, one color texture and one bump texture
+    - <b>Standard Skinned</b> the standard shader for smooth skinned characters skins; 
+      implements vertex skinning completely on the GPU. See Characters for details.
+    - <b> Standard Alpha</b> the standard alpha blended shader. Allows setting source and 
+      destination blend factors directly (additive blending would be Source=One 
+      Dest=One; normal alpha blending is Source=SrcAlpha, Dest=InvSrcAlpha)
+    - <b>Standard Alpha(2 Layers)</b> a 2-layered transparent shader
+    - <b>Standard Blended</b> the standard shader for blend shapes. Assigning a blend shape 
+      shader to a geometry indicates to the plugin that the geometry should be exported 
+      as a blend shape. See Blend Shapes for details.
+    - <b>Standard Layered</b> this a 4 layer shader for terrains (rather inefficient at the 
+      moment, since it uses 4 passes.
+    - <b>Standard Lightmapped</b> this is a shader for lightmapped geometry. 
+    - <b>Leaf</b> this is a shader which implements dynamic sprite leafs in a tree crown, 
+    - <b>Tree</b> this is a shader for geometry which should swing in the wind, like trees, 
+      bushes etc.     
+    - <b>Ocean</b> a DX9-only ocean shader ported from an NVIDIA example shader
+    - <b>Skybox</b>, <b>Cubemapped Skybox</b>, <b>Particle (Additive)</b> and <b>Particle 
+      (Alpha Blended)</b> are OBSOLETE shaders
+
+
+    @section NMaxHowtoMEditorShaderXMLFile Shaders and the shader.xml file
+
+    Shader files reside under <b>"home:data/shaders</b>. Each supported render path has its 
+    own subdirectory where the actual effect(.fx) files are located (<b>2.0</b> for DX9 shaders,  
+    @b fixed for fixed function DX7 shaders). Common shader files are located in the @b lib 
+    subdirectory.
+    
+    The <b>shaders.xml</b> file describes the shader properties for the 3DS Max toolkit plugin, 
+    for instance which shader attributes exist, which shader attributes should be shown 
+    in the Material Editor, what their data types and default values are, etc.
+
+    To add a new shader to the shader library:
+
+        - first create a new FX file which contains the shader's render states, texture unit 
+          configurations and vertex/pixel shader programs
+        - add a new shader entry to the shaders.xml file and describe the shader parameters 
+          for the 3DS Max plugin
+        - add a new entry to the renderpath.xml file in proj:data/shaders/2.0 and 
+          proj:data/shaders/fixed
+        - finally restart 3DS Max so that shaders.xml is re-parsed
+
+    You can also edit the properties of the <tt>shader.xml</tt> with <b>Simple Shader Browser</b> 
+    which can be found in the <tt>$nebula2/utils</tt> directory. Run <tt>shader.py</tt> and it will
+    brings the window like the following image: 
+
+    @image html shdbrowser.png "Simple Shader Browser"
+
+    Make sure you've aleady installed python 2.4 and wxpython 2.6.x (or higher for both of them) 
+    on your system before you run <tt>shader.py</tt>.
+
+    That's all to add a new shader. 
+
+*/

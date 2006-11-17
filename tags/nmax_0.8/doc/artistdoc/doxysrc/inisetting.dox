@@ -1,0 +1,81 @@
+/**
+    @defgroup NIniSetting INI Settings for the Plugin
+
+    @section NIniSettingOverview Overview
+
+    The Neubla2 3DS Max plugin uses INI file to load/save settings needed for the 
+    plugin. The INI file, <tt>nmaxtoolbox.ini</tt> can be found in 
+    <tt>$3dsmax/plugincfg/</tt> directory.
+
+    All values in the INI file are automatically saved to the disk when the plugin 
+    is unloaded.
+
+    @section NIniSettingSettings Settings
+
+    The INI file has the following sections for each of the settings.
+
+      - @ref NIniSettingGeneral
+      - @ref NIniSettingUtilityOption
+      - @ref NIniSettingDefaultViewer
+      - @ref NIniSettingCustomViewer
+
+    The following sections describe details of the sections listed above in the 
+    INI file.
+
+    @subsection NIniSettingGeneral General Setting
+
+      - HomeDir - 
+      - ProjDir - 
+      - BinaryPath - 
+      - AnimsAssign - 
+      - GfxlibAssign - 
+      - GuiAssign - 
+      - LightsAssign - 
+      - MeshesAssign - 
+      - ShadersAssign - 
+      - TexturesAssign - 
+      - AnimsPath - 
+      - GfxlibPath - 
+      - GuiPath - 
+      - LightsPath - 
+      - MeshesPath - 
+      - ShadersPath - 
+      - TexturesPath - 
+
+    See how to do the directory setting of @ref NMaxInstallation page for 
+    additional information.
+
+    @subsection NIniSettingUtilityOption Utility Options Setting
+
+    Keys and values of Utility Options Setting is for setting of Nebula2 
+    utility option panel in 3DS Max.
+
+      - GeometryScale - Geometry scaling value. The default value is 0.001000
+      - MaxJointPalette - Maximum number of the joint palette size. The default value is 24
+      - WeightThreshold - Vertex Weight Trash hold. The default value is 0.000100
+      - SaveMeshAs - A mesh file extension which to be used for exported mesh file. '.n3d2' is defaultly set.
+      - SaveAnimAs - A animation fiel extension which to be used for exported animation file. '.nanim2' is defaultly set.
+      - SampleRate - A sampling rate of aniamtion. The default value is '2'
+      - AddJointName - If it is set to true, all joints name are exported. 'false' is defaultly set.
+      - ExportHiddenNode - If it is set to true, hidden node also exported out. 'false' is defaultly set.
+      - ScriptServer - A persistence server to be used when the plugin exports. 'ntclserver' is defaultly set.
+      - Verbose - A verbose level of the log dialog. The default value is 1.
+
+    See @ref NMaxHowtoGlobalOptions for more details.
+
+    @subsection NIniSettingDefaultViewer Default Viewer Setting
+
+    @note
+    All keys of 'Default Viewer Setting' should has '-' prefix to be used 
+    arguments of the <tt>nviewer.exe</tt>.
+
+      - '-fullscreen' - false
+      - '-alwaysontop' - true 
+      - '-x' - 0
+      - '-y' - 0
+      - '-w' - 640
+      - '-h' - 480
+
+    @subsection NIniSettingCustomViewer Custom Viewer Setting
+
+*/

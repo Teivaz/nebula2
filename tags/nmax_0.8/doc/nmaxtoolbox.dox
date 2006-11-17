@@ -1,0 +1,150 @@
+/**
+    @defgroup NebulaMaxExport2Contrib 3DSMax Toolkit
+    @ingroup NebulaContribAssetToolchainModules
+    
+    This section of the documentation provides technical information on the  
+    <b>Nebula 3DS Max Toolkit</b>(aka. <tt>nmaxtoolbox</tt>) which used to create   
+    contents and tools with 3DS Max.  
+
+      - @ref NMAXToolBoxOverview
+      - @ref NMaxToolBoxComponents
+      - @ref NMAXToolBoxInstallation
+      - @ref NMAXToolBoxDebugging
+      - @ref NMAXToolBoxAdditionalNotes
+
+    @section NMAXToolBoxOverview Overview
+
+    The <b>Nebula 3DS Max Toolkit</b> is a 3DS Max plugin dll. 
+    If you're not familiar with the programming of the 3DS Max plugin, it is highly
+    recommended to read the 3DS Max SDK help file provided when the 3DS Max SDK is
+    installed.
+
+    @note
+    If you want to see the features of the toolkit and supported 3DS Max features 
+    or usages of the toolkit, see the toolkit manual which provides for the artists.
+    The toolkit manual can be found on <tt>$nebula2/code/contrib/nmax/doc/artistdoc</tt>
+
+    A common way to start to write a 3DS Max plugin is to use SDK appwizard shipped and
+    provided by 3DS Max SDK. But the Nebula provides its own libarary and classes 
+    which are more easy to use than the appwizard of the SDK.
+    You should use this feature to write a 3DS Max plugin for Nebula.
+    See @ref registeredClassDesc for more details and its usages.
+
+    @section NMaxToolBoxComponents Components of the Toolkit
+
+    The toolkit consists of the followings for its components:
+
+        - <b>Exporter</b> - 3DS Max exporter plugin for Nebula.
+        - <b>Nebula Script Function Expose System</b> - plugin written based on 3DS Max 
+          Function Publishing System which enables to call Nebula script commands via MaxScript.
+        - <b>Max Script Generator</b> - plugin which generates max script based on the given
+          Nebula object.
+
+
+    @section NMAXToolBoxInstallation Building the Plugin
+
+    nMaxToolBox was targeted at 3DS Max 6 or its higher versions. 
+    (though the toolkit has been mainly developed on 3DS Max 7).
+
+    When you develop a 3DS Max plug-ins, it is important to choose a
+    proper compiler:
+
+        - Microsoft Visual C++ 6 (VC 6) : It is not recommended.
+        - Microsoft Visual C++ .NET 2002 (VC 7.0) : Recommended for 3DS Max 6.
+        - Microsoft Visual C++ .NET 2003 (VC 7.1) : Recommended for 3DS Max 7.    
+    
+    @note
+    There are link errors when nmaxtoolbox is built with 3ds max6 and vc7.1
+    on release mode.  The error is caused by memory management incompatibility
+    between the various versions of the Microsoft compilers, but it cannot
+    be smoothly solved even with <tt>&lt;MAX_Mem.h&gt;</tt> which has been
+    provided by Discreet as a solution to that problem, at the moment. So it
+    is highly recommended to use VC 7.0 if you use 3DS Max 6.0.
+
+    If you use Microsoft Visual C++ .NET 2005(VC 8.0) with 3dsmax8, specify 
+    the following three steps before having futher steps:
+
+    a) Generated projects will not compile out of the box, because Max sdk uses a lot
+    of loop variables checks like this:
+
+    @code
+    for (int i=...)
+    {
+    }
+    do_something(i);
+    @endcode
+
+    To make these compile, the "compliant for loop scope" option have to be turned
+    off in 'C/C++ Properties' > 'Language'.
+     
+    b) Runtime libraries need to be "Multithreaded DLL" and NOT multithreaded
+    debug/multithreaded debug dll. Otherwise bad things will happen (memory
+    problems/crashes/etc). So, if you want to be able to debug the plugin, you need
+    to modify the settings for DEBUG configuration: change runtime libraries to
+    "Multithreaded DLL" and remove _DEBUG preprocessor define for all projects,
+    otherwise it will not link.
+
+    c) To use runtime libraries, manifest linking should be switched to "Yes",
+    otherwise the plugin will not load.
+
+    Now it's time to build the package.
+
+    The following list shows the steps of building the plugin:
+
+      -# Run @c update.tcl(or @c update.py) to generate workspace.
+      -# Add the path of the 3DS Max SDK headers and libraries to your VC
+         Project Directories.
+      -# Build the plugin package and copy it to <tt>$3dsmax\\plugins</tt> directory.
+        - Generated plugin file, @b nmaxtoolbox.dlu can be found in 
+          <tt>$nebula2/bin/win32</tt> or <tt>$nebula2/bin/win32d</tt> directory 
+          depending on your compile mode.
+      -# Run 3DS Max.
+        - copied plugin will automatically be loaded when you start up 3DS Max.
+
+    @note
+    You may meet compile time errors which causes by ndirectshow and nmaxtoolkit
+    package even nmaxtoolkit package does not use any ndirectshow functions.
+    This problem is because both directshow and the Max SDK have a header
+    file with the same name. In this case you need to rearrange your
+    include directories to make sure that the platform sdk stuff is
+    included before the Max SDK.
+
+
+    @section NMAXToolBoxDebugging Debugging the Plugin
+
+    There is two way to debug the plugin. One for startup of the plugin and 
+    the other for exporting of the plugin.
+
+      - Open <i>Project Setting</i>. 
+      - Under <i>Configuration Properties</i> select <i>Debugging</i>.
+        - Set <i>Command</i> to point to <tt>3dsmax.exe</tt>.(which is found in the directory 
+          where you intalled 3dsmax. i.e. <tt>c:/3dsmax7/3dsmax.exe</tt>)
+
+    The above is useful when you debug and see what happens when the 3dsmax loads 
+    the plugin. But with this, you can't debug exporting of the plugin.
+    So there is other way to debug the plugin which enables you to debug process of exporing.
+
+     - First, set break point where you want to debug.
+     - Select <i>Debug</i> menu and click <i>Process</i> menu item.
+     - This will bring the <i>Process</i> dialog. 
+       - Select <tt>3dsmax.exe</tt> in the list view and click <i>Connect</i> button. 
+         - It brings the dialog which shows the list of programs to debug.
+         - Select 'Native' then click 'Ok' and close the process dialog.
+     - Start to export and the debugger will stop where you set the break point.
+
+    Now, you can set break point wherever you want to stop and debug the process of exporting.
+
+
+    @section NMAXToolBoxAdditionalNotes Additional Notes 
+
+    The <b>Nebula2 3DS Max Toolkit</b> was written on the native 3DS Max SDK not 
+    IGame library which provided by Discreet for easy writing of exporter. 
+    (previous Nebula2 3dsmax exporter was written based on the IGame libararay)
+    The reason that the toolkit does not uses IGame libarary is that the library has some bugs
+    and it is not regularly updated and it is nothing more than the wrapper of the exsiting SDK.
+    So, for the reasons of those, the <b>Nebula2 3DS Max Toolkit</b> was written based on the 
+    native 3DS Max SDK which provided when the 3DS Max is installed.
+    
+    (C)2005 Kim, Hyoun Woo
+
+*/

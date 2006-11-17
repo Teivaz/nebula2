@@ -1,0 +1,36 @@
+/**
+    @defgroup NMaxHowtoExpose Nebula2 3DS Max Expose
+
+
+    @section NMaxHowtoExposeOverview Overview
+
+    <b>Nebula2 3DS Max Expose plugin</b> exposes Nebula2 script commands
+    to maxscript. So it enables to use and call Nebula2 script commands
+    within maxscript.
+
+    It makes you can use all Nebula script commands with maxscript.
+    For example use of this package, you can construct entity editing tool just adding 
+    custom attribute which is the feature of 3DSMax and writing some UI. 
+    All this can be easily done only with maxscript. <br> 
+    One good thing of this approach is that all custom data can be saved into 3DSMax 
+    file(.max) and can be loaded for later use of editing and can be exported to 
+    script file by Nebula's script server and serialization mechanism. <br>
+    So artist can make game assets and edit it's attributes within 3DSMax. 
+    All this assets are ready to use for game after it is exported to the form of 
+    script file.
+
+
+    @section NMaxHowtoExposeUsages Usages
+
+    See @ref NMaxExposeReference for supported commands.
+
+
+    @section NMaxHowtoExposeExamples Examples
+
+    - @ref NMaxHowtoExposeNOH - An example demonstrates how to create a <b>Named Object 
+      Hierarchy</b>(aka NOH) viewer showing the nebula object hierarchy with a MaxScript 
+      and a TreeView ActiveX Control. 
+
+    - @ref NMaxExposeODE - An example demonstrates how to use Nebula Expose system with 
+      nOpenDE, Nebula Open Dynamics Engine.
+*/

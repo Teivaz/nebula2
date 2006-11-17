@@ -1,0 +1,90 @@
+/**
+    @defgroup NMaxHowtoHierarchyNode Hierarchy Nodes Howto
+
+    @section NMaxHowtoHierarchyNodeOverview Overview
+
+    A toolkit plugin allows to export mesh nodes of a scene in a hierarchy 
+    form using <i>Group</i> or <i>Linking</i> command of 3DSMax.
+
+    This section of the manual provides the information on the node hierarchy 
+    features of the toolkit plugin.
+    
+      - @ref NMaxHowtoHierarchyNodeUsage
+        - @ref NMaxHowtoHierarchyNodeGroup
+        - @ref NMaxHowtoHierarchyNodeLink
+      - @ref NMaxHowtoHierarchyWithJoints
+    
+    @section NMaxHowtoHierarchyNodeUsage Usage
+
+    Let's look how the toolkit plugin will export grouped or linked objects 
+    of a scene.
+
+    @subsection NMaxHowtoHierarchyNodeGroup Grouping Objects
+
+    You might want to group several objects to make them a single group.
+
+    The following image shows a group of two objects, <i>'box01'</i> and 
+    <i>'box02'</i> in a schematic view:
+
+    @image html hierarchy01.png "Grouped objects in a schematic view"
+
+    The toolkit plugin will create <tt>ntransformnode</tt> for group object
+    and generate the hierarchy like the following when it exports:
+@verbatim
+    ntransformnode group01
+     |
+     +- nshapenode box01
+     |
+     +- nshapenode box02
+@endverbatim
+
+     Grouped objects will be located under the group object as same level 
+     if there are no links between objects.
+
+    @note
+    The other case which the toolkit plugin places <tt>ntransformnode</tt>
+    on the top of the several <tt>nshapenode</tt> is that the object has 
+    <i>Multi-sub</i> material. See @ref NMaxHowtoMEditorMultiSubMaterials 
+    for the details.
+
+    @subsection NMaxHowtoHierarchyNodeLink Linking Objects
+    
+    You might want to create links to build the hierarchy between nodes.
+    You can make it by clicking <i>'Select And Link'</i> on the toolbar
+    or <i>'Connect'</i> on the toolbar of a schematic view either.
+
+    The following image shows two linked objects, <i>'box01'</i> and 
+    <i>'sphere01'</i> in a schematic view:
+
+    @image html hierarchy02.png "Linked objects in a schematic view"
+
+    The toolkit plugin will generate the hierarchy like the following
+    when it exports:
+@verbatim
+    nshapenode box01
+     |
+     +- nshapenode sphere01
+@endverbatim
+
+
+    @section NMaxHowtoHierarchyWithJoints Hierarchy with Joints
+
+    Somethimes you may want to put a mesh node under a biped(or a bone) object as a child
+    node. It is nature on 3dsmax to animate either the child node when the parent biped object moves.
+    But there are no way to represent biped(or a bone) object as a seperate node in a node 
+    hierarchy with Nebula2.
+    Because Nebula2 does not support that feature.
+    So if you put a mesh node under any joint or biped node as a child node, it will exported but 
+    does not work as it is expected.
+
+    @image html hierarchy03.png "A Mesh object as child node of a joint"
+
+    As you can see the above image, you might put a mesh as a child node of the node and you expect
+    the gun will move along with its parent node, <tt>'Bip01_L_Hand'</tt> when the scene is exported.
+    But the 'Gun' will not put on the hand and move along with the hand though the mesh for 
+    a gun will be exported and shown on in the viewer.
+    Because Nebula2 can not represents joint as a node so it can not put gun under a hand node.
+    Nebula2 support this as <i><b>HardPoints</b></i> things.
+
+*/
+

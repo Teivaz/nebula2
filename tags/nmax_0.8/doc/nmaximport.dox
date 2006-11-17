@@ -1,0 +1,29 @@
+/**
+    @defgroup NebulaMaxImportContrib 3DSMax Importer
+    @ingroup NebulaContribAssetToolchainModules
+
+    This section of the documentation covers information on the Nebula 
+    3DS Max importer.
+
+    @section NMaxImportOverview Overview
+
+    <b>The Nebula 3DS Max Importer</b> is seperated 3DS Max plugin tool to 
+    import various type of Nebula mesh into 3DS Max.
+
+    @note
+    Currently it only imports mesh file into 3DS Max. Animation files or other 
+    type of Nebula resources are not supported yet.
+
+    The plugin makes a 3DS Max mesh object per a group of the imported Nebula 
+    mesh file. For an example, if the mesh which to be imported has three groups,  
+    three editable meshes will be shown on 3DS Max when it was imported. 
+
+
+    @section NMaxImportInstallation Building the Plugin
+
+    See @ref NMAXToolBoxInstallation section. It can be done with the same way 
+    as the toolkit plugin.
+
+    (C)2005 Kim, Hyoun Woo
+
+*/

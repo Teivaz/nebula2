@@ -1,0 +1,82 @@
+/**
+    @page NMaxFeatures Features
+
+    @section NMaxFeaturesOverview Overview
+
+    The <b>Nebula2 Toolkit for 3DS Max</b> allows you to:
+
+        - <b>Preview and export</b> any of the followings from 3DS Max:
+            - static scenes
+            - hierarchically animated scenes
+            - smooth-skinned, animated characters
+            - shadow geometry for stencil buffer shadows
+        - A custom <b>Material Editor</b> lets you control the shader attributes of
+          your DX9 HLSL shader library.
+        - <b>automatic scene optimization</b> on the exported geometry for the most 
+          optimal format to render it in Nebula2.
+        - <b>automatic tangent generation</b> creates per-vertex-tangents needed for 
+          <b>per-pixel-lighting</b>.
+        - Terrain tools for nCLodTerrain contributed module
+        - access and calls <b>all Nebula2 objects</b> through <b>nMaxExpose 3DS Max  
+          function publishing</b> system. You can build your own tools within 3DS Max or 
+          extend existing toolkit with this.
+          See @ref NMaxHowtoExpose section for more details.
+        - <b>automatically generates custom attributes and UI code</b> of max scripts 
+          for the given <b>Nebula2 object</b>. 
+          See @ref NMaxScriptGen section for more details.
+        - <b>importer.</b> It is provided by seperated plugin to import Nebula mesh 
+          file into 3DS Max. 
+          (<tt>.n3d2</tt>, <tt>.nvx2</tt>, <tt>.n3d</tt>, <tt>.nvx</tt> and <tt>.obj</tt> 
+          are supported)
+          
+
+    @section NMaxFeaturesSupported3DSMaxFeatures Supported 3DS Max Features
+
+    @subsection NMaxSupported3DSMaxGeom Geometry
+        - triangle based geometry
+        - vertex normal
+        - smooth group
+        - vertex color
+        - vertex weights
+        - vertex tangent which is automatically generated if it is necessary
+        - face normal
+        - XForm
+
+    @subsection NMaxSupported3DSMaxAnimations Animations
+        - Position controller
+        - Rotation controller
+        - Scale controller
+        - Float controller
+        - Color controller
+        - Note Track for exporting character
+
+    @subsection NMaxSupported3DSMaxCS Character Studio
+        - Rigid and rigid blended vertices
+
+    @subsection NMaxSupported3DSMaxSkin Skin
+        - Skin modifier
+        - Any geometry object can be used for bone
+
+    @subsection NMaxSupported3DSMaxCameras Cameras
+        - 3DS Max scene default camera
+        - Clipping planes
+
+    @subsection NMaxSupported3DSMaxLights Lights
+        - Ambient Light
+        - Omni Light
+        - Spot Light
+        - 3DS Max scene default light
+
+    @subsection NMaxSupported3DSMaxMaterials Materials
+        - Multi/Sub materials
+        - Ambient material and its animation
+        - Diffuse material and its animation
+        - Specular material and its animation
+        - Texture uv animation
+
+    @subsection NMaxSupported3DSMaxHierarchy Scene Hierarchy
+        - Grouped objects
+        - Linked objects
+
+
+*/

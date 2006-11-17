@@ -1,0 +1,32 @@
+/**
+    @defgroup NMaxPerMeshOptions Specifying Per Mesh Options
+
+    The <b>Nebula2 3DSMax Toolkit</b> provides per-mesh options which let you 
+    handle the mesh to fit it for your own purpose.
+
+    Be sure that the model which you want to apply the mesh option is selected 
+    before you click the <i>Mesh Options</i> menu item on the Nebula2 menu. 
+
+    @image html meshoption01.png "Mesh Option menu item on Nebula2 menu"
+
+    If you want to remove 'mesh options' from the model which already has
+    'mesh options', select the model then click <i>'Mesh Options'</i>
+    menu item once again. It will remove the mesh options from the selected
+    model.
+    
+    The applied mesh options can be found on the modify panel.
+
+    @image html meshoption02.png "Mesh Option rollout on the modify panel"
+
+      - <b>Mesh Types</b>
+        - Normal - normal mesh type which is default option
+        - Swing - indicate that the mesh is <tt>swing shapenode</tt>.
+        - Shadow - indicate that the mesh is <tt>shadow</tt> model.
+        - Collision - indicate that the mesh will be used for <tt>collision</tt> mesh. 
+      - <b>Vertex Options</b>
+        - Normal - the exported mesh will contain vertex normal.
+        - Color - the exported mesh will contain vertex color.
+        - Uvs - the exported mesh will contain uvs for its texturing.
+        - Tangent - generate tangent per vertex for per pixel lighting
+
+*/

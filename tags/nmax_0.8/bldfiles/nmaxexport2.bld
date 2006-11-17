@@ -1,0 +1,253 @@
+#-------------------------------------------------------------------------------
+#   nmaxexport2.bld
+#
+#   Nebula2 3dsmax exporter modules.
+#
+#   Modules:
+#     - nmaxexporter2
+#     - nmaxscene
+#     - nmaxnode
+#     - nmaxmesh
+#     - nmaxskinpartitioner
+#     - nmaxmaterial
+#     - nmaxbone
+#     - nmaxtransform
+#     - nmaxcamera
+#     - nmaxlight
+#     - nmaxcontroller
+#     - nmaxnotetrack
+#     - nmaxdummy
+#     - nmaxcustattrib
+#   Targets:
+#
+#   (c)2004 Kim, Hyoun Woo
+#-------------------------------------------------------------------------------
+beginmodule nmaxexport2
+    annotate "nebula2 3dsmax exporter"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxexport2_main
+        nmaxexport2_script
+        nmaxexport2_ipc
+        nmaxinterface
+        nmaxutil
+        nmaxscriptcall
+    }
+    setheaders {
+        nmaxexport2
+        nmaxinterface
+        nmaxutil
+        nmaxscriptcall
+        nmax
+    }
+    setlibs_win32 { maxutil.lib core.lib geom.lib mesh.lib poly.lib paramblk2.lib bmm.lib }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxoptions
+    annotate "exporter module for 3dsmax options"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxoptions
+        nmaxoptionscriptext
+    }
+    setheaders {
+        nmaxoptionscriptext
+        nmaxoptions
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxscene
+    annotate "exporter module for 3dsmax scene"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxscene
+    }
+    setheaders {
+        nmaxscene
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxnode
+    annotate "base class module for 3dsmax node"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles { nmaxnode }
+    setheaders { nmaxnode }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxmesh
+    annotate "exporter module for 3dsmax mesh"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxmesh_main
+        nmaxmesh_skin
+        nmaxvertexinfluence
+    }
+    setheaders {
+        nmaxmesh
+        nmaxvertexinfluence
+        nmaxnullview
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxskinpartitioner
+    annotate "exporter module for skinned mesh partitioning"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxskinpartitioner
+    }
+    setheaders {
+        nmaxskinpartitioner
+    }
+
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxmaterial
+    annotate "exporter module for 3dsmax material"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxmaterial_main
+        nmaxmaterial_std
+        nmaxmaterial_cstm
+        nmaxmaterial_shd
+        nmaxmaterial_ui
+        nmaxmaterial_script
+        nmaxtexture
+    }
+    setheaders {
+        nmaxmaterial
+        nmaxmaterial_shd
+        nmaxmaterial_ui
+        nmaxtexture
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxbone
+    annotate "exporter module for 3dsmax bones(physique and skin)"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxbones
+    }
+    setheaders {
+        nmaxbones
+
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxtransform
+    annotate "module for helping transformation"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxtransform
+    }
+    setheaders {
+        nmaxtransform
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxcamera
+    annotate "exporter module for 3dsmax camera"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxcamera
+    }
+    setheaders {
+        nmaxcamera
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxlight
+    annotate "exporter module for 3dsmax light"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxlight
+    }
+    setheaders {
+        nmaxlight
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxanimator
+    annotate "exporter module for 3dsmax controller animation"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxanimator
+        nmaxcontrol
+        nmaxtransformanimator_main
+        nmaxtransformanimator_pos
+        nmaxtransformanimator_rot
+        nmaxtransformanimator_scale
+        nmaxikanimator
+        nmaxtransformcurveanimator
+        nmaxskinanimator
+        nmaxvectoranimator
+        nmaxintanimator
+        nmaxfloatanimator
+        nmaxuvanimator
+    }
+    setheaders {
+        nmaxanimator
+        nmaxcontrol
+        nmaxtransformanimator
+        nmaxikanimator
+        nmaxtransformcurveanimator
+        nmaxskinanimator
+        nmaxvectoranimator
+        nmaxintanimator
+        nmaxfloatanimator
+        nmaxuvanimator
+    }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxnotetrack
+    annotate "exporter module for 3dsmax note track"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles { nmaxnotetrack }
+    setheaders { nmaxnotetrack }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxdummy
+    annotate "exporter module for 3dsmax dummy node"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles { nmaxdummy }
+    setheaders { nmaxdummy }
+endmodule
+#-------------------------------------------------------------------------------
+beginmodule nmaxcustattrib
+    annotate "exporter module for 3dsmax custom attribute"
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles { nmaxcustattrib }
+    setheaders { nmaxcustattrib }
+endmodule
+#-------------------------------------------------------------------------------
+# EOF
+#-------------------------------------------------------------------------------

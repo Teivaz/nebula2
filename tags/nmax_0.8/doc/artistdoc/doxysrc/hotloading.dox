@@ -1,0 +1,36 @@
+/**
+    @defgroup NMaxHowtoHotLoading Hotloading How to
+
+    <b><i>Hotloading</i></b> provided by <tt>nmaxtoolbox</tt> is the process 
+    by which exported assets are automatically and very quickly loaded 
+    into the already running viewer.
+
+    When the plug-in exports any assets it normally runs a viewer 
+    at the end stage of the exporting.
+    By the way running viewer such as <tt>nviewer</tt> the default one
+    specified in the plug-in whenever you export assets is redundant task.
+    Even it is time consuming task. The most time consuming task when you 
+    export assets and see the result is that running a viewer.
+
+    Hotloading supported by the plug-in solves this problem.
+    Whenever you modify your assets in 3dsmax and export, the plug-in does not 
+    run new viewer again. Instead of doing that it informs to reload newly 
+    exported assets to the already running viewer through IPC. 
+    And this is done very quickly so it can reduce iteration times to just a 
+    few seconds. 
+
+    @note 
+    If you use custom viewer, the viewer should provide IPC to accomplish 
+    hotloading.
+
+    One of example about the benifit of this feature is that it is very useful 
+    when you frequently modify geometry of the assets and see the result 
+    over art work. It reduces iteration times so increases productivity.
+    
+    @note
+    If you want to see the changes of your materials color, just establish the 
+    connection to the viewer via IPC and use 3dsmax material editor. 
+    It is more convinient and fast way. See @ref NMaxHowtoChangeShaderParams page 
+    for the details.
+
+*/

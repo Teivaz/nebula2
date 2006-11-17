@@ -1,0 +1,22 @@
+/**
+    @page NMaxKnownIusses KnownIssues and Limitations
+
+    @section NMaxKnownIusses_Mesh Mesh
+
+    @subsection NMaxKnownIusses_Mesh_Consolidation Mesh Consolidation
+
+    The Nebula2 3dsmax toolkit can export a scene contains different kind of mesh 
+    type. In that case the toolkit saves mesh files individually by each type of the mesh.
+    For example consider that the scene has several static meshes and one skinned mesh.  
+    When it is exported, the toolkit merges meshes by its type. 
+    So two mesh files will be saved on disk, one for static meshes and the other for skinned mesh 
+    after it finished exporting. 
+
+    @subsection NMaxKnownIusses_Mesh_VertexComponents Different Vertex Components
+
+    If you try to export meshes which are same type but has different vertex components,  
+    the toolkit changes the vertex components.
+    So it can causes not desired result.
+    It is highly recommended to export 3dsmax mesh objects which have same vertex components together.
+
+*/

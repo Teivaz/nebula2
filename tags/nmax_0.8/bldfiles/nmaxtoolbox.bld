@@ -1,0 +1,71 @@
+#-------------------------------------------------------------------------------
+#   nmaxtoolbox.bld
+#
+#   nmaxtoolbox workspace
+#
+#   Modules:
+#       - nmaxtoolbox
+#   Targets:
+#       - nmaxtoolbox
+#-------------------------------------------------------------------------------
+beginmodule nmaxtoolbox
+    settype cpp
+    setplatform win32
+    setdir export2
+    setfiles {
+        nmaxtoolbox
+    }
+endmodule
+#-------------------------------------------------------------------------------
+begintarget nmaxtoolbox
+    settype dll
+    changedllextension dlu
+    setexceptions true
+
+    setresource_win32 code\contrib\nmax\res\nmaxtoolbox.rc
+
+    setmodules {
+        nmaxdlg
+        nmaxutilityobj
+        nmaxvieweroptions
+        nmaxexport2
+        nmaxoptions
+        nmaxscene
+        nmaxnode
+        nmaxmesh
+        nmaxskinpartitioner
+        nmaxmaterial
+        nmaxbone
+        nmaxtransform
+        nmaxcamera
+        nmaxlight
+        nmaxanimator
+        nmaxnotetrack
+        nmaxdummy
+        nmaxcustattrib
+        nmaxexpose
+        nmaxscript
+        nmaxlistener
+        nmaxdll
+        nmaxtoolbox
+    }
+    settargetdeps {
+        nmaxbase
+        nkernel
+        nnebula
+        ngui
+        ntoollib
+        microtcl
+    }
+endtarget
+#-------------------------------------------------------------------------------
+beginworkspace nmaxtoolbox
+    annotate "The workspace for the 3DS Max toolkit for Nebula2."
+    settargets {
+        nmaxtoolbox
+        nmaxbase
+   }
+endworkspace
+#-------------------------------------------------------------------------------
+#   EOF
+#-------------------------------------------------------------------------------
