@@ -1,5 +1,0 @@
-/**
-    @defgroup Deformers Deformer Subsystem
-    @ingroup Anim2
-    @brief Mesh deformers for blend shapes and skinned meshes.
-*/

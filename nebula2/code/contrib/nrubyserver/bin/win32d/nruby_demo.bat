@@ -1,1 +1,0 @@
-..\..\..\..\..\bin\win32d\nrubyviewer -scriptserver nrubyserver -startup home:code/contrib/nrubyserver/bin/startup.rb -stage home:code/contrib/nrubyserver/bin/stdlight.rb -input home:code/contrib/nrubyserver/bin/stdinput.rb -view home:code/contrib/nrubyserver/export/gfxlib/examples/torus.rb
