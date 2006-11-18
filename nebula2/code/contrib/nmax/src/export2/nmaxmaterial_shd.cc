@@ -138,7 +138,16 @@ nString GetParameterType(const nString &shdType)
     if (shdType == "CubeTexture")
         return "#texturemap";
     else
+    if (shdType == "EnvelopeCurve")
+        //return "#maxObject";
+        return "#floatTab tabSize:9 tabSizeVariable:false";
+    else
+    if (shdType == "ColorEnvelopeCurve" )
+        return "#floatTab tabSize:14 tabSizeVariable:false";
+    else
+    {
         return "<<unknown>>";
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -157,6 +166,8 @@ nString GetParameterType(const nString &shdType)
       -# BumpTexture - mapbutton
       -# CubeTexture - mapbutton
       -# Vector - spinner
+      -# EnvelopeCurve - nmaxenvelopecurve custom control
+      -# ColorEnvelopeCurve - nmaxenvelopecurve custom control
       -# Unknown - label
 
     @param type 'type' value of xml element.
@@ -220,7 +231,16 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
     if (type == "Vector")
         return AddVector4Spinner(elemParam);
     else
-        return "label Unknown \"Unknown\"\n";
+    if (type == "EnvelopeCurve" || type == "ColorEnvelopeCurve")
+        return AddEnvelopeCurve(elemParam);
+    else
+    {
+        nString uiScript;
+        uiScript += "\t\t";
+        uiScript += "label Unknown \"Unknown\"\n";
+
+        return uiScript;
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -569,9 +589,10 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
         strParamBlock += " ";
     }
 
-    if (paramType == "Vector")
+    if (paramType == "Vector" || paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve")
     {
-        //strParamBlock.AppendFloat(atof(defaultValue.GetFirstToken(" \t\n")));
+        // we don't need default values for 'vector' and 'envelopecurve' type 
+        // those are types uses floattab.
     }
     else
     {
@@ -590,33 +611,38 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
     elemParam->Attribute("gui", &hasGui);
     if (hasGui)
     {
-        // 'ui' name should be same as parameter name.
-        strParamBlock += "ui:";
-        // combine the 4 spinner into a parameter
-        if (paramType == "Vector")
+        // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
+        // it is hard to bind those control type with parameters block.
+        if (!(paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve"))
         {
-            // names should be same as the spinners
-            // see AddVector4Spinner
-            nString name = paramName;
-            strParamBlock += "(";
-            name.AppendInt(0);
-            strParamBlock += name;
-            strParamBlock += ", ";
-            name.AppendInt(1);
-            strParamBlock += name;
-            strParamBlock += ", ";
-            name.AppendInt(2);
-            strParamBlock += name;
-            strParamBlock += ", ";
-            name.AppendInt(3);
-            strParamBlock += name;
-            strParamBlock += ")\n";
+            // 'ui' name should be same as parameter name.
+            strParamBlock += "ui:";
+            // combine the 4 spinner into a parameter
+            if (paramType == "Vector")
+            {
+                // names should be same as the spinners
+                // see AddVector4Spinner
+                nString name = paramName;
+                strParamBlock += "(";
+                name.AppendInt(0);
+                strParamBlock += name;
+                strParamBlock += ", ";
+                name.AppendInt(1);
+                strParamBlock += name;
+                strParamBlock += ", ";
+                name.AppendInt(2);
+                strParamBlock += name;
+                strParamBlock += ", ";
+                name.AppendInt(3);
+                strParamBlock += name;
+                strParamBlock += ")";
+            }
+            else
+            {
+                strParamBlock += paramName;
+            }
         }
-        else
-        {
-            strParamBlock += paramName;
-            strParamBlock += " \n";
-        }
+        strParamBlock += " \n";
 
         strRollout += GetUIFromType(elemParam, paramType);
     }
@@ -701,6 +727,9 @@ static const char* filter[FILETER_SIZE] = {
 //-----------------------------------------------------------------------------
 /**
     Filter of the shader in filter array.
+
+    FIXME: we should change to set fileter for shader explicitly out of the plugin. 
+           e.g. consider to use filter.xml
 */
 static
 bool DoFilter(const nString &str)
@@ -890,8 +919,8 @@ bool EvalCustomMaterialPlugin()
     {
         // get shader name.
         nString name = child->Attribute("name");
-        if (DoFilter(name))
-            continue;
+        //if (DoFilter(name))
+        //    continue;
 
 		nString caName = name;
 
@@ -1117,7 +1146,6 @@ bool EvalCustomMaterialPlugin()
 
     nString scriptsPath;
     scriptsPath += GetCOREInterface()->GetDir(APP_SCRIPTS_DIR);
-
 #ifdef _DEBUG
     nString sampleFile;
     sampleFile += scriptsPath;
