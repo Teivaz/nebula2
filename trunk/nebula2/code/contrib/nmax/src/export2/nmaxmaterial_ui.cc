@@ -77,7 +77,7 @@ GetDefault(TiXmlElement* elemParam)
         defScript += defVal;
     }
     else
-    if (paramType == "Vector")
+    if (paramType == "Vector" || paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve")
     {
         nArray<nString> tokens;
         int numValues = defVal.Tokenize(" ", tokens);
@@ -93,7 +93,7 @@ GetDefault(TiXmlElement* elemParam)
     }
     else
     {
-        // unknown. return an empty string.
+        ;// unknown. return an empty string.
     }
 
     return defScript;
@@ -600,6 +600,71 @@ AddSetDirDlg(TiXmlElement* elemParam)
     uiScript += "\t\t\t";
     uiScript += ")\n";
 
+    uiScript += "\t\t";
+    uiScript += ")\n";
+
+    return uiScript;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Add nmaxenvelopecurve custom control to the rollout.
+
+    The code such as the following is generated:
+    @verbatim
+    group "Emission Frequency"
+	(
+	    activeXControl EmissionFrequency "{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}" height:130
+	)
+    @endverbatim
+*/
+nString AddEnvelopeCurve(TiXmlElement* elemParam)
+{
+    nString paramName  = elemParam->Attribute("name");  // UI control name.
+    nString caption    = elemParam->Attribute("label"); // UI caption 
+    nString defaultVal = elemParam->Attribute("def");   // default value of the ui.
+
+    nString uiScript;
+
+    // begin of group control
+    uiScript += "\t\t";
+    uiScript += "group ";
+    uiScript += "\"";
+    uiScript += caption;
+    uiScript += "\"";
+    uiScript += "\n";
+    uiScript += "\t\t";
+    uiScript += "(\n";
+
+    // nmaxenvelopecurve control.
+    uiScript += "\t\t";
+    uiScript += "activeXControl";
+    uiScript += " ";
+    uiScript += paramName;
+    uiScript += " ";
+    uiScript += "\"";
+    uiScript += "{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}";
+    uiScript += "\"";
+    uiScript += " ";
+    uiScript += "height:130";
+
+    //FIXME: do we need call 'open' handler func to set default values?
+
+    uiScript += "\n";
+
+    // end of group control
+    uiScript += "\t\t";
+    uiScript += ")\n";
+
+    // add activex contorl event handler
+    uiScript += "\t\t";
+    uiScript += "on ";
+    uiScript += paramName;
+    uiScript += " ";
+    uiScript += "OnChangedValue do\n";
+    uiScript += "\t\t";
+    uiScript += "(\n";
+    //TODO: add code setting values to parameters
     uiScript += "\t\t";
     uiScript += ")\n";
 

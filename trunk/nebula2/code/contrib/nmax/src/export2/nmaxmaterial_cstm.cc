@@ -156,7 +156,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
 
                         switch(paramType)
                         {
-                        case TYPE_STRING:
+                        case TYPE_STRING: //8
                             {
                                 //HACK: string type used only for effect filename at the present.
 
@@ -227,7 +227,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                             }
                             break;
 
-                        case TYPE_BOOL:
+                        case TYPE_BOOL: //4
                             {
                                 BOOL result;
                                 int value;
@@ -480,6 +480,24 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
                                 else
                                 {
                                     n_maxlog(Error, "Failed to retrieve the value of the parameter %s.", name);
+                                }
+                            }
+                            break;
+
+                        case TYPE_REFTARG: //18
+                            {
+                                BOOL result;
+                                ReferenceTarget* value; 
+                                Interval interval;
+
+                                result = pblock2->GetValue(j, 0, value, interval);
+                                if (result)
+                                {
+                                    ;//TODO: how can we get the values from the custom control such as nmaxenvelopecurve?
+                                    value;
+                                    int i=0;
+                                    //Value* val = MAXClass::make_wrapper_for(value);
+	                                //Value* val = MAXClass::make_node_for(value);
                                 }
                             }
                             break;

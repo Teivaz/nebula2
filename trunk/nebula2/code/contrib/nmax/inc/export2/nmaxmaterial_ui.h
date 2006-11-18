@@ -16,6 +16,8 @@ nString AddMapButton(TiXmlElement* elemParam, nString defaultValue = "");
 nString AddVector4Spinner(TiXmlElement* elemParam);
 nString AddLabel(const nString &uiname, const nString &caption, int across=1, bool addDot = false);
 nString AddSetDirDlg(TiXmlElement* elemParam);
+nString AddEnvelopeCurve(TiXmlElement* elemParam);
+
 
 nString GetDefault(TiXmlElement* elemParam);
 
