@@ -1,0 +1,68 @@
+// nmaxenvelopecurve.idl : ActiveX 컨트롤 프로젝트의 형식 라이브러리 소스입니다.
+
+// 이 파일은 MIDL 컴파일러 도구에 의해 처리되어
+// nmaxenvelopecurve.ocx의 리소스가 되는
+// 형식 라이브러리(nmaxenvelopecurve.tlb)가 생성됩니다.
+
+#include <olectl.h>
+#include <idispids.h>
+
+[ uuid(B9F5585A-F75A-4348-A81A-53029C1A52B6), version(1.0),
+  helpfile("nmaxenvelopecurve.hlp"),
+  helpstring("nmaxenvelopecurve ActiveX 컨트롤 모듈"),
+  control ]
+library nmaxenvelopecurveLib
+{
+	importlib(STDOLE_TLB);
+
+	// nmaxenvelopecurveCtrl의 기본 디스패치 인터페이스입니다.
+
+	[ uuid(949C1889-5D48-44FF-B422-CBE798F64039),
+	  helpstring("nmaxenvelopecurve Control의 디스패치 인터페이스")]
+	dispinterface _Dnmaxenvelopecurve
+	{
+		properties:
+		[id(2), helpstring("속성 ControlType")] BYTE ControlType;
+		[id(5), helpstring("속성 Min")] FLOAT Min;
+		[id(6), helpstring("속성 Max")] FLOAT Max;
+		[id(7), helpstring("속성 Frequency")] FLOAT Frequency;
+		[id(8), helpstring("속성 Amplitude")] FLOAT Amplitude;
+		[id(9), helpstring("속성 Function")] BYTE Function;
+		[id(13), helpstring("속성 Name")] BSTR Name;
+methods:
+		[id(10), helpstring("메서드 GetSelectedCurve")] BYTE GetSelectedCurve(void);
+		[id(12), helpstring("메서드 UpdateDialogControls")] void UpdateDialogControls(void);
+		[id(15), helpstring("메서드 init")] void init(BYTE type, BSTR name, FLOAT* defValue, FLOAT min, FLOAT max);
+		[id(16), helpstring("메서드 GetData")] BSTR GetData(void);
+		[id(19), helpstring("메서드 SetPos")] void SetPos(BYTE index, FLOAT value);
+		[id(20), helpstring("메서드 GetPos")] FLOAT GetPos(BYTE index);
+		[id(21), helpstring("메서드 SetValue")] void SetValue(BYTE index, FLOAT value);
+		[id(22), helpstring("메서드 GetValue")] FLOAT GetValue(BYTE index);
+		[id(23), helpstring("메서드 SetColor")] void SetColor(BYTE index, OLE_COLOR value);
+		[id(24), helpstring("메서드 GetColor")] OLE_COLOR GetColor(BYTE index);
+	};
+
+	// nmaxenvelopecurveCtrl의 이벤트 디스패치 인터페이스입니다.
+
+	[ uuid(BC8E451C-50C9-4F41-9F4D-7113C3212D05),
+	  helpstring("nmaxenvelopecurve Control의 이벤트 인터페이스") ]
+	dispinterface _DnmaxenvelopecurveEvents
+	{
+		properties:
+			// 이벤트 인터페이스에 속성이 없습니다.
+
+		methods:
+		[id(1)] void OnChangedValue(void);
+	};
+
+	// nmaxenvelopecurveCtrl의 클래스 정보입니다.
+
+	[ uuid(EDA6DBCD-A8BB-4709-AB92-40181C0C58CE),
+	  helpstring("nmaxenvelopecurve Control"), control ]
+	coclass nmaxenvelopecurve
+	{
+		[default] dispinterface _Dnmaxenvelopecurve;
+		[default, source] dispinterface _DnmaxenvelopecurveEvents;
+	};
+
+};
