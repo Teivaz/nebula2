@@ -71,6 +71,8 @@ protected:
     
     void GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode);
 
+    void GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode);
+
     // @name Functions for vector4 type material animation
     // @{
     void ExportShaderAnimations(Mtl* mtl, nShapeNode* shapeNode);
@@ -86,8 +88,14 @@ protected:
 
     ///
     nShaderState::Param GetShaderParam(const char* param);
+    ///
+    void ClampColor(vector4 &val);
+    ///
+    bool IsPredefinedCA(TCHAR* caName);
 
-    void nMaxMaterial::ClampColor(vector4 &val);
+    enum {NUM_PREDEFINED_CA  = 3};
+    /// the followings are 3dmax predefined custom attribute.
+    static const char* predefinedCA[NUM_PREDEFINED_CA];
 
 };
 //-----------------------------------------------------------------------------
@@ -122,6 +130,25 @@ void nMaxMaterial::ClampColor(vector4 &val)
         val.z = 1.0f;
     if (val.w > 1.0f)
         val.w = 1.0f;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Check the given name of the custom attribute is predefined standard 
+    custom attribute of 3dsmax or not.
+    
+    @param caName custom attribute name.
+*/
+inline
+bool nMaxMaterial::IsPredefinedCA(TCHAR* caName)
+{
+    for (uint i=0; i<NUM_PREDEFINED_CA; i++)
+    {
+        if (n_stricmp (caName, predefinedCA[i]) == 0)
+            return true;
+    }
+
+    return false;
 }
 
 //-----------------------------------------------------------------------------

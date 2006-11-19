@@ -128,8 +128,15 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
         if (nMaxMaterial::NebulaCustom == materialType)
         {
             // nebula custom scripted plug-in material.
-
             GetNebulaMaterial(mtl, shapeNode);
+
+
+            // if the nshapenode is nparticlenode2, we should retrieve particle part of 
+            // the parameter block values from material again.
+            if (shapeNode->IsA("nparticleshapenode2"))
+            {
+                GetParticle2Material(mtl, shapeNode);
+            }
         }
         else
         {
