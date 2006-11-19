@@ -27,6 +27,7 @@
 #include "scene/nskinshapenode.h"
 #include "scene/nshadowskinshapenode.h"
 #include "scene/nshadownode.h"
+#include "scene/nparticleshapenode2.h"
 #include "nature/nswingshapenode.h"
 
 //-----------------------------------------------------------------------------
@@ -256,6 +257,9 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
                 this->meshType = Collision;
                 break;
             case 5:
+                this->meshType = Particle2;
+                break;
+            case 6:
                 this->meshType = Sky;
                 break;
             case 0:
@@ -388,6 +392,9 @@ nSceneNode* nMaxMesh::CreateShapeNode(INode* inode, nString &nodename)
         else
         if (this->meshType == Swing)
             sceneNode = (nSwingShapeNode*)CreateNebulaObject("nswingshapenode", nodename.Get());
+        else
+        if (this->meshType == Particle2)
+            sceneNode = (nParticleShapeNode2*)CreateNebulaObject("nparticleshapenode2", nodename.Get());
         else
         {
             sceneNode = 0; // collision mesh
