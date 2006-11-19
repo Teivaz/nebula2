@@ -9,6 +9,7 @@
 --  executed in 'Mesh Options' menu item of 'Nebula2' menu
 --  'Custom Attributes' are shown in modifier panel
 -- 
+--  19-Nov-06  kims  Added 'Particle2' mesh type.
 --  10-Nov-06  kims  Added stuff for sky system.
 -------------------------------------------------------------------------------
 nMeshOptionsCA = attributes "nMeshOptions"
@@ -46,7 +47,7 @@ nMeshOptionsCA = attributes "nMeshOptions"
         -- mesh types
         group "Mesh Types"
         (
-        radiobuttons rdoMeshTypes "" align:#left labels:#("Normal", "Swing", "Shadow", "Collision", "Sky") columns:1
+        radiobuttons rdoMeshTypes "" align:#left labels:#("Normal", "Swing", "Shadow", "Collision", "Particle2", "Sky") columns:1
         )
         
         --checkbox chkAttachedNode "Attached Node" align:#left

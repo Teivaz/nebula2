@@ -53,7 +53,8 @@ public:
         Swing     = 2,  /// swing shape node
         Shadow    = 3,  /// shadow mesh
         Collision = 4,  /// collision mesh only
-        Sky       = 5,  /// sky node, this will contain some sky elements
+        Particle2 = 5,  /// nparticleshapenode2
+        Sky       = 6,  /// sky node, this will contain some sky elements
     };
 
     /// Constructor.
