@@ -125,6 +125,7 @@ beginmodule nmaxmaterial
         nmaxmaterial_shd
         nmaxmaterial_ui
         nmaxmaterial_script
+        nmaxmaterial_particle2
         nmaxtexture
     }
     setheaders {

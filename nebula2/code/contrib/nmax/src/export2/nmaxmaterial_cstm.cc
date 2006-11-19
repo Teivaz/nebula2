@@ -24,32 +24,11 @@
 #include "scene/nvectoranimator.h"
 #include "scene/nfloatanimator.h"
 
-// the followings are 3dmax predefined custom attribute.
-#define NUM_PREDEFINED_CA  3
-const char* predefinedCA[NUM_PREDEFINED_CA] = {
+const char* nMaxMaterial::predefinedCA[NUM_PREDEFINED_CA] = {
     "Viewport Manager",
     "DirectX Manager",
     "mental ray: material custom attribute"
 };
-
-//-----------------------------------------------------------------------------
-/**
-    Check the given name of the custom attribute is predefined standard 
-    custom attribute of 3dsmax or not.
-    
-    @param caName custom attribute name.
-*/
-static
-bool IsPredefinedCA(TCHAR* caName)
-{
-    for (uint i=0; i<NUM_PREDEFINED_CA; i++)
-    {
-        if (n_stricmp (caName, predefinedCA[i]) == 0)
-            return true;
-    }
-
-    return false;
-}
 
 //-----------------------------------------------------------------------------
 /**
