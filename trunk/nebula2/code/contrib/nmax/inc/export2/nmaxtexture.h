@@ -53,7 +53,7 @@ protected:
     const char* SubMapIDToString(int subID);
 
     ///
-    bool CopyTexture(const char* textureName);
+    bool CopyTexture(const char* textureName, const char *destName = 0);
 
     ///
     void ExportUVTransform(StdUVGen* uvGen, nShapeNode* shapeNode);
