@@ -2,7 +2,7 @@
 --
 --  MAXScript for testing nmaxenvelopecurve ActiveX control
 --
---  (C)2006
+--  (C)2006 Cho Jun Hyeong 
 --
 -------------------------------------------------------------------------------
 
@@ -59,6 +59,18 @@ rollout roCurveControl "Envelope Curve Control"
     on ax OnChangedValue do
     (
         format "The value of the contorl point is changed!\n"
+
+        v0 = ax.GetValue 0
+        v1 = ax.GetValue 1
+        v2 = ax.GetValue 3
+        v3 = ax.GetValue 4
+        p0 = ax.GetPos 0
+        p1 = ax.GetPos 1
+        freqency = ax.Frequency
+        amplitude = ax.amplitude 
+        modFunc = ax.ModulationFunc
+        
+        format " %f %f %f %f %f %f %f %f %f \n" v0 v1 v2 v3 p0 p1 freqency amplitude modFunc
     )
 )
 
