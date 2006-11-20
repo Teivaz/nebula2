@@ -2,16 +2,21 @@
 
 #define ECN_CHANGEDVALUE            (WM_USER + 1001)
 
-#define EC_FLIP_CURVE_VERTICAL        (WM_USER + 2001)
+#define EC_FLIP_CURVE_VERTICAL      (WM_USER + 2001)
 #define EC_FLIP_CURVE_HORIZONTAL    (WM_USER + 2002)
-#define EC_STRAIGHTEN_CURVE            (WM_USER + 2003)
-#define EC_COPY_CURVE                (WM_USER + 2004)
-#define EC_PASTE_CURVE                (WM_USER + 2005)
-#define EC_ALL_KEYS_TO_MAX            (WM_USER + 2006)
-#define EC_ALL_KEYS_TO_MID            (WM_USER + 2007)
-#define EC_ALL_KEYS_TO_MIN            (WM_USER + 2008)
+#define EC_STRAIGHTEN_CURVE         (WM_USER + 2003)
+#define EC_COPY_CURVE               (WM_USER + 2004)
+#define EC_PASTE_CURVE              (WM_USER + 2005)
+#define EC_ALL_KEYS_TO_MAX          (WM_USER + 2006)
+#define EC_ALL_KEYS_TO_MID          (WM_USER + 2007)
+#define EC_ALL_KEYS_TO_MIN          (WM_USER + 2008)
 
+//-----------------------------------------------------------------------------
+/**
+    @struct Point2f
+    @brief 
 
+*/
 struct Point2f
 {
     float x, y;
@@ -22,17 +27,19 @@ struct Point2f
     @class CEnvelopeCurve
     @brief 
 
-    TODO :
-    컨트롤 포인트가 겹쳤을때 어느것을 우선순위로 할것인가?
-    혹은 겹쳤을때 원하는 컨트롤포인트를 잡을수 있게 컨트롤을 개선해야함.
-
+    TODO:
+    Where put the priority when both of control points are intersected
+    We need to find a better way to get control point what we want to select 
+    when both of control points are overlapped.
 */
 class CEnvelopeCurve : public CWnd
 {
     DECLARE_DYNAMIC(CEnvelopeCurve)
 
 public:
+    /// Constructor.
     CEnvelopeCurve();
+    /// Destructor.
     virtual ~CEnvelopeCurve();
 
     enum CurvePoint
@@ -94,7 +101,6 @@ private:
     int       m_iModulationFunc;
 
     int SelectedCurve( CPoint& pt );
-    
     
 protected:
     DECLARE_MESSAGE_MAP()

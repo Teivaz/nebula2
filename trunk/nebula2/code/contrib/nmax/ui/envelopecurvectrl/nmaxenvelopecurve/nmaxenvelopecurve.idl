@@ -27,7 +27,7 @@ library nmaxenvelopecurveLib
 		[id(6), helpstring("加己 Max")] FLOAT Max;
 		[id(7), helpstring("加己 Frequency")] FLOAT Frequency;
 		[id(8), helpstring("加己 Amplitude")] FLOAT Amplitude;
-		[id(9), helpstring("加己 Function")] BYTE Function;
+		[id(9), helpstring("加己 ModulationFunc")] BYTE ModulationFunc;
 		[id(13), helpstring("加己 Name")] BSTR Name;
 methods:
 		[id(10), helpstring("皋辑靛 GetSelectedCurve")] BYTE GetSelectedCurve(void);
