@@ -182,7 +182,7 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         //TODO: check the texture image file already exist and the overwrite option.
 
         // copy textures.
-        if (CopyTexture(mapFileName.Get()))
+        if (CopyTexture(mapFileName.Get(), textureName.Get()))
         {
             n_maxlog(Medium, "'%s' is copied.", mapFileName.Get());
         }
@@ -225,9 +225,10 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
 Copy texture file to texture assign directory.
 
 @param textureName texture filename which to be copied.
+@param destName texture destination path.
 @return true, if the file was successfully copied, otherwise false.
 */
-bool nMaxTexture::CopyTexture(const char* textureName)
+bool nMaxTexture::CopyTexture(const char* textureName, const char *destName /* = 0 */)
 {
     n_assert(textureName);
 
@@ -236,10 +237,10 @@ bool nMaxTexture::CopyTexture(const char* textureName)
     const char* from = textureName;
 
     nString tmp = textureName;
+
     nString dest = nMaxOptions::Instance()->GetTextureAssign().Get();
     dest += tmp.ExtractFileName();
-
-    const char* to = dest.Get();
+    const char* to = destName ? destName : dest.Get();
 
     if (!fileServer->FileExists(from))
     {
