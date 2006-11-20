@@ -78,6 +78,7 @@
         - <tt>Tobias Lang </tt> - sample for multiple uv coordinate sets.
         - <tt>Ivan Tivonenko</tt> - various bug fixes and improvements which includes 
           exporting of several skinned models at a time.
+        - <tt>Cho Jun Hyeong</tt> - Enveleopecurve ActiveX control to export nparticleshapenode2.
 
     Thanks to:
         - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts  
