@@ -640,7 +640,7 @@ bool nMaxScene::Postprocess()
     nMaxCustAttrib custAttrib;
 
     // HACK: sceneRoot is root node in the current 3dsmax viewport.
-    if (!custAttrib.Convert(sceneRoot, xmlDoc))
+    if (custAttrib.Convert(sceneRoot, xmlDoc))
     {
         TiXmlHandle xmlHandle(&xmlDoc);
 
