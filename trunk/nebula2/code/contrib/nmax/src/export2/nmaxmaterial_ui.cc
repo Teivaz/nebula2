@@ -608,6 +608,40 @@ AddSetDirDlg(TiXmlElement* elemParam)
 
 //-----------------------------------------------------------------------------
 /**
+*/
+static
+nString AddVectorEnvelopeCurveEventHandler(nString &paramName)
+{
+    nString s;
+
+    return s;
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+static
+nString AddEnvelopeCurveEventHandler(nString &paramName)
+{
+    nString s;
+
+    s += "\t\t\t"; s += paramName; s += "[1]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 0\n";
+    s += "\t\t\t"; s += paramName; s += "[2]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 1\n";
+    s += "\t\t\t"; s += paramName; s += "[3]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 2\n";
+    s += "\t\t\t"; s += paramName; s += "[4]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 3\n";
+
+    s += "\t\t\t"; s += paramName; s += "[5]"; s += " = "; s += "ax"; s += paramName; s += ".GetPos 0\n";
+    s += "\t\t\t"; s += paramName; s += "[6]"; s += " = "; s += "ax"; s += paramName; s += ".GetPos 1\n";
+
+    s += "\t\t\t"; s += paramName; s += "[7]"; s += " = "; s += "ax"; s += paramName; s += ".Frequency\n";
+    s += "\t\t\t"; s += paramName; s += "[8]"; s += " = "; s += "ax"; s += paramName; s += ".Amplitude\n";
+    s += "\t\t\t"; s += paramName; s += "[9]"; s += " = "; s += "ax"; s += paramName; s += ".ModulationFunc\n";
+    
+    return s;
+}
+
+//-----------------------------------------------------------------------------
+/**
     Add nmaxenvelopecurve custom control to the rollout.
 
     The code such as the following is generated:
@@ -640,6 +674,7 @@ nString AddEnvelopeCurve(TiXmlElement* elemParam)
     uiScript += "\t\t";
     uiScript += "activeXControl";
     uiScript += " ";
+    uiScript += "ax"; //prefix to mark it as activex control.
     uiScript += paramName;
     uiScript += " ";
     uiScript += "\"";
@@ -659,12 +694,19 @@ nString AddEnvelopeCurve(TiXmlElement* elemParam)
     // add activex contorl event handler
     uiScript += "\t\t";
     uiScript += "on ";
+    uiScript += "ax";
     uiScript += paramName;
     uiScript += " ";
     uiScript += "OnChangedValue do\n";
     uiScript += "\t\t";
     uiScript += "(\n";
-    //TODO: add code setting values to parameters
+
+    //add event handler which specifies control's values to parameters block.
+    if (paramName == "ParticleRGB")
+        uiScript += AddVectorEnvelopeCurveEventHandler(paramName);
+    else
+        uiScript += AddEnvelopeCurveEventHandler(paramName);
+
     uiScript += "\t\t";
     uiScript += ")\n";
 

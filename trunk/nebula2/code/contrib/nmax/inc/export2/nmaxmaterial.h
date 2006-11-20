@@ -48,7 +48,9 @@ public:
         Unknown,
     };
 
+    /// Constructor.
     nMaxMaterial();
+    /// Destructor.
     virtual ~nMaxMaterial();
 
     void Export(Mtl* mtl, nShapeNode* shapeNode, int matID);
@@ -71,11 +73,17 @@ protected:
     
     void GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode);
 
+    // @name Functions for nparticleshapenode2.
+    // @{
+    ///
     void GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode);
+    // @}
 
     // @name Functions for vector4 type material animation
     // @{
+    ///
     void ExportShaderAnimations(Mtl* mtl, nShapeNode* shapeNode);
+    ///
     void CreateShaderAnimator(nShapeNode* shapeNode,
                               nShaderState::Param vectorParameter, 
                               Control* ctrlColor, Control* ctrlAlpha);
