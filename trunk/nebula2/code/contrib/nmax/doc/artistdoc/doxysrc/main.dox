@@ -72,13 +72,13 @@
 
     These are the people who have contributed to <b>Nebula2 Toolkit for 3DS Max</b>.
 
-        - <tt>Kim, Hyoun Woo</tt> - principal author.
+        - <tt>Kim Hyoun Woo</tt> - principal author.
         - <tt>Ben Wooller</tt> - nmaxfloatanimator and nmaxuvanimator.
         - <tt>Bruce Mitchener</tt> - syntax coloring of the export log dialog.
         - <tt>Tobias Lang </tt> - sample for multiple uv coordinate sets.
         - <tt>Ivan Tivonenko</tt> - various bug fixes and improvements which includes 
           exporting of several skinned models at a time.
-        - <tt>Cho Jun Hyeong</tt> - Enveleopecurve ActiveX control to export nparticleshapenode2.
+        - <tt>Cho Jun Hyeong</tt> - Enveleopecurve ActiveX control which is used to export nparticleshapenode2.
 
     Thanks to:
         - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts  

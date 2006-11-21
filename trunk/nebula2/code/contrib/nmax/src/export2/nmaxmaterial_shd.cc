@@ -453,19 +453,16 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
     {
     case nShaderState::MatAmbient:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-        //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
-        //handler += "\t\t\tcurMaterial.delegate.ambient = val\n";
         break;
+
     case nShaderState::MatDiffuse:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-        //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
-        //handler += "\t\t\tcurMaterial.delegate.diffuse = val\n";
         break;
+
     case nShaderState::MatSpecular:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-        //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
-        //handler += "\t\t\tcurMaterial.delegate.specular = val\n";
         break;
+
     case nShaderState::MatEmissive:
         break;
     case nShaderState::MatEmissiveIntensity:
@@ -475,6 +472,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
     case nShaderState::AlphaSrcBlend:
     case nShaderState::AlphaDstBlend:
         break;
+
     case nShaderState::DiffMap0:
     case nShaderState::DiffMap1:
     case nShaderState::DiffMap2:
@@ -484,64 +482,36 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
     case nShaderState::DiffMap6:
     case nShaderState::DiffMap7:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-
-        //FIXME: should assign map channel to delegate.
-
-        // standard material support only one map channel.
-
-        //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
-        //handler += "\t\t\tcurMaterial.delegate.diffuseMap = val\n";
-        //handler += "\t\t\tif curMaterial.delegate.diffuseMap != undefined do\n";
-        //handler += "\t\t\t\tcurMaterial.delegate.diffuseMapEnable = true\n";
         break;
+
     case nShaderState::BumpMap0:
     case nShaderState::BumpMap1:
     case nShaderState::BumpMap2:
     case nShaderState::BumpMap3:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-
-        //FIXME: should assign map channel to delegate.
-
-        //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
-        //handler += "\t\t\tcurMaterial.delegate.bumpMap = val\n";
-        //handler += "\t\t\tif curMaterial.delegate.bumpMap != undefined do\n";
-        //handler += "\t\t\t\tcurMaterial.delegate.bumpMapEnable = true\n";
         break;
+
     case nShaderState::CubeMap0:
     case nShaderState::CubeMap1:
     case nShaderState::CubeMap2:
     case nShaderState::CubeMap3:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-
-        //FIXME: should assign map channel to delegate.
-
-        //FIXME: need find proper way to hanlde cubemap in 3dsmax.
-        //       cubemap is only available when 3dsmax uses hardware shader.
-        //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
-        //handler += "delegate.diffuseMap = val\n";
-        //handler += "if delegate.diffuseMap != undefined do\n";
-        //handler += "\t\t\t\t";
-        //handler += "delegate.diffuseMapEnable = true\n";
         break;
+
     case nShaderState::SpecMap0:
     case nShaderState::SpecMap1:
     case nShaderState::SpecMap2:
     case nShaderState::SpecMap3:
         handler += "\t\t\tOn" + paramName + "Changed val\n";
-        //FIXME: should assign map channel to delegate.
-
-        // specular map.
-        //handler += "\t\t\tcurMaterial = medit.GetCurMtl()\n";
-        //handler += "\t\t\tcurMaterial.delegate.specularMap  = val\n";
-        //handler += "\t\t\tif curMaterial.delegate.specularMap != undefined do\n";
-        //handler += "\t\t\t\tcurMaterial.delegate.specularMapEnable = true\n";
         break;
+
     default:
     case nShaderState::InvalidParameter:
         // put empty handler.
         validParam = false;
         break;
     }
+
     if (validParam)
     {
         handler += GetIpcEventHandler(shdName, paramName);
@@ -589,14 +559,16 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
         strParamBlock += " ";
     }
 
-    if (paramType == "Vector" || paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve")
+    // specify default value of the parameter.
+    if (paramType == "Vector" || 
+       (paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve"))
     {
         // we don't need default values for 'vector' and 'envelopecurve' type 
         // those are types uses floattab.
+        ;
     }
     else
     {
-        // specify default value of the parameter.
         nString defaultValue = GetDefault(elemParam);
         if (!defaultValue.IsEmpty())
         {
