@@ -233,7 +233,7 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
             }
         }
     }
-    else if (paramID.FindStringIndex("rlUVStretch", 0) != -1)
+    else if (paramID.FindStringIndex("UVStretch", 0) != -1)
     {
         // UV Stretch of MultiLayeredShader
         // FIXME: currently only working with dx9
@@ -342,62 +342,62 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         {
             partNode->SetParticleSizeRandomize(paramValue.AsFloat());
         }
-        else if ("rlEmissionFrequency" == paramID)
+        else if ("EmissionFrequency" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::EmissionFrequency,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleLifeTime" == paramID)
+        else if ("ParticleLifeTime" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleLifeTime,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleStartVelocity" == paramID)
+        else if ("ParticleStartVelocity" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleStartVelocity,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleSpreadMax" == paramID)
+        else if ("ParticleSpreadMax" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleSpreadMax,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleSpreadMin" == paramID)
+        else if ("ParticleSpreadMin" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleSpreadMin,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleRotationVelocity" == paramID)
+        else if ("ParticleRotationVelocity" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleRotationVelocity,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleSize" == paramID)
+        else if ("ParticleSize" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleScale,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleAlpha" == paramID)
+        else if ("ParticleAlpha" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleAlpha,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleAirResistance" == paramID)
+        else if ("ParticleAirResistance" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleAirResistance,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleVelocityFactor" == paramID)
+        else if ("ParticleVelocityFactor" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleVelocityFactor,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlParticleMass" == paramID)
+        else if ("ParticleMass" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleMass,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("rlTimeManipulator" == paramID)
+        else if ("TimeManipulator" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::TimeManipulator,
                                this->AsEnvelopeCurve(paramValue));
@@ -422,7 +422,7 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         {
             partNode->SetRandomRotDir(paramValue.AsBool());
         }
-        else if ("rlParticleColor" == paramID)
+        else if ("ParticleColor" == paramID)
         {
             partNode->SetRGBCurve(this->AsColorCurve(paramValue));
         }
