@@ -175,7 +175,7 @@ nString GetParameterType(const nString &shdType)
     -17-Aug-06  kims Changed to add texutre directory setting button.
 */
 static
-nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
+nString GetUIFromType(TiXmlElement* elemParam, const nString &shdName, const nString &type)
 {
     if (type == "Int")
         return AddSpinner(elemParam);
@@ -232,7 +232,7 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &type)
         return AddVector4Spinner(elemParam);
     else
     if (type == "EnvelopeCurve" || type == "ColorEnvelopeCurve")
-        return AddEnvelopeCurve(elemParam);
+        return AddEnvelopeCurve(shdName, elemParam);
     else
     {
         nString uiScript;
@@ -616,7 +616,7 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
         }
         strParamBlock += " \n";
 
-        strRollout += GetUIFromType(elemParam, paramType);
+        strRollout += GetUIFromType(elemParam, shdName, paramType);
     }
 
     // append event handler.

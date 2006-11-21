@@ -13,6 +13,9 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
+// prefix of the envelopecurve activex control 
+const char* particlePrefix = "nx";
+
 //-----------------------------------------------------------------------------
 /**
     Retrieves default value which descriped in 'def'.
@@ -625,18 +628,64 @@ nString AddEnvelopeCurveEventHandler(nString &paramName)
 {
     nString s;
 
-    s += "\t\t\t"; s += paramName; s += "[1]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 0\n";
-    s += "\t\t\t"; s += paramName; s += "[2]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 1\n";
-    s += "\t\t\t"; s += paramName; s += "[3]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 2\n";
-    s += "\t\t\t"; s += paramName; s += "[4]"; s += " = "; s += "ax"; s += paramName; s += ".GetValue 3\n";
+    s += "\t\t\t"; s += paramName; s += "[1]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 0\n";
+    s += "\t\t\t"; s += paramName; s += "[2]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 1\n";
+    s += "\t\t\t"; s += paramName; s += "[3]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 2\n";
+    s += "\t\t\t"; s += paramName; s += "[4]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 3\n";
 
-    s += "\t\t\t"; s += paramName; s += "[5]"; s += " = "; s += "ax"; s += paramName; s += ".GetPos 0\n";
-    s += "\t\t\t"; s += paramName; s += "[6]"; s += " = "; s += "ax"; s += paramName; s += ".GetPos 1\n";
+    s += "\t\t\t"; s += paramName; s += "[5]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 0\n";
+    s += "\t\t\t"; s += paramName; s += "[6]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 1\n";
 
-    s += "\t\t\t"; s += paramName; s += "[7]"; s += " = "; s += "ax"; s += paramName; s += ".Frequency\n";
-    s += "\t\t\t"; s += paramName; s += "[8]"; s += " = "; s += "ax"; s += paramName; s += ".Amplitude\n";
-    s += "\t\t\t"; s += paramName; s += "[9]"; s += " = "; s += "ax"; s += paramName; s += ".ModulationFunc\n";
+    s += "\t\t\t"; s += paramName; s += "[7]"; s += " = "; s += particlePrefix; s += paramName; s += ".Frequency\n";
+    s += "\t\t\t"; s += paramName; s += "[8]"; s += " = "; s += particlePrefix; s += paramName; s += ".Amplitude\n";
+    s += "\t\t\t"; s += paramName; s += "[9]"; s += " = "; s += particlePrefix; s += paramName; s += ".ModulationFunc\n";
     
+    return s;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Add script code to be sent to the viewer through IPC.
+*/
+static
+nString AddToolkitServerScriptForEnvelopeCurve(const nString &shdName, nString &paramName)
+{
+    nString s;
+
+    s += "\t\t\t"; s += "if nIsConnectedIpc() do \n";
+    s += "\t\t\t"; s += "(\n";
+
+    s += "\t\t\t\t"; s += "param = \"\" \n";
+
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[1]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[2]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[3]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[4]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[5]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[6]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[7]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[8]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[9]"; s += " as string \n";
+    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+
+    s += "\n";
+
+    s += "\t\t\t\t"; s += "nChangeShaderParameter "; 
+    s += "\""; s += shdName; s += "\""; s += " ";
+    s += "\"particle2\""; s += " ";
+    s += "\""; s += paramName; s += "\""; s += " ";
+    s += "param \n";
+
+    s += "\t\t\t"; s += ")\n";
+
     return s;
 }
 
@@ -652,7 +701,7 @@ nString AddEnvelopeCurveEventHandler(nString &paramName)
 	)
     @endverbatim
 */
-nString AddEnvelopeCurve(TiXmlElement* elemParam)
+nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
     nString caption    = elemParam->Attribute("label"); // UI caption 
@@ -674,7 +723,7 @@ nString AddEnvelopeCurve(TiXmlElement* elemParam)
     uiScript += "\t\t";
     uiScript += "activeXControl";
     uiScript += " ";
-    uiScript += "ax"; //prefix to mark it as activex control.
+    uiScript += particlePrefix; //prefix to mark it as activex control.
     uiScript += paramName;
     uiScript += " ";
     uiScript += "\"";
@@ -694,7 +743,7 @@ nString AddEnvelopeCurve(TiXmlElement* elemParam)
     // add activex contorl event handler
     uiScript += "\t\t";
     uiScript += "on ";
-    uiScript += "ax";
+    uiScript += particlePrefix;
     uiScript += paramName;
     uiScript += " ";
     uiScript += "OnChangedValue do\n";
@@ -703,9 +752,18 @@ nString AddEnvelopeCurve(TiXmlElement* elemParam)
 
     //add event handler which specifies control's values to parameters block.
     if (paramName == "ParticleRGB")
+    {
         uiScript += AddVectorEnvelopeCurveEventHandler(paramName);
+    }
     else
+    {
         uiScript += AddEnvelopeCurveEventHandler(paramName);
+
+        // NOTE: we could add this on parameters block clause,
+        //       but it looks better to add this place for the activex control
+        //       cause it has its own event handler.
+        uiScript += AddToolkitServerScriptForEnvelopeCurve(shdName, paramName);
+    }
 
     uiScript += "\t\t";
     uiScript += ")\n";
