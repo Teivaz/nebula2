@@ -22,6 +22,7 @@ fn startUp =
     nLoadMenu()
 
     -- create scripted plugins
+    fileIn "nebula2/lodnode.ms"
     fileIn "nebula2/skynode.ms"
     fileIn "nebula2/skystate.ms"
     

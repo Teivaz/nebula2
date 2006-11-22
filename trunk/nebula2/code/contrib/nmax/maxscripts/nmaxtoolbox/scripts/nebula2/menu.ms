@@ -132,25 +132,6 @@ tooltip:"Specify Animation Options"
 )
 
 ---------------------------------------------------------------------------------
--- macro script for 'LOD' menu item.
----------------------------------------------------------------------------------
-macroScript NebulaToolBox_LOD
-category:"nmaxtoolbox" 
-buttonText:"LOD"
-tooltip:"Specify LOD Options" 
-( 	
-    include "nebula2/lod_fn.ms"
-	
-    on execute do
-    (
-        nAddLODCustomAttributes()
-
-        -- Sets Modify command mode activate.
-        max modify mode
-    )
-)
-
----------------------------------------------------------------------------------
 -- macro script for 'Animation' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_Animation
@@ -292,7 +273,6 @@ fn AddMenu =
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_SceneOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_MeshOptions" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_AnimOptions" "nmaxtoolbox")
-        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_LOD" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())	
 
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_TerrainEditor" "nmaxtoolbox")
