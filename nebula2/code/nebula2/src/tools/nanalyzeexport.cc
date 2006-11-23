@@ -79,6 +79,7 @@ main(int argc, const char** argv)
     viewerApp.SetDisplayMode(displayMode);
     viewerApp.SetProjDir(projDir);
     viewerApp.SetOverlayEnabled(false);
+    viewerApp.SetScriptServerClass("ntclserver");
     viewerApp.SetStartupScript("proj:data/scripts/startup.tcl");
     if (viewerApp.Open())
     {
@@ -88,4 +89,5 @@ main(int argc, const char** argv)
     }
     return 0;
 }
+
 
