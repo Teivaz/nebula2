@@ -43,8 +43,8 @@ nAppLauncher::LaunchWait() const
     PROCESS_INFORMATION processInfo = { 0 };
 
     // mangle paths
-    nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
-    nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
+    nString execMangled = nFileServer2::Instance()->ManglePath(this->exec);
+    nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir);
 
     // build a command line
     nString cmdLine = execMangled;
@@ -110,13 +110,13 @@ nAppLauncher::Launch() const
     }
     else
     {
-        execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
+        execMangled = nFileServer2::Instance()->ManglePath(this->exec);
         filePath = execMangled.Get();
     }
     const char* dirPtr = 0;
     if (!this->dir.IsEmpty())
     {
-        dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
+        dirMangled  = nFileServer2::Instance()->ManglePath(this->dir);
         dirPtr = dirMangled.Get();
     }
 #ifdef __WIN32__
@@ -148,8 +148,8 @@ nAppLauncher::LaunchHelper(bool waitForChild) const
         return false;
 
     // mangle paths
-    nString execMangled = nFileServer2::Instance()->ManglePath(this->exec.Get());
-    nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir.Get());
+    nString execMangled = nFileServer2::Instance()->ManglePath(this->exec);
+    nString dirMangled  = nFileServer2::Instance()->ManglePath(this->dir);
 
     // If executable path contains '/' then we convert it to absolute
     // path. Otherwise we will use `execvp' to resolve executable name
@@ -235,4 +235,5 @@ nAppLauncher::LaunchHelper(bool waitForChild) const
     return true;
 }
 #endif
+
 

@@ -458,7 +458,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
     nFile* file = nFileServer2::Instance()->NewFileObject();
     if (!file->Open(this->GetFilename().Get(), "rb"))
     {
-        n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'!", nFileServer2::Instance()->ManglePath(this->GetFilename().Get()).Get());
+        n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'!", nFileServer2::Instance()->ManglePath(this->GetFilename()).Get());
         file->Release();
         return false;
     }
@@ -1019,7 +1019,7 @@ nD3D9Texture::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
     n_assert(baseTexture);
     n_assert(filename.IsValid());
 
-    nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
+    nString mangledPath = nFileServer2::Instance()->ManglePath(filename);
     D3DXIMAGE_FILEFORMAT d3dxFormat = FileFormatToD3DX(fileFormat);
 
     HRESULT hr = D3DXSaveTextureToFile(mangledPath.Get(), d3dxFormat, baseTexture, NULL);

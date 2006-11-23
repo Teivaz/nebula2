@@ -66,8 +66,8 @@ nNpkFileServer::ParseNpkFile(const nString& path)
     if (this->FileExists(path.Get()))
     {
         nString dirname  = path.ExtractDirName();
-        nString absDirPath = this->ManglePath(dirname.Get());
-        nString absFilePath = this->ManglePath(path.Get());
+        nString absDirPath = this->ManglePath(dirname);
+        nString absFilePath = this->ManglePath(path);
         if (this->AddNpkFile(absDirPath, absFilePath))
         {
             return true;
@@ -88,7 +88,7 @@ nNpkFileServer::ParseDirectory(const nString& dirName, const nString& extension)
     n_assert(!dirName.IsEmpty());
     n_assert(!extension.IsEmpty());
 
-    nString absPath = this->ManglePath(dirName.Get());
+    nString absPath = this->ManglePath(dirName);
 
     // scan directory for npk files...
     int numNpks = 0;

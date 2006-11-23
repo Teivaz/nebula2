@@ -147,7 +147,7 @@ nWavFile::Open(const nString& filename)
     n_assert(filename.IsValid());
 
     // modify filename so that MMIO will invoke our custom file function
-    nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
+    nString mangledPath = nFileServer2::Instance()->ManglePath(filename);
     nString mmioFilename("X.NEB2+");
     mmioFilename.Append(mangledPath);
 
@@ -373,6 +373,7 @@ nWavFile::Read(void* buffer, uint bytesToRead)
     mmioSetInfo(this->m_hmmio, &mmioInfoIn, 0);
     return cbDataIn;
 }
+
 
 
 
