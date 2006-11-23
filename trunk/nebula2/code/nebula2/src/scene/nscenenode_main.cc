@@ -411,6 +411,9 @@ nSceneNode::AddAnimator(const char* relPath)
 //------------------------------------------------------------------------------
 /**
     Remove an animator object from this scene node.
+
+    -23-Nov-06  kims  Changed GetName() to getname() cause it should retrieve 
+                      relevant path not just name of an animator.
 */
 void
 nSceneNode::RemoveAnimator(const char* relPath)
@@ -421,7 +424,7 @@ nSceneNode::RemoveAnimator(const char* relPath)
     int i;
     for (i = 0; i < numAnimators; i++)
     {
-        if (!strcmp(relPath, this->animatorArray[i]->GetName()))
+        if (!strcmp(relPath, this->animatorArray[i].getname()))
         {
             this->animatorArray[i].set(0); //unset/clear the nDynAutoRef
             this->animatorArray.Erase(i);  //delete the nDynAutoRef from array
