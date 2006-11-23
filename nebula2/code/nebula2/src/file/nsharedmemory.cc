@@ -42,7 +42,7 @@ nSharedMemory::nSharedMemory() :
 */
 nSharedMemory::~nSharedMemory()
 {
-    if (this->mapHandle != 0)
+    if (this->writable && this->mapHandle != 0)
     {
         this->DestroyMapping();
     }
@@ -59,7 +59,7 @@ nSharedMemory::~nSharedMemory()
 void
 nSharedMemory::Create()
 {
-    if (this->mapHandle != 0)
+    if (this->writable && this->mapHandle != 0)
     {
         this->DestroyMapping();
     }
@@ -143,6 +143,10 @@ nSharedMemory::Close()
 
     if (this->writable)
     {
+        if (this->mapHandle)
+        {
+            this->DestroyMapping();
+        }
         n_assert(this->mapHandle == 0);
 
         if (this->Count() > 0)
