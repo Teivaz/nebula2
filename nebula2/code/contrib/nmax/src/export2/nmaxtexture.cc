@@ -15,7 +15,6 @@
 #include "scene/nshapenode.h"
 #include "scene/nuvanimator.h"
 #include "kernel/nfileserver2.h"
-#include "export2/nmaxmaterial_shd.h"
 
 //-----------------------------------------------------------------------------
 /**
