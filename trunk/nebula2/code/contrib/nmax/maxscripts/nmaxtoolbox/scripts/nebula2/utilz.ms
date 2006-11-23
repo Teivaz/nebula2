@@ -21,7 +21,7 @@ fn nCheckObjectName =
     -- iterate collected nodes and see if there are objects which have same name.
     for i=1 to o.count do
     (
-        for j=1 to o.count do
+        for j=i to o.count do
         (
             -- no need to check for hidden node
             if o[j].isHidden == false then
@@ -39,4 +39,5 @@ fn nCheckObjectName =
         )
     )
 )
+
 
