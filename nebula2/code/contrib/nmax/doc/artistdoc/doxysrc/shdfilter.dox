@@ -1,4 +1,29 @@
 /**
     @defgroup NMaxHowtoShaderFilter Shader Filter
 
+    As the developement is going on, the kind of shaders for it might increase.
+    Due to the plug-in generates 3dsmax scripted plugin for Nebula2 
+    material at the startup of 3dsmax, the growth of the shaders causes 
+    delay of 3dsmax's start time.
+    So it is good to keep the <tt>shaders.xml</tt> file as simple as it is necessary.
+    But modifying shaders.xml file whenever there is changes of the kind of 
+    shaders which are needed is not a good idea and it is redundant task.
+    One of the good idea for that is to filter unnecessary shaders so 
+    the plug-in reads <tt>filter.xml</tt> file to do that.
+    The file can be found under the same directory where <tt>shaders.xml</tt>  
+    file is located.
+
+    Open the <tt>filter.xml</tt> file and it looks like the following:
+    @verbatim
+    <NebulaShaderFilter>
+        <shader name = "Particle"/>
+        ...
+    </NebulaShaderFilter>    
+    @endverbatim
+
+    Add shader whatever you want to filter out. 
+    And the plug-in does not generate MAXScript code for the shader which is listed 
+    the file.
+
+    <i>material editor which does not have particle shader...</i>
 */
