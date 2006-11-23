@@ -3,7 +3,7 @@
 <!-- render path for DX7 fixed function pipeline -->
 <RenderPath name="dx7" shaderPath="renderpath:fixed">
     <!-- declare shaders and technique aliases -->
-	<Shaders>
+    <Shaders>
         <!-- declare shaders and technique aliases -->
         <Shader name="passes" file="shaders:passes.fx" />
         <Shader name="phases" file="shaders:phases.fx" />
@@ -41,7 +41,7 @@
         <!-- ASIM -->
         <Shader name="underwaterground" file ="shaders:asim.fx" />
         <Shader name="underwater" file ="shaders:asim.fx" />
-</Shaders>
+    </Shaders>
     <!-- declare variables -->
     <Float4 name="ShadowColor" value="0.0 0.0 0.0 0.25" />
     <Float4 name="FogDistances" value="10.0 100.0 0.0 0.0" />
