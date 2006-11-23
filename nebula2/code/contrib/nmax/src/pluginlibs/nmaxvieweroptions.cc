@@ -5,6 +5,7 @@
 //------------------------------------------------------------------------------
 #include "export2/nmax.h"
 #include "export2/nmaxoptions.h"
+#include "export2/nmaxutil.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 #include "pluginlibs/nmaxvieweroptions.h"
@@ -75,8 +76,15 @@ bool nMaxViewerOptions::Read()
     if (!this->sceneFilename.IsEmpty())
     {
         this->arguments += "-view ";
-        this->arguments += nMaxOptions::Instance()->GetGfxLibAssign();
-        this->arguments += this->sceneFilename;
+        if (this->sceneDir.IsValid())
+        {
+            this->arguments += nMaxUtil::RelacePathToAssign(nMaxUtil::Gfx, this->sceneDir, this->sceneFilename);
+        }
+        else
+        {
+            this->arguments += nMaxOptions::Instance()->GetGfxLibAssign();
+            this->arguments += this->sceneFilename;
+        }
         this->arguments += " ";
     }
     else
@@ -242,4 +250,5 @@ bool nMaxViewerOptions::ReadCustomViewerOptions(const nString &iniFilename,
     iniFile->Release();
     return true;
 }
+
 
