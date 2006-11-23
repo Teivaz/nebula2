@@ -51,6 +51,8 @@ private:
     nString GetFullSharedMemoryObjectName(const nString& n) const;
     /// Base name of filename `n'.
     nString GetBaseName(const nString& n) const;
+    /// Get shared memory object name (with path) from a given file name
+    nString GetFullSharedMemoryObjectNameFromFileName(const nString& filename) const;
 
     // Data
     nRef<nSharedMemory> refSharedMemory;
