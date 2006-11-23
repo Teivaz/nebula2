@@ -155,7 +155,7 @@ App::SetupFromDefaults()
     // setup display mode
     nDisplayMode2 mode;
     nString windowTitle = this->GetVendorName() + " - " + this->GetAppName() + " - " + this->GetAppVersion();
-    mode.SetWindowTitle(windowTitle);
+    mode.SetWindowTitle(windowTitle.Get());
     mode.SetXPos(0);
     mode.SetYPos(0);
     mode.SetWidth(1024);
@@ -169,7 +169,7 @@ App::SetupFromDefaults()
 
 //------------------------------------------------------------------------------
 /**
-    Change the app settings according to an user profile. This method is
+    Change the app settings according to a user profile. This method is
     called by App::Open() after SetupFromDefault() and before
     SetupFromCmdLineArgs().
 */
