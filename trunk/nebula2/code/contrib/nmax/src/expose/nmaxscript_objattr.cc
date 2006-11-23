@@ -100,7 +100,7 @@ void nObjectAttribute::ClearCommandList()
 bool nObjectAttribute::ParseXmlFile()
 {
 
-    nString mangledPath = nFileServer2::Instance()->ManglePath(this->filename.Get());
+    nString mangledPath = nFileServer2::Instance()->ManglePath(this->filename);
     TiXmlDocument doc(mangledPath.Get());
     if (!doc.LoadFile())
     {
