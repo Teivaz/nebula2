@@ -126,8 +126,8 @@ bool LaunchViewer(const char* sceneFile, nMaxViewerOptions& viewerOptions)
     cwd += "\\bin\\win32";
 #endif
 
-    appLauncher.SetWorkingDirectory(cwd.Get());
-    appLauncher.SetArguments(appArgs.Get());
+    appLauncher.SetWorkingDirectory(cwd);
+    appLauncher.SetArguments(appArgs);
 
     return appLauncher.Launch();
 }
@@ -246,6 +246,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
         else
             viewerOptions.SetViewerType(nMaxViewerOptions::ViewerType::Custom);
 
+        viewerOptions.SetSceneDir(scene.GetSceneDir());
         viewerOptions.SetSceneFileName(sceneFile.Get());
 
         if (!viewerOptions.Read())
@@ -298,4 +299,5 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
 
     return 1;
 }
+
 

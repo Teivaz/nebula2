@@ -54,7 +54,8 @@ public:
     void SetSceneFileName(const char* scenename);
     /// Retrieves scene filename.
     const char* GetSceneFileName() const;
-
+    /// Specifies scene dir
+    void SetSceneDir(const nString& sceneDir);
 protected:
     bool ReadDefaultViewerOptions(const nString &iniFilename, const nString &sectionName);
     bool ReadCustomViewerOptions(const nString &iniFilename, const nString &sectionName);
@@ -70,7 +71,8 @@ protected:
     nString executable;
     /// scene filename.
     nString sceneFilename;
-
+    /// scene dir
+    nString sceneDir;
 };
 //------------------------------------------------------------------------------
 inline
@@ -133,5 +135,13 @@ const char* nMaxViewerOptions::GetSceneFileName() const
 {
     return this->sceneFilename.Get();
 }
+//------------------------------------------------------------------------------
+inline
+void
+nMaxViewerOptions::SetSceneDir(const nString& sceneDir)
+{
+    this->sceneDir = sceneDir;
+}
+
 //------------------------------------------------------------------------------
 #endif
