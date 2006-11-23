@@ -6,6 +6,7 @@
 #include "kernel/nkernelserver.h"
 #include "file/nramfile.h"
 #include "file/nsharedmemory.h"
+#include "file/nnpkfileserver.h"
 
 const nString nRamFile::SharedMemoryRoot = "/usr/share/memory";
 
@@ -33,7 +34,7 @@ nRamFile::~nRamFile()
 bool
 nRamFile::Exists(const nString& fileName) const
 {
-    return nKernelServer::Instance()->Lookup(GetFullSharedMemoryObjectName(GetBaseName(fileName)).Get()) != 0 ||
+    return nKernelServer::Instance()->Lookup(GetFullSharedMemoryObjectNameFromFileName(fileName).Get()) != 0 ||
            nFile::Exists(fileName);
 }
 
@@ -50,7 +51,7 @@ nRamFile::Open(const nString& fileName, const nString& accessMode)
     n_assert(!this->refSharedMemory.isvalid());
 
     // Determine object's name.
-    nString sharedMemoryObjectName = GetFullSharedMemoryObjectName(GetBaseName(fileName));
+    nString sharedMemoryObjectName = GetFullSharedMemoryObjectNameFromFileName(fileName);
 
     // Try a lookup.
     this->refSharedMemory = static_cast<nSharedMemory*>(nKernelServer::Instance()->Lookup(sharedMemoryObjectName.Get()));
@@ -318,6 +319,17 @@ nRamFile::GetBaseName(const nString& n) const
     nString result = n.ExtractFileName();
 //    result.StripExtension();
     return result;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+nString
+nRamFile::GetFullSharedMemoryObjectNameFromFileName(const nString& filename) const
+{
+    nString manglepath = nFileServer2::Instance()->ManglePath(filename);
+    manglepath.ReplaceChars("/\\:", '-');
+    return GetFullSharedMemoryObjectName(manglepath);
 }
 
 //------------------------------------------------------------------------------
