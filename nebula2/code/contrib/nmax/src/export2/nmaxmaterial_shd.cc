@@ -1126,7 +1126,7 @@ bool EvalCustomMaterialPlugin()
     nFile* file = nFileServer2::Instance()->NewFileObject();
     if (file->Open(sampleFile.Get(), "w"))
     {
-        file->PutS(script.Get());
+        file->PutS(script);
         file->Close();
         file->Release();
     }
@@ -1148,7 +1148,7 @@ bool EvalCustomMaterialPlugin()
         nFile* file = nFileServer2::Instance()->NewFileObject();
         if (file->Open(debugFilePath.Get(), "w"))
         {
-            file->PutS(script.Get());
+            file->PutS(script);
             file->Close();
             file->Release();
         }
