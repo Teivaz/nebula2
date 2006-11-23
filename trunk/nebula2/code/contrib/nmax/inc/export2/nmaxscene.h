@@ -37,6 +37,8 @@ public:
     ///
     bool Export(INode* inode);
 
+    ///
+    const nString& GetSceneDir() const;
 protected:
     // @name Helper functions for begin and end stage of export.
     // @{
@@ -133,6 +135,7 @@ protected:
     nArray<nMaxMesh*> shadowMeshArray;
     nArray<nMaxMesh*> skinnedShadowMeshArray;
     nArray<nMaxMesh*> collisionMeshArray;
+    nArray<nMaxMesh*> particle2MeshArray;
     nArray<nMaxMesh*> skyMeshArray;
 
     /// Mesh builder for meshes in the mesh array.
@@ -158,6 +161,14 @@ protected:
     nString sceneDir;
 
 };
+//-----------------------------------------------------------------------------
+inline
+const nString&
+nMaxScene::GetSceneDir() const
+{
+    return this->sceneDir;
+}
+
 //-----------------------------------------------------------------------------
 inline
 Point3 

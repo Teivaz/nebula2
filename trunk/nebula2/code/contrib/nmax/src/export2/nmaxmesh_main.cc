@@ -494,7 +494,7 @@ nSceneNode* nMaxMesh::Export(INode* inode)
         }
 
         // build material
-        if (this->meshType == Shape || this->meshType == Swing)
+        if (this->meshType == Shape || this->meshType == Swing || this->meshType == Particle2)
             GetMaterial(inode, (nShapeNode*)createdNode, 0);
 
         // save mesh file and specifies it to the shape node.
@@ -1434,7 +1434,7 @@ void nMaxMesh::CheckGeometryErrors(nMeshBuilder& meshBuilder, nString& meshName)
             // put the geometry error message to log dialog.
             for (int i=0; i<geomErrorMsgArray.Size(); i++)
             {
-                errFile->PutS(geomErrorMsgArray[i].Get());
+                errFile->PutS(geomErrorMsgArray[i]);
             }
 
             errFile->Close();
@@ -1490,6 +1490,11 @@ nString nMaxMesh::AppendMeshPostfixByType(Type type, bool isSkinned)
     case Collision:
         {
             postfix = "_collision";
+        }
+        break;
+    case Particle2:
+        {
+            postfix = "_particle2";
         }
         break;
     default:

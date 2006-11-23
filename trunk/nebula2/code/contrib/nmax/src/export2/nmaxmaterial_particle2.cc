@@ -100,20 +100,50 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                         particleNode->SetActivityDistance(value);
                                     }
                                     else
-                                    if (strcmp(name, "ParticleStartRotation") == 0)
+                                    if (strcmp(name, "StartRotationMin") == 0)
                                     {
-                                        //particleNode->SetStartRotationMin(value);
-                                        //particleNode->SetStartRotationMax(value);
+                                        particleNode->SetStartRotationMin(value);
                                     }
                                     else
-		                            if (strcmp(name, "ParticleSpreadAngle") == 0)
+                                    if (strcmp(name, "StartRotationMax") == 0)
                                     {
-                                        ;//particleNode->SetParticleSpre
+                                        particleNode->SetStartRotationMax(value);
                                     }
                                     else
-		                            if (strcmp(name, "ParticleBirthDelay") == 0)
+                                    // HACK: 3ds max changes the name Gravity to gravity, so use gravity here
+                                    if (strcmp(name, "gravity") == 0) 
                                     {
-                                        ;
+                                        particleNode->SetGravity(value);
+                                    }
+                                    else
+                                    if (strcmp(name, "ParticleStretch") == 0)
+                                    {
+                                        particleNode->SetParticleStretch(value);
+                                    }
+                                    else
+                                    if (strcmp(name, "ParticleVelocityRandomize") == 0)
+                                    {
+                                        particleNode->SetParticleVelocityRandomize(value);
+                                    }
+                                    else
+                                    if (strcmp(name, "ParticleRotationRandomize") == 0)
+                                    {
+                                        particleNode->SetParticleRotationRandomize(value);
+                                    }
+                                    else
+                                    if (strcmp(name, "ParticleSizeRandomize") == 0)
+                                    {
+                                        particleNode->SetParticleSizeRandomize(value);
+                                    }
+                                    else
+                                    if (strcmp(name, "PrecalcTime") == 0)
+                                    {
+                                        particleNode->SetPrecalcTime(value);
+                                    }
+                                    else
+                                    if (strcmp(name, "StartDelay") == 0)
+                                    {
+                                        particleNode->SetStartDelay(value);
                                     }
                                     else
                                     {
@@ -130,9 +160,26 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                 result = pblock2->GetValue(j, 0, value, interval);
                                 if (result)
                                 {
+                                    bool bvalue = value > 0 ? true : false;
                                     if (strcmp(name, "Loop") == 0)
                                     {
-                                        particleNode->SetLoop(((value > 0) ? true : false));
+                                        particleNode->SetLoop(bvalue);
+                                    }
+                                    else if (strcmp(name, "StretchToStart") == 0)
+                                    {
+                                        particleNode->SetStretchToStart(bvalue);
+                                    }
+                                    else if (strcmp(name, "RandomRotDir") == 0)
+                                    {
+                                        particleNode->SetRandomRotDir(bvalue);
+                                    }
+                                    else if (strcmp(name, "ViewAngleFade") == 0)
+                                    {
+                                        particleNode->SetViewAngleFade(bvalue);
+                                    }
+                                    else if (strcmp(name, "RenderOldestFirst") == 0)
+                                    {
+                                        particleNode->SetRenderOldestFirst(bvalue);
                                     }
                                 }
                             }
@@ -143,6 +190,17 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                 int value;
                                 Interval interval;
                                 result = pblock2->GetValue(j, 0, value, interval);
+                                if (result)
+                                {
+                                    if (strcmp(name, "TileTexture") == 0)
+                                    {
+                                        particleNode->SetTileTexture(value);
+                                    }
+                                    else if (strcmp(name, "StretchDetail") == 0)
+                                    {
+                                        particleNode->SetStretchDetail(value);
+                                    }
+                                }
                             }
                             break;
                         case TYPE_FLOAT_TAB:
@@ -183,8 +241,15 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                         (int)(values[9])
                                     );
 
-                                    particleNode->SetCurve(curveType, envelopeCurve);
+                                    if (curveType < nParticle2Emitter::CurveTypeCount)
+                                        particleNode->SetCurve(curveType, envelopeCurve);
                                 }
+                            }
+                            break;
+                        case TYPE_STRING:
+                        case TYPE_TEXMAP:
+                            {
+                                // HACK: ignore "Shader", "DiffMap0", "dirSettingDiffMap0" in particle
                             }
                             break;
                         default:
@@ -204,77 +269,29 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
 static
 nParticle2Emitter::CurveType GetCurveTpe(TCHAR* name)
 {
-    if (strcmp(name, "EmissionFrequency") == 0)
+    static struct CurveTypeInfo
     {
-        return nParticle2Emitter::EmissionFrequency;
+        const char *name;
+        nParticle2Emitter::CurveType type;
+    } curvetypes[] = 
+    {
+        {"EmissionFrequency",           nParticle2Emitter::EmissionFrequency, },
+        {"ParticleLifeTime",            nParticle2Emitter::ParticleLifeTime, },
+        {"ParticleSpreadMin",           nParticle2Emitter::ParticleSpreadMin, },
+        {"ParticleSpreadMax",           nParticle2Emitter::ParticleSpreadMax, },
+        {"ParticleStartVelocity",       nParticle2Emitter::ParticleStartVelocity, },
+        {"ParticleRotationVelocity",    nParticle2Emitter::ParticleRotationVelocity, },
+        {"ParticleScale",               nParticle2Emitter::ParticleScale, },
+        {"ParticleAlpha",               nParticle2Emitter::ParticleAlpha, },
+        {"ParticleMass",                nParticle2Emitter::ParticleMass, },
+        {"TimeManipulator",             nParticle2Emitter::TimeManipulator, },
+        {"ParticleAirResistance",       nParticle2Emitter::ParticleAirResistance, },
+        {"ParticleVelocityFactor",      nParticle2Emitter::ParticleVelocityFactor, },
+    };
+    for (int i = 0; i < sizeof(curvetypes) / sizeof(curvetypes[0]); i++)
+    {
+        if (strcmp(curvetypes[i].name, name) == 0)
+            return curvetypes[i].type;
     }
-    else
-    if (strcmp(name, "ParticleLifeTime") == 0)
-    {
-        return nParticle2Emitter::ParticleLifeTime;
-    }
-    else
-    if (strcmp(name, "ParticleStartVelocity") == 0)
-    {
-        return nParticle2Emitter::ParticleStartVelocity;
-    }
-    else
-    if (strcmp(name, "ParticleRotationVelocity") == 0)
-    {
-        return nParticle2Emitter::ParticleRotationVelocity;
-    }
-    else
-    if (strcmp(name, "ParticleScale") == 0)
-    {
-        return nParticle2Emitter::ParticleScale;
-    }
-    //else
-    //if (strcmp(name, "ParticleWeight") == 0)
-    //{
-    //    ;
-    //}
-    //else
-    //if (strcmp(name, "ParticleRGB") == 0)
-    //{
-    //    ;
-    //}
-    else
-    if (strcmp(name, "ParticleAlpha") == 0)
-    {
-        return nParticle2Emitter::ParticleAlpha;
-    }
-    //else
-    //if (strcmp(name, "ParticleSideVelocity1") == 0)
-    //{
-    //    ;
-    //}
-    //else
-    //if (strcmp(name, "ParticleSideVelocity2") == 0)
-    //{
-    //    ;
-    //}
-    else
-    if (strcmp(name, "ParticleMass") == 0)
-    {
-        return nParticle2Emitter::ParticleMass;
-    }
-    else
-    if (strcmp(name, "TimeManipulator") == 0)
-    {
-        return nParticle2Emitter::TimeManipulator;
-    }
-    else
-    if (strcmp(name, "ParticleAirResistance") == 0)
-    {
-        return nParticle2Emitter::ParticleAirResistance;
-    }
-    else
-    if (strcmp(name, "ParticleVelocityFactor") == 0)
-    {
-        return nParticle2Emitter::ParticleVelocityFactor;
-    }
-    else
-    {
-        return nParticle2Emitter::CurveTypeCount; // invalid param
-    }        
+    return nParticle2Emitter::CurveTypeCount; // invalid param
 }

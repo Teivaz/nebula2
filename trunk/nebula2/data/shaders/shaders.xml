@@ -335,6 +335,44 @@
         <param name="ParticleAirResistance" label="Particle Air Resistance" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="0.0 0.0 0.0 0.0 0.2 0.8 0.0 0.0" />
         <param name="ParticleVelocityFactor" label="Particle Velocity Factor" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="2.0" def="0.5 0.5 0.5 0.5 0.2 0.8 0.0 0.0" />
     </shader>
+    <shader name="Particle2" shaderType="default" meshType="particleemitter" file="particle2">
+        <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />
+        <param name="LockViewer" label="Lock To Viewer" type="Bool" gui="1" export="0" def="0" />
+        <param name="DiffMap0" label="Texture Map" type="Texture" gui="1" export="1" def="textures:system/white.dds" />
+        <param name="AlphaSrcBlend" label="Alpha Source" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="5" />
+        <param name="AlphaDstBlend" label="Alpha Dest" type="Enum" gui="1" export="1" enum="Zero=1:One:SrcColor:InvSrcColor:SrcAlpha:InvSrcAlpha:DestAlpha:InvDestAlpha:DestColor:InvDestColor" def="6" />
+        <param name="EmissionFrequency" label="Emission Frequency" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="5.0" def="0.8 0.8 0.8 0.8 0.3 0.7 0.0 0.0" />
+        <param name="ParticleLifeTime" label="Particle Life Time" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="2.0" def="0.8 0.8 0.8 0.8 0.3 0.7 0.0 0.0" />
+        <param name="ParticleSpreadMin" label="Particle Spread Min" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="2.0" def="0.8 0.8 0.8 0.8 0.3 0.7 0.0 0.0" />
+        <param name="ParticleSpreadMax" label="Particle Spread Max" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="2.0" def="0.8 0.8 0.8 0.8 0.3 0.7 0.0 0.0" />
+        <param name="ParticleStartVelocity" label="Particle Start Velocity" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="5.0" def="0.8 0.8 0.8 0.8 0.3 0.7 0.0 0.0" />
+        <param name="ParticleRotationVelocity" label="Particle Rotation Velocity" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="5.0" def="0.8 0.8 0.8 0.8 0.3 0.7 0.0 0.0" />
+        <param name="ParticleScale" label="Particle Scale" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="0.8 0.8 0.8 0.0 0.3 0.9 0.0 0.0" />
+        <param name="ParticleAlpha" label="Particle Alpha" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="0.0 1.0 1.0 0.0 0.1 0.9 0.0 0.0" />
+        <param name="ParticleMass" label="Particle Mass" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="0.0 1.0 1.0 0.0 0.1 0.9 0.0 0.0" />
+        <param name="TimeManipulator" label="Time Manipulator" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="0.0 1.0 1.0 0.0 0.1 0.9 0.0 0.0" />
+        <param name="ParticleVelocityFactor" label="Particle Velocity Factor" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="2.0" def="0.5 0.5 0.5 0.5 0.2 0.8 0.0 0.0" />
+        <param name="ParticleAirResistance" label="Particle Air Resistance" type="EnvelopeCurve" gui="1" export="0" min="0.0" max="1.0" def="0.0 0.0 0.0 0.0 0.2 0.8 0.0 0.0" />
+        <param name="ParticleRGB" label="Particle RGB" type="ColorEnvelopeCurve" gui="1" export="0" />
+        <param name="EmissionDuration" label="Emission Duration" type="Float" gui="1" export="0" min="0.0" max="1000.0" def="10.0" />
+        <param name="Loop" label="Loop Emission" type="Bool" gui="1" export="0" def="0" />
+        <param name="ActivityDistance" label="Activity Distance" type="Float" gui="1" export="0" min="0.0" max="1000.0" def="100.0" />
+        <param name="RenderOldestFirst" label="Render Oldest First" type="Bool" gui="1" export="0" def="0" />
+        <param name="StartRotationMin" label="Start Rotation Min" type="Float" gui="1" export="0" min="-10000.0" max="10000.0" def="0.0" />
+        <param name="StartRotationMax" label="Start Rotation Max" type="Float" gui="1" export="0" min="-10000.0" max="10000.0" def="0.0" />
+        <param name="Gravity" label="Gravity" type="Float" gui="1" export="0" min="-10000.0" max="10000.0" def="0.0" />
+        <param name="ParticleStretch" label="Particle Stretch" type="Float" gui="1" export="0" min="0.0" max="10000.0" def="0.0" />
+        <param name="TileTexture" label="Tile Texture" type="Int" gui="1" export="0" min="1" max="100" def="1" />
+        <param name="StretchToStart" label="Stretch To Start" type="Bool" gui="1" export="0" def="0" />
+        <param name="ParticleVelocityRandomize" label="Particle Velocity Randomize" type="Float" gui="1" export="0" min="0.0" max="10000.0" def="0.0" />
+        <param name="ParticleRotationRandomize" label="Particle Rotation Randomize" type="Float" gui="1" export="0" min="0.0" max="10000.0" def="0.0" />
+        <param name="ParticleSizeRandomize" label="Particle Size Randomize" type="Float" gui="1" export="0" min="0.0" max="10000.0" def="0.0" />
+        <param name="PrecalcTime" label="Precalculate Time" type="Float" gui="1" export="0" min="0.0" max="10000.0" def="0.0" />
+        <param name="RandomRotDir" label="Random Rotation Direction" type="Bool" gui="1" export="0" def="0" />
+        <param name="StretchDetail" label="Stretch Detail" type="Int" gui="1" export="0" min="1" max="100" def="1" />
+        <param name="ViewAngleFade" label="View Angle Fade" type="Bool" gui="1" export="0" def="0" />
+        <param name="StartDelay" label="Start Delay" type="Float" gui="1" export="0" min="0.0" max="10000.0" def="0.0" />
+    </shader>
     <!-- OBSOLETE -->
     <shader name="Particle (Additive)" shaderType="default" meshType="particleemitter" file="particle">
         <param name="RenderPri" label="Render Priority" type="Int" gui="1" export="0" min="-100" max="+100" def="0" />

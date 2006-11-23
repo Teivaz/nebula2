@@ -339,6 +339,13 @@ bool nMaxScene::End()
         n_delete(mesh);
     }
 
+    // particle2 meshes
+    for (int i=0; i<this->particle2MeshArray.Size(); i++)
+    {
+        nMaxMesh* mesh = this->particle2MeshArray[i];
+        n_delete(mesh);
+    }
+
     // sky meshes.
     for (int i=0; i<this->skyMeshArray.Size(); i++)
     {
@@ -521,6 +528,25 @@ bool nMaxScene::Postprocess()
 
             // Unlike other types of mesh, collision meshes are individually saved.
             meshFileName = this->GetMeshFileNameToSave(meshPath, nMaxMesh::Collision, false);
+            meshBuilder.Save(fileServer, meshFileName.Get());
+        }
+    }
+
+    // particle2 meshes.
+    if (!this->particle2MeshArray.Empty())
+    {
+        nString meshPath;
+        nString meshFileName;
+
+        for (int i=0; i<particle2MeshArray.Size(); i++)
+        {
+            mesh = this->particle2MeshArray[i];
+            nMeshBuilder& meshBuilder = mesh->GetMeshBuilder();
+
+            meshPath = mesh->GetMeshPath();
+
+            // Unlike other types of mesh, collision meshes are individually saved.
+            meshFileName = this->GetMeshFileNameToSave(meshPath, nMaxMesh::Particle2, false);
             meshBuilder.Save(fileServer, meshFileName.Get());
         }
     }
@@ -1003,6 +1029,11 @@ void nMaxScene::AddMeshByType(nMaxMesh* mesh)
     case nMaxMesh::Collision:
         {
             this->collisionMeshArray.Append(mesh);
+        }
+        break;
+    case nMaxMesh::Particle2:
+        {
+            this->particle2MeshArray.Append(mesh);
         }
         break;
     case nMaxMesh::Sky:
