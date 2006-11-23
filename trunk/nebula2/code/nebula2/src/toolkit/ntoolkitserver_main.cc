@@ -213,7 +213,7 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
     }
     else if ("DiffMap0" == paramID)
     {
-        fileName = nFileServer2::Instance()->ManglePath(paramValue.Get());
+        fileName = nFileServer2::Instance()->ManglePath(paramValue);
         if (nFileServer2::Instance()->FileExists(fileName))
         {
             if (node->HasParam(nShaderState::DiffMap0))
@@ -224,7 +224,7 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
     }
     else if ("BumpMap0" == paramID)
     {
-        fileName = nFileServer2::Instance()->ManglePath(paramValue.Get());
+        fileName = nFileServer2::Instance()->ManglePath(paramValue);
         if (nFileServer2::Instance()->FileExists(fileName))
         {
             if (node->HasParam(nShaderState::BumpMap0))

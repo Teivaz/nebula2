@@ -90,9 +90,10 @@ nString
 nVideoController::FullPathName(const nString& fn) const
 {
     wchar_t widePath[N_MAXPATH];
-    nString result = nFileServer2::Instance()->ManglePath(fn.Get());
+    nString result = nFileServer2::Instance()->ManglePath(fn);
     mbstowcs(widePath, result.Get(), result.Length() + 1);
 
     return result;
 }
+
 

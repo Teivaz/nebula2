@@ -39,7 +39,7 @@ nRpXmlParser::OpenXml()
     n_assert(this->renderPath);
     n_assert(0 == this->xmlDocument);
 
-    this->mangledPath = nFileServer2::Instance()->ManglePath(this->renderPath->GetFilename().Get());
+    this->mangledPath = nFileServer2::Instance()->ManglePath(this->renderPath->GetFilename());
     this->xmlDocument = n_new(TiXmlDocument);
     if (this->xmlDocument->LoadFile(mangledPath.Get()))
     {
@@ -578,6 +578,7 @@ nRpXmlParser::ParseSequence(TiXmlElement* elm, nRpPhase* phase)
     }
     phase->AddSequence(newSequence);
 }
+
 
 
 

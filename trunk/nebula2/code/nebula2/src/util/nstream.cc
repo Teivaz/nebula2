@@ -322,7 +322,7 @@ nStream::Close()
         fileServer->MakePath(this->filename.ExtractDirName());
 
         // FIXME: TinyXml doesn't support Nebula2 filenames for writing
-        nString mangledPath = fileServer->ManglePath(this->filename.Get());
+        nString mangledPath = fileServer->ManglePath(this->filename);
         if (!this->xmlDocument->SaveFile(mangledPath.Get()))
         {
             n_delete(this->xmlDocument);

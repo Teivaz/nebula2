@@ -81,7 +81,7 @@ nD3D9Shader::LoadResource()
 
     // mangle path name
     nString filename = this->GetFilename();
-    nString mangledPath = nFileServer2::Instance()->ManglePath(filename.Get());
+    nString mangledPath = nFileServer2::Instance()->ManglePath(filename);
 
     //load fx file...
     nFile* file = nFileServer2::Instance()->NewFileObject();

@@ -253,7 +253,6 @@ nPersistServer::PutCmd(int level, nCmd *cmd)
     if (this->saveLevel <= level)
     {
         n_assert(cmd);
-        bool success;
         if (SAVEMODE_CLONE == this->saveMode)
         {
             // in clone mode, send cmd directly to object

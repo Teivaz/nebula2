@@ -278,7 +278,7 @@ nTclServer::WriteSelectStatement(nFile* file, nRoot* o, nRoot* owner)
 
                 file->PutS(indentBuf);
                 file->PutS("sel ");
-                file->PutS(relPath.Get());
+                file->PutS(relPath);
                 file->PutS("\n");
             }
             break;
@@ -370,7 +370,7 @@ nTclServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
 
     file->PutS(indentBuf);
     file->PutS("sel ");
-    file->PutS(relPath.Get());
+    file->PutS(relPath);
     file->PutS("\n");
 
     return true;
@@ -450,7 +450,7 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
                 break;
         }
 
-        file->PutS(str.Get());
+        file->PutS(str);
     }
     return file->PutS("\n");
 }
@@ -580,4 +580,5 @@ nTclServer::GetInterp()
 //------------------------------------------------------------------------------
 //  EOF
 //------------------------------------------------------------------------------
+
 
