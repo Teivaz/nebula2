@@ -449,6 +449,9 @@ nMaxUtil::GetPathFromType(nAssignType type)
 /**
     Replace part of the given direcotry path to the Nebula2 assign name.
 
+    -23-Nov-06  kims  Changed to append '/' slash character to the both of 'a' and 'b' string.
+                      Thank kaikai for the patch.
+
     @param type - assign type e.g. texture, gfx, mesh etc.
     @param path - directory path which to be changed to one containing assgin name.
                   e.g. 'c:/nebula2/exports/meshes/char2' will be changed to'meshes:char2'
@@ -474,8 +477,11 @@ nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
 
     nString b = path;
     b.ToLower();
+    b = b.TrimRight("/");
+    b += "/";
 
     int len = a.Length();
+    a = a.TrimRight("/");
     a += "/";
     // not identical and b has subdirectory
     if (a != b && (b.Length() > a.Length()))
@@ -484,10 +490,11 @@ nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
         {
             // retrieve subdirectory of texture assgin directory,
             ret += GetPathFromType(type);
-            // HACK: every manglepath has no trailing slash. 
-            //       so we append the trailing shash to remove the first slash
+            // HACK: every manglepath has no tailing slash. 
+            //       so we append the tailing slash to remove the first slash
             nString sub = b.Substitute(a.Get(), "");
             ret += sub;
+            ret = ret.TrimRight("/");
             ret += "/";
         }
         else
