@@ -23,6 +23,7 @@
     - @ref NMaxHowtoSky
     - @ref NMaxHowtoExport
     - @ref NMaxHowtoHotLoading
+    - @ref NMaxHowtoShaderFilter 
     - @ref NMaxHowtoImport
     - @ref NMaxScriptExtension
     - @ref NMaxHowtoExpose

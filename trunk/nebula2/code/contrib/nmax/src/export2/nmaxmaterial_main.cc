@@ -8,6 +8,7 @@
 #include "export2/nmaxmaterial.h"
 #include "export2/nmaxinterface.h"
 #include "export2/nmaxtexture.h"
+#include "export2/nmaxmaterial_shd.h"
 
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"

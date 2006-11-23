@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!-- Shader fileter for material editor of Nebula2 3dsmax toolkit. 
+     UI of the the shaders in the follwoing list are not created so 
+     those are not shown on the 3dsmax Nebula2 material editor. -->
+
+<NebulaShaderFilter>
+    <shader name = ""/>
+
+</NebulaShaderFilter>

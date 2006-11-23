@@ -21,6 +21,9 @@
 #include "tinyxml/tinyxml.h"
 #include "gfx2/nshaderstate.h"
 
+/// contains shader name which to be filtered out.
+static nArray<nString> shaderFilterArray;
+
 //-----------------------------------------------------------------------------
 /**
     Find the full path of shaders.xml file.
@@ -29,9 +32,11 @@
     nMaxOption is mostly used for exporting. 
     It is singleton class so calling that here makes hard to handle and destroy 
     its instance.
+
+    @param file file to retrieve the path
 */
 static
-nString GetShaderXmlPath()
+nString GetShaderXmlPath(nString file)
 {
     nString shdxml;
 
@@ -72,11 +77,12 @@ nString GetShaderXmlPath()
 
     shdxml += homeDir;
     shdxml += "\\";
-    shdxml += "data\\shaders\\shaders.xml";
+    //shdxml += "data\\shaders\\shaders.xml";
+    shdxml += "data\\shaders\\";
+    shdxml += file;
 
     if (!nFileServer2::Instance()->FileExists(shdxml.Get()))
     {
-        //n_listener("File %s does not exist.\n", shdxml.Get());
         n_message("File %s does not exist.\n", shdxml.Get());
 
         // make the string to be empty then return.
@@ -681,34 +687,16 @@ void ParseParams(TiXmlElement* elemShader, nString& shdName, nString& strParamBl
     }
 }
 
-//FIXME: filtering mechanism is temporal at the moment.
-//       some shaders like particle does not fit well with 3dsmax.
-//       the particle shader needs curved UI controls like enveloped color etc.
-//       using curved UI control does not difficult but place it to
-//       material editor does not seems to be a right way.
-//       So, just filter it up until we find the proper way.
-
-// fileter array.
-const int FILETER_SIZE = 3;
-static const char* filter[FILETER_SIZE] = {
-    "Particle",
-    "Particle (Additive)",
-    "Particle (Alpha Blended)"
-};
-
 //-----------------------------------------------------------------------------
 /**
     Filter of the shader in filter array.
-
-    FIXME: we should change to set fileter for shader explicitly out of the plugin. 
-           e.g. consider to use filter.xml
 */
 static
 bool DoFilter(const nString &str)
 {
-    for (int i=0; i<FILETER_SIZE; i++)
+    for (int i=0; i<shaderFilterArray.Size(); i++)
     {
-        if (strcmp(str.Get(), filter[i]) == 0)
+        if (shaderFilterArray[i] == str)
             return true;
     }
 
@@ -789,41 +777,42 @@ TiXmlHandle GetParamFromShader(TiXmlHandle& shader, const nString &param)
 
 //-----------------------------------------------------------------------------
 /**
-    Retrieve default value which is defined in shader database file(shader.xml)
-    It is needed when the toolkit set default value if the parameter has not any value.
-
-    e.g) The toolkit specifies "nobump.dds" if there is no bump map is specified 
-    in the material editor when it exports.
+    Retrieve shader name which to be filtered out.
+    The shader names are listed in the filter.xml file which can be found 
+    under the same directory with shader.xml file.
 */
-bool GetDefaultValueFromDataBase(const nString &shader, const nString &param, nString &outvalue)
+bool GetShaderFilter()
 {
-    // Get the full path of '$nebula/data/shaders/shaders.xml' file.
-    nString shdXmlFilePath = GetShaderXmlPath();
-    if (shdXmlFilePath.IsEmpty())
+    // Get the full path of '$nebula/data/shaders/filter.xml' file.
+    nString filterXmlFilePath = GetShaderXmlPath("filter.xml");
+    if (filterXmlFilePath.IsEmpty())
     {
-        n_listener("Cannot find shaders.xml file.\n");
+        n_listener("Cannot find filter.xml file.\n");
         return false;
     }
 
     TiXmlDocument xmlDoc;
 
     // Load the shaders.xml file
-    if (!xmlDoc.LoadFile(shdXmlFilePath.Get()))
+    if (!xmlDoc.LoadFile(filterXmlFilePath.Get()))
     {
-        n_listener("Filed to load %s.", shdXmlFilePath.Get());
+        n_listener("Filed to load %s.", filterXmlFilePath.Get());
         return false;
     }
 
     TiXmlHandle xmlHandle(&xmlDoc);
-    TiXmlElement* pElem = GetParamFromShader(GetShaderFromDataBase(xmlHandle, shader), param).Element();
-    if (pElem == 0)
-        return false;
+    TiXmlElement* child;
 
-    const char *attr = pElem->Attribute("def");
-    if (attr == 0)
-        return false;
-    
-    outvalue = attr;
+    shaderFilterArray.Clear();
+
+    child = xmlHandle.FirstChild("NebulaShaderFilter").FirstChild("shader").Element();
+    for (child; child; child=child->NextSiblingElement())
+    {
+        // get shader name.
+        nString name = child->Attribute("name");
+
+        shaderFilterArray.Append(name);
+    }
 
     return true;
 }
@@ -851,8 +840,15 @@ bool GetDefaultValueFromDataBase(const nString &shader, const nString &param, nS
 */
 bool EvalCustomMaterialPlugin()
 {
+    // Get shader name which to be filted out.
+    if (!GetShaderFilter())
+    {
+        n_listener("Cannot find filter.xml file.\n");
+        shaderFilterArray.Clear();
+    }
+
     // Get the full path of '$nebula/data/shaders/shaders.xml' file.
-    nString shdXmlFilePath = GetShaderXmlPath();
+    nString shdXmlFilePath = GetShaderXmlPath(nString("shaders.xml"));
     if (shdXmlFilePath.IsEmpty())
     {
         n_listener("Cannot find shaders.xml file.\n");
@@ -891,8 +887,11 @@ bool EvalCustomMaterialPlugin()
     {
         // get shader name.
         nString name = child->Attribute("name");
-        //if (DoFilter(name))
-        //    continue;
+
+        // if the given shader name is found in the shader filter,
+        // the plugin does not generate script code for the shader.
+        if (DoFilter(name))
+            continue;
 
 		nString caName = name;
 
@@ -1160,6 +1159,47 @@ bool EvalCustomMaterialPlugin()
 
         return false;
     }
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Retrieve default value which is defined in shader database file(shader.xml)
+    It is needed when the toolkit set default value if the parameter has not any value.
+
+    e.g) The toolkit specifies "nobump.dds" if there is no bump map is specified 
+    in the material editor when it exports.
+*/
+bool GetDefaultValueFromDataBase(const nString &shader, const nString &param, nString &outvalue)
+{
+    // Get the full path of '$nebula/data/shaders/shaders.xml' file.
+    nString shdXmlFilePath = GetShaderXmlPath("shaderx.xml");
+    if (shdXmlFilePath.IsEmpty())
+    {
+        n_listener("Cannot find shaders.xml file.\n");
+        return false;
+    }
+
+    TiXmlDocument xmlDoc;
+
+    // Load the shaders.xml file
+    if (!xmlDoc.LoadFile(shdXmlFilePath.Get()))
+    {
+        n_listener("Filed to load %s.", shdXmlFilePath.Get());
+        return false;
+    }
+
+    TiXmlHandle xmlHandle(&xmlDoc);
+    TiXmlElement* pElem = GetParamFromShader(GetShaderFromDataBase(xmlHandle, shader), param).Element();
+    if (pElem == 0)
+        return false;
+
+    const char *attr = pElem->Attribute("def");
+    if (attr == 0)
+        return false;
+    
+    outvalue = attr;
 
     return true;
 }
