@@ -323,13 +323,47 @@ nRamFile::GetBaseName(const nString& n) const
 
 //------------------------------------------------------------------------------
 /**
+    -23-Nov-06  kims  nRamFile uses file name (without a path) to identify files 
+                      when nmaxtoolbox exports a file, the source file name and 
+                      the destination file name will be the same  in RamFile. 
+                      So it should be changed to use the whole path name.
 */
 nString
 nRamFile::GetFullSharedMemoryObjectNameFromFileName(const nString& filename) const
 {
     nString manglepath = nFileServer2::Instance()->ManglePath(filename);
-    manglepath.ReplaceChars("/\\:", '-');
-    return GetFullSharedMemoryObjectName(manglepath);
+    nString name;
+    int i, last = 0;
+    for (i = 0; i < manglepath.Length(); i++)
+    {
+        switch (manglepath[i])
+        {
+        case '-':
+            name.AppendRange(manglepath.Get() + last, i - last);
+            last = i + 1;
+            name.Append("--");
+            break;
+        case '/':
+            name.AppendRange(manglepath.Get() + last, i - last);
+            last = i + 1;
+            name.Append("-1");
+            break;
+        case '\\':
+            name.AppendRange(manglepath.Get() + last, i - last);
+            last = i + 1;
+            name.Append("-2");
+            break;
+        case ':':
+            name.AppendRange(manglepath.Get() + last, i - last);
+            last = i + 1;
+            name.Append("-3");
+            break;
+        default:
+            break;
+        }
+    }
+    name.AppendRange(manglepath.Get() + last, i - last);
+    return GetFullSharedMemoryObjectName(name);
 }
 
 //------------------------------------------------------------------------------
