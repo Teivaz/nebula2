@@ -1174,7 +1174,7 @@ bool EvalCustomMaterialPlugin()
 bool GetDefaultValueFromDataBase(const nString &shader, const nString &param, nString &outvalue)
 {
     // Get the full path of '$nebula/data/shaders/shaders.xml' file.
-    nString shdXmlFilePath = GetShaderXmlPath("shaderx.xml");
+    nString shdXmlFilePath = GetShaderXmlPath("shaders.xml");
     if (shdXmlFilePath.IsEmpty())
     {
         n_listener("Cannot find shaders.xml file.\n");
