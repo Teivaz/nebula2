@@ -31,6 +31,7 @@ fn nPreview =
                 
             -- now, try to export it.
             exportFileName = getFilenameFile filename
+
             -- specify the extension.
             exportFileName += ".n2"
 
@@ -42,7 +43,9 @@ fn nPreview =
         exportFileName = maxFileName
         exportFileName = getFilenameFile exportFileName
 
+        exportFileName += ".n2"
         nExportScene exportFileName -1
     )
 )
+
 
