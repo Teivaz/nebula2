@@ -13,8 +13,12 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
+#define USE_ACTIVEX_ENVELOPECURVE_CTRL 1
+
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
 // prefix of the envelopecurve activex control 
 const char* particlePrefix = "nx";
+#endif
 
 //-----------------------------------------------------------------------------
 /**
@@ -85,14 +89,14 @@ GetDefault(TiXmlElement* elemParam)
         nArray<nString> tokens;
         int numValues = defVal.Tokenize(" ", tokens);
 
-        defScript += "[";
+        defScript += "#(";
         for (int i=0; i<numValues; i++)
         {
             defScript += tokens[i];
             if (i < numValues - 1)
                 defScript += ", ";
         }
-        defScript += "]";
+        defScript += ")";
     }
     else
     {
@@ -141,18 +145,10 @@ AddSpinner(TiXmlElement* elemParam)
     nString defaultVal = elemParam->Attribute("def");   // default value of the ui.
 
     nString uiScript;
-    uiScript += "\t\t";
-    uiScript += "spinner";
-    uiScript += " ";
-    uiScript += paramName;
-    uiScript += " ";
-    uiScript += "\"" + caption + "\"";
-    uiScript += " ";
-    uiScript += "align:#left";
-    uiScript += " ";
+    nString tmp;
 
-    uiScript += "fieldwidth:36";
-    uiScript += " ";
+    tmp.Format("\t\tspinner %s \"%s\" align:#left fieldwidth:36 ", paramName.Get(), caption.Get());
+    uiScript += tmp;
 
     // if the element has spinner UI, there's min/max attributes in xml element.
     nString min = elemParam->Attribute("min");
@@ -189,16 +185,10 @@ AddCheckBox(TiXmlElement* elemParam)
     nString defaultVal = elemParam->Attribute("def");
 
     nString uiScript;
+    nString tmp;
 
-    uiScript += "\t\t";
-    uiScript += "checkbox";
-    uiScript += " ";
-    uiScript += paramName;
-    uiScript += " ";
-    uiScript += "\"" + caption + "\"";
-    uiScript += " ";
-    uiScript += "align:#left";
-    uiScript += " ";
+    tmp.Format("\t\tcheckbox %s \"%s\" align:#left ", paramName.Get(), caption.Get());
+    uiScript += tmp;
 
     uiScript += "checked:";
     uiScript += GetDefault(elemParam);
@@ -224,19 +214,10 @@ AddDropdownList(TiXmlElement* elemParam)
     nString caption = elemParam->Attribute("label");
 
     nString uiScript;
+    nString tmp;
 
-    uiScript += "\t\t";
-    uiScript += "dropdownlist";
-    uiScript += " ";
-    uiScript += paramName;
-    uiScript += " ";
-    uiScript += "\"" + caption + "\"";
-    uiScript += " ";
-    uiScript += "align:#left";
-    uiScript += " ";
-
-    uiScript += "width:100";
-    uiScript += " ";
+    tmp.Format("\t\tdropdownlist %s \"%s\" align:#left width:100 ", paramName.Get(), caption.Get());
+    uiScript += tmp;
 
     // we assume that if we have dropdownlist, the type of the element is 'Enum'.
     // if the ui is 'dropdownlist', it needs items.
@@ -288,16 +269,10 @@ AddColorPicker(TiXmlElement* elemParam)
     nString caption = elemParam->Attribute("label");
 
     nString uiScript;
+    nString tmp;
 
-    uiScript += "\t\t";
-    uiScript += "colorpicker";
-    uiScript += " ";
-    uiScript += paramName;
-    uiScript += " ";
-    uiScript += "\"" + caption + "\"";
-    uiScript += " ";
-    uiScript += "align:#left";
-    uiScript += " ";
+    tmp.Format("\t\tcolorpicker %s \"%s\" align:#left ", paramName.Get(), caption.Get());
+    uiScript += tmp;
 
 #if MAX_RELEASE >= 6000
     uiScript += "alpha:true";
@@ -350,18 +325,15 @@ AddMapButton(TiXmlElement* elemParam, nString defaultVal)
     nString caption = elemParam->Attribute("label");
 
     nString uiScript;
+    nString tmp;
 
     nString dummyLabel = paramName;
     dummyLabel += "_";
     uiScript += AddLabel(dummyLabel, caption, 2, true);
 
-    uiScript += "\t\t";
-    uiScript += "mapbutton";
-    uiScript += " ";
-    uiScript += paramName;
-    uiScript += " ";
-    uiScript += "\"" + caption + "\"";
-    uiScript += " ";
+    tmp.Format("\t\tmapbutton %s \"%s\" ", paramName.Get(), caption.Get());
+    uiScript += tmp;
+
     // add default map property if the default value is given.
     if (!defaultVal.IsEmpty())
     {
@@ -467,25 +439,18 @@ nString
 AddLabel(const nString &uiname, const nString &caption, int across, bool addDot)
 {
     nString uiScript;
+    nString tmp;
 
-    uiScript += "\t\t";
-    uiScript += "label";
-    uiScript += " ";
-    uiScript += uiname;
-    uiScript += " ";
-    uiScript += "\"";
-    uiScript += caption ;
+    tmp.Format("\t\tlabel %s \"%s", uiname.Get(), caption.Get());
+    uiScript += tmp;
+
     if (addDot)
     {
         uiScript += "..................................................";
     }
-    uiScript += "\"";
-    uiScript += " ";
 
-    uiScript += "align:#left";
-    uiScript += " ";
-
-    uiScript += "across:";
+    tmp.Format("\" align:#left across:");
+    uiScript += tmp;
 
     nString strAcross;
     strAcross.AppendInt(across);
@@ -502,16 +467,16 @@ AddLabel(const nString &uiname, const nString &caption, int across, bool addDot)
 
     Example:
     @verbatim
-	button btnFldBumpMap0 "texture:"align:#right width:150
-	on btnFBumpMap0 pressed do
-	(
-		mapPath = getSavePath caption:"Select path of Wave Bump Map"
-		if mapPath != undefined then 
-		(
-			dirSettingBumpMap0  = mapPath
+    button btnFldBumpMap0 "texture:"align:#right width:150
+    on btnFBumpMap0 pressed do
+    (
+        mapPath = getSavePath caption:"Select path of Wave Bump Map"
+        if mapPath != undefined then 
+        (
+            dirSettingBumpMap0  = mapPath
             edtFldBumpMap0.text = mapPath
-		)
-	)
+        )
+    )
     @endverbatim
 */
 nString
@@ -521,90 +486,38 @@ AddSetDirDlg(TiXmlElement* elemParam)
     nString caption = elemParam->Attribute("label");
 
     nString uiScript;
+    nString tmp;
+
     nString uiPrefix = "Fld";
 
     // script code for 'edittext' control
-    uiScript += "\t\t";
-    uiScript += "edittext";
-    uiScript += " ";
-    uiScript += "edt";
-    uiScript += uiPrefix + uiname;
-    uiScript += " ";
-    uiScript += "\"";
-    uiScript += "Dest Folder : ";
-    uiScript += "\"";
-    //uiScript += " align:#left fieldWidth:180 across:2 readonly:true \n";
-    uiScript += " align:#left fieldWidth:180 across:2 \n";
+    tmp.Format("\t\tedittext edt%s%s \"Dest Folder : \"  align:#left fieldWidth:180 across:2 \n", uiPrefix.Get(), uiname.Get());
+    uiScript += tmp;
 
     // script code for 'button' control
-    uiScript += "\t\t";
-    uiScript += "button";
-    uiScript += " ";
-    uiScript += "btn";
-    uiScript += uiPrefix + uiname;
-    uiScript += " ";
-
-    //button name.
-    uiScript += " ";
-    uiScript += "\"";
-    uiScript += "<<";
-    uiScript += "\"";
-    uiScript += " ";
-
-    uiScript += "align:#right";
-    uiScript += " ";
-    uiScript += "width:40 height:18";
-    uiScript += "\n";
+    tmp.Format("\t\tbutton btn%s%s \"<<\" align:#right width:40 height:18\n", uiPrefix.Get(), uiname.Get());
+    uiScript += tmp;
 
     // button handler scrpt code
-    uiScript += "\t\t";
-    uiScript += "on ";
-    uiScript += "btn";
-    uiScript += uiPrefix + uiname;
-    uiScript += " ";
-    uiScript += "pressed do\n";
-    uiScript += "\t\t";
-    uiScript += "(\n";
+    tmp.Format("\t\ton btn%s%s pressed do\n\t\t(\n", uiPrefix.Get(), uiname.Get());
+    uiScript += tmp;
     
-    uiScript += "\t\t\t";
-
-    uiScript += "mapPath = getSavePath";
-    uiScript += " ";
-    uiScript += "caption:";
-    uiScript += "\"";
-    uiScript += "Select a directory where the ";
-    uiScript += caption;
-    uiScript += " to be exported.";
-    uiScript += "\"";
-    uiScript += "\n";
+    tmp.Format("\t\t\tmapPath = getSavePath caption:\"Select a directory where the %s to be exported.\"\n", caption.Get());
+    uiScript += tmp;
     
-    uiScript += "\t\t\t";
-    uiScript += "if mapPath != undefined then \n";
-    uiScript += "\t\t\t";
-    uiScript += "(\n";
+    tmp.Format("\t\t\tif mapPath != undefined then \n\t\t\t(\n");
+    uiScript += tmp;
 
     //HACK: the string 'dirSetting' should be same with the string
     //      which can be found in GenerateScript() function and
     //      nMaxMaterial::GetNebulaMaterial() function.
     //      code : dirSettngDiffmap0 = mapPath
-    uiScript += "\t\t\t\t"; 
-    uiScript += "dirSetting" + uiname;
-    uiScript += " = mapPath";
-    uiScript += "\n";
+    tmp.Format("\t\t\t\tdirSetting%s = mapPath\n", uiname.Get());
+    uiScript += tmp;
 
     // code : edtFldDiffMap0.text = mapPath
-    uiScript += "\t\t\t\t";
-    uiScript += "edt";
-    uiScript += uiPrefix + uiname;
-    uiScript += ".text";
-    uiScript += " = mapPath";
-    uiScript += "\n";
-    
-    uiScript += "\t\t\t";
-    uiScript += ")\n";
-
-    uiScript += "\t\t";
-    uiScript += ")\n";
+    tmp.Format("\t\t\t\tedt%s%s.text = mapPath\n\t\t\t)\n\t\t)\n", uiPrefix.Get(), uiname.Get());
+    uiScript += tmp;
 
     return uiScript;
 }
@@ -627,7 +540,7 @@ static
 nString AddEnvelopeCurveEventHandler(nString &paramName)
 {
     nString s;
-
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
     s += "\t\t\t"; s += paramName; s += "[1]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 0\n";
     s += "\t\t\t"; s += paramName; s += "[2]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 1\n";
     s += "\t\t\t"; s += paramName; s += "[3]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 2\n";
@@ -639,7 +552,20 @@ nString AddEnvelopeCurveEventHandler(nString &paramName)
     s += "\t\t\t"; s += paramName; s += "[7]"; s += " = "; s += particlePrefix; s += paramName; s += ".Frequency\n";
     s += "\t\t\t"; s += paramName; s += "[8]"; s += " = "; s += particlePrefix; s += paramName; s += ".Amplitude\n";
     s += "\t\t\t"; s += paramName; s += "[9]"; s += " = "; s += particlePrefix; s += paramName; s += ".ModulationFunc\n";
-    
+#else
+    nString tmp;
+    tmp.Format("\t\t\t%s[1] = %s_v0.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[2] = %s_v1.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[3] = %s_v2.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[4] = %s_v3.value\n", paramName.Get(), paramName.Get());  s += tmp;
+
+    tmp.Format("\t\t\t%s[5] = %s_p1.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[6] = %s_p2.value\n", paramName.Get(), paramName.Get());  s += tmp;
+
+    tmp.Format("\t\t\t%s[7] = %s_freq.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[8] = %s_ampl.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[9] = %s_modulation.selection\n", paramName.Get(), paramName.Get());  s += tmp;
+#endif
     return s;
 }
 
@@ -693,13 +619,6 @@ nString AddToolkitServerScriptForEnvelopeCurve(const nString &shdName, nString &
 /**
     Add nmaxenvelopecurve custom control to the rollout.
 
-    The code such as the following is generated:
-    @verbatim
-    group "Emission Frequency"
-	(
-	    activeXControl EmissionFrequency "{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}" height:130
-	)
-    @endverbatim
 */
 nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
 {
@@ -708,45 +627,105 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
     nString defaultVal = elemParam->Attribute("def");   // default value of the ui.
 
     nString uiScript;
+    nString tmp;
 
     // begin of group control
-    uiScript += "\t\t";
-    uiScript += "group ";
-    uiScript += "\"";
-    uiScript += caption;
-    uiScript += "\"";
-    uiScript += "\n";
-    uiScript += "\t\t";
-    uiScript += "(\n";
+    tmp.Format("\t\tgroup \"%s\"\n\t\t(\n", caption.Get());
+    uiScript += tmp;
 
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
     // nmaxenvelopecurve control.
-    uiScript += "\t\t";
-    uiScript += "activeXControl";
-    uiScript += " ";
-    uiScript += particlePrefix; //prefix to mark it as activex control.
-    uiScript += paramName;
-    uiScript += " ";
-    uiScript += "\"";
-    uiScript += "{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}";
-    uiScript += "\"";
-    uiScript += " ";
-    uiScript += "height:130";
+    tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:130 \n", particlePrefix, paramName.Get());
+    uiScript += tmp;
+
+    struct SpinnerName
+    {
+        nString paramname;
+        nString caption;
+
+    } spinnerName[] = 
+    {
+        {"SelPos",    "Selected Position"},
+        {"SelVal",    "Selected Value"},
+        {"Max",       "Max"},
+        {"Min",       "Min"},
+        {"Frequency", "Frequency"},
+        {"Amplitude", "Amplitude"}
+    };
+
+    for (int i=0; i<6; ++i)
+    {
+        tmp.Format("\t\tspinner %s%s \" %s \" align:#left fieldwidth:36\n", paramName.Get(), spinnerName[i].paramname.Get(), spinnerName[i].caption.Get());
+        uiScript += tmp;
+    }
+
+    tmp.Format("\t\tdropdownlist %sFunc \"Function\" width:100 items:#(\"Sine\", \"Cosine\") selection:1\n", paramName.Get());
+    uiScript += tmp;
 
     //FIXME: do we need call 'open' handler func to set default values?
 
-    uiScript += "\n";
+#else    
+    nArray<nString> defValues;
+    int count = defaultVal.Tokenize(" \t\n", defValues);
+
+    if (paramName == "ParticleRGB")
+    {
+        // n_assert(count == 16);
+    }
+    else
+    {
+        n_assert(count == 9 || count == 8);
+        // FIXME: check the default values' type
+        nArray<float> defFloatValues;
+        for (int i = 0; i < 8; i++)
+        {
+            defFloatValues.Append(atof(defValues[i].Get()));
+        }
+        int modulation = 1;
+        if (count == 9)
+        {
+            modulation = atoi(defValues[8].Get()) + 1;
+        }
+
+        tmp.Format("\t\tlabel %s_l1 \"Values\" align:#left offset:[0, 0] width:64 height:13 across:4\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\tspinner %s_p1 \"p1\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[4]);
+        uiScript += tmp;
+        tmp.Format("\t\tspinner  %s_p2 \"p2\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[5]);
+        uiScript += tmp;
+        tmp.Format("\t\tlabel %s_dummy \"\"\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\tspinner %s_v0 \"v0\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45 across:4\n", paramName.Get(), defFloatValues[0]);
+        uiScript += tmp;
+        tmp.Format("\t\tspinner %s_v1 \"v1\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[1]);
+        uiScript += tmp;
+        tmp.Format("\t\tspinner %s_v2 \"v2\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[2]);
+        uiScript += tmp;
+        tmp.Format("\t\tspinner %s_v3 \"v3\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[3]);
+        uiScript += tmp;
+        tmp.Format("\t\tspinner %s_freq \"Frequency\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:60\n", paramName.Get(), defFloatValues[6]);
+        uiScript += tmp;
+        tmp.Format("\t\tspinner %s_ampl \"Amplitude\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:60\n", paramName.Get(), defFloatValues[7]);
+        uiScript += tmp;
+        tmp.Format("\t\tdropdownList %s_modulation \"ModulationFunc\" align:#left offset:[144, -42] width:112 height:41 items:#(\"sine\", \"cosine\") selection:%d\n", paramName.Get(), modulation);
+        uiScript += tmp;
+    }
+#endif
 
     // end of group control
     uiScript += "\t\t";
     uiScript += ")\n";
 
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
     // add activex contorl event handler
-    uiScript += "\t\t";
-    uiScript += "on ";
-    uiScript += particlePrefix;
-    uiScript += paramName;
-    uiScript += " ";
-    uiScript += "OnChangedValue do\n";
+    tmp.Format("\t\ton %s%s OnChangedValue do\n", particlePrefix, paramName.Get());
+    uiScript += tmp;
+
+#else
+    // add controls event handlers
+    tmp.Format("\t\tfn update_%s=\n", paramName.Get());
+    uiScript += tmp;
+#endif
     uiScript += "\t\t";
     uiScript += "(\n";
 
@@ -768,5 +747,53 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
     uiScript += "\t\t";
     uiScript += ")\n";
 
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
+
+    for (int i=0; i<6; ++i)
+    {
+        if (spinnerName[i].paramname != "SelPos" ||
+            spinnerName[i].paramname != "SelVal")
+        {
+            tmp.Format("\t\ton %s%s changed val do \n\t\t(\n", paramName.Get(), spinnerName[i].paramname.Get());
+            uiScript += tmp;
+            tmp.Format("\t\t\t%s%s.%s = val \n", particlePrefix, paramName.Get(), spinnerName[i].paramname.Get());
+            uiScript += tmp;
+            uiScript += "\t\t)\n";
+        }
+    }
+
+#else
+    if (paramName == "ParticleRGB")
+    {
+        //TODO: add event hendler for rgb curve control.
+        ;
+    }
+    else
+    {
+        tmp.Format("\t\ton %s_v0 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v3 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+
+        tmp.Format("\t\ton %s_p1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_p2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+
+        tmp.Format("\t\ton %s_freq changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_ampl changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_modulation selected i do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+    }
+#endif
+
     return uiScript;
 }
+
+
