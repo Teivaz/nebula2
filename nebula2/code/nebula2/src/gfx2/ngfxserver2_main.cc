@@ -560,6 +560,7 @@ nGfxServer2::SetTransform(TransformType type, const matrix44& matrix)
 
         case ShadowProjection:
             this->transform[ShadowProjection] = matrix;
+            break;
 
         case Texture0:
         case Texture1:
@@ -1133,4 +1134,5 @@ nGfxServer2::SetClipPlanes(const nArray<plane>& planes)
 {
     this->clipPlanes = planes;
 }
+
 
