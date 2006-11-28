@@ -13,7 +13,7 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
-#define USE_ACTIVEX_ENVELOPECURVE_CTRL 1
+
 
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
 // prefix of the envelopecurve activex control 

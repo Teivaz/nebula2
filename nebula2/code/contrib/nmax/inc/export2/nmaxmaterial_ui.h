@@ -21,4 +21,6 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam);
 
 nString GetDefault(TiXmlElement* elemParam);
 
+#define USE_ACTIVEX_ENVELOPECURVE_CTRL 1
+
 #endif

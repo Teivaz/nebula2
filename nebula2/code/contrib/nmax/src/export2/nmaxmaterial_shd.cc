@@ -48,7 +48,7 @@ nString GetShaderXmlPath(nString file)
     nFileServer2* fileServer = nFileServer2::Instance();
 
     // check the .ini file exist in 3dsmax plugin directory.
-    if (!fileServer->FileExists(iniFilename.Get()))
+    if (!fileServer->FileExists(iniFilename))
     {
         // .ini file does not exist in '/plugcfg' directory.
         n_message("%s file does not exist in '$3dsmax/plugcfg' directory.\n", 
@@ -81,7 +81,7 @@ nString GetShaderXmlPath(nString file)
     shdxml += "data\\shaders\\";
     shdxml += file;
 
-    if (!nFileServer2::Instance()->FileExists(shdxml.Get()))
+    if (!nFileServer2::Instance()->FileExists(shdxml))
     {
         n_message("File %s does not exist.\n", shdxml.Get());
 
@@ -567,11 +567,24 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
 
     // specify default value of the parameter.
     if (paramType == "Vector" || 
-       (paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve"))
+        paramType == "ColorEnvelopeCurve")
     {
-        // we don't need default values for 'vector' and 'envelopecurve' type 
+        // we don't need default values for 'vector' and 'ColorEnvelopeCurve' type 
         // those are types uses floattab.
         ;
+    }
+    else
+    if (paramType == "EnvelopeCurve")
+    {
+        /*
+        nString defaultValue = GetDefault(elemParam);
+        if (!defaultValue.IsEmpty())
+        {
+            strParamBlock += "default:";
+            strParamBlock += defaultValue;
+            strParamBlock += " ";
+        }
+        */
     }
     else
     {
@@ -591,7 +604,34 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
     {
         // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
         // it is hard to bind those control type with parameters block.
-        if (!(paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve"))
+        if (paramType == "EnvelopeCurve")
+        {
+#ifndef USE_ACTIVEX_ENVELOPECURVE_CTRL
+            // 'ui' name should be same as parameter name.
+            strParamBlock += "ui:";
+            nString name = paramName;
+            strParamBlock += "(";
+            strParamBlock += name + "_v0, ";
+            strParamBlock += name + "_v1, ";
+            strParamBlock += name + "_v2, ";
+            strParamBlock += name + "_v3, ";
+
+            strParamBlock += name + "_p1, ";
+            strParamBlock += name + "_p2, ";
+
+            strParamBlock += name + "_freq, ";
+            strParamBlock += name + "_ampl, ";
+            strParamBlock += name + "_modulation";
+            strParamBlock += ")";
+#endif
+        }
+        else
+        if (paramType == "ColorEnvelopeCurve")
+        {
+            //TODO: add code of parameters block for color curve control.
+            ;
+        }
+        else
         {
             // 'ui' name should be same as parameter name.
             strParamBlock += "ui:";
