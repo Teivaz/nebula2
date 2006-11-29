@@ -539,9 +539,11 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
                  'name', 'label', 'type', 'gui', 'export', 'min', 'max', 'def', 'enum'
 */
 static
-void GenerateScript(TiXmlElement* elemParam, nString& shdName,
-                    nString& strParamBlock, nString &strRollout)
+void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParamBlock, 
+                    nString &strRollout, nString &openEvent, nString &closeEvent)
 {
+    nString tmp;
+
     // start to generate script for param block clause.
 
     // parameter name in parameter block.
@@ -702,10 +704,15 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName,
     @param elemShader element of the given xml
     @param strParamBlock parameter block script which to be generated.
     @param strRollout rollout script which to be generated.
+    @param openEvent
+    @param closeEvent
 */
 static
-void ParseParams(TiXmlElement* elemShader, nString& shdName, nString& strParamBlock, nString &strRollout)
+void ParseParams(TiXmlElement* elemShader, nString& shdName, nString& strParamBlock, 
+                 nString &strRollout, nString &openEvent, nString &closeEvent)
 {
+    nString tmp;
+
     nString shdType = elemShader->Attribute("shaderType");
     nString meshType = elemShader->Attribute("meshType");
 
@@ -713,17 +720,13 @@ void ParseParams(TiXmlElement* elemShader, nString& shdName, nString& strParamBl
     nString effectFileName = elemShader->Attribute("file");
 
     // 'Shader' parameter in parameter block.
-    strParamBlock += "\t\t";
-    strParamBlock += "Shader type:#string ";
-    strParamBlock += "default:\"";
-    strParamBlock += effectFileName;
-    strParamBlock += "\" animatable:false";
-    strParamBlock += "\n";
+    tmp.Format("\t\tShader type:#string default:\"%s\" animatable:false\n", effectFileName.Get());
+    strParamBlock += tmp;
 
     TiXmlElement* elemParam = elemShader->FirstChild("param")->ToElement();
     for (elemParam; elemParam; elemParam = elemParam->NextSiblingElement())
     {
-        GenerateScript(elemParam, shdName, strParamBlock, strRollout);
+        GenerateScript(elemParam, shdName, strParamBlock, strRollout, openEvent, closeEvent);
     }
 }
 
@@ -751,30 +754,23 @@ static
 nString AddPluginEventHandlers()
 {
     nString script;
+    nString tmp;
 
     // 'create' plugin event handlers
-    script += "\ton create do\n";
-    script += "\t(\n";
-    script += "\t\tOnPluginCreate()\n";
-    script += "\t)\n";
+    tmp.Format("\ton create do\n\t(\n\t\tOnPluginCreate()\n\t)\n");
+    script += tmp;
 
     // 'postCreate' plugin event handlers
-    script += "\ton postCreate do\n";
-    script += "\t(\n";
-    script += "\t\tOnPluginPostCreate()\n";
-    script += "\t)\n";
+    tmp.Format("\ton postCreate do\n\t(\n\t\tOnPluginPostCreate()\n\t)\n");
+    script += tmp;
 
     // 'load' plugin event handlers
-    script += "\ton load do\n";
-    script += "\t(\n";
-    script += "\t\tOnPluginLoad()\n";
-    script += "\t)\n";
+    tmp.Format("\ton load do\n\t(\n\t\tOnPluginLoad()\n\t)\n");
+    script += tmp;
 
     // 'postLoad' plugin event handlers
-    script += "\ton postLoad do\n";
-    script += "\t(\n";
-    script += "\t\tOnPluginPostLoad()\n";
-    script += "\t)\n";
+    tmp.Format("\ton postLoad do\n\t(\n\t\tOnPluginPostLoad()\n\t)\n");
+    script += tmp;
 
     return script;
 }
@@ -920,6 +916,7 @@ bool EvalCustomMaterialPlugin()
 
     // array for containing generated custom attribute script.
     nArray<nString> custAttribArray;
+    nString tmp;
 
     // retrieves all shader names in xml file.
     child = xmlHandle.FirstChild("NebulaShaderDatabase").FirstChild("shader").Element();
@@ -952,52 +949,64 @@ bool EvalCustomMaterialPlugin()
         custattribName += nMaxUtil::CorrectName(name);
         custAttribNameArray.Append(custattribName);
 
-        custattrib += custattribName;
-        custattrib += " = ";
-        custattrib += "attributes";
-        custattrib += " ";
-        custattrib += "\"";
-        custattrib += caName;//name;
-        custattrib += "\"";
-        custattrib += "\n";
-        custattrib += "(\n";
+        tmp.Format("%s = attributes \"%s\"\n(\n", custattribName.Get(), caName.Get());
+        custattrib += tmp;
 
         // parameter block and rollout clause.
-        nString paramBlock, rollout;
+        nString paramBlock, rollout, openEvent, closeEvent;
 
         nString shdName = nMaxUtil::CorrectName(name);
 
         nString rolloutName = "r" + shdName; //e.g. "rStandard"
 
-        paramBlock += "\t";
-        paramBlock += "parameters ";
-        paramBlock += shdName;//nMaxUtil::CorrectName(shdname);
-        paramBlock += " ";
-        paramBlock += "rollout:";
-        paramBlock += rolloutName;
-        paramBlock += "\n";
-        paramBlock += "\t(\n";
+        tmp.Format("\tparameters %s rollout:%s\n\t(\n", shdName.Get(), rolloutName.Get());
+        paramBlock += tmp;
 
         // begin rollout
-        rollout += "\t";
-        rollout += "rollout ";
-        rollout += rolloutName;
-        rollout += " ";
-
-        //specify rollout name.
-        rollout += "\"";
-        rollout += name;
-        rollout += " ";
-        rollout += "Parameters";
-        rollout += "\"";
-        rollout += "\n";
+        tmp.Format("\trollout %s \"%s Parameters\"\n", rolloutName.Get(), name.Get());
+        rollout += tmp;
 
         rollout += "\t(\n";
 
         // parse each param elements in shader element.
-        ParseParams(child, caName, paramBlock, rollout);
+        ParseParams(child, caName, paramBlock, rollout, openEvent, closeEvent);
 
         paramBlock += "\t)\n";
+
+        //if (!openEvent.IsEmpty())
+        {
+            tmp.Format("\t\ton %s open do\n\t\t(\n", rolloutName.Get());
+            rollout += tmp;
+ 
+            rollout += openEvent;
+
+            //HACK: ugly hardcoding, we assume if the rollout name contains "Particle",
+            //       it uses activex control and enables accelerators.
+            if (strstr(rolloutName.Get(), "Particle"))
+            {
+                tmp.Format("\t\t\tenableAccelerators = false\n");
+                rollout += tmp;
+            }
+
+            rollout += "\t\t)\n";
+        }
+
+        //if (!closeEvent.IsEmpty())
+        {
+            tmp.Format("\t\ton %s close do\n\t\t(\n", rolloutName.Get());
+            rollout += tmp;
+
+            rollout += closeEvent;
+
+            if (strstr(rolloutName.Get(), "Particle"))
+            {
+                tmp.Format("\t\t\tenableAccelerators = true\n");
+                rollout += tmp;
+            }
+
+            rollout += "\t\t)\n";
+        }
+
         rollout += "\t)\n";;
 
         custattrib += paramBlock;
