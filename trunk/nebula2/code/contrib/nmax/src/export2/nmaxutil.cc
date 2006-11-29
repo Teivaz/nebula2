@@ -460,7 +460,7 @@ nMaxUtil::GetPathFromType(nAssignType type)
     @return path which part of path was replaced to assign name.
 */
 nString 
-nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, nString& fileName)
+nMaxUtil::RelacePathToAssign(nAssignType type, nString& path, const nString& fileName)
 {
     // retrieve texture path and append destination texture path to the end of the directory.
     nString ret, assign;

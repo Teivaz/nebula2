@@ -45,7 +45,7 @@ bool nMaxViewerOptions::Read()
     nFileServer2* fileServer = nFileServer2::Instance(); 
 
     // check the .ini file exist in 3dsmax plugin directory.
-    if (!fileServer->FileExists(iniFilename.Get()))
+    if (!fileServer->FileExists(iniFilename))
     {
         // the .ini file does not exist, so make new one.
         nFile* file = fileServer->NewFileObject();
@@ -76,15 +76,7 @@ bool nMaxViewerOptions::Read()
     if (!this->sceneFilename.IsEmpty())
     {
         this->arguments += "-view ";
-        if (this->sceneDir.IsValid())
-        {
-            this->arguments += nMaxUtil::RelacePathToAssign(nMaxUtil::Gfx, this->sceneDir, this->sceneFilename);
-        }
-        else
-        {
-            this->arguments += nMaxOptions::Instance()->GetGfxLibAssign();
-            this->arguments += this->sceneFilename;
-        }
+        this->arguments += this->GetScenePath();
         this->arguments += " ";
     }
     else
@@ -95,6 +87,27 @@ bool nMaxViewerOptions::Read()
 
     return true;
 }
+
+//------------------------------------------------------------------------------
+/**
+*/
+nString
+nMaxViewerOptions::GetScenePath() const
+{
+    nString path;
+    if (this->sceneDir.IsValid())
+    {
+        nString sceneDir = this->sceneDir;
+        path += nMaxUtil::RelacePathToAssign(nMaxUtil::Gfx, sceneDir, this->sceneFilename);
+    }
+    else
+    {
+        path += nMaxOptions::Instance()->GetGfxLibAssign();
+        path += this->sceneFilename;
+    }
+    return path;
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -250,5 +263,6 @@ bool nMaxViewerOptions::ReadCustomViewerOptions(const nString &iniFilename,
     iniFile->Release();
     return true;
 }
+
 
 
