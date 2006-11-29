@@ -644,11 +644,11 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
         // if there's gui, we create ui in the given rollout.
         if (hasGui)
         {
-            // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
-            // it is hard to bind those control type with parameters block.
             if (paramType == "EnvelopeCurve")
             {
-#ifdef !USE_ACTIVEX_ENVELOPECURVE_CTRL
+            // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
+            // it is hard to bind those control type with parameters block.
+#if !USE_ACTIVEX_ENVELOPECURVE_CTRL
                 // 'ui' name should be same as parameter name.
                 strParamBlock += "ui:";
                 nString name = paramName;
