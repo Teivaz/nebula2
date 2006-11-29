@@ -128,6 +128,43 @@ EnumToItem(const nString &enums, nArray<nString> &values)
 
 //-----------------------------------------------------------------------------
 /**
+    Add script code to be sent to the viewer through IPC.
+*/
+static
+nString
+AddToolkitServerScriptForSpinner(const nString &shdName, const nString &shaderHandler, const nString &paramName)
+{
+    nString s, tmp;
+
+    tmp.Format("\t\t\tif nIsConnectedIpc() do \n"); s += tmp;
+    tmp.Format("\t\t\t(\n");                        s += tmp;
+    tmp.Format("\t\t\t\tparam = %s.value as string\n", paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t)\n"); s += tmp;
+
+    return s;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Add script code to be sent to the viewer through IPC.
+*/
+static
+nString
+AddToolkitServerScriptForCheckBox(const nString &shdName, const nString &shaderHandler, const nString &paramName)
+{
+    nString s, tmp;
+
+    tmp.Format("\t\t\tif nIsConnectedIpc() do \n"); s += tmp;
+    tmp.Format("\t\t\t(\n");                        s += tmp;
+    tmp.Format("\t\t\t\tparam = %s.checked as string\n", paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t)\n"); s += tmp;
+
+    return s;
+}
+//-----------------------------------------------------------------------------
+/**
     Add spinner UI script to rollout clause.
 
     Example:
@@ -136,7 +173,7 @@ EnumToItem(const nString &enums, nArray<nString> &values)
     @endverbatim
 */
 nString 
-AddSpinner(TiXmlElement* elemParam)
+AddSpinner(const nString &shdName, const nString &shaderHandler, bool isFloat, TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
     nString caption    = elemParam->Attribute("label"); // UI caption 
@@ -152,16 +189,19 @@ AddSpinner(TiXmlElement* elemParam)
     nString min = elemParam->Attribute("min");
     nString max = elemParam->Attribute("max");
 
-    uiScript += "range:[";
-    uiScript += min;
-    uiScript += ",";
-    uiScript += max.Substitute("+", ""); // max value has '+' sign, so we substitute it to empty char.
-    uiScript += ",";
+    tmp.Format("range:[%s, %s, %s] ",
+        min.Get(),
+        max.Substitute("+", "").Get(),    // max value has '+' sign, so we substitute it to empty char.
+        GetDefault(elemParam).Get()); uiScript += tmp;
     
-    uiScript += GetDefault(elemParam);
-    
-    uiScript += "]";
+    tmp.Format("type:%s", isFloat ? "#float" : "#integer"); uiScript += tmp;
+
     uiScript += "\n";
+
+    tmp.Format("\t\ton %s changed val do\n", paramName.Get()); uiScript += tmp;
+    tmp.Format("\t\t(\n"); uiScript += tmp;
+    uiScript += AddToolkitServerScriptForSpinner(shdName, shaderHandler, paramName);
+    tmp.Format("\t\t)\n"); uiScript += tmp;
 
     return uiScript;
 }
@@ -176,7 +216,7 @@ AddSpinner(TiXmlElement* elemParam)
     @endverbatim
 */
 nString 
-AddCheckBox(TiXmlElement* elemParam)
+AddCheckBox(const nString &shdName, const nString &shaderHandler, TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
     nString caption = elemParam->Attribute("label");
@@ -192,6 +232,11 @@ AddCheckBox(TiXmlElement* elemParam)
     uiScript += GetDefault(elemParam);
 
     uiScript += "\n";
+
+    tmp.Format("\t\ton %s changed val do\n", paramName.Get());    uiScript += tmp;
+    tmp.Format("\t\t(\n");    uiScript += tmp;
+    uiScript += AddToolkitServerScriptForCheckBox(shdName, shaderHandler, paramName);
+    tmp.Format("\t\t)\n");    uiScript += tmp;
 
     return uiScript;
 }
@@ -583,7 +628,7 @@ nString AddEnvelopeCurveEventHandler(nString &paramName)
     Add script code to be sent to the viewer through IPC.
 */
 static
-nString AddToolkitServerScriptForEnvelopeCurve(const nString &shdName, nString &paramName)
+nString AddToolkitServerScriptForEnvelopeCurve(const nString &shdName, const nString &shaderHandler, nString &paramName)
 {
     nString s;
 
@@ -614,9 +659,9 @@ nString AddToolkitServerScriptForEnvelopeCurve(const nString &shdName, nString &
     s += "\n";
 
     s += "\t\t\t\t"; s += "nChangeShaderParameter "; 
-    s += "\""; s += shdName; s += "\""; s += " ";
-    s += "\"particle2\""; s += " ";
-    s += "\""; s += paramName; s += "\""; s += " ";
+    s += "\""; s += shdName; s += "\" ";
+    s += "\""; s += shaderHandler; s+= "\" ";
+    s += "\""; s += paramName; s += "\" ";
     s += "param \n";
 
     s += "\t\t\t"; s += ")\n";
@@ -658,7 +703,7 @@ nString AddToolkitServerScriptForColorEnvelopeCurve(const nString &shdName, cons
     Add nmaxenvelopecurve custom control to the rollout.
 
 */
-nString AddEnvelopeCurve(const nString &shdName, const nString &shanderHandler, TiXmlElement* elemParam)
+nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
     nString caption    = elemParam->Attribute("label"); // UI caption 
@@ -787,7 +832,7 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shanderHandler, 
     if (paramName == "ParticleRGB")
     {
         uiScript += AddVectorEnvelopeCurveEventHandler(paramName);
-        uiScript += AddToolkitServerScriptForColorEnvelopeCurve(shdName, shanderHandler, paramName);
+        uiScript += AddToolkitServerScriptForColorEnvelopeCurve(shdName, shaderHandler, paramName);
     }
     else
     {
@@ -796,7 +841,7 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shanderHandler, 
         // NOTE: we could add this on parameters block clause,
         //       but it looks better to add this place for the activex control
         //       cause it has its own event handler.
-        uiScript += AddToolkitServerScriptForEnvelopeCurve(shdName, paramName);
+        uiScript += AddToolkitServerScriptForEnvelopeCurve(shdName, shaderHandler, paramName);
     }
 
     uiScript += "\t\t";
