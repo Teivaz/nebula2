@@ -181,16 +181,16 @@ nString GetParameterType(const nString &shdType)
     -17-Aug-06  kims Changed to add texutre directory setting button.
 */
 static
-nString GetUIFromType(TiXmlElement* elemParam, const nString &shdName, const nString &type)
+nString GetUIFromType(TiXmlElement* elemParam, const nString &shdName, const nString &shaderHandler, const nString &type)
 {
     if (type == "Int")
-        return AddSpinner(elemParam);
+        return AddSpinner(shdName, shaderHandler, false, elemParam);
     else
     if (type == "Bool")
-        return AddCheckBox(elemParam);
+        return AddCheckBox(shdName, shaderHandler, elemParam);
     else
     if (type == "Float")
-        return AddSpinner(elemParam);
+        return AddSpinner(shdName, shaderHandler, true, elemParam);
     else
     if (type == "Color")
         return AddColorPicker(elemParam);
@@ -238,7 +238,7 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &shdName, const nSt
         return AddVector4Spinner(elemParam);
     else
     if (type == "EnvelopeCurve" || type == "ColorEnvelopeCurve")
-        return AddEnvelopeCurve(shdName, elemParam);
+        return AddEnvelopeCurve(shdName, shaderHandler, elemParam);
     else
     {
         nString uiScript;
@@ -548,152 +548,190 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
 
     // parameter name in parameter block.
     nString paramName = elemParam->Attribute("name");
-    strParamBlock += "\t\t";
-    strParamBlock += paramName;
-    strParamBlock += " ";
-
     // parameter type
     nString paramType = elemParam->Attribute("type");
-    strParamBlock += "type:";
-    strParamBlock += GetParameterType(paramType);
-    strParamBlock += " ";
-
-    // if the type is one of any texture types, specifies false to this parameter.
-    // default setting is 'true' on animatable parameter.
-    if (strstr(paramType.Get(), "Texture"))
-    {
-        //strParamBlock += "animatable:false";
-        strParamBlock += "animatable:true";
-        strParamBlock += " ";
-    }
-
-    // specify default value of the parameter.
-    if (paramType == "Vector" || 
-        paramType == "ColorEnvelopeCurve")
-    {
-        // we don't need default values for 'vector' and 'ColorEnvelopeCurve' type 
-        // those are types uses floattab.
-        ;
-    }
-    else
-    if (paramType == "EnvelopeCurve")
-    {
-        /*
-        nString defaultValue = GetDefault(elemParam);
-        if (!defaultValue.IsEmpty())
-        {
-            strParamBlock += "default:";
-            strParamBlock += defaultValue;
-            strParamBlock += " ";
-        }
-        */
-    }
-    else
-    {
-        nString defaultValue = GetDefault(elemParam);
-        if (!defaultValue.IsEmpty())
-        {
-            strParamBlock += "default:";
-            strParamBlock += defaultValue;
-            strParamBlock += " ";
-        }
-    }
-
-    // if there's gui, we create ui in the given rollout.
+    nString shaderHandler = "common";
     int hasGui;
     elemParam->Attribute("gui", &hasGui);
-    if (hasGui)
+
+    // not a common shader handler
+    if (nShaderState::StringToParam(shdName.Get()) == nShaderState::InvalidParameter)
     {
-        // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
-        // it is hard to bind those control type with parameters block.
-        if (paramType == "EnvelopeCurve")
+        if (shdName == "Particle2")
         {
-#ifndef USE_ACTIVEX_ENVELOPECURVE_CTRL
-            // 'ui' name should be same as parameter name.
-            strParamBlock += "ui:";
-            nString name = paramName;
-            strParamBlock += "(";
-            strParamBlock += name + "_v0, ";
-            strParamBlock += name + "_v1, ";
-            strParamBlock += name + "_v2, ";
-            strParamBlock += name + "_v3, ";
-
-            strParamBlock += name + "_p1, ";
-            strParamBlock += name + "_p2, ";
-
-            strParamBlock += name + "_freq, ";
-            strParamBlock += name + "_ampl, ";
-            strParamBlock += name + "_modulation";
-            strParamBlock += ")";
-#endif
+            shaderHandler = "particle2";
         }
         else
-        if (paramType == "ColorEnvelopeCurve")
         {
-            //TODO: add code of parameters block for color curve control.
+            shaderHandler = "";
+        }
+    }
+
+#if 0
+    if (paramType == "ColorEnvelopeCurve")
+    {
+        n_assert(hasGui);
+        tmp.Format("\t\t%s_v0 type:%s ui:%s_v0\n", paramName.Get(), GetParameterType("Color").Get(), paramName.Get());
+        strParamBlock += tmp;
+        tmp.Format("\t\t%s_v1 type:%s ui:%s_v1\n", paramName.Get(), GetParameterType("Color").Get(), paramName.Get());
+        strParamBlock += tmp;
+        tmp.Format("\t\t%s_v2 type:%s ui:%s_v2\n", paramName.Get(), GetParameterType("Color").Get(), paramName.Get());
+        strParamBlock += tmp;
+        tmp.Format("\t\t%s_v3 type:%s ui:%s_v3\n", paramName.Get(), GetParameterType("Color").Get(), paramName.Get());
+        strParamBlock += tmp;
+
+        tmp.Format("\t\t%s_p1 type:%s ui:%s_p1\n", paramName.Get(), GetParameterType("Float").Get(), paramName.Get());
+        strParamBlock += tmp;
+        tmp.Format("\t\t%s_p2 type:%s ui:%s_p2\n", paramName.Get(), GetParameterType("Float").Get(), paramName.Get());
+        strParamBlock += tmp;
+
+        strRollout += GetUIFromType(elemParam, shdName, shaderHandler, paramType);
+
+        // append event handler.
+        strParamBlock += GetEventHandler(shdName, paramName, );
+    }
+    else
+#endif
+    {
+        strParamBlock += "\t\t";
+        strParamBlock += paramName;
+        strParamBlock += " ";
+
+        strParamBlock += "type:";
+        strParamBlock += GetParameterType(paramType);
+        strParamBlock += " ";
+
+        // if the type is one of any texture types, specifies false to this parameter.
+        // default setting is 'true' on animatable parameter.
+        if (strstr(paramType.Get(), "Texture"))
+        {
+            //strParamBlock += "animatable:false";
+            strParamBlock += "animatable:true";
+            strParamBlock += " ";
+        }
+
+        // specify default value of the parameter.
+        if (paramType == "Vector" || paramType == "ColorEnvelopeCurve")
+        {
+            // we don't need default values for 'vector' and 'ColorEnvelopeCurve' type 
+            // those are types uses floattab.
             ;
         }
         else
+        if (paramType == "EnvelopeCurve")
         {
-            // 'ui' name should be same as parameter name.
-            strParamBlock += "ui:";
-            // combine the 4 spinner into a parameter
-            if (paramType == "Vector")
+            /*
+            nString defaultValue = GetDefault(elemParam);
+            if (!defaultValue.IsEmpty())
             {
-                // names should be same as the spinners
-                // see AddVector4Spinner
+                strParamBlock += "default:";
+                strParamBlock += defaultValue;
+                strParamBlock += " ";
+            }
+            */
+        }
+        else
+        {
+            nString defaultValue = GetDefault(elemParam);
+            if (!defaultValue.IsEmpty())
+            {
+                strParamBlock += "default:";
+                strParamBlock += defaultValue;
+                strParamBlock += " ";
+            }
+        }
+
+        // if there's gui, we create ui in the given rollout.
+        if (hasGui)
+        {
+            // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
+            // it is hard to bind those control type with parameters block.
+            if (paramType == "EnvelopeCurve")
+            {
+                // 'ui' name should be same as parameter name.
+                strParamBlock += "ui:";
                 nString name = paramName;
                 strParamBlock += "(";
-                name.AppendInt(0);
-                strParamBlock += name;
-                strParamBlock += ", ";
-                name.AppendInt(1);
-                strParamBlock += name;
-                strParamBlock += ", ";
-                name.AppendInt(2);
-                strParamBlock += name;
-                strParamBlock += ", ";
-                name.AppendInt(3);
-                strParamBlock += name;
+                strParamBlock += name + "_v0, ";
+                strParamBlock += name + "_v1, ";
+                strParamBlock += name + "_v2, ";
+                strParamBlock += name + "_v3, ";
+
+                strParamBlock += name + "_p1, ";
+                strParamBlock += name + "_p2, ";
+
+                strParamBlock += name + "_freq, ";
+                strParamBlock += name + "_ampl, ";
+                strParamBlock += name + "_modulation";
                 strParamBlock += ")";
             }
             else
+            if (paramType == "ColorEnvelopeCurve")
             {
-                strParamBlock += paramName;
+                ;
             }
+            else
+            {
+                // 'ui' name should be same as parameter name.
+                strParamBlock += "ui:";
+                // combine the 4 spinner into a parameter
+                if (paramType == "Vector")
+                {
+                    // names should be same as the spinners
+                    // see AddVector4Spinner
+                    nString name = paramName;
+                    strParamBlock += "(";
+                    name.AppendInt(0);
+                    strParamBlock += name;
+                    strParamBlock += ", ";
+                    name.AppendInt(1);
+                    strParamBlock += name;
+                    strParamBlock += ", ";
+                    name.AppendInt(2);
+                    strParamBlock += name;
+                    strParamBlock += ", ";
+                    name.AppendInt(3);
+                    strParamBlock += name;
+                    strParamBlock += ")";
+                }
+                else
+                {
+                    strParamBlock += paramName;
+                }
+            }
+            strParamBlock += " \n";
+
+            strRollout += GetUIFromType(elemParam, shdName, shaderHandler, paramType);
         }
-        strParamBlock += " \n";
 
-        strRollout += GetUIFromType(elemParam, shdName, paramType);
-    }
+        // append event handler.
+        strParamBlock += GetEventHandler(shdName, paramName);
 
-    // append event handler.
-    strParamBlock += GetEventHandler (shdName, paramName);
+        // if it is texture type, add destination directory setting value.
+        if (strstr(paramType.Get(), "Texture") && hasGui)
+        {
+            //HACK: 'dirSetting' is used again in AddSetDirDlg() function.
+            //      and nMaxMaterial::GetNebulaMaterial() function.
+            //      So, if you change the string, the string in AddSetDirDlg() 
+            //      also should be changed.
+            nString prefix = "dirSetting";
 
-    // if it is texture type, add destination directory setting value.
-    if (strstr(paramType.Get(), "Texture") && hasGui)
-    {
-        //HACK: 'dirSetting' is used again in AddSetDirDlg() function.
-        //      and nMaxMaterial::GetNebulaMaterial() function.
-        //      So, if you change the string, the string in AddSetDirDlg() 
-        //      also should be changed.
-        nString prefix = "dirSetting";
+            strParamBlock += "\t\t";
+            strParamBlock += prefix;
+            strParamBlock += paramName;
+            strParamBlock += " ";
 
-        strParamBlock += "\t\t";
-        strParamBlock += prefix;
-        strParamBlock += paramName;
-        strParamBlock += " ";
+            strParamBlock += "type:#string ";
 
-        strParamBlock += "type:#string ";
+            // The directory parameter has "" for default string. It is absolutely necessary in Max6.
+            // Without that, the exporter is not usable as the panels that have those controls in them don't work.
+            strParamBlock += "default:\"\" ";
 
-        // The directory parameter has "" for default string. It is absolutely necessary in Max6.
-        // Without that, the exporter is not usable as the panels that have those controls in them don't work.
-        strParamBlock += "default:\"\" ";
-
-        strParamBlock += "ui:";
-        strParamBlock += "edtFld";
-        strParamBlock += paramName;
-        strParamBlock += "\n";
+            strParamBlock += "ui:";
+            strParamBlock += "edtFld";
+            strParamBlock += paramName;
+            strParamBlock += "\n";
+        }
     }
 }
 

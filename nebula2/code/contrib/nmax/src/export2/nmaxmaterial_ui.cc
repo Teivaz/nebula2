@@ -13,8 +13,6 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
-
-
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
 // prefix of the envelopecurve activex control 
 const char* particlePrefix = "nx";
@@ -529,7 +527,18 @@ static
 nString AddVectorEnvelopeCurveEventHandler(nString &paramName)
 {
     nString s;
-
+#if !USE_ACTIVEX_ENVELOPECURVE_CTRL
+    nString tmp;
+    int i, index;
+    for (i = 0, index = 1; i < 4; i++, index += 3)
+    {
+        tmp.Format("\t\t\t%s[%d] = %s_v%d.color.r / 255.0\n", paramName.Get(), index + 0, paramName.Get(), i);  s += tmp;
+        tmp.Format("\t\t\t%s[%d] = %s_v%d.color.g / 255.0\n", paramName.Get(), index + 1, paramName.Get(), i);  s += tmp;
+        tmp.Format("\t\t\t%s[%d] = %s_v%d.color.b / 255.0\n", paramName.Get(), index + 2, paramName.Get(), i);  s += tmp;
+    }
+    tmp.Format("\t\t\t%s[%d] = %s_p1.value\n", paramName.Get(), index + 0, paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[%d] = %s_p2.value\n", paramName.Get(), index + 1, paramName.Get());  s += tmp;
+#endif
     return s;
 }
 
@@ -617,10 +626,39 @@ nString AddToolkitServerScriptForEnvelopeCurve(const nString &shdName, nString &
 
 //-----------------------------------------------------------------------------
 /**
+    Add script code to be sent to the viewer through IPC.
+*/
+static
+nString AddToolkitServerScriptForColorEnvelopeCurve(const nString &shdName, const nString &shaderHandler, nString &paramName)
+{
+    nString s;
+    nString tmp;
+    int i;
+
+    tmp.Format("\t\t\tif nIsConnectedIpc() do \n"); s += tmp;
+    tmp.Format("\t\t\t(\n");                        s += tmp;
+    tmp.Format("\t\t\t\tparam = \"\" \n");          s += tmp;
+
+    for (i = 1; i <= 14; i++)
+    {
+        tmp.Format("\t\t\t\tparam += %s[%d] as string\n", paramName.Get(), i); s += tmp;
+        tmp.Format("\t\t\t\tparam += \" \"\n"); s += tmp;
+    }
+
+    tmp.Format("\n"); s += tmp;
+
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t)\n"); s += tmp;
+
+    return s;
+}
+
+//-----------------------------------------------------------------------------
+/**
     Add nmaxenvelopecurve custom control to the rollout.
 
 */
-nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
+nString AddEnvelopeCurve(const nString &shdName, const nString &shanderHandler, TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
     nString caption    = elemParam->Attribute("label"); // UI caption 
@@ -638,39 +676,55 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
     tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:130 \n", particlePrefix, paramName.Get());
     uiScript += tmp;
 
-    struct SpinnerName
-    {
-        nString paramname;
-        nString caption;
+    //struct SpinnerName
+    //{
+    //    nString paramname;
+    //    nString caption;
 
-    } spinnerName[] = 
-    {
-        {"SelPos",    "Selected Position"},
-        {"SelVal",    "Selected Value"},
-        {"Max",       "Max"},
-        {"Min",       "Min"},
-        {"Frequency", "Frequency"},
-        {"Amplitude", "Amplitude"}
-    };
+    //} spinnerName[] = 
+    //{
+    //    {"SelPos",    "Selected Position"},
+    //    {"SelVal",    "Selected Value"},
+    //    {"Max",       "Max"},
+    //    {"Min",       "Min"},
+    //    {"Frequency", "Frequency"},
+    //    {"Amplitude", "Amplitude"}
+    //};
 
-    for (int i=0; i<6; ++i)
-    {
-        tmp.Format("\t\tspinner %s%s \" %s \" align:#left fieldwidth:36\n", paramName.Get(), spinnerName[i].paramname.Get(), spinnerName[i].caption.Get());
-        uiScript += tmp;
-    }
+    //for (int i=0; i<6; ++i)
+    //{
+    //    tmp.Format("\t\tspinner %s%s \" %s \" align:#left fieldwidth:36\n", paramName.Get(), spinnerName[i].paramname.Get(), spinnerName[i].caption.Get());
+    //    uiScript += tmp;
+    //}
 
-    tmp.Format("\t\tdropdownlist %sFunc \"Function\" width:100 items:#(\"Sine\", \"Cosine\") selection:1\n", paramName.Get());
-    uiScript += tmp;
+    //tmp.Format("\t\tdropdownlist %sFunc \"Function\" width:100 items:#(\"Sine\", \"Cosine\") selection:1\n", paramName.Get());
+    //uiScript += tmp;
 
-    //FIXME: do we need call 'open' handler func to set default values?
+    ////FIXME: do we need call 'open' handler func to set default values?
 
-#else    
+#else
     nArray<nString> defValues;
     int count = defaultVal.Tokenize(" \t\n", defValues);
-
     if (paramName == "ParticleRGB")
     {
+        float defP1 = .3f, defP2 = .7f;
         // n_assert(count == 16);
+        tmp.Format("\t\t\tlabel %s_l1 \"Values\" align:#left offset:[0, 0] width:64 height:13 across:4\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner %s_p1 \"p1\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defP1);
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner  %s_p2 \"p2\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defP2);
+        uiScript += tmp;
+        tmp.Format("\t\t\tlabel %s_dummy \"\"\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v0 \"v0\" align:#left offset:[0, 0] width:64 height:16 across:4\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v1 \"v1\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v2 \"v2\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v3 \"v3\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
+        uiScript += tmp;
     }
     else
     {
@@ -687,27 +741,27 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
             modulation = atoi(defValues[8].Get()) + 1;
         }
 
-        tmp.Format("\t\tlabel %s_l1 \"Values\" align:#left offset:[0, 0] width:64 height:13 across:4\n", paramName.Get());
+        tmp.Format("\t\t\tlabel %s_l1 \"Values\" align:#left offset:[0, 0] width:64 height:13 across:4\n", paramName.Get());
         uiScript += tmp;
-        tmp.Format("\t\tspinner %s_p1 \"p1\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[4]);
+        tmp.Format("\t\t\tspinner %s_p1 \"p1\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[4]);
         uiScript += tmp;
-        tmp.Format("\t\tspinner  %s_p2 \"p2\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[5]);
+        tmp.Format("\t\t\tspinner  %s_p2 \"p2\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[5]);
         uiScript += tmp;
-        tmp.Format("\t\tlabel %s_dummy \"\"\n", paramName.Get());
+        tmp.Format("\t\t\tlabel %s_dummy \"\"\n", paramName.Get());
         uiScript += tmp;
-        tmp.Format("\t\tspinner %s_v0 \"v0\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45 across:4\n", paramName.Get(), defFloatValues[0]);
+        tmp.Format("\t\t\tspinner %s_v0 \"v0\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45 across:4\n", paramName.Get(), defFloatValues[0]);
         uiScript += tmp;
-        tmp.Format("\t\tspinner %s_v1 \"v1\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[1]);
+        tmp.Format("\t\t\tspinner %s_v1 \"v1\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[1]);
         uiScript += tmp;
-        tmp.Format("\t\tspinner %s_v2 \"v2\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[2]);
+        tmp.Format("\t\t\tspinner %s_v2 \"v2\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[2]);
         uiScript += tmp;
-        tmp.Format("\t\tspinner %s_v3 \"v3\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[3]);
+        tmp.Format("\t\t\tspinner %s_v3 \"v3\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defFloatValues[3]);
         uiScript += tmp;
-        tmp.Format("\t\tspinner %s_freq \"Frequency\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:60\n", paramName.Get(), defFloatValues[6]);
+        tmp.Format("\t\t\tspinner %s_freq \"Frequency\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:60\n", paramName.Get(), defFloatValues[6]);
         uiScript += tmp;
-        tmp.Format("\t\tspinner %s_ampl \"Amplitude\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:60\n", paramName.Get(), defFloatValues[7]);
+        tmp.Format("\t\t\tspinner %s_ampl \"Amplitude\" type:#float range:[0, 10000.0, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:60\n", paramName.Get(), defFloatValues[7]);
         uiScript += tmp;
-        tmp.Format("\t\tdropdownList %s_modulation \"ModulationFunc\" align:#left offset:[144, -42] width:112 height:41 items:#(\"sine\", \"cosine\") selection:%d\n", paramName.Get(), modulation);
+        tmp.Format("\t\t\tdropdownList %s_modulation \"ModulationFunc\" align:#left offset:[144, -42] width:112 height:41 items:#(\"sine\", \"cosine\") selection:%d\n", paramName.Get(), modulation);
         uiScript += tmp;
     }
 #endif
@@ -733,6 +787,7 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
     if (paramName == "ParticleRGB")
     {
         uiScript += AddVectorEnvelopeCurveEventHandler(paramName);
+        uiScript += AddToolkitServerScriptForColorEnvelopeCurve(shdName, shanderHandler, paramName);
     }
     else
     {
@@ -749,24 +804,35 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
 
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
 
-    for (int i=0; i<6; ++i)
-    {
-        if (spinnerName[i].paramname != "SelPos" ||
-            spinnerName[i].paramname != "SelVal")
-        {
-            tmp.Format("\t\ton %s%s changed val do \n\t\t(\n", paramName.Get(), spinnerName[i].paramname.Get());
-            uiScript += tmp;
-            tmp.Format("\t\t\t%s%s.%s = val \n", particlePrefix, paramName.Get(), spinnerName[i].paramname.Get());
-            uiScript += tmp;
-            uiScript += "\t\t)\n";
-        }
-    }
+    //for (int i=0; i<6; ++i)
+    //{
+    //    if (spinnerName[i].paramname != "SelPos" ||
+    //        spinnerName[i].paramname != "SelVal")
+    //    {
+    //        tmp.Format("\t\ton %s%s changed val do \n\t\t(\n", paramName.Get(), spinnerName[i].paramname.Get());
+    //        uiScript += tmp;
+    //        tmp.Format("\t\t\t%s%s.%s = val \n", particlePrefix, paramName.Get(), spinnerName[i].paramname.Get());
+    //        uiScript += tmp;
+    //        uiScript += "\t\t)\n";
+    //    }
+    //}
 
 #else
     if (paramName == "ParticleRGB")
     {
-        //TODO: add event hendler for rgb curve control.
-        ;
+        tmp.Format("\t\ton %s_v0 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v3 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+
+        tmp.Format("\t\ton %s_p1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_p2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
     }
     else
     {
@@ -795,5 +861,4 @@ nString AddEnvelopeCurve(const nString &shdName, TiXmlElement* elemParam)
 
     return uiScript;
 }
-
 
