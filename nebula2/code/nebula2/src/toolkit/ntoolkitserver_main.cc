@@ -372,7 +372,7 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
             partNode->SetCurve(nParticle2Emitter::ParticleRotationVelocity,
                                this->AsEnvelopeCurve(paramValue));
         }
-        else if ("ParticleSize" == paramID)
+        else if ("ParticleScale" == paramID)
         {
             partNode->SetCurve(nParticle2Emitter::ParticleScale,
                                this->AsEnvelopeCurve(paramValue));
@@ -404,7 +404,7 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         }
         else if ("TileTexture" == paramID)
         {
-            partNode->SetTileTexture(paramValue.AsBool());
+            partNode->SetTileTexture(paramValue.AsInt());
         }
         else if ("StretchToStart" == paramID)
         {
@@ -422,7 +422,7 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         {
             partNode->SetRandomRotDir(paramValue.AsBool());
         }
-        else if ("ParticleColor" == paramID)
+        else if ("ParticleRGB" == paramID)
         {
             partNode->SetRGBCurve(this->AsColorCurve(paramValue));
         }
@@ -438,7 +438,7 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         {
             partNode->SetPrecalcTime(paramValue.AsFloat());
         }
-        else if ("ParticleStartDelay" == paramID)
+        else if ("StartDelay" == paramID)
         {
             partNode->SetStartDelay(paramValue.AsFloat());
         }
