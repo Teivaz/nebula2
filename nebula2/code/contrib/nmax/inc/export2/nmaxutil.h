@@ -48,7 +48,7 @@ public:
     };
 
     ///
-    static nString RelacePathToAssign(nAssignType type, nString& path, nString& fileName);
+    static nString RelacePathToAssign(nAssignType type, nString& path, const nString& fileName);
 
     ///
     static bool nMaxUtil::CheckExistingViewer(nString& viewerName);

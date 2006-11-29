@@ -274,10 +274,7 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
             }
 
             nString objPath;
-            objPath += nMaxOptions::Instance()->GetGfxLibAssign();
-            //TODO: if we have any gfx subdirectories, append it
-            // ...
-            objPath += sceneFile;
+            objPath = viewerOptions.GetScenePath();
 
             nDoHotLoading(objPath.Get());
         }
@@ -299,5 +296,6 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
 
     return 1;
 }
+
 
 

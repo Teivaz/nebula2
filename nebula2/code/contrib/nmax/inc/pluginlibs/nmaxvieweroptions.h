@@ -56,6 +56,8 @@ public:
     const char* GetSceneFileName() const;
     /// Specifies scene dir
     void SetSceneDir(const nString& sceneDir);
+    /// Get scene path
+    nString GetScenePath() const;
 protected:
     bool ReadDefaultViewerOptions(const nString &iniFilename, const nString &sectionName);
     bool ReadCustomViewerOptions(const nString &iniFilename, const nString &sectionName);
