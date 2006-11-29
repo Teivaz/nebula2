@@ -648,7 +648,7 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
             // it is hard to bind those control type with parameters block.
             if (paramType == "EnvelopeCurve")
             {
-#ifndef USE_ACTIVEX_ENVELOPECURVE_CTRL
+#ifdef !USE_ACTIVEX_ENVELOPECURVE_CTRL
                 // 'ui' name should be same as parameter name.
                 strParamBlock += "ui:";
                 nString name = paramName;
