@@ -295,6 +295,8 @@ nToolkitServer::AsColorCurve(const nString& value)
 
 //------------------------------------------------------------------------------
 /**
+    -29-Nov-06  kims  Changed to be compatible the particle2 shader.
+                      Thank kaikai for the patch.
 */
 bool
 nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
