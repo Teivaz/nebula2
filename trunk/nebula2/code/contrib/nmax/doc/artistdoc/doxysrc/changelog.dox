@@ -6,6 +6,9 @@
 
     @section N2ChangeLog_2006_11 2006.11.
 
+    - Fixed to get correct shared memory object name to make preview mode
+    work.
+    - Added particle2 shader on the material editor.
     - Added hotloading stuff. Now the plug-in does not need to open a new viewer
     whenever it exports assets.
     - Fixed the problem of closing log dialog at the end of export stage. 

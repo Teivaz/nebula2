@@ -19,4 +19,12 @@
     So it can causes not desired result.
     It is highly recommended to export 3dsmax mesh objects which have same vertex components together.
 
+
+    @section NMaxKnownIusses_Material Material
+
+    @subsection NMaxKnownIusses_Particle2 Minimizing Material Editor with Particles2 shader.
+    On the case of the particle2 shader is selected on the material editor, when
+    you minimize the material editor it freezes 3dsmax. 
+    This bug does not shown on the other Nebula2 shaders.
+    The custom ActiveX control might affect the minimizing action.
 */

@@ -1,0 +1,150 @@
+/**
+    @defgroup NMaxHowtoParticle2 HowTo: Particle System 2
+
+    @section NMaxParticle2SystemOverview Particle System 2 Overview
+
+    As development goes on the need for a more powerful particle system arised. 
+    To not endanger the operativeness of current or recent projects and to give the ability 
+    to reuse older effects we decided to keep the Particle1 as is and do an independent 
+    new particle system. 
+    Its simply called Partile2 in the Nebula Material Editor. Basically its the same idea that 
+    underlies Particle2: Its a shader that enables a mesh to emit particles at its vertices 
+    along their vertexnormals. 
+    But the development was aiming towads a lot more flexibility, performance and stability. 
+    On the other Hand it surely got a little more complex. 
+    But here we will try to give you the complete overview of features and news.
+
+    @image html part_emitter.png "The emitter in Maya to the left and Nebula to the right"
+
+
+    @section NMaxParticle2Setup Setup a Particle Shader to your Scene
+
+    @subsection NMaxParticle2SceneSetup Scene Setup
+
+
+    @section NMaxParticle2Shader Shader Settings in Depth
+
+    @subsection NMaxParticle2MainSection Main Section
+
+    @image html part_mainsection01.png "Particle Shader 2 - Main Section - 1"   
+
+    <i>Render Priority:</i> <br>
+    specifies the position of this particle systems sprites in the render stack of all particle systems. 
+    (Note: Doesn't work if Alpha Source/Dest is set to One/One)
+
+    <i>Texture Map:</i> <br>
+    Thats the texture mapped onto the emitted sprites. 
+    Keep in mind that Alpha Source/Dest set to One/One doesn't make use of an alpha channel. 
+
+    <i>Alpha Dest:</i> <br>
+    The destination color is what color already exists at the pixel location being considered; 
+    this is the result of rendering some other object that is behind the transparent object. 
+    It is the object that will be visible through the transparent object.
+
+    <i>Texture Tiling:</i> <br>
+    New in Particle2: You can assing "random particle textures". 
+    You do so by creating a vertical strip of several textures and setting the number of them here. 
+    For an example see the image below. This can be used to do a lot more realistic looking fire or 
+    smoke or whatever you like:
+
+    @image html part_texturetiling.png "Rough example: With such a texture set to 2 Texture Tiling would cause something like this"   
+
+    @image html part_mainsection02.png "Particle Shader 2 - Main Section - 2"   
+
+    <i>Emission Duration:</i> <br>
+    Specifies the length of the cycle.
+
+    <i>Loop Emission:</i> <br>
+    If its set the Emission Duration will start over and over again.
+
+    <i>Activity Distance:</i> <br>
+    The Emission will be stopped if your distance to the emitting object is higher than the value 
+    set ant Activity Distance and will continue if within the amount.
+
+    <i>Render Oldes First:</i> <br>
+    Makes new emitted particles appear behind the old ones. 
+    Setting this depends a lot on usual viewing direction you see that effect from: 
+    E.g. in isometric views you'd want that checked on a particle system that creates smoke to avoid 
+    a tunnel-effect or a kind of weird looking.
+
+    <i>Start Delay:</i> <br>
+    From time = 0 the emission will be delayed by the amount of seconds set here.
+
+    <i>Precalculation at Start:</i> <br>
+    Use this to get rid of the annoying "come-into-a-room-and-the-fire-starts-burning"-syndrom. 
+    It fast-forwards the particle system by the given number of seconds at creation.
+
+    <i>Gravity:</i> <br>
+    Now you can set the gravity global for this particle system. 
+    The effect can be manipulated over time by the "Particle Mass" attribute beneath.
+
+    <i>Particle Stretch:</i> <br>
+    If higer than 0 this will cause the particles to aim towards their emitting direction and change their 
+    lenght according to the speed. Values above 0 influence the lenght-effect and will turn off all 
+    rotation specific attributes described beneath.
+
+    <i>Stretch Detail:</i> <br>
+    If your stretched particles perform a curved path caused by gravity or wind you can make the trail 
+    bend that way by giving up a number of subdivisions set here. 
+    Higher values may have influece on the performance. This only takes effect if Particle Stretch is set.
+
+    <i>Stretch To Start:</i> <br>
+    Checking this makes the stretched particles trail keep pinned to their emitting location. 
+    Means only the tip of each particle flyes around.
+
+    <i>Avoid Errors by fading:</i> <br>
+    Especially for the Stretch Detail feature this is a workaround to get rid of a heavy flipping 
+    effect that occurs if the particle bows and you look along its moving direction. 
+    It fades away the surfaces that are arranged in a close angle towards the viewer.
+
+
+
+    @section NMaxParticle2Editting Editting the Curves
+
+    ...
+
+    @section NMaxParticle2Emission Emission Duration Attributes
+
+
+    @subsection NMaxParticle2EmissionFrequency Emission Frequency
+
+
+    @subsection NMaxParticle2ParticleLifeTime Particle Lifetime
+
+    @subsection NMaxParticle2ParticleIntialVelocity Particle Initial Velocity
+
+
+    @subsection NMaxParticle2ParticleSpreadMaxMin Particle Spread Max / Min
+
+
+    @image html part_spreadminmax.png "Particle Shader 2 - Spread Max / Min"
+
+
+    @section NMaxParticle2LifetimeAttribute Life Time Attribute
+
+
+    @subsection NMaxParticle2InitialRotationalangleMinMax Initial Rotation Alangle Min / Max
+
+    @image html part_rotationalminmax.png "Particle Shader 2 - Initial Rotationangle Min / Max"
+
+
+    @subsection NMaxParticle2ParticleRotationVelocity Particle Rotation Velocity
+
+    @subsection NMaxParticle2ParticleSize Particle Size
+
+    @subsection NMaxParticle2ParticleColor Particle Color
+
+
+    @subsection NMaxParticle2ParticleAlpha Particle Alpha
+
+    @subsection NMaxParticle2ParticleAirResistance Particle Air Resistance
+
+
+    @subsection NMaxParticle2ParticleVelocityFactor Particle Velocity Factor
+
+
+    @subsection NMaxParticle2ParticleMass Particle Mass
+
+    @subsection NMaxParticle2Time Manipulator Time Manipulator
+
+*/
