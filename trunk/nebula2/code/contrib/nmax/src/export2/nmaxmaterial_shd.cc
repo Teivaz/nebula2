@@ -304,19 +304,14 @@ nString GetStringForColorPicker(const nString &shdName, const nString &type, con
 static
 nString GetStringForMapButton(const nString &shdName, const nString &type, const nString &paramName)
 {
-    nString str;
+    nString script;
+    nString tmp;
 
-    str += "\t\t\t\tnChangeShaderParameter ";
-    str += "\""; str += shdName; str += "\"";
-    str += " ";
-    str += "\""; str += type; str += "\"";
-    str += " ";
-    str += "\""; str += paramName; str += "\"";
-    str += " ";
-    str += "val.filename";
-    str += "\n";
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" val.filename\n", 
+        shdName.Get(), type.Get(), paramName.Get());
+    script += tmp;
 
-    return str;
+    return script;
 }
 
 //-----------------------------------------------------------------------------
@@ -331,24 +326,20 @@ nString GetStringForMapButton(const nString &shdName, const nString &type, const
 static
 nString GetStringForDefault(const nString &shdName, const nString &type, const nString &paramName)
 {
-    nString str;
+    nString script;
+    nString tmp;
 
-    nString indent = "\t\t\t\t";
+    tmp.Format("\t\t\t\tparam = \"\" \n");
+    script += tmp;
 
-    str += indent + "param = \"\" \n";
-    str += indent + "param += val as string \n";
+    tmp.Format("\t\t\t\tparam += val as string \n");
+    script += tmp;
 
-    str += "\t\t\t\tnChangeShaderParameter ";
-    str += "\""; str += shdName; str += "\"";
-    str += " ";
-    str += "\""; str += type; str += "\"";
-    str += " ";
-    str += "\""; str += paramName; str += "\"";
-    str += " ";
-    str += "param";
-    str += "\n";
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", 
+        shdName.Get(), type.Get(), paramName.Get());
+    script += tmp;
 
-    return str;
+    return script;
 }
 
 //-----------------------------------------------------------------------------
@@ -370,6 +361,7 @@ static
 nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
 {
     nString handler;
+    nString tmp;
 
     handler += "\t\t\tif nIsConnectedIpc() do\n";
     handler += "\t\t\t(\n";
@@ -405,14 +397,9 @@ nString GetIpcEventHandler(const nString &shdName, const nString &paramName)
     }
     else
     {
-        // print "Unknown material type: shader name: xxx parameter name: yyy"
-        handler += "\t\t\t\tprint ";
-        handler += "\"Unknown material type: shader name: ";
-        handler += shdName.Get();
-        handler += " ";
-        handler += "parameter name: ";
-        handler += paramName.Get();
-        handler += "\"\n";
+        tmp.Format("\t\t\t\tprint \"Unknown material type: shader name: %s parameter name: %s\"\n", 
+            shdName.Get(), paramName.Get());
+        handler += tmp;
     }
 
     handler += "\t\t\t)\n";
@@ -712,27 +699,14 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
         // if it is texture type, add destination directory setting value.
         if (strstr(paramType.Get(), "Texture") && hasGui)
         {
-            //HACK: 'dirSetting' is used again in AddSetDirDlg() function.
-            //      and nMaxMaterial::GetNebulaMaterial() function.
-            //      So, if you change the string, the string in AddSetDirDlg() 
-            //      also should be changed.
-            nString prefix = "dirSetting";
+            //HACK: 'dirSetting' is used again in AddSetDirDlg() function and nMaxMaterial::GetNebulaMaterial().
+            //      So, if you change the string, the string in AddSetDirDlg() also should be changed.
+            //      The directory parameter has "" for default string. It is absolutely necessary in Max6.
+            //      Without that, the plug-in with the panel have those contorls does not correctly work.
 
-            strParamBlock += "\t\t";
-            strParamBlock += prefix;
-            strParamBlock += paramName;
-            strParamBlock += " ";
-
-            strParamBlock += "type:#string ";
-
-            // The directory parameter has "" for default string. It is absolutely necessary in Max6.
-            // Without that, the exporter is not usable as the panels that have those controls in them don't work.
-            strParamBlock += "default:\"\" ";
-
-            strParamBlock += "ui:";
-            strParamBlock += "edtFld";
-            strParamBlock += paramName;
-            strParamBlock += "\n";
+            tmp.Format("\t\tdirSetting%s type:#string default:\"\" ui:edtFld%s\n", 
+                paramName.Get(), paramName.Get());
+            strParamBlock += tmp;
         }
     }
 }
