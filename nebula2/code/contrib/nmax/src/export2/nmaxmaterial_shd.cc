@@ -661,12 +661,14 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
             else
             if (paramType == "ColorEnvelopeCurve")
             {
+#if !USE_ACTIVEX_ENVELOPECURVE_CTRL
                 tmp.Format("\t\t\t%s_v0.color = (color (%s[1]*255) (%s[2]*255) (%s[3]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_v1.color = (color (%s[4]*255) (%s[5]*255) (%s[6]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_v2.color = (color (%s[7]*255) (%s[8]*255) (%s[9]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_v3.color = (color (%s[10]*255) (%s[11]*255) (%s[12]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_p1.value = %s[13]\n", paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_p2.value = %s[14]\n", paramName.Get(), paramName.Get()); openEvent += tmp;
+#endif
             }
             else
             {
