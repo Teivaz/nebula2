@@ -4,6 +4,7 @@
 //------------------------------------------------------------------------------
 #include "toolkit/ntoolkitserver.h"
 #include "scene/nmultilayerednode.h"
+#include "nature/nswingshapenode.h"
 
 nNebulaScriptClass(nToolkitServer, "nroot");
 nToolkitServer* nToolkitServer::Singleton = 0;
@@ -91,7 +92,7 @@ nToolkitServer::ChangeShaderParameter(const nString& mayaShaderName,
         return "false";
     }
     return "true";
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -105,7 +106,7 @@ nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,
                                             const nString& paramValue)
 {
     bool result = true;
-    if (node->IsA(nKernelServer::Instance()->FindClass("nmaterialnode")))
+    if (node->IsA("nmaterialnode"))
     {
         nMaterialNode* matNode = (nMaterialNode*) node;
         if (matNode->GetMayaShaderName() == mayaShaderName)
@@ -120,6 +121,13 @@ nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,
                 // particle2 shader attributes
                 this->ChangeTypeParticle2(matNode, paramID, paramValue);
             }
+            else if ("swing" == shaderHandler)
+            {
+                // particle2 shader attributes
+                this->ChangeTypeSwing(matNode, paramID, paramValue);
+            }
+            // default shader attributes
+            this->ChangeTypeDefault(matNode, paramID, paramValue);
         }
     }
     // apply changes to sub-nodes
@@ -133,7 +141,7 @@ nToolkitServer::ChangeShaderParameterOnNode(nRoot* node,
                                                     paramValue);
     }
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -237,7 +245,7 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
     {
         // UV Stretch of MultiLayeredShader
         // FIXME: currently only working with dx9
-        if (node->IsA(nKernelServer::Instance()->FindClass("nmultilayerednode")))
+        if (node->IsA("nmultilayerednode"))
         {
             int maxTexturesPerShader = 5;
             nMultiLayeredNode* mlNode = (nMultiLayeredNode*) node;
@@ -259,7 +267,61 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
     }
 
     return result;
-};
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nToolkitServer::ChangeTypeDefault(nMaterialNode* node,
+                                 const nString& paramID,
+                                 const nString& paramValue)
+{
+    bool result = true;
+
+    n_printf("Received remote command : %s %s\n",
+        paramID.Get(), paramValue.Get());
+
+    if ("RenderPri" == paramID)
+    {
+        node->SetRenderPri(paramValue.AsInt());
+    }
+    else if ("LockViewer" == paramID)
+    {
+        node->SetLockViewer(paramValue.AsBool());
+    }
+
+    return result;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nToolkitServer::ChangeTypeSwing(nMaterialNode* node,
+                                  const nString& paramID,
+                                  const nString& paramValue)
+{
+    bool result = true;
+
+    if (node->IsA("nswingshapenode"))
+    {
+        nSwingShapeNode *swingShapeNode = (nSwingShapeNode *)node;
+        n_printf("Received remote command : %s %s\n",
+            paramID.Get(), paramValue.Get());
+
+        if ("SwingAngle" == paramID)
+        {
+            swingShapeNode->SetSwingAngle(paramValue.AsFloat());
+        }
+        else if ("SwingTime" == paramID)
+        {
+            swingShapeNode->SetSwingTime(paramValue.AsFloat());
+        }
+    }
+
+    return result;
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -275,7 +337,8 @@ nToolkitServer::AsEnvelopeCurve(const nString& value)
                           tokens[4].AsFloat(), tokens[5].AsFloat(),
                           tokens[6].AsFloat(), tokens[7].AsFloat(),
                           tokens[8].AsInt());
-};
+}
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -290,8 +353,7 @@ nToolkitServer::AsColorCurve(const nString& value)
                                  vector3(tokens[6].AsFloat(), tokens[7].AsFloat(), tokens[8].AsFloat()),
                                  vector3(tokens[9].AsFloat(), tokens[10].AsFloat(), tokens[11].AsFloat()),
                                  tokens[12].AsFloat(), tokens[13].AsFloat());
-};
-
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -304,11 +366,11 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
 {
     bool result = true;
 
-    if (node->IsA(nKernelServer::Instance()->FindClass("nparticleshapenode2")))
+    if (node->IsA("nparticleshapenode2"))
     {
         nParticleShapeNode2* partNode = (nParticleShapeNode2*) node;
 
-        if ("ParticleGravity" == paramID)
+        if ("Gravity" == paramID)
         {
             partNode->SetGravity(paramValue.AsFloat());
         }
@@ -324,15 +386,15 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         {
             partNode->SetStretchDetail(paramValue.AsInt());
         }
-        else if ("ParticleStartVelocityRandomize" == paramID)
+        else if ("ParticleVelocityRandomize" == paramID)
         {
             partNode->SetParticleVelocityRandomize(paramValue.AsFloat());
         }
-        else if ("ParticleInitialRotationMin" == paramID)
+        else if ("StartRotationMin" == paramID)
         {
             partNode->SetStartRotationMin(paramValue.AsFloat());
         }
-        else if ("ParticleInitialRotationMax" == paramID)
+        else if ("StartRotationMax" == paramID)
         {
             partNode->SetStartRotationMax(paramValue.AsFloat());
         }
@@ -450,7 +512,7 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         result = false;
     }
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 /**

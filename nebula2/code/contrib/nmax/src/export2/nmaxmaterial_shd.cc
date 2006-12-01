@@ -196,7 +196,7 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &shdName, const nSt
         return AddColorPicker(elemParam);
     else
     if (type == "Enum")
-        return AddDropdownList(elemParam);
+        return AddDropdownList(shdName, shaderHandler, elemParam);
     else
     if (type == "Texture")
     {
@@ -235,7 +235,7 @@ nString GetUIFromType(TiXmlElement* elemParam, const nString &shdName, const nSt
     }
     else
     if (type == "Vector")
-        return AddVector4Spinner(elemParam);
+        return AddVector4Spinner(shdName, shaderHandler, elemParam);
     else
     if (type == "EnvelopeCurve" || type == "ColorEnvelopeCurve")
         return AddEnvelopeCurve(shdName, shaderHandler, elemParam);
@@ -542,11 +542,15 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
     elemParam->Attribute("gui", &hasGui);
 
     // not a common shader handler
-    if (nShaderState::StringToParam(shdName.Get()) == nShaderState::InvalidParameter)
+    if (nShaderState::StringToParam(paramName.Get()) == nShaderState::InvalidParameter)
     {
-        if (shdName == "Particle2")
+        if ("Particle2" == shdName )
         {
             shaderHandler = "particle2";
+        }
+        else if ("Leaf" == shdName || "Tree" == shdName)
+        {
+            shaderHandler = "swing";
         }
         else
         {
@@ -633,8 +637,8 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
         {
             if (paramType == "EnvelopeCurve")
             {
-            // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
-            // it is hard to bind those control type with parameters block.
+                // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
+                // it is hard to bind those control type with parameters block.
 #if !USE_ACTIVEX_ENVELOPECURVE_CTRL
                 // 'ui' name should be same as parameter name.
                 strParamBlock += "ui:";
@@ -657,7 +661,12 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
             else
             if (paramType == "ColorEnvelopeCurve")
             {
-                ;
+                tmp.Format("\t\t\t%s_v0.color = (color (%s[1]*255) (%s[2]*255) (%s[3]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
+                tmp.Format("\t\t\t%s_v1.color = (color (%s[4]*255) (%s[5]*255) (%s[6]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
+                tmp.Format("\t\t\t%s_v2.color = (color (%s[7]*255) (%s[8]*255) (%s[9]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
+                tmp.Format("\t\t\t%s_v3.color = (color (%s[10]*255) (%s[11]*255) (%s[12]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
+                tmp.Format("\t\t\t%s_p1.value = %s[13]\n", paramName.Get(), paramName.Get()); openEvent += tmp;
+                tmp.Format("\t\t\t%s_p2.value = %s[14]\n", paramName.Get(), paramName.Get()); openEvent += tmp;
             }
             else
             {
