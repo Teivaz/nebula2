@@ -1,5 +1,5 @@
 /**
-    @defgroup NMaxHowtoImport Importing How to
+    @defgroup NMaxHowtoImport Importing 
 
     You can import Nebula mesh file into 3DS Max with the Nebula importer plugin.
     The importer support not only <tt>.n3d2</tt>, <tt>.nvx2</tt> Nebula2 mesh file  

@@ -1,5 +1,5 @@
 /**
-    @defgroup NMaxHowtoHotLoading Hotloading How to
+    @defgroup NMaxHowtoHotLoading Hotloading 
 
     <b><i>Hotloading</i></b> provided by <tt>nmaxtoolbox</tt> is the process 
     by which exported assets are automatically and very quickly loaded 

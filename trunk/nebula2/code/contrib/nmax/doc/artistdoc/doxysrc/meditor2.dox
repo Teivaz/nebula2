@@ -1,5 +1,5 @@
 /**
-    @defgroup NMaxHowtoChangeShaderParams How to change shader parameters in real time
+    @defgroup NMaxHowtoChangeShaderParams Changing Shader Parameters in Real Time
 
     With Nebula2 3DS Max Toolkit(aka. nmaxtoolbox), a shader parameter 
     can be adjusted and changed in realtime.

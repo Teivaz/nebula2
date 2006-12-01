@@ -53,7 +53,19 @@
     The reason above that is the plugin try to find <tt>nviewer.exe</tt> depends on its build 
     type.(cause <tt>$win32</tt> is for release mode and <tt>$win32</tt> is for debug mode) 
     But if both of the directories contain <tt>nviewer.exe</tt>, it will work without any problems.
-     
+
+
+    @subsection NMaxInstallRegistActiveX Registeration of ActiveX Control
+
+    To use the custom activex control such as envelope curve control for particle2 shader within 3dsmax, 
+    it should be registered before it is used.
+
+    Please, open command-line console and type the following and return:
+    @verbatim
+    d:\dev\nebula2\bin\win32\regsvr32 nmaxenvelopecurve.ocx
+    @endverbatim
+    (it assumes that nebula2 is installed under 'd:\\dev\\nebula2' and the control was already built.) 
+
     That's all. All tasks for installation was done and ready to go.
 
 */
