@@ -146,6 +146,8 @@ protected:
     nMeshBuilder globalShadowMeshBuilder;
     /// Mesh builder for meshes in the skinned shadow mesh array.
     nMeshBuilder globalSkinnedShadowMeshBuilder;
+    /// Mesh builder for meshes in the particle2 mesh array
+    nMeshBuilder globalParticle2MeshBuilder;
 
     ///hashmap for skystates.
     //HashMap2<nMaxDummy*> skyStateMap;

@@ -171,6 +171,7 @@ bool nMaxScene::Preprocess(INode* root)
     this->globalShadowMeshBuilder.Clear();
     this->globalSkinnedMeshBuilder.Clear();
     this->globalSkinnedShadowMeshBuilder.Clear();
+    this->globalParticle2MeshBuilder.Clear();
 
     // Disable physique modifier to get skin in the initial pose.
     // ...
@@ -425,7 +426,7 @@ bool nMaxScene::Postprocess()
     if (!this->meshArray.Empty())
     {
         int nummeshes = this->meshArray.Size();
-        for (int i=0; i<nummeshes; i++)
+        for (int i = 0; i < nummeshes; i++)
         {
             mesh = this->meshArray[i];
 
@@ -437,7 +438,7 @@ bool nMaxScene::Postprocess()
             mesh->SetBaseGroupIndex(baseGroupIndex);
 
             // if we consolidate all meshes to one mesh, use the first mesh's path for saving it.
-            if (i==0 && globalMeshPath.IsEmpty())
+            if (i == 0 && globalMeshPath.IsEmpty())
             {
                 globalMeshPath = mesh->GetMeshPath();
             }
@@ -448,7 +449,7 @@ bool nMaxScene::Postprocess()
     if (!this->skinnedMeshArray.Empty())
     {
         int nummeshes = this->skinnedMeshArray.Size();
-        for (int i=0; i<nummeshes; i++)
+        for (int i = 0; i < nummeshes; i++)
         {
             mesh = this->skinnedMeshArray[i];
 
@@ -460,7 +461,7 @@ bool nMaxScene::Postprocess()
                     mesh->SetBaseGroupIndex(baseGroupIndex);
 
             // if we consolidate all meshes to one mesh, use the first mesh's path for saving it.
-            if (i==0 && globalMeshPath.IsEmpty())
+            if (i == 0 && globalMeshPath.IsEmpty())
             {
                 globalMeshPath = mesh->GetMeshPath();
             }
@@ -471,7 +472,7 @@ bool nMaxScene::Postprocess()
     if (!this->shadowMeshArray.Empty())
     {
         int nummeshes = this->shadowMeshArray.Size();
-        for (int i=0; i<nummeshes; i++)
+        for (int i = 0; i < nummeshes; i++)
         {
             mesh = this->shadowMeshArray[i];
 
@@ -483,7 +484,7 @@ bool nMaxScene::Postprocess()
             mesh->SetBaseGroupIndex(baseGroupIndex);
 
             // if we consolidate all meshes to one mesh, use the first mesh's path for saving it.
-            if (i==0 && globalMeshPath.IsEmpty())
+            if (i == 0 && globalMeshPath.IsEmpty())
             {
                 globalMeshPath = mesh->GetMeshPath();
             }
@@ -494,7 +495,7 @@ bool nMaxScene::Postprocess()
     if (!this->skinnedShadowMeshArray.Empty())
     {
         int nummeshes = this->skinnedShadowMeshArray.Size();
-        for (int i=0; i<nummeshes; i++)
+        for (int i = 0; i < nummeshes; i++)
         {
             mesh = this->skinnedShadowMeshArray[i];
 
@@ -506,7 +507,7 @@ bool nMaxScene::Postprocess()
             mesh->SetBaseGroupIndex(baseGroupIndex);
 
             // if we consolidate all meshes to one mesh, use the first mesh's path for saving it.
-            if (i==0 && globalMeshPath.IsEmpty())
+            if (i == 0 && globalMeshPath.IsEmpty())
             {
                 globalMeshPath = mesh->GetMeshPath();
             }
@@ -519,7 +520,7 @@ bool nMaxScene::Postprocess()
         nString meshPath;
         nString meshFileName;
 
-        for (int i=0; i<collisionMeshArray.Size(); i++)
+        for (int i = 0; i < this->collisionMeshArray.Size(); i++)
         {
             mesh = this->collisionMeshArray[i];
             nMeshBuilder& meshBuilder = mesh->GetMeshBuilder();
@@ -538,16 +539,22 @@ bool nMaxScene::Postprocess()
         nString meshPath;
         nString meshFileName;
 
-        for (int i=0; i<particle2MeshArray.Size(); i++)
+        for (int i = 0; i < this->particle2MeshArray.Size(); i++)
         {
             mesh = this->particle2MeshArray[i];
-            nMeshBuilder& meshBuilder = mesh->GetMeshBuilder();
 
-            meshPath = mesh->GetMeshPath();
+            //TODO: check the mesh has same vertex component.
+            //...
 
-            // Unlike other types of mesh, collision meshes are individually saved.
-            meshFileName = this->GetMeshFileNameToSave(meshPath, nMaxMesh::Particle2, false);
-            meshBuilder.Save(fileServer, meshFileName.Get());
+            // append retrieved meshes to a global mesh.
+            int baseGroupIndex = this->globalParticle2MeshBuilder.Append(mesh->GetMeshBuilder());
+            mesh->SetBaseGroupIndex(baseGroupIndex);
+
+            // if we consolidate all meshes to one mesh, use the first mesh's path for saving it.
+            if (i == 0 && globalMeshPath.IsEmpty())
+            {
+                globalMeshPath = mesh->GetMeshPath();
+            }
         }
     }
 
@@ -602,10 +609,10 @@ bool nMaxScene::Postprocess()
     {
         meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Shadow, false);
 
+        ProcessOnMeshBuilder(this->globalShadowMeshBuilder, true, meshFileName);
+
         // remove useless components if those are.
         this->globalShadowMeshBuilder.ForceVertexComponents(nMeshBuilder::Vertex::COORD);
-
-        ProcessOnMeshBuilder(this->globalShadowMeshBuilder, true, meshFileName);
 
         rootBBox = globalShadowMeshBuilder.GetBBox();
 
@@ -617,15 +624,31 @@ bool nMaxScene::Postprocess()
     {
         meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Shadow, true);
 
+        ProcessOnMeshBuilder(this->globalSkinnedShadowMeshBuilder, true, meshFileName);
+
         // remove useless components if those are.
         this->globalSkinnedShadowMeshBuilder.ForceVertexComponents(
             nMeshBuilder::Vertex::COORD | nMeshBuilder::Vertex::WEIGHTS | nMeshBuilder::Vertex::JINDICES);
 
-        ProcessOnMeshBuilder(this->globalSkinnedShadowMeshBuilder, true, meshFileName);
-
         rootBBox = globalSkinnedShadowMeshBuilder.GetBBox();
 
         this->globalSkinnedShadowMeshBuilder.Save(fileServer, meshFileName.Get());
+    }
+
+    // export particle2 mesh object.
+    if (this->globalParticle2MeshBuilder.GetNumVertices())
+    {
+        meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Particle2, false);
+
+        ProcessOnMeshBuilder(this->globalParticle2MeshBuilder, false, meshFileName);
+
+        // remove useless components if those are.
+        this->globalParticle2MeshBuilder.ForceVertexComponents(
+            nMeshBuilder::Vertex::COORD | nMeshBuilder::Vertex::NORMAL);
+
+        rootBBox = globalSkinnedShadowMeshBuilder.GetBBox();
+
+        this->globalParticle2MeshBuilder.Save(fileServer, meshFileName.Get());
     }
 
     // create skin animators
@@ -1222,6 +1245,10 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
       - scale a mesh
 
     Called in nMaxScene::Postprocess() function.
+
+    ProcessOnMeshBuilder() use some components but they are removed by ForceVertexComponents()
+    and it produces new components which is not needed. So ProcessOnMeshBuilder() should be 
+    called before calling ForceVertexComponents().
 
     @param meshBuilder  - A reference to nMeshBuilder needed for building tangent, 
                           normal and edges if it is necessary.
