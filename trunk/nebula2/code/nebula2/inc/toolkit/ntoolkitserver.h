@@ -62,6 +62,13 @@ private:
     /// attribute handler 1 (Particle2)
     bool ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
                              const nString& paramValue);
+    /// attribute handler 2 (Swing Attributes)
+    bool ChangeTypeSwing(nMaterialNode* node, const nString& paramID,
+        const nString& paramValue);
+    /// attribute handler (Default Attributes)
+    bool ChangeTypeDefault(nMaterialNode* node, const nString& paramID,
+        const nString& paramValue);
+
     /// helper function, converts a string to an envelope curve
     nEnvelopeCurve AsEnvelopeCurve(const nString& value);
     /// helper function, converts a string to a color envelope curve

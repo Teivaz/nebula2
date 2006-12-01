@@ -5,6 +5,8 @@
      those are not shown on the 3dsmax Nebula2 material editor. -->
 
 <NebulaShaderFilter>
+    <shader name = "Particle"/>
+    <shader name = "Particle (Additive)"/>
+    <shader name = "Particle (Alpha Blended)"/>
     <shader name = ""/>
-
 </NebulaShaderFilter>

@@ -139,7 +139,7 @@ AddToolkitServerScriptForSpinner(const nString &shdName, const nString &shaderHa
     tmp.Format("\t\t\tif nIsConnectedIpc() do \n"); s += tmp;
     tmp.Format("\t\t\t(\n");                        s += tmp;
     tmp.Format("\t\t\t\tparam = %s.value as string\n", paramName.Get()); s += tmp;
-    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get()); s += tmp;
     tmp.Format("\t\t\t)\n"); s += tmp;
 
     return s;
@@ -158,11 +158,57 @@ AddToolkitServerScriptForCheckBox(const nString &shdName, const nString &shaderH
     tmp.Format("\t\t\tif nIsConnectedIpc() do \n"); s += tmp;
     tmp.Format("\t\t\t(\n");                        s += tmp;
     tmp.Format("\t\t\t\tparam = %s.checked as string\n", paramName.Get()); s += tmp;
-    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get()); s += tmp;
     tmp.Format("\t\t\t)\n"); s += tmp;
 
     return s;
 }
+
+//-----------------------------------------------------------------------------
+/**
+    Add script code to be sent to the viewer through IPC.
+*/
+static
+nString
+AddToolkitServerScriptForDropdownList(const nString &shdName, const nString &shaderHandler, const nString &paramName)
+{
+    nString s, tmp;
+
+    tmp.Format("\t\t\tif nIsConnectedIpc() do \n"); s += tmp;
+    tmp.Format("\t\t\t(\n");                        s += tmp;
+    tmp.Format("\t\t\t\tparam = %s0.value as string\n", paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t\tparam += \" \"\n"); s += tmp;
+    tmp.Format("\t\t\t\tparam += %s01.value as string\n", paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t\tparam += \" \"\n"); s += tmp;
+    tmp.Format("\t\t\t\tparam += %s012.value as string\n", paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t\tparam += \" \"\n"); s += tmp;
+    tmp.Format("\t\t\t\tparam += %s0123.value as string\n", paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t)\n"); s += tmp;
+
+    return s;
+}
+
+//-----------------------------------------------------------------------------
+/**
+Add script code to be sent to the viewer through IPC.
+*/
+static
+nString
+AddToolkitServerScriptForVector4Spinner(const nString &shdName, const nString &shaderHandler, const nString &paramName)
+{
+    nString s, tmp;
+
+    tmp.Format("\t\t\tif nIsConnectedIpc() do \n"); s += tmp;
+    tmp.Format("\t\t\t(\n");                        s += tmp;
+    tmp.Format("\t\t\t\tparam = %s.selection as string\n", paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t\tnChangeShaderParameter \"%s\" \"%s\" \"%s\" param\n", shdName.Get(), shaderHandler.Get(), paramName.Get()); s += tmp;
+    tmp.Format("\t\t\t)\n"); s += tmp;
+
+    return s;
+}
+
+
 //-----------------------------------------------------------------------------
 /**
     Add spinner UI script to rollout clause.
@@ -251,7 +297,7 @@ AddCheckBox(const nString &shdName, const nString &shaderHandler, TiXmlElement* 
     @endverbatim
 */
 nString 
-AddDropdownList(TiXmlElement* elemParam)
+AddDropdownList(const nString &shdName, const nString &shaderHandler, TiXmlElement* elemParam)
 {
     nString paramName = elemParam->Attribute("name");
     nString caption = elemParam->Attribute("label");
@@ -292,6 +338,11 @@ AddDropdownList(TiXmlElement* elemParam)
     uiScript += " ";
 
     uiScript += "\n";
+
+    tmp.Format("\t\ton %s changed val do\n", paramName.Get());    uiScript += tmp;
+    tmp.Format("\t\t(\n");    uiScript += tmp;
+    uiScript += AddToolkitServerScriptForDropdownList(shdName, shaderHandler, paramName);
+    tmp.Format("\t\t)\n");    uiScript += tmp;
 
     return uiScript;
 }
@@ -408,19 +459,19 @@ AddMapButton(TiXmlElement* elemParam, nString defaultVal)
     @endverbatim
 */
 nString 
-AddVector4Spinner(TiXmlElement* elemParam)
+AddVector4Spinner(const nString &shdName, const nString &shaderHandler, TiXmlElement* elemParam)
 {
     nString paramName  = elemParam->Attribute("name");  // UI control name.
     nString caption    = elemParam->Attribute("label"); // UI caption 
     nString def        = elemParam->Attribute("def"); // UI caption 
 
-    nString uiScript;
+    nString uiScript, tmp;
 
     // insert dummy label which has parameters name for its UI name.
     caption += " ";
     uiScript += AddLabel(paramName, caption, 5);
 
-    nString index, label;
+    nString name, label;
     nArray<nString> defs;
     int count = def.Tokenize(" \t\n", defs);
     if (count != 4)
@@ -433,10 +484,11 @@ AddVector4Spinner(TiXmlElement* elemParam)
         defs.Append("0");
     }
 
+    name = paramName;
     // create four spinner for vector type.
     for (int i=0; i<4; i++)
     {
-        index.AppendInt(i);
+        name.AppendInt(i);
         
         //switch(i)
         //{
@@ -446,25 +498,16 @@ AddVector4Spinner(TiXmlElement* elemParam)
         //case 3: label = "w:"; break;
         //}
 
-        uiScript += "\t\t";
-        uiScript += "spinner";
-        uiScript += " ";
-        uiScript += paramName + index;
-        uiScript += " ";
-        //uiScript += "\"" + label + "\"";
-        //uiScript += " ";
-        uiScript += "align:#left";
-        uiScript += " ";
-        uiScript += "fieldwidth:36";
-        uiScript += " ";
-        uiScript += "range:[-100000, 100000, " + defs[i] + "]";
-        uiScript += "\n";
-
-        //if (i==1)
-        //    uiScript += "across:4";
+        tmp.Format("\t\tspinner %s align:#left fieldwidth:36 range:[-100000, 100000, %s]\n", name.Get(), defs[i].Get()); uiScript += tmp;
+        tmp.Format("\t\ton %s changed val do\n", name.Get()); uiScript += tmp;
+        tmp.Format("\t\t(\n");    uiScript += tmp;
+        tmp.Format("\t\t\tupdate_%s\n", paramName.Get()); uiScript += tmp;
+        tmp.Format("\t\t)\n");    uiScript += tmp;
     }
-
-    uiScript += "\n";
+    tmp.Format("\t\tfn update_%s =\n", paramName.Get()); uiScript += tmp;
+    tmp.Format("\t\t(\n"); uiScript += tmp;
+    uiScript += AddToolkitServerScriptForVector4Spinner(shdName, shaderHandler, paramName);
+    tmp.Format("\t\t)\n"); uiScript += tmp;
 
     return uiScript;
 }
@@ -906,4 +949,5 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 
     return uiScript;
 }
+
 
