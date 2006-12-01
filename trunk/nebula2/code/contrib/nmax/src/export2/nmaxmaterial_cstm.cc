@@ -442,8 +442,7 @@ void nMaxMaterial::GetNebulaMaterial(Mtl* mtl, nShapeNode* shapeNode)
 
                                     // if the texture map directory is not specified, we use default assigned one
                                     // in the directory setting dialog.
-                                    if (texDir == "")
-                                        texDir = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetTextureAssign());
+                                    texDir = nFileServer2::Instance()->ManglePath(texDir.IsEmpty() ? nMaxOptions::Instance()->GetTextureAssign() : texDir);
                                 }
                                 else
                                 {
