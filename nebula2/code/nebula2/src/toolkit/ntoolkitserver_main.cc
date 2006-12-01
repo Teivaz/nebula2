@@ -271,6 +271,8 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
 
 //------------------------------------------------------------------------------
 /**
+    -01-Dec-06  kims  which are for "RenderPri" and "LockViewer" shader parameter.
+                      Thans kaikai for the patch.
 */
 bool
 nToolkitServer::ChangeTypeDefault(nMaterialNode* node,
@@ -296,6 +298,7 @@ nToolkitServer::ChangeTypeDefault(nMaterialNode* node,
 
 //------------------------------------------------------------------------------
 /**
+    -01-Dec-06  kims  which are for nswingnode. Thans kaikai for the patch.
 */
 bool
 nToolkitServer::ChangeTypeSwing(nMaterialNode* node,
