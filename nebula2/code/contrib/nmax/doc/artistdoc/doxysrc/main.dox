@@ -19,7 +19,8 @@
 
         - Windows 2000 or Windows XP
         - The DirectX9 runtime
-        - Discreet <b>3DS Max6</b> or <b>3DS Max7.X</b> (3DS Max7.x is highly recommended)
+        - Discreet <b>3DS Max6</b> or higher versions including <b>3DS Max7.X</b> and <b>3DS Max8.X</b> 
+          (3DS Max7.x or higher versions are highly recommended)
         - A DX9 graphics cards which supports DX shader model 2.0 is recommended.
         - MS Excel 2003 or XP required to edit XML files for some configuration tables. (optional)
 
@@ -62,15 +63,15 @@
     the <b>3DSMax Toolkit</b> pages of <b>Asset Toolchain</b> section in <b>Nebula2</b> 
     document.
 
-    See the @ref NMaxKnownIusses page if you want to know any the toolkit related issues 
-    or current limitations about it.
+    See the @ref NMaxKnownIusses page if you want to know anything about the toolkit related issues 
+    or current limitations.
 
     See @ref NMaxChangeLog page to see what features are newly added.
 
 
     @section NMaxIntroCredits Credits
 
-    These are the people who have contributed to <b>Nebula2 Toolkit for 3DS Max</b>.
+    These are the people who have contributed to <b>Nebula2 Toolkit for 3DS Max</b>.(<i>random order</i>)
 
         - <tt>Kim Hyoun Woo</tt> - principal author.
         - <tt>Ben Wooller</tt> - nmaxfloatanimator and nmaxuvanimator.
@@ -79,6 +80,7 @@
         - <tt>Ivan Tivonenko</tt> - various bug fixes and improvements which includes 
           exporting of several skinned models at a time.
         - <tt>Cho Jun Hyeong</tt> - Enveleopecurve ActiveX control which is used to export nparticleshapenode2.
+        - <tt>ZHANG Zikai</tt> - various bug fixes and improvements.
 
     Thanks to:
         - <tt>Johannes Kellner</tt> and <tt>Dmitriy Peter</tt> for their previous efforts  
@@ -86,7 +88,7 @@
           That gave many helps on this toolkit.
 
 
-    (C)2005 Kim, Hyoun Woo
+    (C)2005-2006 Kim, Hyoun Woo
 
 */
 

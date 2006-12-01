@@ -27,4 +27,18 @@
     you minimize the material editor it freezes 3dsmax. 
     This bug does not shown on the other Nebula2 shaders.
     The custom ActiveX control might affect the minimizing action.
+
+
+    @section NMaxKnownIusses_MAXSCript MAXScript
+
+    @subsection NMaxKnownIusses_MAXSCript_HeapMemory Out of Heap Memory 
+
+    MAXScript carves its own working memory (called a heap) out of the memory that the software allocates. 
+    If you meet the case that the plugin fails due to the out of memory for the heap, you can add to the heap 
+    by increasing the value as the following image: 
+    
+    @image html maxscriptmemory.png "MAXScript Preferences"
+    
+    The preference dialog can be open by executing <i>Customize > Preferences... > MAXScript tab</i>.
+
 */

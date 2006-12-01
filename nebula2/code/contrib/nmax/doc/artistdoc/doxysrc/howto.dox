@@ -7,29 +7,38 @@
     to the work you need for making game assets of Nebula.
 
     - @ref NMaxHowtoQuickStart
-    - @ref NMaxHowtoStaticScene 
-    - @ref NMaxHowtoGlobalOptions 
-    - @ref NMaxHowtoUsingMaterialEditor
-    - @ref NMaxHowtoChangeShaderParams
-    - @ref NMaxHowtoMultipleUv
-    - @ref NMaxWorkingNebulaMaterialWithMaxScript
-    - @ref NMaxPerMeshOptions
-    - @ref NMaxHowtoCharacters 
-    - @ref NMaxHowtoParticle2
-    - @ref NMaxHowtoHierarchyNode 
-    - @ref NMaxHowtoShadows 
-    - @ref NMaxHowtoAnimations
-    - @ref NMaxHowtoLOD
-    - @ref NMaxHowtoSky
-    - @ref NMaxHowtoExport
-    - @ref NMaxHowtoHotLoading
-    - @ref NMaxHowtoShaderFilter 
-    - @ref NMaxHowtoImport
-    - @ref NMaxScriptExtension
-    - @ref NMaxHowtoExpose
-    - @ref NMaxScriptGen
-    - @ref NMaxTerrainTools
-    - @ref NIniSetting
+    - <b>Howto</b>
+      - @ref NMaxHowtoExport
+      - @ref NMaxHowtoStaticScene 
+      - @ref NMaxHowtoUsingMaterialEditor
+      - @ref NMaxHowtoChangeShaderParams
+      - @ref NMaxHowtoMultipleUv
+      - @ref NMaxHowtoCharacters 
+      - @ref NMaxHowtoParticle2
+      - @ref NMaxHowtoHierarchyNode 
+      - @ref NMaxHowtoAnimations
+      - @ref NMaxHowtoShadows 
+      - @ref NMaxHowtoLOD
+      - @ref NMaxHowtoSky
+      - @ref NMaxHowtoImport
+      - @ref NMaxHowtoHotLoading
+    - <b>Settings</b>
+      - @ref NMaxHowtoGlobalOptions 
+      - @ref NMaxPerMeshOptions
+      - @ref NMaxHowtoShaderFilter 
+      - @ref NIniSetting
+    - <b>Working with MAXScript</b>
+      - @ref NMaxWorkingNebulaMaterialWithMaxScript
+      - @ref NMaxScriptExtension
+      - @ref NMaxHowtoExpose
+      - @ref NMaxScriptGen
+    - <b>Command Line Tools</b>
+      - @ref NMaxCLineToolNViewer
+      - @ref NMaxCLineToolNShell
+      - @ref NMaxCLineToolRemoteShell
+      - @ref NMaxCLineToolNPKPackerTool
+    - <b>Miscellaneous</b>
+      - @ref NMaxTerrainTools
 
 */
 

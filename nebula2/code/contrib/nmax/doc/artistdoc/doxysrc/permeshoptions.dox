@@ -1,5 +1,5 @@
 /**
-    @defgroup NMaxPerMeshOptions Specifying Per Mesh Options
+    @defgroup NMaxPerMeshOptions Setting Per Mesh Options
 
     The <b>Nebula2 3DSMax Toolkit</b> provides per-mesh options which let you 
     handle the mesh to fit it for your own purpose.

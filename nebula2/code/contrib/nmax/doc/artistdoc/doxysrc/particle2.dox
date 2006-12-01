@@ -1,5 +1,5 @@
 /**
-    @defgroup NMaxHowtoParticle2 HowTo: Particle System 2
+    @defgroup NMaxHowtoParticle2 Particle System 2
 
     @section NMaxParticle2SystemOverview Particle System 2 Overview
 
@@ -108,13 +108,36 @@
 
     @subsection NMaxParticle2EmissionFrequency Emission Frequency
 
+    This allows you to set the amount of particles that will be emitted per second from durationtime 
+    start to end.
+
 
     @subsection NMaxParticle2ParticleLifeTime Particle Lifetime
 
+    Allows you to set the lifetime of the particles. The units are measured in seconds.
+
+
     @subsection NMaxParticle2ParticleIntialVelocity Particle Initial Velocity
+
+    This is the speed that will be set to the particle when it is going to be emitted. 
+    This is unit per second. 
+    Now <b>Initial Velocity Randomize</b> can be used to have particles with different speeds. 
+    There is a random factor between 1 and the given value that is multiplied onto the 
+    Initial Velocity of each particle. 1 means all particles will have the given Particle Initial Velocity. 
+    If set to 0 the whole range of Particle Initial Velocity to absolutely 
+    NO Initial Velocity maybe applied to a particle.
 
 
     @subsection NMaxParticle2ParticleSpreadMaxMin Particle Spread Max / Min
+
+    Like in Nebula1 you are now able to set up 2 cones that represent the emitting angle again. 
+    One for adding angle to the emitter and another one to substract from it. 
+    Furthermore you can animate these settings over durationtime comfortable with a curve. 
+    Here is an example shown below the controls: 
+    There is a green cone that represents the MAX value and a red one for the MIN Spread Angle. 
+    As you can see the emission occurs between these two cones. 
+    Note that the emission will not be outside of the MAX-cone even if the Min exceeds the Max value 
+    at any time. Setting both angles to 90¡Æ will cause emittion in a flat level.
 
 
     @image html part_spreadminmax.png "Particle Shader 2 - Spread Max / Min"
@@ -122,29 +145,89 @@
 
     @section NMaxParticle2LifetimeAttribute Life Time Attribute
 
+    All other settings are related to the specified Lifetime. 
+    Means the left border of the curves represent the birth of each particle where the right border 
+    marks its death.
+
 
     @subsection NMaxParticle2InitialRotationalangleMinMax Initial Rotation Alangle Min / Max
+
+    Not yet a Life Time Attributes. But as it is rotation stuff it belongs here: 
+    As in Particle1 here you can give each particle a random rotation angle within 0 and the specified value. 
+    But you are now able to reduce the angle with the second setting. 
+    This is similar to the increasing / decreasing cone of the Particle Spread feature: 
+    You can limit the range even up to a single value by setting both values to the same. Here an example:
 
     @image html part_rotationalminmax.png "Particle Shader 2 - Initial Rotationangle Min / Max"
 
 
     @subsection NMaxParticle2ParticleRotationVelocity Particle Rotation Velocity
 
+    This sets the amount of rotation for the particle in its lifetime. 
+    This is not an absolute value! Its more a rotation speed you set here. 
+    Now <b>Rotation Randomize</b> can be used to have particles with different rotation speeds. 
+    There is a random factor between 1 and the given value that is multiplied onto the Rotation Velocity 
+    of each particle. 1 means all particles will have the given Particle Rotation Velocity. 
+    If set to 0 the whole range of Particle Rotation Velocity to absolutely NO Rotation Velocity 
+    maybe applied to a particle. 
+    Left-Right-Random is used to have the particles rotated clockwise or counterclockwise randomly.
+
+
     @subsection NMaxParticle2ParticleSize Particle Size
 
+    Allows you to set the size of the sprites over the particle lifetime. 
+    Now Size Randomize can be used to have particles with different sizes. 
+    There is a random factor between 1 and the given value that is multiplied onto the size of each particle. 
+    1 means all particles will have the given Particle Size. 
+    If set to 0 the whole range from Particle Size to absolutely NO Size maybe applied to a particle.
+
+
     @subsection NMaxParticle2ParticleColor Particle Color
+
+    Here you can specify overlay-colors for the image-file. 
+    The values can be set in the color-bar an can be changed over time.
+
+    <b>Note:</b> Nebula doesn't support more than 4 manipulators for the color-bar, 
+    even though the color-bar allows you to set more. If you do, only the first 4 will be recognized.
+
+    ...
 
 
     @subsection NMaxParticle2ParticleAlpha Particle Alpha
 
+    To set the transparency of the particles over their lifetime. 
+    This only works with alpha-channel particles. 
+    You can make additive particles fade by turning the color to black (see Alpha Source/Dest).
+
+
     @subsection NMaxParticle2ParticleAirResistance Particle Air Resistance
+
+    Defines the wind influence on the particles over lifetime. 
+    Since this is a factor you can set higher values to make the particles blow away. 
+    Note: "Wind" is a global vector in Nebula2 this attribute listens to. 
+    By default its quite unspectacular but theoretical it could be programmed to blow in waves and 
+    turn randomly to make it appear more realistic.
 
 
     @subsection NMaxParticle2ParticleVelocityFactor Particle Velocity Factor
 
+    Allows you to set an additional factor thats multiplicated onto the velocity of the particle over 
+    lifetime. Means at 0 the particle stops completely whereas values over 1 accelerate it additional.
+
 
     @subsection NMaxParticle2ParticleMass Particle Mass
 
+    Describes the weight over lifetime of each particle. 
+    The resulting movement of course depends on the set gravity. 
+    If gravity is set like terrestrial -9.81 a high value will make the particle fall whereas below 0 
+    will cause it to rise. Wich is important for e.g. fire.
+
+
     @subsection NMaxParticle2Time Manipulator Time Manipulator
+
+    This is used to take control of the global time of the particle system. 
+    Even though its not used very often its able to create some crazy and interesting effects. 
+    Last but not least because you can make the particles have negative time.
+
 
 */

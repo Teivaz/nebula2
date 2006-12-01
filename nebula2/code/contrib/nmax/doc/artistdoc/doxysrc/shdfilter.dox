@@ -1,5 +1,5 @@
 /**
-    @defgroup NMaxHowtoShaderFilter Shader Filter
+    @defgroup NMaxHowtoShaderFilter Setting Shader Filter
 
     As the developement is going on, the kind of shaders for it might increase.
     Due to the plug-in generates 3dsmax scripted plugin for Nebula2 

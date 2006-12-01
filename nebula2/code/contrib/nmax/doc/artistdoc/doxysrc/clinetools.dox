@@ -1,0 +1,105 @@
+/**
+    @defgroup NMaxCommandLineTools Command Line Tools
+
+
+    @section NMaxCLineToolNViewer Nebula Viewer
+
+    The Nebula2 viewer displays Nebula2 3D objects in real-time. 
+    It can be invoked from the command line (nviewer.exe), from the start menu, or from 3dsmax by 
+    executing Nebula -> Preview Scene.
+    The viewer offers an overlay 2D user interface which is activated by pressing the Escape key. 
+    The GUI offers built-in command consoles, a texture browser window, a graphics object browser 
+    window, and 2 windows with runtime and debug information.
+
+    @subsections NMaxCLineToolNViewerParameters Parameters
+
+    @verbatim
+    -view [.n2 file]            the filename of the .n2 file to be displayed, default is none
+    -script [script file]       an optional script file to execute on startup, default is none
+    -stage [script file]        a script file describing a (lighting) stage to load
+    -fullscreen                 open window in fullscreen mode
+    -alwaysontop                keep window always on top (only when windowed mode)
+    -x [xpos]                   the x position of the window (ignored in fullscreen mode)
+    -y [ypos]                   the y position of the window (ignored in fullscreen mode)
+    -w [width]                  the width of the window
+    -h [height]                 the height of the window
+    -projdir [path]             optional path project directory, default is Current Project Directory
+    -sceneserver [Neb2 class]   an optional class name for the Nebula2 scene server object
+    -gfxserver [Neb2 class]     an optional class name for the graphics server
+    -featureset [featureset]    an optional graphics feature set string (default: best supported feature set)
+    @endverbatim
+
+
+    @section NMaxCLineToolNShell Nebula Shell
+
+    The Nebula2 Shell (nsh.exe) can be used to execute Nebula2 scripts or to interactively browse a minimal 
+    Nebula2 environment. Nebula2 has a pluggable scripting architecture. The default scripting language is MicroTCL, 
+    which is a stripped down TCL dialect, with some Nebula specific extensions.
+    Alternative scripting languages provided by the Open Source community include Lua, Python, Ruby, and others...
+
+    The default Nebula2 shell looks very much like a Tcl shell which allows to navigate the hierarchy of live 
+    Nebula2 C++ objects like a filesystem hierarchy and invoke commands on them.
+
+    Use the command exit to quit a running nsh instance.
+
+    @subsection NMaxCLineToolNShellParameters Parameters 
+
+    @verbatim
+    -help                       display a short help
+    -startup [script file]      execute script file and go into interactive mode
+    -run [script file]          execute script file and exit
+    -scriptserver [Neb2 class]  use an alternative Nebula2 script server (default is ntclserver)
+    @endverbatim
+
+
+    @section NMaxCLineToolRemoteShell Nebula Remote Shell
+
+    The Nebula2 viewer displays Nebula2 3D objects in real-time. 
+    It can be invoked from the command line (nviewer.exe) from the start menu and connected by executing <i>Nebula2 > Connect IPC</i> menu.
+
+    @subsection NMaxCLineToolRemoteShellParameters Parameters
+
+    @verbatim
+    -help       display a short help
+    -host       host name of the remote machine (localhost, or DNS name, or TCP/IP address string)
+    -port       port name of the remote application
+    @endverbatim
+
+    @subsection NMaxCLineToolRemoteShellExamples Examples
+
+    To connect to a running nviewer instance on the local machine:     
+    @verbatim
+    nremoteshell -host localhost -port nviewer
+    @endverbatim
+
+    To connect to a running nviewer instance on a remote machine with TCP/IP number 192.168.0.199 
+    @verbatim
+    nremoteshell -host 192.168.0.199 -port nviewer
+    @endverbatim
+
+    To connect to a running nviewer instance on a remote machine with the DNS or SMB name Elvis: 
+    @verbatim
+    nremoteshell -host Elvis -port nviewer
+    @endverbatim
+
+
+    @section NMaxCLineToolNPKPackerTool NPK Packer Tool
+
+    The NPK packer tool (nnpktool.exe) allows to pack, unpack and diff npk archives. 
+    Npk archives are Nebula2's version of PAK files where many small files are packed into one big archive 
+    to reduce disk fragmentation and loading times.
+
+    @subsection NMaxCLineToolNPKPackerToolParameters Parameters
+    @verbatim
+    -help               display a short help
+    -pack [directory]   pack the given input directory into an npk file
+    -out [filename]     the filename of the resulting npk archive (default: pack.npk)
+    -list [filename]    list the contents of an npk file
+    -listdiff           list differences between 2 npk files
+    -diff               build a diff file from 2 npk files
+    -old [filename]     the "old" npk file for diffing
+    -new [filename]     the "new" npk file for diffing
+    -unpack [filename]  unpack the given npk file
+    @endverbatim
+
+*/
