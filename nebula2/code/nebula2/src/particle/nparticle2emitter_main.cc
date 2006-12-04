@@ -309,7 +309,7 @@ nParticle2Emitter::Update(float curTime)
 
                             if (this->emitOnSurface)
                             {
-                                int faceIndex = int(n_rand(0.0f, float(numIndices / 3 - 1)));
+                                int faceIndex = int(n_rand(0.0f, numIndices / 3 - TINY));
                                 n_assert(faceIndex * 3 + 2 < numIndices);
 
                                 // combine 2 triangles into a parallelogram
