@@ -31,6 +31,7 @@ nParticle2Emitter::nParticle2Emitter() :
     stretchDetail(1),
     viewAngleFade(false),
     startDelay(0.0f),
+    emitOnSurface(false),
     gravity(0.0f),
     startRotationMin(0.0f),
     startRotationMax(0.0f),
@@ -196,6 +197,8 @@ nParticle2Emitter::CheckInvisible(float deltaTime)
 //------------------------------------------------------------------------------
 /**
     Updates the particle system. This will create new particles.
+
+    -04-Dec-06  kims  Changed that particles to be emitted on a surface.
 */
 void
 nParticle2Emitter::Update(float curTime)
@@ -304,15 +307,55 @@ nParticle2Emitter::Update(float curTime)
                             nParticle2* newParticle = &this->particles[this->particleCount];
                             this->particleCount++;
 
-                            // get emission position
-                            int indexIndex = firstIndex + int(n_rand(0.0f, float(numIndices - 1)));
-                            float* vertexPtr = &(vertices[indices[indexIndex] * vertexWidth]);
-                            emissionPos.set(vertexPtr[0], vertexPtr[1], vertexPtr[2]);
-                            emissionPos = this->transform * emissionPos;
+                            if (this->emitOnSurface)
+                            {
+                                int faceIndex = int(n_rand(0.0f, float(numIndices / 3 - 1)));
+                                n_assert(faceIndex * 3 + 2 < numIndices);
 
-                            // get emission normal
-                            emissionNormal.set(vertexPtr[3], vertexPtr[4], vertexPtr[5]);
-                            emissionNormal = transform33 * emissionNormal;
+                                // combine 2 triangles into a parallelogram
+                                // get 2 randomized lerp value
+                                float lerp0 = n_rand();
+                                float lerp1 = n_rand();
+                                if (lerp1 + lerp0 > 1)
+                                {
+                                    // the position is in the other side of the parallelogram
+                                    // just turn it back
+                                    lerp0 = 1 - lerp0;
+                                    lerp1 = 1 - lerp1;
+                                }
+                                vector3 tmp;
+
+                                // get emission position
+                                int indexIndex = firstIndex + faceIndex * 3;
+                                const vector3 &vertex0 = *(vector3*)&(vertices[indices[indexIndex + 0] * vertexWidth]);
+                                const vector3 &vertex1 = *(vector3*)&(vertices[indices[indexIndex + 1] * vertexWidth]);
+                                const vector3 &vertex2 = *(vector3*)&(vertices[indices[indexIndex + 2] * vertexWidth]);
+                                tmp.lerp(vertex0, vertex1, lerp0);
+                                tmp += (vertex2 - vertex0) * lerp1;
+                                emissionPos.set(tmp);
+                                emissionPos = this->transform * emissionPos;
+
+                                // get emission normal
+                                const vector3 &normal0 = *(vector3*)&(vertices[indices[indexIndex + 0] * vertexWidth + 3]);
+                                const vector3 &normal1 = *(vector3*)&(vertices[indices[indexIndex + 1] * vertexWidth + 3]);
+                                const vector3 &normal2 = *(vector3*)&(vertices[indices[indexIndex + 2] * vertexWidth + 3]);
+                                tmp.lerp(normal0, normal1, lerp0);
+                                tmp += (normal2 - normal0) * lerp1;
+                                emissionNormal.set(tmp);
+                                emissionNormal = transform33 * emissionNormal;
+                            }
+                            else
+                            {
+                                // get emission position
+                                int indexIndex = firstIndex + int(n_rand(0.0f, float(numIndices - 1)));
+                                float* vertexPtr = &(vertices[indices[indexIndex] * vertexWidth]);
+                                emissionPos.set(vertexPtr[0], vertexPtr[1], vertexPtr[2]);
+                                emissionPos = this->transform * emissionPos;
+
+                                // get emission normal
+                                emissionNormal.set(vertexPtr[3], vertexPtr[4], vertexPtr[5]);
+                                emissionNormal = transform33 * emissionNormal;
+                            }
 
                             // find orthogonal vectors to spread normal vector
                             vector3 ortho1;
@@ -665,14 +708,14 @@ void nParticle2Emitter::Render(float curTime)
     {
         this->isSleeping = false;
         // reallocate particles
-        this->particles = new nParticle2[this->maxParticleCount];
+        this->AllocateParticles();
         n_assert(0 != this->particles);
 
         this->frameWasRendered = true;
         this->Update(curTime - 0.001f);    // trigger with a little difference, so that the emitter will reset
 
         // ok, we're up-to-date again
-    };
+    }
 
     if (!this->particleMesh.IsValid())
     {
@@ -692,15 +735,13 @@ void nParticle2Emitter::Render(float curTime)
         remVertices = RenderPure(dstVertices,maxVertices);
     else
     {
-
         if (this->stretchToStart || (this->stretchDetail == 1))
         {
             remVertices = RenderStretched(dstVertices,maxVertices);
         } else {
             remVertices = RenderStretchedSmooth(dstVertices,maxVertices);
-        };
-
-    };
+        }
+    }
 
     // Draw
     this->particleMesh.End(remVertices);
@@ -726,9 +767,10 @@ nParticle2Emitter::Initialize()
         if (this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
             maxLife = this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime];
     }
-    this->maxParticleCount = (int)(maxFreq * maxLife);
+    this->maxParticleCount = (int)n_ceil(maxFreq * maxLife);
+    this->maxParticleCount = n_max(1, this->maxParticleCount);
     // allocate array
-    this->particles = new nParticle2[this->maxParticleCount];
+    this->AllocateParticles();
     n_assert(0 != this->particles);
     // reset particles
     this->particleCount = 0;
@@ -750,33 +792,36 @@ nParticle2Emitter::NotifyCurvesChanged()
     {
         // we need to rearrange the particlearray, because the curves have changed
 
-        float maxFreq = 0 , maxLife = 0;
+        float maxFreq = 0, maxLife = 0;
         int i;
         for (i = 0; i < ParticleTimeDetail; i++)
         {
-            if (this->pStaticCurves[i*CurveTypeCount+EmissionFrequency] > maxFreq)
-                maxFreq = this->pStaticCurves[i*CurveTypeCount+EmissionFrequency];
-            if (this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime] > maxLife)
-                maxLife = this->pStaticCurves[i*CurveTypeCount+ParticleLifeTime];
+            if (this->pStaticCurves[i * CurveTypeCount + EmissionFrequency] > maxFreq)
+                maxFreq = this->pStaticCurves[i * CurveTypeCount + EmissionFrequency];
+            if (this->pStaticCurves[i * CurveTypeCount + ParticleLifeTime] > maxLife)
+                maxLife = this->pStaticCurves[i * CurveTypeCount + ParticleLifeTime];
         }
-        int newMaxParticleCount = (int)(maxFreq * maxLife);
-        // allocate array
-        nParticle2* newPtr = new nParticle2[newMaxParticleCount];
-        n_assert(0 != newPtr);
+        int newMaxParticleCount = (int)n_ceil(maxFreq * maxLife);
+        newMaxParticleCount = n_max(1, newMaxParticleCount);
+        if (newMaxParticleCount > this->maxParticleCount || newMaxParticleCount < this->maxParticleCount / 2)
+        {
+            // allocate array
+            nParticle2* newPtr = n_new_array(nParticle2, newMaxParticleCount);
+            n_assert(0 != newPtr);
 
-        int partsToCopy = this->particleCount;
-        if (partsToCopy > newMaxParticleCount)
-            partsToCopy = newMaxParticleCount;
+            int partsToCopy = this->particleCount;
+            if (partsToCopy > newMaxParticleCount)
+                partsToCopy = newMaxParticleCount;
 
-        memcpy(newPtr,this->particles,partsToCopy*sizeof(nParticle2));
+            memcpy(newPtr, this->particles, partsToCopy * sizeof(nParticle2));
 
-        // delete old array
-        delete [] this->particles;
+            // delete old array
+            n_delete_array(this->particles);
 
-        // set new values
-        this->particleCount = partsToCopy;
-        this->particles = newPtr;
-        this->maxParticleCount = newMaxParticleCount;
-
+            // set new values
+            this->particleCount = partsToCopy;
+            this->particles = newPtr;
+            this->maxParticleCount = newMaxParticleCount;
+        }
     }
 }

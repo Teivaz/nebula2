@@ -20,6 +20,7 @@ static void n_p2setprecalctime(void* slf, nCmd* cmd);
 static void n_p2setstretchdetail(void* slf, nCmd* cmd);
 static void n_p2setviewanglefade(void* slf, nCmd* cmd);
 static void n_p2setstartdelay(void* slf, nCmd* cmd);
+static void n_p2setemitonsurface(void* slf, nCmd* cmd);
 
 static void n_p2setparticlevelocityrandomize(void* slf, nCmd* cmd);
 static void n_p2setparticlerotationrandomize(void* slf, nCmd* cmd);
@@ -74,6 +75,7 @@ n_initcmds(nClass* cl)
     cl->AddCmd("v_setstretchdetail_i", 'SSDT', n_p2setstretchdetail);
     cl->AddCmd("v_setviewanglefade_b", 'SVAF', n_p2setviewanglefade);
     cl->AddCmd("v_setstartdelay_f", 'STDL', n_p2setstartdelay);
+    cl->AddCmd("v_setemitonsurface_b", 'STEO', n_p2setemitonsurface);
 
     cl->AddCmd("v_setemissionfrequency_ffffffffi", 'SCVA', n_p2setemissionfrequency);
     cl->AddCmd("v_setparticlelifetime_ffffffffi", 'SCVB', n_p2setparticlelifetime);
@@ -392,6 +394,17 @@ n_p2setparticleairresistance(void* slf, nCmd* cmd)
 
 //------------------------------------------------------------------------------
 /**
+    -04-Dec-06  kims  Changed that particles can be emitted on a surface.
+*/
+static void
+n_p2setemitonsurface(void* slf, nCmd* cmd)
+{
+    nParticleShapeNode2* self = (nParticleShapeNode2*) slf;
+    self->SetEmitOnSurface(cmd->In()->GetB());
+}
+//------------------------------------------------------------------------------
+/**
+   -04-Dec-06  kims  Changed that particles can be emitted on a surface.
 */
 bool
 nParticleShapeNode2::SaveCmds(nPersistServer* ps)
@@ -563,6 +576,11 @@ nParticleShapeNode2::SaveCmds(nPersistServer* ps)
         //--- set start delay ---
         cmd = ps->GetCmd(this, 'STDL');
         cmd->In()->SetF((float) this->startDelay);
+        ps->PutCmd(cmd);
+
+        //--- set emit on surface ---
+        cmd = ps->GetCmd(this, 'STEO');
+        cmd->In()->SetB((bool) this->emitOnSurface);
         ps->PutCmd(cmd);
 
         return true;
