@@ -57,6 +57,7 @@ nNebulaUsePackage(ndshow);
 nNebulaUsePackage(ngui);
 nNebulaUsePackage(nnetwork);
 nNebulaUsePackage(ncterrain2);
+nNebulaUsePackage(ndsound);
 
 //------------------------------------------------------------------------------
 /*
@@ -103,11 +104,11 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* scriptserverArg = args.GetStringArg("-scriptserver", "ntclserver");
-    const char* sceneserverArg = args.GetStringArg("-sceneserver", 0);
-    const char* startupArg = args.GetStringArg("-startup", "home:bin/startup.tcl");
-    const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
+    nString scriptserverArg = args.GetStringArg("-scriptserver", "ntclserver");
+    nString sceneserverArg = args.GetStringArg("-sceneserver", 0);
+    nString startupArg = args.GetStringArg("-startup", "home:data/scripts/startup.tcl");
+    nString viewArg   = args.GetStringArg("-view", 0);
+    nString stageArg  = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     bool helpArg          = args.GetBoolArg("-help");
@@ -115,10 +116,10 @@ main(int argc, const char** argv)
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
     int heightArg         = args.GetIntArg("-h", 480);
-    const char* projDir   = args.GetStringArg("-projdir", 0);
+    nString projDir   = args.GetStringArg("-projdir", 0);
 
-    const char* gfxServerClass = args.GetStringArg("-gfxserver", 0);
-    const char* featureSetArg  = args.GetStringArg("-featureset", 0);
+    nString gfxServerClass = args.GetStringArg("-gfxserver", 0);
+    nString featureSetArg  = args.GetStringArg("-featureset", 0);
 
     // If the user needs an explanation, just provide one, and don't do anything else this execution
     if (helpArg)
@@ -158,10 +159,11 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(ngui);
     kernelServer.AddPackage(nnetwork);
     kernelServer.AddPackage(ncterrain2);
+    kernelServer.AddPackage(ndsound);
 
     // initialize a display mode object
     nString title;
-    if (viewArg)
+    if (viewArg.IsValid())
     {
         title.Append(viewArg);
         title.Append(" - ");
@@ -172,15 +174,15 @@ main(int argc, const char** argv)
     displayMode.SetDialogBoxMode(true);
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, false, false, 0);
     }
     else if (alwaysOnTopArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, false, false, 0);
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false);
+        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, false, false, 0);
     }
 
     // under Win32 check if we should read the project directory from the registry
@@ -199,17 +201,17 @@ main(int argc, const char** argv)
     // initialize a viewer app object
     nViewerApp viewerApp;
     viewerApp.SetDisplayMode(displayMode);
-    if (gfxServerClass)   viewerApp.SetGfxServerClass(gfxServerClass);
-    if (viewArg)          viewerApp.SetSceneFile(viewArg);
-    if (projDir)          viewerApp.SetProjDir(projDir);
-    if (featureSetArg)
+    if (gfxServerClass.IsValid())   viewerApp.SetGfxServerClass(gfxServerClass);
+    if (viewArg.IsValid())          viewerApp.SetSceneFile(viewArg);
+    if (projDir.IsValid())          viewerApp.SetProjDir(projDir);
+    if (featureSetArg.IsValid())
     {
-        nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg);
+        nGfxServer2::FeatureSet featureSet = nGfxServer2::StringToFeatureSet(featureSetArg.Get());
         viewerApp.SetFeatureSetOverride(featureSet);
     }
     
     viewerApp.SetScriptServerClass(scriptserverArg);
-    if (sceneserverArg)   viewerApp.SetSceneServerClass(sceneserverArg);
+    if (sceneserverArg.IsValid())   viewerApp.SetSceneServerClass(sceneserverArg);
     viewerApp.SetStartupScript(startupArg);
     viewerApp.SetStageScript(stageArg);
 

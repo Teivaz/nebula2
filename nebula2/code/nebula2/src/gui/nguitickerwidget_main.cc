@@ -71,7 +71,7 @@ nGuiTickerWidget::RenderText()
 
     if (this->textIsInvalid)
     {
-        this->textExtend = nGfxServer2::Instance()->GetTextExtent(this->text.Get());
+        this->textExtend = nGfxServer2::Instance()->GetTextExtent(this->text);
         this->textIsInvalid = false;
     }
 

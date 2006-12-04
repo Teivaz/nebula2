@@ -12,7 +12,7 @@
 /**
     Load .n3d2 and construct render monkey scene with it.
 
-    @param filename .n3d2 filename which to be loaed.
+    @param filename .n3d2 filename which to be loaded.
     @param modelContainer RenderMonkey model container.
 */
 bool ConstructScene(const RM_TCHAR* filename, RmMeshModelContainer *modelContainer)

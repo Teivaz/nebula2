@@ -412,7 +412,7 @@ nGuiFileDialog::DeleteFile()
     path.Append("/");
     path.Append(this->GetFilename());
 
-    if (nFileServer2::Instance()->DeleteFile(path.Get()))
+    if (nFileServer2::Instance()->DeleteFile(path))
     {
         return true;
     }
@@ -498,7 +498,7 @@ nGuiFileDialog::CheckFileExists()
     path.Append("/");
     path.Append(this->GetFilename());
 
-    if (kernelServer->GetFileServer()->FileExists(path.Get()))
+    if (kernelServer->GetFileServer()->FileExists(path))
     {
         // file already exists, create an overwrite warning
         nGuiMessageBox* msgBox = (nGuiMessageBox*) nGuiServer::Instance()->NewWindow("nguimessagebox", false);

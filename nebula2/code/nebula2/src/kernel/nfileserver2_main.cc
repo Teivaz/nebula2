@@ -219,7 +219,7 @@ nFileServer2::ManglePath(const nString& pathName)
         {
             nString assignString = pathString.ExtractRange(0, colonIndex);
             nString postAssignString = pathString.ExtractRange(colonIndex + 1, pathString.Length() - (colonIndex + 1));
-            nString replace = this->GetAssign(assignString.Get());
+            nString replace = this->GetAssign(assignString);
             if (!replace.IsEmpty())
             {
                 replace.Append(postAssignString);
@@ -340,14 +340,14 @@ nFileServer2::InitHomeAssign()
             homePath = homePath.ExtractDirName();
             homePath.StripTrailingSlash();
             homePath = homePath.ExtractDirName();
-            this->SetAssign("home", homePath.Get());
+            this->SetAssign("home", homePath);
         }
         else
         {
             // not in normal home:bin/win32 directory structure,
             // use the exe's directory as home path
             nString homePath = pathToExe.ExtractDirName();
-            this->SetAssign("home", homePath.Get());
+            this->SetAssign("home", homePath);
         }
     #elif defined(__LINUX__)
         // under Linux, the NEBULADIR environment variable must be set,
@@ -407,7 +407,7 @@ nFileServer2::InitBinAssign()
         nString pathToExe = buf;
         pathToExe.ConvertBackslashes();
         nString binPath = pathToExe.ExtractDirName();
-        this->SetAssign("bin", binPath.Get());
+        this->SetAssign("bin", binPath);
 
     #elif defined(__LINUX__)
 
@@ -460,11 +460,11 @@ nFileServer2::InitUserAssign()
     nString path(rawPath);
     path.ConvertBackslashes();
     path.Append("/");
-    this->SetAssign("user", path.Get());
+    this->SetAssign("user", path);
 #elif defined(__LINUX__) || defined(__MACOSX__)
     nString path(getenv("HOME"));
     path.Append("/");
-    this->SetAssign("user", path.Get());
+    this->SetAssign("user", path);
 #else
 #error "IMPLEMENT ME!"
 #endif
@@ -487,7 +487,7 @@ nFileServer2::InitTempAssign()
     nString path(rawPath);
     path.ConvertBackslashes();
     path.Append("/");
-    this->SetAssign("temp", path.Get());
+    this->SetAssign("temp", path);
 #elif defined(__LINUX__) || defined(__MACOSX__)
     const char * tmpDir = getenv("TMPDIR");
     if (NULL == tmpDir)
@@ -496,7 +496,7 @@ nFileServer2::InitTempAssign()
     }
     nString path(tmpDir);
     path.Append("/");
-    this->SetAssign("user", path.Get());
+    this->SetAssign("user", path);
 #else
 #error "IMPLEMENT ME!"
 #endif
@@ -511,7 +511,7 @@ nFileServer2::FileExists(const nString& pathName) const
     n_assert(pathName != 0);
     bool result = false;
     nFile* file = this->NewFileObject();
-    if (file->Exists(pathName.Get()))
+    if (file->Exists(pathName))
     {
         result = true;
     }
@@ -545,7 +545,7 @@ nFileServer2::DirectoryExists(const nString& pathName) const
 {
     n_assert(pathName != 0);
     nDirectory* dir = this->NewDirectoryObject();
-    if (dir->Open(pathName.Get()))
+    if (dir->Open(pathName))
     {
         dir->Close();
         n_delete(dir);
@@ -568,7 +568,7 @@ nFileServer2::MakePath(const nString& dirName)
     // build stack of non-existing dir components
     nString path = this->ManglePath(dirName).Get();
     nArray<nString> pathStack;
-    while ((!path.IsEmpty()) && (!dir->Open(path.Get())))
+    while ((!path.IsEmpty()) && (!dir->Open(path)))
     {
         pathStack.Append(path);
         nString nextPath = path.ExtractDirName().TrimRight("/\\");
@@ -878,7 +878,7 @@ nFileServer2::ListFiles(const nString& dirName)
 {
     nArray<nString> fileList;
     nDirectory* dir = this->NewDirectoryObject();
-    if (dir->Open(dirName.Get()))
+    if (dir->Open(dirName))
     {
         if (dir->SetToFirstEntry()) do
         {
@@ -903,7 +903,7 @@ nFileServer2::ListMatchingFiles(const nString& dirName, const nString& pattern)
 {
     nArray<nString> fileList;
     nDirectory* dir = this->NewDirectoryObject();
-    if (dir->Open(dirName.Get()))
+    if (dir->Open(dirName))
     {
         if (dir->SetToFirstEntry()) do
         {
@@ -928,7 +928,7 @@ nFileServer2::ListDirectories(const nString& dirName)
 {
     nArray<nString> dirList;
     nDirectory* dir = this->NewDirectoryObject();
-    if (dir->Open(dirName.Get()))
+    if (dir->Open(dirName))
     {
         if (dir->SetToFirstEntry()) do
         {
@@ -953,7 +953,7 @@ nFileServer2::ListMatchingDirectories(const nString& dirName, const nString& pat
 {
     nArray<nString> dirList;
     nDirectory* dir = this->NewDirectoryObject();
-    if (dir->Open(dirName.Get()))
+    if (dir->Open(dirName))
     {
         if (dir->SetToFirstEntry()) do
         {

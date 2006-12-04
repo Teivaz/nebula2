@@ -312,7 +312,7 @@ nPythonServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
             _indent(++this->indent_level, this->indent_buf);
             file->PutS(this->indent_buf);
             file->PutS("__NDobj = sel('");
-            file->PutS(owner->GetRelPath(o).Get());
+            file->PutS(owner->GetRelPath(o));
             file->PutS("')\n");
             break;
 
@@ -394,7 +394,7 @@ nPythonServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
     _indent(--this->indent_level, this->indent_buf);
     file->PutS(this->indent_buf);
     file->PutS("__NDobj = sel('");
-    file->PutS(o->GetRelPath(owner).Get());
+    file->PutS(o->GetRelPath(owner));
     file->PutS("')\n");
 
     return true;

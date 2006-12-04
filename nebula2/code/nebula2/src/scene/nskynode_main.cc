@@ -85,7 +85,7 @@ nSkyNode::TypeToString(nSkyNode::ElementType type) const
 nSkyNode::ElementType
 nSkyNode::StringToType(const nString& str) const
 {
-    n_assert(str.Get());
+    n_assert(str.IsValid());
     const nString sky = "sky";
     const nString sun = "sun";
     const nString light = "light";
@@ -296,7 +296,7 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
         }
         default:
         {
-            n_assert(elementPtr->IsA(this->kernelServer->FindClass("nabstractshadernode")));
+            n_assert(elementPtr->IsA("nabstractshadernode"));
             newElement.type = nSkyNode::GenericElement;
             break;
         }

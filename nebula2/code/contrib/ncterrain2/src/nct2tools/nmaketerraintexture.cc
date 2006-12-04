@@ -17,7 +17,7 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg        = args.GetBoolArg("-help");
-    const char* confArg = args.GetStringArg("-conf", 0);
+    nString confArg     = args.GetStringArg("-conf", 0);
 
     if (helpArg)
     {
@@ -30,7 +30,7 @@ main(int argc, const char** argv)
     }
 
     // check args
-    if (!confArg)
+    if (confArg.IsEmpty())
     {
         n_printf("-conf arg expected!\n");
         return 10;
@@ -38,7 +38,7 @@ main(int argc, const char** argv)
 
     // create and configure a GenTerrainTexture object
     nGenTerrainTexture genTexture(&kernelServer);
-    genTexture.SetConfigFilename(confArg);
+    genTexture.SetConfigFilename(confArg.Get());
     if (!genTexture.Run())
     {
         n_printf("Generating texture failed with: %s\n", genTexture.GetError());

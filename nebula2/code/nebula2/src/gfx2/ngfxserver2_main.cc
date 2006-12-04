@@ -1034,7 +1034,7 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
             outString[lineEndTestMark] = 0;
 
             // get the text extend
-            const vector2& textExtend = this->GetTextExtent(outString.Get());
+            const vector2& textExtend = this->GetTextExtent(outString);
 
             // restore the original text (but only if this isn't the last char, that must be \0)
             if (lineEndTestMark < textLength)
@@ -1134,5 +1134,4 @@ nGfxServer2::SetClipPlanes(const nArray<plane>& planes)
 {
     this->clipPlanes = planes;
 }
-
 

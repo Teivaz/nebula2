@@ -88,7 +88,7 @@ nNpkBuilder::GenerateToc(nDirectory* dir, const nString& dirName)
             nDirectory* subDir = fileServer->NewDirectoryObject();
             n_assert(subDir);
             bool subDirOk = false;
-            if (subDir->Open(fullEntryName.Get()))
+            if (subDir->Open(fullEntryName))
             {
                 // recurse
                 this->GenerateToc(subDir, fullEntryName);
@@ -319,7 +319,7 @@ nNpkBuilder::Pack(const nString& rootPath, const nString& dirName, const nString
     absDirName.Append("/");
     absDirName.Append(dirName);
     nDirectory* dir = fileServer->NewDirectoryObject();
-    if (!dir->Open(absDirName.Get()))
+    if (!dir->Open(absDirName))
     {
         this->SetError(CannotOpenSourceDirectory);
         n_delete(dir);

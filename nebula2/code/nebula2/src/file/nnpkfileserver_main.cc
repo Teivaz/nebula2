@@ -63,7 +63,7 @@ bool
 nNpkFileServer::ParseNpkFile(const nString& path)
 {
     n_assert(!path.IsEmpty());
-    if (this->FileExists(path.Get()))
+    if (this->FileExists(path))
     {
         nString dirname  = path.ExtractDirName();
         nString absDirPath = this->ManglePath(dirname);
@@ -94,7 +94,7 @@ nNpkFileServer::ParseDirectory(const nString& dirName, const nString& extension)
     int numNpks = 0;
     nDirectory* dir = nFileServer2::NewDirectoryObject();
     n_assert(dir);
-    if (dir->Open(absPath.Get()))
+    if (dir->Open(absPath))
     {
         if (!dir->IsEmpty()) do
         {

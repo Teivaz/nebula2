@@ -52,7 +52,7 @@ n_attachform(void* slf, nCmd* cmd)
     nGuiWidget* widget = (nGuiWidget*) cmd->In()->GetO();
     nGuiFormLayout::Edge edge = nGuiFormLayout::StringToEdge(cmd->In()->GetS());
     float offset = cmd->In()->GetF();
-    n_assert(widget->IsA(nKernelServer::Instance()->FindClass("nguiwidget")));
+    n_assert(widget->IsA("nguiwidget"));
     cmd->Out()->SetI(self->AttachForm(widget, edge, offset));
 }
 
@@ -76,8 +76,8 @@ n_attachwidget(void* slf, nCmd* cmd)
     nGuiFormLayout::Edge edge = nGuiFormLayout::StringToEdge(cmd->In()->GetS());
     nGuiWidget* other = (nGuiWidget*) cmd->In()->GetO();
     float offset = cmd->In()->GetF();
-    n_assert(widget->IsA(nKernelServer::Instance()->FindClass("nguiwidget")));
-    n_assert(other->IsA(nKernelServer::Instance()->FindClass("nguiwidget")));
+    n_assert(widget->IsA("nguiwidget"));
+    n_assert(other->IsA("nguiwidget"));
     cmd->Out()->SetI(self->AttachWidget(widget, edge, other, offset));
 }
 
@@ -100,6 +100,6 @@ n_attachpos(void* slf, nCmd* cmd)
     nGuiWidget* widget = (nGuiWidget*) cmd->In()->GetO();
     nGuiFormLayout::Edge edge = nGuiFormLayout::StringToEdge(cmd->In()->GetS());
     float pos = cmd->In()->GetF();
-    n_assert(widget->IsA(nKernelServer::Instance()->FindClass("nguiwidget")));
+    n_assert(widget->IsA("nguiwidget"));
     cmd->Out()->SetI(self->AttachPos(widget, edge, pos));
 }

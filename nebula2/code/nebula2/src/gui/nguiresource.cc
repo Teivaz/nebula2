@@ -20,7 +20,7 @@ nGuiResource::Load()
             int(this->absUvRect.v1.x),                  // Width.
             int(this->absUvRect.v1.y),                  // Height.
             nTexture2::X8R8G8B8,                        // Format.
-            nTexture2::Empty | nTexture2::Dynamic | nTexture2::RenderTargetColor);
+            nTexture2::CreateEmpty | nTexture2::Dynamic | nTexture2::RenderTargetColor);
     }
     else
     {
@@ -32,7 +32,7 @@ nGuiResource::Load()
         }
         if (!this->refTexture->IsValid())
         {
-            this->refTexture->SetFilename(this->texName.Get());
+            this->refTexture->SetFilename(this->texName);
             if (!this->refTexture->Load())
             {
                 n_error("nGuiResource: could not load texture %s!", this->texName.Get());
@@ -82,5 +82,4 @@ nGuiResource::GetRelUvRect()
 
     return this->relUvRect;
 }
-
 

@@ -88,7 +88,7 @@ nGuiCmdEntry::AppendCmdLine()
     {
         cmdLine.Append(textFromCursor);
     }
-    this->AppendLine(cmdLine.Get());
+    this->AppendLine(cmdLine);
 }
 
 //------------------------------------------------------------------------------

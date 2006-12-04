@@ -26,7 +26,7 @@ nChunkLodMesh::nChunkLodMesh() :
     // do NOT create the mesh object inside LoadResource(),
     // because NewMesh() may not be multithreading safe
     this->refMesh = nGfxServer2::Instance()->NewMesh(0);
-    this->refMesh->SetRefillBuffersMode(nMesh2::DisabledOnce);
+//    this->refMesh->SetRefillBuffersMode(nMesh2::DisabledOnce);
 }
 
 //------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ nChunkLodMesh::LoadResource()
     this->matDiffuse.z = 0.5f + n_rand() * 0.5f;
     this->matDiffuse.w = 1.0f;
 
-    this->SetValid(true);
+    this->SetState(nResource::Valid);
     return true;
 }
 
@@ -169,5 +169,5 @@ nChunkLodMesh::UnloadResource()
 
     // n_printf("nChunkLodMesh %s: unloading\n");
 
-    this->SetValid(false);
+    this->SetState(nResource::Valid);
 }

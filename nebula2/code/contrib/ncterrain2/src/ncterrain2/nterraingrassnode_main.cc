@@ -86,9 +86,9 @@ nTerrainGrassNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* ren
     }
 
     // render the mesh
-    gfxServer->SetMesh(attrs->mesh);
+    gfxServer->SetMesh(attrs->mesh, attrs->mesh);
     gfxServer->SetVertexRange(0, attrs->mesh->GetNumVertices());
     gfxServer->DrawNS(nGfxServer2::PointList);
-    gfxServer->SetMesh(0);
+    gfxServer->SetMesh(0, 0);
     return true;
 }

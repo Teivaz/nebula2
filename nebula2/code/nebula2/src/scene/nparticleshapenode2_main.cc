@@ -239,4 +239,3 @@ nParticleShapeNode2::GetEmitter(nRenderContext* renderContext)
     return (nParticle2Emitter*)varEmitter.GetObj();
 }
 
-

@@ -432,7 +432,7 @@ nGuiTexBrowserWindow::UpdateInfoField()
             str = "Filename:\t";
             str.Append(filename.Get());
         }
-        infoField->AppendLine(str.Get());
+        infoField->AppendLine(str);
 
         // usage flags
         int usage = tex->GetUsage();
@@ -458,7 +458,7 @@ nGuiTexBrowserWindow::UpdateInfoField()
         {
             str.Append("none");
         }
-        infoField->AppendLine(str.Get());
+        infoField->AppendLine(str);
 
         // type
         nTexture2::Type type = tex->GetType();
@@ -471,7 +471,7 @@ nGuiTexBrowserWindow::UpdateInfoField()
             case nTexture2::TEXTURE_CUBE:   str.Append("Cube"); break;
             default:             str.Append("Unknown???"); break;
         }
-        infoField->AppendLine(str.Get());
+        infoField->AppendLine(str);
 
         // format
         nTexture2::Format format = tex->GetFormat();
@@ -499,7 +499,7 @@ nGuiTexBrowserWindow::UpdateInfoField()
             case nTexture2::A32B32G32R32F: str.Append("A32B32G32R32F (four 32-bit float channels)"); break;
             default:                       str.Append("Unknown!");
         }
-        infoField->AppendLine(str.Get());
+        infoField->AppendLine(str);
 
         // dimension, number of mip levels
         int width = tex->GetWidth();
@@ -512,7 +512,7 @@ nGuiTexBrowserWindow::UpdateInfoField()
         str.Append(", ");
         str.AppendInt(numMipLevels);
         str.Append(" mip levels");
-        infoField->AppendLine(str.Get());
+        infoField->AppendLine(str);
 
         // memory size
         char buf[128];

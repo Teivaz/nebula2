@@ -95,7 +95,7 @@ nGuiDirLister::UpdateContent()
             {
                 entryName.StripExtension();
             }
-            this->AppendLine(entryName.Get());
+            this->AppendLine(entryName);
         }
         while (dir->SetToNextEntry());
 

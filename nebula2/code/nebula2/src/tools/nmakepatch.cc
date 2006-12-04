@@ -35,7 +35,7 @@ HandleDiffFile(const nString& filename)
     nString oldFileName = filename.Substitute(NewDirPath.Get(), OldDirPath.Get());
 
     bool copyFile = false;
-    if (fileServer->FileExists(oldFileName.Get()))
+    if (fileServer->FileExists(oldFileName))
     {
         // file exists, do a crc check...
         uint newCrc = 0;
@@ -72,8 +72,8 @@ HandleDiffFile(const nString& filename)
         // copy new file to difference directory
         nString diffFileName = filename.Substitute(NewDirPath.Get(), DiffDirPath.Get());
         nString diffFileDir = diffFileName.ExtractDirName();
-        fileServer->MakePath(diffFileDir.Get());
-        fileServer->CopyFile(filename.Get(), diffFileName.Get());
+        fileServer->MakePath(diffFileDir);
+        fileServer->CopyFile(filename, diffFileName);
         Different = true;
     }
     return true;
@@ -92,7 +92,7 @@ CheckCleanupDirectory(const nString& dirName)
 
     // build corresponding filename in new dir
     nString newDirName = dirName.Substitute(OldDirPath.Get(), NewDirPath.Get());
-    if (!fileServer->DirectoryExists(newDirName.Get()))
+    if (!fileServer->DirectoryExists(newDirName))
     {
         // directory no longer exists...
         nString relativeDirName = dirName.Substitute(OldDirPath.Get(), "").Substitute("/", "\\").TrimLeft("\\");
@@ -122,7 +122,7 @@ HandleCleanupFile(const nString& filename)
     nString newFileName = filename.Substitute(OldDirPath.Get(), NewDirPath.Get());
 
     // check if file does not exist in new dir
-    if (!fileServer->FileExists(newFileName.Get()))
+    if (!fileServer->FileExists(newFileName))
     {
         // add an entry to the batch file
         nString relativeFilename = filename.Substitute(OldDirPath.Get(), "").Substitute("/", "\\").TrimLeft("\\");
@@ -146,7 +146,7 @@ void
 WalkDirectory(const nString& dirName, bool cleanupMode)
 {
     nDirectory* dir = nFileServer2::Instance()->NewDirectoryObject();
-    if (dir->Open(dirName.Get()))
+    if (dir->Open(dirName))
     {
         // check if directory still event exists
         if (CheckCleanupDirectory(dirName))

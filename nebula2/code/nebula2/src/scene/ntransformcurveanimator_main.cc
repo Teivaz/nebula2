@@ -63,7 +63,7 @@ nTransformCurveAnimator::LoadAnimation()
         n_assert(animation);
         if (!animation->IsLoaded())
         {
-            animation->SetFilename(this->animationName.Get());
+            animation->SetFilename(this->animationName);
             if (!animation->Load())
             {
                 n_printf("nTransformCurveAnimator: Error loading animation '%s'\n", this->animationName.Get());
@@ -149,5 +149,4 @@ nTransformCurveAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
     targetNode->SetPosition(vector3(keyArray[0].x, keyArray[0].y, keyArray[0].z));
     targetNode->SetQuat(quaternion(keyArray[1].x, keyArray[1].y, keyArray[1].z, keyArray[1].w));
     targetNode->SetScale(vector3(keyArray[2].x, keyArray[2].y, keyArray[2].z));
-
 }

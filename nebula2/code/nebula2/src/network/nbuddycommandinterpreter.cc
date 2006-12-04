@@ -508,8 +508,8 @@ void nBuddyCommandInterpreter::GetProfileAttr(nString& strResult,nStream& query,
             result.SetInt("id",MessageID);
             result.SetString("type","result");
             result.BeginNode("servermessage");
-            result.SetString("message",key.Get());
-            result.SetString("value",value.Get());
+            result.SetString("message",key);
+            result.SetString("value",value);
             result.EndNode();
             result.EndNode();
         }

@@ -73,7 +73,7 @@ bool nMaxOptions::Initialize()
     nFileServer2* fileServer = nFileServer2::Instance();
 
     // check the .ini file exist in 3dsmax plugin directory.
-    if (!fileServer->FileExists(iniFilename.Get()))
+    if (!fileServer->FileExists(iniFilename))
     {
         // .ini file does not exist in '/plugcfg' directory.
         n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
@@ -169,7 +169,7 @@ bool nMaxOptions::Initialize()
 
     iniFile->Release();
 
-    if (!fileServer->DirectoryExists(this->homeDir.Get()))
+    if (!fileServer->DirectoryExists(this->homeDir))
     {
         n_listener("Home path '%s' does not exist.", this->homeDir.Get());
         return false;
@@ -190,13 +190,13 @@ bool nMaxOptions::Initialize()
             fileServer->SetAssign("proj", projDir.Get());
         }
 
-        if (!fileServer->DirectoryExists(binaryPath.Get()))
+        if (!fileServer->DirectoryExists(binaryPath))
         {
             tmp += "\n  binary path: ";
             tmp += binaryPath;
         }
 
-        if (!fileServer->DirectoryExists(animsAssign.Get()))
+        if (!fileServer->DirectoryExists(animsAssign))
         {
             tmp += "\n  'anims' assign: ";
             tmp += animsAssign;
@@ -204,14 +204,14 @@ bool nMaxOptions::Initialize()
         else
         {
             fileServer->SetAssign("anims", animsAssign.Get());
-            if (!fileServer->DirectoryExists(animsPath.Get()))
+            if (!fileServer->DirectoryExists(animsPath))
             {
                 tmp += "\n  'Animation' path: ";
                 tmp += animsPath;
             }
         }
 
-        if (!fileServer->DirectoryExists(gfxlibAssign.Get()))
+        if (!fileServer->DirectoryExists(gfxlibAssign))
         {
             tmp += "\n  'gfxlib' assign: ";
             tmp += gfxlibAssign;
@@ -219,14 +219,14 @@ bool nMaxOptions::Initialize()
         else
         {
             fileServer->SetAssign("gfxlib", gfxlibAssign.Get());
-            if (!fileServer->DirectoryExists(gfxlibPath.Get()))
+            if (!fileServer->DirectoryExists(gfxlibPath))
             {
                 tmp += "\n  'Gfx' path: ";
                 tmp += gfxlibPath;
             }
         }
 
-        if (!fileServer->DirectoryExists(guiAssign.Get()))
+        if (!fileServer->DirectoryExists(guiAssign))
         {
             tmp += "\n  'gui' assign: ";
             tmp += guiAssign;
@@ -234,14 +234,14 @@ bool nMaxOptions::Initialize()
         else
         {
             fileServer->SetAssign("gui", guiAssign.Get());
-            if (!fileServer->DirectoryExists(guiPath.Get()))
+            if (!fileServer->DirectoryExists(guiPath))
             {
                 tmp += "\n  'Gui' path: ";
                 tmp += guiPath;
             }
         }
 
-        if (!fileServer->DirectoryExists(lightsAssign.Get()))
+        if (!fileServer->DirectoryExists(lightsAssign))
         {
             tmp += "\n  'lights' assign: ";
             tmp += lightsAssign;
@@ -249,14 +249,14 @@ bool nMaxOptions::Initialize()
         else
         {
             fileServer->SetAssign("lights", lightsAssign.Get());
-            if (!fileServer->DirectoryExists(lightsPath.Get()))
+            if (!fileServer->DirectoryExists(lightsPath))
             {
                 tmp += "\n  'Lights' path: ";
                 tmp += lightsPath;
             }
         }
 
-        if (!fileServer->DirectoryExists(meshesAssign.Get()))
+        if (!fileServer->DirectoryExists(meshesAssign))
         {
             tmp += "\n  'meshes' assign: ";
             tmp += meshesAssign;
@@ -264,14 +264,14 @@ bool nMaxOptions::Initialize()
         else
         {
             fileServer->SetAssign("meshes", meshesAssign.Get());
-            if (!fileServer->DirectoryExists(meshesPath.Get()))
+            if (!fileServer->DirectoryExists(meshesPath))
             {
                 tmp += "\n  'Meshes' path: ";
                 tmp += meshesPath;
             }
         }
 
-        if (!fileServer->DirectoryExists(shadersAssign.Get()))
+        if (!fileServer->DirectoryExists(shadersAssign))
         {
             tmp += "\n  'shaders' assign: ";
             tmp += shadersAssign;
@@ -279,14 +279,14 @@ bool nMaxOptions::Initialize()
         else
         {
             fileServer->SetAssign("shaders", shadersAssign.Get());
-            if (!fileServer->DirectoryExists(shadersPath.Get()))
+            if (!fileServer->DirectoryExists(shadersPath))
             {
                 tmp += "\n  'Shaders' path: ";
                 tmp += shadersPath;
             }
         }
 
-        if (!fileServer->DirectoryExists(texturesAssign.Get()))
+        if (!fileServer->DirectoryExists(texturesAssign))
         {
             tmp += "\n  'textures' assign: ";
             tmp += texturesAssign;
@@ -294,7 +294,7 @@ bool nMaxOptions::Initialize()
         else
         {
             fileServer->SetAssign("textures", texturesAssign.Get());
-            if (!fileServer->DirectoryExists(texturesPath.Get()))
+            if (!fileServer->DirectoryExists(texturesPath))
             {
                 tmp += "\n  'Textures' path: ";
                 tmp += texturesPath;
@@ -331,7 +331,7 @@ bool nMaxOptions::LoadUtilityOptions()
     nFileServer2* fileServer = nFileServer2::Instance();
 
     // check the .ini file exist in 3dsmax plugin directory.
-    if (!fileServer->FileExists(iniFilename.Get()))
+    if (!fileServer->FileExists(iniFilename))
     {
         // .ini file does not exist in '/plugcfg' directory.
         n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);

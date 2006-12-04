@@ -85,7 +85,7 @@ nMouseCursor::Load()
     n_assert(this->refTexture.isvalid());
     if (this->refTexture->IsUnloaded())
     {
-        this->refTexture->SetFilename(this->filename.Get());
+        this->refTexture->SetFilename(this->filename);
         bool success = this->refTexture->Load();
         return success;
     }

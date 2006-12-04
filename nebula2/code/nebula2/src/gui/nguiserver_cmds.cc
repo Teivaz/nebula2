@@ -264,7 +264,7 @@ n_setskin(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
     nGuiSkin* skin = (nGuiSkin*) cmd->In()->GetO();
-    n_assert(skin->IsA(nKernelServer::Instance()->FindClass("nguiskin")));
+    n_assert(skin->IsA("nguiskin"));
     self->SetSkin(skin);
 }
 
@@ -303,7 +303,7 @@ n_setsystemskin(void* slf, nCmd* cmd)
 {
     nGuiServer* self = (nGuiServer*) slf;
     nGuiSkin* skin = (nGuiSkin*) cmd->In()->GetO();
-    n_assert(skin->IsA(nKernelServer::Instance()->FindClass("nguiskin")));
+    n_assert(skin->IsA("nguiskin"));
     self->SetSystemSkin(skin);
 }
 

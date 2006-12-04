@@ -308,7 +308,7 @@ void nLuaServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
     
     file->PutS(this->indent_buf);
     file->PutS("sel('");
-    file->PutS(relpath.Get());
+    file->PutS(relpath);
     file->PutS("')\n");
 }
 
@@ -387,7 +387,7 @@ bool nLuaServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
     
     file->PutS(this->indent_buf);
     file->PutS("sel('");
-    file->PutS(relpath.Get());
+    file->PutS(relpath);
     file->PutS("')\n");
 
     return true;

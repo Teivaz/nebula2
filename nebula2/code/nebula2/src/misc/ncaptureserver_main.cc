@@ -96,7 +96,7 @@ bool
 nCaptureServer::CreateSessionDirectory()
 {
     nString dirName = this->GetSessionDirectoryPath();
-    return nFileServer2::Instance()->MakePath(dirName.Get());
+    return nFileServer2::Instance()->MakePath(dirName);
 }
 
 //------------------------------------------------------------------------------
@@ -114,7 +114,7 @@ nCaptureServer::SetToNextSessionIndex()
         this->sessionIndex++;
         dirName = this->GetSessionDirectoryPath();
     }
-    while (fileServer->DirectoryExists(dirName.Get()));
+    while (fileServer->DirectoryExists(dirName));
 }
 
 //------------------------------------------------------------------------------

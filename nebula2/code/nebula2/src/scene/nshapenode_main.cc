@@ -73,7 +73,7 @@ nShapeNode::LoadMesh()
         n_assert(mesh);
         if (!mesh->IsLoaded())
         {
-            mesh->SetFilename(this->meshName.Get());
+            mesh->SetFilename(this->meshName);
             mesh->SetUsage(this->GetMeshUsage());
 
             if (this->refMeshResourceLoader.isvalid())

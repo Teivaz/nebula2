@@ -96,4 +96,3 @@ nVideoController::FullPathName(const nString& fn) const
     return result;
 }
 
-
