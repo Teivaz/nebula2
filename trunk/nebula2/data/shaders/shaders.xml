@@ -372,6 +372,7 @@
         <param name="StretchDetail" label="Stretch Detail" type="Int" gui="1" export="0" min="1" max="100" def="1" />
         <param name="ViewAngleFade" label="View Angle Fade" type="Bool" gui="1" export="0" def="0" />
         <param name="StartDelay" label="Start Delay" type="Float" gui="1" export="0" min="0.0" max="10000.0" def="0.0" />
+        <param name="EmitOnSurface" label="Emit On Surface" type="Bool" gui="1" export="0" def="0" />
     </shader>
     <!-- OBSOLETE -->
     <shader name="Particle (Additive)" shaderType="default" meshType="particleemitter" file="particle">

@@ -8,6 +8,10 @@
 
     The particle emitter class for the Particle2 system.
 
+
+    -04-Dec-06  kims  Changed that particles can be emitted on a surface.
+
+
     (C) 2003 RadonLabs GmbH
 */
 #include "particle/nparticleserver2.h"
@@ -105,6 +109,9 @@ public:
     /// get emitter mesh group index
     int GetEmitterMeshGroupIndex() const;
 
+    /// get current particle count
+    int GetParticleCount() const;
+
     /// set bounding box
     void SetBoundingBox(const bbox3& b);
     /// get bounding box
@@ -159,6 +166,10 @@ public:
     void SetViewAngleFade(bool value);
     /// set start delay
     void SetStartDelay(float value);
+    /// set emit on surface or on vertex
+    void SetEmitOnSurface(bool value);
+    /// get emit on surface or on vertex
+    bool GetEmitOnSurface() const;
 
 protected:
     float* pStaticCurves;
@@ -189,6 +200,8 @@ protected:
     int stretchDetail;
     bool viewAngleFade;
     float startDelay;
+    /// flag for particles can be emitted on a surface rather than vertices.
+    bool emitOnSurface;
 
     float gravity;
     float startRotationMin;
@@ -257,6 +270,16 @@ nParticle2Emitter::GetTransform() const
 
 //------------------------------------------------------------------------------
 /**
+    -04-Dec-06  kims  Added missing member func. Thank kaikai for the patch.
+*/
+inline
+float
+nParticle2Emitter::GetStartTime() const
+{
+    return this->startTime;
+}
+//------------------------------------------------------------------------------
+/**
 */
 inline
 void
@@ -323,6 +346,17 @@ float
 nParticle2Emitter::GetEmissionDuration() const
 {
     return this->emissionDuration;
+}
+
+//------------------------------------------------------------------------------
+/**
+    -04-Dec-06  kims  Added missing member func. Thank kaikai for the patch.
+*/
+inline
+int
+nParticle2Emitter::GetParticleCount() const
+{
+    return this->particleCount;
 }
 
 //------------------------------------------------------------------------------
@@ -604,6 +638,30 @@ void
 nParticle2Emitter::SetStartDelay(float value)
 {
     this->startDelay = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+    -04-Dec-06  kims  It is needed for particles can be emitted on a surface. 
+                      Thank kaikai for the patch.
+*/
+inline
+void
+nParticle2Emitter::SetEmitOnSurface(bool value)
+{
+    this->emitOnSurface = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+    -04-Dec-06  kims  It is needed for particles can be emitted on a surface. 
+                      Thank kaikai for the patch.
+*/
+inline
+bool
+nParticle2Emitter::GetEmitOnSurface() const
+{
+    return this->emitOnSurface;
 }
 
 //------------------------------------------------------------------------------

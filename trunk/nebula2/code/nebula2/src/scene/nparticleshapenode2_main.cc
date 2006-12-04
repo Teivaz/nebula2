@@ -25,7 +25,8 @@ nParticleShapeNode2::nParticleShapeNode2() :
     renderOldestFirst(true),
     curvesValid(false),
     invisible(false),
-    startDelay(0)
+    startDelay(0),
+    emitOnSurface(false)
 {
     // obtain variable handles
     this->timeHandle = nVariableServer::Instance()->GetVariableHandleByName("time");
@@ -44,6 +45,8 @@ nParticleShapeNode2::~nParticleShapeNode2()
 /**
     Compute the resulting modelview matrix and set it in the scene
     server as current modelview matrix.
+
+    -04-Dec-06  kims  Changed that particles can be emitted on a surface.
 */
 bool
 nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
@@ -64,24 +67,28 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
         int c,s;
         for (c = 0; c < nParticle2Emitter::CurveTypeCount ; c++)
             for (s = 0; s < nParticle2Emitter::ParticleTimeDetail; s++)
-                staticCurve[s][c] = curves[c].GetValue((float)s / (float)nParticle2Emitter::ParticleTimeDetail);
+                this->staticCurve[s][c] = this->curves[c].GetValue((float)s / (float)nParticle2Emitter::ParticleTimeDetail);
         // encode colors
         for (s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
         {
             vector3 col = rgbCurve.GetValue((float)s / (float)nParticle2Emitter::ParticleTimeDetail);
-            staticCurve[s][nParticle2Emitter::StaticRGBCurve] = (float)((((uint)(col.x*255.0f)) << 16) |
+            this->staticCurve[s][nParticle2Emitter::StaticRGBCurve] = (float)((((uint)(col.x*255.0f)) << 16) |
                                                     (((uint)(col.y*255.0f)) << 8) |
                                                     (((uint)(col.z*255.0f))));
         };
 
         // encode alpha values from [0,1] to [0,255]
         for (s = 0; s < nParticle2Emitter::ParticleTimeDetail ; s++)
-            staticCurve[s][nParticle2Emitter::ParticleAlpha] = (float)(((int)(staticCurve[s][nParticle2Emitter::ParticleAlpha] * 255.0f)));
+            this->staticCurve[s][nParticle2Emitter::ParticleAlpha] = (float)(((int)(this->staticCurve[s][nParticle2Emitter::ParticleAlpha] * 255.0f)));
 
         this->curvesValid = true;
-    };
-
-    if (!emitter->IsStaticCurvePtrValid())
+        if (!emitter->IsStaticCurvePtrValid())
+        {
+            emitter->SetStaticCurvePtr((float*)&this->staticCurve);
+        }
+        emitter->NotifyCurvesChanged();
+    }
+    else if (!emitter->IsStaticCurvePtrValid())
     {
         emitter->SetStaticCurvePtr((float*)&this->staticCurve);
         emitter->NotifyCurvesChanged();
@@ -109,6 +116,7 @@ nParticleShapeNode2::RenderTransform(nSceneServer* sceneServer,
     emitter->SetViewAngleFade(this->viewAngleFade);
     emitter->SetStretchDetail(this->stretchDetail);
     emitter->SetStartDelay(this->startDelay);
+    emitter->SetEmitOnSurface(this->emitOnSurface);
 
     // set emitter settings
     emitter->SetEmissionDuration(this->emissionDuration);
@@ -230,4 +238,5 @@ nParticleShapeNode2::GetEmitter(nRenderContext* renderContext)
     nVariable& varEmitter = renderContext->GetLocalVar(this->emitterVarIndex);
     return (nParticle2Emitter*)varEmitter.GetObj();
 }
+
 

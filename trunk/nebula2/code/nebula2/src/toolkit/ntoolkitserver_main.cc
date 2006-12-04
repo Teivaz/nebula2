@@ -360,6 +360,7 @@ nToolkitServer::AsColorCurve(const nString& value)
 
 //------------------------------------------------------------------------------
 /**
+    -04-Dec-06  kims  Changed that particles can be emitted on a surface.
     -29-Nov-06  kims  Changed to be compatible the particle2 shader.
                       Thank kaikai for the patch.
 */
@@ -508,6 +509,10 @@ nToolkitServer::ChangeTypeParticle2(nMaterialNode* node, const nString& paramID,
         else if ("StartDelay" == paramID)
         {
             partNode->SetStartDelay(paramValue.AsFloat());
+        }
+        else if ("EmitOnSurface" == paramID)
+        {
+            partNode->SetEmitOnSurface(paramValue.AsBool());
         }
     }
     else

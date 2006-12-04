@@ -161,7 +161,8 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                 if (result)
                                 {
                                     bool bvalue = value > 0 ? true : false;
-                                    if (strcmp(name, "Loop") == 0)
+                                    // HACK: 3ds max changes the name Loop to loop, so use loop here
+                                    if (strcmp(name, "loop") == 0)
                                     {
                                         particleNode->SetLoop(bvalue);
                                     }
@@ -180,6 +181,10 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                     else if (strcmp(name, "RenderOldestFirst") == 0)
                                     {
                                         particleNode->SetRenderOldestFirst(bvalue);
+                                    }
+                                    else if (strcmp(name, "EmitOnSurface") == 0)
+                                    {
+                                        particleNode->SetEmitOnSurface(bvalue);
                                     }
                                 }
                             }

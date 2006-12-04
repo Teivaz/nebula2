@@ -7,6 +7,8 @@
 
     A shape node representing a particle system.
 
+    -04-Dec-06  kims  Changed that particles can be emitted on a surface.
+
     (C) 2004 RadonLabs GmbH
 */
 #include "scene/nshapenode.h"
@@ -84,6 +86,10 @@ public:
     bool GetRenderOldestFirst() const;
     /// set start delay
     void SetStartDelay(float value);
+    /// set emit on surface or on vertex
+    void SetEmitOnSurface(bool value);
+    /// get emit on surface or on vertex
+    bool GetEmitOnSurface() const;
 
     /// set one of the envelope curves (not the color)
     void SetCurve(nParticle2Emitter::CurveType curveType, const nEnvelopeCurve& curve);
@@ -121,6 +127,7 @@ protected:
     bool  viewAngleFade;
     int   stretchDetail;
     float startDelay;
+    bool  emitOnSurface;            // emit particles from surface or from vertex
 
     nEnvelopeCurve curves[nParticle2Emitter::CurveTypeCount];
     nVector3EnvelopeCurve rgbCurve;
@@ -374,6 +381,26 @@ void
 nParticleShapeNode2::SetStartDelay(float value)
 {
     this->startDelay = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nParticleShapeNode2::SetEmitOnSurface(bool value)
+{
+    this->emitOnSurface = value;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+bool
+nParticleShapeNode2::GetEmitOnSurface() const
+{
+    return this->emitOnSurface;
 }
 
 //------------------------------------------------------------------------------
