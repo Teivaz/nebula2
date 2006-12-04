@@ -18,8 +18,8 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg        = args.GetBoolArg("-help");
-    const char* inArg   = args.GetStringArg("-in", 0);
-    const char* outArg  = args.GetStringArg("-out", 0);
+    nString inArg       = args.GetStringArg("-in", 0);
+    nString outArg      = args.GetStringArg("-out", 0);
     int sizeArg         = args.GetIntArg("-size", 256);
     bool normalMapArg   = args.GetBoolArg("-nmap");
     float vscaleArg     = args.GetFloatArg("-vscale", 10000.0f);
@@ -39,12 +39,12 @@ main(int argc, const char** argv)
     }
 
     // check args
-    if (!inArg)
+    if (inArg.IsEmpty())
     {
         printf("-in arg expected!\n");
         return 10;
     }
-    if (!outArg)
+    if (outArg.IsEmpty())
     {
         printf("-out arg expected!\n");
         return 10;
@@ -54,9 +54,9 @@ main(int argc, const char** argv)
 
     // open the bt file
     nBtFile btFile(&kernelServer);
-    if (!btFile.Open(inArg))
+    if (!btFile.Open(inArg.Get()))
     {
-        printf("Could not open bt file '%s' for reading.\n", inArg);
+        printf("Could not open bt file '%s' for reading.\n", inArg.Get());
         return 10;
     }
     
@@ -64,9 +64,9 @@ main(int argc, const char** argv)
     nTgaFile tgaFile(&kernelServer);
     tgaFile.SetWidth(sizeArg);
     tgaFile.SetHeight(sizeArg);
-    if (!tgaFile.OpenWrite(outArg))
+    if (!tgaFile.OpenWrite(outArg.Get()))
     {
-        printf("Could not open tga file for writing '%s'.\n", outArg);
+        printf("Could not open tga file for writing '%s'.\n", outArg.Get());
         return 10;
     }
 

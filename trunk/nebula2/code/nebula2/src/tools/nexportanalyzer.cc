@@ -118,7 +118,7 @@ nExportAnalyzer::RecurseCheckTexturesExist(nRoot* root, nArray<nString>& failedA
 
     // check if root is an abstract shader node, if yes, check its textures
     bool retval = true;
-    if (root->IsA(nKernelServer::Instance()->FindClass("nabstractshadernode")))
+    if (root->IsA("nabstractshadernode"))
     {
         nAbstractShaderNode* abstractShaderNode = (nAbstractShaderNode*) root;
         int i;
@@ -538,7 +538,7 @@ nExportAnalyzer::ReadAnimInfo(const nString& path)
 
 
     // create an animation object
-    nAnimation* anim = nAnimationServer::Instance()->NewMemoryAnimation(path.Get());
+    nAnimation* anim = nAnimationServer::Instance()->NewMemoryAnimation(path);
     anim->SetFilename(path);
     if (anim->Load())
     {
@@ -586,7 +586,7 @@ nExportAnalyzer::ReadObjectInfo(const nString& path)
     kernelServer->PushCwd(kernelServer->Lookup("/"));
     nSceneNode* o = (nSceneNode*) kernelServer->Load(path.Get());
     kernelServer->PopCwd();
-    n_assert(o->IsA(kernelServer->FindClass("nscenenode")));
+    n_assert(o->IsA("nscenenode"));
     if (o)
     {
         nClass* rsrcClass = kernelServer->FindClass("nresource");

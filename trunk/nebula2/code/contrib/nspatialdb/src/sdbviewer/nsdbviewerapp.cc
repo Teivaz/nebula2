@@ -88,7 +88,7 @@ nSDBViewerApp::Open()
     this->refAnimServer     = (nAnimationServer*) kernelServer->New("nanimationserver", "/sys/servers/anim");
     this->refParticleServer = (nParticleServer*)  kernelServer->New("nparticleserver", "/sys/servers/particle");
     this->refGuiServer      = (nGuiServer*)       kernelServer->New("nguiserver", "/sys/servers/gui");
-    this->refShadowServer   = (nShadowServer*)    kernelServer->New("nshadowserver", "/sys/servers/shadow");
+    this->refShadowServer   = (nShadowServer2*)    kernelServer->New("nshadowserver2", "/sys/servers/shadow");
 
     // set the gfx server feature set override
     if (this->featureSetOverride != nGfxServer2::InvalidFeatureSet)
@@ -125,23 +125,24 @@ nSDBViewerApp::Open()
     // initialize graphics
     this->refGfxServer->SetDisplayMode(this->displayMode);
     this->refGfxServer->SetCamera(this->chasecamera);
-    this->refGfxServer->OpenDisplay();
-
-    // define the input mapping
-    // late initialization of input server, because it relies on 
-    // refGfxServer->OpenDisplay having been called
-    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
-    if (NULL != this->GetInputScript())
-    {
-        nString result;
-        this->refScriptServer->RunScript(this->GetInputScript(), result);
-    }
+    //this->refGfxServer->OpenDisplay();
 
     // open the scene server
     if (!this->refSceneServer->Open())
     {
         n_error("nSDBViewerApp::Open(): Failed to open nSceneServer!");
         return false;
+    }
+
+    // define the input mapping
+    // late initialization of input server, because it relies on 
+    // refGfxServer->OpenDisplay having been called
+    this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
+    this->refInputServer->Open();
+    if (NULL != this->GetInputScript())
+    {
+        nString result;
+        this->refScriptServer->RunScript(this->GetInputScript(), result);
     }
 
     // initialize gui
@@ -283,6 +284,9 @@ void nSDBViewerApp::Run()
             // render
             matrix44 cameravm;
             markcameras[m_viewcamera].GenerateTransform(cameravm);
+            matrix44 c2;
+            this->cdchasecamera.GenerateTransform(c2);
+            cameravm = cameravm * c2;
 
             this->refSceneServer->BeginScene(cameravm);
 
@@ -334,8 +338,8 @@ void nSDBViewerApp::Run()
 
             this->refSceneServer->EndScene();
             this->refSceneServer->RenderScene();             // renders the 3d scene
-            this->refGuiServer->Render();                    // do additional rendering before presenting the frame
-            this->refConServer->Render();
+            //this->refGuiServer->Render();                    // do additional rendering before presenting the frame
+            //this->refConServer->Render();
 
             // draw the visitor debug info
             if (showVisualDebug && m_rootsector.isvalid())
@@ -442,7 +446,7 @@ nSDBViewerApp::HandleInput(float frameTime)
         filename.AppendInt(this->screenshotID++);
         filename.Append(".bmp");
 
-        this->refGfxServer->SaveScreenshot(filename.Get());
+        this->refGfxServer->SaveScreenshot(filename.Get(), nTexture2::BMP);
     }
 
     this->HandleInputPlay(frameTime);
@@ -486,7 +490,32 @@ void nSDBViewerApp::HandleInputPlay(float frameTime)
         playcamera.viewerPos += playcamera.viewMatrix.z_component() * movespeed * frameTime;
     }
 
+    if (inputServer->GetButton("turnright2"))
+    {
+        if (inputServer->GetButton("strafemode2"))
+            cdchasecamera.viewerPos += cdchasecamera.viewMatrix.x_component() * movespeed * frameTime;
+        else
+            cdchasecamera.viewerAngles.rho -= turnspeed * frameTime;
+    }
+
+    if (inputServer->GetButton("turnleft2"))
+    {
+        if (inputServer->GetButton("strafemode2"))
+            cdchasecamera.viewerPos -= cdchasecamera.viewMatrix.x_component() * movespeed * frameTime;
+        else
+            cdchasecamera.viewerAngles.rho += turnspeed * frameTime;
+    }
+
+    if (inputServer->GetButton("moveforward2"))
+    {
+        cdchasecamera.viewerPos -= cdchasecamera.viewMatrix.z_component() * movespeed * frameTime;
+    }
+    if (inputServer->GetButton("movebackward2"))
+    {
+        cdchasecamera.viewerPos += cdchasecamera.viewMatrix.z_component() * movespeed * frameTime;
+    }
     matrix44 dummy;
+    cdchasecamera.GenerateTransform(dummy);
     playcamera.GenerateTransform(dummy);
     
 }

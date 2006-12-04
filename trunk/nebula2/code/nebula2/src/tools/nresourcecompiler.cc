@@ -174,7 +174,7 @@ nResourceCompiler::Compile(const nArray<nString>& objs)
     }
 
     // delete tmp files
-    fileServer->DeleteFile(this->dataFilePath.Get());
+    fileServer->DeleteFile(this->dataFilePath);
 
     return true;
 }

@@ -86,7 +86,7 @@ nChunkLodMesh::Render(const nChunkLodRenderParams& renderParams)
     {
         renderParams.shader->SetFloat4(nShaderState::MatDiffuse, this->matDiffuse);
     }
-
+/*
     if (this->refMesh->GetRefillBuffersMode() == nMesh2::NeededNow)
     {
         // initiate loading process
@@ -99,10 +99,10 @@ nChunkLodMesh::Render(const nChunkLodRenderParams& renderParams)
             n_sleep(0.001f);
         }
     }
-
+*/
     nMesh2* mesh = this->refMesh.get();
     n_assert(mesh->IsValid());
-    renderParams.gfxServer->SetMesh(mesh);
+    renderParams.gfxServer->SetMesh(mesh, mesh);
     renderParams.gfxServer->SetVertexRange(0, mesh->GetNumVertices());
     renderParams.gfxServer->SetIndexRange(0, mesh->GetNumIndices());
     renderParams.gfxServer->DrawIndexedNS(nGfxServer2::TriangleStrip);    

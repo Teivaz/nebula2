@@ -21,7 +21,7 @@
 #include "mathlib/polar.h"
 #include "kernel/nremoteserver.h"
 #include "gui/nguiserver.h"
-#include "shadow/nshadowserver.h"
+#include "shadow2/nshadowserver2.h"
 
 #include "spatialdb/nspatialelements.h"
 #include "spatialdb/nscriptablesector.h"
@@ -135,7 +135,7 @@ private:
     nRef<nAnimationServer> refAnimServer;
     nRef<nParticleServer> refParticleServer;
     nRef<nGuiServer> refGuiServer;
-    nRef<nShadowServer> refShadowServer;
+    nRef<nShadowServer2> refShadowServer;
 
     nRef<nTransformNode> refRootNode;
     nRef<nTransformNode> refCameraMarkerNode;
@@ -196,6 +196,7 @@ private:
     // these cameras are used to mark the objects
     enum { CAMERACOUNT = 3 };
     CameraDescription markcameras[CAMERACOUNT];
+    CameraDescription cdchasecamera;
     // which camera is used as the render view? which camera is the user controlling? which camera is used for visibility?
     int m_viewcamera, m_activecamera, m_viscamera;
 

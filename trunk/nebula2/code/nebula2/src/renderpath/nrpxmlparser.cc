@@ -579,12 +579,3 @@ nRpXmlParser::ParseSequence(TiXmlElement* elm, nRpPhase* phase)
     phase->AddSequence(newSequence);
 }
 
-
-
-
-
-
-
-
-
-

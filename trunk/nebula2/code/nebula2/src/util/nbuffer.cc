@@ -17,7 +17,7 @@ nBuffer::nBuffer() :
     capacity(InitialCapacity),
     count(0)
 {
-    this->data = MakeArea(InitialCapacity);
+    this->data = this->MakeArea(InitialCapacity);
 }
 
 //------------------------------------------------------------------------------
@@ -27,8 +27,8 @@ nBuffer::nBuffer(const nBuffer& other) :
     capacity(other.capacity),
     count(other.count)
 {
-    this->data = MakeArea(capacity);
-    Copy(this->data, other.data, other.count);
+    this->data = this->MakeArea(capacity);
+    this->Copy(this->data, other.data, other.count);
 }
 
 //------------------------------------------------------------------------------
@@ -46,7 +46,7 @@ void
 nBuffer::Reset()
 {
     delete [] this->data;
-    this->data = MakeArea(InitialCapacity);
+    this->data = this->MakeArea(InitialCapacity);
     this->capacity = InitialCapacity;
     this->count = 0;
 }
@@ -62,10 +62,10 @@ nBuffer::Resize(int newSize)
 
     if (newSize > this->capacity)
     {
-        char* newData = MakeArea(newSize);
+        char* newData = this->MakeArea(newSize);
         if (this->count > 0)
         {
-            Copy(newData, this->data, this->count);
+            this->Copy(newData, this->data, this->count);
         }
         delete [] this->data;
         this->data = newData;
@@ -80,11 +80,11 @@ void
 nBuffer::Write(const char* data, int startIndex, int endIndex)
 {
     n_assert(data != 0);
-    n_assert(ValidRange(startIndex, endIndex));
+    n_assert(this->ValidRange(startIndex, endIndex));
 
     char* p = this->data;
     p += startIndex;
-    Copy(p, data, endIndex - startIndex + 1);
+    this->Copy(p, data, endIndex - startIndex + 1);
     if (this->count <= endIndex)
     {
         this->count = endIndex + 1;
@@ -98,11 +98,11 @@ void
 nBuffer::Read(char* data, int startIndex, int endIndex)
 {
     n_assert(data != 0);
-    n_assert(ValidRange(startIndex, endIndex));
+    n_assert(this->ValidRange(startIndex, endIndex));
 
     char* p = this->data;
     p += startIndex;
-    Copy(data, p, endIndex - startIndex + 1);
+    this->Copy(data, p, endIndex - startIndex + 1);
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ nBuffer::Read(char* data, int startIndex, int endIndex)
 bool
 nBuffer::ValidIndex(int v) const
 {
-    return 0 <= v && v <= Capacity() - 1;
+    return 0 <= v && v <= this->Capacity() - 1;
 }
 
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ nBuffer::ValidIndex(int v) const
 bool
 nBuffer::ValidRange(int startIndex, int endIndex) const
 {
-    return ValidIndex(startIndex) && ValidIndex(endIndex) && endIndex >= startIndex;
+    return this->ValidIndex(startIndex) && this->ValidIndex(endIndex) && endIndex >= startIndex;
 }
 
 //------------------------------------------------------------------------------
@@ -134,8 +134,8 @@ nBuffer::operator = (const nBuffer& other)
         return *this;
     }
 
-    Resize(other.capacity);
-    Copy(this->data, other.data, other.count);
+    this->Resize(other.capacity);
+    this->Copy(this->data, other.data, other.count);
     count = other.count;
 
     return *this;
@@ -165,5 +165,4 @@ nBuffer::MakeArea(int cap) const
     n_assert(result != 0);
     return result;
 }
-
 

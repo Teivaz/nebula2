@@ -55,7 +55,7 @@ nAbstractShaderNode::LoadTexture(int index)
             n_assert(tex);
             if (!tex->IsLoaded())
             {
-                tex->SetFilename(texNode.texName.Get());
+                tex->SetFilename(texNode.texName);
                 if (!tex->Load())
                 {
                     n_printf("nAbstractShaderNode: Error loading texture '%s'\n", texNode.texName.Get());

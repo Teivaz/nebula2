@@ -57,10 +57,10 @@ main(int argc, const char** argv)
 
     // configure an app launcher
     nAppLauncher appLauncher;
-    appLauncher.SetExecutable(appArg.Get());
+    appLauncher.SetExecutable(appArg);
     if (dirArg.IsValid())
     {
-        appLauncher.SetWorkingDirectory(dirArg.Get());
+        appLauncher.SetWorkingDirectory(dirArg);
     }
     appLauncher.SetNoConsoleWindow(true);
     if (!appLauncher.Launch())

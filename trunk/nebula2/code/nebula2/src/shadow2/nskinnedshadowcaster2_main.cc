@@ -47,7 +47,7 @@ nSkinnedShadowCaster2::LoadResource()
     this->refBindPoseMesh = bindPoseMesh;
     if (!bindPoseMesh->IsLoaded())
     {
-        bindPoseMesh->SetFilename(this->GetFilename().Get());
+        bindPoseMesh->SetFilename(this->GetFilename());
         bindPoseMesh->SetUsage(nMesh2::ReadOnly);
         if (!bindPoseMesh->Load())
         {
@@ -259,6 +259,7 @@ nSkinnedShadowCaster2::UpdateSkinning()
     int numSrcVertices = srcGroup.GetNumVertices();
     int numDstVertices = dstGroup.GetNumVertices();
     n_assert((2 * numSrcVertices) == numDstVertices);
+    n_assert(srcMesh->GetVertexWidth() == 11); // COORD(3) + WEIGHTS(4) + JINDICES(4) = 11 floats
 
     float* srcVertices = srcMesh->LockVertices() + srcGroup.GetFirstVertex();
     float* dstVertices = dstMesh->LockVertices() + dstGroup.GetFirstVertex();
@@ -293,7 +294,4 @@ nSkinnedShadowCaster2::UpdateSkinning()
     dstMesh->UnlockVertices();
     srcMesh->UnlockVertices();
 }
-
-
-
 

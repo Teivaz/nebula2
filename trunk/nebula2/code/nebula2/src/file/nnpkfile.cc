@@ -55,7 +55,7 @@ nNpkFile::Open(const nString& filename, const nString& accessMode)
     // not a conventional file, try to open as npk file
     nString absPath = nFileServer2::Instance()->ManglePath(filename);
 
-    this->tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(absPath.Get());
+    this->tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(absPath);
     if (this->tocEntry && (nNpkTocEntry::FILE == this->tocEntry->GetType()))
     {
         this->isNpkFile     = true;
@@ -81,7 +81,7 @@ nNpkFile::Exists(const nString& filename) const
     // not a conventional file, check if the npk file exists
     nString absPath = nFileServer2::Instance()->ManglePath(filename);
 
-    nNpkTocEntry* tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(absPath.Get());
+    nNpkTocEntry* tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(absPath);
     if (tocEntry && (nNpkTocEntry::FILE == tocEntry->GetType()))
     {
         return true;

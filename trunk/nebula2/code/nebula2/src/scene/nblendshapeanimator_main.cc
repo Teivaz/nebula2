@@ -62,7 +62,7 @@ nBlendShapeAnimator::LoadAnimation()
         n_assert(animation);
         if (!animation->IsLoaded())
         {
-            animation->SetFilename(this->animationName.Get());
+            animation->SetFilename(this->animationName);
             if (!animation->Load())
             {
                 n_printf("nBlendShapeAnimator: Error loading animation '%s'\n", this->animationName.Get());

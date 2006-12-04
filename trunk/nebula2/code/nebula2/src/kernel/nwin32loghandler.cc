@@ -75,7 +75,7 @@ nWin32LogHandler::Open()
         path.Append("/");
 
         // make sure path exists
-        fileServer->MakePath(path.Get());
+        fileServer->MakePath(path);
 
         // append logfile name
         path.Append(this->appName);

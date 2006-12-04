@@ -48,7 +48,7 @@ nNpkDirectory::Open(const nString& dirName)
     // not a filesystem directory
     this->apath = nNpkFileServer::Instance()->ManglePath(dirName);
 
-    this->tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(this->apath.Get());
+    this->tocEntry = ((nNpkFileServer*)nFileServer2::Instance())->FindTocEntry(this->apath);
     if (this->tocEntry && (nNpkTocEntry::DIR == this->tocEntry->GetType()))
     {
         this->isNpkDir = true;
@@ -260,5 +260,4 @@ nNpkDirectory::IsEmpty()
         return nDirectory::IsEmpty();
     }
 }
-
 

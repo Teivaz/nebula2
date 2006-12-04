@@ -74,7 +74,7 @@ nGuiCanvas::GetLabelRect(int id)
         nFont2* textfont = (nFont2*) nResourceServer::Instance()->FindResource(label.GetFont().Get(), nResource::Font);
         nFont2* oldfont = nGfxServer2::Instance()->GetFont();
         nGfxServer2::Instance()->SetFont(textfont);
-        vector2 extent = nGfxServer2::Instance()->GetTextExtent(label.GetContent().Get());
+        vector2 extent = nGfxServer2::Instance()->GetTextExtent(label.GetContent());
         nGfxServer2::Instance()->SetFont(oldfont);
 
         rectangle labelrect = rectangle(pos, pos+extent);
@@ -133,7 +133,7 @@ nGuiCanvas::Render()
 
 
             // Determine how much screenspace the textlabel needs
-            textextent = nGfxServer2::Instance()->GetTextExtent(this->textarray.At(i).GetContent().Get());
+            textextent = nGfxServer2::Instance()->GetTextExtent(this->textarray.At(i).GetContent());
 
             textRect = rectangle(vector2(
                                         screenSpaceRect.v0.x + textarray.At(i).GetPosition().x,

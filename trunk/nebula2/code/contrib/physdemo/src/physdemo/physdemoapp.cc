@@ -66,7 +66,7 @@ PhysDemoApp::Open()
     //  Set the proj: assign
     nFileServer2*   fs = static_cast<nFileServer2*>(kernelServer->Lookup("/sys/servers/file2"));
     fs->SetAssign("proj", "home:code/contrib/physdemo");
-    
+
     // run the startup script
     this->refScriptServer->RunScript("proj:bin/startup.tcl", result);
 
@@ -96,7 +96,7 @@ PhysDemoApp::Open()
         this->physContactArray[index].surface.mode = dContactApprox1;
         this->physContactArray[index].surface.mu = 0.75;
     }
-    
+
     // open the remote port
     this->kernelServer->GetRemoteServer()->Open("physdemo");
 
@@ -113,7 +113,7 @@ PhysDemoApp::Open()
     }
 
     // define the input mapping
-    // late initialization of input server, because it relies on 
+    // late initialization of input server, because it relies on
     // refGfxServer->OpenDisplay having been called
     this->refInputServer    = (nInputServer*)     kernelServer->New("ndi8server", "/sys/servers/input");
     this->refInputServer->Open();
@@ -142,7 +142,7 @@ PhysDemoApp::Open()
     nTransformNode *lightNode = (nTransformNode *)kernelServer->LoadAs("lights:point_lights/simple_light.n2", "/scenenodes/default_light");
     lightNode->RenderContextCreated(&this->lightRenderContext);
     lightRenderContext.SetRootNode(lightNode);
-    
+
     // create the floor for the physical world
     this->CreateFloor(0.0f, -5.0f, 0.0f);
 
@@ -162,7 +162,7 @@ PhysDemoApp::Close()
     this->refGuiServer->Close();
     // disable any possibility of future rendering
     this->refGfxServer->CloseDisplay();
-    
+
     // clear the objects
     kernelServer->Lookup("/objects")->Release();
 
@@ -180,7 +180,7 @@ PhysDemoApp::Close()
     this->refParticleServer->Release();
     this->refAnimServer->Release();
     this->refVarServer->Release();
-    this->refSceneServer->Release();    
+    this->refSceneServer->Release();
     this->refInputServer->Release();
     this->refGfxServer->Release();
     this->refScriptServer->Release();
@@ -260,7 +260,7 @@ PhysDemoApp::Run()
         {
             this->HandleInput(frameTime);
         }
-        
+
         // trigger gui server
         this->refGuiServer->Trigger();
 
@@ -299,13 +299,13 @@ PhysDemoApp::HandleInput(float frameTime)
     cameraPos.rotate(vector3(1, 0, 0), this->viewerAngles.theta);
     cameraPos.rotate(vector3(0, 1, 0), this->viewerAngles.rho);
     cameraPos += this->viewerPos;
-    
+
     this->HandleMovementInput(frameTime);
 
     if (inputServer->GetButton("screenshot"))
     {
         nString filename;
-        
+
         filename = "physdemo";
 
         filename.AppendInt(this->screenshotID++);
@@ -315,7 +315,7 @@ PhysDemoApp::HandleInput(float frameTime)
     }
 
     // Here starts our physically-related buttons
-    
+
     // Create a box at a random location
     if (inputServer->GetButton("create_box"))
     {
@@ -518,17 +518,17 @@ PhysDemoApp::HandleMovementInput(float frameTime)
     if (inputServer->GetButton("zoom"))
     {
         zoomHori    = inputServer->GetSlider("left") - inputServer->GetSlider("right");
-        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up"); 
+        zoomVert    = inputServer->GetSlider("down") - inputServer->GetSlider("up");
     }
 
     // do mousewheel zoom
     if (inputServer->GetButton("zoomIn"))
     {
-        zoomVert += 1.0f; 
+        zoomVert += 1.0f;
     }
     else if (inputServer->GetButton("zoomOut"))
     {
-        zoomVert -= 1.0f; 
+        zoomVert -= 1.0f;
     }
 
     // toggle console
@@ -587,15 +587,15 @@ PhysDemoApp::CreateFloor(float x, float y, float z)
 
     // Find the scene node to use with this object
     nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/floor");
-    
+
     // Set the scene node in the render context
     newObj->renderContext.SetRootNode(scenenode);
-    
+
     // update the render context variables
     newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
     newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
-    
+
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
 
@@ -604,18 +604,18 @@ PhysDemoApp::CreateFloor(float x, float y, float z)
 
     // Now create the physical representation
     // (the floor has no body, only a geom, which is connected to body 0, "the world")
-    
+
     // The physics nodes are created as children of the curren object.
     kernelServer->PushCwd(newObj);
     nOpendeBoxGeom *physGeom = (nOpendeBoxGeom *)kernelServer->New("nopendeboxgeom", "physgeom");
-    
+
     n_assert(physGeom);
-    
+
     physGeom->Create("/phys/world/space");
     physGeom->SetPosition(vector3(x, y, z));
     physGeom->SetLengths(20.0f, 1.0f, 20.0f);
     physGeom->SetBody((dBodyID)0);
-    newObj->refPhysGeom = physGeom;    
+    newObj->refPhysGeom = physGeom;
 
     // pop the Cwd
     kernelServer->PopCwd();
@@ -641,15 +641,15 @@ PhysDemoApp::CreateBox(float x, float y, float z, bool createDisabled)
 
     // Find the scene node to use with this object
     nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/box");
-    
+
     // Set the scene node in the render context
     newObj->renderContext.SetRootNode(scenenode);
-    
+
     // update the render context variables
     newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
     newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
-    
+
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
 
@@ -688,7 +688,7 @@ PhysDemoApp::CreateBox(float x, float y, float z, bool createDisabled)
 SimpleObject *
 PhysDemoApp::CreateSphere(float x, float y, float z)
 {
-    
+
     // create unique name for this object
     nString name = "sphere";
     name.AppendInt(this->objectID++);
@@ -700,15 +700,15 @@ PhysDemoApp::CreateSphere(float x, float y, float z)
 
     // Find the scene node to use with this object
     nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/sphere");
-    
+
     // Set the scene node in the render context
     newObj->renderContext.SetRootNode(scenenode);
-    
+
     // update the render context variables
     newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
     newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
-    
+
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
 
@@ -754,21 +754,21 @@ PhysDemoApp::CreateBigSphere(float x, float y, float z)
 
     // Find the scene node to use with this object
     nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/bigsphere");
-    
+
     // Set the scene node in the render context
     newObj->renderContext.SetRootNode(scenenode);
-    
+
     // update the render context variables
     newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
     newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
-    
+
     // tell the scene node that it is being used by (another) render context
     scenenode->RenderContextCreated(&newObj->renderContext);
 
     // set the position
     newObj->Transform.settranslation(vector3(x, y, z));
-    
+
     // Now create the physical representation
     // The physics nodes are created as children of the curren object.
     kernelServer->PushCwd(newObj);
@@ -808,15 +808,15 @@ PhysDemoApp::CreateBullet(float x, float y, float z)
 
     // Find the scene node to use with this object
     nSceneNode *scenenode = (nSceneNode*)kernelServer->Lookup("/scenenodes/sphere");
-    
+
     // Set the scene node in the render context
     newObj->renderContext.SetRootNode(scenenode);
-    
+
     // update the render context variables
     newObj->renderContext.AddVariable(nVariable(this->timeHandle, 0.0f));
     nFloat4 wind = { 1.0f, 0.0f, 0.0f, 0.5f };
     newObj->renderContext.AddVariable(nVariable(this->windHandle, wind));
-    
+
     // tell the scene node that it is being used by (another) render context
     // this gives the scene nodes(s) a chance to create any per-instance data
     scenenode->RenderContextCreated(&newObj->renderContext);
@@ -878,7 +878,7 @@ PhysDemoApp::CreateExplosion(float x, float y, float z, float force, bool enable
             vector3 explosionVector = curObj->refPhysBody->GetPosition() - vector3(x, y, z);
             explosionVector.norm();
             explosionVector = explosionVector * force;
-    
+
             curObj->refPhysBody->AddForceAtPos(explosionVector, vector3(x, y, z));
 
             if (enableObjects)
@@ -917,7 +917,7 @@ void PhysDemoApp::UpdatePhysWorld(float &physTime)
 
         // Step the world by frameTime (the amount of time since the last frame)
         this->refPhysWorld->QuickStep(PHYSICS_STEPSIZE);
-        
+
         physTime -= PHYSICS_STEPSIZE;
     }
 
@@ -1003,7 +1003,7 @@ void PhysDemoApp::RenderWorld(nTime time, uint frameId)
         curObj->renderContext.GetVariable(this->timeHandle)->SetFloat((float)time);
         curObj->renderContext.SetFrameId(frameId);
 
-        // render the object        
+        // render the object
         this->refSceneServer->Attach(&curObj->renderContext);
     }
 
@@ -1018,7 +1018,7 @@ void PhysDemoApp::RenderWorld(nTime time, uint frameId)
 //------------------------------------------------------------------------------
 /**
     Initialize the overlay GUI.
-*/  
+*/
 void
 PhysDemoApp::InitOverlayGui()
 {

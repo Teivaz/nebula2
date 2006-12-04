@@ -374,8 +374,3 @@ nWavFile::Read(void* buffer, uint bytesToRead)
     return cbDataIn;
 }
 
-
-
-
-
-

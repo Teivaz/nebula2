@@ -436,45 +436,45 @@ nGuiTextEntry::Render()
             {
                 case Center:
                 {
-                    vector2 totalTextSize = nGfxServer2::Instance()->GetTextExtent(lineText.Get());
+                    vector2 totalTextSize = nGfxServer2::Instance()->GetTextExtent(lineText);
                     leftMargin = (screenSpaceRect.v1.x - screenSpaceRect.v0.x - totalTextSize.x) * 0.5f;
                     // fallthrough!
                 }
                 case Left:
                 {
                     nString textToCursor = lineText.ExtractRange(0, cursorIndex);
-                    vector2 textToCursorSize = nGfxServer2::Instance()->GetTextExtent(textToCursor.Get());
-					// check for whitespaces at end of text
-					if (textToCursor.Length() > 0)
-					{
-						// make sure the cursor moves even if whitespaces are entered
-						while (cursorIndex > 0 && textToCursor[cursorIndex-1] == ' ')
-						{
-							textToCursorSize.x += 0.005f;
-							cursorIndex--;
-						}
-					}
+                    vector2 textToCursorSize = nGfxServer2::Instance()->GetTextExtent(textToCursor);
+                    // check for whitespaces at end of text
+                    if (textToCursor.Length() > 0)
+                    {
+                        // make sure the cursor moves even if whitespaces are entered
+                        while (cursorIndex > 0 && textToCursor[cursorIndex-1] == ' ')
+                        {
+                            textToCursorSize.x += 0.005f;
+                            cursorIndex--;
+                        }
+                    }
                     leftMargin += screenSpaceRect.v0.x + textToCursorSize.x;
                     break;
                 }
                 case Right:
                 {
                     nString textAfterCursor = lineText.ExtractRange(cursorIndex, lineText.Length() - cursorIndex);
-                    vector2 textAfterCursorSize = nGfxServer2::Instance()->GetTextExtent(textAfterCursor.Get());
+                    vector2 textAfterCursorSize = nGfxServer2::Instance()->GetTextExtent(textAfterCursor);
                     leftMargin = screenSpaceRect.v1.x - textAfterCursorSize.x;
-					// check for whitespaces at end of text
-					nString textToCursor = lineText.ExtractRange(0, cursorIndex);
-					if (textToCursor.Length() > 0)
-					{
-						// make sure the text moves left even if whitespaces are entered
-						while (cursorIndex > 0 && textToCursor[cursorIndex-1] == ' ')
-						{
-							screenSpaceRect.v0.x -= 0.005f;
-							screenSpaceRect.v1.x -= 0.005f;
-							cursorIndex--;
-						}
-					}
-					break;
+                    // check for whitespaces at end of text
+                    nString textToCursor = lineText.ExtractRange(0, cursorIndex);
+                    if (textToCursor.Length() > 0)
+                    {
+                        // make sure the text moves left even if whitespaces are entered
+                        while (cursorIndex > 0 && textToCursor[cursorIndex-1] == ' ')
+                        {
+                            screenSpaceRect.v0.x -= 0.005f;
+                            screenSpaceRect.v1.x -= 0.005f;
+                            cursorIndex--;
+                        }
+                    }
+                    break;
                 }
             }
 

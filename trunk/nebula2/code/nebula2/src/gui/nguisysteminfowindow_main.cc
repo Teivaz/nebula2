@@ -103,32 +103,32 @@ nGuiSystemInfoWindow::UpdateTextView()
     // home assign
     str = "Home Directory:\t\t";
     str.Append(nFileServer2::Instance()->ManglePath("home:"));
-    textView->AppendLine(str.Get());
+    textView->AppendLine(str);
 
     // user assign
     str = "User Directory:\t\t";
     str.Append(nFileServer2::Instance()->ManglePath("user:"));
-    textView->AppendLine(str.Get());
+    textView->AppendLine(str);
 
     // proj assign
     str = "Project Directory:\t";
     str.Append(nFileServer2::Instance()->ManglePath("proj:"));
-    textView->AppendLine(str.Get());
+    textView->AppendLine(str);
 
     // texture assign
     str = "Texture Directory:\t";
     str.Append(nFileServer2::Instance()->ManglePath("textures:"));
-    textView->AppendLine(str.Get());
+    textView->AppendLine(str);
 
     // mesh assign
     str = "Mesh Directory:\t\t";
     str.Append(nFileServer2::Instance()->ManglePath("meshes:"));
-    textView->AppendLine(str.Get());
+    textView->AppendLine(str);
 
     // shader assign
     str = "Shader Directory:\t";
     str.Append(nFileServer2::Instance()->ManglePath("shaders:"));
-    textView->AppendLine(str.Get());
+    textView->AppendLine(str);
 
     // time
     char buf[128];

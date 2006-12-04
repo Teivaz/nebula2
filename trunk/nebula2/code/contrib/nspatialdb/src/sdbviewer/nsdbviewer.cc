@@ -69,26 +69,26 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 #endif
 
-    const char* scriptserverArg = args.GetStringArg("-scriptserver", "nluaserver");
-    const char* sceneserverArg = args.GetStringArg("-sceneserver", "nmrtsceneserver");
-    const char* startupArg = args.GetStringArg("-startup", "home:code/contrib/nspatialdb/bin/startup.lua");
-    const char* viewArg   = args.GetStringArg("-view", 0);
-    const char* stageArg  = args.GetStringArg("-stage", "luascript:stdlight.lua");
-    const char* inputArg  = args.GetStringArg("-input", "luascript:stdinput.lua");
+    nString scriptserverArg = args.GetStringArg("-scriptserver", "nluaserver");
+    nString sceneserverArg = args.GetStringArg("-sceneserver", "nsceneserver");
+    nString startupArg = args.GetStringArg("-startup", "home:code/contrib/nspatialdb/bin/startup.lua");
+    nString viewArg   = args.GetStringArg("-view", 0);
+    nString stageArg  = args.GetStringArg("-stage", "luascript:stdlight.lua");
+    nString inputArg  = args.GetStringArg("-input", "luascript:stdinput.lua");
     bool fullscreenArg    = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg   = args.GetBoolArg("-alwaysontop");
     int xPosArg           = args.GetIntArg("-x", 0);
     int yPosArg           = args.GetIntArg("-y", 0);
     int widthArg          = args.GetIntArg("-w", 640);
     int heightArg         = args.GetIntArg("-h", 480);
-    const char* projDir   = args.GetStringArg("-projdir", 0);
+    nString projDir   = args.GetStringArg("-projdir", 0);
 
-    if (viewArg == NULL)
+    if (viewArg.IsEmpty())
         viewArg = "localgfxlib:unitsphere.n2";
 
     // initialize a display mode object
     nString title;
-    if (viewArg)
+    if (viewArg.IsValid())
     {
         title.Append(viewArg);
         title.Append(" - ");
@@ -97,15 +97,15 @@ main(int argc, const char** argv)
     nDisplayMode2 displayMode;
     if (fullscreenArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::Fullscreen, xPosArg, yPosArg, widthArg, heightArg, true, false, NULL);
     }
     else if (alwaysOnTopArg)
     {
-        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::AlwaysOnTop, xPosArg, yPosArg, widthArg, heightArg, true, false, NULL);
     }
     else
     {
-        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, true);
+        displayMode.Set(title.Get(), nDisplayMode2::Windowed, xPosArg, yPosArg, widthArg, heightArg, true, false, NULL);
     }
 
     // initialize Nebula runtime
@@ -124,19 +124,19 @@ main(int argc, const char** argv)
     // initialize a viewer app object
     nSDBViewerApp viewerApp(&kernelServer);
     viewerApp.SetDisplayMode(displayMode);
-    if (viewArg)
+    if (viewArg.Get())
     {
-        viewerApp.SetSceneFile(viewArg);
+        viewerApp.SetSceneFile(viewArg.Get());
     }
-    if (projDir)
+    if (projDir.Get())
     {
-        viewerApp.SetProjDir(projDir);
+        viewerApp.SetProjDir(projDir.Get());
     }
-    viewerApp.SetScriptServerClass(scriptserverArg);
-    viewerApp.SetSceneServerClass(sceneserverArg);
-    viewerApp.SetStartupScript(startupArg);
-    viewerApp.SetStageScript(stageArg);
-    viewerApp.SetInputScript(inputArg);
+    viewerApp.SetScriptServerClass(scriptserverArg.Get());
+    viewerApp.SetSceneServerClass(sceneserverArg.Get());
+    viewerApp.SetStartupScript(startupArg.Get());
+    viewerApp.SetStageScript(stageArg.Get());
+    viewerApp.SetInputScript(inputArg.Get());
 
     // open and run viewer
     if (viewerApp.Open())

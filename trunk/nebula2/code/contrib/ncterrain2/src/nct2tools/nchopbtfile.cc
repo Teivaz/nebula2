@@ -16,8 +16,8 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg = args.GetBoolArg("-help");
-    const char* inArg = args.GetStringArg("-in", 0);
-    const char* outArg = args.GetStringArg("-out", "out.bt");
+    nString inArg = args.GetStringArg("-in", 0);
+    nString outArg = args.GetStringArg("-out", "out.bt");
     int xArg = args.GetIntArg("-x", 0);
     int yArg = args.GetIntArg("-y", 0);
     int wArg = args.GetIntArg("-w", 0);
@@ -41,7 +41,7 @@ main(int argc, const char** argv)
     }
 
     // check args
-    if (!inArg)
+    if (inArg.IsEmpty())
     {
         printf("-in arg expected!");
         return 10;
@@ -54,9 +54,9 @@ main(int argc, const char** argv)
 
     nKernelServer kernelServer;
     nBtFile btFile(&kernelServer);
-    if (!btFile.Open(inArg))
+    if (!btFile.Open(inArg.Get()))
     {
-        printf("Could not open -in file '%s'\n", inArg);
+        printf("Could not open -in file '%s'\n", inArg.Get());
         return 10;
     }
 

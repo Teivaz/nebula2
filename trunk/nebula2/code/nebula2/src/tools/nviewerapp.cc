@@ -85,7 +85,7 @@ nViewerApp::Open()
     // initialize the proj: assign
     if (!this->GetProjDir().IsEmpty())
     {
-        kernelServer->GetFileServer()->SetAssign("proj", this->GetProjDir().Get());
+        kernelServer->GetFileServer()->SetAssign("proj", this->GetProjDir());
     }
     else
     {

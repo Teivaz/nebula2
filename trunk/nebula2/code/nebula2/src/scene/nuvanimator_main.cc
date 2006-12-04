@@ -49,7 +49,7 @@ nUvAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(sceneNode);
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
-    n_assert(sceneNode->IsA(nKernelServer::Instance()->FindClass("nabstractshadernode")));
+    n_assert(sceneNode->IsA("nabstractshadernode"));
     
     nAbstractShaderNode* targetNode = (nAbstractShaderNode*) sceneNode;
 

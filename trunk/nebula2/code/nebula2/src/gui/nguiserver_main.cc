@@ -1360,7 +1360,7 @@ nGuiServer::SetDragBox(nGuiDragBox* dragBox)
 {
     if (dragBox)
     {
-        n_assert(dragBox->IsA(kernelServer->FindClass("nguidragbox")));
+        n_assert(dragBox->IsA("nguidragbox"));
     }
     this->refDragBox = dragBox;
 }

@@ -236,4 +236,3 @@ nAppLauncher::LaunchHelper(bool waitForChild) const
 }
 #endif
 
-

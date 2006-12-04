@@ -123,7 +123,7 @@ nSceneServer::Open()
         nShadowServer2* shadowServer = nShadowServer2::Instance();
 
         // initialize the shaders assign from the render path
-        fileServer->SetAssign("shaders", this->renderPath.GetShaderPath().Get());
+        fileServer->SetAssign("shaders", this->renderPath.GetShaderPath());
 
         // open the display
         bool displayOpened = gfxServer->OpenDisplay();

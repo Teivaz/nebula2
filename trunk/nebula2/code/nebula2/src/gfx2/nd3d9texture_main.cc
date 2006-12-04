@@ -989,7 +989,7 @@ nD3D9Texture::GetByteSize()
 
 //------------------------------------------------------------------------------
 /**
-    Convert fileformat to D3DX type.
+    Convert file format to D3DX type.
 */
 D3DXIMAGE_FILEFORMAT
 nD3D9Texture::FileFormatToD3DX(FileFormat fileFormat)
@@ -1030,7 +1030,7 @@ nD3D9Texture::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
 
 //------------------------------------------------------------------------------
 /**
-    Convert nTexture2::Fromat to D3DFORMAT.
+    Convert nTexture2::Format to D3DFORMAT.
 
     -16-Jun-05    kims    Added to remove duplicated code from nD3D9Texture module
                           and nD3D9Surface module.

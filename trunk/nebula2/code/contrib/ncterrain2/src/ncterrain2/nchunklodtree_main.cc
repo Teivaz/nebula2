@@ -217,7 +217,7 @@ nChunkLodTree::LoadResource()
     // update the root bounding box
     this->UpdateBoundingBox();
 
-    this->SetValid(true);
+    this->SetState(nResource::Valid);
     return true;
 }
 
@@ -259,7 +259,7 @@ nChunkLodTree::UnloadResource()
         this->texQuadTree = 0;
     }
 
-    this->SetValid(false);
+    this->SetState(nResource::Valid);
 }
 
 //------------------------------------------------------------------------------

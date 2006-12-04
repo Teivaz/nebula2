@@ -236,7 +236,7 @@ void
 nCharacter3Node::LoadSkinsFromSubfolder(nString path)
 {
     nDirectory* dir = nFileServer2::Instance()->NewDirectoryObject();
-    if (dir->Open(path.Get()))
+    if (dir->Open(path))
     {
         if (dir->SetToFirstEntry())
         {

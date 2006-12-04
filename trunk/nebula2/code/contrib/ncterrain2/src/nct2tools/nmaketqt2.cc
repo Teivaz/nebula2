@@ -20,9 +20,9 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg = args.GetBoolArg("-help");
-    const char* inFile  = args.GetStringArg("-in", 0);
-    const char* outFile = args.GetStringArg("-out", 0);
-    const char* tmpFile = args.GetStringArg("-tmp", "home:tmp.tqt2");
+    nString inFile  = args.GetStringArg("-in", 0);
+    nString outFile = args.GetStringArg("-out", 0);
+    nString tmpFile = args.GetStringArg("-tmp", "home:tmp.tqt2");
     int depth           = args.GetIntArg("-depth", 4);
     int tileSize        = args.GetIntArg("-tilesize", 256);
     bool dxt1           = args.GetBoolArg("-dxt1");
@@ -43,12 +43,12 @@ main(int argc, const char** argv)
         return 5;
     }
 
-    if (!inFile)
+    if (!inFile.IsValid())
     {
         n_printf("Input filename required [-in]!\n");
         return 10;
     }
-    if (!outFile)
+    if (!outFile.IsValid())
     {
         n_printf("Output filename required [-out]!\n");
         return 10;
@@ -59,8 +59,8 @@ main(int argc, const char** argv)
     if (!compress)
     {
         nTqt2FileMaker fileMaker(&kernelServer);
-        fileMaker.SetSourceFile(inFile);
-        fileMaker.SetTargetFile(outFile);
+        fileMaker.SetSourceFile(inFile.Get());
+        fileMaker.SetTargetFile(outFile.Get());
         fileMaker.SetTileSize(tileSize);
         fileMaker.SetTreeDepth(depth);
         if (!fileMaker.Run())
@@ -75,7 +75,7 @@ main(int argc, const char** argv)
     {
         n_printf("-> compressing generated texture tiles...\n");
         nTqt2Compressor compressor(&kernelServer);
-        compressor.SetSourceFile(inFile);
+        compressor.SetSourceFile(inFile.Get());
         if (dxt1)
         {
             compressor.SetMode(nTqt2Compressor::DXT1);
@@ -84,7 +84,7 @@ main(int argc, const char** argv)
         {
             compressor.SetMode(nTqt2Compressor::DXT5);
         }
-        compressor.SetTargetFile(outFile);
+        compressor.SetTargetFile(outFile.Get());
         if (!compressor.Run())
         {
             n_printf("TQT2 Compressor failed with: %s\n", compressor.GetError());

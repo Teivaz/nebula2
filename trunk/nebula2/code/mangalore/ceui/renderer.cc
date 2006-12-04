@@ -168,11 +168,11 @@ void Renderer::addQuad(const CEGUI::Rect& destRect, float z, const CEGUI::Textur
                 for (uint y = 0; y < height; y++) {
                     CEGUI::uint8* dstBuf = (CEGUI::uint8*)dstLockInfo.surfPointer + y * dstLockInfo.surfPitch;
                     CEGUI::uint8* srcBuf = (CEGUI::uint8*)srcLockInfo.surfPointer + (yOffset + y) * srcLockInfo.surfPitch;
-                    // d3d cursor can only accept 0.0 or 1.0 alpha channel values
                     memcpy(dstBuf, srcBuf + sizeof(CEGUI::uint32) * xOffset, sizeof(CEGUI::uint32) * width);
+                    // d3d cursor can only accept 0.0 or 1.0 alpha channel values
                     for (uint x = 0; x < width; x++) {
                         CEGUI::uint8* alpha = dstBuf + sizeof(CEGUI::uint32) * x + 3;
-                        *alpha = *alpha > 0x80 ? 0xff : 0x00;
+                        *alpha = *alpha > 0x7F ? 0xFF : 0x00;
                     }
                 }
                 dstTexture->Unlock(0);
