@@ -760,36 +760,35 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
     uiScript += tmp;
 
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
-    // nmaxenvelopecurve control.
-    tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:130 \n", particlePrefix, paramName.Get());
-    uiScript += tmp;
 
-    //struct SpinnerName
-    //{
-    //    nString paramname;
-    //    nString caption;
-
-    //} spinnerName[] = 
-    //{
-    //    {"SelPos",    "Selected Position"},
-    //    {"SelVal",    "Selected Value"},
-    //    {"Max",       "Max"},
-    //    {"Min",       "Min"},
-    //    {"Frequency", "Frequency"},
-    //    {"Amplitude", "Amplitude"}
-    //};
-
-    //for (int i=0; i<6; ++i)
-    //{
-    //    tmp.Format("\t\tspinner %s%s \" %s \" align:#left fieldwidth:36\n", paramName.Get(), spinnerName[i].paramname.Get(), spinnerName[i].caption.Get());
-    //    uiScript += tmp;
-    //}
-
-    //tmp.Format("\t\tdropdownlist %sFunc \"Function\" width:100 items:#(\"Sine\", \"Cosine\") selection:1\n", paramName.Get());
-    //uiScript += tmp;
-
-    ////FIXME: do we need call 'open' handler func to set default values?
-
+    // use color picker due to that we don't have envelope color curve control yet.
+    if (paramName == "ParticleRGB")
+    {
+        float defP1 = .3f, defP2 = .7f;
+        // n_assert(count == 16);
+        tmp.Format("\t\t\tlabel %s_l1 \"Values\" align:#left offset:[0, 0] width:64 height:13 across:4\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner %s_p1 \"p1\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defP1);
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner  %s_p2 \"p2\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defP2);
+        uiScript += tmp;
+        tmp.Format("\t\t\tlabel %s_dummy \"\"\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v0 \"v0\" align:#left offset:[0, 0] width:64 height:16 across:4\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v1 \"v1\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v2 \"v2\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tcolorPicker %s_v3 \"v3\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
+        uiScript += tmp;
+    }
+    else
+    {
+        // nmaxenvelopecurve control.
+        tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:130 \n", particlePrefix, paramName.Get());
+        uiScript += tmp;
+    }
 #else
     nArray<nString> defValues;
     int count = defaultVal.Tokenize(" \t\n", defValues);
@@ -859,9 +858,18 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
     uiScript += ")\n";
 
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
-    // add activex contorl event handler
-    tmp.Format("\t\ton %s%s OnChangedValue do\n", particlePrefix, paramName.Get());
-    uiScript += tmp;
+    if (paramName == "ParticleRGB")
+    {
+        // add controls event handlers
+        tmp.Format("\t\tfn update_%s=\n", paramName.Get());
+        uiScript += tmp;
+    }
+    else
+    {
+        // add activex contorl event handler
+        tmp.Format("\t\ton %s%s OnChangedValue do\n", particlePrefix, paramName.Get());
+        uiScript += tmp;
+    }
 
 #else
     // add controls event handlers
@@ -892,18 +900,23 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
 
-    //for (int i=0; i<6; ++i)
-    //{
-    //    if (spinnerName[i].paramname != "SelPos" ||
-    //        spinnerName[i].paramname != "SelVal")
-    //    {
-    //        tmp.Format("\t\ton %s%s changed val do \n\t\t(\n", paramName.Get(), spinnerName[i].paramname.Get());
-    //        uiScript += tmp;
-    //        tmp.Format("\t\t\t%s%s.%s = val \n", particlePrefix, paramName.Get(), spinnerName[i].paramname.Get());
-    //        uiScript += tmp;
-    //        uiScript += "\t\t)\n";
-    //    }
-    //}
+    // use color picker due to that we don't have envelope color curve control yet.
+    if (paramName == "ParticleRGB")
+    {
+        tmp.Format("\t\ton %s_v0 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_v3 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+
+        tmp.Format("\t\ton %s_p1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\ton %s_p2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        uiScript += tmp;
+    }
 
 #else
     if (paramName == "ParticleRGB")
