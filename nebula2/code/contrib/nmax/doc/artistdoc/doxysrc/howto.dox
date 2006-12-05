@@ -38,6 +38,7 @@
       - @ref NMaxCLineToolRemoteShell
       - @ref NMaxCLineToolNPKPackerTool
     - <b>Miscellaneous</b>
+      - @ref NMaxPreferences
       - @ref NMaxTerrainTools
 
 */
