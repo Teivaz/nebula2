@@ -209,6 +209,22 @@ tooltip:"IPC for remote access"
 )
 
 ---------------------------------------------------------------------------------
+-- macro script for 'Preferences' menu item.
+---------------------------------------------------------------------------------
+macroScript NebulaToolBox_Preferences
+category:"nmaxtoolbox" 
+buttonText:"Preferences..."
+tooltip:"Preferences" 
+( 
+    on execute do 
+    (
+        include "nebula2/preferences.ms"
+        
+        CreateDialog rPrefViewerOptions
+    )
+)
+
+---------------------------------------------------------------------------------
 -- macro script for 'Help' menu item.
 ---------------------------------------------------------------------------------
 macroScript NebulaToolBox_Help
@@ -285,6 +301,7 @@ fn AddMenu =
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_DisonnectIPC" "nmaxtoolbox") 
         append ItemsTemp (menuMan.createSeparatorItem())
 
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Preferences" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Help" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_About" "nmaxtoolbox")
 					
