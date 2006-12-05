@@ -1,0 +1,27 @@
+/**
+    @defgroup NMaxPreferences Preferences
+
+    @section NMaxPreferencesOverview Overview
+
+    Any changed values of <tt>nmaxtoolbox.ini</tt> file are saved again when 
+    the preferences dialog is closed.
+
+    @section NMaxPreferencesViewerOptions nviewer Options
+
+    <b>Preview in FullScreen Mode</b> <br>
+    The viewer runs on fullscreen mode.
+
+    <b>Always on Top</b> <br>
+    The viewer always stay on top.
+
+    <b>Window Position</b> <br>
+    Specifies x and y position of the viewer in screen coordination. 
+
+    <b>Window Size</b> <br>
+    Specifies width and height of the viewer.
+
+    @section NMaxPreferencesCustomViewerOptions Custom Viewer Options
+
+    Viewer options for user provided custom viewer options. Not available yet.
+
+*/
