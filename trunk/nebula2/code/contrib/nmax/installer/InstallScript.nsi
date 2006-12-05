@@ -115,6 +115,8 @@ Section "Runtime" Section_Runtime
     ; bin directory
     SetOutPath "$INSTDIR\plugins"
     File "${N2SRCDIR}\bin\win32\nmaxtoolbox.dlu"
+    File "${N2SRCDIR}\bin\win32\nmaximport.dli"
+
 
     ; 3dsmax/plugcfg direcotry
     SetOutPath "$INSTDIR\plugcfg"
@@ -149,6 +151,19 @@ SectionEnd
 
 ; It may need this section to register custom activex control
 Section "ActiveX" Section_ActiveX
+
+    SectionIn RO
+
+    ; root directory
+    SetOutPath "$INSTDIR"
+
+    ; bin directory
+    SetOutPath "$INSTDIR\plugins"
+    File "${N2SRCDIR}\bin\win32\nmaxenvelopecurve.ocx"
+
+    ; register activex used for envelope curver cotnrol
+    Exec '"$INSTDIR\regsvr32.exe /s nmaxenvelopecurve.ocx"'
+
 SectionEnd
 
 ;-------------------------------------------------------------------------------
