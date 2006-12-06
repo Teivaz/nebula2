@@ -5,8 +5,68 @@
 -------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
+-- get $3dsmax/plugcfg/ directory
+-------------------------------------------------------------------------------
+/*
+fn nGetNMaxIniFilename = 
+(
+    -- get $3dsmax/plugcfg/ directory
+    nmaxtoolboxIniFile = getDir #plugcfg
+    nmaxtoolboxIniFile += "\\"
+    nmaxtoolboxIniFile += "nmaxtoolbox.ini" 
+
+    return nmaxtoolboxIniFile
+)
+*/
+
+-------------------------------------------------------------------------------
+-- mesh suffix rollout in preferences
+-------------------------------------------------------------------------------
+rollout rPrefSuffix "Mesh Suffix" width:319 height:300
+(
+    edittext edtStatic "static mesh suffix: " pos:[88,17] width:210 height:20
+    edittext edtSkinned "skinned mesh suffix: " pos:[76,42] width:222 height:20
+    edittext edtStaticShadow "static shadow mesh suffix: " pos:[47,68] width:252 height:20
+    edittext edtSkinnedShadow "skinned shadow mesh suffix: " pos:[36,93] width:263 height:20    
+    edittext edtSwing "swing mesh suffix: " pos:[86,119] width:213 height:20
+    edittext edtCollision "collision mesh suffix: " pos:[76,145] width:223 height:20
+    edittext edtParticle2 "particle2 mesh suffix: " pos:[74,172] width:225 height:20
+    
+    -- retrieve suffixes from INI file.
+    on rPrefSuffix open do
+    (
+        nmaxIniFile = getDir #plugcfg
+        nmaxIniFile += "\\"
+        nmaxIniFile += "nmaxtoolbox.ini"
+
+        edtStatic.text  = getINISetting nmaxIniFile "MeshSuffix" "static"
+        edtSkinned.text = getINISetting nmaxIniFile "MeshSuffix" "skinned"
+        edtStaticShadow.text  = getINISetting nmaxIniFile "MeshSuffix" "shadow"
+        edtSkinnedShadow.text = getINISetting nmaxIniFile "MeshSuffix" "skinnedshadow"
+        edtSwing.text = getINISetting nmaxIniFile "MeshSuffix" "swing"
+        edtCollision.text = getINISetting nmaxIniFile "MeshSuffix" "collision"
+        edtParticle2.text = getINISetting nmaxIniFile "MeshSuffix" "particle2"
+    )
+
+    -- save suffixes to INI file.
+    on rPrefSuffix close do
+    (
+        nmaxIniFile = getDir #plugcfg
+        nmaxIniFile += "\\"
+        nmaxIniFile += "nmaxtoolbox.ini"
+
+        setINISetting nmaxIniFile "MeshSuffix" "static" edtStatic.text
+        setINISetting nmaxIniFile "MeshSuffix" "skinned" edtSkinned.text
+        shadowSuffix  = setINISetting nmaxIniFile "MeshSuffix" "shadow" edtStaticShadow.text
+        skinnedShadowSuffix = setINISetting nmaxIniFile "MeshSuffix" "skinnedshadow" edtSkinnedShadow.text
+        swingSuffix = setINISetting nmaxIniFile "MeshSuffix" "swing" edtSwing.text
+        collisionSuffix = setINISetting nmaxIniFile "MeshSuffix" "collision" edtCollision.text
+        particle2Suffix = setINISetting nmaxIniFile "MeshSuffix" "particle2" edtParticle2.text
+    )
+)
+
+-------------------------------------------------------------------------------
 -- viewer options rollout in preferences
---
 -------------------------------------------------------------------------------
 rollout rPrefViewerOptions "Viewer Options" width:319 height:339
 (
@@ -31,16 +91,18 @@ rollout rPrefViewerOptions "Viewer Options" width:319 height:339
     on rPrefViewerOptions open do
     (
         -- get $3dsmax/plugcfg/ directory
+        --nmaxtoolboxIniFile = nGetNMaxIniFilename() 
+
         nmaxtoolboxIniFile = getDir #plugcfg
         nmaxtoolboxIniFile += "\\"
         nmaxtoolboxIniFile += "nmaxtoolbox.ini" 
 
         fullscreen   = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-fullscreen"
         alwaysOnTop  = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-alwaysontop"
-        viewerXPos   = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-x"
-        viewerYPos   = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-y"
-        viewerWidth  = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-w"
-        viewerHeight = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-h"
+        edtXPos.text = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-x"
+        edtYPos.text = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-y"
+        edtWidth.text = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-w"
+        edtHeight.text = getINISetting nmaxtoolboxIniFile "DefaultViewerSetting" "-h"
 
         if fullscreen == "true" then
             chkFullScreen.checked = true
@@ -51,11 +113,6 @@ rollout rPrefViewerOptions "Viewer Options" width:319 height:339
             chkAlwaysOnTop.checked = true
         else
             chkAlwaysOnTop.checked = false
-
-        edtXPos.text = viewerXPos
-        edtYPos.text = viewerYPos
-        edtWidth.text = viewerWidth
-        edtHeight.text = viewerHeight
 
         -- temporary disabled untill we have methods for custom viewer options.
         edtCustomViewerExe.enabled = false
@@ -69,7 +126,8 @@ rollout rPrefViewerOptions "Viewer Options" width:319 height:339
     (
         nmaxtoolboxIniFile = ""
 
-        -- get $3dsmax/plugcfg/ directory
+        --nmaxtoolboxIniFile = nGetNMaxIniFilename() 
+
         nmaxtoolboxIniFile = getDir #plugcfg
         nmaxtoolboxIniFile += "\\"
         nmaxtoolboxIniFile += "nmaxtoolbox.ini" 
@@ -96,6 +154,12 @@ rollout rPrefViewerOptions "Viewer Options" width:319 height:339
     )
 )
 
--- veiwerOptionsFloater = newRolloutFloater "Preferences" 335 380
--- addRollout rPrefViewerOptions veiwerOptionsFloater
+-------------------------------------------------------------------------------
+--  Run preferences dialog
+-------------------------------------------------------------------------------
+
+veiwerOptionsFloater = newRolloutFloater "Preferences" 335 590
+addRollout rPrefSuffix veiwerOptionsFloater
+addRollout rPrefViewerOptions veiwerOptionsFloater
+
 
