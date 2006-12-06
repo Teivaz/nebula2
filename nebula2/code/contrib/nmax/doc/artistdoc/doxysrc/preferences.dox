@@ -6,6 +6,24 @@
     Any changed values of <tt>nmaxtoolbox.ini</tt> file are saved again when 
     the preferences dialog is closed.
 
+    @section NMaxPreferencesMeshSuffix Mesh Suffix
+
+    A mesh suffix is a file name suffix which is appened to the exported mesh file name 
+    to make the mesh can be easily recognized by its type.
+    Currently the following mesh types are supported:
+
+      - <b>Static</b> Mesh Suffix - A default value is "".
+      - <b>Skinned</b> Mesh Suffix - A default value is "_skinned".
+      - <b>Static Shadow</b> Mesh Suffix - A default value is "_shadow".
+      - <b>Skinned Shadow</b> Mesh Suffix - A default value is "_skinnedshadow". 
+      - <b>Swing Mesh</b> Suffix - A default value is "_swing". 
+      - <b>Collision</b> Mesh Suffix - A default value is "_collision". 
+      - <b>Particle2</b> Mesh Suffix - A default value is "_particle2". 
+
+    All those mesh suffixes are saved in the plugin INI file(<tt>nmaxtoolbox.ini</tt>) and 
+    can be modified via @ref NMaxPreferences dialog.
+    See @ref NMaxPerMeshOptions page for more information about supported mesh types.
+
     @section NMaxPreferencesViewerOptions nviewer Options
 
     <b>Preview in FullScreen Mode</b> <br>
@@ -22,6 +40,6 @@
 
     @section NMaxPreferencesCustomViewerOptions Custom Viewer Options
 
-    Viewer options for user provided custom viewer options. Not available yet.
+    Viewer options for user provided custom viewer options. (<i>Not available yet</i>.)
 
 */

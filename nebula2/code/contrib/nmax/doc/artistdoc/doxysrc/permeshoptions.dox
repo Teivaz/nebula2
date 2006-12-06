@@ -23,10 +23,15 @@
         - Swing - indicate that the mesh is <tt>swing shapenode</tt>.
         - Shadow - indicate that the mesh is <tt>shadow</tt> model.
         - Collision - indicate that the mesh will be used for <tt>collision</tt> mesh. 
+        - Particle2 - indicate that the mesh will be used for a mesh of <tt>particle2</tt> node.
+        - Sky - indicate that the mesh will be used for a mesh of <tt>sky</tt> node.
       - <b>Vertex Options</b>
         - Normal - the exported mesh will contain vertex normal.
         - Color - the exported mesh will contain vertex color.
         - Uvs - the exported mesh will contain uvs for its texturing.
         - Tangent - generate tangent per vertex for per pixel lighting
+
+     You can also add mesh suffix to its file name by its type when the mesh is exported. 
+     See @ref NMaxPreferencesMeshSuffix section for the details.
 
 */
