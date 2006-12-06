@@ -4,6 +4,10 @@
     This section of the document lists the change history of The Nebula2 3dsmax
     Toolkit.
 
+    @section N2ChangeLog_2006_12 2006.12.
+    - Added "preferences" menu item. Now you can change mesh suffix or adjust
+    viewer options.
+
     @section N2ChangeLog_2006_11 2006.11.
 
     - Fixed to get correct shared memory object name to make preview mode
