@@ -219,8 +219,6 @@ tooltip:"Preferences"
     on execute do 
     (
         include "nebula2/preferences.ms"
-        
-        CreateDialog rPrefViewerOptions
     )
 )
 
