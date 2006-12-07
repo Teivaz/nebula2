@@ -65,10 +65,9 @@ class Db3File:
             self.cursor.execute(sql % i)
         sql = "CREATE TABLE _Entities ('_Type' TEXT, 'GUID' TEXT, '_ID' TEXT, '_Category' TEXT, '_Level' TEXT, \
               'Transform' TEXT, 'LightType' TEXT, 'LightColor' TEXT, 'LightRange' TEXT, 'LightAmbient' TEXT, \
-              'LightCastShadows' TEXT, 'AnimPath' TEXT, 'Graphics' TEXT, 'Physics' TEXT, 'Center' TEXT, \
-              'Extents' TEXT, 'StartLevel' TEXT, 'Id' TEXT, 'Placeholder' TEXT, 'LE' TEXT, 'AE' TEXT, 'AT' TEXT, \
-              'PA' TEXT, 'Name' TEXT, 'AnimSet' TEXT, 'InputFocus' TEXT, 'CameraFocus' TEXT, 'MaxVelocity' TEXT, \
-              'FieldOfView' TEXT, 'Time' TEXT)"
+              'LightCastShadows' TEXT, 'AnimPath' TEXT, 'Graphics' TEXT, 'Physics' TEXT, 'Territory' TEXT, \
+              'Center' TEXT, 'Extents' TEXT, 'StartLevel' TEXT, 'Id' TEXT, 'Name' TEXT, 'AnimSet' TEXT, 'CharacterSet' TEXT, \
+              'InputFocus' TEXT, 'CameraFocus' TEXT, 'MaxVelocity' TEXT, 'FieldOfView' TEXT, 'Time' TEXT, 'File' TEXT)"
         self.cursor.execute(sql)
         sql = "CREATE TABLE _Categories ('Name' TEXT)"
         self.cursor.execute(sql)

@@ -18,7 +18,7 @@ class MainFrame(wx.Frame):
     def __init__(self):
         self.config = ConfigParser.SafeConfigParser()
         self.config.read(CONFIG_FILENAME)
-        wx.ArtProvider.PushProvider(MedArtProvider())
+        wx.ArtProvider.Push(MedArtProvider())
         wx.Frame.__init__(self, None, title = 'Mangalore Level Editor', size = (800, 600))
         self.SetIcon(wx.ArtProvider_GetIcon('MED', wx.ART_OTHER, (16, 16)))
         self.createMenuBar()
