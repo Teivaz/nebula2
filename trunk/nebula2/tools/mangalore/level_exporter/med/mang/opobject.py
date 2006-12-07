@@ -11,6 +11,7 @@ class OpObject(EnvObject):
         self.placeholder = ''
         self.name = ''
         self.animSet = ''
+        self.characterSet = ''
         self.inputFocus = ''
         self.cameraFocus = ''
         self.maxVelocity = ''
@@ -22,6 +23,7 @@ class OpObject(EnvObject):
         self.placeholder = db3File.queryEntityData(guid, 'Placeholder')
         self.Name = db3File.queryEntityData(guid, 'Name')
         self.animSet = db3File.queryEntityData(guid, 'AnimSet')
+        self.characterSet = db3File.queryEntityData(guid, 'CharacterSet')
         self.inputFocus = db3File.queryEntityData(guid, 'InputFocus')
         self.cameraFocus = db3File.queryEntityData(guid, 'CameraFocus')
         self.maxVelocity = db3File.queryEntityData(guid, 'MaxVelocity')
@@ -47,6 +49,9 @@ class OpObject(EnvObject):
         if self.animSet:
             db3File.updateEntityCategory(self._category, self.id, 'AnimSet', self.animSet)
             db3File.updateEntityData(self.guid, 'AnimSet', self.animSet)
+        if self.characterSet:
+            db3File.updateEntityCategory(self._category, self.id, 'CharacterSet', self.characterSet)
+            db3File.updateEntityData(self.guid, 'CharacterSet', self.characterSet)
         if self.inputFocus:
             db3File.updateEntityCategory(self._category, self.id, 'InputFocus', self.inputFocus)
             db3File.updateEntityData(self.guid, 'InputFocus', self.inputFocus)
@@ -72,6 +77,8 @@ class OpObject(EnvObject):
             self.name = attrs['Name']
         if 'AnimSet' in attrs:
             self.animSet = attrs['AnimSet']
+        if 'CharacterSet' in attrs:
+            self.characterSet = attrs['CharacterSet']
         if 'InputFocus' in attrs:
             self.inputFocus = attrs['InputFocus']
         if 'CameraFocus' in attrs:
@@ -91,6 +98,8 @@ class OpObject(EnvObject):
             attrs['Name'] = self.name
         if self.animSet:
             attrs['AnimSet'] = self.animSet
+        if self.characterSet:
+            attrs['CharacterSet'] = self.characterSet
         if self.inputFocus:
             attrs['InputFocus'] = self.inputFocus
         if self.cameraFocus:
