@@ -140,34 +140,34 @@ nRpXmlParser::ParseShaders()
 {
     // setup the xml stream object
     nStream newXmlStream;
-	n_assert(this->mangledPath.Get());
+    n_assert(this->mangledPath.IsValid());
     newXmlStream.SetFilename(this->mangledPath);
-	if (!newXmlStream.Open(nStream::Read))
+    if (!newXmlStream.Open(nStream::Read))
     {
         n_error(nString("Failed to open " + this->mangledPath + "\n").Get());
     }
-	else
-	{
-		newXmlStream.SetToNode("/RenderPath/Shaders");
-	}
+    else
+    {
+        newXmlStream.SetToNode("/RenderPath/Shaders");
+    }
 
-	newXmlStream.SetToFirstChild();
+    newXmlStream.SetToFirstChild();
     do
     {
-		if (newXmlStream.HasAttr("name") && newXmlStream.HasAttr("file"))
-		{
-			nRpShader newShader;
-			nString name = newXmlStream.GetString("name");
-			nString file = newXmlStream.GetString("file");
+        if (newXmlStream.HasAttr("name") && newXmlStream.HasAttr("file"))
+        {
+            nRpShader newShader;
+            nString name = newXmlStream.GetString("name");
+            nString file = newXmlStream.GetString("file");
 
-			newShader.SetName(name);
-			newShader.SetFilename(file);
-			renderPath->AddShader(newShader);
-		}
-		else
-		{
-			break;
-		}
+            newShader.SetName(name);
+            newShader.SetFilename(file);
+            renderPath->AddShader(newShader);
+        }
+        else
+        {
+            break;
+        }
     }
     while (newXmlStream.SetToNextChild());
 }

@@ -69,7 +69,7 @@ void nMaxDirDlg::OnInitDialog()
     iniFilename += N_MAXEXPORT_INIFILE;
 
     // check the .ini file exist in 3dsmax plugin directory.
-    if (!fileServer->FileExists(iniFilename.Get()))
+    if (!fileServer->FileExists(iniFilename))
     {
         // the .ini file does not exist, so make new one.
         nFile* file = fileServer->NewFileObject();
@@ -245,7 +245,7 @@ bool nMaxDirDlg::OnOK()
     GetDlgItemText(hWnd, IDC_EXT_PATH_TEXTURES, str, BUFSIZE); texturesPath = str;
 
     // check the specified assigns and paths are valid.
-    if (!nFileServer2::Instance()->DirectoryExists(homeDir.Get()))
+    if (!nFileServer2::Instance()->DirectoryExists(homeDir))
     {
         // specified home directory does not exist.
         MessageBox(this->hWnd, "The specified 'Home' assign directory does not exist.", "Error", MB_OK);
