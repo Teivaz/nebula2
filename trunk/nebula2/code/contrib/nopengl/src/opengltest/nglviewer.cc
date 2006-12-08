@@ -59,7 +59,7 @@ nNebulaUsePackage(nnetwork);
 #ifdef __WIN32__
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(ndshow);
-//nNebulaUsePackage(ndsound);
+nNebulaUsePackage(ndsound);
 #endif
 
 //------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ main(int argc, const char** argv)
 #endif
 
     nString scriptServerClass    = args.GetStringArg("-scriptserver", "ntclserver");
-    nString startupArg           = args.GetStringArg("-startup", "home:code/contrib/nopengl/bin/startup.tcl");
+    nString startupArg           = args.GetStringArg("-startup", "home:code/contrib/nopengl/data/scripts/startup.tcl");
     nString viewArg              = args.GetStringArg("-view", "");
     nString stageArg             = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
     bool fullscreenArg           = args.GetBoolArg("-fullscreen");
@@ -128,7 +128,7 @@ main(int argc, const char** argv)
     int aaSamples                = args.GetIntArg("-aa", 0);
     vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
     vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
-    vector3 eyeUp(args.GetFloatArg("-eyeupx", 0.0f), args.GetFloatArg("-eyeupy", 1.0f), args.GetFloatArg("-eyeupz", 0.0f));
+    vector3 eyeUp(args.GetFloatArg("-eyeupx",   0.0f), args.GetFloatArg("-eyeupy",  1.0f), args.GetFloatArg("-eyeupz",  0.0f));
 
     // Don't allow window width smaller than 40 and height smaller than 30.
     if (widthArg < 40)
@@ -185,7 +185,7 @@ main(int argc, const char** argv)
     #ifdef __WIN32__
     kernelServer.AddPackage(ndinput8);
     kernelServer.AddPackage(ndshow);
-    //kernelServer.AddPackage(ndsound);
+    kernelServer.AddPackage(ndsound);
     #endif
 
     // initialize a display mode object

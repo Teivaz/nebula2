@@ -13,6 +13,8 @@
 */
 #include "gfx2/ntexture2.h"
 
+#define USE_DEVIL 0
+
 //#include "opengl/nglincludes.h"
 
 struct DDSHeader;
@@ -92,8 +94,11 @@ private:
     GLuint GetTexID() const;
     /// create a P-Buffer
     bool CreatePBuffer(const int *pfa, const int *pba);
+
+#if USE_DEVIL
     /// load a texture through DevIL
     bool LoadILFile();
+#endif
 
     GLuint texID;
     GLenum target;

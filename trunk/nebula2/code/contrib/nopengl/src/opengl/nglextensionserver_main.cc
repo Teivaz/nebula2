@@ -82,35 +82,27 @@ nGLExtensionServer::PrintExtensions(nString extStr)
 */
 void nGLExtensionServer::InitExtensions()
 {
-    n_printf("\nInit OpenGL extensitions:\n");
+    n_printf("\nInit OpenGL extensitions:");
 
 #define EXTENSION_BEGIN(extname)\
-    n_printf("" #extname " -");\
-    if (support_##extname = HasExtension(#extname))\
-    {\
-        n_printf(" supported!\n");
+    support_##extname = HasExtension(#extname);\
+    n_printf("\n[%c] " #extname "\n", support_##extname ? '+' : '-');\
+    if (support_##extname)\
+    {
 #ifdef __WIN32__
 #define DECL_GLEXT_PROC(type, procname)\
         procname = (type) wglGetProcAddress(#procname);\
-        if (procname == NULL)\
-        { \
-            n_printf("    " #procname " not supported.\n");\
-        } \
-        else \
-        {\
-            n_printf("    " #procname " supported.\n");\
-        }
+        n_printf("    [%c] " #procname "\n", procname ? '+' : '-');
 #else // other OS not implemented yet
 #define DECL_GLEXT_PROC(type, procname)\
         procname = NULL;
 #endif
+
 #define EXTENSION_END(extname)\
-    }\
-    else\
-    {\
-        n_printf(" not supported!\n");\
     }
+
 #include "opengl\nglextensions.h"
+
 #undef EXTENSION_BEGIN
 #undef DECL_GLEXT_PROC
 #undef EXTENSION_END

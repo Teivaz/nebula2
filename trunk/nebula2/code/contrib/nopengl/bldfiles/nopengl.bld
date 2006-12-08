@@ -112,14 +112,23 @@ beginmodule nglserver2
         Xmu
     }
     setlibs_win32 {
-        wsock32.lib
-        opengl32.lib
-        glu32.lib
-        user32.lib
-        gdi32.lib
         advapi32.lib
+        dxerr9.lib
+        gdi32.lib
+        glu32.lib
+        opengl32.lib
+        user32.lib
+        wsock32.lib
     }
 endmodule
+#    setlibs_win32 {
+#        advapi32.lib
+#        d3d9.lib
+#        d3dx9.lib
+#        dxguid.lib
+#        gdi32.lib
+#        user32.lib
+#    }
 #    setmoduledeps {
 #        nglmesh
 #        ngltexture
@@ -205,6 +214,7 @@ begintarget nglviewer
         microtcl
         ndinput8
         nopengl
+        ndsound
         ndshow
         ngui
         nnetwork
