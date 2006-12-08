@@ -130,7 +130,7 @@ nGLServer2::DeviceOpen()
     // prepare window...
     this->windowHandler.AdjustWindowForChange();
 
-    this->hDC = GetDC(this->windowHandler.GetHwnd());
+    this->hDC = GetDC(this->windowHandler.GetAppHwnd());
 
     // init open opengl context
     this->ContextOpen();
@@ -139,15 +139,20 @@ nGLServer2::DeviceOpen()
     //bool res = nCgFXShader::CreateDevice();
 
     //display info
-    n_printf("GL - Extensions\n");
+    n_printf("\nDevice information\n");
     n_printf("    Vendor:   %s\n", glGetString(GL_VENDOR));
     n_printf("    Renderer: %s\n", glGetString(GL_RENDERER));
     n_printf("    Version:  %s\n", glGetString(GL_VERSION));
-    n_printf("Supported Extensions:\n");
+    n_printf("\nSupported GL extensions:\n");
     nGLExtensionServer::PrintExtensions(nString((const char*)glGetString(GL_EXTENSIONS)));
     
     //init extensitions
-    //nGLExtensionServer::InitExtensions();
+    nGLExtensionServer::InitExtensions();
+
+    // check required extensions
+    n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_shader_objects),       "nGLServer2::DeviceOpen(): GL_ARB_shader_objects extention not supported!");
+    n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object), "nGLServer2::DeviceOpen(): GL_ARB_vertex_buffer_object extention not supported!");
+    //n_assert2(N_GL_EXTENSION_SUPPORTED(WGL_ARB_render_texture), "nGLServer2::DeviceOpen(): WGL_ARB_render_texture extention not supported!");
 
     // reload any resources if necessary
     this->OnDeviceInit(true);
@@ -172,7 +177,7 @@ nGLServer2::DeviceClose()
     n_assert(this->hDC);
     n_assert(this->windowHandler.IsWindowOpen());
     n_assert(!this->windowHandler.IsWindowMinimized());
-    n_assert(this->windowHandler.GetHwnd());
+    n_assert(this->windowHandler.GetAppHwnd());
 
     n_printf("nGLServer2::DeviceClose()\n");
 
@@ -189,7 +194,7 @@ nGLServer2::DeviceClose()
     this->OnDeviceCleanup(true);
 
     // destroy gl device
-    ReleaseDC(this->windowHandler.GetHwnd(), this->hDC);
+    ReleaseDC(this->windowHandler.GetAppHwnd(), this->hDC);
     this->hDC = NULL;
     
     // minimze the app window

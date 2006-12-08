@@ -8,8 +8,11 @@
 
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+
+#if USE_DEVIL
 #include "il/il.h"
 #include "il/ilu.h"
+#endif
 
 nNebulaClass(nGLTexture, "ntexture2");
 
@@ -230,11 +233,19 @@ nGLTexture::LoadResource()
     //    // load file through D3DX, assume file has mip maps 
     //    success = this->LoadD3DXFile(false);
     //}
+#if USE_DEVIL
     else
     {
         // load file through DevIL
         success = this->LoadILFile();
     }
+#else
+    else
+    {
+        n_error("nGLTexture::LoadResource(): Unknown texture type!");
+    }
+#endif
+
     if (success)
     {
         this->SetState(Valid);
@@ -1854,6 +1865,7 @@ nGLTexture::CreatePBuffer(const int *pfa, const int *pba)
     of conversion happens in here, and all loaded textures are converted
     to 32 bit BGRA, which is not very memory efficient.
 */
+#if USE_DEVIL
 bool
 nGLTexture::LoadILFile()
 {
@@ -1971,3 +1983,4 @@ nGLTexture::LoadILFile()
     n_printf("DevIL: stop texture loading.\n");
     return true;
 }
+#endif

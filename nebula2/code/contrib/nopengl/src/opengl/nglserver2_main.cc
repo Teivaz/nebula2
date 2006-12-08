@@ -9,7 +9,7 @@
 
 #include "opengl/nglmesh.h"
 #include "opengl/ngltexture.h"
-#include "opengl/nglextensionserver.h"
+//#include "opengl/nglextensionserver.h"
 
 //#include "kernel/ntimeserver.h"
 
@@ -137,12 +137,12 @@ nGLServer2::nGLServer2() :
 
     //nKernelServer::Instance()->New("nglextensionserver", "/sys/servers/glextension");
 
-    nGLExtensionServer::InitExtensions();
+    //nGLExtensionServer::InitExtensions();
 
     // check required extensions
-    n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_shader_objects), "nGLServer2::nGLServer2(): GL_ARB_shader_objects extention not supported!");
-    n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object), "nGLServer2::nGLServer2(): GL_ARB_vertex_buffer_object extention not supported!");
-    n_assert2(N_GL_EXTENSION_SUPPORTED(WGL_ARB_render_texture), "nGLServer2::nGLServer2(): WGL_ARB_render_texture extention not supported!");
+    //n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_shader_objects), "nGLServer2::nGLServer2(): GL_ARB_shader_objects extention not supported!");
+    //n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object), "nGLServer2::nGLServer2(): GL_ARB_vertex_buffer_object extention not supported!");
+    //n_assert2(N_GL_EXTENSION_SUPPORTED(WGL_ARB_render_texture), "nGLServer2::nGLServer2(): WGL_ARB_render_texture extention not supported!");
 }
 
 //------------------------------------------------------------------------------
