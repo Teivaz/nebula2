@@ -71,7 +71,7 @@ main(int argc, const char** argv)
     displayMode.SetType(nDisplayMode2::Windowed);
 
     nString projDir = ReadProjRegistryKey();
-    if (!projDir.IsValid())
+    if (projDir.IsEmpty())
     {
         projDir = "home:";
     }

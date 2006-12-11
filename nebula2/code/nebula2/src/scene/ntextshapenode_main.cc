@@ -89,7 +89,7 @@ nTextShapeNode::LoadFont()
                             fontDesc.GetAntiAliased());
 
         // get a new or shared font
-        nFont2* font = nGfxServer2::Instance()->NewFont(resourceName.Get(), fontDesc);
+        nFont2* font = nGfxServer2::Instance()->NewFont(resourceName, fontDesc);
         n_assert(font);
         if (!font->IsLoaded())
         {

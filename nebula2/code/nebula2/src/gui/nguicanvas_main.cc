@@ -83,7 +83,7 @@ nGuiCanvas::GetLabelRect(int id)
     else
     {
         n_printf("textlabel with ID %d not found!", id);
-        return rectangle(vector2(0.0f, 0.0f), vector2(0.0f, 0.0f));
+        return rectangle(vector2::zero, vector2::zero);
     }
 }
 

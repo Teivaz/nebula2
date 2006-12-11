@@ -51,7 +51,7 @@ nAbstractShaderNode::LoadTexture(int index)
         // load only if the texture is used in the shader
         if (this->IsTextureUsed(texNode.shaderParameter))
         {
-            nTexture2* tex = nGfxServer2::Instance()->NewTexture(texNode.texName.Get());
+            nTexture2* tex = nGfxServer2::Instance()->NewTexture(texNode.texName);
             n_assert(tex);
             if (!tex->IsLoaded())
             {

@@ -21,7 +21,7 @@
     @return             pointer to a nD3D8Mesh2 object
 */
 nMesh2*
-nGLServer2::NewMesh(const char* rsrcName)
+nGLServer2::NewMesh(const nString& rsrcName)
 {
     n_printf("\nNew Mesh: %s.\n", rsrcName);
     return (nMesh2*) this->refResource->NewResource("nglmesh", rsrcName, nResource::Mesh);
@@ -34,7 +34,7 @@ nGLServer2::NewMesh(const char* rsrcName)
     @return             pointer to a nGLMeshArray object
 */
 nMeshArray*
-nGLServer2::NewMeshArray(const char* rsrcName)
+nGLServer2::NewMeshArray(const nString& rsrcName)
 {
     //return ((nMeshArray*) this->refResource->NewResource("nglmesharray", rsrcName, nResource::Mesh));
     return NULL;
@@ -49,7 +49,7 @@ nGLServer2::NewMeshArray(const char* rsrcName)
     @return             pointer to a nD3D8Texture2 object
 */
 nTexture2*
-nGLServer2::NewTexture(const char* rsrcName)
+nGLServer2::NewTexture(const nString& rsrcName)
 {
     n_printf("\nNew Texture: %s.\n", rsrcName);
     return (nTexture2*) this->refResource->NewResource("ngltexture", rsrcName, nResource::Texture);
@@ -63,7 +63,7 @@ nGLServer2::NewTexture(const char* rsrcName)
     @return             pointer to a nCgGLShaderObject object
 */
 nShader2*
-nGLServer2::NewShader(const char* rsrcName)
+nGLServer2::NewShader(const nString& rsrcName)
 {
     n_printf("\nNew Shader: %s.\n", rsrcName);
     return (nShader2*) this->refResource->NewResource("nglslshader", rsrcName, nResource::Shader);
@@ -79,7 +79,7 @@ nGLServer2::NewShader(const char* rsrcName)
     @return             pointer to a nCgFXShader object
 */
 nFont2*
-nGLServer2::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
+nGLServer2::NewFont(const nString& rsrcName, const nFontDesc& fontDesc)
 {
     n_printf("\nNew Font: %s.\n", rsrcName);
     nFont2* font = (nFont2*) this->refResource->NewResource("nglfont", rsrcName, nResource::Font);
@@ -99,7 +99,7 @@ nGLServer2::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
     @param  usageFlags  combination of #nTexture2::Usage flags
 */
 nTexture2*
-nGLServer2::NewRenderTarget(const char* rsrcName,
+nGLServer2::NewRenderTarget(const nString& rsrcName,
                              int width,
                              int height,
                              nTexture2::Format format,

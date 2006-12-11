@@ -74,7 +74,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     label->SetColor(this->axisTextColor);
     this->AttachForm(label, nGuiFormLayout::Top, 0.005f);
     this->AttachForm(label, nGuiFormLayout::Left, 0.005f);
@@ -94,7 +94,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     label->SetColor(this->axisTextColor);
     this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
     this->AttachForm(label, nGuiFormLayout::Right, 0.005f);
@@ -127,7 +127,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     this->AttachForm(label, nGuiFormLayout::Left, 0.0005f);
     this->AttachForm(label, nGuiFormLayout::Bottom, 0.0005f + size.y);
     label->OnShow();
@@ -156,7 +156,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     this->AttachForm(label, nGuiFormLayout::Left, 0.0005f);
     // FIXME: This is just the vertical center of the widget
     // and does not fit to the canvas marker in the middle
@@ -187,7 +187,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     this->AttachForm(label, nGuiFormLayout::Left, 0.0005f);
     this->AttachWidget(label, nGuiFormLayout::Top, this->refTextLabel[YLabel].get(), 0.0005f);
     label->OnShow();
@@ -217,7 +217,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
     this->AttachWidget(label, nGuiFormLayout::Left, this->refTextLabel[Ymax].get(), 0.005f);
     label->OnShow();
@@ -246,7 +246,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
     // FIXME: This is just the horizontal center of the widget
     // and does not fit to the canvas marker in the middle
@@ -277,7 +277,7 @@ nGuiDiagramCanvas::OnShow()
     size = label->GetTextExtent();
     label->SetMinSize(size);
     label->SetMaxSize(size);
-    label->SetBorder(vector2(0.0f, 0.0f));
+    label->SetBorder(vector2::zero);
     this->AttachForm(label, nGuiFormLayout::Bottom, 0.0f);
     this->AttachWidget(label, nGuiFormLayout::Right, this->refTextLabel[XLabel].get(), 0.005f);
     label->OnShow();

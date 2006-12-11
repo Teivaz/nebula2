@@ -41,7 +41,7 @@ public:
     /// set to theta and rho
     void set(const float t, const float r);
     /// set to cartesian
-    void set(const vector3&);
+    void set(const vector3& vec);
     /// fuzzy equality check
     bool isequal(const polar2& rhs, float tol) const;
 

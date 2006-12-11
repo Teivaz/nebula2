@@ -38,7 +38,7 @@ nGuiColorLabel::OnShow()
     nString texName = skin->GetTexturePrefix();
     texName.Append("white");
     texName.Append(skin->GetTexturePostfix());
-    nTexture2* tex = nGfxServer2::Instance()->NewTexture(texName.Get());
+    nTexture2* tex = nGfxServer2::Instance()->NewTexture(texName);
     if (!tex->IsValid())
     {
         tex->SetFilename(texName);

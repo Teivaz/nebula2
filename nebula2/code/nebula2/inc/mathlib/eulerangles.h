@@ -20,7 +20,7 @@
 //-------------------------------------------------------------------
 class nEulerAngles {
 public:
-    float x,y,z;
+    float x, y, z;
 
     //-- constructors -----------------------------------------------
     nEulerAngles()
@@ -146,15 +146,15 @@ public:
         matrix33 mat;
 
         double ti, tj, th, ci, cj, ch, si, sj, sh, cc, cs, sc, ss;
-        int i,j,k,h,n,s,f;
-        EulGetOrd(EulOrdXYZs,i,j,k,h,n,s,f);
-        if (f==EulFrmR) {float t = x; x = z; z = t;}
-        if (n==EulParOdd) {x = -x; y = -y; z = -z;}
-        ti = x;   tj = y;   th = z;
+        int i, j, k, h, n, s, f;
+        EulGetOrd(EulOrdXYZs, i, j, k, h, n, s, f);
+        if (f == EulFrmR) { float t = x; x = z; z = t; }
+        if (n == EulParOdd) { x = -x; y = -y; z = -z; }
+        ti = x; tj = y; th = z;
         ci = cos(ti); cj = cos(tj); ch = cos(th);
         si = sin(ti); sj = sin(tj); sh = sin(th);
         cc = ci*ch; cs = ci*sh; sc = si*ch; ss = si*sh;
-        if (s==EulRepYes) {
+        if (s == EulRepYes) {
             mat.M11 = (float)(cj);     mat.M12 = (float)( sj*si);    mat.M13 = (float)( sj*ci);
             mat.M21 = (float)(sj*sh);  mat.M22 = (float)(-cj*ss+cc); mat.M23 = (float)(-cj*cs-sc);
             mat.M31 = (float)(-sj*ch); mat.M23 = (float)( cj*sc+cs); mat.M33 = (float)( cj*cc-ss);

@@ -27,17 +27,17 @@ public:
     /// constructor 1
     nEnvelopeCurve();
     /// constructor 2
-    nEnvelopeCurve(const float keyFrameValue0, const float keyFrameValue1,
-        const float keyFrameValue2, const float keyFrameValue3,
-        const float keyFramePos1, const float keyFramePos2,
-        const float frequency, const float amplitude,
-        const int modulationFunc);
+    nEnvelopeCurve(float keyFrameValue0, float keyFrameValue1,
+        float keyFrameValue2, float keyFrameValue3,
+        float keyFramePos1, float keyFramePos2,
+        float frequency, float amplitude,
+        int modulationFunc);
     // set all parameters
-    void SetParameters(const float keyFrameValue0, const float keyFrameValue1,
-        const float keyFrameValue2, const float keyFrameValue3,
-        const float keyFramePos1, const float keyFramePos2,
-        const float frequency, const float amplitude,
-        const int modulationFunc);
+    void SetParameters(float keyFrameValue0, float keyFrameValue1,
+        float keyFrameValue2, float keyFrameValue3,
+        float keyFramePos1, float keyFramePos2,
+        float frequency, float amplitude,
+        int modulationFunc);
     // assign to other envelope curve
     void SetParameters(const nEnvelopeCurve& src);
     /// get the function value; pos must be between 0 and 1
@@ -76,11 +76,11 @@ nEnvelopeCurve::nEnvelopeCurve() :
 /**
 */
 inline
-nEnvelopeCurve::nEnvelopeCurve(const float keyFrameValue0,
-        const float keyFrameValue1, const float keyFrameValue2,
-        const float keyFrameValue3, const float keyFramePos1,
-        const float keyFramePos2, const float frequency,
-        const float amplitude, const int modulationFunc/* = Sine*/) :
+nEnvelopeCurve::nEnvelopeCurve(float keyFrameValue0,
+        float keyFrameValue1, float keyFrameValue2,
+        float keyFrameValue3, float keyFramePos1,
+        float keyFramePos2, float frequency,
+        float amplitude, int modulationFunc/* = Sine*/) :
     keyFramePos1(keyFramePos1),
     keyFramePos2(keyFramePos2),
     frequency(frequency),
@@ -97,11 +97,11 @@ nEnvelopeCurve::nEnvelopeCurve(const float keyFrameValue0,
 /**
 */
 inline
-void nEnvelopeCurve::SetParameters(const float keyFrameValue0, const float keyFrameValue1,
-    const float keyFrameValue2, const float keyFrameValue3,
-    const float keyFramePos1, const float keyFramePos2,
-    const float frequency, const float amplitude,
-    const int modulationFunc/* = Sine*/)
+void nEnvelopeCurve::SetParameters(float keyFrameValue0, float keyFrameValue1,
+    float keyFrameValue2, float keyFrameValue3,
+    float keyFramePos1, float keyFramePos2,
+    float frequency, float amplitude,
+    int modulationFunc/* = Sine*/)
 {
     this->keyFrameValues[0] = keyFrameValue0;
     this->keyFrameValues[1] = keyFrameValue1;
@@ -149,25 +149,25 @@ float nEnvelopeCurve::GetValue(float pos) const
     {
         value = this->keyFrameValues[1] +
             (this->keyFrameValues[2] - this->keyFrameValues[1]) *
-            ((pos-this->keyFramePos1) / (this->keyFramePos2-this->keyFramePos1));
+            (pos-this->keyFramePos1 / this->keyFramePos2-this->keyFramePos1);
     }
     else
     {
         value = this->keyFrameValues[2] +
             (this->keyFrameValues[3] - this->keyFrameValues[2]) *
-            ((pos-this->keyFramePos2) / (1.0f-this->keyFramePos2));
+            (pos-this->keyFramePos2 / (1.0f - this->keyFramePos2));
     }
 
     if (this->amplitude > 0.0f)
     {
-    if (Sine == this->modulationFunc)
-    {
-        value += n_sin(pos * N_PI * 2 * this->frequency) * this->amplitude;
-    }
-    else
-    {
-        value += n_cos(pos * N_PI * 2 * this->frequency) * this->amplitude;
-    }
+        if (Sine == this->modulationFunc)
+        {
+            value += n_sin(pos * N_PI * 2 * this->frequency) * this->amplitude;
+        }
+        else
+        {
+            value += n_cos(pos * N_PI * 2 * this->frequency) * this->amplitude;
+        }
     }
 
     return value;
@@ -179,9 +179,8 @@ float nEnvelopeCurve::GetValue(float pos) const
 inline
 float nEnvelopeCurve::GetMaxPossibleValue() const
 {
-    float maxVal;
+    float maxVal = this->keyFrameValues[0];
     int keyFrame;
-    maxVal = this->keyFrameValues[0];
     for (keyFrame = 1; keyFrame < NumValues; keyFrame++)
     {
         maxVal = n_max(maxVal, this->keyFrameValues[keyFrame]);

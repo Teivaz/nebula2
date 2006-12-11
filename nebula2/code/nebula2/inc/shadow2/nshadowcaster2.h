@@ -22,7 +22,6 @@ public:
     {
         Static,
         Skinned,
-
         NumTypes,
         InvalidType,
     };
@@ -120,6 +119,5 @@ nShadowCaster2::GetMeshGroupIndex() const
 {
     return this->meshGroupIndex;
 }
-
 //------------------------------------------------------------------------------
 #endif

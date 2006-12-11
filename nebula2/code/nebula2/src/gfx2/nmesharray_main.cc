@@ -51,7 +51,7 @@ nMeshArray::LoadResource()
 
             if (!curElm.refMesh.isvalid())
             {
-                curElm.refMesh = nGfxServer2::Instance()->NewMesh(curElm.filename.Get());
+                curElm.refMesh = nGfxServer2::Instance()->NewMesh(curElm.filename);
             }
 
             curElm.refMesh->SetFilename(curElm.filename);
