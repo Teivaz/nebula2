@@ -38,14 +38,14 @@ nMemoryAnimation::LoadResource()
     n_assert(this->IsUnloaded());
 
     bool success = false;
-    nString filename = this->GetFilename().Get();
-    if (filename.CheckExtension("nanim2"))
+    nString filename = this->GetFilename();
+    if (filename.CheckExtension("nax2"))
     {
-        success = this->LoadNanim2(filename.Get());
+        success = this->LoadNax2(filename);
     }
-    else if (filename.CheckExtension("nax2"))
+    else if (filename.CheckExtension("nanim2"))
     {
-        success = this->LoadNax2(filename.Get());
+        success = this->LoadNanim2(filename);
     }
     if (success)
     {
@@ -73,7 +73,7 @@ nMemoryAnimation::UnloadResource()
     Loads animation data from an ASCII nanim2 file.
 */
 bool
-nMemoryAnimation::LoadNanim2(const char* filename)
+nMemoryAnimation::LoadNanim2(const nString& filename)
 {
     n_assert(this->IsUnloaded())
 
@@ -218,7 +218,7 @@ nMemoryAnimation::LoadNanim2(const char* filename)
     - 30-Jun-04 floh    fixed assertion bug when number of keys in a curve is 0
 */
 bool
-nMemoryAnimation::LoadNax2(const char* filename)
+nMemoryAnimation::LoadNax2(const nString& filename)
 {
     n_assert(this->IsUnloaded());
 

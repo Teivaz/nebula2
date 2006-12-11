@@ -415,6 +415,3 @@ nShadowCaster2::RenderShadowVolume()
 {
     // empty
 }
-
-
-

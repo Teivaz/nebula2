@@ -25,7 +25,7 @@ public:
     virtual void RenderShadowVolume();
 
 protected:
-    /// override in subclasse to perform actual resource loading
+    /// override in subclass to perform actual resource loading
     virtual bool LoadResource();
     /// override in subclass to perform actual resource unloading
     virtual void UnloadResource();

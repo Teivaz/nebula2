@@ -9,7 +9,6 @@
 #include "viewer/viewerapp.h"
 #ifdef __WIN32__
 #include "tools/nwinmaincmdlineargs.h"
-#include <windows.h>
 #else
 #include "tools/ncmdlineargs.h"
 #endif
