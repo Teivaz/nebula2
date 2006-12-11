@@ -66,7 +66,7 @@ nBlendShapeRenderer::Setup()
         dstMeshName.Append("_bsr");
 
         nGfxServer2* gfxServer = nGfxServer2::Instance();
-        nMesh2* dstMesh = gfxServer->NewMesh(dstMeshName.Get());
+        nMesh2* dstMesh = gfxServer->NewMesh(dstMeshName);
         if (!dstMesh->IsLoaded())
         {
             // if the mesh hasn't been initialized yet, do it now

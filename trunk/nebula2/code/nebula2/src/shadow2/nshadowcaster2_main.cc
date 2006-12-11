@@ -56,7 +56,7 @@ nShadowCaster2::AllocateBuffers(nMesh2* mesh)
     // we assume that in the worst case there will never be more then 4 times the original
     // indices required for rendering the shadow volume
     nString ibName = this->GetFilename() + "_ib";
-    nMesh2* newMesh = nGfxServer2::Instance()->NewMesh(ibName.Get());
+    nMesh2* newMesh = nGfxServer2::Instance()->NewMesh(ibName);
     this->refIndexBuffer = newMesh;
     if (!newMesh->IsLoaded())
     {
@@ -232,7 +232,7 @@ nShadowCaster2::BeginWriteIndices(nMesh2* mesh)
     this->drawNumIndices = 0;
     this->srcMesh = mesh;
     this->srcIndices = mesh->LockIndices();
-    this->srcEdges   = mesh->LockEdges();
+    this->srcEdges = mesh->LockEdges();
 }
 
 //------------------------------------------------------------------------------

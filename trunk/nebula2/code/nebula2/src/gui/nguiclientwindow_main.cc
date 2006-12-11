@@ -131,7 +131,7 @@ nGuiClientWindow::OnShow()
         btn->SetHighlightBrush("titlebar");
         btn->SetText(this->GetTitle());
         btn->SetColor(skin->GetTitleTextColor());
-        btn->SetPressedOffset(vector2(0.0f, 0.0f));
+        btn->SetPressedOffset(vector2::zero);
         if (this->IsMovable())
         {
             btn->SetStickyMouse(true);

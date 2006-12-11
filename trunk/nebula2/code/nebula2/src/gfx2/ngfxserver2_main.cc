@@ -69,7 +69,7 @@ nGfxServer2::~nGfxServer2()
     @return             a new nMesh2 object
 */
 nMesh2*
-nGfxServer2::NewMesh(const char* /*rsrcName*/)
+nGfxServer2::NewMesh(const nString& /*rsrcName*/)
 {
     return 0;
 }
@@ -81,7 +81,7 @@ nGfxServer2::NewMesh(const char* /*rsrcName*/)
     @return             a new nMeshArray object
 */
 nMeshArray*
-nGfxServer2::NewMeshArray(const char* /*rsrcName*/)
+nGfxServer2::NewMeshArray(const nString& /*rsrcName*/)
 {
     return 0;
 }
@@ -94,7 +94,7 @@ nGfxServer2::NewMeshArray(const char* /*rsrcName*/)
     @return             a new nTexture2 object
 */
 nTexture2*
-nGfxServer2::NewTexture(const char* /*rsrcName*/)
+nGfxServer2::NewTexture(const nString& /*rsrcName*/)
 {
     return 0;
 }
@@ -107,7 +107,7 @@ nGfxServer2::NewTexture(const char* /*rsrcName*/)
     @return             a new nShader2 object
 */
 nShader2*
-nGfxServer2::NewShader(const char* /*rsrcName*/)
+nGfxServer2::NewShader(const nString& /*rsrcName*/)
 {
     return 0;
 }
@@ -121,7 +121,7 @@ nGfxServer2::NewShader(const char* /*rsrcName*/)
     @return             a nFont2 object
 */
 nFont2*
-nGfxServer2::NewFont(const char* /*rsrcName*/, const nFontDesc& /*fontDesc*/)
+nGfxServer2::NewFont(const nString& /*rsrcName*/, const nFontDesc& /*fontDesc*/)
 {
     return 0;
 }
@@ -134,9 +134,9 @@ nGfxServer2::NewFont(const char* /*rsrcName*/, const nFontDesc& /*fontDesc*/)
     @return             pointer to a new nInstanceStream object
 */
 nInstanceStream*
-nGfxServer2::NewInstanceStream(const char* rsrcName)
+nGfxServer2::NewInstanceStream(const nString& rsrcName)
 {
-    return (nInstanceStream*) this->refResource->NewResource("ninstancestream", rsrcName, nResource::Other);
+    return (nInstanceStream*)this->refResource->NewResource("ninstancestream", rsrcName, nResource::Other);
 }
 
 //------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ nGfxServer2::NewOcclusionQuery()
     @param  usageFlags  a combination of nTexture2::Usage flags (RenderTargetXXX only)
 */
 nTexture2*
-nGfxServer2::NewRenderTarget(const char* /*rsrcName*/,
+nGfxServer2::NewRenderTarget(const nString& /*rsrcName*/,
                              int /*width*/,
                              int /*height*/,
                              nTexture2::Format /*format*/,
@@ -173,7 +173,7 @@ nGfxServer2::NewRenderTarget(const char* /*rsrcName*/,
 
 //------------------------------------------------------------------------------
 /**
-    Set the prefered display mode. This must be called outside
+    Set the preferred display mode. This must be called outside
     OpenDisplay()/CloseDisplay().
 */
 void
@@ -716,7 +716,7 @@ nGfxServer2::DrawText(const nString& /*text*/, const vector4& /*color*/, const r
 vector2
 nGfxServer2::GetTextExtent(const nString& /*text*/)
 {
-    return vector2(0.0f, 0.0f);
+    return vector2::zero;
 }
 
 //------------------------------------------------------------------------------

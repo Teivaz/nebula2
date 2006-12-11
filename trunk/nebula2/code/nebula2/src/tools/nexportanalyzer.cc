@@ -459,7 +459,7 @@ nExportAnalyzer::ReadTextureInfo(const nString& path)
     nString name = this->ExtractCategoryFilename(path);
 
     // create a texture object
-    nTexture2* tex = nGfxServer2::Instance()->NewTexture(path.Get());
+    nTexture2* tex = nGfxServer2::Instance()->NewTexture(path);
     tex->SetFilename(path);
     if (tex->Load())
     {
@@ -498,7 +498,7 @@ nExportAnalyzer::ReadMeshInfo(const nString& path)
     nString name = this->ExtractCategoryFilename(path);
 
     // create a mesh object
-    nMesh2* mesh = nGfxServer2::Instance()->NewMesh(path.Get());
+    nMesh2* mesh = nGfxServer2::Instance()->NewMesh(path);
     mesh->SetFilename(path);
     if (mesh->Load())
     {

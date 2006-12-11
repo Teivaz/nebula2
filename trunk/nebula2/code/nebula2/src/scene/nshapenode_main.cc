@@ -69,7 +69,7 @@ nShapeNode::LoadMesh()
         resourceName.Format("%s_%d", this->meshName.Get(), this->GetMeshUsage());
 
         // get a new or shared mesh
-        nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resourceName.Get());
+        nMesh2* mesh = nGfxServer2::Instance()->NewMesh(resourceName);
         n_assert(mesh);
         if (!mesh->IsLoaded())
         {

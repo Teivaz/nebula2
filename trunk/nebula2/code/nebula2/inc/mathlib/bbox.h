@@ -107,7 +107,7 @@ public:
         if (l.m.x != 0.0f)
         {
             float t = (x - l.b.x) / l.m.x;
-            if ((t>=0.0f) && (t<=1.0f))
+            if ((t >= 0.0f) && (t <= 1.0f))
             {
                 // point of intersection...
                 out = l.ipol(t);
@@ -121,7 +121,7 @@ public:
         if (l.m.y != 0.0f)
         {
             float t = (y - l.b.y) / l.m.y;
-            if ((t>=0.0f) && (t<=1.0f))
+            if ((t >= 0.0f) && (t <= 1.0f))
             {
                 // point of intersection...
                 out = l.ipol(t);
@@ -135,7 +135,7 @@ public:
         if (l.m.z != 0.0f)
         {
             float t = (z - l.b.z) / l.m.z;
-            if ((t>=0.0f) && (t<=1.0f))
+            if ((t >= 0.0f) && (t <= 1.0f))
             {
                 // point of intersection...
                 out = l.ipol(t);
@@ -148,17 +148,17 @@ public:
     // point in polygon check for sides with constant x,y and z
     bool pip_const_x(const vector3& p) const
     {
-        if ((p.y>=vmin.y)&&(p.y<=vmax.y)&&(p.z>=vmin.z)&&(p.z<=vmax.z)) return true;
+        if ((p.y >= vmin.y) && (p.y <= vmax.y) && (p.z >= vmin.z) && (p.z <= vmax.z)) return true;
         else return false;
     }
     bool pip_const_y(const vector3& p) const
     {
-        if ((p.x>=vmin.x)&&(p.x<=vmax.x)&&(p.z>=vmin.z)&&(p.z<=vmax.z)) return true;
+        if ((p.x >= vmin.x) && (p.x <= vmax.x) && (p.z >= vmin.z) && (p.z <= vmax.z)) return true;
         else return false;
     }
     bool pip_const_z(const vector3& p) const
     {
-        if ((p.x>=vmin.x)&&(p.x<=vmax.x)&&(p.y>=vmin.y)&&(p.y<=vmax.y)) return true;
+        if ((p.x >= vmin.x) && (p.x <= vmax.x) && (p.y >= vmin.y) && (p.y <= vmax.y)) return true;
         else return false;
     }
 
@@ -263,8 +263,8 @@ inline
 void
 bbox3::begin_extend()
 {
-    vmin.set(+1000000.0f,+1000000.0f,+1000000.0f);
-    vmax.set(-1000000.0f,-1000000.0f,-1000000.0f);
+    vmin.set( 1000000.0f,  1000000.0f,  1000000.0f);
+    vmax.set(-1000000.0f, -1000000.0f, -1000000.0f);
 }
 
 //------------------------------------------------------------------------------
@@ -276,8 +276,8 @@ inline
 void
 bbox3::end_extend()
 {
-    if (vmin.isequal(vector3(+1000000.0f,+1000000.0f,+1000000.0f), TINY) &&
-        vmax.isequal(vector3(-1000000.0f,-1000000.0f,-1000000.0f), TINY))
+    if (vmin.isequal(vector3( 1000000.0f,  1000000.0f,  1000000.0f), TINY) &&
+        vmax.isequal(vector3(-1000000.0f, -1000000.0f, -1000000.0f), TINY))
     {
         vmin.set(0.0f, 0.0f, 0.0f);
         vmax.set(0.0f, 0.0f, 0.0f);
@@ -674,10 +674,10 @@ inline
 int bbox3::line_test(float v0, float v1, float w0, float w1)
 {
     // quick rejection test
-    if ((v1<w0) || (v0>w1)) return OUTSIDE;
-    else if ((v0==w0) && (v1==w1)) return ISEQUAL;
-    else if ((v0>=w0) && (v1<=w1)) return ISCONTAINED;
-    else if ((v0<=w0) && (v1>=w1)) return CONTAINS;
+    if ((v1 < w0) || (v0 > w1)) return OUTSIDE;
+    else if ((v0 == w0) && (v1 == w1)) return ISEQUAL;
+    else if ((v0 >= w0) && (v1 <= w1)) return ISCONTAINED;
+    else if ((v0 <= w0) && (v1 >= w1)) return CONTAINS;
     else return CLIPS;
 }
 
@@ -691,22 +691,23 @@ inline
 int bbox3::intersect(const bbox3& box)
 {
     int and_code = 0xffff;
-    int or_code  = 0;
-    int cx,cy,cz;
-    cx = line_test(vmin.x,vmax.x,box.vmin.x,box.vmax.x);
-    and_code&=cx; or_code|=cx;
-    cy = line_test(vmin.y,vmax.y,box.vmin.y,box.vmax.y);
-    and_code&=cy; or_code|=cy;
-    cz = line_test(vmin.z,vmax.z,box.vmin.z,box.vmax.z);
-    and_code&=cz; or_code|=cz;
+    int or_code = 0;
+    int cx = line_test(vmin.x, vmax.x, box.vmin.x, box.vmax.x);
+    and_code &= cx;
+    or_code |= cx;
+    int cy = line_test(vmin.y, vmax.y, box.vmin.y, box.vmax.y);
+    and_code &= cy;
+    or_code |= cy;
+    int cz = line_test(vmin.z, vmax.z, box.vmin.z, box.vmax.z);
+    and_code &= cz;
+    or_code |= cz;
     if (or_code == 0) return OUTSIDE;
-    else if (and_code != 0) {
-        return and_code;
-    } else {
+    else if (and_code != 0) return and_code;
+    else {
         // only if all test produced a non-outside result,
-        // an intersection has occured
+        // an intersection has occurred
         if (cx && cy && cz) return CLIPS;
-        else                return OUTSIDE;
+        else return OUTSIDE;
     }
 }
 
@@ -719,6 +720,5 @@ bbox3::diagonal_size() const
 {
     return vector3::distance(this->vmin, this->vmax);
 }
-
 //------------------------------------------------------------------------------
 #endif

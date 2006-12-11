@@ -52,6 +52,6 @@ nRpRenderTarget::Validate()
             w = int(mode.GetWidth() * this->relSize);
             h = int(mode.GetHeight() * this->relSize);
         }
-        this->refTexture = nGfxServer2::Instance()->NewRenderTarget(this->name.Get(), w, h, this->format, nTexture2::RenderTargetColor);
+        this->refTexture = nGfxServer2::Instance()->NewRenderTarget(this->name, w, h, this->format, nTexture2::RenderTargetColor);
     }
 }

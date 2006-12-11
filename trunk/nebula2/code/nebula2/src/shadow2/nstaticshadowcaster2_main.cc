@@ -43,7 +43,7 @@ nStaticShadowCaster2::LoadResource()
     nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // create a new shared mesh object
-    nMesh2* newMesh = gfxServer->NewMesh(this->GetFilename().Get());
+    nMesh2* newMesh = gfxServer->NewMesh(this->GetFilename());
     this->refMesh = newMesh;
     if (!newMesh->IsLoaded())
     {

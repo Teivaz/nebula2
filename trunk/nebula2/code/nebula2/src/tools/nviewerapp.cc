@@ -83,7 +83,7 @@ nViewerApp::Open()
     }
 
     // initialize the proj: assign
-    if (!this->GetProjDir().IsEmpty())
+    if (this->GetProjDir().IsValid())
     {
         kernelServer->GetFileServer()->SetAssign("proj", this->GetProjDir());
     }
@@ -100,15 +100,13 @@ nViewerApp::Open()
     this->refGfxServer->SetDisplayMode(this->displayMode);
 
     // run startup script (assigns must be setup before opening the display!)
-    if (!this->GetStartupScript().IsEmpty())
+    if (this->GetStartupScript().IsValid())
     {
         nString result;
-        bool r;
-        r = this->refScriptServer->RunScript(this->GetStartupScript().Get(), result);
+        bool r = this->refScriptServer->RunScript(this->GetStartupScript().Get(), result);
         if (false == r)
         {
-            n_error("Executing startup script failed: %s",
-                    !result.IsEmpty() ? result.Get() : "Unknown error");
+            n_error("Executing startup script failed: %s", result.IsValid() ? result.Get() : "Unknown error");
         }
     }
 
@@ -118,7 +116,7 @@ nViewerApp::Open()
 
     // initialize graphics
     this->refGfxServer->SetCamera(this->camera);
-    if (!this->renderPath.IsEmpty())
+    if (this->renderPath.IsValid())
     {
         this->refSceneServer->SetRenderPathFilename(this->renderPath);
     }
@@ -231,7 +229,7 @@ nViewerApp::Run()
             prevTime = time;
         }
 
-        // Trigger Audioserver
+        // trigger audio server
         this->refAudioServer->BeginScene(time);
 
         frameTime = (float) (time - prevTime);
@@ -263,13 +261,13 @@ nViewerApp::Run()
             this->camControl.SetSliderUp(inputServer->GetSlider("up"));
             this->camControl.SetSliderDown(inputServer->GetSlider("down"));
 
-            // Toggle console
+            // toggle console
             if (inputServer->GetButton("console"))
             {
                 this->refConServer->Toggle();
             }
 
-            // Make Screenshot
+            // make screenshot
             if (inputServer->GetButton("makescreenshot"))
             {
                 nString basename = this->GetSceneFile().Get();
@@ -286,14 +284,14 @@ nViewerApp::Run()
                 nString filename;
                 do
                 {
-                    filename.Format("user:%s%03d.bmp", filename.Get(), screenshotID++);
+                    filename.Format("user:%s%03d.bmp", basename.Get(), screenshotID++);
                 }
                 while (nFileServer2::Instance()->FileExists(filename));
 
-                nTexture2* screenshotBuffer = (nTexture2*) nResourceServer::Instance()->FindResource("Screenshot",nResource::Texture);
+                nTexture2* screenshotBuffer = (nTexture2*)nResourceServer::Instance()->FindResource("Screenshot", nResource::Texture);
                 n_assert(screenshotBuffer);
                 screenshotBuffer->SaveTextureToFile(filename, nTexture2::JPG);
-            };
+            }
             // update view and get the actual viewMatrix
             this->camControl.Update();
             this->viewMatrix = this->camControl.GetViewMatrix();
@@ -319,7 +317,7 @@ nViewerApp::Run()
                     this->refSceneServer->Attach(this->nodeList.GetRenderContextAt(index));
                 }
                 this->refSceneServer->EndScene();
-                this->refSceneServer->RenderScene();             // renders the 3d scene
+                this->refSceneServer->RenderScene();             // render the 3d scene
                 this->OnFrameRendered();
                 this->refCaptureServer->Trigger();
                 this->refSceneServer->PresentScene();            // present the frame
@@ -337,7 +335,7 @@ nViewerApp::Run()
         // trigger kernel server at end of frame
         kernelServer->Trigger();
 
-        // Trigger Audioserver / important for streaming sounds
+        // trigger audio server / important for streaming sounds
         this->refAudioServer->UpdateAllSounds();
         this->refAudioServer->EndScene();
 
@@ -354,12 +352,10 @@ void
 nViewerApp::DefineInputMapping()
 {
     nString scriptResult;
-    bool r;
-    r = this->refScriptServer->RunFunction("OnViewerMapInput", scriptResult);
+    bool r = this->refScriptServer->RunFunction("OnViewerMapInput", scriptResult);
     if (false == r)
     {
-        n_error("Executing OnMapInput failed: %s",
-                !scriptResult.IsEmpty() ? scriptResult.Get() : "Unknown error");
+        n_error("Executing OnMapInput failed: %s", scriptResult.IsValid() ? scriptResult.Get() : "Unknown error");
     }
 }
 
@@ -376,13 +372,13 @@ nViewerApp::InitOverlayGui()
     this->refGuiServer->SetRootWindowPointer(0);
     nGuiWindow* userRootWindow = this->refGuiServer->NewWindow("nguiwindow", true);
     n_assert(userRootWindow);
-    rectangle nullRect(vector2(0.0f, 0.0f), vector2(0.0f, 0.0));
+    rectangle nullRect(vector2::zero, vector2::zero);
     userRootWindow->SetRect(nullRect);
 
     kernelServer->PushCwd(userRootWindow);
 
     // create logo label
-    nGuiLabel* rightLabel = (nGuiLabel*) kernelServer->New("nguilabel", "RightLogo");
+    nGuiLabel* rightLabel = (nGuiLabel*)kernelServer->New("nguilabel", "RightLogo");
     n_assert(rightLabel);
     vector2 rightLabelSize = this->refGuiServer->ComputeScreenSpaceBrushSize("n2logo");
     rectangle rightRect;
@@ -395,7 +391,7 @@ nViewerApp::InitOverlayGui()
     rightLabel->OnShow();
 
     // create a help text label
-    nGuiTextLabel* textLabel = (nGuiTextLabel*) kernelServer->New("nguitextlabel", "HelpLabel");
+    nGuiTextLabel* textLabel = (nGuiTextLabel*)kernelServer->New("nguitextlabel", "HelpLabel");
     n_assert(textLabel);
     textLabel->SetText("Esc: toggle GUI\nSpace: center view\nLMB: rotate\nMMB: pan\nRMB: zoom");
     textLabel->SetFont("GuiSmall");

@@ -31,17 +31,17 @@ public:
     static nGLServer2* Instance();
 
     /// create a shared mesh object
-    virtual nMesh2* NewMesh(const char* rsrcName);
+    virtual nMesh2* NewMesh(const nString& rsrcName);
     /// create a mesh array object
-    virtual nMeshArray* NewMeshArray(const char* rsrcName);
+    virtual nMeshArray* NewMeshArray(const nString& rsrcName);
     /// create a shared texture object
-    virtual nTexture2* NewTexture(const char* rsrcName);
+    virtual nTexture2* NewTexture(const nString& rsrcName);
     /// create a shared shader object
-    virtual nShader2* NewShader(const char* rsrcName);
+    virtual nShader2* NewShader(const nString& rsrcName);
     /// create a font object
-    virtual nFont2* NewFont(const char* rsrcName, const nFontDesc& fontDesc);
+    virtual nFont2* NewFont(const nString& rsrcName, const nFontDesc& fontDesc);
     /// create a render target object
-    virtual nTexture2* NewRenderTarget(const char* rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
+    virtual nTexture2* NewRenderTarget(const nString& rsrcName, int width, int height, nTexture2::Format fmt, int usageFlags);
     /// create a new occlusion query object
     virtual nOcclusionQuery* NewOcclusionQuery();
 

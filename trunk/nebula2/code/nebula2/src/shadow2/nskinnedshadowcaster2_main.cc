@@ -43,7 +43,7 @@ nSkinnedShadowCaster2::LoadResource()
 
     // load the bind pose mesh, this will reside in system memory and
     // will ever only be read by the CPU as the source for skinning
-    nMesh2* bindPoseMesh = gfxServer->NewMesh(this->GetFilename().Get());
+    nMesh2* bindPoseMesh = gfxServer->NewMesh(this->GetFilename());
     this->refBindPoseMesh = bindPoseMesh;
     if (!bindPoseMesh->IsLoaded())
     {
@@ -61,7 +61,7 @@ nSkinnedShadowCaster2::LoadResource()
     // data, properly layed out for shadow volume extrusion (which means
     // vertices will be duplicated)
     nString skinnedMeshName = this->GetFilename() + "s";
-    nMesh2* skinnedMesh = gfxServer->NewMesh(skinnedMeshName.Get());
+    nMesh2* skinnedMesh = gfxServer->NewMesh(skinnedMeshName);
     this->refSkinnedMesh = skinnedMesh;
     if (!skinnedMesh->IsLoaded())
     {

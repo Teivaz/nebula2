@@ -37,7 +37,7 @@ nRpShader::Validate()
     if (!this->refShader.isvalid())
     {
         n_assert(!this->filename.IsEmpty());
-        shd = nGfxServer2::Instance()->NewShader(this->filename.Get());
+        shd = nGfxServer2::Instance()->NewShader(this->filename);
         this->refShader = shd;
     }
     else

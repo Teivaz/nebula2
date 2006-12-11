@@ -19,9 +19,9 @@
     @return             pointer to a nD3D9Mesh2 object
 */
 nMesh2*
-nD3D9Server::NewMesh(const char* rsrcName)
+nD3D9Server::NewMesh(const nString& rsrcName)
 {
-    return (nMesh2*) this->refResource->NewResource("nd3d9mesh", rsrcName, nResource::Mesh);
+    return (nMesh2*)this->refResource->NewResource("nd3d9mesh", rsrcName, nResource::Mesh);
 }
 
 //------------------------------------------------------------------------------
@@ -31,9 +31,9 @@ nD3D9Server::NewMesh(const char* rsrcName)
     @return             pointer to a nD3D9MeshArray object
 */
 nMeshArray*
-nD3D9Server::NewMeshArray(const char* rsrcName)
+nD3D9Server::NewMeshArray(const nString& rsrcName)
 {
-    return ((nMeshArray*) this->refResource->NewResource("nd3d9mesharray", rsrcName, nResource::Mesh));
+    return (nMeshArray*)this->refResource->NewResource("nd3d9mesharray", rsrcName, nResource::Mesh);
 }
 
 //------------------------------------------------------------------------------
@@ -45,9 +45,9 @@ nD3D9Server::NewMeshArray(const char* rsrcName)
     @return             pointer to a nD3D9Texture2 object
 */
 nTexture2*
-nD3D9Server::NewTexture(const char* rsrcName)
+nD3D9Server::NewTexture(const nString& rsrcName)
 {
-    return (nTexture2*) this->refResource->NewResource("nd3d9texture", rsrcName, nResource::Texture);
+    return (nTexture2*)this->refResource->NewResource("nd3d9texture", rsrcName, nResource::Texture);
 }
 
 //------------------------------------------------------------------------------
@@ -59,9 +59,9 @@ nD3D9Server::NewTexture(const char* rsrcName)
     @return             pointer to a nD3D9Shader2 object
 */
 nShader2*
-nD3D9Server::NewShader(const char* rsrcName)
+nD3D9Server::NewShader(const nString& rsrcName)
 {
-    return (nShader2*) this->refResource->NewResource("nd3d9shader", rsrcName, nResource::Shader);
+    return (nShader2*)this->refResource->NewResource("nd3d9shader", rsrcName, nResource::Shader);
 }
 
 //------------------------------------------------------------------------------
@@ -73,9 +73,9 @@ nD3D9Server::NewShader(const char* rsrcName)
     @return             pointer to a nD3D9Shader2 object
 */
 nFont2*
-nD3D9Server::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
+nD3D9Server::NewFont(const nString& rsrcName, const nFontDesc& fontDesc)
 {
-    nFont2* font = (nFont2*) this->refResource->NewResource("nd3d9font", rsrcName, nResource::Font);
+    nFont2* font = (nFont2*)this->refResource->NewResource("nd3d9font", rsrcName, nResource::Font);
     n_assert(font);
     font->SetFontDesc(fontDesc);
     return font;
@@ -92,13 +92,13 @@ nD3D9Server::NewFont(const char* rsrcName, const nFontDesc& fontDesc)
     @param  usageFlags  a combination of nTexture2::Usage flags
 */
 nTexture2*
-nD3D9Server::NewRenderTarget(const char* rsrcName,
+nD3D9Server::NewRenderTarget(const nString& rsrcName,
                              int width,
                              int height,
                              nTexture2::Format format,
                              int usageFlags)
 {
-    nTexture2* renderTarget = (nTexture2*) this->refResource->NewResource("nd3d9texture", rsrcName, nResource::Texture);
+    nTexture2* renderTarget = (nTexture2*)this->refResource->NewResource("nd3d9texture", rsrcName, nResource::Texture);
     n_assert(renderTarget);
     if (!renderTarget->IsLoaded())
     {

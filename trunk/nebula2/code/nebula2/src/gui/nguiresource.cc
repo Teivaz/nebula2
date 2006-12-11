@@ -28,7 +28,7 @@ nGuiResource::Load()
         n_assert(!this->texName.IsEmpty());
         if (!this->refTexture.isvalid())
         {
-            this->refTexture = nGfxServer2::Instance()->NewTexture(this->texName.Get());
+            this->refTexture = nGfxServer2::Instance()->NewTexture(this->texName);
         }
         if (!this->refTexture->IsValid())
         {
