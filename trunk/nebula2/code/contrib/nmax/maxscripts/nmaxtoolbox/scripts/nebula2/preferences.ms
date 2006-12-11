@@ -70,7 +70,7 @@ rollout rPrefSuffix "Mesh Suffix" width:319 height:300
 -------------------------------------------------------------------------------
 rollout rPrefViewerOptions "Viewer Options" width:319 height:339
 (
-    GroupBox grp1 "nviewer Options" pos:[10,19] width:300 height:147
+    GroupBox grp1 "Default Viewer Options" pos:[10,19] width:300 height:147
     checkbox chk1 "Checkbox" pos:[30,62] width:0 height:0
     checkbox chkFullScreen "Preview in Fullscreen Mode" pos:[24,44] width:159 height:20
     checkbox chkAlwaysOnTop "Always on Top" pos:[24,67] width:167 height:20

@@ -8,6 +8,8 @@
 
     @section NMaxPreferencesMeshSuffix Mesh Suffix
 
+    @image html meshsuffix01.png "Mesh Suffix rollout in the Preferences dialog"
+
     A mesh suffix is a file name suffix which is appened to the exported mesh file name 
     to make the mesh can be easily recognized by its type.
     Currently the following mesh types are supported:
@@ -24,7 +26,13 @@
     can be modified via @ref NMaxPreferences dialog.
     See @ref NMaxPerMeshOptions page for more information about supported mesh types.
 
-    @section NMaxPreferencesViewerOptions nviewer Options
+    @section NMaxPreferencesViewerOptions Viewer Options
+
+    @image html vieweroptions01.png "Viewer Options rollout in the Preferences dialog"
+
+    @subsection NMaxPreferencesDefaultViewerOptions Default Viewer Options
+
+    For a default viewer, <tt>nviewer.exe</tt> is used.
 
     <b>Preview in FullScreen Mode</b> <br>
     The viewer runs on fullscreen mode.
@@ -38,7 +46,8 @@
     <b>Window Size</b> <br>
     Specifies width and height of the viewer.
 
-    @section NMaxPreferencesCustomViewerOptions Custom Viewer Options
+
+    @subsection NMaxPreferencesCustomViewerOptions Custom Viewer Options
 
     Viewer options for user provided custom viewer options. (<i>Not available yet</i>.)
 
