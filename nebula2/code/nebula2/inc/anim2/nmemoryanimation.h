@@ -37,9 +37,9 @@ protected:
     /// unload the resource (clears the valid flag)
     virtual void UnloadResource();
     /// load curve group from ASCII nanim2 file
-    bool LoadNanim2(const char* filename);
+    bool LoadNanim2(const nString& filename);
     /// load curve group from binary nax2 file
-    bool LoadNax2(const char* filename);
+    bool LoadNax2(const nString& filename);
 
     nArray<vector4> keyArray;
 };
