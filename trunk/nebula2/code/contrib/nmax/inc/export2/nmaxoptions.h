@@ -15,6 +15,8 @@
 */
 #include "util/nstring.h"
 
+class nIniPrefServer;
+
 //-----------------------------------------------------------------------------
 class nMaxOptions
 {
@@ -105,6 +107,28 @@ public:
     bool UseDefaultViewer() const;
     void SetUseDefaultViewer(bool use);
 
+    /// @name Mesh File Extension
+    /// @{
+    nString GetStaticMeshSuffix() const;
+    nString GetSkinnedMeshSuffixt() const;
+    nString GetShadowMeshSuffix() const;
+    nString GetSkinnedShadowMeshSuffix() const;
+    nString GetSwingMeshSuffix() const;
+    nString GetCollisionMeshSuffix() const;
+    nString GetParticle2MeshSuffix() const;
+    /// @}
+
+protected:
+    ///
+    bool LoadDirSettings();
+    ///
+    bool LoadMeshSuffix();
+
+    ///
+    nIniPrefServer* BeginINIPref(const nString& section);
+    ///
+    void EndINIPref(nIniPrefServer* iniFIle);
+
 protected:
     /// @name export option variables.
     /// @{
@@ -173,6 +197,24 @@ protected:
     int verboseLevel; 
     /// If it is present, overwrite any existing texture.
     bool overwriteExistTexture;
+
+    /// @name
+    /// @{
+    /// static mesh file suffic
+    nString meshSuffixStatic;
+    /// skinned mesh file suffic
+    nString meshSuffixSkinned;
+    /// shadow mesh file suffix
+    nString meshSuffixShadow;
+    /// skinned shadow mesh file suffix
+    nString meshSuffixSkinnedShadow;
+    /// collision mesh file suffix
+    nString meshSuffixCollision;
+    /// particle2 mesh file suffix
+    nString meshSuffixParticle2;
+    /// swing mesh file suffix
+    nString meshSuffixSwing;
+    /// @}
 
 private:
     nMaxOptions();
@@ -361,6 +403,48 @@ inline
 void nMaxOptions::SetUseDefaultViewer(bool use)
 {
     this->useDefaultViewer = use;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxOptions::GetStaticMeshSuffix() const
+{
+    return this->meshSuffixStatic;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxOptions::GetSkinnedMeshSuffixt() const
+{
+    return this->meshSuffixSkinned;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxOptions::GetShadowMeshSuffix() const
+{
+    return this->meshSuffixShadow;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxOptions::GetSkinnedShadowMeshSuffix() const
+{
+    return this->meshSuffixSkinnedShadow;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxOptions::GetSwingMeshSuffix() const
+{
+    return this->meshSuffixSwing;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxOptions::GetCollisionMeshSuffix() const
+{
+    return this->meshSuffixCollision;
+}
+//-----------------------------------------------------------------------------
+inline
+nString nMaxOptions::GetParticle2MeshSuffix() const
+{
+    return this->meshSuffixParticle2;
 }
 //-----------------------------------------------------------------------------
 #endif

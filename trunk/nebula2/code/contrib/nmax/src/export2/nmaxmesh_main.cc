@@ -1471,30 +1471,30 @@ nString nMaxMesh::AppendMeshPostfixByType(Type type, bool isSkinned)
     case Shape:
         {
             if (isSkinned)
-                postfix = "_skinned";
+                postfix = nMaxOptions::Instance()->GetSkinnedMeshSuffixt();
         }
         break;
     case Shadow:
         {
             if (isSkinned)
-                postfix = "_skinnedshadow";
+                postfix = nMaxOptions::Instance()->GetSkinnedShadowMeshSuffix();
             else
-                postfix = "_shadow";
+                postfix = nMaxOptions::Instance()->GetShadowMeshSuffix();
         }
         break;
     case Swing:
         {
-            postfix = "_swing";
+            postfix = nMaxOptions::Instance()->GetSwingMeshSuffix();
         }
         break;
     case Collision:
         {
-            postfix = "_collision";
+            postfix = nMaxOptions::Instance()->GetCollisionMeshSuffix();
         }
         break;
     case Particle2:
         {
-            postfix = "_particle2";
+            postfix = nMaxOptions::Instance()->GetParticle2MeshSuffix();
         }
         break;
     default:

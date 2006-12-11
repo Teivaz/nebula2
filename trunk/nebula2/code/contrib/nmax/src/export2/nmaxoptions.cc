@@ -5,14 +5,16 @@
 //-----------------------------------------------------------------------------
 #include "base/nmaxlistener.h"
 #include "export2/nmax.h"
-#include "export2/nmaxoptions.h"
-#include "pluginlibs/nmaxdlg.h"
-#include "pluginlibs/nmaxlogdlg.h"
 
 #include "kernel/nkernelserver.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 #include "misc/niniprefserver.h"
+
+#include "export2/nmaxoptions.h"
+#include "pluginlibs/nmaxdlg.h"
+#include "pluginlibs/nmaxlogdlg.h"
+
 
 nMaxOptions* nMaxOptions::Singleton = 0;
 
@@ -40,7 +42,14 @@ nMaxOptions::nMaxOptions() :
     verboseLevel(2/*Low*/),
     overwriteExistTexture(true),
     previewMode(false),
-    useDefaultViewer(true)
+    useDefaultViewer(true),
+    meshSuffixStatic(""),
+    meshSuffixSkinned("_skinned"),
+    meshSuffixShadow("_shadow"),
+    meshSuffixSkinnedShadow("_skinnedshadow"),
+    meshSuffixCollision("_collision"),
+    meshSuffixParticle2("_particle2"),
+    meshSuffixSwing("_swing")
 {
     n_assert(Singleton == 0);
     Singleton = this;
@@ -56,14 +65,9 @@ nMaxOptions::~nMaxOptions()
 
 //-----------------------------------------------------------------------------
 /**
-    Read .ini file in '$3dsmax/plugcfg' directory and specifies assigns and 
-    paths to file server.
-
-    @return true if the function call is success.
-
-    -19-Sep-05    kims    Added reading 'proj' assign from .ini file.
+    Open nmaxtoolbox.ini file and prepare to read the specified section.
 */
-bool nMaxOptions::Initialize()
+nIniPrefServer* nMaxOptions::BeginINIPref(const nString& section)
 {
     nString iniFilename;
     iniFilename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
@@ -77,12 +81,52 @@ bool nMaxOptions::Initialize()
     {
         // .ini file does not exist in '/plugcfg' directory.
         n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
-        return false;
+        return 0;
     }
 
     nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
     iniFile->SetFileName(iniFilename);
-    iniFile->SetSection("GeneralSettings");
+    iniFile->SetSection(section);
+
+    return iniFile;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Release opened INI file.
+*/
+void nMaxOptions::EndINIPref(nIniPrefServer* iniFile)
+{
+    iniFile->Release();
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+bool nMaxOptions::Initialize()
+{
+    if (!LoadDirSettings())
+        return false;
+
+    if (!LoadMeshSuffix())
+        return false;
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Read .ini file in '$3dsmax/plugcfg' directory and specifies assigns and 
+    paths to file server.
+
+    @return true if the function call is success.
+
+    -19-Sep-05    kims    Added reading 'proj' assign from .ini file.
+*/
+bool nMaxOptions::LoadDirSettings()
+{
+    nIniPrefServer* iniFile = this->BeginINIPref("GeneralSettings");
+
     iniFile->SetDefault(".");
     
     homeDir = iniFile->ReadString("HomeDir");
@@ -167,9 +211,12 @@ bool nMaxOptions::Initialize()
     if (texturesPath.IsEmpty())
         return false;
 
-    iniFile->Release();
+    //iniFile->Release();
+    this->EndINIPref(iniFile);
 
-    if (!fileServer->DirectoryExists(this->homeDir))
+    nFileServer2* fileServer = nFileServer2::Instance();
+
+    if (!fileServer->DirectoryExists(this->homeDir.Get()))
     {
         n_listener("Home path '%s' does not exist.", this->homeDir.Get());
         return false;
@@ -315,7 +362,38 @@ bool nMaxOptions::Initialize()
 
 //-----------------------------------------------------------------------------
 /**
-    Load various utility options from nmaxtoolbox.ini file.
+*/
+bool nMaxOptions::LoadMeshSuffix()
+{
+    nIniPrefServer* iniFile = this->BeginINIPref("MeshSuffix");
+    if (!iniFile)
+        return false;
+
+    iniFile->SetDefault("");
+    this->meshSuffixStatic = iniFile->ReadString("static");
+    iniFile->SetDefault("_skinned");
+    this->meshSuffixSkinned = iniFile->ReadString("skinned");
+    iniFile->SetDefault("_shadow");
+    this->meshSuffixShadow = iniFile->ReadString("shadow");
+    iniFile->SetDefault("_skinnedshadow");
+    this->meshSuffixSkinnedShadow = iniFile->ReadString("skinnedshadow");
+    iniFile->SetDefault("_collision");
+    this->meshSuffixCollision = iniFile->ReadString("collision");
+    iniFile->SetDefault("_particle2");
+    this->meshSuffixParticle2 = iniFile->ReadString("particle2");
+    iniFile->SetDefault("_swing");
+    this->meshSuffixSwing = iniFile->ReadString("swing");
+
+    //iniFile->Release();
+    this->EndINIPref(iniFile);
+
+    return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Load various utility options from nmaxtoolbox.ini file. <br>
+    It is called whenever the plugin is initialized.
 
     @note
     If you add any optin in .ini file, don't forget to add code saves the option 
@@ -323,24 +401,9 @@ bool nMaxOptions::Initialize()
 */
 bool nMaxOptions::LoadUtilityOptions()
 {
-    nString iniFilename;
-    iniFilename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
-    iniFilename += "\\";
-    iniFilename += N_MAXEXPORT_INIFILE;
-
-    nFileServer2* fileServer = nFileServer2::Instance();
-
-    // check the .ini file exist in 3dsmax plugin directory.
-    if (!fileServer->FileExists(iniFilename))
-    {
-        // .ini file does not exist in '/plugcfg' directory.
-        n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
+    nIniPrefServer* iniFile = this->BeginINIPref("UtilityOptions");
+    if (!iniFile)
         return false;
-    }
-
-    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
-    iniFile->SetFileName(iniFilename);
-    iniFile->SetSection("UtilityOptions");
 
     iniFile->SetDefault("0.01f");
     this->geomScale = iniFile->ReadFloat ("GeometryScale");
@@ -378,12 +441,13 @@ bool nMaxOptions::LoadUtilityOptions()
     this->verboseLevel= iniFile->ReadInt("Verbose");
     if (this->verboseLevel <0 || this->verboseLevel > 5)
     {
-        n_message("Faied to read verbose option in %s or \
+        n_message("Failed to read verbose option in %s or \
                    wrong verbose level in the ini file. \
-                   Set to 'high' for the default value.", iniFilename.Get());
+                   Set to 'high' for the default value.", N_MAXEXPORT_INIFILE);
     }
 
-    iniFile->Release();
+    //iniFile->Release();
+    this->EndINIPref(iniFile);
 
     return true;
 }
@@ -400,14 +464,7 @@ bool nMaxOptions::LoadUtilityOptions()
 void nMaxOptions::SaveUtilityOptions()
 {
     // write the values to .ini file.
-    nString iniFilename;
-    iniFilename += GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
-    iniFilename += "\\";
-    iniFilename += N_MAXEXPORT_INIFILE;
-
-    nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
-    iniFile->SetFileName(iniFilename);
-    iniFile->SetSection("UtilityOptions");
+    nIniPrefServer* iniFile = this->BeginINIPref("UtilityOptions");
 
     iniFile->WriteFloat ("GeometryScale",   this->geomScale);
     iniFile->WriteInt   ("MaxJointPalette", this->maxJointPaletteSize);
@@ -419,7 +476,8 @@ void nMaxOptions::SaveUtilityOptions()
     iniFile->WriteString("ScriptServer",    this->saveScriptServer);
     iniFile->WriteInt   ("Verbose",         this->verboseLevel);
 
-    iniFile->Release();
+//    iniFile->Release();
+    this->EndINIPref(iniFile);
 }
 
 //-----------------------------------------------------------------------------
