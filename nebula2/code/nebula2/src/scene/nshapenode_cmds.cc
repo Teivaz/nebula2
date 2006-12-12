@@ -76,7 +76,7 @@ static void
 n_getmesh(void* slf, nCmd* cmd)
 {
     nShapeNode* self = (nShapeNode*) slf;
-    cmd->Out()->SetS(self->GetMesh());
+    cmd->Out()->SetS(self->GetMesh().Get());
 }
 
 //------------------------------------------------------------------------------
@@ -199,7 +199,7 @@ nShapeNode::SaveCmds(nPersistServer* ps)
 
         //--- setmesh ---
         cmd = ps->GetCmd(this, 'SMSH');
-        cmd->In()->SetS(this->GetMesh());
+        cmd->In()->SetS(this->GetMesh().Get());
         ps->PutCmd(cmd);
 
         //--- setgroupindex ---

@@ -98,9 +98,9 @@ nGuiSkyEditor::ShowSky()
 {
     const float leftWidth = 0.3f;
     const float rightWidth = 0.15f;
-    const float maxAngle = 360;
-    const float minHeight = -90;
-    const float maxHeight = 90;
+    const float maxAngle = 360.0f;
+    const float minHeight = -90.0f;
+    const float maxHeight = 90.0f;
     const float border = 0.005f;
     const float sliderOffset = 0.025f;
 
@@ -1451,11 +1451,11 @@ nGuiSkyEditor::CreateSun()
     nGuiHoriSliderGroup* slider;
     nGuiColorSliderGroup* colorSlider;
 
-    colorSlider = (nGuiColorSliderGroup*) kernelServer->New("nguicolorslidergroup", "SunColSlider");
+    colorSlider = (nGuiColorSliderGroup*)kernelServer->New("nguicolorslidergroup", "SunColSlider");
     colorSlider->SetLabelText("Sun Color");
     colorSlider->SetMaxIntensity(10.0f);
     colorSlider->SetTextLabelWidth(leftWidth);
-    colorSlider->SetColor(vector4(1,1,1,1));
+    colorSlider->SetColor(vector4(1.0f, 1.0f, 1.0f, 1.0f));
     this->AttachWidget(colorSlider, nGuiFormLayout::Top, this->refElementLabel, 2*border);
     this->AttachForm(colorSlider, nGuiFormLayout::Left, border);
     this->AttachForm(colorSlider, nGuiFormLayout::Right, border);
@@ -1467,7 +1467,7 @@ nGuiSkyEditor::CreateSun()
     slider->SetDisplayFormat(nGuiHoriSliderGroup::Float);
     slider->SetMinValue(0.0f);
     slider->SetMaxValue(5.0f);
-    slider->SetValue(0);
+    slider->SetValue(0.0f);
     slider->SetKnobSize(0.05f);
     slider->SetIncrement(0.01f);
     slider->SetLeftWidth(leftWidth);
@@ -1583,9 +1583,9 @@ nGuiSkyEditor::CreateSunlight()
 {
     const float leftWidth = 0.3f;
     const float rightWidth = 0.15f;
-    const float maxAngle = 360;
-    const float minHeight = -90;
-    const float maxHeight = 90;
+    const float maxAngle = 360.0f;
+    const float minHeight = -90.0f;
+    const float maxHeight = 90.0f;
     const float border = 0.005f;
     const float sliderOffset = 0.025f;
 
@@ -1949,18 +1949,18 @@ nGuiSkyEditor::OnFrame()
 
 */
 void
-nGuiSkyEditor::UpdateSliderFromElement(nGuiHoriSliderGroup* slider,nShaderState::Param param, float min, float max, int vectornr)
+nGuiSkyEditor::UpdateSliderFromElement(nGuiHoriSliderGroup* slider, nShaderState::Param param, float min, float max, int vectornr)
 {
     if (this->refElement->HasParam(param))
     {
         slider->SetMinValue(min);
         slider->SetMaxValue(max);
-        slider->SetKnobSize((float)(fabs(min)+max)/10);
+        slider->SetKnobSize((float)(fabs(min) + max)/10);
         if (vectornr == 0)
         {
             slider->SetValue(this->refElement->GetFloat(param));
         }
-        else if ((vectornr > 0) && (vectornr <=4))
+        else if (vectornr > 0 && vectornr <= 4)
         {
             switch (vectornr)
             {
@@ -1985,7 +1985,7 @@ nGuiSkyEditor::UpdateSliderFromElement(nGuiHoriSliderGroup* slider,nShaderState:
 
 */
 void
-nGuiSkyEditor::UpdateColorSliderFromElement(nGuiColorSliderGroup* slider,nShaderState::Param param, float max)
+nGuiSkyEditor::UpdateColorSliderFromElement(nGuiColorSliderGroup* slider, nShaderState::Param param, float max)
 {
     if (this->refElement->HasParam(param))
     {
@@ -1995,7 +1995,7 @@ nGuiSkyEditor::UpdateColorSliderFromElement(nGuiColorSliderGroup* slider,nShader
     else
     {
         slider->SetMaxIntensity(max);
-        slider->SetColor(vector4(1,1,1,0));
+        slider->SetColor(vector4(1.0f, 1.0f, 1.0f, 0.0f));
     }
 }
 
@@ -2006,9 +2006,9 @@ nGuiSkyEditor::UpdateColorSliderFromElement(nGuiColorSliderGroup* slider,nShader
 void
 nGuiSkyEditor::FindSkyNode(nRoot* node)
 {
-	if (node->IsInstanceOf(nKernelServer::Instance()->FindClass("nskynode")))
+	if (node->IsInstanceOf("nskynode"))
 	{
-		this->skyPath.Set(node->GetFullName().Get());
+		this->skyPath = node->GetFullName();
 		this->refSky.set(this->skyPath.Get());
 	}
 	else

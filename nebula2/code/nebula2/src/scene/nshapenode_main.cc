@@ -170,9 +170,9 @@ nShapeNode::RenderGeometry(nSceneServer* /*sceneServer*/, nRenderContext* /*rend
     filename of the mesh.
 */
 void
-nShapeNode::SetMesh(const char* name)
+nShapeNode::SetMesh(const nString& name)
 {
-    n_assert(name);
+    n_assert(name.IsValid());
     this->UnloadMesh();
     this->meshName = name;
 }
@@ -180,10 +180,10 @@ nShapeNode::SetMesh(const char* name)
 //------------------------------------------------------------------------------
 /**
 */
-const char*
+const nString&
 nShapeNode::GetMesh() const
 {
-    return this->meshName.IsEmpty() ? 0 : this->meshName.Get();
+    return this->meshName;
 }
 
 //------------------------------------------------------------------------------

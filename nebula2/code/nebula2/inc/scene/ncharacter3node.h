@@ -20,7 +20,7 @@ public:
     /// destructor
     virtual ~nCharacter3Node();
     /// save object to persistent stream
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
     /// load resources for this object
@@ -41,9 +41,9 @@ public:
     //int GetRenderContextCharacterSetIndex() const;
 
     /// read skin list from a XML file
-    static bool ReadCharacterStuffFromXML(nString fileName,nString &resultSkinList,nString &resultVariation);
+    static bool ReadCharacterStuffFromXML(nString fileName, nString& resultSkinList, nString& resultVariation);
     /// save skin list to a XML file
-    static bool WriteCharacterStuffFromXML(nString fileName, nString skins,nString variation);
+    static bool WriteCharacterStuffFromXML(nString fileName, nString skins, nString variation);
 
 protected:
 

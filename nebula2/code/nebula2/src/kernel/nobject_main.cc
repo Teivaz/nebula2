@@ -28,7 +28,7 @@ nObject::~nObject()
 /**
 */
 bool
-nObject::Dispatch(nCmd *cmd)
+nObject::Dispatch(nCmd* cmd)
 {
     n_assert(cmd->GetProto());
     cmd->Rewind();
@@ -41,39 +41,39 @@ nObject::Dispatch(nCmd *cmd)
 /**
 */
 void
-nObject::GetCmdProtos(nHashList *cmd_list)
+nObject::GetCmdProtos(nHashList* cmd_list)
 {
     // for each superclass attach it's command proto names
     // to the list
-    nClass *cl = this->instanceClass;
+    nClass* cl = this->instanceClass;
 
     // for each superclass...
     do
     {
-        nHashList *cl_cmdprotos = cl->GetCmdList();
+        nHashList* cl_cmdprotos = cl->GetCmdList();
         if (cl_cmdprotos)
         {
-            nCmdProto *cmd_proto;
-            for (cmd_proto=(nCmdProto *) cl_cmdprotos->GetHead();
+            nCmdProto* cmd_proto;
+            for (cmd_proto=(nCmdProto*)cl_cmdprotos->GetHead();
                  cmd_proto;
-                 cmd_proto=(nCmdProto *) cmd_proto->GetSucc())
+                 cmd_proto=(nCmdProto*)cmd_proto->GetSucc())
             {
                 nHashNode* node = n_new(nHashNode(cmd_proto->GetName()));
                 node->SetPtr((void*)cmd_proto);
                 cmd_list->AddTail(node);
             }
         }
-    } while ((cl = cl->GetSuperClass()));
+    } while (cl = cl->GetSuperClass());
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 bool
-nObject::SaveAs(const char *name)
+nObject::SaveAs(const char* name)
 {
     n_assert(name);
-    nPersistServer *ps = nKernelServer::Instance()->GetPersistServer();
+    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
     n_assert(ps);
 
     bool retval = false;
@@ -94,10 +94,10 @@ nObject::SaveAs(const char *name)
 /**
 */
 nObject*
-nObject::Clone(const char *)
+nObject::Clone(const char*)
 {
     nObject *clone = NULL;
-    nPersistServer *ps = nKernelServer::Instance()->GetPersistServer();
+    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
     n_assert(ps);
 
     nPersistServer::nSaveMode oldMode = ps->GetSaveMode();
@@ -123,7 +123,7 @@ nObject::Clone(const char *)
     attributes to the file server.
 */
 bool
-nObject::SaveCmds(nPersistServer *)
+nObject::SaveCmds(nPersistServer*)
 {
     return true;
 }
@@ -146,9 +146,19 @@ nObject::GetInstanceSize() const
            for this object.
 */
 bool
-nObject::IsA(const char *className) const
+nObject::IsA(const char* className) const
 {
     return this->IsA(nKernelServer::Instance()->FindClass(className));
+}
+
+//------------------------------------------------------------------------------
+/**
+    @brief Return true instance of class
+*/
+bool
+nObject::IsInstanceOf(const char* className) const
+{
+    return this->IsInstanceOf(nKernelServer::Instance()->FindClass(className));
 }
 
 //------------------------------------------------------------------------------

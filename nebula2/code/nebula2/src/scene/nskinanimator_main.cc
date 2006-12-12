@@ -246,7 +246,7 @@ nSkinAnimator::RenderContextDestroyed(nRenderContext* renderContext)
 {
     // delete character object
     nVariable var = renderContext->GetLocalVar(this->characterVarIndex);
-    nCharacter2* curCharacter = (nCharacter2*) var.GetObj();
+    nCharacter2* curCharacter = (nCharacter2*)var.GetObj();
     n_assert(curCharacter);
     curCharacter->Release();
 
@@ -400,7 +400,7 @@ nSkinAnimator::EndAnimEventTracks(int clipIndex)
 nCharacter2Set*
 nSkinAnimator::CreateCharacterSet()
 {
-    return n_new (nCharacter2Set);
+    return n_new(nCharacter2Set);
 }
 
 //------------------------------------------------------------------------------
@@ -411,7 +411,7 @@ nSkinAnimator::DeleteCharacterSet(nRenderContext* renderContext)
 {
     n_assert(0 != renderContext);
     nVariable var = renderContext->GetLocalVar(this->characterSetIndex);
-    nCharacter2Set* characterSet = (nCharacter2Set*) var.GetObj();
+    nCharacter2Set* characterSet = (nCharacter2Set*)var.GetObj();
     n_assert(characterSet);
     characterSet->Release();
 }

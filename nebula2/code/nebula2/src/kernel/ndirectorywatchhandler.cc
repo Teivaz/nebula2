@@ -75,14 +75,14 @@ nDirectoryWatchHandler::WatchThreadFunc(nThread* thread)
 {
     thread->ThreadStarted();
 
-    nDirectoryWatchHandler* watchHandler = (nDirectoryWatchHandler *)thread->LockUserData();
+    nDirectoryWatchHandler* watchHandler = (nDirectoryWatchHandler*)thread->LockUserData();
     thread->UnlockUserData();
 
 #ifdef __WIN32__
     FILE_NOTIFY_INFORMATION fileChanges[16];
     DWORD bytesReturned;
-    OVERLAPPED overlapped = { 0, };
-    HANDLE event = CreateEvent(0,0,1,0);
+    OVERLAPPED overlapped = { 0 };
+    HANDLE event = CreateEvent(0, 0, 1, 0);
     overlapped.hEvent = event;
 
     // NOTE: We're using the asynchronous version of the function.

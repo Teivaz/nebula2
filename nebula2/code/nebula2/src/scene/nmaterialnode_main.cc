@@ -184,25 +184,6 @@ nMaterialNode::RenderShader(nSceneServer* sceneServer, nRenderContext* renderCon
 //------------------------------------------------------------------------------
 /**
 */
-void
-nMaterialNode::SetShader(const char* name)
-{
-    n_assert(name);
-    this->shaderName = name;
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
-const char*
-nMaterialNode::GetShader() const
-{
-    return this->shaderName.Get();
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
 bool
 nMaterialNode::IsTextureUsed(nShaderState::Param param)
 {

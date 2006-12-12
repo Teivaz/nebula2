@@ -26,7 +26,7 @@ public:
     /// unload resources
     virtual void UnloadResources();
 
-    /// perform pre-instancing rending of geometry
+    /// perform pre-instancing rendering of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render the geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
@@ -39,10 +39,9 @@ protected:
     /// update the screen space rectangle
     void UpdateScreenSpaceRect();
 
-    nRef<nFont2>    refFont;
-
-    uint        fontFlags;
-    rectangle   screenSpaceRect;
+    nRef<nFont2> refFont;
+    uint fontFlags;
+    rectangle screenSpaceRect;
     nClass*     transformNodeClass;
 };
 

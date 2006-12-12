@@ -71,7 +71,7 @@ static void
 n_getshader(void* slf, nCmd* cmd)
 {
     nMaterialNode* self = (nMaterialNode*) slf;
-    cmd->Out()->SetS(self->GetShader());
+    cmd->Out()->SetS(self->GetShader().Get());
 }
 //------------------------------------------------------------------------------
 /**

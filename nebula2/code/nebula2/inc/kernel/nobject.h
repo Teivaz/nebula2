@@ -49,21 +49,22 @@ public:
     /// save object under different name
     virtual bool SaveAs(const char* name);
     /// create new object as clone of this object
-    virtual nObject *Clone(const char *unused = 0);
+    virtual nObject* Clone(const char* unused = 0);
 
     /// get pointer to my class object
-    nClass *GetClass() const;
+    nClass* GetClass() const;
     /// return true if part of class hierarchy
-    bool IsA(const nClass *) const;
+    bool IsA(const nClass*) const;
     /// return true if part of class herarchy
-    bool IsA(const char *) const;
+    bool IsA(const char*) const;
     /// return true instance of class
-    bool IsInstanceOf(const nClass *) const;
-
+    bool IsInstanceOf(const nClass*) const;
+    /// return true instance of class
+    bool IsInstanceOf(const char*) const;
     /// invoke nCmd on object
-    bool Dispatch(nCmd *);
+    bool Dispatch(nCmd*);
     /// get cmd proto list from object
-    void GetCmdProtos(nHashList *);
+    void GetCmdProtos(nHashList*);
 
     /// pointer to kernel server
     static nKernelServer* kernelServer;
@@ -74,7 +75,7 @@ protected:
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nObject();
     /// set pointer to my class object
-    void SetClass(nClass *);
+    void SetClass(nClass*);
 
     nClass* instanceClass;
 };
@@ -104,16 +105,16 @@ nObject::GetClass() const
 */
 inline
 bool
-nObject::IsA(const nClass *cl) const
+nObject::IsA(const nClass* cl) const
 {
-    nClass *actClass = this->instanceClass;
+    nClass* actClass = this->instanceClass;
     do
     {
         if (actClass == cl)
         {
             return true;
         }
-    } while ((actClass = actClass->GetSuperClass()));
+    } while (actClass = actClass->GetSuperClass());
     return false;
 }
 
@@ -122,10 +123,9 @@ nObject::IsA(const nClass *cl) const
 */
 inline
 bool
-nObject::IsInstanceOf(const nClass *cl) const
+nObject::IsInstanceOf(const nClass* cl) const
 {
     return (cl == this->instanceClass);
 }
-
 //------------------------------------------------------------------------------
 #endif // N_OBJECT_H

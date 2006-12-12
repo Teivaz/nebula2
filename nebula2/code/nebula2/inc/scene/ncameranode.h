@@ -21,11 +21,11 @@ public:
     /// destructor
     virtual ~nCameraNode();
 
-    /// function wich updates the camera
+    /// function updates the camera
     virtual bool RenderCamera(const matrix44& modelWorldMatrix, const matrix44& viewMatrix, const matrix44& projectionMatrix);
 
 protected:
-    /// compute the viewmatrix
+    /// compute the view matrix
     matrix44 ComputeViewMatrix(const vector3& cameraPosition, const vector3& cameraDirection);
 };
 

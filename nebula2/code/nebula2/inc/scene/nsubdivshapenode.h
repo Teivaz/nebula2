@@ -22,7 +22,7 @@ public:
     /// destructor
     virtual ~nSubdivShapeNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// perform pre-instancing rending of shader
     virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform pre-instancing rending of geometry

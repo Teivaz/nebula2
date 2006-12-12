@@ -63,7 +63,7 @@ public:
     /// destructor
     virtual ~nSkyNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// Attach to sceneserver
     void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// Update

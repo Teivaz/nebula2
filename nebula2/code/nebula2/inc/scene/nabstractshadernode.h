@@ -32,7 +32,7 @@ public:
     /// destructor
     virtual ~nAbstractShaderNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// load resources
     virtual bool LoadResources();
     /// unload resources
@@ -71,7 +71,7 @@ public:
     void SetVector(nShaderState::Param param, const vector4& val);
     /// get a vector value bound to a shader variable
     const vector4& GetVector(nShaderState::Param param) const;
-    /// get shaderparams
+    /// get shader params
     nShaderParams& GetShaderParams();
     /// returns true, if node possesses the param
     bool HasParam(nShaderState::Param param);

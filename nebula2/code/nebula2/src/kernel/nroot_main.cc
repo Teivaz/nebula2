@@ -273,7 +273,7 @@ bool
 nRoot::SaveAs(const char *name)
 {
     n_assert(name);
-    nPersistServer *ps = nKernelServer::Instance()->GetPersistServer();
+    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
     n_assert(ps);
 
     bool retval = false;
@@ -323,7 +323,7 @@ nRoot::Clone(const char *name)
 {
     n_assert(name);
     nObject *clone = NULL;
-    nPersistServer *ps = nKernelServer::Instance()->GetPersistServer();
+    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
     n_assert(ps);
 
     nPersistServer::nSaveMode oldMode = ps->GetSaveMode();

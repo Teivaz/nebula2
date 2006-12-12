@@ -28,7 +28,7 @@ public:
     /// destructor
     virtual ~nShapeNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// load resources
     virtual bool LoadResources();
     /// unload resources
@@ -36,7 +36,7 @@ public:
 
     /// indicate to scene server that we offer geometry for rendering
     virtual bool HasGeometry() const;
-    /// perform pre-instancing rending of geometry
+    /// perform pre-instancing rendering of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
@@ -46,15 +46,15 @@ public:
     void SetMeshUsage(int usage);
     /// get the mesh usage flags required by this shape node
     int GetMeshUsage() const;
-    /// explicitely set the "needs vertex shader" mesh usage flag
+    /// explicitly set the "needs vertex shader" mesh usage flag
     void SetNeedsVertexShader(bool b);
-    /// explicutely get the "needs vertex shader" mesh usage flag
+    /// explicitly get the "needs vertex shader" mesh usage flag
     bool GetNeedsVertexShader() const;
 
     /// set the mesh resource name
-    void SetMesh(const char* name);
+    void SetMesh(const nString& name);
     /// get the mesh resource name
-    const char* GetMesh() const;
+    const nString& GetMesh() const;
     /// get mesh2 object
     nMesh2* GetMeshObject();
 

@@ -34,7 +34,7 @@ public:
     /// destructor
     virtual ~nMaterialNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// load resources
     virtual bool LoadResources();
     /// unload resources
@@ -42,15 +42,15 @@ public:
 
     /// indicate to scene graph that we provide a surface shader
     virtual bool HasShader() const;
-    /// perform pre-instancing rending of shader
+    /// perform pre-instancing rendering of shader
     virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
     virtual bool RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext);
 
     /// set shader resource name
-    void SetShader(const char* name);
+    void SetShader(const nString& name);
     /// get shader resource name
-    const char* GetShader() const;
+    const nString& GetShader() const;
     /// get bucket index of shader
     int GetShaderIndex();
     /// get pointer to shader object
@@ -77,6 +77,27 @@ private:
     int shaderIndex;
     nRef<nShader2> refShader;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+void
+nMaterialNode::SetShader(const nString& name)
+{
+    n_assert(name.IsValid());
+    this->shaderName = name;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+const nString&
+nMaterialNode::GetShader() const
+{
+    return this->shaderName;
+}
 
 //------------------------------------------------------------------------------
 /**

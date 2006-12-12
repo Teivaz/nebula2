@@ -22,7 +22,7 @@ public:
     virtual Type GetAnimatorType() const;
     /// set the name of the shader parameter to manipulate
     void SetParamName(const char* n);
-    /// get the name of the attr parameter to manipulate
+    /// get the name of the attribute parameter to manipulate
     const char* GetParamName() const;
 
 protected:
