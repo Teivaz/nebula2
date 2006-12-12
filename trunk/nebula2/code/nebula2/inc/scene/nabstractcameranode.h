@@ -23,7 +23,7 @@ public:
     /// destructor
     virtual ~nAbstractCameraNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// provides a camera
     virtual bool HasCamera() const;
     /// render the scene from the provided camera

@@ -32,7 +32,7 @@ public:
     /// destructor
     virtual ~nSkinShapeNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// perform pre-instance geometry setup
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render per-instance geometry

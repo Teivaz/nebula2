@@ -22,7 +22,7 @@ public:
     /// destructor
     virtual ~nLodNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// called by nSceneServer when object is attached to scene
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// append camera distance threshold when the child node at index is switched on and its predecessor switched off

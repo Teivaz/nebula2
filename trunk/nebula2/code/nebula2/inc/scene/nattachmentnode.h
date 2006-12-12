@@ -34,7 +34,7 @@ public:
     /// destructor
     virtual ~nAttachmentNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
 
     /// update transform and render into scene server
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);

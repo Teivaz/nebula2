@@ -261,8 +261,8 @@ nResourceCompiler::ExtractResourceAttrs(nRoot* curNode)
     // meshes
     if (curNode->IsA(this->shapeNodeClass))
     {
-        nShapeNode* shapeNode = (nShapeNode*) curNode;
-        ResEntry entry(nResource::Mesh, shapeNode->GetMesh());
+        nShapeNode* shapeNode = (nShapeNode*)curNode;
+        ResEntry entry(nResource::Mesh, shapeNode->GetMesh().Get());
         entry.SetFlags(shapeNode->GetMeshUsage());
         if (!this->meshes.Find(entry))
         {

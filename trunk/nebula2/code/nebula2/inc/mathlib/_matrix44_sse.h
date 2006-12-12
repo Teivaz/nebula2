@@ -30,6 +30,7 @@ class _matrix44_sse
 {
 public:
     static const _matrix44_sse identity;
+    static const _matrix44_sse ortho;
 
 public:
     /// constructor 1
@@ -100,7 +101,7 @@ public:
     void lookat(const _vector3_sse& to, const _vector3_sse& up);
     /// restricted lookat
     void billboard(const _vector3_sse& to, const _vector3_sse& up);
-    /// inplace matrix mulitply
+    /// inplace matrix multiply
     void operator *= (const _matrix44_sse& m1);
     /// multiply source vector into target vector, eliminates tmp vector
     void mult(const _vector4_sse& src, _vector4_sse& dst) const;

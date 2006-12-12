@@ -27,8 +27,8 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg               = args.GetBoolArg("-help");
-    nString inFileArg          = args.GetStringArg("-in", 0);
-    nString outFileArg         = args.GetStringArg("-out", 0);
+    nString inFileArg          = args.GetStringArg("-in");
+    nString outFileArg         = args.GetStringArg("-out");
 
     // show help?
     if (helpArg)
@@ -44,7 +44,7 @@ main(int argc, const char** argv)
     }
 
     // error if no input file given
-    if (0 == inFileArg)
+    if (inFileArg.IsEmpty())
     {
         printf("nanimtool error: No input file! (type 'nanimtool -help' for help)\n");
         return 5;

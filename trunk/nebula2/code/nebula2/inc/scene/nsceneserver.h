@@ -100,9 +100,9 @@ public:
     void SetPerfGuiEnabled(bool b);
     /// get performance gui status
     bool GetPerfGuiEnabled() const;
-	/// set the projectionmatrix, that should be saved model matrix
+	/// set the projection matrix, that should be saved model matrix
     void SaveProjectionMatrix(const matrix44& m);
-	/// get the projectionmatrix, that was saved
+	/// get the projection matrix, that was saved
 	const matrix44& GetSavedProjectionMatrix() const;
 private:
 
@@ -153,11 +153,11 @@ private:
     void RenderShapeLightModeFFP(const Group& shapeGroup);
     /// render single shape with light mode "Shader"
     void RenderShapeLightModeShader(Group& shapeGroup, const nRpSequence& seq);
-    /// update scissor rects for one light source
+    /// update scissor rectangles for one light source
     void ComputeLightScissor(LightInfo& lightInfo);
     /// update the clip planes for a single light source
     void ComputeLightClipPlanes(LightInfo& lightInfo);
-    /// update scissor rects and clip planes once for all lights
+    /// update scissor rectangles and clip planes once for all lights
     void ComputeLightScissorsAndClipPlanes();
     /// apply the scissor rectangle for a light group
     void ApplyLightScissors(const LightInfo& lightInfo);
@@ -417,7 +417,7 @@ nSceneServer::GetModelTransform() const
 
 //------------------------------------------------------------------------------
 /**
-	set the projectionmatrix, that should be saved model matrix
+	set the projectio nmatrix, that should be saved model matrix
 */
 inline
 void
@@ -430,7 +430,7 @@ nSceneServer::SaveProjectionMatrix(const matrix44& m)
 
 //------------------------------------------------------------------------------
 /**
-	get the projectionmatrix, that was saved
+	get the projection matrix, that was saved
 */
 inline
 const matrix44&

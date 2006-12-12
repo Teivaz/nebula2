@@ -21,7 +21,7 @@ public:
     /// destructor
     virtual ~nMultiLayeredNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
 

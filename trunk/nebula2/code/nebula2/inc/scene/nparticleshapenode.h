@@ -26,12 +26,12 @@ public:
     /// destructor
     virtual ~nParticleShapeNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// called by app when new render context has been created for this object
     virtual void RenderContextCreated(nRenderContext* renderContext);
     /// called by nSceneServer when object is attached to scene
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// perform pre-instancing rending of geometry
+    /// perform pre-instancing rendering of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
@@ -84,7 +84,7 @@ public:
 protected:
     nAutoRef<nParticleServer> refParticleServer;
 
-    int emitterVarIndex;       ///< index of the emitter in the rendercontext
+    int emitterVarIndex;       ///< index of the emitter in the render context
     nTime emissionDuration;    ///< how long shall be emitted ?
     bool loop;                 ///< loop emitter ?
 

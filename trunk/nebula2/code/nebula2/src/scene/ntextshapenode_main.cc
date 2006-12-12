@@ -157,11 +157,7 @@ nTextShapeNode::UpdateScreenSpaceRect()
 
     // multiply by orthogonal projection matrix, this must be the same
     // as used by the GUI shader!
-    const static matrix44 orthoProj(0.5f, 0.0f,    0.0f, 0.0f,
-                                    0.0f, 0.6667f, 0.0f, 0.0f,
-                                    0.0f, 0.0f,   -0.5f, 0.0f,
-                                    0.0f, 0.0f,    0.5f, 1.0f);
-    m = m * orthoProj;
+    m = m * matrix44::ortho;
 
     // get local bounding box and transform to screen space
     bbox3 box = this->GetLocalBox();

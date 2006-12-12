@@ -110,7 +110,6 @@ beginmodule ndebug
     setdir kernel
     setheaders {
         ndebug
-        ndbgalloc
     }
     setfiles {
         ndbgalloc

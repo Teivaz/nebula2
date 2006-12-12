@@ -194,19 +194,11 @@ static void n_getclasses(void *o, nCmd *cmd)
     Check whether the object is instantiated or derived from the
     class given by 'Classname'.
 */
-static void n_isa(void *o, nCmd *cmd)
+static void n_isa(void* o, nCmd* cmd)
 {
-    nObject *self = (nObject *) o;
-    const char *arg0 = cmd->In()->GetS();
-    nClass *cl = nRoot::kernelServer->FindClass(arg0);
-    if (cl)
-    {
-        cmd->Out()->SetB(self->IsA(cl));
-    }
-    else
-    {
-        cmd->Out()->SetB(false);
-    }
+    nObject* self = (nObject*)o;
+    const char* arg0 = cmd->In()->GetS();
+    cmd->Out()->SetB(self->IsA(arg0));
 }
 
 //-------------------------------------------------------------------
@@ -224,19 +216,11 @@ static void n_isa(void *o, nCmd *cmd)
     Check whether the object is an instance of the class given
     by 'Classname'.
 */
-static void n_isinstanceof(void *o, nCmd *cmd)
+static void n_isinstanceof(void* o, nCmd* cmd)
 {
-    nObject *self = (nObject *) o;
-    const char *arg0 = cmd->In()->GetS();
-    nClass *cl = nRoot::kernelServer->FindClass(arg0);
-    if (cl)
-    {
-        cmd->Out()->SetB(self->IsInstanceOf(cl));
-    }
-    else
-    {
-        cmd->Out()->SetB(false);
-    }
+    nObject* self = (nObject*)o;
+    const char* arg0 = cmd->In()->GetS();
+    cmd->Out()->SetB(self->IsInstanceOf(arg0));
 }
 
 //-------------------------------------------------------------------

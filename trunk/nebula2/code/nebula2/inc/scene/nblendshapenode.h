@@ -22,7 +22,7 @@ public:
     /// destructor
     virtual ~nBlendShapeNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// load resources
     virtual bool LoadResources();
     /// unload resources
@@ -32,7 +32,7 @@ public:
     virtual bool HasGeometry() const;
     /// get the mesh usage flags required by this shape node
     virtual int GetMeshUsage() const;
-    /// perform pre-instancing rending of geometry
+    /// perform pre-instancing rendering of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// perform per-instance-rendering of geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);

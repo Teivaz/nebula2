@@ -26,7 +26,7 @@ public:
     /// destructor
     virtual ~nShadowNode();
     /// save object to persistent stream
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// load resources for this object
     virtual bool LoadResources();
     /// unload resources for this object

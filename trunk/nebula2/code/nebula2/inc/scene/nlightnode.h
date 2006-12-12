@@ -24,7 +24,7 @@ public:
     /// destructor
     virtual ~nLightNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// return true if node provides lighting information
     virtual bool HasLight() const;
     /// set per-light states

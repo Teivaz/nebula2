@@ -28,14 +28,14 @@ public:
     /// destructor
     virtual ~nParticleShapeNode2();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// called by app when new render context has been created for this object
     virtual void RenderContextCreated(nRenderContext* renderContext);
     /// called by app when render context has been destroyed
     virtual void RenderContextDestroyed(nRenderContext* renderContext);
     /// called by nSceneServer when object is attached to scene
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
-    /// perform pre-instancing rending of geometry
+    /// perform pre-instancing rendering of geometry
     virtual bool ApplyGeometry(nSceneServer* sceneServer);
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
@@ -76,13 +76,13 @@ public:
     void SetStretchToStart(bool value);
     /// set precalc time
     void SetPrecalcTime(float value);
-    /// set wether to render oldest or youngest particles first
+    /// set whether to render oldest or youngest particles first
     void SetRenderOldestFirst(bool b);
-    /// set wether to render oldest or youngest particles first
+    /// set whether to render oldest or youngest particles first
     void SetStretchDetail(int value);
-    /// set wether to render oldest or youngest particles first
+    /// set whether to render oldest or youngest particles first
     void SetViewAngleFade(bool value);
-    /// get wether to render oldest or youngest particles first
+    /// get whether to render oldest or youngest particles first
     bool GetRenderOldestFirst() const;
     /// set start delay
     void SetStartDelay(float value);
@@ -106,7 +106,7 @@ public:
 protected:
     nAutoRef<nParticleServer2> refParticleServer;
 
-    int emitterVarIndex;            // index of the emitter in the rendercontext
+    int emitterVarIndex;            // index of the emitter in the render context
     float emissionDuration;         // how long shall be emitted ?
     bool loop;                      // loop emitter ?
 
@@ -122,7 +122,7 @@ protected:
     bool  randomRotDir;
     int   tileTexture;              // texture tiling
     bool  stretchToStart;           // stretch to point of emission ?
-    bool  renderOldestFirst;        // wether to render the oldest particles first or the youngest
+    bool  renderOldestFirst;        // whether to render the oldest particles first or the youngest
     bool  invisible;
     bool  viewAngleFade;
     int   stretchDetail;

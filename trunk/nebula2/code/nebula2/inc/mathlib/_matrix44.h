@@ -21,7 +21,7 @@ static float _matrix44_ident[16] =
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
     0.0f, 0.0f, 1.0f, 0.0f,
-    0.0f, 0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
 };
 
 //------------------------------------------------------------------------------
@@ -29,6 +29,7 @@ class _matrix44
 {
 public:
     static const _matrix44 identity;
+    static const _matrix44 ortho;
 
 public:
     /// constructor 1
@@ -111,7 +112,7 @@ public:
     void orthoRh(float w, float h, float zn, float zf);
     /// restricted lookat
     void billboard(const _vector3& to, const _vector3& up);
-    /// inplace matrix mulitply
+    /// inplace matrix multiply
     void operator *= (const _matrix44& m1);
     /// multiply source vector into target vector, eliminates tmp vector
     void mult(const _vector4& src, _vector4& dst) const;

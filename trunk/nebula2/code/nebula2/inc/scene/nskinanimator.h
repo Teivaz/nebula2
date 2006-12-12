@@ -34,7 +34,7 @@ public:
     /// destructor
     virtual ~nSkinAnimator();
     /// save object to persistent stream
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// load resources
     virtual bool LoadResources();
     /// unload resources

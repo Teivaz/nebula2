@@ -40,12 +40,12 @@ class nHardRef : public nRef<TYPE>
 public:
     /// default constructor if used in arrays or containers
     nHardRef();
-    /// prefered constructor
+    /// preferred constructor
     nHardRef(nKernelServer* kServer);
     /// the destructor
     ~nHardRef();
 
-    /// defered initialization, call if default constructor used
+    /// deferred initialization, call if default constructor used
     void initialize(nKernelServer* kServer);
     /// validate name, invalidate object pointer
     void set(const char *objName);

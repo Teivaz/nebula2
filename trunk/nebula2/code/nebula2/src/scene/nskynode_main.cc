@@ -110,7 +110,7 @@ void
 nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
 {
     kernelServer->PushCwd(this);
-    nRoot* elementPtr = (nRoot*) this->kernelServer->Lookup(name.Get());
+    nRoot* elementPtr = this->kernelServer->Lookup(name.Get());
     kernelServer->PopCwd();
 
     n_assert(elementPtr);
@@ -125,16 +125,18 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
     {
         case nSkyNode::SkyElement:
         {
-            n_assert(elementPtr->IsInstanceOf(this->kernelServer->FindClass("nshapenode")));
+            n_assert(elementPtr->IsInstanceOf("nshapenode"));
             nShapeNode* newNode = (nShapeNode*) elementPtr;
 
-            if (!newNode->GetMesh())
+            if (newNode->GetMesh().IsEmpty())
             {
                 newNode->SetMesh("meshes:examples/skyElements_s_0.n3d2");
                 newNode->SetGroupIndex(0);
             }
-            if (!strcmp(newNode->GetShader(), ""))
+            if (newNode->GetShader().IsEmpty())
+            {
                 newNode->SetShader("sky");
+            }
             newNode->SetLockViewer(true);
             if (!newNode->HasParam(nShaderState::Intensity0))
                 newNode->SetFloat(nShaderState::Intensity0, 1.0f);
@@ -145,86 +147,90 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
             if (!newNode->HasParam(nShaderState::SkyBottom))
                 newNode->SetFloat(nShaderState::SkyBottom, 0.0f);
             if (!newNode->HasParam(nShaderState::Saturation))
-                newNode->SetVector(nShaderState::Saturation, vector4(1.0f,1.0f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::Saturation, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::Brightness))
-                newNode->SetVector(nShaderState::Brightness, vector4(1.0f,1.0f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::Brightness, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::TopColor))
-                newNode->SetVector(nShaderState::TopColor, vector4(0.1f,0.1f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::TopColor, vector4(0.1f, 0.1f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::BottomColor))
-                newNode->SetVector(nShaderState::BottomColor, vector4(0.6f,0.6f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::BottomColor, vector4(0.6f, 0.6f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::SunColor))
-                newNode->SetVector(nShaderState::SunColor, vector4(1.0f,1.0f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::SunColor, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         }
         case nSkyNode::SunElement:
         {
-            n_assert(elementPtr->IsInstanceOf(this->kernelServer->FindClass("nshapenode")));
-            nShapeNode* newNode = (nShapeNode*) elementPtr;
+            n_assert(elementPtr->IsInstanceOf("nshapenode"));
+            nShapeNode* newNode = (nShapeNode*)elementPtr;
 
-            if (!newNode->GetMesh())
+            if (newNode->GetMesh().IsEmpty())
             {
                 newNode->SetMesh("meshes:examples/skyElements_s_0.n3d2");
                 newNode->SetGroupIndex(3);
             }
             if (!newNode->GetTexture(nShaderState::DiffMap0))
                 newNode->SetTexture(nShaderState::DiffMap0, "textures:environment/sun.dds");
-            if (!strcmp(newNode->GetShader(), ""))
+            if (newNode->GetShader().IsEmpty())
+            {
                 newNode->SetShader("sun");
+            }
             newNode->SetLockViewer(false);
             if (!newNode->HasParam(nShaderState::Intensity0))
-                newNode->SetFloat(nShaderState::Intensity0, 1.0);
+                newNode->SetFloat(nShaderState::Intensity0, 1.0f);
             if (!newNode->HasParam(nShaderState::MatDiffuse))
-                newNode->SetVector(nShaderState::MatDiffuse, vector4(1,1,1,1));
+                newNode->SetVector(nShaderState::MatDiffuse, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::Move))
-                newNode->SetVector(nShaderState::Move, vector4(0,1,0,0));
+                newNode->SetVector(nShaderState::Move, vector4(0.0f, 1.0f, 0.0f, 0.0f));
             if (!newNode->HasParam(nShaderState::ScaleVector))
-                newNode->SetVector(nShaderState::ScaleVector, vector4(1,1,1,1.5));
+                newNode->SetVector(nShaderState::ScaleVector, vector4(1.0f, 1.0f, 1.0f, 1.5f));
             if (!newNode->HasParam(nShaderState::Position))
-                newNode->SetVector(nShaderState::Position, vector4(40,-90,20,0));
+                newNode->SetVector(nShaderState::Position, vector4(40.0f, -90.0f, 20.0f, 0.0f));
             else
             {
                 vector4 vec = newNode->GetVector(nShaderState::Position);
-                vec.y = -90;
+                vec.y = -90.0f;
                 newNode->SetVector(nShaderState::Position, vec);
             }
 
             if (!newNode->HasParam(nShaderState::LightDiffuse))
-                newNode->SetVector(nShaderState::LightDiffuse, vector4(1,1,1,1));
+                newNode->SetVector(nShaderState::LightDiffuse, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::LightDiffuse1))
-                newNode->SetVector(nShaderState::LightDiffuse1, vector4(0.1f,0.1f,0.15f,1));
+                newNode->SetVector(nShaderState::LightDiffuse1, vector4(0.1f, 0.1f, 0.15f, 1.0f));
             break;
         }
         case nSkyNode::LightElement:
         {
-            n_assert(elementPtr->IsInstanceOf(this->kernelServer->FindClass("nlightnode")));
+            n_assert(elementPtr->IsInstanceOf("nlightnode"));
             nLightNode* newNode = (nLightNode*) elementPtr;
 
             newNode->SetInt(nShaderState::LightType, nLight::Directional);
             if (!newNode->HasParam(nShaderState::LightDiffuse))
-                newNode->SetVector(nShaderState::LightDiffuse, vector4(1,1,1,1));
+                newNode->SetVector(nShaderState::LightDiffuse, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::LightSpecular))
-                newNode->SetVector(nShaderState::LightSpecular, vector4(0.5,0.5,0.5,1));
+                newNode->SetVector(nShaderState::LightSpecular, vector4(0.5f, 0.5f, 0.5f, 1.0f));
             if (!newNode->HasParam(nShaderState::LightAmbient))
-                newNode->SetVector(nShaderState::LightAmbient, vector4(0.1f,0.1f,0.15f,1));
+                newNode->SetVector(nShaderState::LightAmbient, vector4(0.1f, 0.1f, 0.15f, 1.0f));
             if (!newNode->HasParam(nShaderState::LightDiffuse1))
-                newNode->SetVector(nShaderState::LightDiffuse1, vector4(0.3f,0.3f,0.3f,1));
+                newNode->SetVector(nShaderState::LightDiffuse1, vector4(0.3f, 0.3f, 0.3f, 1.0f));
             if (!newNode->HasParam(nShaderState::LightRange))
                 newNode->SetFloat(nShaderState::LightRange, 5000.0f);
-            newNode->SetLocalBox(bbox3(vector3(0,0,0),vector3(5000,5000,5000)));
+            newNode->SetLocalBox(bbox3(vector3::zero, vector3(5000.0f, 5000.0f, 5000.0f)));
             break;
         }
         case nSkyNode::CloudElement:
         {
-            n_assert(elementPtr->IsInstanceOf(this->kernelServer->FindClass("nshapenode")));
+            n_assert(elementPtr->IsInstanceOf("nshapenode"));
             nShapeNode* newNode = (nShapeNode*) elementPtr;
 
-            if (!newNode->GetMesh())
+            if (newNode->GetMesh().IsEmpty())
             {
                 newNode->SetMesh("meshes:examples/skyElements_s_0.n3d2");
                 newNode->SetGroupIndex(2);
             }
-            if (!strcmp(newNode->GetShader(), ""))
+            if (newNode->GetShader().IsEmpty())
+            {
                 newNode->SetShader("cloud");
+            }
             newNode->SetLockViewer(true);
             if (!newNode->GetTexture(nShaderState::BumpMap0))
                 newNode->SetTexture(nShaderState::BumpMap0, "textures:environment/cloud_bump_ripple.dds");
@@ -242,14 +248,14 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
             if (!newNode->HasParam(nShaderState::Move))
                 newNode->SetVector(nShaderState::Move, vector4(0.2f, 0.1f, 0.15f, 0.08f));
             if (!newNode->HasParam(nShaderState::CloudMod))
-                newNode->SetVector(nShaderState::CloudMod, vector4(0.0f,1.0f,0.0f,0));
-                newNode->SetVector(nShaderState::CloudPos, vector4(0.0f,0.0f,0.0f,0.0f));
+                newNode->SetVector(nShaderState::CloudMod, vector4(0.0f, 1.0f, 0.0f, 0.0f));
+                newNode->SetVector(nShaderState::CloudPos, vector4(0.0f, 0.0f, 0.0f, 0.0f));
             if (!newNode->HasParam(nShaderState::CloudGrad))
-                newNode->SetVector(nShaderState::CloudGrad, vector4(0.0f,3.0f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::CloudGrad, vector4(0.0f, 3.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::LightDiffuse))
-                newNode->SetVector(nShaderState::LightDiffuse, vector4(1.0f,1.0f,1.0f,1));
+                newNode->SetVector(nShaderState::LightDiffuse, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::LightDiffuse1))
-                newNode->SetVector(nShaderState::LightDiffuse1, vector4(0.1f,0.1f,0.15f,1));
+                newNode->SetVector(nShaderState::LightDiffuse1, vector4(0.1f, 0.1f, 0.15f, 1.0f));
             if (!newNode->HasParam(nShaderState::SunRange))
                 newNode->SetFloat(nShaderState::SunRange, 1.0f);
             if (!newNode->HasParam(nShaderState::Density))
@@ -263,7 +269,7 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
             if (!newNode->HasParam(nShaderState::Glow))
                 newNode->SetFloat(nShaderState::Glow, 0.5f);
             if (!newNode->HasParam(nShaderState::Position))
-                newNode->SetVector(nShaderState::Position, vector4(1.0f,3.0f,1.0f,0));
+                newNode->SetVector(nShaderState::Position, vector4(1.0f, 3.0f, 1.0f, 0.0f));
             if (!newNode->HasParam(nShaderState::Weight))
                 newNode->SetFloat(nShaderState::Weight, 0.7f);
             if (!newNode->HasParam(nShaderState::BumpFactor))
@@ -272,16 +278,18 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
         }
         case nSkyNode::StarElement:
         {
-            n_assert(elementPtr->IsInstanceOf(this->kernelServer->FindClass("nshapenode")));
-            nShapeNode* newNode = (nShapeNode*) elementPtr;
+            n_assert(elementPtr->IsInstanceOf("nshapenode"));
+            nShapeNode* newNode = (nShapeNode*)elementPtr;
 
-            if (!newNode->GetMesh())
+            if (newNode->GetMesh().IsEmpty())
             {
                 newNode->SetMesh("meshes:examples/skyElements_s_0.n3d2");
                 newNode->SetGroupIndex(1);
             }
-            if (!strcmp(newNode->GetShader(), ""))
+            if (newNode->GetShader().IsEmpty())
+            {
                 newNode->SetShader("stars");
+            }
             if (!newNode->GetTexture(nShaderState::DiffMap0))
                 newNode->SetTexture(nShaderState::DiffMap0, "textures:environment/stars_tile.dds");
             if (!newNode->GetTexture(nShaderState::DiffMap1))
@@ -289,9 +297,9 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
             if (!newNode->HasParam(nShaderState::Intensity0))
                 newNode->SetFloat(nShaderState::Intensity0, 1.0f);
             if (!newNode->HasParam(nShaderState::Saturation))
-                newNode->SetVector(nShaderState::Saturation, vector4(1.0f,1.0f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::Saturation, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             if (!newNode->HasParam(nShaderState::Brightness))
-                newNode->SetVector(nShaderState::Brightness, vector4(1.0f,1.0f,1.0f,1.0f));
+                newNode->SetVector(nShaderState::Brightness, vector4(1.0f, 1.0f, 1.0f, 1.0f));
             break;
         }
         default:
@@ -317,19 +325,19 @@ nSkyNode::AddState(const nString& destName, const nString& stateName, float time
     int i;
     int j;
     bool addstate_ok = false;
-    for (i=0; i < this->elements.Size(); i++)
+    for (i = 0; i < this->elements.Size(); i++)
     {
         if (destName == nString(this->elements[i].refElement->GetName()))
         {
             kernelServer->PushCwd(this);
-            nSkyState* statePtr = (nSkyState*) this->kernelServer->Lookup(stateName.Get());
+            nSkyState* statePtr = (nSkyState*)this->kernelServer->Lookup(stateName.Get());
             kernelServer->PopCwd();
             if (statePtr)
             {
                 StateGroup newState;
                 newState.time = time;
                 newState.refState.set(statePtr);
-                for (j=0; j < this->elements[i].states.Size(); j++)
+                for (j = 0; j < this->elements[i].states.Size(); j++)
                 {
                     if (time < this->elements[i].states[j].time)
                     {
@@ -400,30 +408,30 @@ nSkyNode::NewElement(nSkyNode::ElementType type, const nString& name)
 
    switch (type)
    {
-    case nSkyNode::SkyElement:
-    case nSkyNode::SunElement:
-    case nSkyNode::CloudElement:
-    case nSkyNode::StarElement:
+        case nSkyNode::SkyElement:
+        case nSkyNode::SunElement:
+        case nSkyNode::CloudElement:
+        case nSkyNode::StarElement:
         {
             this->kernelServer->PushCwd(this);
-            nShapeNode* newNode = (nShapeNode*) kernelServer->New("nshapenode", name.Get());
+            nShapeNode* newNode = (nShapeNode*)kernelServer->New("nshapenode", name.Get());
             this->kernelServer->PopCwd();
             this->AddElement(type, name);
             break;
         }
-    case nSkyNode::LightElement:
+        case nSkyNode::LightElement:
         {
             this->kernelServer->PushCwd(this);
-            nLightNode* newNode = (nLightNode*) kernelServer->New("nlightnode", name.Get());
+            nLightNode* newNode = (nLightNode*)kernelServer->New("nlightnode", name.Get());
             this->kernelServer->PopCwd();
             this->AddElement(type, name);
             break;
         }
-   case nSkyNode::GenericElement:
-   default:
+       case nSkyNode::GenericElement:
+       default:
        {
             this->kernelServer->PushCwd(this);
-            nShapeNode* newNode = (nShapeNode*) kernelServer->New("nshapenode", name.Get());
+            nShapeNode* newNode = (nShapeNode*)kernelServer->New("nshapenode", name.Get());
             this->kernelServer->PopCwd();
             this->AddElement(nSkyNode::GenericElement, name);
             break;
@@ -472,9 +480,9 @@ int
 nSkyNode::FindElement(const nString& name)
 {
     int i;
-    for (i=0; i < this->elements.Size() ; i++)
+    for (i = 0; i < this->elements.Size() ; i++)
     {
-        if (name == nString(elements[i].refElement->GetName())) return i;
+        if (name == elements[i].refElement->GetName()) return i;
     }
     return -1;
 }
@@ -488,9 +496,9 @@ nSkyNode::FindState(int elementNr, const nString& stateName)
 {
 
     int i;
-    for (i=0; i < this->elements[elementNr].states.Size() ; i++)
+    for (i = 0; i < this->elements[elementNr].states.Size() ; i++)
     {
-        if (stateName == nString(elements[elementNr].states[i].refState->GetName())) return i;
+        if (stateName == elements[elementNr].states[i].refState->GetName()) return i;
     }
     return -1;
 }
@@ -542,7 +550,7 @@ nSkyNode::SortOutParams(int element, ParamList& paramList)
                 {
                     int i;
                     i = paramList.vectorParams.FindIndex(nShaderState::Position);
-                    if (i != -1) paramList.vectorParams.Set(i , nShaderState::InvalidParameter);
+                    if (i != -1) paramList.vectorParams.Set(i, nShaderState::InvalidParameter);
                     break;
                 }
             case nSkyNode::LightElement:
@@ -553,7 +561,7 @@ nSkyNode::SortOutParams(int element, ParamList& paramList)
                 {
                     int i;
                     i = paramList.vectorParams.FindIndex(nShaderState::Move);
-                    if (i != -1) paramList.vectorParams.Set(i , nShaderState::InvalidParameter);
+                    if (i != -1) paramList.vectorParams.Set(i, nShaderState::InvalidParameter);
                     break;
                 }
             case nSkyNode::GenericElement:
@@ -609,8 +617,8 @@ nSkyNode::UpdateSky(float newTime)
     {
         // time exception
         if (this->elements[iEl].lastRefresh > this->worldTime) this->elements[iEl].lastRefresh = this->worldTime - this->elements[iEl].refreshTime;
-        // only update element if refreshtime elapsed
-        // never update element if refreshtime is set to -1
+        // only update element if refresh time elapsed
+        // never update element if refresh time is set to -1
         if ((this->elements[iEl].refreshTime != -1) &&
         ((this->elements[iEl].lastRefresh + this->elements[iEl].refreshTime) <= this->worldTime))
         {
@@ -645,7 +653,7 @@ nSkyNode::UpdateSky(float newTime)
 
                 int iPa;
                 // apply state vector params to element
-                for (iPa=0; iPa < paramList.vectorParams.Size(); iPa++)
+                for (iPa = 0; iPa < paramList.vectorParams.Size(); iPa++)
                 {
                     if (nShaderState::InvalidParameter != paramList.vectorParams[iPa])
                     {
@@ -662,7 +670,7 @@ nSkyNode::UpdateSky(float newTime)
                 }
 
                 // apply state float params to element
-                for (iPa=0; iPa < paramList.floatParams.Size(); iPa++)
+                for (iPa = 0; iPa < paramList.floatParams.Size(); iPa++)
                 {
                     if (nShaderState::InvalidParameter != paramList.floatParams[iPa])
                     {
@@ -679,7 +687,7 @@ nSkyNode::UpdateSky(float newTime)
                 }
 
                 // apply state int params to element
-                for (iPa=0; iPa < paramList.intParams.Size(); iPa++)
+                for (iPa = 0; iPa < paramList.intParams.Size(); iPa++)
                 {
                     if (nShaderState::InvalidParameter != paramList.intParams[iPa])
                     {
@@ -700,31 +708,28 @@ nSkyNode::UpdateSky(float newTime)
                 switch (this->elements[iEl].type)
                 {
                     case nSkyNode::SkyElement:
+                        //apply linked elements
+                        for (iLk = 0; iLk < this->elements[iEl].linkTo.Size(); iLk++)
                         {
-                            //apply linked elements
-                            for (iLk = 0; iLk < this->elements[iEl].linkTo.Size(); iLk++)
+                            if (this->elements[iEl].linkTo[iLk] != -1)
                             {
-                                if (this->elements[iEl].linkTo[iLk] != -1)
+                                switch (this->elements[this->elements[iEl].linkTo[iLk]].type)
                                 {
-                                    switch (this->elements[this->elements[iEl].linkTo[iLk]].type)
+                                case nSkyNode::SunElement:
                                     {
-                                    case nSkyNode::SunElement:
-                                        {
-                                            vec0 = this->elements[this->elements[iEl].linkTo[iLk]].refElement->GetPosition();
-                                            this->elements[iEl].refElement->SetVector(nShaderState::Position, vec0);
+                                        vec0 = this->elements[this->elements[iEl].linkTo[iLk]].refElement->GetPosition();
+                                        this->elements[iEl].refElement->SetVector(nShaderState::Position, vec0);
 
-                                            vec0 = this->elements[this->elements[iEl].linkTo[iLk]].refElement->GetVector(nShaderState::MatDiffuse);
-                                            vec0.w = 1;
-                                            vec0.saturate();
-                                            this->elements[iEl].refElement->SetVector(nShaderState::SunColor, vec0);
-                                            break;
-                                        }
+                                        vec0 = this->elements[this->elements[iEl].linkTo[iLk]].refElement->GetVector(nShaderState::MatDiffuse);
+                                        vec0.w = 1;
+                                        vec0.saturate();
+                                        this->elements[iEl].refElement->SetVector(nShaderState::SunColor, vec0);
+                                        break;
                                     }
                                 }
                             }
-
-                            break;
                         }
+                        break;
                     case nSkyNode::SunElement:
                         {
                             // compute position data
@@ -881,7 +886,7 @@ nSkyNode::UpdateSky(float newTime)
 void
 nSkyNode::SetFaceToViewer(int element)
 {
-    polar2 viewerAngles(- this->elements[element].refElement->GetPosition());
+    polar2 viewerAngles(-this->elements[element].refElement->GetPosition());
     viewerAngles.theta -= N_PI*0.5f;
     matrix44 m;
     m.ident();
@@ -897,13 +902,13 @@ nSkyNode::SetFaceToViewer(int element)
 vector3
 nSkyNode::GetSphericalCoordinates(vector3 angles)
 {
-    angles.x +=90;
-    angles *=N_PI/180;
+    angles.x += 90.0f;
+    angles *= N_PI/180.0f;
     vector3 pos;
     pos.x = n_sin(angles.x) * n_cos(angles.y);
     pos.y = n_sin(angles.x) * n_sin(angles.y);
     pos.z = n_cos(angles.x);
-    pos.rotate(vector3(1,0,0),angles.z);
+    pos.rotate(vector3(1.0f, 0.0f, 0.0f), angles.z);
     return pos;
 }
 
@@ -1020,7 +1025,7 @@ nSkyNode::SetStateTime(int elementNr,int stateNr, float time)
     int state0;
     int state1;
     this->FindStates(elementNr, time, state0, state1);
-    if ((state0==stateNr) || (state1==stateNr))
+    if ((state0 == stateNr) || (state1 == stateNr))
     {
         this->elements[elementNr].states[stateNr].time = time;
         return stateNr;
@@ -1202,11 +1207,11 @@ nSkyNode::GetChannel()
 vector3
 nSkyNode::GetCameraPos()
 {
-    vector3 cameraPos;
     matrix44 viewMatrix = nGfxServer2::Instance()->GetTransform(nGfxServer2::View);
     matrix44 _viewMatrix = viewMatrix;
-    _viewMatrix.pos_component() = vector3(0.0,0.0,0.0);
+    _viewMatrix.pos_component() = vector3::zero;
     _viewMatrix.invert();
-    _viewMatrix.mult(viewMatrix.pos_component(),cameraPos);
+    vector3 cameraPos;
+    _viewMatrix.mult(viewMatrix.pos_component(), cameraPos);
     return cameraPos;
 }

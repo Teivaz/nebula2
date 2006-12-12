@@ -31,7 +31,7 @@ public:
     /// destructor
     virtual ~nTransformNode();
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *ps);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// called by nSceneServer when object is attached to scene
     virtual void Attach(nSceneServer* sceneServer, nRenderContext* renderContext);
     /// indicate the scene server that this node provides transformation
