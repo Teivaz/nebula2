@@ -90,7 +90,7 @@ nAppLauncher::LaunchWait() const
     The path of executable file and directory are should be specified
     before launching the application by calling nAppLauncher::SetExecutable() and
     nAppLauncher::SetWorkingDirectory().
-    And aguments can be specified by calling nAppLauncher::SetArguments() if
+    And arguments can be specified by calling nAppLauncher::SetArguments() if
     those are needed.
 
     - 15-Oct-04 kims fixed a string invalidation bug on 'execmangled' and
@@ -153,11 +153,11 @@ nAppLauncher::LaunchHelper(bool waitForChild) const
 
     // If executable path contains '/' then we convert it to absolute
     // path. Otherwise we will use `execvp' to resolve executable name
-    // using `PATH' enviroment variable.
+    // using `PATH' environment variable.
     nString execCmd;
     if (this->exec.FindCharIndex('/', 0) != -1 && this->exec.Get()[0] != '/')
     {
-        // NOTE: This is `glibc' exstension to `POSIX.1'.
+        // NOTE: This is `glibc' extension to `POSIX.1'.
         char *cwd = getcwd(NULL, 0);
         execCmd.Format("%s/%s", cwd, this->exec.Get());
         free(cwd);

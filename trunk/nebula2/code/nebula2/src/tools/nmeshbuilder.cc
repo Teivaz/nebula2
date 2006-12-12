@@ -8,9 +8,9 @@
 /**
 */
 nMeshBuilder::nMeshBuilder() :
-    vertexArray((1<<15), (1<<15)),
-    triangleArray((1<<15), (1<<15)),
-    edgeArray((1<<15), (1<<15))
+    vertexArray(1 << 15, 1 << 15),
+    triangleArray(1 << 15, 1 << 15),
+    edgeArray(1 << 15, 1 << 15)
 {
     // empty
 }
@@ -32,10 +32,10 @@ nMeshBuilder::~nMeshBuilder()
 int
 nMeshBuilder::GetNumGroupTriangles(int groupId, int materialId, int usageFlags, int startTriangleIndex) const
 {
-    int triIndex = startTriangleIndex;
+    int triIndex;
     int maxTriIndex = this->triangleArray.Size();
     int numTris = 0;
-    for (; triIndex < maxTriIndex; triIndex++)
+    for (triIndex = startTriangleIndex; triIndex < maxTriIndex; triIndex++)
     {
         if ((this->triangleArray[triIndex].GetGroupId() == groupId) &&
             (this->triangleArray[triIndex].GetMaterialId() == materialId) &&
@@ -116,9 +116,9 @@ nMeshBuilder::UpdateTriangleIds(const nArray<Group>& groupMap)
         const Group& group = groupMap[groupIndex];
         int triIndex = group.GetFirstTriangle();
         int maxTriIndex = triIndex + group.GetNumTriangles();
-        for (; triIndex < maxTriIndex; triIndex++)
+        while (triIndex < maxTriIndex)
         {
-            Triangle& tri = this->GetTriangleAt(triIndex);
+            Triangle& tri = this->GetTriangleAt(triIndex++);
             tri.SetGroupId(group.GetId());
             tri.SetMaterialId(group.GetMaterialId());
             tri.SetUsageFlags(group.GetUsageFlags());
@@ -647,7 +647,7 @@ nMeshBuilder::Cleanup(nArray< nArray<int> >* collapseMap)
         }
     }
 
-    // initialize the collaps map so that for each new (collapsed)
+    // initialize the collapse map so that for each new (collapsed)
     // index it contains a list of old vertex indices which have been
     // collapsed into the new vertex
     if (collapseMap)
@@ -928,13 +928,13 @@ nMeshBuilder::ForceVertexComponents(int wantedMask)
             int compIndex;
             for (compIndex = 0; compIndex < Vertex::NUM_VERTEX_COMPONENTS; compIndex++)
             {
-                int curMask = (1 << compIndex);
-                if ((hasMask & curMask) && (!(wantedMask & curMask)))
+                int curMask = 1 << compIndex;
+                if ((hasMask & curMask) && !(wantedMask & curMask))
                 {
                     // delete the vertex component
                     vertex.DelComponent((Vertex::Component) curMask);
                 }
-                else if ((!(hasMask & curMask)) && (wantedMask & curMask))
+                else if (!(hasMask & curMask) && (wantedMask & curMask))
                 {
                     // add the vertex component
                     vertex.ZeroComponent((Vertex::Component) curMask);
@@ -1193,14 +1193,14 @@ nMeshBuilder::Split(const plane& clipPlane,
                     // reuse the existing triangle (but only the
                     // first positive triangle may do this!)
                     this->GetTriangleAt(triangleIndex).SetVertexIndices(posVertexIndices[0],
-                                                                        posVertexIndices[i + 1],
-                                                                        posVertexIndices[i + 2]);
+                                                                        posVertexIndices[i+1],
+                                                                        posVertexIndices[i+2]);
                 }
                 else
                 {
                     newTri.SetVertexIndices(posVertexIndices[0],
-                                            posVertexIndices[i + 1],
-                                            posVertexIndices[i + 2]);
+                                            posVertexIndices[i+1],
+                                            posVertexIndices[i+2]);
                     this->AddTriangle(newTri);
                 }
                 numPosTriangles++;
@@ -1209,8 +1209,8 @@ nMeshBuilder::Split(const plane& clipPlane,
             for (i = 0; i < (numNegVertexIndices - 2); i++)
             {
                 newTri.SetVertexIndices(negVertexIndices[0],
-                                        negVertexIndices[i + 1],
-                                        negVertexIndices[i + 2]);
+                                        negVertexIndices[i+1],
+                                        negVertexIndices[i+2]);
                 this->AddTriangle(newTri);
                 numNegTriangles++;
             }
@@ -1395,7 +1395,7 @@ nMeshBuilder::CheckForDuplicatedFaces()
 
 // FIXME: temporarily commented out because of error with quad geometry
 /*
-    // create temporary meshbuilder and erase any vertexcomponent but the COORD, then search for duplicated faces
+    // create temporary meshbuilder and erase any vertex component but the COORD, then search for duplicated faces
     nMeshBuilder tempBuilder = *this;
     tempBuilder.ForceVertexComponents(Vertex::COORD);
     tempBuilder.Cleanup(0);
@@ -1418,7 +1418,7 @@ nMeshBuilder::CheckForDuplicatedFaces()
 
     return errors;
 */
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -1454,8 +1454,8 @@ nMeshBuilder::SearchDuplicatedFaces()
             if (triangleReferences[index0].At(k)->Equals(this->triangleArray[i]))
             {
                 found = true;
-            };
-        };
+            }
+        }
 
         if (found)
         {
@@ -1468,11 +1468,11 @@ nMeshBuilder::SearchDuplicatedFaces()
             triangleReferences[index0].PushBack(&this->triangleArray[i]);
             triangleReferences[index1].PushBack(&this->triangleArray[i]);
             triangleReferences[index2].PushBack(&this->triangleArray[i]);
-        };
-    };
+        }
+    }
 
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 /**

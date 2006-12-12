@@ -63,27 +63,27 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg               = args.GetBoolArg("-help");
-    nString inFileArg          = args.GetStringArg("-in", 0);
-    nString outFileArg         = args.GetStringArg("-out", 0);
+    nString inFileArg          = args.GetStringArg("-in");
+    nString outFileArg         = args.GetStringArg("-out");
     bool oldN3d2Loader         = args.GetBoolArg("-oldn3d2");
-    nString appendFileArg      = args.GetStringArg("-append", 0);
+    nString appendFileArg      = args.GetStringArg("-append");
     bool cleanArg              = args.GetBoolArg("-clean");
     bool tangentNoSplitArg     = args.GetBoolArg("-tangent");
     bool tangentSplitArg       = args.GetBoolArg("-tangentsplit");
     bool edgeArg               = args.GetBoolArg("-edge");
-    nString groupArg           = args.GetStringArg("-group", 0);
-    nString groupRenameArg     = args.GetStringArg("-grename", 0);
-    float txArg                = args.GetFloatArg("-tx", 0.0f);
-    float tyArg                = args.GetFloatArg("-ty", 0.0f);
-    float tzArg                = args.GetFloatArg("-tz", 0.0f);
-    float rxArg                = args.GetFloatArg("-rx", 0.0f);
-    float ryArg                = args.GetFloatArg("-ry", 0.0f);
-    float rzArg                = args.GetFloatArg("-rz", 0.0f);
+    nString groupArg           = args.GetStringArg("-group");
+    nString groupRenameArg     = args.GetStringArg("-grename");
+    float txArg                = args.GetFloatArg("-tx");
+    float tyArg                = args.GetFloatArg("-ty");
+    float tzArg                = args.GetFloatArg("-tz");
+    float rxArg                = args.GetFloatArg("-rx");
+    float ryArg                = args.GetFloatArg("-ry");
+    float rzArg                = args.GetFloatArg("-rz");
     float sxArg                = args.GetFloatArg("-sx", 1.0f);
     float syArg                = args.GetFloatArg("-sy", 1.0f);
     float szArg                = args.GetFloatArg("-sz", 1.0f);
-    float scaleArg             = args.GetFloatArg("-scale", 0.0f);
-    nString delComponentArg    = args.GetStringArg("-delcomponent", 0);
+    float scaleArg             = args.GetFloatArg("-scale");
+    nString delComponentArg    = args.GetStringArg("-delcomponent");
 
     // show help?
     if (helpArg)
@@ -120,7 +120,7 @@ main(int argc, const char** argv)
     }
 
     // error if no input file given
-    if (0 == inFileArg)
+    if (inFileArg.IsEmpty())
     {
         printf("nmeshtool error: No input file! (type 'nmeshtool -help' for help)\n");
         return 5;

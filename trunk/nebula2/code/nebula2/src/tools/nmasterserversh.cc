@@ -29,8 +29,8 @@ main(int argc, const char** argv)
     // get cmd line args
 
     bool helpArg            = args.GetBoolArg("-help");
-    nString startupArg      = args.GetStringArg("-startup", 0);
-    nString runArg          = args.GetStringArg("-run", 0);
+    nString startupArg      = args.GetStringArg("-startup");
+    nString runArg          = args.GetStringArg("-run");
     nString scriptServerArg = args.GetStringArg("-scriptserver", "ntclserver");
     nString sqlServerArg    = args.GetStringArg("-sqlserver", "nsqlite3server");
 
@@ -54,16 +54,16 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(nnebula);
     kernelServer.AddPackage(nnetwork);
 
-    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg.Get(), "/sys/servers/script");
+    nScriptServer* scriptServer = (nScriptServer*)kernelServer.New(scriptServerArg.Get(), "/sys/servers/script");
     if (0 == scriptServer)
     {
         n_printf("Could not create script server of class '%s'\n", scriptServerArg.Get());
         return 10;
     }
 
-    nResourceServer* resServer = (nResourceServer*) kernelServer.New("nresourceserver", "/sys/servers/resource");
-    nSqlServer* sqlServer = (nSqlServer*) kernelServer.New("nsqlite3server", "/sys/servers/sql");
-    nBuddyDatabase* buddydatabase = (nBuddyDatabase*) kernelServer.New("nbuddydatabase", "/sys/servers/buddydatabase");
+    nResourceServer* resServer = (nResourceServer*)kernelServer.New("nresourceserver", "/sys/servers/resource");
+    nSqlServer* sqlServer = (nSqlServer*)kernelServer.New("nsqlite3server", "/sys/servers/sql");
+    nBuddyDatabase* buddydatabase = (nBuddyDatabase*)kernelServer.New("nbuddydatabase", "/sys/servers/buddydatabase");
     nUserController usercontroller;
 
     buddydatabase->Open();

@@ -497,7 +497,7 @@ nBinScriptServer::GetObj(nFile* file, nRoot*& val)
     nString objHandle;
     if (this->GetString(file, objHandle))
     {
-        if (strcmp(objHandle.Get(), "null") == 0)
+        if (objHandle == "null")
         {
             // special case null object
             val = 0;

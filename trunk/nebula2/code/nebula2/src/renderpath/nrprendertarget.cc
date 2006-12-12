@@ -38,7 +38,6 @@ nRpRenderTarget::Validate()
     if (!this->refTexture.isvalid())
     {
         nGfxServer2* gfxServer = nGfxServer2::Instance();
-        const nDisplayMode2& mode = gfxServer->GetDisplayMode();
         int w, h;
         if ((this->width > 0) && (this->height > 0))
         {
@@ -48,10 +47,11 @@ nRpRenderTarget::Validate()
         }
         else
         {
+            const nDisplayMode2& mode = gfxServer->GetDisplayMode();
             // use relative width
             w = int(mode.GetWidth() * this->relSize);
             h = int(mode.GetHeight() * this->relSize);
         }
-        this->refTexture = nGfxServer2::Instance()->NewRenderTarget(this->name, w, h, this->format, nTexture2::RenderTargetColor);
+        this->refTexture = gfxServer->NewRenderTarget(this->name, w, h, this->format, nTexture2::RenderTargetColor);
     }
 }

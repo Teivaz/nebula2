@@ -66,7 +66,7 @@ private:
     IDirect3DIndexBuffer9* indexBuffer;
     IDirect3DVertexDeclaration9* vertexDeclaration;
     void* privVertexBuffer;                     // valid if Usage==ReadOnly
-    void* privIndexBuffer;                      // valif if Usage==ReadOnly
+    void* privIndexBuffer;                      // valid if Usage==ReadOnly
 };
 
 //------------------------------------------------------------------------------
@@ -101,7 +101,6 @@ nD3D9Mesh::GetVertexDeclaration()
     n_assert(this->IsLoaded());
     return this->vertexDeclaration;
 }
-
 //------------------------------------------------------------------------------
 #endif
 

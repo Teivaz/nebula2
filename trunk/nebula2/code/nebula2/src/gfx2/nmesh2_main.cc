@@ -94,7 +94,7 @@ nMesh2::LoadResource()
 {
     n_assert(Unloaded == this->GetState());
 
-    nString filename(this->GetFilename().Get());
+    nString filename(this->GetFilename());
     bool success = false;
     if (filename.IsEmpty())
     {
@@ -136,7 +136,7 @@ nMesh2::LoadResource()
     {
         nMeshLoader* meshLoader = 0;
 
-        // select meshloader
+        // select mesh loader
         if (filename.CheckExtension("nvx2"))
         {
             meshLoader = n_new(nNvx2Loader);
@@ -264,15 +264,12 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     n_assert(meshLoader);
     n_assert(this->IsUnloaded());
 
-    bool res;
-    nString filename = this->GetFilename();
-
     // configure a mesh loader and load header
-    meshLoader->SetFilename(filename.Get());
+    meshLoader->SetFilename(this->GetFilename());
     meshLoader->SetIndexType(nMeshLoader::Index16);
     if (!meshLoader->Open())
     {
-        n_error("nMesh2: could not open file '%s'!\n", filename.Get());
+        n_error("nMesh2: could not open file '%s'!\n", this->GetFilename().Get());
         return false;
     }
 
@@ -303,7 +300,7 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     // load vertex buffer and index buffer
     float* vertexBufferPtr = this->LockVertices();
     ushort* indexBufferPtr = this->LockIndices();
-    res = meshLoader->ReadVertices(vertexBufferPtr, vbSize);
+    bool res = meshLoader->ReadVertices(vertexBufferPtr, vbSize);
     n_assert(res);
     res = meshLoader->ReadIndices(indexBufferPtr, ibSize);
     n_assert(res);
@@ -323,7 +320,7 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
         this->UnlockEdges();
     }
 
-    // close the meshloader
+    // close the mesh loader
     meshLoader->Close();
 
     return true;

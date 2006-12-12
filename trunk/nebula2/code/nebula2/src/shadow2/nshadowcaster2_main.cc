@@ -113,10 +113,10 @@ nShadowCaster2::UpdateFaceNormalsAndMidpoints(nMesh2* mesh)
     int faceIndex;
     for (faceIndex = 0; faceIndex < numFaces; faceIndex++)
     {
-        int ii = startIndex + faceIndex * 3;
-        const vector3& v0 = *(vector3*)(vertices + indices[ii] * vertexWidth);
-        const vector3& v1 = *(vector3*)(vertices + indices[ii + 1] * vertexWidth);
-        const vector3& v2 = *(vector3*)(vertices + indices[ii + 2] * vertexWidth);
+        int i = startIndex + faceIndex * 3;
+        const vector3& v0 = *(vector3*)(vertices + indices[i] * vertexWidth);
+        const vector3& v1 = *(vector3*)(vertices + indices[i+1] * vertexWidth);
+        const vector3& v2 = *(vector3*)(vertices + indices[i+2] * vertexWidth);
         this->faces[faceIndex].normal = (v1 - v0) * (v2 - v0);
         this->faces[faceIndex].normal.norm();
         this->faces[faceIndex].point  = v0;
@@ -261,10 +261,10 @@ nShadowCaster2::WriteCapIndices(bool lit)
             const Face& curFace = this->faces[faceIndex];
             if (!curFace.lit)
             {
-                int ii = startIndex + faceIndex * 3;
-                *this->indexBufferCurrent++ = this->srcIndices[ii] + 1;
-                *this->indexBufferCurrent++ = this->srcIndices[ii + 2] + 1;
-                *this->indexBufferCurrent++ = this->srcIndices[ii + 1] + 1;
+                int i = startIndex + faceIndex * 3;
+                *this->indexBufferCurrent++ = this->srcIndices[i] + 1;
+                *this->indexBufferCurrent++ = this->srcIndices[i+2] + 1;
+                *this->indexBufferCurrent++ = this->srcIndices[i+1] + 1;
             }
         }
     }
@@ -278,10 +278,10 @@ nShadowCaster2::WriteCapIndices(bool lit)
             const Face& curFace = this->faces[faceIndex];
             if (curFace.lit)
             {
-                int ii = startIndex + faceIndex * 3;
-                *this->indexBufferCurrent++ = this->srcIndices[ii];
-                *this->indexBufferCurrent++ = this->srcIndices[ii + 2];
-                *this->indexBufferCurrent++ = this->srcIndices[ii + 1];
+                int i = startIndex + faceIndex * 3;
+                *this->indexBufferCurrent++ = this->srcIndices[i];
+                *this->indexBufferCurrent++ = this->srcIndices[i+2];
+                *this->indexBufferCurrent++ = this->srcIndices[i+1];
             }
         }
     }
@@ -328,7 +328,7 @@ nShadowCaster2::WriteSideIndices()
     ushort numEdges  = meshGroup.GetNumEdges();
     ushort startFace = meshGroup.GetFirstIndex() / 3;
     ushort edgeIndex;
-    for (edgeIndex = startEdge; edgeIndex < (startEdge + numEdges); edgeIndex++)
+    for (edgeIndex = startEdge; edgeIndex < startEdge + numEdges; edgeIndex++)
     {
         const nMesh2::Edge& edge = this->srcEdges[edgeIndex];
 

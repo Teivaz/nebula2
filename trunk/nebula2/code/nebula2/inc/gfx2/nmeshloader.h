@@ -99,9 +99,9 @@ public:
     /// destructor
     virtual ~nMeshLoader();
     /// set filename
-    void SetFilename(const char* name);
+    void SetFilename(const nString& name);
     /// get filename
-    const char* GetFilename() const;
+    const nString& GetFilename() const;
     /// 16 or 32 bit indices (default is 16)
     void SetIndexType(IndexType t);
     /// get index type
@@ -189,9 +189,9 @@ nMeshLoader::~nMeshLoader()
 */
 inline
 void
-nMeshLoader::SetFilename(const char* name)
+nMeshLoader::SetFilename(const nString& name)
 {
-    n_assert(name);
+    n_assert(name.IsValid());
     this->filename = name;
 }
 
@@ -199,10 +199,10 @@ nMeshLoader::SetFilename(const char* name)
 /**
 */
 inline
-const char*
+const nString&
 nMeshLoader::GetFilename() const
 {
-    return this->filename.Get();
+    return this->filename;
 }
 
 //------------------------------------------------------------------------------

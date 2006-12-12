@@ -82,10 +82,7 @@ nGuiDirLister::UpdateContent()
             {
                 continue;
             }
-            if ((0 == strcmp(entryName.Get(), ".")) ||
-                (0 == strcmp(entryName.Get(), "..")) ||
-                (0 == strcmp(entryName.Get(), "CVS")) ||
-                (0 == strcmp(entryName.Get(), ".svn")))
+            if ((entryName == ".") || (entryName == "..") || (entryName == "CVS") || (entryName == ".svn"))
             {
                 continue;
             }

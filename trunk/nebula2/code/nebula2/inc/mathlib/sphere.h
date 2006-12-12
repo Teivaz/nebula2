@@ -129,8 +129,8 @@ sphere::intersects(const sphere& s) const
 {
     vector3 d(s.p - p);
     float rsum = s.r + r;
-    if (d.lensquared() <= (rsum * rsum)) return true;
-    else                                 return false;
+    if (d.lensquared() <= rsum * rsum) return true;
+    else                               return false;
 }
 
 //------------------------------------------------------------------------------
@@ -251,7 +251,7 @@ sphere::intersect_sweep(const vector3& va, const sphere&  sb, const vector3& vb,
     {
         // check if they hit each other
         float a = vab % vab;
-        if ((a < -TINY) || (a > +TINY))
+        if ((a < -TINY) || (a > TINY))
         {
             // if a is '0' then the objects don't move relative to each other
             float b = (vab % ab) * 2.0f;
@@ -322,7 +322,5 @@ sphere::project_screen_rh(const matrix44& view, const matrix44& projection, floa
 
     return rectangle(vector2(left, top), vector2(right, bottom));
 }
-
-
 //------------------------------------------------------------------------------
 #endif

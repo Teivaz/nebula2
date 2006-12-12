@@ -193,18 +193,17 @@ nInputServer::NextIdenticalEvent(nInputEvent *pattern, nInputEvent *e)
 //------------------------------------------------------------------------------
 /**
 */
-static int getInt(const char *str, const char *attr)
+static int getInt(const char* str, const char* attr)
 {
     char buf[128];
-    char *kw;
-    n_strncpy2(buf,str,sizeof(buf));
-    kw = strtok(buf," =");
+    n_strncpy2(buf, str, sizeof(buf));
+    char* kw = strtok(buf, " =");
     if (kw) do {
-        if (strcmp(kw,attr)==0) {
-            char *val = strtok(NULL," =");
+        if (strcmp(kw, attr) == 0) {
+            char* val = strtok(NULL, " =");
             if (val) return atoi(val);
         }
-    } while ((kw = strtok(NULL," =")));
+    } while (kw = strtok(NULL, " ="));
     return 0;
 }
 
@@ -216,18 +215,19 @@ static int getInt(const char *str, const char *attr)
     If not, the nInputEvent is invalid and the function returns false.
 */
 bool
-nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
+nInputServer::MapStrToEvent(const char* str, nInputEvent* ie)
 {
-    char *dev_str, *chnl_str;
+    char* dev_str;
+    char* chnl_str;
     char buf[128];
     char fname[128];
-    nRoot *dev;
+    nRoot* dev;
     bool retval = false;
 
     // separate device and channel strings...
-    n_strncpy2(buf,str,sizeof(buf));
-    dev_str  = buf;
-    chnl_str = strchr(buf,':');
+    n_strncpy2(buf, str, sizeof(buf));
+    dev_str = buf;
+    chnl_str = strchr(buf, ':');
     if (chnl_str)
     {
         *chnl_str++ = 0;
@@ -243,7 +243,7 @@ nInputServer::MapStrToEvent(const char *str, nInputEvent *ie)
     dev = kernelServer->Lookup(fname);
     if (dev)
     {
-        nEnv *channel;
+        nEnv* channel;
         kernelServer->PushCwd(dev);
         // search for channel
         sprintf(fname,"channels/%s",chnl_str);

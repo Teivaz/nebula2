@@ -17,7 +17,7 @@
      - 08-Nov-04   enlight + now takes nObject* instead of nRoot*
 */
 nFile *
-nPersistServer::PutFoldedObjectHeader(nScriptServer *saver, const char *fname, nObject* obj)
+nPersistServer::PutFoldedObjectHeader(nScriptServer* saver, const char* fname, nObject* obj)
 {
     n_assert(saver);
     n_assert(fname);
@@ -41,7 +41,7 @@ nPersistServer::PutFoldedObjectHeader(nScriptServer *saver, const char *fname, n
      - 09-Nov-04    enlight + nObject support
 */
 bool
-nPersistServer::BeginFoldedObject(nObject *obj, nCmd *cmd, const char *name, bool selOnly,
+nPersistServer::BeginFoldedObject(nObject* obj, nCmd* cmd, const char* name, bool selOnly,
                                   bool isObjNamed)
 {
     n_assert(obj);
@@ -51,8 +51,7 @@ nPersistServer::BeginFoldedObject(nObject *obj, nCmd *cmd, const char *name, boo
 
     if (isObjNamed)
     {
-        n_assert2(obj->IsA("nroot"),
-                  "Set isObjNamed to false to save a non-nRoot object!");
+        n_assert2(obj->IsA("nroot"), "Set isObjNamed to false to save a non-nRoot object!");
 
         // if no objects on stack, create a new file...
         if (this->objectStack.IsEmpty())
@@ -75,27 +74,25 @@ nPersistServer::BeginFoldedObject(nObject *obj, nCmd *cmd, const char *name, boo
             n_assert(this->objectStack.Top()->IsA("nroot"));
             if (selOnly)
             {
-                this->refSaver->WriteBeginSelObject(this->file, (nRoot *)obj,
-                                                    (nRoot *)this->objectStack.Top());
+                this->refSaver->WriteBeginSelObject(this->file, (nRoot*)obj,
+                                                    (nRoot*)this->objectStack.Top());
             }
             else if (cmd)
             {
-                this->refSaver->WriteBeginNewObjectCmd(this->file, (nRoot *)obj,
-                                                       (nRoot *)this->objectStack.Top(),
-                                                       cmd);
+                this->refSaver->WriteBeginNewObjectCmd(this->file, (nRoot*)obj,
+                                                       (nRoot*)this->objectStack.Top(), cmd);
             }
             else
             {
-                this->refSaver->WriteBeginNewObject(this->file, (nRoot *)obj,
-                                                    (nRoot *)this->objectStack.Top());
+                this->refSaver->WriteBeginNewObject(this->file, (nRoot*)obj,
+                                                    (nRoot*)this->objectStack.Top());
             }
             fileOk = true;
         }
     }
     else
     {
-        n_assert2(!obj->IsA("nroot"),
-                  "Set isObjNamed to true to save an nRoot object!");
+        n_assert2(!obj->IsA("nroot"), "Set isObjNamed to true to save an nRoot object!");
         n_assert(0 == this->file);
 
         this->file = this->PutFoldedObjectHeader(this->refSaver.get(), name, obj);
@@ -179,12 +176,12 @@ nPersistServer::EndFoldedObject(bool isObjNamed)
      - 09-Nov-04   enlight nObject support
 */
 bool
-nPersistServer::BeginCloneObject(nObject *obj, const char *name, bool isObjNamed)
+nPersistServer::BeginCloneObject(nObject* obj, const char* name, bool isObjNamed)
 {
     n_assert(obj);
 
     bool retval = false;
-    const char *cl = obj->GetClass()->GetName();
+    const char* cl = obj->GetClass()->GetName();
 
     if (isObjNamed)
     {
@@ -195,7 +192,7 @@ nPersistServer::BeginCloneObject(nObject *obj, const char *name, bool isObjNamed
         if (this->cloneTarget)
         {
             n_assert(this->cloneTarget->GetRefCount() == 1);
-            nRoot *actCwd = kernelServer->GetCwd();
+            nRoot* actCwd = kernelServer->GetCwd();
             if (this->objectStack.IsEmpty())
             {
                 this->origCwd = actCwd;
@@ -237,7 +234,7 @@ nPersistServer::EndCloneObject(bool isObjNamed)
         n_assert(!this->objectStack.IsEmpty())
         n_assert2(this->objectStack.Top()->IsA("nroot"),
                   "Set isObjNamed to false to clone non-nRoot object!");
-        nRoot *cwd = (nRoot *) this->objectStack.Pop();
+        nRoot* cwd = (nRoot*)this->objectStack.Pop();
         if (cwd != this->origCwd)
         {
             this->cloneTarget = cwd;

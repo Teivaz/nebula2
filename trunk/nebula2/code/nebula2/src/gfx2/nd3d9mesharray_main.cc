@@ -71,7 +71,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
     nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
     n_assert(gfxServer && gfxServer->d3d9Device);
 
-    const int maxElements = 11; //the maximum number of vertex compontents
+    const int maxElements = 11; //the maximum number of vertex components
     D3DVERTEXELEMENT9 decl[maxElements * nGfxServer2::MaxVertexStreams];
 
     int meshIndex;
@@ -97,7 +97,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
                 if (vertexComponentMask & mask)
                 {
                     bool ignoreElement = false;
-                    decl[curElement].Stream = meshIndex; // to which vertex stream it referres
+                    decl[curElement].Stream = meshIndex; // to which vertex stream it referred
                     decl[curElement].Offset = curOffset;
                     decl[curElement].Method = D3DDECLMETHOD_DEFAULT;
                     switch (mask)
@@ -230,7 +230,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
     decl[curElement].Usage  = 0;
     decl[curElement].UsageIndex = 0;
 
-    HRESULT hr = gfxServer->d3d9Device->CreateVertexDeclaration(decl, &(this->vertexDeclaration));
+    HRESULT hr = gfxServer->d3d9Device->CreateVertexDeclaration(decl, &this->vertexDeclaration);
     n_dxtrace(hr, "CreateVertexDeclaration() failed in nD3D9MeshArray");
     n_assert(this->vertexDeclaration);
 }
