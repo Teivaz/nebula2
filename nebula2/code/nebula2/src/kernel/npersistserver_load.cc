@@ -14,7 +14,7 @@
     keyword belonging to string.
 */
 char *
-nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char *buf, int buf_size)
+nPersistServer::ReadEmbeddedString(const char* fname, const char* keyword, char* buf, int buf_size)
 {
     char header_buf[256];
     int num_bytes;
@@ -37,22 +37,22 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
         if (num_bytes > 0) {
 
             // suche nach $
-            char *str = header_buf;
-            char *end_str = str + num_bytes;
+            char* str = header_buf;
+            char* end_str = str + num_bytes;
             while (str < end_str)
             {
                 if (*str == '$')
                 {
-                    char *tmp;
-                    char *end = 0;
+                    char* tmp;
+                    char* end = 0;
                     *str++ = 0;
 
                     // liegt das Ende im Buffer?
-                    if ((end = strchr(str,'$')))
+                    if ((end = strchr(str, '$')))
                     {
                         *end++ = 0;
                         // Trennzeichen ':'
-                        if ((tmp = strchr(str,':')))
+                        if ((tmp = strchr(str, ':')))
                         {
                             *tmp++ = 0;
                             // korrektes Keyword?
@@ -105,10 +105,10 @@ nPersistServer::ReadEmbeddedString(const char *fname, const char *keyword, char 
      - 28-Sep-00   floh    + PushCwd()/PopCwd()
 */
 nObject*
-nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
+nPersistServer::LoadFoldedObject(const char* fname, const char* objName,
                                  const char* parserClass, const char* objClass)
 {
-    nObject *obj = 0;
+    nObject* obj = 0;
 
     n_assert(parserClass);
     n_assert(objClass);
@@ -154,7 +154,7 @@ nPersistServer::LoadFoldedObject(const char *fname, const char *objName,
 
 //------------------------------------------------------------------------------
 /**
-    @brief Frontend to load an object from a persistent object file.
+    @brief Front-end to load an object from a persistent object file.
 */
 nObject*
 nPersistServer::LoadObject(const char* fileName, const char* objName)

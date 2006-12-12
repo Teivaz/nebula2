@@ -62,8 +62,8 @@ public:
     };
     void Set(const matrix33& m)
     {
-        int i,j,k,h,n,s,f;
-        EulGetOrd(EulOrdXYZs,i,j,k,h,n,s,f);
+        int i, j, k, h, n, s, f;
+        EulGetOrd(EulOrdXYZs, i, j, k, h, n, s, f);
         if (s == EulRepYes)
         {
             double sy = (float) sqrt(m.m[0][1]*m.m[0][1] + m.m[0][2]*m.m[0][2]);
@@ -178,6 +178,5 @@ public:
         return ((x != e.x) || (y != e.y) || (z != e.z)) ? true : false;
     }
 };
-
-
+//------------------------------------------------------------------------------
 #endif

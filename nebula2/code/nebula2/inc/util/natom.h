@@ -127,7 +127,7 @@ bool
 nAtom::operator==(const char* rhs) const
 {
     n_assert(rhs);
-    return (0 == strcmp(nAtomTable::Instance()->KeyToString(this->key).Get(), rhs));
+    return nAtomTable::Instance()->KeyToString(this->key) == rhs;
 }
 
 //------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ bool
 nAtom::operator!=(const char* rhs) const
 {
     n_assert(rhs);
-    return (0 != strcmp(nAtomTable::Instance()->KeyToString(this->key).Get(), rhs));
+    return nAtomTable::Instance()->KeyToString(this->key) != rhs;
 }
 
 //------------------------------------------------------------------------------

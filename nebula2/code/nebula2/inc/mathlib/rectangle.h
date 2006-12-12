@@ -157,6 +157,5 @@ rectangle operator *(const rectangle& r0, const rectangle& r1)
 
     return rectangle(vector2(v0x, v0y), vector2(v1x, v1y));
 }
-
 //------------------------------------------------------------------------------
 #endif

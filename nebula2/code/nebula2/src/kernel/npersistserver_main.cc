@@ -62,8 +62,8 @@ nPersistServer::SetSaverClass(const nString& saverClass)
     n_assert(!saverClass.IsEmpty());
 
     // first check if the default script server matches this class
-    nScriptServer* defaultServer = (nScriptServer*) kernelServer->Lookup("/sys/servers/script");
-    if (defaultServer && (strcmp(saverClass.Get(), defaultServer->GetClass()->GetName()) == 0))
+    nScriptServer* defaultServer = (nScriptServer*)kernelServer->Lookup("/sys/servers/script");
+    if (defaultServer && (saverClass == defaultServer->GetClass()->GetName()))
     {
         this->refSaver.set(0);
         this->refSaver = defaultServer;
@@ -71,11 +71,11 @@ nPersistServer::SetSaverClass(const nString& saverClass)
     else
     {
         // otherwise check if a matching local script server already exists
-        nScriptServer* localServer = (nScriptServer*) this->Find(saverClass.Get());
+        nScriptServer* localServer = (nScriptServer*)this->Find(saverClass.Get());
         if (!localServer)
         {
             kernelServer->PushCwd(this);
-            localServer = (nScriptServer*) kernelServer->New(saverClass.Get(), saverClass.Get());
+            localServer = (nScriptServer*)kernelServer->New(saverClass.Get(), saverClass.Get());
             kernelServer->PopCwd();
         }
         n_assert(localServer);
@@ -106,7 +106,7 @@ nPersistServer::GetLoader(const char* loaderClass)
     nScriptServer* loaderServer = 0;
 
     // first check if the default script server matches this class
-    loaderServer = (nScriptServer*) kernelServer->Lookup("/sys/servers/script");
+    loaderServer = (nScriptServer*)kernelServer->Lookup("/sys/servers/script");
     if (loaderServer && (strcmp(loaderClass, loaderServer->GetClass()->GetName()) == 0))
     {
         // the default server is the right one
@@ -115,7 +115,7 @@ nPersistServer::GetLoader(const char* loaderClass)
     else
     {
         // otherwise check if a matching local script server already exists
-        loaderServer = (nScriptServer*) this->Find(loaderClass);
+        loaderServer = (nScriptServer*)this->Find(loaderClass);
         if (!loaderServer)
         {
             // if not, create
@@ -138,16 +138,16 @@ nPersistServer::GetLoader(const char* loaderClass)
      - 09-Nov-04   enlight + nObject support
 */
 bool
-nPersistServer::BeginObject(nObject *o, const char *name, bool isObjNamed)
+nPersistServer::BeginObject(nObject* obj, const char* name, bool isObjNamed)
 {
     bool retval = false;
     switch (this->saveMode)
     {
         case SAVEMODE_FOLD:
-            retval = this->BeginFoldedObject(o, NULL, name, false, isObjNamed);
+            retval = this->BeginFoldedObject(obj, NULL, name, false, isObjNamed);
             break;
         case SAVEMODE_CLONE:
-            retval = this->BeginCloneObject(o, name, isObjNamed);
+            retval = this->BeginCloneObject(obj, name, isObjNamed);
             break;
     }
     return retval;
@@ -163,17 +163,17 @@ nPersistServer::BeginObject(nObject *o, const char *name, bool isObjNamed)
      - 29-Feb-00   floh    created
 */
 bool
-nPersistServer::BeginObjectWithCmd(nRoot *o, nCmd *cmd, const char *name)
+nPersistServer::BeginObjectWithCmd(nRoot* obj, nCmd* cmd, const char* name)
 {
     bool retval = false;
-    bool sel_only = (cmd==NULL) ? true : false;
+    bool sel_only = (cmd == NULL) ? true : false;
     switch (this->saveMode)
     {
         case SAVEMODE_FOLD:
-            retval = this->BeginFoldedObject(o, cmd, name, sel_only, true);
+            retval = this->BeginFoldedObject(obj, cmd, name, sel_only, true);
             break;
         case SAVEMODE_CLONE:
-            retval = this->BeginCloneObject(o, name, true);
+            retval = this->BeginCloneObject(obj, name, true);
             break;
     }
     if (cmd)
@@ -217,22 +217,22 @@ nPersistServer::EndObject(bool isObjNamed)
                              sondern nCmdProto::NewCmd()
 */
 nCmd*
-nPersistServer::GetCmd(nObject *o, nFourCC id)
+nPersistServer::GetCmd(nObject* obj, nFourCC id)
 {
-    n_assert(o);
-    nCmdProto *cp = o->GetClass()->FindCmdById(id);
+    n_assert(obj);
+    nCmdProto* cp = obj->GetClass()->FindCmdById(id);
     if (!cp)
     {
-        if (o->IsA("nroot"))
+        if (obj->IsA("nroot"))
         {
-            nString fullname = ((nRoot *) o)->GetFullName();
+            nString fullname = ((nRoot*)obj)->GetFullName();
             n_error("nPersistServer::GetCmd(): unknown command '%s' for object '%s' of class %s\n",
-                    n_fourcctostr(id), fullname.Get(), o->GetClass()->GetName());
+                    n_fourcctostr(id), fullname.Get(), obj->GetClass()->GetName());
         }
         else
         {
             n_error("nPersistServer::GetCmd(): unknown command '%s' for object of class %s\n",
-                    n_fourcctostr(id), o->GetClass()->GetName());
+                    n_fourcctostr(id), obj->GetClass()->GetName());
         }
         return 0;
     }
@@ -247,7 +247,7 @@ nPersistServer::GetCmd(nObject *o, nFourCC id)
      - 16-Jun-00   floh    created
 */
 bool
-nPersistServer::PutCmd(int level, nCmd *cmd)
+nPersistServer::PutCmd(int level, nCmd* cmd)
 {
     bool success = false;
     if (this->saveLevel <= level)
@@ -278,7 +278,7 @@ nPersistServer::PutCmd(int level, nCmd *cmd)
      - 20-Jan-00   floh    rewritten to ref_ss
 */
 bool
-nPersistServer::PutCmd(nCmd *cmd)
+nPersistServer::PutCmd(nCmd* cmd)
 {
     return this->PutCmd(0, cmd);
 }

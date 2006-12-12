@@ -133,7 +133,7 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
                 newNode->SetMesh("meshes:examples/skyElements_s_0.n3d2");
                 newNode->SetGroupIndex(0);
             }
-            if (!strcmp(newNode->GetShader(),""))
+            if (!strcmp(newNode->GetShader(), ""))
                 newNode->SetShader("sky");
             newNode->SetLockViewer(true);
             if (!newNode->HasParam(nShaderState::Intensity0))
@@ -168,7 +168,7 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
             }
             if (!newNode->GetTexture(nShaderState::DiffMap0))
                 newNode->SetTexture(nShaderState::DiffMap0, "textures:environment/sun.dds");
-            if (!strcmp(newNode->GetShader(),""))
+            if (!strcmp(newNode->GetShader(), ""))
                 newNode->SetShader("sun");
             newNode->SetLockViewer(false);
             if (!newNode->HasParam(nShaderState::Intensity0))
@@ -223,7 +223,7 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
                 newNode->SetMesh("meshes:examples/skyElements_s_0.n3d2");
                 newNode->SetGroupIndex(2);
             }
-            if (!strcmp(newNode->GetShader(),""))
+            if (!strcmp(newNode->GetShader(), ""))
                 newNode->SetShader("cloud");
             newNode->SetLockViewer(true);
             if (!newNode->GetTexture(nShaderState::BumpMap0))
@@ -280,7 +280,7 @@ nSkyNode::AddElement(nSkyNode::ElementType type, const nString& name)
                 newNode->SetMesh("meshes:examples/skyElements_s_0.n3d2");
                 newNode->SetGroupIndex(1);
             }
-            if (!strcmp(newNode->GetShader(),""))
+            if (!strcmp(newNode->GetShader(), ""))
                 newNode->SetShader("stars");
             if (!newNode->GetTexture(nShaderState::DiffMap0))
                 newNode->SetTexture(nShaderState::DiffMap0, "textures:environment/stars_tile.dds");

@@ -27,8 +27,8 @@ main(int argc, const char** argv)
 
     // get cmd line args
     bool helpArg            = args.GetBoolArg("-help");
-    nString inFileArg       = args.GetStringArg("-in", 0);
-    nString outFileArg      = args.GetStringArg("-out", 0);
+    nString inFileArg       = args.GetStringArg("-in");
+    nString outFileArg      = args.GetStringArg("-out");
     nString scriptServerArg = args.GetStringArg("-scriptserver", "ntclserver");
     nString sqlServerArg    = args.GetStringArg("-sqlserver", "nsqlite3server");
 
@@ -46,7 +46,7 @@ main(int argc, const char** argv)
         return 5;
     }
 
-    if (0 == inFileArg)
+    if (inFileArg.IsEmpty())
     {
         printf("ngfxtool error: No input file! (type 'ngfxtool -help' for help)\n");
         return 5;
@@ -56,13 +56,13 @@ main(int argc, const char** argv)
     nKernelServer kernelServer;
     kernelServer.AddPackage(nnebula);
 
-    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg.Get(), "/sys/servers/script");
+    nScriptServer* scriptServer = (nScriptServer*)kernelServer.New(scriptServerArg.Get(), "/sys/servers/script");
     if (0 == scriptServer)
     {
         n_printf("Could not create script server of class '%s'\n", scriptServerArg.Get());
         return 10;
     }
-    nSqlServer* sqlServer = (nSqlServer*) kernelServer.New(sqlServerArg.Get(), "/sys/servers/sql");
+    nSqlServer* sqlServer = (nSqlServer*)kernelServer.New(sqlServerArg.Get(), "/sys/servers/sql");
     if (0 == sqlServer)
     {
         n_printf("Could not create sql server of class '%s'\n", sqlServerArg.Get());
@@ -70,12 +70,10 @@ main(int argc, const char** argv)
     }
     nVariableServer* variableServer = (nVariableServer*)kernelServer.New("nvariableserver", "/sys/servers/variable");
     nResourceServer* resServer = (nResourceServer*)kernelServer.New("nresourceserver", "/sys/servers/resource");
-    if (inFileArg.IsValid()) {
-        nObject* obj = kernelServer.Load(inFileArg.Get());
-        if (outFileArg.IsValid() && 0 != obj) {
-            obj->SaveAs(outFileArg.Get());
-            obj->Release();
-        }
+    nObject* obj = kernelServer.Load(inFileArg.Get());
+    if (outFileArg.IsValid() && 0 != obj) {
+        obj->SaveAs(outFileArg.Get());
+        obj->Release();
     }
     resServer->Release();
     variableServer->Release();

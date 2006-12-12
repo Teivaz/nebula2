@@ -21,7 +21,7 @@
 //-------------------------------------------------------------------
 class triangle {
 public:
-    vector3 b,e0,e1;
+    vector3 b, e0, e1;
 
     triangle() {};
     triangle(const vector3& v0, const vector3& v1, const vector3& v2)
@@ -177,7 +177,6 @@ public:
         }
     };
 };
-
 //-------------------------------------------------------------------
 #endif
 

@@ -138,6 +138,5 @@ nVector3EnvelopeCurve::GetValue(float pos) const
 
     return linearValue;
 }
-
 //------------------------------------------------------------------------------
 #endif

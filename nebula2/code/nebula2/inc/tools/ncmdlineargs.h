@@ -87,7 +87,7 @@ nCmdLineArgs::FindArg(const nString& option) const
     int i;
     for (i = 0; i < this->argCount; i++)
     {
-        if (strcmp(this->argVector[i], option.Get()) == 0)
+        if (option == this->argVector[i])
         {
             return i;
         }
@@ -120,7 +120,7 @@ nCmdLineArgs::GetFloatArg(const nString& option, float defaultValue) const
     }
     else if (++i < this->argCount)
     {
-        return (float) atof(this->argVector[i]);
+        return (float)atof(this->argVector[i]);
     }
     else
     {

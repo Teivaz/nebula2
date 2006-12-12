@@ -6,8 +6,8 @@
 #include "kernel/ncmdproto.h"
 #include "kernel/npersistserver.h"
 
-static void n_setsavelevel(void *, nCmd *);
-static void n_getsavelevel(void *, nCmd *);
+static void n_setsavelevel(void*, nCmd*);
+static void n_getsavelevel(void*, nCmd*);
 static void n_setsaverclass(void*, nCmd*);
 static void n_getsaverclass(void*, nCmd*);
 
@@ -28,7 +28,7 @@ static void n_getsaverclass(void*, nCmd*);
     are saved. All load/save operations of objects run finally through
     the persis server. That's all you need to know about it...
 */
-void n_initcmds(nClass *cl)
+void n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
     cl->AddCmd("v_setsavelevel_i",  'SSLV', n_setsavelevel);
@@ -59,9 +59,9 @@ void n_initcmds(nClass *cl)
     without having to write several save routines (savegames are
     an example).
 */
-static void n_setsavelevel(void *o, nCmd *cmd)
+static void n_setsavelevel(void* o, nCmd *cmd)
 {
-    nPersistServer *self = (nPersistServer *) o;
+    nPersistServer* self = (nPersistServer*)o;
     self->SetSaveLevel(cmd->In()->GetI());
 }
 
@@ -79,9 +79,9 @@ static void n_setsavelevel(void *o, nCmd *cmd)
     @info
     Get the current save level.
 */
-static void n_getsavelevel(void *o, nCmd *cmd)
+static void n_getsavelevel(void* slf, nCmd* cmd)
 {
-    nPersistServer *self = (nPersistServer *) o;
+    nPersistServer* self = (nPersistServer*)slf;
     cmd->Out()->SetI(self->GetSaveLevel());
 }
 
@@ -102,7 +102,7 @@ static void n_getsavelevel(void *o, nCmd *cmd)
 */
 static void n_setsaverclass(void* slf, nCmd* cmd)
 {
-    nPersistServer* self = (nPersistServer*) slf;
+    nPersistServer* self = (nPersistServer*)slf;
     self->SetSaverClass(cmd->In()->GetS());
 }
 
@@ -122,7 +122,7 @@ static void n_setsaverclass(void* slf, nCmd* cmd)
 */
 static void n_getsaverclass(void* slf, nCmd* cmd)
 {
-    nPersistServer* self = (nPersistServer*) slf;
+    nPersistServer* self = (nPersistServer*)slf;
     cmd->Out()->SetS(self->GetSaverClass().Get());
 }
 

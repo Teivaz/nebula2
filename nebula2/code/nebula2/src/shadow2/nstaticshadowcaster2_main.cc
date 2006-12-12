@@ -40,10 +40,9 @@ nStaticShadowCaster2::LoadResource()
     n_assert(!this->IsLoaded());
     n_assert(!this->refIndexBuffer.isvalid());
     n_assert(!this->refMesh.isvalid());
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
 
     // create a new shared mesh object
-    nMesh2* newMesh = gfxServer->NewMesh(this->GetFilename());
+    nMesh2* newMesh = nGfxServer2::Instance()->NewMesh(this->GetFilename());
     this->refMesh = newMesh;
     if (!newMesh->IsLoaded())
     {
@@ -61,7 +60,7 @@ nStaticShadowCaster2::LoadResource()
         {
             n_error("nStaticShadowCaster2::LoadResource: filetype not supported!\n");
         }
-        meshLoader->SetFilename(this->GetFilename().Get());
+        meshLoader->SetFilename(this->GetFilename());
         meshLoader->SetIndexType(nMeshLoader::Index16);
         meshLoader->SetValidVertexComponents(nMesh2::Coord);
         if (meshLoader->Open())

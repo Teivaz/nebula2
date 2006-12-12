@@ -39,7 +39,7 @@ public:
     /// set to polar object
     void set(const polar2& p);
     /// set to theta and rho
-    void set(const float t, const float r);
+    void set(float t, float r);
     /// set to cartesian
     void set(const vector3& vec);
     /// fuzzy equality check
@@ -123,7 +123,7 @@ polar2::set(const polar2& p)
 */
 inline
 void
-polar2::set(const float t, const float r)
+polar2::set(float t, float r)
 {
     this->theta = t;
     this->rho = r;
@@ -186,10 +186,10 @@ polar2::get_cartesian() const
     double cos_theta = cos(this->theta);
     double sin_rho   = sin(this->rho);
     double cos_rho   = cos(this->rho);
-    float x = (float) (sin_theta * sin_rho);
-    float y = (float) cos_theta;
-    float z = (float) (sin_theta * cos_rho);
-    v.set(x,y,z);
+    float x = (float)(sin_theta * sin_rho);
+    float y = (float)cos_theta;
+    float z = (float)(sin_theta * cos_rho);
+    v.set(x, y, z);
     return v;
 }
 
@@ -205,6 +205,5 @@ polar2::isequal(const polar2& rhs, float tol) const
 
     return (dt <= tol) && (dr <= tol);
 }
-
 //------------------------------------------------------------------------------
 #endif

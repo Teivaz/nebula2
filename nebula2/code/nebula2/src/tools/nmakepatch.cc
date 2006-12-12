@@ -103,7 +103,7 @@ CheckCleanupDirectory(const nString& dirName)
         printf("Remove Directory: %s\n", relativeDirName.Get());
         return false;
     }
-    // directiry still exists
+    // directory still exists
     return true;
 }
 
@@ -193,9 +193,9 @@ main(int argc, const char** argv)
     nKernelServer kernelServer;
 
     bool helpArg = args.GetBoolArg("-help");
-    OldDirPath  = args.GetStringArg("-olddir", 0);
-    NewDirPath  = args.GetStringArg("-newdir", 0);
-    DiffDirPath = args.GetStringArg("-diffdir", 0);
+    OldDirPath  = args.GetStringArg("-olddir");
+    NewDirPath  = args.GetStringArg("-newdir");
+    DiffDirPath = args.GetStringArg("-diffdir");
 
     if (helpArg)
     {
@@ -213,17 +213,17 @@ main(int argc, const char** argv)
     }
 
     // check args
-    if (0 == OldDirPath)
+    if (OldDirPath.IsEmpty())
     {
         printf("Error: -olddir arg expected!\n");
         return 10;
     }
-    if (0 == NewDirPath)
+    if (NewDirPath.IsEmpty())
     {
         printf("Error: -newdir arg expected!\n");
         return 10;
     }
-    if (0 == DiffDirPath)
+    if (DiffDirPath.IsEmpty())
     {
         printf("Error: -diffdir arg expected!\n");
         return 10;

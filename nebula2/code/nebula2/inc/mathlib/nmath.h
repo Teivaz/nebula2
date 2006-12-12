@@ -324,7 +324,6 @@ n_angulardistance(float from, float to)
     }
     return dist;
 }
-
 //------------------------------------------------------------------------------
 #endif
 

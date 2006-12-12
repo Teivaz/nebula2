@@ -287,7 +287,7 @@ nRoot::Find(const char *str)
     nRoot* child;
     for (child = this->GetHead(); child; child = child->GetSucc())
     {
-        if (strcmp(child->name.Get(), str) == 0)
+        if (child->name == str)
         {
             return child;
         }

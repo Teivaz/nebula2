@@ -81,7 +81,7 @@ nHardRefServer::RegisterTargetObject(nRoot& targetObject)
     {
         nStrNode* nextNode = (nStrNode*) strNode->GetSucc();
 
-        if (0 == strcmp(targetName.Get(), strNode->GetName()))
+        if (targetName == strNode->GetName())
         {
             // match found, resolve hardref
             //

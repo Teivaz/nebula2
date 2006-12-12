@@ -136,11 +136,11 @@ main(int argc, const char** argv)
     int yPosArg                  = args.GetIntArg("-y", 0);
     int widthArg                 = args.GetIntArg("-w", 640);
     int heightArg                = args.GetIntArg("-h", 480);
-    nString projDir              = args.GetStringArg("-projdir", "");
-    nString sceneServerClass     = args.GetStringArg("-sceneserver", "");
-    nString gfxServerClass       = args.GetStringArg("-gfxserver", "");
-    nString featureSetArg        = args.GetStringArg("-featureset", "");
-    nString renderPath           = args.GetStringArg("-renderpath", "");
+    nString projDir              = args.GetStringArg("-projdir");
+    nString sceneServerClass     = args.GetStringArg("-sceneserver");
+    nString gfxServerClass       = args.GetStringArg("-gfxserver");
+    nString featureSetArg        = args.GetStringArg("-featureset");
+    nString renderPath           = args.GetStringArg("-renderpath");
     int aaSamples                = args.GetIntArg("-aa", 0);
     vector3 eyePos(args.GetFloatArg("-eyeposx", 0.0f), args.GetFloatArg("-eyeposy", 0.0f), args.GetFloatArg("-eyeposz", 9.0f));
     vector3 eyeCoi(args.GetFloatArg("-eyecoix", 0.0f), args.GetFloatArg("-eyecoiy", 0.0f), args.GetFloatArg("-eyecoiz", 0.0f));
