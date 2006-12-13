@@ -22,9 +22,6 @@
 
 nNebulaScriptClass(nSceneServer, "nroot");
 nSceneServer* nSceneServer::Singleton = 0;
-
-// global data for qsort() compare function
-nSceneServer* nSceneServer::self = 0;
 vector3 nSceneServer::viewerPos;
 int nSceneServer::sortingOrder = nRpPhase::BackToFront;
 
@@ -75,7 +72,6 @@ nSceneServer::nSceneServer() :
     this->rootArray.SetFlags(nArray<ushort>::DoubleGrowSize);
     this->shadowArray.SetFlags(nArray<ushort>::DoubleGrowSize);
 
-    this->lightNodeClass = nKernelServer::Instance()->FindClass("nlightnode");
     this->groupStack.SetSize(MaxHierarchyDepth);
     this->groupStack.Clear(0);
 
@@ -90,8 +86,6 @@ nSceneServer::nSceneServer() :
     reqRefractClass = nKernelServer::Instance()->FindClass("nclippingcameranode");
     n_assert(reqReflectClass);
     n_assert(reqRefractClass);
-
-    self = this;
 }
 
 //------------------------------------------------------------------------------
@@ -118,19 +112,16 @@ nSceneServer::Open()
     // parse renderpath XML file
     if (this->renderPath.OpenXml())
     {
-        nGfxServer2* gfxServer = nGfxServer2::Instance();
-        nFileServer2* fileServer = nFileServer2::Instance();
-        nShadowServer2* shadowServer = nShadowServer2::Instance();
-
         // initialize the shaders assign from the render path
-        fileServer->SetAssign("shaders", this->renderPath.GetShaderPath());
+        nFileServer2::Instance()->SetAssign("shaders", this->renderPath.GetShaderPath());
 
         // open the display
+        nGfxServer2* gfxServer = nGfxServer2::Instance();
         bool displayOpened = gfxServer->OpenDisplay();
         n_assert(displayOpened);
 
         // open the shadow server (after opening display!)
-        shadowServer->Open();
+        nShadowServer2::Instance()->Open();
 
         // initialize the render path object
         bool renderPathOpened = this->renderPath.Open();
@@ -398,7 +389,7 @@ nSceneServer::SplitNodes()
     // clear arrays which are filled by this method
     this->shapeBucket.Clear();
     this->lightArray.Clear();
-    this->shadowLightArray.Reset();
+    this->shadowLightArray.Clear();
     this->shadowArray.Reset();
     this->cameraArray.Reset();
 
@@ -413,19 +404,21 @@ nSceneServer::SplitNodes()
         {
             if (group.renderContext->GetFlag(nRenderContext::ShapeVisible))
             {
-                nMaterialNode* shapeNode = (nMaterialNode*) group.sceneNode;
+                nMaterialNode* shapeNode = (nMaterialNode*)group.sceneNode;
 
                 // if this is a reflecting shape, parse for render priority
                 if (this->IsAReflectingShape(shapeNode))
                 {
-                    // reset complex flag (we think this one is not the one to be rendered complex)
-                    group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 0);
-
                     // check if this one is the new (or old) node to be rendered complex
-                    if (true == this->ParsePriority(group))
+                    if (this->ParsePriority(group))
                     {
                         this->cameraArray.Reset();
                         group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 1);
+                    }
+                    else
+                    {
+                        // reset complex flag (we think this one is not the one to be rendered complex)
+                        group.renderContext->GetShaderOverrides().SetArg(nShaderState::RenderComplexity, 0);
                     }
                 }
 
@@ -438,7 +431,7 @@ nSceneServer::SplitNodes()
         }
         if (group.sceneNode->HasLight())
         {
-            n_assert(group.sceneNode->IsA(this->lightNodeClass));
+            n_assert(group.sceneNode->IsA("nlightnode"));
             group.renderContext->SetSceneLightIndex(this->lightArray.Size());
             LightInfo lightInfo;
             lightInfo.groupIndex = i;
@@ -543,13 +536,12 @@ int
 __cdecl
 nSceneServer::CompareNodes(const ushort* i1, const ushort* i2)
 {
-    nSceneServer* sceneServer = nSceneServer::self;
+    nSceneServer* sceneServer = nSceneServer::Singleton;
     const nSceneServer::Group& g1 = sceneServer->groupArray[*i1];
     const nSceneServer::Group& g2 = sceneServer->groupArray[*i2];
-    int cmp;
 
-    // by render pri
-    cmp = g1.sceneNode->GetRenderPri() - g2.sceneNode->GetRenderPri();
+    // by render priority
+    int cmp = g1.sceneNode->GetRenderPri() - g2.sceneNode->GetRenderPri();
     if (cmp != 0)
     {
         return cmp;
@@ -565,24 +557,20 @@ nSceneServer::CompareNodes(const ushort* i1, const ushort* i2)
     // distance to viewer (closest first)
     static vector3 dist1;
     static vector3 dist2;
-    dist1.set(viewerPos.x - g1.modelTransform.M41,
-              viewerPos.y - g1.modelTransform.M42,
-              viewerPos.z - g1.modelTransform.M43);
-    dist2.set(viewerPos.x - g2.modelTransform.M41,
-              viewerPos.y - g2.modelTransform.M42,
-              viewerPos.z - g2.modelTransform.M43);
+    dist1.set(viewerPos.x - g1.modelTransform.M41, viewerPos.y - g1.modelTransform.M42, viewerPos.z - g1.modelTransform.M43);
+    dist2.set(viewerPos.x - g2.modelTransform.M41, viewerPos.y - g2.modelTransform.M42, viewerPos.z - g2.modelTransform.M43);
     float diff = dist1.lensquared() - dist2.lensquared();
 
     if (sortingOrder == nRpPhase::FrontToBack)
 	{
 		// (closest first)
         if (diff < 0.001f)      return -1;
-		else if (diff > 0.001f) return +1;
+		else if (diff > 0.001f) return 1;
     }
 	else if (sortingOrder == nRpPhase::BackToFront)
     {
         if (diff > 0.001f)      return -1;
-        else if (diff < 0.001f) return +1;
+        else if (diff < 0.001f) return 1;
     }
 
     // nodes are identical
@@ -598,7 +586,7 @@ int
 __cdecl
 nSceneServer::CompareShadowLights(const LightInfo* i1, const LightInfo* i2)
 {
-    nSceneServer* sceneServer = nSceneServer::self;
+    nSceneServer* sceneServer = nSceneServer::Singleton;
     const nSceneServer::Group& g1 = sceneServer->groupArray[i1->groupIndex];
     const nSceneServer::Group& g2 = sceneServer->groupArray[i2->groupIndex];
 
@@ -607,17 +595,16 @@ nSceneServer::CompareShadowLights(const LightInfo* i1, const LightInfo* i2)
     static vector3 dist2;
     dist1.set(viewerPos.x - g1.modelTransform.M41, viewerPos.y - g1.modelTransform.M42, viewerPos.z - g1.modelTransform.M43);
     dist2.set(viewerPos.x - g2.modelTransform.M41, viewerPos.y - g2.modelTransform.M42, viewerPos.z - g2.modelTransform.M43);
-    nLightNode* ln1 = (nLightNode*) g1.sceneNode;
-    nLightNode* ln2 = (nLightNode*) g2.sceneNode;
-    n_assert(ln1->IsA(sceneServer->lightNodeClass));
-    n_assert(ln2->IsA(sceneServer->lightNodeClass));
+    nLightNode* ln1 = (nLightNode*)g1.sceneNode;
+    nLightNode* ln2 = (nLightNode*)g2.sceneNode;
+    n_assert(ln1->IsA("nlightnode") && ln2->IsA("nlightnode"));
     float range1 = ln1->GetLocalBox().extents().x;
     float range2 = ln2->GetLocalBox().extents().x;
     float intensity1 = n_saturate(dist1.len() / range1);
     float intensity2 = n_saturate(dist2.len() / range2);
     float diff = intensity1 - intensity2;
     if (diff < 0.001f)      return -1;
-    else if (diff > 0.001f) return +1;
+    else if (diff > 0.001f) return 1;
     else                    return 0;
 }
 
@@ -638,11 +625,11 @@ nSceneServer::SortNodes()
     int num = this->shapeBucket.Size();
     for (i = 0; i < num; i++)
     {
-        ushort* indexPtr = (ushort*) this->shapeBucket[i].Begin();
         int numIndices = this->shapeBucket[i].Size();
         if (numIndices > 0)
         {
-            qsort(indexPtr, numIndices, sizeof(ushort), (int(__cdecl *)(const void *, const void *)) CompareNodes);
+            ushort* indexPtr = (ushort*)this->shapeBucket[i].Begin();
+            qsort(indexPtr, numIndices, sizeof(ushort), (int(__cdecl*)(const void*, const void*))CompareNodes);
         }
     }
 
@@ -650,8 +637,7 @@ nSceneServer::SortNodes()
     int numShadowLights = this->shadowLightArray.Size();
     if (numShadowLights > 0)
     {
-        qsort(&(this->shadowLightArray[0]), numShadowLights, sizeof(LightInfo), (int(__cdecl *)(const void *, const void *)) CompareShadowLights);
+        qsort(&(this->shadowLightArray[0]), numShadowLights, sizeof(LightInfo), (int(__cdecl*)(const void*, const void*))CompareShadowLights);
     }
     PROFILER_STOP(this->profSortNodes);
 }
-

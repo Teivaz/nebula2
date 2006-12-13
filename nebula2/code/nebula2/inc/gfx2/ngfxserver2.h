@@ -231,7 +231,7 @@ public:
     /// returns the number of available z bits
     virtual int GetNumDepthBits() const;
     /// set scissor rect
-    virtual void SetScissorRect(const rectangle& r);
+    virtual void SetScissorRect(const rectangle& rect);
     /// get scissor rect
     const rectangle& GetScissorRect() const;
     /// set or clear user defined clip planes in clip space
@@ -244,7 +244,7 @@ public:
     bool GetHint(Hint hint) const;
 
     /// set a new render target texture
-    virtual void SetRenderTarget(int index, nTexture2* t);
+    virtual void SetRenderTarget(int index, nTexture2* tex);
     /// get the current render target
     nTexture2* GetRenderTarget(int index) const;
 

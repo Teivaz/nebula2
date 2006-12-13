@@ -90,7 +90,7 @@ public:
     /// get a bounding box enclosing the camera
     const bbox3& GetBox();
     // get the view volume
-    void GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, float & minz, float & maxz) const;
+    void GetViewVolume(float& minx, float& maxx, float& miny, float& maxy, float& minz, float& maxz) const;
     /// check if 2 view volumes intersect
     ClipStatus GetClipStatus(const matrix44& myTransform, const matrix44& otherViewProjection);
 
@@ -388,7 +388,7 @@ nCamera2::GetShadowOffset() const
 */
 inline
 void
-nCamera2::GetViewVolume(float & minx, float & maxx, float & miny, float & maxy, float & minz, float & maxz) const
+nCamera2::GetViewVolume(float& minx, float& maxx, float& miny, float& maxy, float& minz, float& maxz) const
 {
     maxy = this->nearPlane * n_tan(this->angleOfView * 0.5f);
     miny = -maxy;
@@ -527,7 +527,7 @@ nCamera2::GetBox()
         this->boxDirty = false;
         if (Perspective == this->type || ProjMatrixSet == this->type)
         {
-            float tanAov = float(tan(this->angleOfView * 0.5f));
+            float tanAov = n_tan(this->angleOfView * 0.5f);
             this->box.vmin.z = this->nearPlane;
             this->box.vmax.z = this->farPlane;
             this->box.vmax.y = tanAov * this->farPlane;     // ??? -> tanAov * (this->farPlane - this->nearPlane);

@@ -30,8 +30,8 @@ nSceneServer::RenderPhaseLightModeOff(nRpPhase& curPhase)
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->SetLightingType(nGfxServer2::Off);
 
-    uint numSeqs = curPhase.Begin();
-    uint seqIndex;
+    int numSeqs = curPhase.Begin();
+    int seqIndex;
     for (seqIndex = 0; seqIndex < numSeqs; seqIndex++)
     {
         // check if there is anything to render for the next sequence shader at all
@@ -43,22 +43,22 @@ nSceneServer::RenderPhaseLightModeOff(nRpPhase& curPhase)
         int numShapes = shapeArray.Size();
         if (numShapes > 0)
         {
-            uint seqNumPasses = curSeq.Begin();
-            uint seqPassIndex;
+            int seqNumPasses = curSeq.Begin();
+            int seqPassIndex;
             for (seqPassIndex = 0; seqPassIndex < seqNumPasses; seqPassIndex++)
             {
                 curSeq.BeginPass(seqPassIndex);
 
                 // for each shape in bucket
-                int shapeIndex;
                 nMaterialNode* prevShapeNode = 0;
+                int shapeIndex;
                 for (shapeIndex = 0; shapeIndex < numShapes; shapeIndex++)
                 {
                     const Group& shapeGroup = this->groupArray[shapeArray[shapeIndex]];
                     n_assert(shapeGroup.renderContext->GetFlag(nRenderContext::ShapeVisible));
                     if (!shapeGroup.renderContext->GetFlag(nRenderContext::Occluded))
                     {
-                        nMaterialNode* shapeNode = (nMaterialNode*) shapeGroup.sceneNode;
+                        nMaterialNode* shapeNode = (nMaterialNode*)shapeGroup.sceneNode;
                         if (shapeNode != prevShapeNode)
                         {
                             // start a new instance set
@@ -103,17 +103,13 @@ nSceneServer::RenderShapeLightModeFFP(const Group& shapeGroup)
     // Render with vertex-lighting and multiple light sources
     if (this->obeyLightLinks)
     {
-        // use light links, each shape rendercontext is linked to
-        // all light rendercontexts which illuminate this shape,
+        // use light links, each shape render context is linked to
+        // all light render context which illuminate this shape,
         // light links are provided by the application
         gfxServer->ClearLights();
-        int lightIndex;
         int numLights = shapeGroup.renderContext->GetNumLinks();
-        if (numLights > nGfxServer2::MaxLights)
-        {
-            numLights = nGfxServer2::MaxLights;
-        }
-        for (lightIndex = 0; lightIndex < numLights; lightIndex++)
+        int lightIndex;
+        for (lightIndex = 0; lightIndex < n_min(numLights, nGfxServer2::MaxLights); lightIndex++)
         {
             nRenderContext* lightRenderContext = shapeGroup.renderContext->GetLinkAt(lightIndex);
             const Group& lightGroup = this->groupArray[lightRenderContext->GetSceneGroupIndex()];
@@ -123,30 +119,23 @@ nSceneServer::RenderShapeLightModeFFP(const Group& shapeGroup)
             lightGroup.sceneNode->ApplyLight(this, lightGroup.renderContext, lightGroup.modelTransform, dummyShadowLightMask);
         }
     }
-    else
+    else if (!this->ffpLightingApplied)
     {
         // ignore light links, each shape is influenced by each light
         // Optimization: if lighting has been applied for this
         // frame already, we don't need to do it again. This will only
         // work if rendering doesn't go through light links though
-        if (!this->ffpLightingApplied)
+        gfxServer->ClearLights();
+        int numLights = this->lightArray.Size();
+        int lightIndex;
+        for (lightIndex = 0; lightIndex < n_min(numLights, nGfxServer2::MaxLights); lightIndex++)
         {
-            gfxServer->ClearLights();
-            int lightIndex;
-            int numLights = this->lightArray.Size();
-            if (numLights > nGfxServer2::MaxLights)
-            {
-                numLights = nGfxServer2::MaxLights;
-            }
-            for (lightIndex = 0; lightIndex < numLights; lightIndex++)
-            {
-                const Group& lightGroup = this->groupArray[this->lightArray[lightIndex].groupIndex];
-                n_assert(lightGroup.sceneNode->HasLight());
-                lightGroup.sceneNode->RenderLight(this, lightGroup.renderContext, lightGroup.modelTransform);
-                lightGroup.sceneNode->ApplyLight(this, lightGroup.renderContext, lightGroup.modelTransform, dummyShadowLightMask);
-            }
-            this->ffpLightingApplied = true;
+            const Group& lightGroup = this->groupArray[this->lightArray[lightIndex].groupIndex];
+            n_assert(lightGroup.sceneNode->HasLight());
+            lightGroup.sceneNode->RenderLight(this, lightGroup.renderContext, lightGroup.modelTransform);
+            lightGroup.sceneNode->ApplyLight(this, lightGroup.renderContext, lightGroup.modelTransform, dummyShadowLightMask);
         }
+        this->ffpLightingApplied = true;
     }
     shapeGroup.sceneNode->RenderGeometry(this, shapeGroup.renderContext);
     WATCHER_ADD_INT(watchNumInstances, 1);
@@ -164,8 +153,8 @@ nSceneServer::RenderPhaseLightModeFFP(nRpPhase& curPhase)
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->SetLightingType(nGfxServer2::FFP);
 
-    uint numSeqs = curPhase.Begin();
-    uint seqIndex;
+    int numSeqs = curPhase.Begin();
+    int seqIndex;
     for (seqIndex = 0; seqIndex < numSeqs; seqIndex++)
     {
         // check if there is anything to render for the next sequence shader at all
@@ -177,8 +166,8 @@ nSceneServer::RenderPhaseLightModeFFP(nRpPhase& curPhase)
         int numShapes = shapeArray.Size();
         if (numShapes > 0)
         {
-            uint seqNumPasses = curSeq.Begin();
-            uint seqPassIndex;
+            int seqNumPasses = curSeq.Begin();
+            int seqPassIndex;
             for (seqPassIndex = 0; seqPassIndex < seqNumPasses; seqPassIndex++)
             {
                 curSeq.BeginPass(seqPassIndex);
@@ -192,7 +181,7 @@ nSceneServer::RenderPhaseLightModeFFP(nRpPhase& curPhase)
                     n_assert(shapeGroup.renderContext->GetFlag(nRenderContext::ShapeVisible));
                     if (!shapeGroup.renderContext->GetFlag(nRenderContext::Occluded))
                     {
-                        nMaterialNode* shapeNode = (nMaterialNode*) shapeGroup.sceneNode;
+                        nMaterialNode* shapeNode = (nMaterialNode*)shapeGroup.sceneNode;
                         if (shapeNode != prevShapeNode)
                         {
                             // start a new instance set
@@ -246,7 +235,7 @@ nSceneServer::RenderShapeLightModeShader(Group& shapeGroup, const nRpSequence& s
 //------------------------------------------------------------------------------
 /**
     Render a complete phase for light mode "Shader". This updates the light's
-    status in the outer loop and then renders all shapes influenced by this
+    status in the outer loop and then render all shapes influenced by this
     light. This will minimize render state switches between draw calls.
 */
 void
@@ -274,13 +263,13 @@ nSceneServer::RenderPhaseLightModeShader(nRpPhase& curPhase)
             lightGroup.sceneNode->ApplyLight(this, lightGroup.renderContext, lightGroup.modelTransform, lightInfo.shadowLightMask);
 
             // now iterate through sequences...
-            uint numSeqs = curPhase.Begin();
+            int numSeqs = curPhase.Begin();
 
             // NOTE: nRpPhase::Begin resets the scissor rect, thus this must happen afterwards!
             this->ApplyLightScissors(lightInfo);
             this->ApplyLightClipPlanes(lightInfo);
 
-            uint seqIndex;
+            int seqIndex;
             for (seqIndex = 0; seqIndex < numSeqs; seqIndex++)
             {
                 // check if there is anything to render for the next sequence shader at all
@@ -292,8 +281,8 @@ nSceneServer::RenderPhaseLightModeShader(nRpPhase& curPhase)
                 int numShapes = shapeArray.Size();
                 if (numShapes > 0)
                 {
-                    uint seqNumPasses = curSeq.Begin();
-                    uint seqPassIndex;
+                    int seqNumPasses = curSeq.Begin();
+                    int seqPassIndex;
                     for (seqPassIndex = 0; seqPassIndex < seqNumPasses; seqPassIndex++)
                     {
                         curSeq.BeginPass(seqPassIndex);
@@ -317,7 +306,7 @@ nSceneServer::RenderPhaseLightModeShader(nRpPhase& curPhase)
                                 }
                                 if (shapeInfluencedByLight)
                                 {
-                                    nMaterialNode* shapeNode = (nMaterialNode*) shapeGroup.sceneNode;
+                                    nMaterialNode* shapeNode = (nMaterialNode*)shapeGroup.sceneNode;
                                     if (shapeNode != prevShapeNode)
                                     {
                                         // start a new instance set
@@ -365,16 +354,15 @@ void
 nSceneServer::DoRenderPath(nRpSection& rpSection)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
-    uint numPasses = rpSection.Begin();
-    uint passIndex;
-
+    int numPasses = rpSection.Begin();
+    int passIndex;
     for (passIndex = 0; passIndex < numPasses; passIndex++)
     {
         // for each phase...
         nRpPass& curPass = rpSection.GetPass(passIndex);
 
         // check if this is the GUI pass, and gui is disabled...
-        if (curPass.GetDrawGui() && (!this->GetGuiEnabled()))
+        if (curPass.GetDrawGui() && !this->GetGuiEnabled())
         {
             // don't render gui pass...
             continue;
@@ -396,25 +384,25 @@ nSceneServer::DoRenderPath(nRpSection& rpSection)
         else
         {
             // default case: render phases and sequences
-            uint numPhases = curPass.Begin();
-            uint phaseIndex;
+            int numPhases = curPass.Begin();
+            int phaseIndex;
             for (phaseIndex = 0; phaseIndex < numPhases; phaseIndex++)
             {
                 this->ffpLightingApplied = false;
 
                 // for each sequence...
                 nRpPhase& curPhase = curPass.GetPhase(phaseIndex);
-                if (curPhase.GetLightMode() == nRpPhase::Off)
+                switch (curPhase.GetLightMode())
                 {
+                case nRpPhase::Off:
                     this->RenderPhaseLightModeOff(curPhase);
-                }
-                else if (curPhase.GetLightMode() == nRpPhase::FFP)
-                {
+                    break;
+                case nRpPhase::FFP:
                     this->RenderPhaseLightModeFFP(curPhase);
-                }
-                else if (curPhase.GetLightMode() == nRpPhase::Shader)
-                {
+                    break;
+                case nRpPhase::Shader:
                     this->RenderPhaseLightModeShader(curPhase);
+                    break;
                 }
             }
             curPass.End();
@@ -422,4 +410,3 @@ nSceneServer::DoRenderPath(nRpSection& rpSection)
     }
     rpSection.End();
 }
-

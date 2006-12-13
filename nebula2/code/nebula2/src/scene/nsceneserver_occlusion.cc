@@ -24,7 +24,7 @@ nSceneServer::IssueOcclusionQuery(Group& group, const vector3& viewerPos)
     if (sceneNode->HasLight())
     {
         // don't do occlusion check for directional light
-        nLightNode* lightNode = (nLightNode*) sceneNode;
+        nLightNode* lightNode = (nLightNode*)sceneNode;
         if (nLight::Directional == lightNode->GetType())
         {
             return;
@@ -38,24 +38,23 @@ nSceneServer::IssueOcclusionQuery(Group& group, const vector3& viewerPos)
     const bbox3& globalBox = group.renderContext->GetGlobalBox();
 
     // check whether the bounding box is very small in one or more dimensions
-    // which may lead to zbuffer artefacts during the occlusion check, in that
+    // which may lead to z-buffer artifacts during the occlusion check, in that
     // case, don't do an occlusion query for this object
     // FIXME: could also be done once at load time in Mangalore...
     vector3 extents = globalBox.extents();
-    if ((extents.x < 0.001f) || (extents.y < 0.001f) || (extents.z < 0.001f))
+    if (extents.x < 0.001f || extents.y < 0.001f || extents.z < 0.001f)
     {
         return;
     }
-    bbox3 occlusionBox(globalBox.center(), globalBox.extents() * 1.1f);
+    
     bbox3 viewerCheckBox(globalBox.center(), globalBox.extents() * 1.2f);
-
-    // convert back to a matrix for shape rendering
-    matrix44 occlusionShapeMatrix = occlusionBox.to_matrix44();
-
     // check if viewer position is inside current bounding box,
     // if yes, don't perform occlusion check
     if (!viewerCheckBox.contains(viewerPos))
     {
+        bbox3 occlusionBox(globalBox.center(), globalBox.extents() * 1.1f);
+        // convert back to a matrix for shape rendering
+        matrix44 occlusionShapeMatrix = occlusionBox.to_matrix44();
         this->occlusionQuery->AddShapeQuery(nGfxServer2::Box, occlusionShapeMatrix, &group);
     }
 }
@@ -83,7 +82,7 @@ nSceneServer::DoOcclusionQuery()
         // needs to check whether the viewer is inside the occlusion bounding box
         // to check, if we don't account for the near plane then the front plane
         // of the occlusion plane might be clipped which would return 0 drawn pixels
-        // when the object really isn't occluded (simply turning off backface
+        // when the object really isn't occluded (simply turning off back face
         // culling won't help either in some cases!)
 
         // FIXME: hmm, this method sucks... better to check viewer position against
@@ -95,10 +94,9 @@ nSceneServer::DoOcclusionQuery()
             gfxServer->SetHint(nGfxServer2::MvpOnly, true);
 
             // issue queries...
-            int i;
-            int num = this->rootArray.Size();
             this->occlusionQuery->Begin();
-            for (i = 0; i < num; i++)
+            int num = this->rootArray.Size();
+            for (int i = 0; i < num; i++)
             {
                 Group& group = this->groupArray[this->rootArray[i]];
                 if (group.renderContext->GetFlag(nRenderContext::DoOcclusionQuery))
@@ -112,14 +110,13 @@ nSceneServer::DoOcclusionQuery()
             // (NOTE: we could split this out and query the results
             // later, since the query will run in parallel to the CPU...
             // if only we had something useful todo in the meantime)
-            int queryIndex;
             int numQueries = this->occlusionQuery->GetNumQueries();
-            for (queryIndex = 0; queryIndex < numQueries; queryIndex++)
+            for (int queryIndex = 0; queryIndex < numQueries; queryIndex++)
             {
-                Group* group = (Group*) this->occlusionQuery->GetUserData(queryIndex);
                 bool occluded = this->occlusionQuery->GetOcclusionStatus(queryIndex);
                 if (occluded)
                 {
+                    Group* group = (Group*)this->occlusionQuery->GetUserData(queryIndex);
                     group->renderContext->SetFlag(nRenderContext::Occluded, true);
                     WATCHER_ADD_INT(watchNumOccluded, 1);
                 }
@@ -136,4 +133,3 @@ nSceneServer::DoOcclusionQuery()
     }
     PROFILER_STOP(this->profOcclusion);
 }
-

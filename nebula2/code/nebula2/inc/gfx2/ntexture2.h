@@ -554,14 +554,11 @@ nTexture2::StringToType(const char* str)
 {
     n_assert(str);
     if (0 == strcmp(str, "NoType")) return TEXTURE_NOTYPE;
-    else if (0 == strcmp(str, "2D")) return TEXTURE_2D;
-    else if (0 == strcmp(str, "3D")) return TEXTURE_3D;
-    else if (0 == strcmp(str, "CUBE")) return TEXTURE_CUBE;
-    else
-    {
-        n_error("nTexture2::StringToType(): invalid string '%s'", str);
-        return TEXTURE_NOTYPE;
-    }
+    if (0 == strcmp(str, "2D")) return TEXTURE_2D;
+    if (0 == strcmp(str, "3D")) return TEXTURE_3D;
+    if (0 == strcmp(str, "CUBE")) return TEXTURE_CUBE;
+    n_error("nTexture2::StringToType(): invalid string '%s'", str);
+    return TEXTURE_NOTYPE;
 }
 
 //------------------------------------------------------------------------------

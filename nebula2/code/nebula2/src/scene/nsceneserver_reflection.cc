@@ -21,7 +21,7 @@ nSceneServer::RenderCameraScene()
     {
         // get the camera node
         Group& cameraNodeGroup = this->groupArray[cameraArray[i]];
-        nAbstractCameraNode* cameraNode = (nAbstractCameraNode*) cameraNodeGroup.sceneNode;
+        nAbstractCameraNode* cameraNode = (nAbstractCameraNode*)cameraNodeGroup.sceneNode;
 
         // check if the render target available
         const nString& rpSectionName = cameraNode->GetRenderPathSection();
@@ -33,7 +33,7 @@ nSceneServer::RenderCameraScene()
                                     nGfxServer2::Instance()->GetTransform(nGfxServer2::View),
                                     nGfxServer2::Instance()->GetTransform(nGfxServer2::Projection));
 
-            // temp view- and projection matrix
+            // temp view and projection matrix
             gfxServer->PushTransform(nGfxServer2::View, cameraNode->GetViewMatrix());
             gfxServer->PushTransform(nGfxServer2::Projection, cameraNode->GetProjectionMatrix());
 
@@ -51,11 +51,11 @@ nSceneServer::RenderCameraScene()
 //------------------------------------------------------------------------------
 /**
     This method parses the given node for one reflection camera and one
-    clippingnode, returns true if this node seems to be a reflecting and
+    clipping node, returns true if this node seems to be a reflecting and
     refraction one
 */
 bool
-nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
+nSceneServer::IsAReflectingShape(const nMaterialNode* shapeNode)  const
 {
     // check if shape has child
     nRoot* child = shapeNode->GetHead();
@@ -71,11 +71,8 @@ nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
     bool refract1Found = false;
     bool refract2Found = false;
 
-    while (0 != child && !(reflect1Found && refract1Found && refract2Found))
+    while (child)
     {
-        // check
-        n_assert(child);
-
         // check if this child is a reflection camera (a reflection camera is a refraction(clipping) camera too!!!)
         if (child->IsA(reqReflectClass))
         {
@@ -87,17 +84,20 @@ nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
                 refract1Found = true;
             }
         }
-        // check if this is a pure refraction(clipping) camer
+        // check if this is a pure refraction(clipping) camera
         else if (child->IsA(reqRefractClass))
         {
             refract2Found = true;
         }
-        // if the two cams are not the only childs, this is no reflectin shape
+        // if the two cameras are not the only children, this is no reflection shape
         else
         {
             return false;
         }
-
+        if (reflect1Found && refract1Found && refract2Found)
+        {
+            break;
+        }
         // get next child
         child = child->GetSucc();
     }
@@ -109,19 +109,17 @@ nSceneServer::IsAReflectingShape(const nMaterialNode *shapeNode)  const
 
 //------------------------------------------------------------------------------
 /**
-    checks the given node's bounding box if it is visible or not (inside viewfrustum)
+    checks the given node's bounding box if it is visible or not (inside view frustum)
 */
 bool
 nSceneServer::IsShapesBBVisible(const Group& groupNode)
 {
-    // get view frustum as matrix
-    const matrix44& viewProj = nGfxServer2::Instance()->GetTransform(nGfxServer2::ViewProjection);
-
     // get bounding box
     bbox3 bBox = groupNode.sceneNode->GetLocalBox();
     bBox.transform(groupNode.modelTransform);
 
     // compute clipping for box
+    const matrix44& viewProj = nGfxServer2::Instance()->GetTransform(nGfxServer2::ViewProjection);
     int clipStat = bBox.clipstatus(viewProj);
     return (clipStat != 0);
 }
@@ -149,8 +147,8 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     line3 l43(v4, v3);
     line3 l31(v3, v1);
 
-    // get the distances, if 0 < tVal < 1 then everything is allright, if not
-    // calc position to the corner vertex of bounding box
+    // get the distances, if 0 < tVal < 1 then everything is all right, if not
+    // calculate position to the corner vertex of bounding box
     float retVal;
     float tVal = l12.closestpoint(viewerPos);
     if (tVal < 0.0f)
@@ -183,7 +181,7 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     }
 
     // compare
-    retVal = tempVal < retVal ? tempVal : retVal;
+    retVal = n_min(retVal, tempVal);
 
     // get next distance to next line
     tVal = l43.closestpoint(viewerPos);
@@ -201,7 +199,7 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     }
 
     // compare
-    retVal = tempVal < retVal ? tempVal : retVal;
+    retVal = n_min(retVal, tempVal);
 
     // get next to compare
     tVal = l31.closestpoint(viewerPos);
@@ -219,15 +217,15 @@ nSceneServer::CalculateDistanceToBoundingBox(const Group& groupNode)
     }
 
     // compare
-    retVal = tempVal < retVal ? tempVal : retVal;
+    retVal = n_min(retVal, tempVal);
 
-    // calc dist
+    // calculate distance
     return retVal;
 }
 
 //------------------------------------------------------------------------------
 /**
-    Parses the given node (usually a relecting, refracting sea) for its priority.
+    Parses the given node (usually a reflecting, refracting sea) for its priority.
     If this sea gets the highest priority, the member 'renderedReflectorPtr' will be set
     to this one, and the distance 'renderedReflectorDistance' will be set.
     Returns true if the given node gains complex render priority
@@ -253,12 +251,11 @@ nSceneServer::ParsePriority(const Group& groupNode)
             return true;
         }
 
-        // if this is allready the chosen one to render  //////////////////////////////// THIRD CONDITION - not allready assigned
+        // if this is all ready the chosen one to render  //////////////////////////////// THIRD CONDITION - not all ready assigned
         if (this->renderContextPtr == groupNode.renderContext)
         {
             // assign new distance
             this->renderedReflectorDistance = tempDistance;
-
             // nothing else to do
             return true;
         }
@@ -269,21 +266,16 @@ nSceneServer::ParsePriority(const Group& groupNode)
             // assign new nearest sea object
             this->renderedReflectorDistance = tempDistance;
             this->renderContextPtr = groupNode.renderContext;
-
             return true;
         }
     }
-    else
+    // if this was the assigned reflector
+    else if (groupNode.renderContext == this->renderContextPtr)
     {
-        // if this was the assigned reflector
-        if (groupNode.renderContext == this->renderContextPtr)
-        {
-            // this is no longer the chosen one
-            this->renderContextPtr = 0;
-            return false;
-        }
+        // this is no longer the chosen one
+        this->renderContextPtr = 0;
+        return false;
     }
-
     // we should never come here
     return false;
 }

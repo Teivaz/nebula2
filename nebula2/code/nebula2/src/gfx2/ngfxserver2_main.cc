@@ -418,22 +418,22 @@ nGfxServer2::Clear(int /*bufferTypes*/, float /*red*/, float /*green*/, float /*
     previous render target.
 
     @param  index   render target index
-    @param  t       the new render target, or 0 to render to the frame buffer
+    @param  tex      the new render target, or 0 to render to the frame buffer
 */
 void
-nGfxServer2::SetRenderTarget(int index, nTexture2* t)
+nGfxServer2::SetRenderTarget(int index, nTexture2* tex)
 {
     n_assert(!this->inBeginScene);
-    if (t)
+    if (tex)
     {
-        t->AddRef();
+        tex->AddRef();
     }
     if (this->refRenderTargets[index].isvalid())
     {
         this->refRenderTargets[index]->Release();
         this->refRenderTargets[index].invalidate();
     }
-    this->refRenderTargets[index] = t;
+    this->refRenderTargets[index] = tex;
 }
 
 //------------------------------------------------------------------------------
@@ -1030,7 +1030,7 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
 
         if (lineEndTestMark > 0) // skip a possible leading white space
         {
-            // set a text end mark at the current test postion
+            // set a text end mark at the current test position
             outString[lineEndTestMark] = 0;
 
             // get the text extend
@@ -1052,9 +1052,9 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
                 }
                 else
                 {
-                    // there was no valid previous tested position (reason, no white space in the fisrt line, or since the
+                    // there was no valid previous tested position (reason, no white space in the first line, or since the
                     // last inserted new line
-                    // insert the new line at the current test positon
+                    // insert the new line at the current test position
                     lastLineBegin = lineEndTestMark;
                     previousLineEndTestMark = lastLineBegin;
                     outString[lastLineBegin-1] = '\n';
@@ -1118,9 +1118,9 @@ nGfxServer2::SetSkipMsgLoop(bool /*skip*/)
     is ((0.0f, 0.0f), (1.0f, 1.0f)).
 */
 void
-nGfxServer2::SetScissorRect(const rectangle& r)
+nGfxServer2::SetScissorRect(const rectangle& rect)
 {
-    this->scissorRect = r;
+    this->scissorRect = rect;
 }
 
 //------------------------------------------------------------------------------
@@ -1134,4 +1134,3 @@ nGfxServer2::SetClipPlanes(const nArray<plane>& planes)
 {
     this->clipPlanes = planes;
 }
-

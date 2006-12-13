@@ -852,20 +852,17 @@ inline
 nVariant::Type
 nVariant::StringToType(const char* str)
 {
-    if      (0 == strcmp(str, "void"))    return Void;
-    else if (0 == strcmp(str, "int"))     return Int;
-    else if (0 == strcmp(str, "float"))   return Float;
-    else if (0 == strcmp(str, "bool"))    return Bool;
-    else if (0 == strcmp(str, "vector3")) return Vector3;
-    else if (0 == strcmp(str, "vector4")) return Vector4;
-    else if (0 == strcmp(str, "color"))   return Vector4; // NOT A BUG!
-    else if (0 == strcmp(str, "string"))  return String;
-    else if (0 == strcmp(str, "matrix44")) return Matrix44;
-    else
-    {
-        n_error("nVariant::StringToType(): invalid type string '%s'!", str);
-        return Void;
-    }
+    if (0 == strcmp(str, "void")) return Void;
+    if (0 == strcmp(str, "int")) return Int;
+    if (0 == strcmp(str, "float")) return Float;
+    if (0 == strcmp(str, "bool")) return Bool;
+    if (0 == strcmp(str, "vector3")) return Vector3;
+    if (0 == strcmp(str, "vector4")) return Vector4;
+    if (0 == strcmp(str, "color")) return Vector4; // NOT A BUG!
+    if (0 == strcmp(str, "string")) return String;
+    if (0 == strcmp(str, "matrix44")) return Matrix44;
+    n_error("nVariant::StringToType(): invalid type string '%s'!", str);
+    return Void;
 }
 
 //------------------------------------------------------------------------------
