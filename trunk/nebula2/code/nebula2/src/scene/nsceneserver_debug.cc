@@ -98,4 +98,3 @@ nSceneServer::DebugRenderPerfGui()
     uint textFlags = nFont2::Top | nFont2::Left | nFont2::NoClip | nFont2::ExpandTabs;
     nGfxServer2::Instance()->DrawText(text, textColor, textRect, textFlags, false);
 }
-

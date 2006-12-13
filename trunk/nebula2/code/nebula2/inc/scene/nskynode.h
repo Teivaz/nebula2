@@ -96,7 +96,7 @@ public:
     /// set refresh time
     void SetRefreshTime(const nString& name, float time);
     /// get refresh time
-    float GetRefreshTime(const nString& name);              //Fehlt
+    float GetRefreshTime(const nString& name);
     /// set time periode
     void SetTimePeriod(float periode);
     /// get time periode
@@ -130,9 +130,9 @@ public:
     nSkyNode::ElementType GetElementType(int elementNr);
 
     /// converts enum type to string
-    nString TypeToString(nSkyNode::ElementType type) const;
+    const char* TypeToString(nSkyNode::ElementType type) const;
     /// converts a string to enum type
-    nSkyNode::ElementType StringToType(const nString& str) const;
+    nSkyNode::ElementType StringToType(const char* str) const;
 
 
 protected:
@@ -166,5 +166,121 @@ protected:
     nVariable::Handle channelVarHandle;
 };
 
-#endif
+//------------------------------------------------------------------------------
+/**
+    Sets the multiplier for the time
+*/
+inline
+void
+nSkyNode::SetTimeFactor(float factor)
+{
+    this->timeFactor = factor;
+}
 
+//------------------------------------------------------------------------------
+/**
+    Gets the multiplier for the time
+*/
+inline
+float
+nSkyNode::GetTimeFactor()
+{
+    return this->timeFactor;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Sets the start point of time
+*/
+inline
+void
+nSkyNode::SetStartTime(float time)
+{
+    this->jumpTime = time - this->startTime;
+    this->startTime = time;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Gets the start point of time
+*/
+inline
+float
+nSkyNode::GetStartTime()
+{
+    return this->startTime;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Sets the time period for a day
+*/
+inline
+void
+nSkyNode::SetTimePeriod(float period)
+{
+    this->timePeriod = period;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Gets the time period for a day
+*/
+inline
+float
+nSkyNode::GetTimePeriod()
+{
+    return this->timePeriod;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Gets the actual time from this skynode
+*/
+inline
+float
+nSkyNode::GetSkyTime()
+{
+    return this->skyTime;
+}
+
+//------------------------------------------------------------------------------
+/**
+    translates element types to string
+*/
+inline
+const char*
+nSkyNode::TypeToString(nSkyNode::ElementType type) const
+{
+    n_assert((type >= 0) && (type < nSkyNode::NumElementTypes));
+    switch (type)
+    {
+    case nSkyNode::SkyElement:      return "sky";
+    case nSkyNode::SunElement:      return "sun";
+    case nSkyNode::LightElement:    return "light";
+    case nSkyNode::CloudElement:    return "cloud";
+    case nSkyNode::StarElement:     return "star";
+    case nSkyNode::GenericElement:  return "generic";
+    default:                        return "unknown";
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    translates string to element type
+*/
+inline
+nSkyNode::ElementType
+nSkyNode::StringToType(const char* str) const
+{
+    n_assert(str);
+    if (strcmp(str, "sky") == 0)        return nSkyNode::SkyElement;
+    if (strcmp(str, "sun") == 0)        return nSkyNode::SunElement;
+    if (strcmp(str, "light") == 0)      return nSkyNode::LightElement;
+    if (strcmp(str, "star") == 0)       return nSkyNode::StarElement;
+    if (strcmp(str, "cloud") == 0)      return nSkyNode::CloudElement;
+    if (strcmp(str, "generic") == 0)    return nSkyNode::GenericElement;
+    return nSkyNode::InvalidElement;
+}
+//------------------------------------------------------------------------------
+#endif

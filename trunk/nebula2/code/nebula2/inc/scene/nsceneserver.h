@@ -199,11 +199,9 @@ private:
         MaxShadowLights = 4,
     };
 
-    static nSceneServer* self;
     static vector3 viewerPos;
     static int sortingOrder;
 
-    nClass* lightNodeClass;
     bool isOpen;
     bool inBeginScene;
     bool obeyLightLinks;

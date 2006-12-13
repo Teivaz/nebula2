@@ -330,22 +330,10 @@ nDisplayMode2::Type
 nDisplayMode2::StringToType(const char* str)
 {
     n_assert(str);
-    if (0 == strcmp(str, "windowed"))
-    {
-        return Windowed;
-    }
-    else if (0 == strcmp(str, "alwaysontop"))
-    {
-        return AlwaysOnTop;
-    }
-    else if (0 == strcmp(str, "childwindow"))
-    {
-        return ChildWindow;
-    }
-    else
-    {
-        return Fullscreen;
-    }
+    if (0 == strcmp(str, "windowed")) return Windowed;
+    if (0 == strcmp(str, "alwaysontop")) return AlwaysOnTop;
+    if (0 == strcmp(str, "childwindow")) return ChildWindow;
+    return Fullscreen;
 }
 
 //------------------------------------------------------------------------------

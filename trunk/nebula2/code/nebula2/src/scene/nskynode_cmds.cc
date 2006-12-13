@@ -334,7 +334,7 @@ nSkyNode::SaveCmds(nPersistServer* ps)
         for (i=0; i < this->elements.Size(); i++)
         {
             cmd = ps->GetCmd(this, 'ADDE');
-            cmd->In()->SetS(this->TypeToString(this->elements[i].type).Get());
+            cmd->In()->SetS(this->TypeToString(this->elements[i].type));
             cmd->In()->SetS(this->elements[i].refElement->GetName());
             ps->PutCmd(cmd);
         }

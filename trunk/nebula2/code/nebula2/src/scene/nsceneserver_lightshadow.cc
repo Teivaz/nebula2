@@ -43,9 +43,8 @@ nSceneServer::ComputeLightScissor(LightInfo& lightInfo)
 {
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     const Group& lightGroup = this->groupArray[lightInfo.groupIndex];
-    nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
-    n_assert(lightNode);
-    n_assert(lightNode->IsA(this->lightNodeClass));
+    nLightNode* lightNode = (nLightNode*)lightGroup.sceneNode;
+    n_assert(0 != lightNode && lightNode->IsA("nlightnode"));
 
     nLight::Type lightType = lightNode->GetType();
     if (nLight::Point == lightType)
@@ -63,7 +62,7 @@ nSceneServer::ComputeLightScissor(LightInfo& lightInfo)
     else if (nLight::Directional == lightType)
     {
         // directional lights cover the whole screen
-        static const rectangle fullScreenRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+        static const rectangle fullScreenRect(vector2::zero, vector2(1.0f, 1.0f));
         lightInfo.scissorRect = fullScreenRect;
     }
     else
@@ -82,13 +81,9 @@ nSceneServer::ComputeLightClipPlanes(LightInfo& lightInfo)
     if (this->clipPlaneFencing)
     {
         nGfxServer2* gfxServer = nGfxServer2::Instance();
-
         const Group& lightGroup = this->groupArray[lightInfo.groupIndex];
-        nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
-
-        n_assert(0 != lightNode && lightNode->IsA(this->lightNodeClass));
-
-        lightInfo.clipPlanes.Reset();
+        nLightNode* lightNode = (nLightNode*)lightGroup.sceneNode;
+        n_assert(0 != lightNode && lightNode->IsA("nlightnode"));
 
         nLight::Type lightType = lightNode->GetType();
         if (nLight::Point == lightType)
@@ -100,6 +95,7 @@ nSceneServer::ComputeLightClipPlanes(LightInfo& lightInfo)
         else if (nLight::Directional == lightType)
         {
             // directional light have no user clip planes
+            lightInfo.clipPlanes.Reset();
         }
         else
         {
@@ -162,7 +158,7 @@ nSceneServer::ResetLightScissorsAndClipPlanes()
     if (this->clipPlaneFencing)
     {
         nGfxServer2* gfxServer = nGfxServer2::Instance();
-        static const rectangle fullScreenRect(vector2(0.0f, 0.0f), vector2(1.0f, 1.0f));
+        static const rectangle fullScreenRect(vector2::zero, vector2(1.0f, 1.0f));
         gfxServer->SetScissorRect(fullScreenRect);
         nArray<plane> nullArray(0, 0);
         gfxServer->SetClipPlanes(nullArray);
@@ -178,12 +174,11 @@ nSceneServer::ResetLightScissorsAndClipPlanes()
 void
 nSceneServer::CopyStencilBufferToTexture(nRpPass& rpPass, const vector4& shadowLightMask)
 {
-    nGfxServer2* gfxServer = nGfxServer2::Instance();
     nShader2* shd = rpPass.GetShader();
     if (shd)
     {
         shd->SetVector4(nShaderState::ShadowIndex, shadowLightMask);
-        gfxServer->SetShader(shd);
+        nGfxServer2::Instance()->SetShader(shd);
         shd->Begin(true);
         shd->BeginPass(0);
         rpPass.DrawFullScreenQuad();
@@ -220,23 +215,19 @@ nSceneServer::GatherShadowLights()
             // ignore occluded light sources
             if (!lightGroup.renderContext->GetFlag(nRenderContext::Occluded))
             {
-                nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
+                nLightNode* lightNode = (nLightNode*)lightGroup.sceneNode;
                 if (lightNode->GetCastShadows())
                 {
-                    vector3 distVec = lightGroup.modelTransform.pos_component() - viewerPos;
-                    float dist = distVec.len();
-                    float range = lightNode->GetFloat(nShaderState::LightRange);
                     float priority;
                     switch (lightNode->GetType())
                     {
                         case nLight::Point:
-                            priority = -(dist / range);
+                            priority = -(lightGroup.modelTransform.pos_component() - viewerPos).len() /
+                                lightNode->GetFloat(nShaderState::LightRange);
                             break;
-
                         case nLight::Directional:
                             priority = 100000.0f;
                             break;
-
                         default:
                             priority = 0.0f;
                             break;
@@ -276,7 +267,7 @@ nSceneServer::RenderShadow(nRpPass& curPass)
     {
         // initialize rendering for multilight shadows
         maxShadowLights = 4;
-        nTexture2* renderTarget = (nTexture2*) nResourceServer::Instance()->FindResource(curPass.GetRenderTargetName(0).Get(), nResource::Texture);
+        nTexture2* renderTarget = (nTexture2*)nResourceServer::Instance()->FindResource(curPass.GetRenderTargetName(0), nResource::Texture);
         n_assert(renderTarget);
         gfxServer->SetRenderTarget(0, renderTarget);
     }
@@ -299,25 +290,20 @@ nSceneServer::RenderShadow(nRpPass& curPass)
 
         // for each shadow casting light...
         int numShadowLights = this->shadowLightArray.Size();
-        if (maxShadowLights > numShadowLights)
-        {
-            maxShadowLights = numShadowLights;
-        }
-
-        if ((numShadowLights > 0) && (this->shadowArray.Size() > 0))
+        if (numShadowLights > 0 && this->shadowArray.Size() > 0)
         {
             // begin shadow scene
             if (shadowServer->BeginScene())
             {
                 int shadowLightIndex;
-                for (shadowLightIndex = 0; shadowLightIndex < maxShadowLights; shadowLightIndex++)
+                for (shadowLightIndex = 0; shadowLightIndex < n_min(maxShadowLights, numShadowLights); shadowLightIndex++)
                 {
                     // only process non-occluded lights
                     const LightInfo& lightInfo = this->shadowLightArray[shadowLightIndex];
                     Group& lightGroup = this->groupArray[lightInfo.groupIndex];
                     if (!lightGroup.renderContext->GetFlag(nRenderContext::Occluded))
                     {
-                        nLightNode* lightNode = (nLightNode*) lightGroup.sceneNode;
+                        nLightNode* lightNode = (nLightNode*)lightGroup.sceneNode;
                         n_assert(lightNode->GetCastShadows());
 
                         // get light position in world space

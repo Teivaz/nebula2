@@ -158,7 +158,7 @@ static const char* StateTable[nShaderState::NumParameters] =
     "LeafCluster",
     "LeafAngleMatrices",
     "WindMatrices",
-    "RendertargetOffSet",
+    "RenderTargetOffset",
     "RenderComplexity",
     "SkyBottom",
     "SunFlat",

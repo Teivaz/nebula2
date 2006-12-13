@@ -266,27 +266,20 @@ void
 nCaptureServer::SetCorrectRenderpathOffset(int numTilesX, int numTilesY, int tileXNum, int tileYNum, bool reset)
 {
 	nFloat4 offset;
-	nShader2* shaderParameter = (nShader2*)nResourceServer::Instance()->FindResourceA("shared", nResource::Shader);
-	if (reset == false)
+	if (reset)
 	{
-		float X0 = (float)tileXNum / (float)numTilesX;
-		float X1 =  X0 + 1 / (float)numTilesX;
-
-		float Y0 = (float)tileYNum / (float)numTilesY;
-		float Y1 = Y0 + 1 / (float)numTilesY;
-
-		offset.x = X0;
-		offset.y = X1;
-		offset.z = Y0;
-		offset.w = Y1;
+        offset.x = 0.0f;
+        offset.y = 1.0f;
+        offset.z = 0.0f;
+        offset.w = 1.0f;
 	}
 	else
 	{
-		offset.x = 0.0;
-		offset.y = 1.0;
-		offset.z = 0.0;
-		offset.w = 1.0;
+        offset.x = (float)tileXNum / (float)numTilesX;
+        offset.y =  offset.x + 1.0f / (float)numTilesX;
+        offset.z = (float)tileYNum / (float)numTilesY;
+        offset.w = offset.z + 1.0f / (float)numTilesY;
 	}
-	shaderParameter->SetFloat4(nShaderState::RendertargetOffSet, offset);
+    nShader2* shaderParameter = (nShader2*)nResourceServer::Instance()->FindResource("shared", nResource::Shader);
+	shaderParameter->SetFloat4(nShaderState::RenderTargetOffset, offset);
 }
-

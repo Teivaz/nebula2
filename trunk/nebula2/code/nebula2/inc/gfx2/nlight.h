@@ -289,13 +289,10 @@ nLight::StringToType(const char* str)
 {
     n_assert(str);
     if (0 == strcmp(str, "Point")) return Point;
-    else if (0 == strcmp(str, "Directional")) return Directional;
-    else if (0 == strcmp(str, "Spot")) return Spot;
-    else
-    {
-        n_error("nLight::StringToType(): invalid light type string '%s'!", str);
-        return InvalidType;
-    }
+    if (0 == strcmp(str, "Directional")) return Directional;
+    if (0 == strcmp(str, "Spot")) return Spot;
+    n_error("nLight::StringToType(): invalid light type string '%s'!", str);
+    return InvalidType;
 }
 
 //------------------------------------------------------------------------------
