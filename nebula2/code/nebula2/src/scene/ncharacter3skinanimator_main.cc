@@ -41,13 +41,12 @@ nCharacter3SkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderCo
     n_assert(renderContext);
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
-
     const nVariable& charVar = renderContext->GetLocalVar(this->characterVarIndex);
-    nCharacter2* curCharacter = (nCharacter2*) charVar.GetObj();
+    nCharacter2* curCharacter = (nCharacter2*)charVar.GetObj();
     n_assert(curCharacter);
 
     const nVariable& varCharacterSet = renderContext->GetLocalVar(this->characterSetIndex);
-    nCharacter3Set* characterSet = (nCharacter3Set*) varCharacterSet.GetObj();
+    nCharacter3Set* characterSet = (nCharacter3Set*)varCharacterSet.GetObj();
     n_assert(characterSet);
 
     this->currentVariation = characterSet->GetCurrentVariationIndex();
@@ -203,8 +202,8 @@ nCharacter3SkinAnimator::LoadResources()
 
             // create a combined animation object, throw away original animations
             // so they don't use up memory
-            nString rsrcName = name + nString("_c3anim");
-            this->animations = (nCombinedAnimation*) nResourceServer::Instance()->NewResource("ncombinedanimation", rsrcName, nResource::Animation);
+            nString rsrcName = name + "_c3anim";
+            this->animations = (nCombinedAnimation*)nResourceServer::Instance()->NewResource("ncombinedanimation", rsrcName, nResource::Animation);
             this->animations->BeginAnims();
             int numAnimations = this->animationAnims.Size();
             int i;
@@ -310,7 +309,7 @@ nCharacter3SkinAnimator::LoadAnimationsFromFolder(const nString& path, nArray<nR
             nString entryName = files[i].ExtractFileName();
             entryName.StripExtension();
             result.Append(entryName);
-            nMemoryAnimation* anim = (nMemoryAnimation*) this->refAnimServer->NewMemoryAnimation(0);
+            nMemoryAnimation* anim = (nMemoryAnimation*)this->refAnimServer->NewMemoryAnimation(0);
             anim->SetFilename(files[i]);
             if (!anim->Load())
             {
@@ -329,7 +328,7 @@ nCharacter3SkinAnimator::LoadAnimationsFromFolder(const nString& path, nArray<nR
 nCharacter2Set*
 nCharacter3SkinAnimator::CreateCharacterSet()
 {
-    return n_new (nCharacter3Set);
+    return n_new(nCharacter3Set);
 }
 
 //------------------------------------------------------------------------------
@@ -340,7 +339,7 @@ nCharacter3SkinAnimator::DeleteCharacterSet(nRenderContext* renderContext)
 {
     n_assert(0 != renderContext);
     nVariable var = renderContext->GetLocalVar(this->characterSetIndex);
-    nCharacter3Set* characterSet = (nCharacter3Set*) var.GetObj();
+    nCharacter3Set* characterSet = (nCharacter3Set*)var.GetObj();
     n_assert(characterSet);
     characterSet->Release();
 }

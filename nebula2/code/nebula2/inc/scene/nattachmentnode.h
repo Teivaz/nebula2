@@ -45,7 +45,7 @@ public:
     const matrix44& GetFinalTransform();
 
     /// specifies the target joint by name
-    virtual void SetJointByName(const char *jointName);
+    virtual void SetJointByName(const char* jointName);
     /// specifies the target joint by index
     virtual void SetJointByIndex(unsigned int newIndex);
 

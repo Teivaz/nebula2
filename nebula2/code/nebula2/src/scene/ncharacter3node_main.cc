@@ -58,7 +58,7 @@ nCharacter3Node::UpdateBoundingBox()
         bbox3 parentBox = parent->GetLocalBox();
         parentBox.extend(box);
         parent->SetLocalBox(parentBox);
-        parent = (nSceneNode*) parent->GetParent();
+        parent = (nSceneNode*)parent->GetParent();
     }
 }
 
@@ -74,7 +74,7 @@ nCharacter3Node::RenderTransform(nSceneServer* sceneServer, nRenderContext* rend
     nVariable::Handle characterSetHandle = nVariableServer::Instance()->GetVariableHandleByName("charSetPointer");
     nVariable* var = renderContext->FindLocalVar(characterSetHandle);
     n_assert(0 != var);
-    nCharacter3Set* characterSet = (nCharacter3Set*) var->GetObj();
+    nCharacter3Set* characterSet = (nCharacter3Set*)var->GetObj();
     n_assert(characterSet);
 
     if (!characterSet->IsValid())
@@ -92,7 +92,7 @@ nCharacter3Node::RenderTransform(nSceneServer* sceneServer, nRenderContext* rend
     {
         if (this->loadedSkins[i]->IsA(this->transformNodeClass))
         {
-            nTransformNode* node = (nTransformNode*) this->loadedSkins[i];
+            nTransformNode* node = (nTransformNode*)this->loadedSkins[i];
             bool isVisible = characterSet->IsSkinVisibleAtIndex(i);
             node->SetActive(isVisible);
         }
@@ -115,7 +115,7 @@ nCharacter3Node::LoadResources()
     {
         result &= nSceneNode::LoadResources();
         nString name = this->GetName();
-        this->LoadSkinsFromSubfolder(nString("gfxlib:characters/")+name+"/skins");
+        this->LoadSkinsFromSubfolder(nString("gfxlib:characters/") + name + "/skins");
         this->UpdateBoundingBox();
 
         // now try to initialize the character nodes by using the default skin list
@@ -258,7 +258,7 @@ nCharacter3Node::LoadSkinsFromSubfolder(nString path)
 
                         nString name;
                         nArray<nString> directories;
-                        int tokens = curPath.Tokenize("/",directories);
+                        int tokens = curPath.Tokenize("/", directories);
                         if (tokens >= 3)
                         {
                             name.Append(directories[directories.Size()-3]);
@@ -324,7 +324,7 @@ nCharacter3Node::FindFirstInstance(nRoot* node, nClass* classType)
     read skin list from a XML file
 */
 bool
-nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinList,nString &resultVariation)
+nCharacter3Node::ReadCharacterStuffFromXML(nString fileName, nString& resultSkinList, nString& resultVariation)
 {
     resultVariation = "";
     resultSkinList = "";
@@ -352,7 +352,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
         do
         {
             nString current = stream.GetCurrentNodeName();
-            skins += current + nString(" ");
+            skins += current + " ";
 
             if (!stream.SetToFirstChild())
             {
@@ -361,7 +361,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
             }
 
             current = stream.GetCurrentNodeName();
-            skins += current + nString(" ");
+            skins += current + " ";
 
             if (!stream.SetToFirstChild())
             {
@@ -370,7 +370,7 @@ nCharacter3Node::ReadCharacterStuffFromXML(nString fileName,nString &resultSkinL
             }
 
             current = stream.GetCurrentNodeName();
-            skins += current + nString(" ");
+            skins += current + " ";
 
             stream.SetToParent();
             stream.SetToParent();
@@ -404,7 +404,7 @@ nCharacter3Node::WriteCharacterStuffFromXML(nString fileName, nString skins, nSt
 {
     fileName = nFileServer2::Instance()->ManglePath(fileName);
     nArray<nString> skin;
-    skins.Tokenize(" ",skin);
+    skins.Tokenize(" ", skin);
 
     nStream stream;
     stream.SetFilename(fileName);

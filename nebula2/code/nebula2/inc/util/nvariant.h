@@ -63,7 +63,7 @@ public:
     void operator=(int val);
     /// float assignment operator
     void operator=(float val);
-    /// bool assigment operator
+    /// bool assignment operator
     void operator=(bool val);
     /// string assignment operator
     void operator=(const char* s);
