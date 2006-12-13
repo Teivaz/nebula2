@@ -39,7 +39,7 @@ nClippingCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix
     vector3 camPosWorldSpace;
 
     matrix44 _viewMatrix         = viewMatrix;
-    _viewMatrix.pos_component()  = vector3(0.0, 0.0, 0.0);
+    _viewMatrix.pos_component()  = vector3::zero;
 
     _viewMatrix.invert();
     _viewMatrix.mult(viewMatrix.pos_component(), camPosWorldSpace);
@@ -51,7 +51,7 @@ nClippingCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix
 
     clipPlaneNormal.norm();
 
-    if (distance < 0.0)
+    if (distance < 0.0f)
     {
         //front side of plane
         clipPlaneNormal = -clipPlaneNormal;
@@ -79,9 +79,9 @@ nClippingCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix
 float
 nClippingCameraNode::sgn(float a)
 {
-	if (a > 0.0F) return (1.0F);
-	if (a < 0.0F) return (-1.0F);
-	return (0.0F);
+	if (a > 0.0f) return 1.0f;
+	if (a < 0.0f) return -1.0f;
+	return 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -120,9 +120,8 @@ nClippingCameraNode::ComputeProjectionMatrix(const matrix44& viewMatrix, const m
 
     float t = n_sin(N_PI/2.0f - angle.theta);
 
-    //bring rotatation over 0.1
-    t = (t<0)? -t: t;
-    t = (t<0.1f)? 0.1f: t;
+    //bring rotation over 0.1
+    t = n_max(0.1f, n_abs(t));
 
     vector4 q;
     q.x = t*(this->sgn(_clipPlane.x)) / _projectionMatrix.m[0][0];
@@ -130,7 +129,7 @@ nClippingCameraNode::ComputeProjectionMatrix(const matrix44& viewMatrix, const m
     q.z = -1.0;
     q.w = t*(float)(1.0 + _projectionMatrix.m[2][2]) / _projectionMatrix.m[3][2];
 
-    vector4 c = _clipPlane * (1.0F / (_clipPlane.x*q.x + _clipPlane.y*q.y + _clipPlane.z*q.z + _clipPlane.w*q.w));
+    vector4 c = _clipPlane * (1.0f / (_clipPlane.x*q.x + _clipPlane.y*q.y + _clipPlane.z*q.z + _clipPlane.w*q.w));
 
 	// Replace the third column of the projection matrix
 	_projectionMatrix.m[0][2] = c.x;

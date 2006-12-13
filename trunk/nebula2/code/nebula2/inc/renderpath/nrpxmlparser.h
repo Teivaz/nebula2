@@ -66,7 +66,7 @@ private:
     nVariable ParseVariable(nVariable::Type dataType, TiXmlElement* elm);
     /// parse a global variable under RenderPath
     void ParseGlobalVariable(nVariable::Type dataType, TiXmlElement* elm, nRenderPath2* renderPath);
-    /// parse a Secion XML element
+    /// parse a Section XML element
     void ParseSection(TiXmlElement* elm, nRenderPath2* renderPath);
     /// parse a Pass XML element
     void ParsePass(TiXmlElement* elm, nRpSection* section);

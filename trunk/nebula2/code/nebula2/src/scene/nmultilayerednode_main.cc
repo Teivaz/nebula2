@@ -26,7 +26,6 @@ nMultiLayeredNode::~nMultiLayeredNode()
     // empty
 }
 
-
 //------------------------------------------------------------------------------
 /**
 */
@@ -41,26 +40,27 @@ nMultiLayeredNode::RenderGeometry(nSceneServer* sceneServer, nRenderContext* ren
     nShader2* shd = nGfxServer2::Instance()->GetShader();
     if (shd->IsParameterUsed(nShaderState::MLPUVStretch))
     {
-        shd->SetMatrix(nShaderState::MLPUVStretch,uvStretchMatrix);
-    };
+        shd->SetMatrix(nShaderState::MLPUVStretch, uvStretchMatrix);
+    }
 
-    matrix44 uvStretch[5];
     // set uv matrices for dx7 shader
     for (int i = 0; i < 5; i++)
     {
         float stretch = this->dx7uvStretch[i];
-        uvStretch[i].ident();
-        uvStretch[i].m[0][0] = stretch;
-        uvStretch[i].m[1][1] = stretch;
-        uvStretch[i].m[2][2] = stretch;
-        uvStretch[i].m[3][3] = stretch;
-        if ((i==0)&&(shd->IsParameterUsed(nShaderState::UVStretch0))) shd->SetMatrix(nShaderState::UVStretch0,uvStretch[i]);
-        if ((i==1)&&(shd->IsParameterUsed(nShaderState::UVStretch1))) shd->SetMatrix(nShaderState::UVStretch1,uvStretch[i]);
-        if ((i==2)&&(shd->IsParameterUsed(nShaderState::UVStretch2))) shd->SetMatrix(nShaderState::UVStretch2,uvStretch[i]);
-        if ((i==3)&&(shd->IsParameterUsed(nShaderState::UVStretch3))) shd->SetMatrix(nShaderState::UVStretch3,uvStretch[i]);
-        if ((i==4)&&(shd->IsParameterUsed(nShaderState::UVStretch4))) shd->SetMatrix(nShaderState::UVStretch4,uvStretch[i]);
-//        if ((i==5)&&(shd->IsParameterUsed(nShaderState::UVStretch5))) shd->SetMatrix(nShaderState::UVStretch5,uvStretch[i]);
+        matrix44 uvStretch;
+        uvStretch.ident();
+        uvStretch.m[0][0] = stretch;
+        uvStretch.m[1][1] = stretch;
+        uvStretch.m[2][2] = stretch;
+        uvStretch.m[3][3] = stretch;
+        switch (i)
+        {
+            case 0: if (shd->IsParameterUsed(nShaderState::UVStretch0)) shd->SetMatrix(nShaderState::UVStretch0, uvStretch); break;
+            case 1: if (shd->IsParameterUsed(nShaderState::UVStretch1)) shd->SetMatrix(nShaderState::UVStretch1, uvStretch); break;
+            case 2: if (shd->IsParameterUsed(nShaderState::UVStretch2)) shd->SetMatrix(nShaderState::UVStretch2, uvStretch); break;
+            case 3: if (shd->IsParameterUsed(nShaderState::UVStretch3)) shd->SetMatrix(nShaderState::UVStretch3, uvStretch); break;
+            case 4: if (shd->IsParameterUsed(nShaderState::UVStretch4)) shd->SetMatrix(nShaderState::UVStretch4, uvStretch); break;
+        }
     }
     return nShapeNode::RenderGeometry(sceneServer, renderContext);
 }
-

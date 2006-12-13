@@ -81,7 +81,7 @@ nAttachmentNode::UpdateFinalTransform()
     if (this->isFinalDirty)
     {
         // Multiply the local matrix by the joint matrix (which we get through lengthy means via the parent nSkinShapeNode)
-        finalMatrix = this->tform.getmatrix() * ((nSkinShapeNode *)this->parent)->GetCharSkeleton()->GetJointAt(this->jointIndex).GetMatrix();
+        finalMatrix = this->tform.getmatrix() * ((nSkinShapeNode*)this->parent)->GetCharSkeleton()->GetJointAt(this->jointIndex).GetMatrix();
 
         this->isFinalDirty = false;
     }
@@ -94,7 +94,7 @@ nAttachmentNode::UpdateFinalTransform()
     @param jointName  the name of the joint index to target
 */
 void
-nAttachmentNode::SetJointByName(const char *jointName)
+nAttachmentNode::SetJointByName(const char* jointName)
 {
     /*if (strcmp(this->parent->GetClass()->GetName(), "nskinshapenode"))
     {

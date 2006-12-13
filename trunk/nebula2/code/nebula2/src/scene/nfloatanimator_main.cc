@@ -69,7 +69,7 @@ nFloatAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
     // FIXME: dirty cast, make sure that it is a nAbstractShaderNode!
-    nAbstractShaderNode* targetNode = (nAbstractShaderNode*) sceneNode;
+    nAbstractShaderNode* targetNode = (nAbstractShaderNode*)sceneNode;
 
     // get the sample time from the render context
     nVariable* var = renderContext->GetVariable(this->channelVarHandle);

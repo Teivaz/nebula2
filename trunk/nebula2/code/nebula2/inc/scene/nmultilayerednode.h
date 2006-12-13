@@ -8,11 +8,9 @@
     (C) 2005 RadonLabs GmbH
 */
 #include "scene/nshapenode.h"
-//#include "scene/nscenenode.h"
 
 class nRenderContext;
 //------------------------------------------------------------------------------
-//class nMultiLayeredNode : public nSceneNode
 class nMultiLayeredNode : public nShapeNode
 {
 public:
@@ -25,8 +23,8 @@ public:
     /// render geometry
     virtual bool RenderGeometry(nSceneServer* sceneServer, nRenderContext* renderContext);
 
-    void SetUVStretch(int nr,float val);
-    void SetDX7UVStretch(int nr,float val);
+    void SetUVStretch(int nr, float val);
+    void SetDX7UVStretch(int nr, float val);
     void SetTexCount(int cnt);
     /// sets the part Index of this node
     void SetPartIndex(int partIndex);
@@ -47,7 +45,7 @@ inline
 void
 nMultiLayeredNode::SetUVStretch(int nr, float value)
 {
-    n_assert((nr>=0)&&(nr<6));
+    n_assert(nr >= 0 && nr < 6);
     this->uvStretch[nr] = value;
 }
 //------------------------------------------------------------------------------
@@ -57,7 +55,7 @@ inline
 void
 nMultiLayeredNode::SetDX7UVStretch(int nr, float value)
 {
-    n_assert((nr>=0)&&(nr<6));
+    n_assert(nr >= 0 && nr < 6);
     this->dx7uvStretch[nr] = value;
 }
 
