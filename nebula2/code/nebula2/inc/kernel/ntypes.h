@@ -2,7 +2,7 @@
 #define N_TYPES_H
 //------------------------------------------------------------------------------
 /**
-    Lowlevel Nebula defs.
+    Lowlevel Nebula defines.
 
     (C) 2002 RadonLabs GmbH
 */
@@ -24,6 +24,7 @@ typedef unsigned char  uchar;
 typedef float float2[2];
 typedef float float3[3];
 typedef float float4[4];
+
 struct nFloat4
 {
     float x;
@@ -31,19 +32,21 @@ struct nFloat4
     float z;
     float w;
 };
+
 struct nFloat3
 {
     float x;
     float y;
     float z;
 };
+
 struct nFloat2
 {
     float x;
     float y;
 };
 /**
-    An nFourCC is usualy represented in textual form in the source code
+    An nFourCC is usually represented in textual form in the source code
     as a character constant comprised of 4 characters:
 
     @verbatim
@@ -70,9 +73,9 @@ typedef double nTime;
 #define N_MAXNAMELEN (128)   // maximum length for single path component
 
 //------------------------------------------------------------------------------
-#define nID(a,b,c,d) ((a<<24)|(b<<16)|(c<<8)|(d))
-#define MAKE_FOURCC(ch0,ch1,ch2,ch3) (ch0 | ch1<<8 | ch2<<16 | ch3<<24)
-#define FOURCC(i) (((i&0xff000000)>>24) | ((i&0x00ff0000)>>8) | ((i&0x0000ff00)<<8) | ((i&0x000000ff)<<24))
+#define nID(a, b, c, d) ((a << 24) | (b << 16) | (c << 8) | (d))
+#define MAKE_FOURCC(c0, c1, c2, c3) ((c0) | (c1 << 8) | (c2 << 16) | (c3 << 24))
+#define FOURCC(i) (((i & 0xff000000) >> 24) | ((i & 0x00ff0000) >> 8) | ((i & 0x0000ff00) << 8) | ((i & 0x000000ff) << 24))
 #define N_WHITESPACE " \r\n\t"
 
 #if defined(__LINUX__) || defined(__MACOSX__)
@@ -97,37 +100,37 @@ typedef double nTime;
 #endif
 
 // maps unsigned 8 bits/channel to D3DCOLOR
-#define N_ARGB(a,r,g,b) ((uint)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
-#define N_RGBA(r,g,b,a) N_ARGB(a,r,g,b)
-#define N_XRGB(r,g,b)   N_ARGB(0xff,r,g,b)
-#define N_COLORVALUE(r,g,b,a) N_RGBA((uint)((r)*255.f),(uint)((g)*255.f),(uint)((b)*255.f),(uint)((a)*255.f))
+#define N_ARGB(a, r, g, b) ((uint)((((a)&0xff) << 24) | (((r)&0xff) << 16) | (((g)&0xff) << 8) | ((b)&0xff)))
+#define N_RGBA(r, g, b, a) N_ARGB(a, r, g, b)
+#define N_XRGB(r, g, b)   N_ARGB(0xff, r, g, b)
+#define N_COLORVALUE(r, g, b, a) N_RGBA((uint)((r)*255.f), (uint)((g)*255.f), (uint)((b)*255.f), (uint)((a)*255.f))
 
 //------------------------------------------------------------------------------
 //  public kernel C functions
 //------------------------------------------------------------------------------
-void __cdecl n_printf(const char *, ...)
-    __attribute__((format(printf,1,2)));
+void __cdecl n_printf(const char*, ...)
+    __attribute__((format(printf, 1, 2)));
 void __cdecl n_error(const char*, ...)
     __attribute__((noreturn))
-    __attribute__((format(printf,1,2)));
+    __attribute__((format(printf, 1, 2)));
 void __cdecl n_message(const char*, ...)
-    __attribute__((format(printf,1,2)));
+    __attribute__((format(printf, 1, 2)));
 void __cdecl n_dbgout(const char*, ...)
-    __attribute__((format(printf,1,2)));
+    __attribute__((format(printf, 1, 2)));
 void n_sleep(double);
-char *n_strdup(const char *);
-char *n_strncpy2(char *, const char *, size_t);
-bool n_strmatch(const char *, const char *);
-void n_strcat(char *, const char *, size_t);
+char* n_strdup(const char*);
+char* n_strncpy2(char*, const char*, size_t);
+bool n_strmatch(const char*, const char*);
+void n_strcat(char*, const char*, size_t);
 
-void n_barf(const char *, const char *, int)
+void n_barf(const char*, const char*, int)
     __attribute__((noreturn));
 void n_barf2(const char*, const char*, const char*, int)
     __attribute__((noreturn));
 
-void *n_dllopen(const char *);
-void  n_dllclose(void *);
-void *n_dllsymbol(void *, const char *);
+void* n_dllopen(const char*);
+void  n_dllclose(void*);
+void* n_dllsymbol(void*, const char*);
 
 nFourCC n_strtofourcc(const char*);
 const char* n_fourcctostr(nFourCC);

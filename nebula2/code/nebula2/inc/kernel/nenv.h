@@ -20,7 +20,7 @@ class nEnv : public nRoot
 {
 public:
     /// object persistency
-    virtual bool SaveCmds(nPersistServer *);
+    virtual bool SaveCmds(nPersistServer* ps);
     /// Returns the type of this nEnv instance
     nArg::Type GetType();
     /// Sets the value of this object to the passed integer
@@ -30,9 +30,9 @@ public:
     /// Sets the value of this object to the passed float value
     void SetF(float f);
     /// Sets the value of this object to the passed string
-    void SetS(const char *s);
+    void SetS(const char* s);
     /// Sets the value of this objet to the passed object
-    void SetO(nRoot *o);
+    void SetO(nRoot* o);
     /// set float4 value
     void SetF4(const nFloat4& f4);
     /// set a vector4
@@ -46,9 +46,9 @@ public:
     /// Returns the float value
     float GetF();
     /// Returns the string
-    const char *GetS();
+    const char* GetS();
     /// Returns the object
-    nRoot *GetO();
+    nRoot* GetO();
     /// get float4 value
     const nFloat4& GetF4();
     /// get vector4 value
@@ -105,7 +105,7 @@ nEnv::SetF(float f)
 */
 inline
 void
-nEnv::SetS(const char *s)
+nEnv::SetS(const char* s)
 {
     this->arg.SetS(s);
 }
@@ -115,7 +115,7 @@ nEnv::SetS(const char *s)
 */
 inline
 void
-nEnv::SetO(nRoot *o)
+nEnv::SetO(nRoot* o)
 {
     this->arg.SetO(o);
 }
@@ -197,7 +197,7 @@ inline
 nRoot*
 nEnv::GetO()
 {
-    return (nRoot *) this->arg.GetO();
+    return (nRoot*)this->arg.GetO();
 }
 
 //------------------------------------------------------------------------------

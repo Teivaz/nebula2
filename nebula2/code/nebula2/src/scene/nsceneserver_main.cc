@@ -82,8 +82,8 @@ nSceneServer::nSceneServer() :
     this->renderContextPtr = 0;
 
      // get class pointer to compare, and check this stuff
-    reqReflectClass = nKernelServer::Instance()->FindClass("nreflectioncameranode");
-    reqRefractClass = nKernelServer::Instance()->FindClass("nclippingcameranode");
+    reqReflectClass = kernelServer->FindClass("nreflectioncameranode");
+    reqRefractClass = kernelServer->FindClass("nclippingcameranode");
     n_assert(reqReflectClass);
     n_assert(reqRefractClass);
 }

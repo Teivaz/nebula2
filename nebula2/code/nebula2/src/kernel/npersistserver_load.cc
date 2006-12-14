@@ -116,11 +116,11 @@ nPersistServer::LoadFoldedObject(const char* fname, const char* objName,
     // create object and parse script
     if (objName)
     {
-        obj = nKernelServer::Instance()->New(objClass, objName);
+        obj = kernelServer->New(objClass, objName);
     }
     else
     {
-        obj = nKernelServer::Instance()->New(objClass);
+        obj = kernelServer->New(objClass);
     }
 
     if (obj)
@@ -131,7 +131,7 @@ nPersistServer::LoadFoldedObject(const char* fname, const char* objName,
 
         if (isRoot)
         {
-            nKernelServer::Instance()->PushCwd((nRoot *)obj);
+            kernelServer->PushCwd((nRoot *)obj);
         }
         else
         {
@@ -142,7 +142,7 @@ nPersistServer::LoadFoldedObject(const char* fname, const char* objName,
 
         if (isRoot)
         {
-            nKernelServer::Instance()->PopCwd();
+            kernelServer->PopCwd();
         }
         else
         {
@@ -178,7 +178,7 @@ nPersistServer::LoadObject(const char* fileName, const char* objName)
     nString tmpName;
 
     // if we need to create an nRoot make sure it will have a valid name
-    if (nKernelServer::Instance()->FindClass(objClass)->IsA("nroot"))
+    if (kernelServer->FindClass(objClass)->IsA("nroot"))
     {
         // isolate object name from path, object path can have 2 forms:
         //

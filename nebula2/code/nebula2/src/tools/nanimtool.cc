@@ -51,15 +51,14 @@ main(int argc, const char** argv)
     }
 
     // startup Nebula
-    nKernelServer* kernelServer = new nKernelServer;
+    nKernelServer kernelServer;
 
     // read input anim
     n_printf("-> loading anim '%s'\n", inFileArg.Get());
     nString filename = inFileArg;
-    if (!anim.Load(kernelServer->GetFileServer(), inFileArg.Get()))
+    if (!anim.Load(kernelServer.GetFileServer(), inFileArg.Get()))
     {
         n_printf("nanimtool error: Could not load '%s'\n", inFileArg.Get());
-        delete kernelServer;
         return 5;
     }
 
@@ -67,15 +66,13 @@ main(int argc, const char** argv)
     if (outFileArg.IsValid())
     {
         n_printf("-> saving '%s'\n", outFileArg.Get());
-        if (!anim.Save(kernelServer->GetFileServer(), outFileArg.Get()))
+        if (!anim.Save(kernelServer.GetFileServer(), outFileArg.Get()))
         {
             n_printf("Error: Could not save '%s'\n", outFileArg.Get());
-            delete kernelServer;
             return 5;
         }
     }
 
     // success
-    delete kernelServer;
     return 0;
 }

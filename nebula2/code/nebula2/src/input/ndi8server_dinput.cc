@@ -25,7 +25,7 @@ nDI8Server::InitDirectInput()
         n_printf("nDI8Server: GetModuleHandle() failed!\n");
         return false;
     }
-    hr = DirectInput8Create(instance, DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**) &(this->di8), NULL);
+    hr = DirectInput8Create(instance, DIRECTINPUT_VERSION, IID_IDirectInput8A, (void**)&(this->di8), NULL);
     if (FAILED(hr))
     {
         n_printf("nDI8Server: DirectInput8Create() failed with '%s'!\n", this->Error(hr));
@@ -76,7 +76,7 @@ di8SetDWordProp(IDirectInputDevice8* dev, REFGUID prop, DWORD val)
     dpw.diph.dwHow = DIPH_DEVICE;
     dpw.diph.dwObj = NULL;
     dpw.dwData     = val;
-    hr = dev->SetProperty(prop, (LPDIPROPHEADER) &dpw);
+    hr = dev->SetProperty(prop, (LPDIPROPHEADER)&dpw);
 }
 
 //------------------------------------------------------------------------------
@@ -98,7 +98,7 @@ di8GetRangeProp(IDirectInputDevice8* dev,
     dpr.diph.dwHeaderSize = sizeof(DIPROPHEADER);
     dpr.diph.dwHow = DIPH_BYOFFSET;
     dpr.diph.dwObj = obj;
-    hr = dev->GetProperty(prop,(LPDIPROPHEADER)&dpr);
+    hr = dev->GetProperty(prop, (LPDIPROPHEADER)&dpr);
     if (SUCCEEDED(hr))
     {
         minRange = dpr.lMin;
@@ -125,7 +125,7 @@ BOOL CALLBACK
 di8EnumDevicesCallback(LPCDIDEVICEINSTANCE lpddi, LPVOID pvRef)
 {
     HRESULT hr;
-    nDI8Server* diServer = (nDI8Server*) pvRef;
+    nDI8Server* diServer = (nDI8Server*)pvRef;
     IDirectInput8* di8 = diServer->di8;
     n_assert(di8);
 
@@ -251,9 +251,9 @@ nDI8Server::HwndChanged()
 {
     HRESULT hr;
     nDI8Device* dev;
-    for (dev = (nDI8Device*) this->di8DevList.GetHead();
+    for (dev = (nDI8Device*)this->di8DevList.GetHead();
          dev;
-         dev = (nDI8Device*) dev->GetSucc())
+         dev = (nDI8Device*)dev->GetSucc())
     {
         IDirectInputDevice8* diDev = dev->GetDevice();
         n_assert(diDev);
@@ -330,9 +330,9 @@ nDI8Server::ExportDevices()
 
     // scan di8 device list
     nDI8Device* di8Dev;
-    for (di8Dev = (nDI8Device*) this->di8DevList.GetHead();
+    for (di8Dev = (nDI8Device*)this->di8DevList.GetHead();
          di8Dev;
-         di8Dev = (nDI8Device*) di8Dev->GetSucc())
+         di8Dev = (nDI8Device*)di8Dev->GetSucc())
     {
         // get hardware's number of axes, buttons and povs
         int numAxes    = di8Dev->GetNumAxes();

@@ -157,7 +157,7 @@ nViewerApp::Open()
         // Switch to ramfileserver if demanded.
         if (this->UseRam())
         {
-            nKernelServer::Instance()->ReplaceFileServer("nramfileserver");
+            kernelServer->ReplaceFileServer("nramfileserver");
         }
         this->nodeList.LoadObject(this->GetSceneFile());
     }

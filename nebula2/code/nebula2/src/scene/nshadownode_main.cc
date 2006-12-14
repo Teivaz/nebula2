@@ -45,8 +45,7 @@ nShadowNode::LoadResources()
 {
     if (nTransformNode::LoadResources())
     {
-        nShadowServer2* shadowServer = nShadowServer2::Instance();
-        nStaticShadowCaster2* shadowCaster = (nStaticShadowCaster2*) shadowServer->NewShadowCaster(nShadowCaster2::Static, 0);
+        nStaticShadowCaster2* shadowCaster = (nStaticShadowCaster2*)nShadowServer2::Instance()->NewShadowCaster(nShadowCaster2::Static, 0);
         n_assert(!shadowCaster->IsLoaded());
         shadowCaster->SetMeshGroupIndex(this->groupIndex);
         shadowCaster->SetFilename(this->meshName);
@@ -82,7 +81,6 @@ nShadowNode::RenderShadow(nSceneServer* /*sceneServer*/, nRenderContext* /*rende
     // HACK:
     // check distance for small objects < smaller 3 meters diagonal)
     // should be replaced by some proper LODing!
-    bool cull = false;
     if (this->GetLocalBox().diagonal_size() < 3.0f)
     {
         nGfxServer2* gfxServer = nGfxServer2::Instance();
@@ -91,14 +89,11 @@ nShadowNode::RenderShadow(nSceneServer* /*sceneServer*/, nRenderContext* /*rende
         float dist = vector3::distance(viewerPos, worldPos);
         if (dist > maxSmallObjectDistance)
         {
-            cull = true;
+            return true;
         }
     }
 
     // render the shadow volume
-    if (!cull)
-    {
-        nShadowServer2::Instance()->RenderShadowCaster(this->refShadowCaster, modelMatrix);
-    }
+    nShadowServer2::Instance()->RenderShadowCaster(this->refShadowCaster, modelMatrix);
     return true;
 }

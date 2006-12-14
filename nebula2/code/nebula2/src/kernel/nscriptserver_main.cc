@@ -34,7 +34,7 @@ nScriptServer::~nScriptServer()
 
     @param  cmdStr      the statement to execute
     @param  result      [out] will be filled with the result
-    @return             false if an error occured during execution
+    @return             false if an error occurred during execution
 */
 bool
 nScriptServer::Run(const char* /* cmdStr */, nString& /* result */)
@@ -49,7 +49,7 @@ nScriptServer::Run(const char* /* cmdStr */, nString& /* result */)
 
     @param functionName     the function to invoke
     @param result           [out] will be filled with the result
-    @return                 false if an error occured during execution
+    @return                 false if an error occurred during execution
 */
 bool
 nScriptServer::RunFunction(const char* /*functionName*/, nString& /*result*/)
@@ -64,7 +64,7 @@ nScriptServer::RunFunction(const char* /*functionName*/, nString& /*result*/)
 
     @param  filename    the script filename (ABSOLUTE PATH!)
     @param  result      [out] will be filled with the result
-    @return             false if an error occured during execution
+    @return             false if an error occurred during execution
 */
 bool
 nScriptServer::RunScript(const char* /* filename */, nString& /* result */)
@@ -99,7 +99,7 @@ nScriptServer::BeginWrite(const char* /* filename */, nObject* /* obj */)
 /**
 */
 bool
-nScriptServer::WriteBeginNewObject(nFile*, nRoot *, nRoot *)
+nScriptServer::WriteBeginNewObject(nFile*, nRoot*, nRoot*)
 {
     // overwrite in subclass
     return false;
@@ -109,7 +109,7 @@ nScriptServer::WriteBeginNewObject(nFile*, nRoot *, nRoot *)
 /**
 */
 bool
-nScriptServer::WriteBeginNewObjectCmd(nFile*, nRoot *, nRoot *, nCmd *)
+nScriptServer::WriteBeginNewObjectCmd(nFile*, nRoot*, nRoot*, nCmd*)
 {
     // overwrite in subclass
     return false;
@@ -119,7 +119,7 @@ nScriptServer::WriteBeginNewObjectCmd(nFile*, nRoot *, nRoot *, nCmd *)
 /**
 */
 bool
-nScriptServer::WriteBeginSelObject(nFile*, nRoot *, nRoot *)
+nScriptServer::WriteBeginSelObject(nFile*, nRoot*, nRoot*)
 {
    // overwrite in subclass
    return false;
@@ -129,7 +129,7 @@ nScriptServer::WriteBeginSelObject(nFile*, nRoot *, nRoot *)
 /**
 */
 bool
-nScriptServer::WriteCmd(nFile*, nCmd *)
+nScriptServer::WriteCmd(nFile*, nCmd*)
 {
     // overwrite in subclass
     return false;
@@ -139,7 +139,7 @@ nScriptServer::WriteCmd(nFile*, nCmd *)
 /**
 */
 bool
-nScriptServer::WriteEndObject(nFile*, nRoot *, nRoot *)
+nScriptServer::WriteEndObject(nFile*, nRoot*, nRoot*)
 {
     // overwrite in subclass
     return false;
@@ -167,7 +167,7 @@ nScriptServer::EndWrite(nFile* /* file */)
 bool
 nScriptServer::Trigger()
 {
-    bool retval = !(this->quitRequested);
+    bool retval = !this->quitRequested;
     this->quitRequested = false;
     return retval;
 }

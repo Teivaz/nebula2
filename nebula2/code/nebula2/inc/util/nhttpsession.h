@@ -72,7 +72,7 @@ private:
     bool ReadResponse(HINTERNET hRequest, nString& response);
     /// extract cookie from request
     bool ExtractCookie(const nString& object);
-    /// check for dialup connection and do the nexessary stuff to connect
+    /// check for dial-up connection and do the necessary stuff to connect
     bool DoDialupStuff();
 
     bool isConnected;

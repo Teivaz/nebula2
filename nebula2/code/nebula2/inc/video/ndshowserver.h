@@ -36,9 +36,9 @@ public:
     /// per-frame trigger
     virtual void Trigger();
     /// create new video player
-    virtual nVideoPlayer*   NewVideoPlayer(nString name);
+    virtual nVideoPlayer* NewVideoPlayer(nString name);
     /// delete video player
-    virtual void   DeleteVideoPlayer(nVideoPlayer* player);
+    virtual void DeleteVideoPlayer(nVideoPlayer* player);
 
 private:
     nAutoRef<nEnv> refHwnd;
@@ -49,8 +49,8 @@ private:
     IVideoWindow* videoWindow;
     IBasicVideo* basicVideo;
     bool firstFrame;
-    nTime  oldTime;
-    bool    timeSet;
+    nTime oldTime;
+    bool timeSet;
 };
 
 //------------------------------------------------------------------------------

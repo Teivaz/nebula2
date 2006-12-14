@@ -158,7 +158,7 @@ nMemoryAnimation::LoadNanim2(const nString& filename)
             curGroup->SetKeyStride(atoi(keyStrideString));
             curGroup->SetKeyTime(float(atof(keyTimeString)));
             curGroup->SetFadeInFrames(float(atof(fadeInFramesString)));
-            curGroup->SetLoopType(curGroup->StringToLoopType(loopTypeString));
+            curGroup->SetLoopType(nAnimation::Group::StringToLoopType(loopTypeString));
         }
         else if (0 == strcmp(keyWord, "curve"))
         {
@@ -173,7 +173,7 @@ nMemoryAnimation::LoadNanim2(const nString& filename)
 
             n_assert(curGroup);
             curCurve = &(curGroup->GetCurveAt(curveIndex++));
-            curCurve->SetIpolType(curCurve->StringToIpolType(ipolTypeString));
+            curCurve->SetIpolType(nAnimation::Curve::StringToIpolType(ipolTypeString));
             curCurve->SetFirstKeyIndex(atoi(firstKeyIndexString));
             curCurve->SetIsAnimated(atoi(isAnimatedString));
             vec4.x = float(atof(constXString));

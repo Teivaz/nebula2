@@ -21,12 +21,12 @@ nNebulaUsePackage(nnetwork);
 static
 int
 N_THREADPROC
-TriggerFunc(nThread *thread)
+TriggerFunc(nThread* thread)
 {
     // tell thread object that we have started
     thread->ThreadStarted();
 
-    nBuddyClient* client = (nBuddyClient*) thread->LockUserData();
+    nBuddyClient* client = (nBuddyClient*)thread->LockUserData();
     thread->UnlockUserData();
 
     while (client->IsOpen())
@@ -35,7 +35,7 @@ TriggerFunc(nThread *thread)
         i++;
         client->SetTime(i);
         client->Trigger();
-        n_sleep(0); // call the sheduler to be multitask friendly
+        n_sleep(0); // call the scheduler to be multi-task friendly
     } //while (!thread->ThreadStopRequested());
     thread->ThreadHarakiri();
     return 0;
@@ -54,8 +54,8 @@ main(int argc, const char** argv)
     // get cmd line args
 
     bool helpArg            = args.GetBoolArg("-help");
-    nString startupArg      = args.GetStringArg("-startup", 0);
-    nString runArg          = args.GetStringArg("-run", 0);
+    nString startupArg      = args.GetStringArg("-startup");
+    nString runArg          = args.GetStringArg("-run");
     nString scriptServerArg = args.GetStringArg("-scriptserver", "ntclserver");
     nString serverArg       = args.GetStringArg("-server", "192.168.0.105");
 
@@ -80,24 +80,24 @@ main(int argc, const char** argv)
     kernelServer.AddPackage(nnebula);
     kernelServer.AddPackage(nnetwork);
 
-    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerArg.Get(), "/sys/servers/script");
+    nScriptServer* scriptServer = (nScriptServer*)kernelServer.New(scriptServerArg.Get(), "/sys/servers/script");
     if (0 == scriptServer)
     {
         n_printf("Could not create script server of class '%s'\n", scriptServerArg.Get());
         return 10;
     }
 
-    nResourceServer* resServer = (nResourceServer*) kernelServer.New("nresourceserver", "/sys/servers/resource");
+    nResourceServer* resServer = (nResourceServer*)kernelServer.New("nresourceserver", "/sys/servers/resource");
 
     WSADATA wsa;
-    if(WSAStartup(MAKEWORD(2,0),&wsa) == SOCKET_ERROR)
+    if(WSAStartup(MAKEWORD(2, 0), &wsa) == SOCKET_ERROR)
     {
         printf("Error %d returned by WSAStartup\n", GetLastError());
         exit(1);
     }
 
 
-    nBuddyClient* buddyClient = (nBuddyClient*) kernelServer.New("nbuddyclient", "/sys/servers/buddyclient");
+    nBuddyClient* buddyClient = (nBuddyClient*)kernelServer.New("nbuddyclient", "/sys/servers/buddyclient");
     buddyClient->SetServerHostName(serverArg.Get());
     buddyClient->SetServerPortNum(5326);
     buddyClient->Open();
@@ -115,11 +115,7 @@ main(int argc, const char** argv)
             scriptServer->RunScript(startupArg.Get(), result);
         }
 
-
-
-
-         nThread *Thread;
-         Thread = n_new(nThread(TriggerFunc,
+         nThread* Thread = n_new(nThread(TriggerFunc,
                                          nThread::Normal,
                                          0,
                                          NULL,

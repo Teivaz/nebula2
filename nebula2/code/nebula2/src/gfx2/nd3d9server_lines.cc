@@ -75,6 +75,3 @@ nD3D9Server::EndLines()
     HRESULT hr = this->d3dxLine->End();
     n_dxtrace(hr, "ID3DXLine::End() failed!");
 }
-
-
-

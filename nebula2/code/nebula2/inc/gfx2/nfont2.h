@@ -40,9 +40,9 @@ public:
     const nFontDesc& GetFontDesc() const;
 
     /// convert render flag string to enum
-    static RenderFlags StringToRenderFlag(const nString& str);
+    static RenderFlags StringToRenderFlag(const char* str);
     /// convert render flag enum to string
-    static nString RenderFalgToString(RenderFlags renderFlag);
+    static const char* RenderFalgToString(RenderFlags renderFlag);
 
 protected:
     nFontDesc fontDesc;
@@ -53,22 +53,21 @@ protected:
     Convert the render flag to its corresponded string.
 */
 inline
-nString
+const char*
 nFont2::RenderFalgToString(nFont2::RenderFlags renderFlag)
 {
     switch (renderFlag)
     {
-        case nFont2::Bottom:         return nString("Bottom"); break;
-        case nFont2::Top:            return nString("Top"); break;
-        case nFont2::Center:         return nString("Center"); break;
-        case nFont2::Left:           return nString("Left"); break;
-        case nFont2::Right:          return nString("Right"); break;
-        case nFont2::VCenter:        return nString("VCenter"); break;
-        case nFont2::NoClip:         return nString("NoClip"); break;
-        case nFont2::ExpandTabs:     return nString("ExpandTabs"); break;
-        case nFont2::WordBreak:      return nString("WordBreak"); break;
-        default:
-            n_error("nFont2::RenderFalgToString(): invalid render flag!");
+        case nFont2::Bottom:            return "Bottom";
+        case nFont2::Top:               return "Top";
+        case nFont2::Center:            return "Center";
+        case nFont2::Left:              return "Left";
+        case nFont2::Right:             return "Right";
+        case nFont2::VCenter:           return "VCenter";
+        case nFont2::NoClip:            return "NoClip";
+        case nFont2::ExpandTabs:        return "ExpandTabs";
+        case nFont2::WordBreak:         return "WordBreak";
+        default: n_error("nFont2::RenderFalgToString(): invalid render flag!");
     }
 }
 
@@ -79,49 +78,19 @@ nFont2::RenderFalgToString(nFont2::RenderFlags renderFlag)
 */
 inline
 nFont2::RenderFlags
-nFont2::StringToRenderFlag(const nString& str)
+nFont2::StringToRenderFlag(const char* str)
 {
-    n_assert(!str.IsEmpty());
-    if ("Bottom" == str)
-    {
-        return Bottom;
-    }
-    else if ("Top" == str)
-    {
-        return Top;
-    }
-    else if ("Center" == str)
-    {
-        return Center;
-    }
-    else if ("Left" == str)
-    {
-        return Left;
-    }
-    else if ("Right" == str)
-    {
-        return Right;
-    }
-    else if ("VCenter" == str)
-    {
-        return VCenter;
-    }
-    else if ("NoClip" == str)
-    {
-        return NoClip;
-    }
-    else if ("ExpandTabs" == str)
-    {
-        return ExpandTabs;
-    }
-    else if ("WordBreak" == str)
-    {
-        return WordBreak;
-    }
-    else
-    {
-        return (RenderFlags)0;
-    }
+    n_assert(str);
+    if (strcmp(str, "Bottom") == 0)     return Bottom;
+    if (strcmp(str, "Top") == 0)        return Top;
+    if (strcmp(str, "Center") == 0)     return Center;
+    if (strcmp(str, "Left") == 0)       return Left;
+    if (strcmp(str, "Right") == 0)      return Right;
+    if (strcmp(str, "VCenter") == 0)    return VCenter;
+    if (strcmp(str, "NoClip") == 0)     return NoClip;
+    if (strcmp(str, "ExpandTabs") == 0) return ExpandTabs;
+    if (strcmp(str, "WorkBreak") == 0)  return WordBreak;
+    return (RenderFlags)0;
 }
 
 //------------------------------------------------------------------------------

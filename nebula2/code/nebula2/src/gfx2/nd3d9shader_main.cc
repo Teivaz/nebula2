@@ -87,7 +87,7 @@ nD3D9Shader::LoadResource()
     nFile* file = nFileServer2::Instance()->NewFileObject();
 
     // open the file
-    if (!file->Open(mangledPath.Get(), "r"))
+    if (!file->Open(mangledPath, "r"))
     {
         n_error("nD3D9Shader: could not load shader file '%s'!", mangledPath.Get());
         return false;
@@ -216,7 +216,7 @@ nD3D9Shader::SetBool(nShaderState::Param p, bool val)
 void
 nD3D9Shader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
 
     // FIXME Floh: is the C++ bool datatype really identical to the Win32 BOOL datatype?
     HRESULT hr = this->effect->SetBoolArray(this->parameterHandles[p], (const BOOL*) array, count);
@@ -232,7 +232,7 @@ nD3D9Shader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
 void
 nD3D9Shader::SetInt(nShaderState::Param p, int val)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     this->curParams.SetArg(p, nShaderArg(val));
     HRESULT hr = this->effect->SetInt(this->parameterHandles[p], val);
     #ifdef __NEBULA_STATS__
@@ -247,7 +247,7 @@ nD3D9Shader::SetInt(nShaderState::Param p, int val)
 void
 nD3D9Shader::SetIntArray(nShaderState::Param p, const int* array, int count)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     HRESULT hr = this->effect->SetIntArray(this->parameterHandles[p], array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
@@ -261,7 +261,7 @@ nD3D9Shader::SetIntArray(nShaderState::Param p, const int* array, int count)
 void
 nD3D9Shader::SetFloat(nShaderState::Param p, float val)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     this->curParams.SetArg(p, nShaderArg(val));
     HRESULT hr = this->effect->SetFloat(this->parameterHandles[p], val);
     #ifdef __NEBULA_STATS__
@@ -276,7 +276,7 @@ nD3D9Shader::SetFloat(nShaderState::Param p, float val)
 void
 nD3D9Shader::SetFloatArray(nShaderState::Param p, const float* array, int count)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     HRESULT hr = this->effect->SetFloatArray(this->parameterHandles[p], array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
@@ -290,9 +290,9 @@ nD3D9Shader::SetFloatArray(nShaderState::Param p, const float* array, int count)
 void
 nD3D9Shader::SetVector4(nShaderState::Param p, const vector4& val)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&val));
-    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &val);
+    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*)&val);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -305,11 +305,11 @@ nD3D9Shader::SetVector4(nShaderState::Param p, const vector4& val)
 void
 nD3D9Shader::SetVector3(nShaderState::Param p, const vector3& val)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     static vector4 v;
     v.set(val.x, val.y, val.z, 1.0f);
     this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&v));
-    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &v);
+    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*)&v);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -322,9 +322,9 @@ nD3D9Shader::SetVector3(nShaderState::Param p, const vector3& val)
 void
 nD3D9Shader::SetFloat4(nShaderState::Param p, const nFloat4& val)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     this->curParams.SetArg(p, nShaderArg(val));
-    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*) &val);
+    HRESULT hr = this->effect->SetVector(this->parameterHandles[p], (CONST D3DXVECTOR4*)&val);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -337,8 +337,8 @@ nD3D9Shader::SetFloat4(nShaderState::Param p, const nFloat4& val)
 void
 nD3D9Shader::SetFloat4Array(nShaderState::Param p, const nFloat4* array, int count)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
-    HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*) array, count);
+    n_assert(this->effect && p < nShaderState::NumParameters);
+    HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*)array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -351,8 +351,8 @@ nD3D9Shader::SetFloat4Array(nShaderState::Param p, const nFloat4* array, int cou
 void
 nD3D9Shader::SetVector4Array(nShaderState::Param p, const vector4* array, int count)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
-    HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*) array, count);
+    n_assert(this->effect && p < nShaderState::NumParameters);
+    HRESULT hr = this->effect->SetVectorArray(this->parameterHandles[p], (CONST D3DXVECTOR4*)array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -365,9 +365,9 @@ nD3D9Shader::SetVector4Array(nShaderState::Param p, const vector4* array, int co
 void
 nD3D9Shader::SetMatrix(nShaderState::Param p, const matrix44& val)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     this->curParams.SetArg(p, nShaderArg(&val));
-    HRESULT hr = this->effect->SetMatrix(this->parameterHandles[p], (CONST D3DXMATRIX*) &val);
+    HRESULT hr = this->effect->SetMatrix(this->parameterHandles[p], (CONST D3DXMATRIX*)&val);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -380,8 +380,8 @@ nD3D9Shader::SetMatrix(nShaderState::Param p, const matrix44& val)
 void
 nD3D9Shader::SetMatrixArray(nShaderState::Param p, const matrix44* array, int count)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
-    HRESULT hr = this->effect->SetMatrixArray(this->parameterHandles[p], (CONST D3DXMATRIX*) array, count);
+    n_assert(this->effect && p < nShaderState::NumParameters);
+    HRESULT hr = this->effect->SetMatrixArray(this->parameterHandles[p], (CONST D3DXMATRIX*)array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -394,8 +394,8 @@ nD3D9Shader::SetMatrixArray(nShaderState::Param p, const matrix44* array, int co
 void
 nD3D9Shader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** array, int count)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
-    HRESULT hr = this->effect->SetMatrixPointerArray(this->parameterHandles[p], (CONST D3DXMATRIX**) array, count);
+    n_assert(this->effect && p < nShaderState::NumParameters);
+    HRESULT hr = this->effect->SetMatrixPointerArray(this->parameterHandles[p], (CONST D3DXMATRIX**)array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif
@@ -408,7 +408,7 @@ nD3D9Shader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** array
 void
 nD3D9Shader::SetTexture(nShaderState::Param p, nTexture2* tex)
 {
-    n_assert(this->effect && (p < nShaderState::NumParameters));
+    n_assert(this->effect && p < nShaderState::NumParameters);
     if (0 == tex)
     {
         HRESULT hr = this->effect->SetTexture(this->parameterHandles[p], 0);
@@ -493,11 +493,11 @@ nD3D9Shader::SetParams(const nShaderParams& params)
                         break;
 
                     case nShaderState::Float4:
-                        hr = this->effect->SetVector(handle, (CONST D3DXVECTOR4*) &(curArg.GetFloat4()));
+                        hr = this->effect->SetVector(handle, (CONST D3DXVECTOR4*)&(curArg.GetFloat4()));
                         break;
 
                     case nShaderState::Matrix44:
-                        hr = this->effect->SetMatrix(handle, (CONST D3DXMATRIX*) curArg.GetMatrix44());
+                        hr = this->effect->SetMatrix(handle, (CONST D3DXMATRIX*)curArg.GetMatrix44());
                         break;
 
                     case nShaderState::Texture:
@@ -651,7 +651,7 @@ nD3D9Shader::ValidateEffect()
 void
 nD3D9Shader::SetVertexProcessingMode()
 {
-    nD3D9Server* d3d9Server = (nD3D9Server*) nGfxServer2::Instance();
+    nD3D9Server* d3d9Server = (nD3D9Server*)nGfxServer2::Instance();
     d3d9Server->SetSoftwareVertexProcessing(this->curTechniqueNeedsSoftwareVertexProcessing);
 }
 

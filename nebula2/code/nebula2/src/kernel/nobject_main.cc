@@ -73,7 +73,7 @@ bool
 nObject::SaveAs(const char* name)
 {
     n_assert(name);
-    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
+    nPersistServer* ps = kernelServer->GetPersistServer();
     n_assert(ps);
 
     bool retval = false;
@@ -96,8 +96,8 @@ nObject::SaveAs(const char* name)
 nObject*
 nObject::Clone(const char*)
 {
-    nObject *clone = NULL;
-    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
+    nObject* clone = NULL;
+    nPersistServer* ps = kernelServer->GetPersistServer();
     n_assert(ps);
 
     nPersistServer::nSaveMode oldMode = ps->GetSaveMode();
@@ -148,7 +148,7 @@ nObject::GetInstanceSize() const
 bool
 nObject::IsA(const char* className) const
 {
-    return this->IsA(nKernelServer::Instance()->FindClass(className));
+    return this->IsA(kernelServer->FindClass(className));
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ nObject::IsA(const char* className) const
 bool
 nObject::IsInstanceOf(const char* className) const
 {
-    return this->IsInstanceOf(nKernelServer::Instance()->FindClass(className));
+    return this->IsInstanceOf(kernelServer->FindClass(className));
 }
 
 //------------------------------------------------------------------------------

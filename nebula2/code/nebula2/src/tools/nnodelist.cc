@@ -105,7 +105,7 @@ nNodeList::Clear()
     // create the /usr/scene object
     if (!this->refUsrScene.isvalid())
     {
-        this->refUsrScene = (nSceneNode*) nKernelServer::Instance()->New("nscenenode", "/usr/scene");
+        this->refUsrScene = (nSceneNode*)nKernelServer::Instance()->New("nscenenode", "/usr/scene");
     }
 
     n_assert(this->refUsrScene.isvalid());
@@ -218,7 +218,7 @@ nNodeList::GetCharacter()
     Loads an object and attaches it to the given animator
 */
 void
-nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex)
+nNodeList::LoadObjectAndAttachToHardpoint(const nString& objPath, int jointIndex)
 {
     // load Object inside an individual Node
     nString tmpString = objPath.ExtractFileName();
@@ -287,7 +287,7 @@ nNodeList::Trigger(double time, uint frameId)
     Transfers globals vars for a specific rendering context
 */
 void
-nNodeList::TransferGlobalVars(nRenderContext &context,double time,uint frameId)
+nNodeList::TransferGlobalVars(nRenderContext& context, double time, uint frameId)
 {
     context.GetVariable(timeHandle)->SetFloat((float)time);
     context.SetFrameId(frameId);

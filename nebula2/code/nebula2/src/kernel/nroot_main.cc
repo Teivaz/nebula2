@@ -38,8 +38,8 @@ nRoot::~nRoot()
     }
 
     // release child objects
-    nRoot *child;
-    while ((child = this->GetHead()))
+    nRoot* child;
+    while (child = this->GetHead())
     {
         while (!child->Release());
     }
@@ -101,7 +101,7 @@ nRoot::GetFullName() const
     {
         stack[i++] = cur;
     }
-    while ((cur = cur->GetParent()) && (i < maxDepth));
+    while ((cur = cur->GetParent()) && i < maxDepth);
 
     // traverse stack in reverse order and build filename
     nString str;
@@ -131,7 +131,7 @@ nRoot::GetFullName() const
      - 24-May-04    floh    rewritten to nString
 */
 nString
-nRoot::GetRelPath(const nRoot *other) const
+nRoot::GetRelPath(const nRoot* other) const
 {
     n_assert(other);
 
@@ -155,7 +155,7 @@ nRoot::GetRelPath(const nRoot *other) const
         nArray<const nRoot*> otherHierarchy;
 
         // for both objects, create lists of all parents up to root
-        const nRoot *o = this;
+        const nRoot* o = this;
         do
         {
             thisHierarchy.Insert(0, o);
@@ -215,10 +215,10 @@ nRoot::GetRelPath(const nRoot *other) const
      - 18-May-99   floh    created
 */
 int __cdecl
-child_cmp(const void *e0, const void *e1)
+child_cmp(const void* e0, const void* e1)
 {
-    nRoot *r0 = *((nRoot **)e0);
-    nRoot *r1 = *((nRoot **)e1);
+    nRoot* r0 = *((nRoot**)e0);
+    nRoot* r1 = *((nRoot**)e1);
     return strcmp(r1->GetName(), r0->GetName());
 }
 
@@ -232,20 +232,20 @@ void
 nRoot::Sort()
 {
     int num,i;
-    nRoot *c;
+    nRoot* c;
 
     // count child objects
     for (num=0, c=this->GetHead(); c; c=c->GetSucc(), num++);
 
     if (num > 0)
     {
-        nRoot **c_array = (nRoot **) n_malloc(num * sizeof(nRoot *));
+        nRoot** c_array = (nRoot**)n_malloc(num * sizeof(nRoot*));
         n_assert(c_array);
         for (i = 0, c = this->GetHead(); c; c = c->GetSucc(), i++)
         {
             c_array[i] = c;
         }
-        qsort(c_array, num, sizeof(nRoot *), child_cmp);
+        qsort(c_array, num, sizeof(nRoot*), child_cmp);
 
         for (i = 0; i < num; i++)
         {
@@ -270,17 +270,17 @@ nRoot::Save()
 /**
 */
 bool
-nRoot::SaveAs(const char *name)
+nRoot::SaveAs(const char* name)
 {
     n_assert(name);
-    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
+    nPersistServer* ps = kernelServer->GetPersistServer();
     n_assert(ps);
 
     bool retval = false;
     if (ps->BeginObject(this, name, true))
     {
         // ...the usual behavior...
-        nRoot *c;
+        nRoot* c;
         if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {
             // upsidedown: save children first, then own status
@@ -322,8 +322,8 @@ nObject*
 nRoot::Clone(const char *name)
 {
     n_assert(name);
-    nObject *clone = NULL;
-    nPersistServer* ps = nKernelServer::Instance()->GetPersistServer();
+    nObject* clone = NULL;
+    nPersistServer* ps = kernelServer->GetPersistServer();
     n_assert(ps);
 
     nPersistServer::nSaveMode oldMode = ps->GetSaveMode();
@@ -331,7 +331,7 @@ nRoot::Clone(const char *name)
     if (ps->BeginObject(this, name, true))
     {
         // ...the usual behavior...
-        nRoot *c;
+        nRoot* c;
         if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {
             // upsidedown: save children first, then own status

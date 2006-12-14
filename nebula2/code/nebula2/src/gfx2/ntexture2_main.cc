@@ -87,7 +87,7 @@ nTexture2::UnlockCubeFace(CubeFace /*face*/, int /*level*/)
     Saves the texture to a file
 */
 bool
-nTexture2::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
+nTexture2::SaveTextureToFile(const nString& filename, FileFormat fileFormat)
 {
     return false;
 };
@@ -100,4 +100,3 @@ void nTexture2::GenerateMipMaps()
 {
     // reimplemented in derived class's member function.
 }
-

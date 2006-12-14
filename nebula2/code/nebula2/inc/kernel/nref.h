@@ -110,7 +110,7 @@ nRef<TYPE>::nRef(const nRef<TYPE>& rhs) :
 {
     if (targetObject)
     {
-        ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
+        ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced>*)this);
     }
 }
 
@@ -134,7 +134,7 @@ nRef<TYPE>::invalidate()
 {
     if (this->targetObject)
     {
-        ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced> *)this);
+        ((nReferenced*)this->targetObject)->RemObjectRef((nRef<nReferenced>*)this);
         this->targetObject = 0;
     }
 }
@@ -151,7 +151,7 @@ nRef<TYPE>::set(TYPE* obj)
     this->targetObject = obj;
     if (obj)
     {
-        ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
+        ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced>*)this);
     }
 }
 
@@ -164,7 +164,7 @@ TYPE*
 nRef<TYPE>::get() const
 {
     n_assert2(this->targetObject, "Null pointer access through nRef!");
-    return (TYPE*) this->targetObject;
+    return (TYPE*)this->targetObject;
 }
 
 //------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ inline
 TYPE*
 nRef<TYPE>::get_unsafe() const
 {
-    return (TYPE*) this->targetObject;
+    return (TYPE*)this->targetObject;
 }
 
 //------------------------------------------------------------------------------

@@ -49,7 +49,7 @@ nHttpSession::SetInternetLastError()
 
 //------------------------------------------------------------------------------
 /**
-    Check if the connection is a dialup connection and do the necessary
+    Check if the connection is a dial-up connection and do the necessary
     things to connect to the internet. If the method returns false,
     a connection to the internet could not be established.
 */
@@ -66,13 +66,13 @@ nHttpSession::DoDialupStuff()
     }
     else
     {
-        // no connection to the internet, try dialup...
-        nEnv* env = (nEnv*) nKernelServer::Instance()->Lookup("/sys/env/hwnd");
+        // no connection to the internet, try dial-up...
+        nEnv* env = (nEnv*)nKernelServer::Instance()->Lookup("/sys/env/hwnd");
         HWND hwnd = 0;
         if (env)
         {
             // parent window exists...
-            hwnd = (HWND) env->GetI();
+            hwnd = (HWND)env->GetI();
         }
 
         nGfxServer2* gfxServer = nGfxServer2::Instance();
@@ -106,7 +106,7 @@ nHttpSession::Connect()
     n_assert(!this->agentName.IsEmpty());
 
     // attempt to connect to the Internet, this should bring up
-    // a dialup dialog if no connection can be made...
+    // a dial-up dialog if no connection can be made...
     bool connected = this->DoDialupStuff();
     if (!connected)
     {
@@ -194,10 +194,10 @@ nHttpSession::ReadResponse(HINTERNET hRequest, nString& response)
     // read data back
     DWORD numBytesToRead = 0;
     BOOL readSuccess = TRUE;
-    while (readSuccess && InternetQueryDataAvailable(hRequest, &numBytesToRead, 0, 0) && (numBytesToRead > 0))
+    while (readSuccess && InternetQueryDataAvailable(hRequest, &numBytesToRead, 0, 0) && numBytesToRead > 0)
     {
         n_assert(numBytesToRead > 0);
-        char* buffer = (char*) n_malloc(numBytesToRead);
+        char* buffer = (char*)n_malloc(numBytesToRead);
         char* ptr = buffer;
         DWORD readNumBytes = numBytesToRead;
         DWORD numBytesRead = 0;
@@ -207,7 +207,7 @@ nHttpSession::ReadResponse(HINTERNET hRequest, nString& response)
             readNumBytes -= numBytesRead;
             ptr += numBytesRead;
         }
-        while ((!readSuccess) && (numBytesRead > 0));
+        while (!readSuccess && numBytesRead > 0);
         response.AppendRange(buffer, numBytesToRead);
         n_free(buffer);
     }

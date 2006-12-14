@@ -76,10 +76,10 @@ nProfiler::Initialize(const char* name)
     n_assert(name);
     char buf[N_MAXPATH];
     snprintf(buf, sizeof(buf), "/sys/var/%s", name);
-    this->refEnv = (nEnv*) nKernelServer::Instance()->Lookup(buf);
+    this->refEnv = (nEnv*)nKernelServer::Instance()->Lookup(buf);
     if (!this->refEnv.isvalid())
     {
-        this->refEnv = (nEnv *) nKernelServer::Instance()->New("nenv",buf);
+        this->refEnv = (nEnv*)nKernelServer::Instance()->New("nenv",buf);
     }
     this->startTime = 0.0;
     this->isStarted = false;

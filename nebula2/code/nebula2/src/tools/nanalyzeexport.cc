@@ -35,7 +35,7 @@ ReadProjRegistryKey()
     DWORD keyType;
     static char projectDir[512];
     DWORD projectDirSize = sizeof(projectDir);
-    err = RegQueryValueEx(hKey, "project", 0, &keyType, (LPBYTE) &projectDir, &projectDirSize);
+    err = RegQueryValueEx(hKey, "project", 0, &keyType, (LPBYTE)&projectDir, &projectDirSize);
     if (ERROR_SUCCESS != err)
     {
         return 0;
@@ -89,4 +89,3 @@ main(int argc, const char** argv)
     }
     return 0;
 }
-

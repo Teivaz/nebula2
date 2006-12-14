@@ -421,7 +421,8 @@ nExportAnalyzer::ParseLevels()
     this->levels.Clear();
 
     // open the world database
-    nSqlServer* sqlServer = (nSqlServer*) nKernelServer::Instance()->New("nsqlite3server", "/sys/servers/sql");
+    nKernelServer* kernelServer = nKernelServer::Instance();
+    nSqlServer* sqlServer = (nSqlServer*)kernelServer->New("nsqlite3server", "/sys/servers/sql");
     nSqlDatabase* db = nSqlServer::Instance()->NewDatabase("proj:export/db/world.db3");
     if (db)
     {

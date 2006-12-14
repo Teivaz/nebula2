@@ -78,6 +78,3 @@ nFileNode::PutS(const nString& buffer)
     n_assert(buffer.IsValid());
     return this->file->PutS(buffer);
 }
-
-
-

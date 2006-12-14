@@ -84,10 +84,10 @@ nFileServer2::SetAssign(const nString& assignName, const nString& pathName)
 
     // ex. das Assign schon?
     kernelServer->PushCwd(this->assignDir.get());
-    nEnv *env = (nEnv *) this->assignDir->Find(assignName.Get());
+    nEnv* env = (nEnv*)this->assignDir->Find(assignName.Get());
     if (!env)
     {
-        env = (nEnv *) kernelServer->New("nenv", assignName.Get());
+        env = (nEnv*)kernelServer->New("nenv", assignName.Get());
         n_assert(env);
     }
     env->SetS(pathString.Get());
@@ -108,16 +108,13 @@ nFileServer2::SetAssign(const nString& assignName, const nString& pathName)
 nString
 nFileServer2::GetAssign(const nString& assignName)
 {
-    nEnv *env = (nEnv *) this->assignDir->Find(assignName.Get());
+    nEnv* env = (nEnv*)this->assignDir->Find(assignName.Get());
     if (env)
     {
         return env->GetS();
     }
-    else
-    {
-        n_printf("Assign '%s' not defined!\n", assignName.Get());
-        return NULL;
-    }
+    n_printf("Assign '%s' not defined!\n", assignName.Get());
+    return NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -568,7 +565,7 @@ nFileServer2::MakePath(const nString& dirName)
     // build stack of non-existing dir components
     nString path = this->ManglePath(dirName).Get();
     nArray<nString> pathStack;
-    while ((!path.IsEmpty()) && (!dir->Open(path)))
+    while (!path.IsEmpty() && !dir->Open(path))
     {
         pathStack.Append(path);
         nString nextPath = path.ExtractDirName().TrimRight("/\\");

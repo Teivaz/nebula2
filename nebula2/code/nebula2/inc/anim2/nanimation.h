@@ -326,22 +326,10 @@ nAnimation::Curve::IpolType
 nAnimation::Curve::StringToIpolType(const char* str)
 {
     n_assert(str);
-    if (0 == strcmp("none", str))
-    {
-        return None;
-    }
-    else if (0 == strcmp("step", str))
-    {
-        return Step;
-    }
-    else if (0 == strcmp("quat", str))
-    {
-        return Quat;
-    }
-    else
-    {
-        return Linear;
-    }
+    if (0 == strcmp("none", str))       return None;
+    if (0 == strcmp("step", str))       return Step;
+    if (0 == strcmp("quat", str))       return Quat;
+    return Linear;
 }
 
 //------------------------------------------------------------------------------
@@ -588,14 +576,8 @@ nAnimation::Group::LoopType
 nAnimation::Group::StringToLoopType(const char* str)
 {
     n_assert(str);
-    if (0 == strcmp("repeat", str))
-    {
-        return Repeat;
-    }
-    else
-    {
-        return Clamp;
-    }
+    if (0 == strcmp("repeat", str))     return Repeat;
+    return Clamp;
 }
 
 //------------------------------------------------------------------------------
@@ -615,21 +597,15 @@ nAnimation::Group::IsInbetween(float time, float startTime, float stopTime) cons
     {
         return ((time >= startTime) && (time <= stopTime));
     }
-    else
+    float dur = float(this->GetDuration());
+    float normStartTime = fmodf(startTime, dur);
+    float normStopTime  = fmodf(stopTime, dur);
+    if (normStartTime < normStopTime)
     {
-        float dur = float(this->GetDuration());
-        float normStartTime = fmodf(startTime, dur);
-        float normStopTime  = fmodf(stopTime, dur);
-        if (normStartTime < normStopTime)
-        {
-            return ((time >= normStartTime) && (time <= normStopTime));
-        }
-        else
-        {
-            // wrap around
-            return ((time >= normStartTime) || (time <= normStopTime));
-        }
+        return time >= normStartTime && time <= normStopTime;
     }
+    // wrap around
+    return time >= normStartTime || time <= normStopTime;
 }
 
 //------------------------------------------------------------------------------

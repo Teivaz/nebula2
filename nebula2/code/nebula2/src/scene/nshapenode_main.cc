@@ -122,16 +122,6 @@ nShapeNode::UnloadResources()
 
 //------------------------------------------------------------------------------
 /**
-    Indicate to scene server that we provide geometry
-*/
-bool
-nShapeNode::HasGeometry() const
-{
-    return true;
-}
-
-//------------------------------------------------------------------------------
-/**
     Perform pre-instancing actions needed for rendering geometry. This
     is called once before multiple instances of this shape node are
     actually rendered.
@@ -203,17 +193,14 @@ nShapeNode::SetMeshResourceLoader(const char* resourceLoaderPath)
 
     @return resource loader name or null when there is no resource loader
 */
-const char *
+const char*
 nShapeNode::GetMeshResourceLoader()
 {
     if (this->refMeshResourceLoader.isvalid())
     {
         return this->refMeshResourceLoader.getname();
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------

@@ -138,7 +138,7 @@ public:
     matrix44 GetOptionalMatrix44(const nString& name, const matrix44& defaultValue) const;
 
 private:
-    /// find a node by path, handles relativ paths as well
+    /// find a node by path, handles relative paths as well
     TiXmlNode* FindNode(const nString& path) const;
 
     ///  helper function , to generate a string

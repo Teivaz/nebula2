@@ -61,9 +61,9 @@ public:
         InvalidCategory,
     };
     /// convert category to string
-    static nString CategoryToString(Category category);
+    static const char* CategoryToString(Category category);
     /// convert string to category
-    static Category StringToCategory(const nString& string);
+    static Category StringToCategory(const char* str);
     /// set the master volume (0.0 .. 1.0)
     void SetMasterVolume(Category category, float v);
     /// get the master volume
@@ -147,8 +147,7 @@ bool
 nAudioServer3::IsInBeginScene() const
 {
     return this->inBeginScene;
-};
-
+}
 
 //------------------------------------------------------------------------------
 #endif

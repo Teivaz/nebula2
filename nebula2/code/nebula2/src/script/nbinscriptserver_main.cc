@@ -684,7 +684,7 @@ nBinScriptServer::ReadBlock(nFile* file)
         // this is a normal cmd
         nObject* obj = nScriptServer::GetCurrentTargetObject(); // use the current nObject if one is set
         if (!obj)
-            obj = nKernelServer::Instance()->GetCwd(); // otherwise use the current nRoot
+            obj = kernelServer->GetCwd(); // otherwise use the current nRoot
         n_assert(obj);
         nClass* objClass = obj->GetClass();
         nCmdProto* cmdProto = objClass->FindCmdById(fourcc);

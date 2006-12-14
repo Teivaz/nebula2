@@ -163,18 +163,16 @@ nAudioServer3::NewSound()
 //------------------------------------------------------------------------------
 /**
 */
-nString
+const char*
 nAudioServer3::CategoryToString(Category cat)
 {
     switch (cat)
     {
-        case Effect: return "effect";
-        case Music:  return "music";
-        case Speech: return "speech";
-        case Ambient: return "ambient";
-        default:
-            n_error("nAudioServer3: Invalid Category: %i!", cat);
-            return "";
+        case Effect:                    return "effect";
+        case Music:                     return "music";
+        case Speech:                    return "speech";
+        case Ambient:                   return "ambient";
+        default: n_error("nAudioServer3: Invalid Category: %i!", cat);
     }
 }
 
@@ -182,17 +180,14 @@ nAudioServer3::CategoryToString(Category cat)
 /**
 */
 nAudioServer3::Category
-nAudioServer3::StringToCategory(const nString& s)
+nAudioServer3::StringToCategory(const char* str)
 {
-    if ("effect" == s)          return Effect;
-    else if ("music" == s)      return Music;
-    else if ("speech" == s)     return Speech;
-    else if ("ambient" == s)    return Ambient;
-    else
-    {
-        n_error("nAudioServer3: Invalid category string '%s'.\n", s.Get());
-        return InvalidCategory;
-    }
+    if (strcmp(str, "effect") == 0)     return Effect;
+    if (strcmp(str, "music") == 0)      return Music;
+    if (strcmp(str, "speech") == 0)     return Speech;
+    if (strcmp(str, "ambient") == 0)    return Ambient;
+    n_error("nAudioServer3: Invalid category string '%s'.\n", str);
+    return InvalidCategory;
 }
 
 //------------------------------------------------------------------------------
