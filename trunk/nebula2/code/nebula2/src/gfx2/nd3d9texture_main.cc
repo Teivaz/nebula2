@@ -99,7 +99,7 @@ nD3D9Texture::UnloadResource()
     if (this->usage & Video)
     {
         nVideoServer::Instance()->DeleteVideoPlayer(this->videoPlayer);
-    };
+    }
 
     this->SetState(Unloaded);
 }
@@ -1014,7 +1014,7 @@ nD3D9Texture::FileFormatToD3DX(FileFormat fileFormat)
     Save texture to file
 */
 bool
-nD3D9Texture::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
+nD3D9Texture::SaveTextureToFile(const nString& filename, FileFormat fileFormat)
 {
     n_assert(baseTexture);
     n_assert(filename.IsValid());
@@ -1038,33 +1038,29 @@ nD3D9Texture::SaveTextureToFile(const nString &filename, FileFormat fileFormat)
 D3DFORMAT
 nD3D9Texture::FormatToD3DFormat(nTexture2::Format format)
 {
-    D3DFORMAT d3dFormat;
     switch (format)
     {
-        case X8R8G8B8:          d3dFormat = D3DFMT_X8R8G8B8;      break;
-        case A8R8G8B8:          d3dFormat = D3DFMT_A8R8G8B8;      break;
-        case R5G6B5:            d3dFormat = D3DFMT_R5G6B5;        break;
-        case A1R5G5B5:          d3dFormat = D3DFMT_A1R5G5B5;      break;
-        case A4R4G4B4:          d3dFormat = D3DFMT_A4R4G4B4;      break;
-        case P8:                d3dFormat = D3DFMT_P8;            break;
-        case G16R16:            d3dFormat = D3DFMT_G16R16;        break;
-        case DXT1:              d3dFormat = D3DFMT_DXT1;          break;
-        case DXT2:              d3dFormat = D3DFMT_DXT2;          break;
-        case DXT3:              d3dFormat = D3DFMT_DXT3;          break;
-        case DXT4:              d3dFormat = D3DFMT_DXT4;          break;
-        case DXT5:              d3dFormat = D3DFMT_DXT5;          break;
-        case R16F:              d3dFormat = D3DFMT_R16F;          break;
-        case G16R16F:           d3dFormat = D3DFMT_G16R16F;       break;
-        case A16B16G16R16F:     d3dFormat = D3DFMT_A16B16G16R16F; break;
-        case R32F:              d3dFormat = D3DFMT_R32F;          break;
-        case G32R32F:           d3dFormat = D3DFMT_G32R32F;       break;
-        case A32B32G32R32F:     d3dFormat = D3DFMT_A32B32G32R32F; break;
-        case A8:                d3dFormat = D3DFMT_A8;            break;
-        default:
-            // can't happen
-            n_assert(false);
+    case X8R8G8B8:          return D3DFMT_X8R8G8B8;
+    case A8R8G8B8:          return D3DFMT_A8R8G8B8;
+    case R5G6B5:            return D3DFMT_R5G6B5;
+    case A1R5G5B5:          return D3DFMT_A1R5G5B5;
+    case A4R4G4B4:          return D3DFMT_A4R4G4B4;
+    case P8:                return D3DFMT_P8;
+    case G16R16:            return D3DFMT_G16R16;
+    case DXT1:              return D3DFMT_DXT1;
+    case DXT2:              return D3DFMT_DXT2;
+    case DXT3:              return D3DFMT_DXT3;
+    case DXT4:              return D3DFMT_DXT4;
+    case DXT5:              return D3DFMT_DXT5;
+    case R16F:              return D3DFMT_R16F;
+    case G16R16F:           return D3DFMT_G16R16F;
+    case A16B16G16R16F:     return D3DFMT_A16B16G16R16F;
+    case R32F:              return D3DFMT_R32F;
+    case G32R32F:           return D3DFMT_G32R32F;
+    case A32B32G32R32F:     return D3DFMT_A32B32G32R32F;
+    case A8:                return D3DFMT_A8;
+    default:                return D3DFMT_UNKNOWN;
     }
-    return d3dFormat;
 }
 
 //------------------------------------------------------------------------------
@@ -1078,12 +1074,9 @@ nD3D9Texture::GenerateMipMaps()
 {
     n_assert(this->texture2D);
 
-    HRESULT hr;
-
-    hr = D3DXFilterTexture(this->texture2D,    // pTexture
-                           NULL,               // pPalette
-                           D3DX_DEFAULT,       // SrcLevel(0)
-                           D3DX_FILTER_LINEAR);// MipFilter
-
+    HRESULT hr = D3DXFilterTexture(this->texture2D,    // pTexture
+                                   NULL,               // pPalette
+                                   D3DX_DEFAULT,       // SrcLevel(0)
+                                   D3DX_FILTER_LINEAR);// MipFilter
     n_assert (SUCCEEDED(hr));
 }

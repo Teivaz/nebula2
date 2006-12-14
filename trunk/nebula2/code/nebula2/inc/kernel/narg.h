@@ -46,7 +46,7 @@ public:
     /// copy content
     void Copy(const nArg& rhs);
     /// copy from va_list
-    void Copy(va_list * marker);
+    void Copy(va_list* marker);
     /// the equals operator
     bool operator==(const nArg& rhs) const;
     /// assignment operator
@@ -131,7 +131,7 @@ inline
 void
 nArg::Delete()
 {
-    if ((this->type == String) && (0 != this->s))
+    if (this->type == String && 0 != this->s)
     {
         n_free(this->s);
         this->s = 0;

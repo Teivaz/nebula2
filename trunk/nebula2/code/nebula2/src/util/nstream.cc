@@ -469,7 +469,7 @@ nStream::EndNode()
 //------------------------------------------------------------------------------
 /**
     This method returns true if the node identified by path exists. Path
-    follows the normal filesystem path conventions, "/" is the separator,
+    follows the normal file system path conventions, "/" is the separator,
     ".." is the parent node, "." is the current node. An absolute path
     starts with a "/", a relative path doesn't.
 */
@@ -484,7 +484,7 @@ nStream::HasNode(const nString& n) const
     Get the short name (without path) of the current node. Node that
     (as a special case), that the name of the root node is the filename
     of the XML document. This is a quirk of TinyXML and isn't handled
-    separatly here.
+    separately here.
 */
 nString
 nStream::GetCurrentNodeName() const
@@ -531,7 +531,7 @@ nStream::GetCurrentNodePath() const
 //------------------------------------------------------------------------------
 /**
     Set the node pointed to by the path string as current node. The path
-    may be absolute or relative, following the usual filesystem path
+    may be absolute or relative, following the usual file system path
     conventions. Separator is a slash.
 */
 void
@@ -672,7 +672,7 @@ nStream::HasAttr(const nString& name) const
 //------------------------------------------------------------------------------
 /**
     Return the provided attribute as string. If the attribute does not exist
-    the method will fail hard (use HasAttr() to check for its existance).
+    the method will fail hard (use HasAttr() to check for its existence).
 */
 nString
 nStream::GetString(const nString& name) const
@@ -718,7 +718,7 @@ nStream::GetOptionalString(const nString& name, const nString& defaultValue) con
 //------------------------------------------------------------------------------
 /**
     Return the provided attribute as a bool. If the attribute does not exist
-    the method will fail hard (use HasAttr() to check for its existance).
+    the method will fail hard (use HasAttr() to check for its existence).
 */
 bool
 nStream::GetBool(const nString& name) const
@@ -749,7 +749,7 @@ nStream::GetOptionalBool(const nString& name, bool defaultValue) const
 //------------------------------------------------------------------------------
 /**
     Return the provided attribute as int. If the attribute does not exist
-    the method will fail hard (use HasAttr() to check for its existance).
+    the method will fail hard (use HasAttr() to check for its existence).
 */
 int
 nStream::GetInt(const nString& name) const
@@ -778,7 +778,7 @@ nStream::GetOptionalInt(const nString& name, int defaultValue) const
 //------------------------------------------------------------------------------
 /**
     Return the provided attribute as float. If the attribute does not exist
-    the method will fail hard (use HasAttr() to check for its existance).
+    the method will fail hard (use HasAttr() to check for its existence).
 */
 float
 nStream::GetFloat(const nString& name) const
@@ -807,7 +807,7 @@ nStream::GetOptionalFloat(const nString& name, float defaultValue) const
 //------------------------------------------------------------------------------
 /**
     Return the provided attribute as vector3. If the attribute does not exist
-    the method will fail hard (use HasAttr() to check for its existance).
+    the method will fail hard (use HasAttr() to check for its existence).
 */
 vector3
 nStream::GetVector3(const nString& name) const
@@ -836,7 +836,7 @@ nStream::GetOptionalVector3(const nString& name, const vector3& defaultValue) co
 //------------------------------------------------------------------------------
 /**
     Return the provided attribute as vector4. If the attribute does not exist
-    the method will fail hard (use HasAttr() to check for its existance).
+    the method will fail hard (use HasAttr() to check for its existence).
 */
 vector4
 nStream::GetVector4(const nString& name) const
@@ -865,7 +865,7 @@ nStream::GetOptionalVector4(const nString& name, const vector4& defaultValue) co
 //------------------------------------------------------------------------------
 /**
     Return the provided attribute as matrix44. If the attribute does not exist
-    the method will fail hard (use HasAttr() to check for its existance).
+    the method will fail hard (use HasAttr() to check for its existence).
 */
 matrix44
 nStream::GetMatrix44(const nString& name) const

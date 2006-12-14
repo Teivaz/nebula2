@@ -34,20 +34,20 @@ nD3D9WindowHandler::OnSetCursor()
     {
         switch (this->d3d9Server->cursorVisibility)
         {
-            case nGfxServer2::None:
-            case nGfxServer2::Gui:
-                SetCursor(NULL);
-                this->d3d9Server->d3d9Device->ShowCursor(FALSE);
-                return true;
+        case nGfxServer2::None:
+        case nGfxServer2::Gui:
+            SetCursor(NULL);
+            this->d3d9Server->d3d9Device->ShowCursor(FALSE);
+            return true;
 
-            case nGfxServer2::System:
-                this->d3d9Server->d3d9Device->ShowCursor(FALSE);
-                break;
+        case nGfxServer2::System:
+            this->d3d9Server->d3d9Device->ShowCursor(FALSE);
+            break;
 
-            case nGfxServer2::Custom:
-                SetCursor(NULL);
-                this->d3d9Server->d3d9Device->ShowCursor(TRUE);
-                return true;
+        case nGfxServer2::Custom:
+            SetCursor(NULL);
+            this->d3d9Server->d3d9Device->ShowCursor(TRUE);
+            return true;
         }
     }
     return false;

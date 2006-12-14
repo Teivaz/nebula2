@@ -258,7 +258,7 @@ endmodule
 beginmodule nsessionserver
     setdir network
     setheaders {
-        nsessionatrpool
+        nsessionattrpool
         nsessionserver
     }
     setfiles {

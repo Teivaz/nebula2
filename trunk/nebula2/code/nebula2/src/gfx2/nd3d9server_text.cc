@@ -113,13 +113,13 @@ nD3D9Server::DrawTextImmediate(nFont2* font, const nString& text, const vector4&
     {
         font->Load();
     }
-    float dispWidth  = (float) this->windowHandler.GetDisplayMode().GetWidth();
-    float dispHeight = (float) this->windowHandler.GetDisplayMode().GetHeight();
+    float dispWidth  = (float)this->windowHandler.GetDisplayMode().GetWidth();
+    float dispHeight = (float)this->windowHandler.GetDisplayMode().GetHeight();
     RECT r;
-    r.left   = (LONG) (rect.v0.x * dispWidth);
-    r.top    = (LONG) (rect.v0.y * dispHeight);
-    r.right  = (LONG) (rect.v1.x * dispWidth);
-    r.bottom = (LONG) (rect.v1.y * dispHeight);
+    r.left   = (LONG)(rect.v0.x * dispWidth);
+    r.top    = (LONG)(rect.v0.y * dispHeight);
+    r.right  = (LONG)(rect.v1.x * dispWidth);
+    r.bottom = (LONG)(rect.v1.y * dispHeight);
 
     DWORD d3dFlags = 0;
     nString wordBreakString;
@@ -161,8 +161,8 @@ nD3D9Server::GetTextExtent(const nString& text)
 {
     int width = 0;
     int height = 0;
-    float dispWidth  = (float) this->windowHandler.GetDisplayMode().GetWidth();
-    float dispHeight = (float) this->windowHandler.GetDisplayMode().GetHeight();
+    float dispWidth  = (float)this->windowHandler.GetDisplayMode().GetWidth();
+    float dispHeight = (float)this->windowHandler.GetDisplayMode().GetHeight();
     if (this->refFont.isvalid())
     {
         if (!this->refFont->IsLoaded())

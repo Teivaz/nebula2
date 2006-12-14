@@ -21,9 +21,9 @@ nNebulaUsePackage(nnebula);
     a string array.
 */
 bool
-loadObjectList(nKernelServer* kernelServer, const char* filename, nArray<nString>& array)
+loadObjectList(nKernelServer* kernelServer, const nString& filename, nArray<nString>& array)
 {
-    n_assert(filename);
+    n_assert(filename.IsValid());
     bool success = false;
 
     nFileServer2* fileServer = kernelServer->GetFileServer();
@@ -58,9 +58,9 @@ main(int argc, const char** argv)
     bool helpArg   = args.GetBoolArg("-help");
     bool binaryArg = args.GetBoolArg("-binary");
     bool waitArg   = args.GetBoolArg("-waitforkey");
-    nString inArg                   = args.GetStringArg("-in", 0);
-    nString outArg                  = args.GetStringArg("-out", 0);
-    nString projDirArg              = args.GetStringArg("-projdir", 0);
+    nString inArg                   = args.GetStringArg("-in");
+    nString outArg                  = args.GetStringArg("-out");
+    nString projDirArg              = args.GetStringArg("-projdir");
     nString scratchDirArg           = args.GetStringArg("-scratchdir", "c:/temp");
     nString scriptServerClassArg    = args.GetStringArg("-scriptserver", "ntclserver");
 
@@ -82,17 +82,17 @@ main(int argc, const char** argv)
     }
 
     // check arguments
-    if (0 == inArg)
+    if (inArg.IsEmpty())
     {
         n_printf("Error: -in argument expected!\n");
         return 10;
     }
-    if (0 == outArg)
+    if (outArg.IsEmpty())
     {
         n_printf("Error: -out argument expected!\n");
         return 10;
     }
-    if (0 == projDirArg)
+    if (projDirArg.IsEmpty())
     {
         n_printf("Error: -projdir argument expected!\n");
         return 10;
@@ -102,7 +102,7 @@ main(int argc, const char** argv)
     nKernelServer kernelServer;
     kernelServer.AddPackage(nnebula);
 
-    nScriptServer* scriptServer = (nScriptServer*) kernelServer.New(scriptServerClassArg.Get(), "/sys/servers/script");
+    nScriptServer* scriptServer = (nScriptServer*)kernelServer.New(scriptServerClassArg.Get(), "/sys/servers/script");
     kernelServer.New("nvariableserver", "/sys/servers/variable");
     kernelServer.New("nanimationserver", "/sys/servers/anim");
     kernelServer.New("nresourceserver", "/sys/servers/resource");
@@ -125,7 +125,7 @@ main(int argc, const char** argv)
 
     // get list of objects
     nArray<nString> objectArray;
-    if (!loadObjectList(&kernelServer, inArg.Get(), objectArray))
+    if (!loadObjectList(&kernelServer, inArg, objectArray))
     {
         n_printf("Error: could not open file %s\n", inArg);
         return 10;

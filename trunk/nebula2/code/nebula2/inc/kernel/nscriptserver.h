@@ -43,27 +43,27 @@ public:
     /// destructor
     virtual ~nScriptServer();
     /// evaluate a script command
-    virtual bool Run(const char * cmdStr, nString& result);
+    virtual bool Run(const char* cmdStr, nString& result);
     /// invoke a script function by name, with no parameters
     virtual bool RunFunction(const char* functionName, nString& result);
     /// evaluate a script file
-    virtual bool RunScript(const char * filename, nString& result);
+    virtual bool RunScript(const char* filename, nString& result);
     /// set an unnamed object that will receive cmds instead of the cwd
-    static void SetCurrentTargetObject(nObject *obj);
+    static void SetCurrentTargetObject(nObject* obj);
     /// get the currently set unnamed object
     static nObject* GetCurrentTargetObject();
     /// write header of a persistent object file
     virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// write object header with default constructor
-    virtual bool WriteBeginNewObject(nFile* fp, nRoot *o, nRoot *owner);
+    virtual bool WriteBeginNewObject(nFile* fp, nRoot* o, nRoot* owner);
     /// write object header with constructor cmd
-    virtual bool WriteBeginNewObjectCmd(nFile* fp, nRoot *o, nRoot *owner, nCmd *cmd);
+    virtual bool WriteBeginNewObjectCmd(nFile* fp, nRoot* o, nRoot* owner, nCmd* cmd);
     /// write object header without constructor (select only)
-    virtual bool WriteBeginSelObject(nFile* fp, nRoot *o, nRoot *owner);
+    virtual bool WriteBeginSelObject(nFile* fp, nRoot* o, nRoot* owner);
     /// translate and write a cmd message
-    virtual bool WriteCmd(nFile*, nCmd *);
+    virtual bool WriteCmd(nFile*, nCmd*);
     /// write object footer
-    virtual bool WriteEndObject(nFile* fp, nRoot *o, nRoot *owner);
+    virtual bool WriteEndObject(nFile* fp, nRoot* o, nRoot* owner);
     /// finish a persistent object file
     virtual bool EndWrite(nFile*);
     /// abort program on error?
@@ -89,7 +89,7 @@ public:
 
 protected:
     /// when set the script server will dispatch cmds to this object instead of the cwd
-    static nObject *currentTargetObject;
+    static nObject* currentTargetObject;
 
 private:
     bool quitRequested;

@@ -137,12 +137,12 @@ nDShowServer::PlayFile(const char* filename)
     n_assert(SUCCEEDED(hr));
     hr = this->graphBuilder->QueryInterface(IID_IMediaEvent, (void**)&this->mediaEvent);
     n_assert(SUCCEEDED(hr));
-    hr = this->graphBuilder->QueryInterface(IID_IVideoWindow, (void**) &this->videoWindow);
+    hr = this->graphBuilder->QueryInterface(IID_IVideoWindow, (void**)&this->videoWindow);
     n_assert(SUCCEEDED(hr));
-    hr = this->graphBuilder->QueryInterface(IID_IBasicVideo, (void**) &this->basicVideo);
+    hr = this->graphBuilder->QueryInterface(IID_IBasicVideo, (void**)&this->basicVideo);
 
     // compute video window size
-    OAHWND ownerHwnd = (OAHWND) this->refHwnd->GetI();
+    OAHWND ownerHwnd = (OAHWND)this->refHwnd->GetI();
     RECT rect;
     GetClientRect((HWND)ownerHwnd, &rect);
     LONG videoLeft, videoTop, videoWidth, videoHeight;
@@ -224,7 +224,7 @@ nDShowServer::Stop()
         this->graphBuilder = 0;
     }
 
-    HWND hwnd = (HWND) this->refHwnd->GetI();
+    HWND hwnd = (HWND)this->refHwnd->GetI();
     ShowWindow(hwnd, SW_RESTORE);
 
     nVideoServer::Stop();
@@ -243,33 +243,33 @@ nDShowServer::Trigger()
     {
         oldTime=time;
         timeSet = true;
-    };
+    }
 
-    // check if time-reset occured
+    // check if time-reset occurred
     if (time < oldTime)
     {
         oldTime = time;
         // rewind players
         int i;
-        for (i = 0; i<videoPlayers.Size() ; i++)
+        for (i = 0; i < videoPlayers.Size(); i++)
         {
-            nVideoPlayer*   currentPlayer = videoPlayers.At(i);
+            nVideoPlayer* currentPlayer = videoPlayers.At(i);
             if (currentPlayer->IsOpen())
                 currentPlayer->Rewind();
-        };
+        }
 
-    };
+    }
 
     nTime deltaTime = time - oldTime;
     oldTime = time;
 
     int i;
-    for (i = 0; i<videoPlayers.Size() ; i++)
+    for (i = 0; i < videoPlayers.Size(); i++)
     {
-        nVideoPlayer*   currentPlayer = videoPlayers.At(i);
+        nVideoPlayer* currentPlayer = videoPlayers.At(i);
         if (currentPlayer->IsOpen())
             currentPlayer->Decode(deltaTime);
-    };
+    }
 
     if (this->IsPlaying())
     {
@@ -325,7 +325,7 @@ nDShowServer::Trigger()
 nVideoPlayer*
 nDShowServer::NewVideoPlayer(nString name)
 {
-    nVideoPlayer*   player = (nVideoPlayer*) nResourceServer::Instance()->NewResource("noggtheoraplayer", name.Get(), nResource::Other);
+    nVideoPlayer* player = (nVideoPlayer*)nResourceServer::Instance()->NewResource("noggtheoraplayer", name.Get(), nResource::Other);
     player->SetFilename(name);
     videoPlayers.PushBack(player);
     return player;
@@ -340,13 +340,13 @@ nDShowServer::DeleteVideoPlayer(nVideoPlayer* player)
 {
     n_assert(player);
     int i;
-    for (i = 0; i<videoPlayers.Size() ; i++)
+    for (i = 0; i < videoPlayers.Size(); i++)
         if (videoPlayers.At(i) == player)
         {
             videoPlayers.Erase(i);
             break;
-        };
+        }
     if (player->IsOpen())
         player->Close();
     player->Release();
-};
+}

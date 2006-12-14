@@ -103,7 +103,7 @@ n_message(const char* msg, ...)
 */
 void
 __cdecl
-n_printf(const char *msg, ...)
+n_printf(const char* msg, ...)
 {
     va_list argList;
     va_start(argList,msg);
@@ -130,7 +130,7 @@ n_printf(const char *msg, ...)
 */
 void
 __cdecl
-n_dbgout(const char *msg, ...)
+n_dbgout(const char* msg, ...)
 {
     va_list argList;
     va_start(argList,msg);
@@ -184,7 +184,7 @@ char*
 n_strdup(const char* from)
 {
     n_assert(from);
-    char *to = (char *) n_malloc(strlen(from) + 1);
+    char* to = (char*)n_malloc(strlen(from) + 1);
     if (to)
     {
         strcpy(to, from);
@@ -199,10 +199,10 @@ n_strdup(const char* from)
      - 19-Feb-99   floh    created
 */
 char*
-n_strncpy2(char *dest, const char *src, size_t size)
+n_strncpy2(char* dest, const char* src, size_t size)
 {
-    strncpy(dest,src,size);
-    dest[size - 1] = 0;
+    strncpy(dest, src, size);
+    dest[size-1] = 0;
     return dest;
 }
 
@@ -213,7 +213,7 @@ n_strncpy2(char *dest, const char *src, size_t size)
      - 06-Mar-00   floh    created
 */
 void
-n_strcat(char *dest, const char *src, size_t dest_size)
+n_strcat(char* dest, const char* src, size_t dest_size)
 {
     unsigned int l = strlen(dest) + strlen(src) + 1;
     n_assert(l < dest_size);
@@ -357,39 +357,39 @@ n_strmatch(const char* str, const char* pat)
             if (*str == 0) return true;
             else           return false;
         }
-        if ((*str == 0) && (*pat != '*')) return false;
-        if (*pat=='*')
+        if (*str == 0 && *pat != '*') return false;
+        if (*pat == '*')
         {
             pat++;
-            if (*pat==0) return true;
+            if (*pat == 0) return true;
             while (true)
             {
                 if (n_strmatch(str, pat)) return true;
-                if (*str==0) return false;
+                if (*str == 0) return false;
                 str++;
             }
         }
-        if (*pat=='?') goto match;
-        if (*pat=='[')
+        if (*pat == '?') goto match;
+        if (*pat == '[')
         {
             pat++;
             while (true)
             {
-                if ((*pat==']') || (*pat==0)) return false;
-                if (*pat==*str) break;
+                if (*pat == ']' || *pat == 0) return false;
+                if (*pat == *str) break;
                 if (pat[1] == '-')
                 {
                     c2 = pat[2];
-                    if (c2==0) return false;
-                    if ((*pat<=*str) && (c2>=*str)) break;
-                    if ((*pat>=*str) && (c2<=*str)) break;
-                    pat+=2;
+                    if (c2 == 0) return false;
+                    if (*pat <= *str && c2 >= *str) break;
+                    if (*pat >= *str && c2 <= *str) break;
+                    pat += 2;
                 }
                 pat++;
             }
-            while (*pat!=']')
+            while (*pat != ']')
             {
-                if (*pat==0)
+                if (*pat == 0)
                 {
                     pat--;
                     break;
@@ -399,12 +399,12 @@ n_strmatch(const char* str, const char* pat)
             goto match;
         }
 
-        if (*pat=='\\')
+        if (*pat == '\\')
         {
             pat++;
-            if (*pat==0) return false;
+            if (*pat == 0) return false;
         }
-        if (*pat!=*str) return false;
+        if (*pat != *str) return false;
 
 match:
         pat++;

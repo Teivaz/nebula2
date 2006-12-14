@@ -12,7 +12,7 @@ nNebulaClass(nTextShapeNode, "nshapenode");
 */
 nTextShapeNode::nTextShapeNode()
 {
-    this->transformNodeClass = nKernelServer::Instance()->FindClass("ntransformnode");
+    this->transformNodeClass = kernelServer->FindClass("ntransformnode");
     this->fontFlags = nFont2::NoClip | nFont2::Center | nFont2::VCenter;
 }
 
@@ -63,8 +63,8 @@ nTextShapeNode::LoadFont()
     if (!this->refFont.isvalid())
     {
         // get render flags
-        this->fontFlags = nFont2::StringToRenderFlag(this->GetStringAttr("rlGuiHAlignment"));
-        this->fontFlags |= nFont2::StringToRenderFlag(this->GetStringAttr("rlGuiVAlignment"));
+        this->fontFlags = nFont2::StringToRenderFlag(this->GetStringAttr("rlGuiHAlignment").Get());
+        this->fontFlags |= nFont2::StringToRenderFlag(this->GetStringAttr("rlGuiVAlignment").Get());
 
         // append mesh usage to mesh resource name
         nString resourceName;

@@ -58,13 +58,12 @@ nD3D9Server::ClearLights()
     nGfxServer2::ClearLights();
     if (FFP == this->lightingType)
     {
-        uint i;
         uint maxLights = this->devCaps.MaxActiveLights;
         if (maxLights > 8)
         {
             maxLights = 8;
         }
-        for (i = 0; i < maxLights; i++)
+        for (uint i = 0; i < maxLights; i++)
         {
             HRESULT hr = this->d3d9Device->LightEnable(i, FALSE);
             n_assert(SUCCEEDED(hr));
@@ -82,7 +81,7 @@ nD3D9Server::ClearLight(int index)
     nGfxServer2::ClearLight(index);
 
     uint maxLights = this->devCaps.MaxActiveLights;
-    if (index < (int) maxLights)
+    if (index < (int)maxLights)
     {
         HRESULT hr = this->d3d9Device->LightEnable(index, FALSE);
         n_assert(SUCCEEDED(hr));
@@ -122,17 +121,17 @@ nD3D9Server::AddLight(const nLight& light)
         memset(&d3dLight9, 0, sizeof(d3dLight9));
         switch (light.GetType())
         {
-            case nLight::Point:
-                d3dLight9.Type = D3DLIGHT_POINT;
-                break;
+        case nLight::Point:
+            d3dLight9.Type = D3DLIGHT_POINT;
+            break;
 
-            case nLight::Directional:
-                d3dLight9.Type = D3DLIGHT_DIRECTIONAL;
-                break;
+        case nLight::Directional:
+            d3dLight9.Type = D3DLIGHT_DIRECTIONAL;
+            break;
 
-            case nLight::Spot:
-                d3dLight9.Type = D3DLIGHT_SPOT;
-                break;
+        case nLight::Spot:
+            d3dLight9.Type = D3DLIGHT_SPOT;
+            break;
         }
         d3dLight9.Diffuse.r    = light.GetDiffuse().x;
         d3dLight9.Diffuse.g    = light.GetDiffuse().y;
@@ -173,7 +172,7 @@ nD3D9Server::AddLight(const nLight& light)
     {
         // set light in shader pipeline
         this->SetTransform(nGfxServer2::Light, light.GetTransform());
-        nShader2* shd = this->refSharedShader;
+        nShader2* shd = this->refSharedShader.get_unsafe();
 
         if (light.GetType() == nLight::Directional)
         {
@@ -550,20 +549,17 @@ nD3D9Server::SetMesh(nMesh2* vbMesh, nMesh2* ibMesh)
     {
         if ((this->refVbMesh.get_unsafe() != vbMesh) || (this->refIbMesh.get_unsafe() != ibMesh))
         {
-            IDirect3DVertexBuffer9* d3dVBuf = 0;
-            IDirect3DIndexBuffer9* d3dIBuf = 0;
-            IDirect3DVertexDeclaration9* d3dVDecl = 0;
-            UINT stride = 0;
-            d3dVBuf  = ((nD3D9Mesh*)vbMesh)->GetVertexBuffer();
-            d3dVDecl = ((nD3D9Mesh*)vbMesh)->GetVertexDeclaration();
+            IDirect3DVertexBuffer9* d3dVBuf  = ((nD3D9Mesh*)vbMesh)->GetVertexBuffer();
+            IDirect3DVertexDeclaration9* d3dVDecl = ((nD3D9Mesh*)vbMesh)->GetVertexDeclaration();
             n_assert(d3dVBuf);
             n_assert(d3dVDecl);
+            IDirect3DIndexBuffer9* d3dIBuf = 0;
             if (ibMesh->GetNumIndices() > 0)
             {
-                d3dIBuf  = ((nD3D9Mesh*)ibMesh)->GetIndexBuffer();
+                d3dIBuf = ((nD3D9Mesh*)ibMesh)->GetIndexBuffer();
                 n_assert(d3dIBuf);
             }
-            stride = vbMesh->GetVertexWidth() << 2;
+            UINT stride = vbMesh->GetVertexWidth() << 2;
 
             // set the vertex stream source
             hr = this->d3d9Device->SetStreamSource(0, d3dVBuf, 0, stride);
@@ -589,7 +585,7 @@ nD3D9Server::SetMesh(nMesh2* vbMesh, nMesh2* ibMesh)
         hr = this->d3d9Device->SetStreamSource(0, 0, 0, 0);
         n_dxtrace(hr, "SetStreamSource() on D3D device failed!");
 
-        // clear the indexbuffer
+        // clear the index buffer
         hr = this->d3d9Device->SetIndices(0);
         n_dxtrace(hr, "SetIndices() on D3D device failed!");
     }
@@ -676,7 +672,7 @@ nD3D9Server::SetMeshArray(nMeshArray* meshArray)
         //hr = this->d3d9Device->SetVertexDeclaration(0);
         //n_dxtrace(hr, "SetVertexDeclaration() on D3D device failed!");
 
-        // clear the indexbuffer
+        // clear the index buffer
         hr = this->d3d9Device->SetIndices(0);
         n_dxtrace(hr, "SetIndices() on D3D device failed!");
     }
@@ -862,7 +858,7 @@ nD3D9Server::Draw(PrimitiveType primType)
 
 //------------------------------------------------------------------------------
 /**
-    Renders the currently set mesh without applying any shader state.
+    Render the currently set mesh without applying any shader state.
     You must call nShader2::Begin(), nShader2::Pass() and nShader2::End()
     yourself as needed.
 */
@@ -910,7 +906,7 @@ nD3D9Server::DrawIndexedNS(PrimitiveType primType)
 
 //------------------------------------------------------------------------------
 /**
-    Renders the currently set mesh without applying any shader state.
+    Render the currently set mesh without applying any shader state.
     You must call nShader2::Begin(), nShader2::Pass() and nShader2::End()
     yourself as needed.
 */

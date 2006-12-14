@@ -51,7 +51,7 @@ WaveBank::CreateSoundObjectFromXmlTable(const nXmlTable& xmlTable, int rowIndex,
     snd->SetStreaming(xmlTable.Cell(rowIndex, "Stream").AsBool());
     snd->SetLooping(xmlTable.Cell(rowIndex, "Loop").AsBool());
     snd->SetPriority(xmlTable.Cell(rowIndex, "Pri").AsInt());
-    snd->SetCategory(nAudioServer3::StringToCategory(xmlTable.Cell(rowIndex, "Category").AsString()));
+    snd->SetCategory(nAudioServer3::StringToCategory(xmlTable.Cell(rowIndex, "Category").AsString().Get()));
     snd->SetNumTracks(xmlTable.Cell(rowIndex, "Tracks").AsInt());
     snd->SetMinDist(xmlTable.Cell(rowIndex, "MinDist").AsFloat());
     snd->SetMaxDist(xmlTable.Cell(rowIndex, "MaxDist").AsFloat());

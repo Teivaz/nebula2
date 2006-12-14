@@ -42,4 +42,3 @@ nFont2::GetFontDesc() const
 {
     return this->fontDesc;
 }
-

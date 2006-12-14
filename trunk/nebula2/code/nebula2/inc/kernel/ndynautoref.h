@@ -22,9 +22,9 @@ public:
     nDynAutoRef& operator=(const nDynAutoRef& rhs);
 
     /// set path name
-    void set(const char *name);
+    void set(const char* name);
     /// path name assignemnt operator
-    void operator=(const char *name);
+    void operator=(const char* name);
     /// object pointer assignment operator (leaves path name invalid)
     void operator=(TYPE* obj);
 };
@@ -38,12 +38,12 @@ public:
 template<class TYPE>
 inline
 void
-nDynAutoRef<TYPE>::set(const char *name)
+nDynAutoRef<TYPE>::set(const char* name)
 {
     this->invalidate();
     if (this->targetName)
     {
-        n_free((void*) this->targetName);
+        n_free((void*)this->targetName);
     }
     if (name)
     {
@@ -84,7 +84,7 @@ nDynAutoRef<TYPE>::~nDynAutoRef()
 {
     if (this->targetName)
     {
-        n_free((void *)this->targetName);
+        n_free((void*)this->targetName);
         this->targetName = 0;
     }
 }
@@ -109,7 +109,7 @@ nDynAutoRef<TYPE>::operator=(const nDynAutoRef<TYPE>& rhs)
 template<class TYPE>
 inline
 void
-nDynAutoRef<TYPE>::operator=(const char *name)
+nDynAutoRef<TYPE>::operator=(const char* name)
 {
     this->set(name);
 }

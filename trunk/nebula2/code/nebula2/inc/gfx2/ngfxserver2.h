@@ -554,30 +554,12 @@ nGfxServer2::FeatureSet
 nGfxServer2::StringToFeatureSet(const char* str)
 {
     n_assert(str);
-    if (0 == strcmp(str, "dx7"))
-    {
-        return DX7;
-    }
-    else if (0 == strcmp(str, "dx8"))
-    {
-        return DX8;
-    }
-    else if (0 == strcmp(str, "dx8sb"))
-    {
-        return DX8SB;
-    }
-    else if (0 == strcmp(str, "dx9"))
-    {
-        return DX9;
-    }
-    else if (0 == strcmp(str, "dx9flt"))
-    {
-        return DX9FLT;
-    }
-    else
-    {
-        return InvalidFeatureSet;
-    }
+    if (0 == strcmp(str, "dx7"))        return DX7;
+    if (0 == strcmp(str, "dx8"))        return DX8;
+    if (0 == strcmp(str, "dx8sb"))      return DX8SB;
+    if (0 == strcmp(str, "dx9"))        return DX9;
+    if (0 == strcmp(str, "dx9flt"))     return DX9FLT;
+    return InvalidFeatureSet;
 }
 
 //------------------------------------------------------------------------------
@@ -590,12 +572,12 @@ nGfxServer2::FeatureSetToString(FeatureSet f)
 {
     switch (f)
     {
-        case nGfxServer2::DX7:      return "dx7"; break;
-        case nGfxServer2::DX8:      return "dx8"; break;
-        case nGfxServer2::DX8SB:    return "dx8sb"; break;
-        case nGfxServer2::DX9:      return "dx9"; break;
-        case nGfxServer2::DX9FLT:   return "dx9flt"; break;
-        default:                    return "invalid"; break;
+        case nGfxServer2::DX7:          return "dx7";
+        case nGfxServer2::DX8:          return "dx8";
+        case nGfxServer2::DX8SB:        return "dx8sb";
+        case nGfxServer2::DX9:          return "dx9";
+        case nGfxServer2::DX9FLT:       return "dx9flt";
+        default:                        return "invalid";
     }
 }
 

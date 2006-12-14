@@ -208,7 +208,7 @@ nPersistServer::BeginCloneObject(nObject* obj, const char* name, bool isObjNamed
     {
         n_assert2(!obj->IsA("nroot"), "Set isObjNamed to true to clone nRoot object!");
 
-        this->cloneTarget = nKernelServer::Instance()->New(cl);
+        this->cloneTarget = kernelServer->New(cl);
         if (this->cloneTarget)
         {
             n_assert(this->cloneTarget->GetRefCount() == 1);

@@ -1257,13 +1257,13 @@ nGuiServer::DiscardWindows(const char* className)
     nGuiWindow* rootWindow = this->GetRootWindowPointer();
     if (rootWindow)
     {
-        nClass* windowClass = nKernelServer::Instance()->FindClass(className);
+        nClass* windowClass = kernelServer->FindClass(className);
         n_assert(windowClass);
-        nGuiWidget* child = (nGuiWidget*) rootWindow->GetHead();
+        nGuiWidget* child = (nGuiWidget*)rootWindow->GetHead();
         nGuiWidget* nextChild = 0;
         if (child) do
         {
-            nextChild = (nGuiWidget*) child->GetSucc();
+            nextChild = (nGuiWidget*)child->GetSucc();
             if (child->IsA(windowClass))
             {
                 child->Release();
@@ -1287,26 +1287,26 @@ nGuiServer::FindWindowByClass(const char* className, nGuiWindow* curWindow)
     nGuiWindow* rootWindow = this->GetRootWindowPointer();
     if (rootWindow)
     {
-        nClass* windowClass = nKernelServer::Instance()->FindClass(className);
+        nClass* windowClass = kernelServer->FindClass(className);
         n_assert(windowClass);
         nGuiWidget* child;
         if (curWindow)
         {
-            child = (nGuiWidget*) curWindow->GetSucc();
+            child = (nGuiWidget*)curWindow->GetSucc();
         }
         else
         {
-            child = (nGuiWidget*) rootWindow->GetHead();
+            child = (nGuiWidget*)rootWindow->GetHead();
         }
         nGuiWidget* nextChild = 0;
         if (child) do
         {
-            nextChild = (nGuiWidget*) child->GetSucc();
+            nextChild = (nGuiWidget*)child->GetSucc();
             if (child->IsA(windowClass))
             {
-                return (nGuiWindow*) child;
+                return (nGuiWindow*)child;
             }
-        } while ((child = nextChild));
+        } while (child = nextChild);
     }
     return 0;
 }

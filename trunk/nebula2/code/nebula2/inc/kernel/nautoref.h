@@ -38,7 +38,7 @@ public:
     /// cast operator
     operator TYPE*();
     /// assign operator
-    void operator=(const char *name);
+    void operator=(const char* name);
 
 protected:
     /// resolve target pointer from name if necessary
@@ -95,13 +95,13 @@ nAutoRef<TYPE>::check()
         {
             return 0;
         }
-        this->targetObject = (TYPE*) nKernelServer::Instance()->Lookup(this->targetName);
+        this->targetObject = (TYPE*)nKernelServer::Instance()->Lookup(this->targetName);
         if (this->targetObject)
         {
-            ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced> *)this);
+            ((nReferenced*)this->targetObject)->AddObjectRef((nRef<nReferenced>*)this);
         }
     }
-    return (TYPE *) this->targetObject;
+    return (TYPE*)this->targetObject;
 }
 
 //------------------------------------------------------------------------------
@@ -179,7 +179,7 @@ nAutoRef<TYPE>::operator TYPE*()
 template<class TYPE>
 inline
 void
-nAutoRef<TYPE>::operator=(const char *name)
+nAutoRef<TYPE>::operator=(const char* name)
 {
     this->set(name);
 }

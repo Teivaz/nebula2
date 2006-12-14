@@ -50,7 +50,7 @@ nWin32WindowHandler::OpenWindow()
     if (parent_hwnd.isvalid())
     {
         // parent window exist and set window height and width
-        this->parentHwnd = (HWND) parent_hwnd->GetI();
+        this->parentHwnd = (HWND)parent_hwnd->GetI();
 
         // we are a child, so set dimension from parent
         RECT r;
@@ -94,7 +94,7 @@ nWin32WindowHandler::OpenWindow()
     RegisterClassEx(&wc);
 
     // open the window
-    DWORD windowStyle = (((this->parentHwnd != 0) ? this->childStyle : this->windowedStyle) | WS_MINIMIZE);
+    DWORD windowStyle = ((this->parentHwnd != 0 ? this->childStyle : this->windowedStyle) | WS_MINIMIZE);
     this->hWnd = CreateWindow("Nebula2 window class",                   // lpClassName
                               this->displayMode.GetWindowTitle().Get(), // lpWindowName
                               windowStyle,                              // dwStyle
@@ -113,8 +113,8 @@ nWin32WindowHandler::OpenWindow()
     SetWindowLong(this->hWnd, 0, (LONG)this);
 
     // publish the window handle under a well defined name
-    nEnv *env;
-    if ((env = (nEnv *) nKernelServer::Instance()->New("nenv","/sys/env/hwnd")))
+    nEnv* env = (nEnv*)nKernelServer::Instance()->New("nenv", "/sys/env/hwnd");
+    if (env)
     {
         env->SetI((int)this->hWnd);
     }
@@ -480,286 +480,286 @@ nWin32WindowHandler::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     LONG retval = 1;
 
     // user data of windows contains 'this' pointer
-    nWin32WindowHandler* self = (nWin32WindowHandler*) GetWindowLong(hWnd, 0);
+    nWin32WindowHandler* self = (nWin32WindowHandler*)GetWindowLong(hWnd, 0);
 
     switch (uMsg)
     {
-        case WM_SYSCOMMAND:
-            // prevent moving/sizing and power loss in full-screen mode
-            if (self && (self->GetDisplayMode().GetType() == nDisplayMode2::Fullscreen))
+    case WM_SYSCOMMAND:
+        // prevent moving/sizing and power loss in full-screen mode
+        if (self && (self->GetDisplayMode().GetType() == nDisplayMode2::Fullscreen))
+        {
+            switch (wParam)
             {
-                switch (wParam)
-                {
-                    case SC_MOVE:
-                    case SC_SIZE:
-                    case SC_MAXIMIZE:
-                    case SC_KEYMENU:
-                    case SC_MONITORPOWER:
-                        return 1;
-                        break;
-                }
-            }
-            break;
-
-        case WM_ERASEBKGND:
-            // prevent windows from erasing
-            return 1;
-
-        case WM_SIZE:
-            if (self)
-            {
-                // inform input server about focus change
-                if ((SIZE_MAXHIDE == wParam) || (SIZE_MINIMIZED == wParam))
-                {
-                    // let window handler react on size change
-                    self->OnSize(true);
-
-                }
-                else
-                {
-                    // let window handler react on size change
-                    self->OnSize(false);
-                }
-                ReleaseCapture();
-            }
-            break;
-
-        case WM_SETCURSOR:
-            if (self)
-            {
-                bool result = self->OnSetCursor();
-                if (result)
-                {
-                    return TRUE;
-                }
-            }
-            break;
-
-        case WM_PAINT:
-            if (self)
-            {
-                self->OnPaint();
-            }
-            break;
-
-        case WM_SETFOCUS:
-            // tell input server that we have obtained the input focus
-            if (self && self->refInputServer.isvalid())
-            {
-                self->refInputServer->ObtainFocus();
-                ReleaseCapture();
-            }
-            break;
-
-        case WM_KILLFOCUS:
-            // tell input server that we have lost the input focus
-            if (self && self->refInputServer.isvalid())
-            {
-                self->refInputServer->LoseFocus();
-                ReleaseCapture();
-            }
-            break;
-
-        case WM_CLOSE:
-            // ask Nebula to quit, everything else should happen in the destructor
-            // If we're not a child window
-            if (!self->GetParentHwnd())
-            {
-                if (self->OnClose())
-                {
-                    self->quitRequested = true;
-                }
-                return 0;
-            }
-            break;
-
-        case WM_COMMAND:
-            if (self)
-            {
-                switch (LOWORD(wParam))
-                {
-                    case nWin32WindowHandler::ACCEL_TOGGLEFULLSCREEN:
-                    {
-                        self->OnToggleFullscreenWindowed();
-                    }
+                case SC_MOVE:
+                case SC_SIZE:
+                case SC_MAXIMIZE:
+                case SC_KEYMENU:
+                case SC_MONITORPOWER:
+                    return 1;
                     break;
-                }
             }
-            break;
+        }
+        break;
 
-        case WM_KEYDOWN:
-            if (self && self->refInputServer.isvalid())
+    case WM_ERASEBKGND:
+        // prevent windows from erasing
+        return 1;
+
+    case WM_SIZE:
+        if (self)
+        {
+            // inform input server about focus change
+            if (SIZE_MAXHIDE == wParam || SIZE_MINIMIZED == wParam)
             {
-                nKey key = self->TranslateKey((int)wParam);
-                nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie)
+                // let window handler react on size change
+                self->OnSize(true);
+
+            }
+            else
+            {
+                // let window handler react on size change
+                self->OnSize(false);
+            }
+            ReleaseCapture();
+        }
+        break;
+
+    case WM_SETCURSOR:
+        if (self)
+        {
+            bool result = self->OnSetCursor();
+            if (result)
+            {
+                return TRUE;
+            }
+        }
+        break;
+
+    case WM_PAINT:
+        if (self)
+        {
+            self->OnPaint();
+        }
+        break;
+
+    case WM_SETFOCUS:
+        // tell input server that we have obtained the input focus
+        if (self && self->refInputServer.isvalid())
+        {
+            self->refInputServer->ObtainFocus();
+            ReleaseCapture();
+        }
+        break;
+
+    case WM_KILLFOCUS:
+        // tell input server that we have lost the input focus
+        if (self && self->refInputServer.isvalid())
+        {
+            self->refInputServer->LoseFocus();
+            ReleaseCapture();
+        }
+        break;
+
+    case WM_CLOSE:
+        // ask Nebula to quit, everything else should happen in the destructor
+        // If we're not a child window
+        if (!self->GetParentHwnd())
+        {
+            if (self->OnClose())
+            {
+                self->quitRequested = true;
+            }
+            return 0;
+        }
+        break;
+
+    case WM_COMMAND:
+        if (self)
+        {
+            switch (LOWORD(wParam))
+            {
+                case nWin32WindowHandler::ACCEL_TOGGLEFULLSCREEN:
                 {
-                    ie->SetType(N_INPUT_KEY_DOWN);
-                    ie->SetDeviceId(N_INPUT_KEYBOARD(0));
-                    ie->SetKey(key);
-                    self->refInputServer->LinkEvent(ie);
+                    self->OnToggleFullscreenWindowed();
                 }
+                break;
             }
-            break;
+        }
+        break;
 
-        case WM_SYSKEYDOWN:
-            /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
-            if (self && self->refInputServer.isvalid())
+    case WM_KEYDOWN:
+        if (self && self->refInputServer.isvalid())
+        {
+            nKey key = self->TranslateKey((int)wParam);
+            nInputEvent* ie = self->refInputServer->NewEvent();
+            if (ie)
             {
-                nKey key = self->TranslateKey((int)wParam);
-                nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie)
-                {
-                    ie->SetType(N_INPUT_KEY_DOWN);
-                    ie->SetDeviceId(N_INPUT_KEYBOARD(0));
-                    ie->SetKey(key);
-                    self->refInputServer->LinkEvent(ie);
-                }
-
-                return(0);
+                ie->SetType(N_INPUT_KEY_DOWN);
+                ie->SetDeviceId(N_INPUT_KEYBOARD(0));
+                ie->SetKey(key);
+                self->refInputServer->LinkEvent(ie);
             }
-            */
-            break;
+        }
+        break;
 
-        case WM_KEYUP:
-            if (self && self->refInputServer.isvalid())
+    case WM_SYSKEYDOWN:
+        /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
+        if (self && self->refInputServer.isvalid())
+        {
+            nKey key = self->TranslateKey((int)wParam);
+            nInputEvent *ie = self->refInputServer->NewEvent();
+            if (ie)
             {
-                nKey key = self->TranslateKey((int)wParam);
-                nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie)
-                {
-                    ie->SetType(N_INPUT_KEY_UP);
-                    ie->SetDeviceId(N_INPUT_KEYBOARD(0));
-                    ie->SetKey(key);
-                    self->refInputServer->LinkEvent(ie);
-                }
+                ie->SetType(N_INPUT_KEY_DOWN);
+                ie->SetDeviceId(N_INPUT_KEYBOARD(0));
+                ie->SetKey(key);
+                self->refInputServer->LinkEvent(ie);
             }
-            break;
 
-        case WM_SYSKEYUP:
-            /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
-            if (self && self->refInputServer.isvalid())
+            return(0);
+        }
+        */
+        break;
+
+    case WM_KEYUP:
+        if (self && self->refInputServer.isvalid())
+        {
+            nKey key = self->TranslateKey((int)wParam);
+            nInputEvent* ie = self->refInputServer->NewEvent();
+            if (ie)
             {
-                nKey key = self->TranslateKey((int)wParam);
-                nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie)
-                {
-                    ie->SetType(N_INPUT_KEY_UP);
-                    ie->SetDeviceId(N_INPUT_KEYBOARD(0));
-                    ie->SetKey(key);
-                    self->refInputServer->LinkEvent(ie);
-                }
-
-                return(0);
+                ie->SetType(N_INPUT_KEY_UP);
+                ie->SetDeviceId(N_INPUT_KEYBOARD(0));
+                ie->SetKey(key);
+                self->refInputServer->LinkEvent(ie);
             }
-            */
-            break;
+        }
+        break;
 
-        case WM_CHAR:
-            if (self && self->refInputServer.isvalid())
+    case WM_SYSKEYUP:
+        /* FIXME: this code prevents Alt-F4 from being handled! NOT GOOD!
+        if (self && self->refInputServer.isvalid())
+        {
+            nKey key = self->TranslateKey((int)wParam);
+            nInputEvent *ie = self->refInputServer->NewEvent();
+            if (ie)
             {
-                nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie)
-                {
-                    ie->SetType(N_INPUT_KEY_CHAR);
-                    ie->SetDeviceId(N_INPUT_KEYBOARD(0));
-                    ie->SetChar((int) wParam);
-                    self->refInputServer->LinkEvent(ie);
-                }
+                ie->SetType(N_INPUT_KEY_UP);
+                ie->SetDeviceId(N_INPUT_KEYBOARD(0));
+                ie->SetKey(key);
+                self->refInputServer->LinkEvent(ie);
             }
-            break;
 
-        case WM_LBUTTONDBLCLK:
-        case WM_RBUTTONDBLCLK:
-        case WM_MBUTTONDBLCLK:
-        case WM_LBUTTONDOWN:
-        case WM_RBUTTONDOWN:
-        case WM_MBUTTONDOWN:
-        case WM_LBUTTONUP:
-        case WM_RBUTTONUP:
-        case WM_MBUTTONUP:
-            if (self->GetParentHwnd())
+            return(0);
+        }
+        */
+        break;
+
+    case WM_CHAR:
+        if (self && self->refInputServer.isvalid())
+        {
+            nInputEvent* ie = self->refInputServer->NewEvent();
+            if (ie)
             {
-                SetFocus(hWnd);
+                ie->SetType(N_INPUT_KEY_CHAR);
+                ie->SetDeviceId(N_INPUT_KEYBOARD(0));
+                ie->SetChar((int)wParam);
+                self->refInputServer->LinkEvent(ie);
             }
-            if (self && self->refInputServer.isvalid())
-            {
-                nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie)
-                {
-                    short x = LOWORD(lParam);
-                    short y = HIWORD(lParam);
-                    switch (uMsg)
-                    {
-                        case WM_LBUTTONDBLCLK:
-                        case WM_RBUTTONDBLCLK:
-                        case WM_MBUTTONDBLCLK:
-                            ie->SetType(N_INPUT_BUTTON_DBLCLCK);
-                            break;
+        }
+        break;
 
-                        case WM_LBUTTONDOWN:
-                        case WM_RBUTTONDOWN:
-                        case WM_MBUTTONDOWN:
-                            SetCapture(hWnd);
-                            ie->SetType(N_INPUT_BUTTON_DOWN);
-                            break;
-
-                        case WM_LBUTTONUP:
-                        case WM_RBUTTONUP:
-                        case WM_MBUTTONUP:
-                            ReleaseCapture();
-                            ie->SetType(N_INPUT_BUTTON_UP);
-                            break;
-                    }
-                    switch (uMsg)
-                    {
-                        case WM_LBUTTONDBLCLK:
-                        case WM_LBUTTONDOWN:
-                        case WM_LBUTTONUP:
-                            ie->SetButton(0);
-                            break;
-
-                        case WM_RBUTTONDBLCLK:
-                        case WM_RBUTTONDOWN:
-                        case WM_RBUTTONUP:
-                            ie->SetButton(1);
-                            break;
-
-                        case WM_MBUTTONDBLCLK:
-                        case WM_MBUTTONDOWN:
-                        case WM_MBUTTONUP:
-                            ie->SetButton(2);
-                            break;
-                    }
-                    ie->SetDeviceId(N_INPUT_MOUSE(0));
-                    ie->SetAbsPos(x, y);
-                    float relX = float(x) / self->GetDisplayMode().GetWidth();
-                    float relY = float(y) / self->GetDisplayMode().GetHeight();
-                    ie->SetRelPos(relX, relY);
-                    self->refInputServer->LinkEvent(ie);
-                }
-            }
-            break;
-
-        case WM_MOUSEMOVE:
-            if (self && self->refInputServer.isvalid())
+    case WM_LBUTTONDBLCLK:
+    case WM_RBUTTONDBLCLK:
+    case WM_MBUTTONDBLCLK:
+    case WM_LBUTTONDOWN:
+    case WM_RBUTTONDOWN:
+    case WM_MBUTTONDOWN:
+    case WM_LBUTTONUP:
+    case WM_RBUTTONUP:
+    case WM_MBUTTONUP:
+        if (self->GetParentHwnd())
+        {
+            SetFocus(hWnd);
+        }
+        if (self && self->refInputServer.isvalid())
+        {
+            nInputEvent* ie = self->refInputServer->NewEvent();
+            if (ie)
             {
                 short x = LOWORD(lParam);
                 short y = HIWORD(lParam);
-                nInputEvent *ie = self->refInputServer->NewEvent();
-                if (ie)
+                switch (uMsg)
                 {
-                    ie->SetType(N_INPUT_MOUSE_MOVE);
-                    ie->SetDeviceId(N_INPUT_MOUSE(0));
-                    ie->SetAbsPos(x, y);
-                    float relX = float(x) / self->GetDisplayMode().GetWidth();
-                    float relY = float(y) / self->GetDisplayMode().GetHeight();
-                    ie->SetRelPos(relX, relY);
-                    self->refInputServer->LinkEvent(ie);
+                    case WM_LBUTTONDBLCLK:
+                    case WM_RBUTTONDBLCLK:
+                    case WM_MBUTTONDBLCLK:
+                        ie->SetType(N_INPUT_BUTTON_DBLCLCK);
+                        break;
+
+                    case WM_LBUTTONDOWN:
+                    case WM_RBUTTONDOWN:
+                    case WM_MBUTTONDOWN:
+                        SetCapture(hWnd);
+                        ie->SetType(N_INPUT_BUTTON_DOWN);
+                        break;
+
+                    case WM_LBUTTONUP:
+                    case WM_RBUTTONUP:
+                    case WM_MBUTTONUP:
+                        ReleaseCapture();
+                        ie->SetType(N_INPUT_BUTTON_UP);
+                        break;
                 }
-                self->OnMouseMove((UINT)x, (UINT)y);
+                switch (uMsg)
+                {
+                    case WM_LBUTTONDBLCLK:
+                    case WM_LBUTTONDOWN:
+                    case WM_LBUTTONUP:
+                        ie->SetButton(0);
+                        break;
+
+                    case WM_RBUTTONDBLCLK:
+                    case WM_RBUTTONDOWN:
+                    case WM_RBUTTONUP:
+                        ie->SetButton(1);
+                        break;
+
+                    case WM_MBUTTONDBLCLK:
+                    case WM_MBUTTONDOWN:
+                    case WM_MBUTTONUP:
+                        ie->SetButton(2);
+                        break;
+                }
+                ie->SetDeviceId(N_INPUT_MOUSE(0));
+                ie->SetAbsPos(x, y);
+                float relX = float(x) / self->GetDisplayMode().GetWidth();
+                float relY = float(y) / self->GetDisplayMode().GetHeight();
+                ie->SetRelPos(relX, relY);
+                self->refInputServer->LinkEvent(ie);
             }
-            break;
+        }
+        break;
+
+    case WM_MOUSEMOVE:
+        if (self && self->refInputServer.isvalid())
+        {
+            short x = LOWORD(lParam);
+            short y = HIWORD(lParam);
+            nInputEvent* ie = self->refInputServer->NewEvent();
+            if (ie)
+            {
+                ie->SetType(N_INPUT_MOUSE_MOVE);
+                ie->SetDeviceId(N_INPUT_MOUSE(0));
+                ie->SetAbsPos(x, y);
+                float relX = float(x) / self->GetDisplayMode().GetWidth();
+                float relY = float(y) / self->GetDisplayMode().GetHeight();
+                ie->SetRelPos(relX, relY);
+                self->refInputServer->LinkEvent(ie);
+            }
+            self->OnMouseMove((int)x, (int)y);
+        }
+        break;
     }
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -928,4 +928,3 @@ nWin32WindowHandler::TranslateKey(int vkey)
 }
 
 #endif __WIN32__
-

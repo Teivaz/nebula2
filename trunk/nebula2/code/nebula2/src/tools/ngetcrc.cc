@@ -16,8 +16,8 @@ main(int argc, const char** argv)
     nCmdLineArgs args(argc, argv);
 
     bool helpArg    = args.GetBoolArg("-help");
-    nString fileArg = args.GetStringArg("-file", 0);
-    nString cmpArg  = args.GetStringArg("-cmp", 0);
+    nString fileArg = args.GetStringArg("-file");
+    nString cmpArg  = args.GetStringArg("-cmp");
 
     if (helpArg)
     {

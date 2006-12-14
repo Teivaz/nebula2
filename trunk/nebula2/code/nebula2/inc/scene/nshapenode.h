@@ -80,6 +80,18 @@ protected:
     nDynAutoRef<nResourceLoader> refMeshResourceLoader;
 };
 
+
+//------------------------------------------------------------------------------
+/**
+    Indicate to scene server that we provide geometry
+*/
+inline
+bool
+nShapeNode::HasGeometry() const
+{
+    return true;
+}
+
 //------------------------------------------------------------------------------
 /**
 */

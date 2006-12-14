@@ -115,7 +115,7 @@ public:
     /// finish rendering the pass
     void End();
     /// convert shadow technique string to enum
-    static ShadowTechnique StringToShadowTechnique(const nString& s);
+    static ShadowTechnique StringToShadowTechnique(const char* str);
     /// draw a full-screen quad
     void DrawFullScreenQuad();
 
@@ -591,16 +591,14 @@ nRpPass::GetDrawShadows() const
 */
 inline
 nRpPass::ShadowTechnique
-nRpPass::StringToShadowTechnique(const nString& s)
+nRpPass::StringToShadowTechnique(const char* str)
 {
-    if ("NoShadows" == s) return NoShadows;
-    else if ("Simple" == s) return Simple;
-    else if ("MultiLight" == s) return MultiLight;
-    else
-    {
-        n_error("nRpPass::StringToShadowTechnique: Invalid string '%s'!", s.Get());
-        return NoShadows;
-    }
+    n_assert(str);
+    if (strcmp(str, "NoShadows") == 0)      return NoShadows;
+    if (strcmp(str, "Simple") == 0)         return Simple;
+    if (strcmp(str, "MultiLight") == 0)     return MultiLight;
+    n_error("nRpPass::StringToShadowTechnique: Invalid string '%s'!", str);
+    return NoShadows;
 }
 
 #if __NEBULA_STATS__

@@ -248,7 +248,6 @@ nCharacter3Node::LoadSkinsFromSubfolder(nString path)
                     if (curPath.CheckExtension("n2"))
                     {
                         // load new object
-                        nKernelServer* kernelServer = nKernelServer::Instance();
                         kernelServer->PushCwd(this);
                         nRoot* nObj = (nRoot*)kernelServer->Load(curPath.Get());
                         n_assert(nObj);

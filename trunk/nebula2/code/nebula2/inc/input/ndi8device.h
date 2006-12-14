@@ -10,13 +10,8 @@
 
     (C) 2002 RadonLabs GmbH
 */
-#ifndef N_NODE_H
 #include "util/nnode.h"
-#endif
-
-#ifndef N_STRING_H
 #include "util/nstring.h"
-#endif
 
 //------------------------------------------------------------------------------
 class nDI8Device : public nNode

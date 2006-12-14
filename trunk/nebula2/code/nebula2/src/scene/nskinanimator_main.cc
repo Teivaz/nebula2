@@ -57,7 +57,7 @@ nSkinAnimator::UnloadAnim()
 bool
 nSkinAnimator::LoadAnim()
 {
-    if ((!this->refAnim.isvalid()) && (!this->animName.IsEmpty()))
+    if (!this->refAnim.isvalid() && !this->animName.IsEmpty())
     {
         nAnimation* anim = this->refAnimServer->NewMemoryAnimation(this->animName);
         n_assert(anim);
@@ -72,7 +72,6 @@ nSkinAnimator::LoadAnim()
             }
         }
         this->refAnim = anim;
-
         this->character.SetAnimation(anim);
     }
     return true;
@@ -119,7 +118,7 @@ nSkinAnimator::RenderContextCreated(nRenderContext* renderContext)
     }
 
     // create one character 2 object per instance
-    nCharacter2* curCharacter = n_new (nCharacter2(this->character));
+    nCharacter2* curCharacter = n_new(nCharacter2(this->character));
     n_assert(0 != curCharacter);
     curCharacter->SetSkinAnimator(this);
 
@@ -157,7 +156,7 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     n_assert(nVariable::InvalidHandle != this->channelVarHandle);
 
     const nVariable& characterVar = renderContext->GetLocalVar(this->characterVarIndex);
-    nCharacter2* curCharacter = (nCharacter2*) characterVar.GetObj();
+    nCharacter2* curCharacter = (nCharacter2*)characterVar.GetObj();
     n_assert(curCharacter);
 
     // update the animation enabled flag
@@ -179,7 +178,7 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         float curOffset = 0 != var ? var->GetFloat() : 0.0f;
 
         const nVariable& character2SetVar = renderContext->GetLocalVar(this->characterSetIndex);
-        nCharacter2Set* characterSet = (nCharacter2Set*) character2SetVar.GetObj();
+        nCharacter2Set* characterSet = (nCharacter2Set*)character2SetVar.GetObj();
         n_assert(characterSet);
 
         // get character 2 set from render context and check if animation state needs to be updated
@@ -223,13 +222,13 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
     // update the source node with the new char skeleton state
     if (sceneNode->IsA(this->skinShapeNodeClass))
     {
-        nSkinShapeNode* skinShapeNode = (nSkinShapeNode*) sceneNode;
+        nSkinShapeNode* skinShapeNode = (nSkinShapeNode*)sceneNode;
         skinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
 
     }
     else if (sceneNode->IsA(this->shadowSkinShapeNodeClass))
     {
-        nShadowSkinShapeNode* shadowSkinShapeNode = (nShadowSkinShapeNode*) sceneNode;
+        nShadowSkinShapeNode* shadowSkinShapeNode = (nShadowSkinShapeNode*)sceneNode;
         shadowSkinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
     }
     else

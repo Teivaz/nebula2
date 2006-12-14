@@ -157,18 +157,18 @@ nDI8Server::Trigger(double time)
 
     // prepare Nebula input device objects for event emission
     nInputDevice* nebDev;
-    for (nebDev = (nInputDevice*) this->nebDevList.GetHead();
+    for (nebDev = (nInputDevice*)this->nebDevList.GetHead();
          nebDev;
-         nebDev = (nInputDevice*) nebDev->GetSucc())
+         nebDev = (nInputDevice*)nebDev->GetSucc())
     {
         nebDev->BeginEmitEvents(frameTime);
     }
 
     // query devices and generate Nebula input events...
     nDI8Device* di8Dev;
-    for (di8Dev = (nDI8Device*) this->di8DevList.GetHead();
+    for (di8Dev = (nDI8Device*)this->di8DevList.GetHead();
          di8Dev;
-         di8Dev = (nDI8Device*) di8Dev->GetSucc())
+         di8Dev = (nDI8Device*)di8Dev->GetSucc())
     {
         IDirectInputDevice8* diDev = di8Dev->GetDevice();
         nDI8Device::DeviceType devType = di8Dev->GetDeviceType();
@@ -190,9 +190,9 @@ nDI8Server::Trigger(double time)
             }
 
             // for each Nebula input device which is fed by this DirectInput device...
-            for (nebDev = (nInputDevice*) this->nebDevList.GetHead();
+            for (nebDev = (nInputDevice*)this->nebDevList.GetHead();
                  nebDev;
-                 nebDev = (nInputDevice*) nebDev->GetSucc())
+                 nebDev = (nInputDevice*)nebDev->GetSucc())
             {
                 if (nebDev->GetSourceDevice() != di8Dev)
                 {
@@ -228,9 +228,9 @@ nDI8Server::Trigger(double time)
     }
 
     // tell Nebula input devices that event emission is finished for this frame
-    for (nebDev = (nInputDevice*) this->nebDevList.GetHead();
+    for (nebDev = (nInputDevice*)this->nebDevList.GetHead();
          nebDev;
-         nebDev = (nInputDevice*) nebDev->GetSucc())
+         nebDev = (nInputDevice*)nebDev->GetSucc())
     {
         nebDev->EndEmitEvents();
     }

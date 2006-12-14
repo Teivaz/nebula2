@@ -556,7 +556,7 @@ nD3D9Server::DeviceClose()
     this->d3d9Device->Release();
     this->d3d9Device = 0;
 
-    // minimze the app window
+    // minimize the app window
     this->windowHandler.MinimizeWindow();
 }
 

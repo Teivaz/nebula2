@@ -64,10 +64,7 @@ nRefCounted::Release()
         n_delete(this);
         return 0;
     }
-    else
-    {
-        return --this->refCount;
-    }
+    return --this->refCount;
 }
 
 //------------------------------------------------------------------------------

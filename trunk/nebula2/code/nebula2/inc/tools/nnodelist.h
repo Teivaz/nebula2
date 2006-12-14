@@ -47,12 +47,12 @@ public:
     /// Load an object
     void LoadObject(const nString& objPath);
     /// Load an object and animate it by the given hardpoint(jointIndex)
-    void LoadObjectAndAttachToHardpoint(const nString& objPath,int jointIndex);
+    void LoadObjectAndAttachToHardpoint(const nString& objPath, int jointIndex);
     /// update vars
     void Trigger(double time, uint frameId);
 
     /// check rendercontext, global vars, etc
-    void TransferGlobalVars(nRenderContext &context,double time,uint frameId);
+    void TransferGlobalVars(nRenderContext& context, double time, uint frameId);
     /// add Default Variables
     void AddDefaultVariables(nRenderContext& context);
     /// currently open?
