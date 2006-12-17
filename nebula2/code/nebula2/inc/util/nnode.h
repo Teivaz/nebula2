@@ -19,31 +19,31 @@ public:
     /// the default constructor
     nNode();
     /// constructor providing user data pointer
-    nNode(void *ptr);
+    nNode(void* ptr);
     /// the destructor
     ~nNode();
     /// get the next node in the list
-    nNode *GetSucc() const;
+    nNode* GetSucc() const;
     /// get the previous node in the list
-    nNode *GetPred() const;
+    nNode* GetPred() const;
     /// insert this node before 'succ' node into list
-    void InsertBefore(nNode *succ);
+    void InsertBefore(nNode* succ);
     /// insert this node after 'pred' node into list
-    void InsertAfter(nNode *pred);
+    void InsertAfter(nNode* pred);
     /// remove node from list
     void Remove();
     /// set user data pointer
-    void SetPtr(void *p);
+    void SetPtr(void* p);
     /// get user data pointer
-    void *GetPtr() const;
+    void* GetPtr() const;
     /// check if node is currently linked into a list
     bool IsLinked() const;
 
 private:
     friend class nList;
-    nNode *succ;
-    nNode *pred;
-    void *ptr;
+    nNode* succ;
+    nNode* pred;
+    void* ptr;
 };
 
 //-----------------------------------------------------------------------------
@@ -123,14 +123,13 @@ nNode::GetPred(void) const
 */
 inline
 void
-nNode::InsertBefore(nNode *succ)
+nNode::InsertBefore(nNode* succ)
 {
     n_assert(succ->pred);
     n_assert(!this->succ);
-    nNode *pred = succ->pred;
-    this->pred = pred;
+    this->pred = succ->pred;
     this->succ = succ;
-    pred->succ = this;
+    this->pred->succ = this;
     succ->pred = this;
 }
 
@@ -140,15 +139,14 @@ nNode::InsertBefore(nNode *succ)
 */
 inline
 void
-nNode::InsertAfter(nNode *pred)
+nNode::InsertAfter(nNode* pred)
 {
     n_assert(pred->succ);
     n_assert(!this->succ);
-    nNode *succ = pred->succ;
     this->pred = pred;
-    this->succ = succ;
+    this->succ = pred->succ;
     pred->succ = this;
-    succ->pred = this;
+    this->succ->pred = this;
 }
 
 //-----------------------------------------------------------------------------
@@ -159,10 +157,8 @@ void
 nNode::Remove(void)
 {
     n_assert(this->succ);
-    nNode *succ = this->succ;
-    nNode *pred = this->pred;
-    succ->pred = pred;
-    pred->succ = succ;
+    this->succ->pred = this->pred;
+    this->pred->succ = this->succ;
     this->succ = NULL;
     this->pred = NULL;
 }
@@ -173,7 +169,7 @@ nNode::Remove(void)
 */
 inline
 void
-nNode::SetPtr(void *p)
+nNode::SetPtr(void* p)
 {
     this->ptr = p;
 }
@@ -197,15 +193,8 @@ inline
 bool
 nNode::IsLinked(void) const
 {
-    if (this->succ)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-};
+    return this->succ != 0;
+}
 
 //--------------------------------------------------------------------
 #endif

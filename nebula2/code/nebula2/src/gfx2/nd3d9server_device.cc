@@ -942,7 +942,7 @@ nD3D9Server::OnDeviceInit(bool startup)
     this->UpdateCursor();
 
     // create the shape shader
-    this->refShapeShader = (nD3D9Shader*) this->NewShader("shape");
+    this->refShapeShader = (nD3D9Shader*)this->NewShader("shape");
     if (!this->refShapeShader->IsLoaded())
     {
         this->refShapeShader->SetFilename("shaders:shape.fx");
@@ -954,7 +954,7 @@ nD3D9Server::OnDeviceInit(bool startup)
     }
 
     // create the shared effect parameter reference shader
-    this->refSharedShader = (nD3D9Shader*) this->NewShader("shared");
+    this->refSharedShader = (nD3D9Shader*)this->NewShader("shared");
     if (!this->refSharedShader->IsLoaded())
     {
         this->refSharedShader->SetFilename("shaders:shared.fx");
@@ -1005,7 +1005,7 @@ nD3D9Server::GetSoftwareVertexProcessing()
     else if (this->deviceBehaviourFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
     {
         BOOL b = this->d3d9Device->GetSoftwareVertexProcessing();
-        return (b != FALSE) ? true : false;
+        return b ? true : false;
     }
     else
     {
@@ -1025,14 +1025,14 @@ nD3D9Server::GetCurrentRenderTargetSize() const
     nTexture2* renderTarget = this->GetRenderTarget(0);
     if (renderTarget)
     {
-        size.x = (float) renderTarget->GetWidth();
-        size.y = (float) renderTarget->GetHeight();
+        size.x = (float)renderTarget->GetWidth();
+        size.y = (float)renderTarget->GetHeight();
     }
     else
     {
         const nDisplayMode2& mode = this->GetDisplayMode();
-        size.x = (float) mode.GetWidth();
-        size.y = (float) mode.GetHeight();
+        size.x = (float)mode.GetWidth();
+        size.y = (float)mode.GetHeight();
     }
     return size;
 }
@@ -1117,14 +1117,12 @@ nD3D9Server::SetClipPlanes(const nArray<plane>& planes)
 */
 void nD3D9Server::AdjustGamma()
 {
-    D3DGAMMARAMP	ramp;
+    D3DGAMMARAMP ramp;
 
-    int val;
-
-    for (int i=0; i<256; i++)
+    for (int i = 0; i < 256; i++)
     {
-        val = (int)((this->contrast+0.5f)*pow(i/255.f,1.0f/this->gamma)*65535.f +
-                    (this->brightness-0.5f)*32768.f - this->contrast*32768.f + 16384.f);
+        int val = (int)((this->contrast + 0.5f) * pow(i / 255.f, 1.0f / this->gamma) * 65535.f +
+                  (this->brightness - 0.5f) * 32768.f - this->contrast * 32768.f + 16384.f);
         ramp.red[i] = ramp.green[i] = ramp.blue[i] = n_iclamp(val, 0, 65535);
     }
 
@@ -1153,9 +1151,9 @@ void nD3D9Server::AdjustGamma()
 */
 void nD3D9Server::RestoreGamma()
 {
-    D3DGAMMARAMP	ramp;
+    D3DGAMMARAMP ramp;
 
-    for (int i=0; i<256; i++)
+    for (int i = 0; i < 256; i++)
         ramp.red[i] = ramp.green[i] = ramp.blue[i] = i << 8;
 
     nDisplayMode2 dispMode = this->windowHandler.GetDisplayMode();

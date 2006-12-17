@@ -172,7 +172,7 @@ nAudioServer3::CategoryToString(Category cat)
         case Music:                     return "music";
         case Speech:                    return "speech";
         case Ambient:                   return "ambient";
-        default: n_error("nAudioServer3: Invalid Category: %i!", cat);
+        default: n_error("nAudioServer3: Invalid Category: %i!", cat); return "";
     }
 }
 
