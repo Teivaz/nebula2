@@ -406,7 +406,6 @@ endmodule
 beginmodule ntimeserver
     setdir kernel
     setheaders {
-        ntime
         ntimeserver
     }
     setfiles {

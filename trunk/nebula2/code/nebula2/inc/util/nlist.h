@@ -48,9 +48,9 @@ private:
 inline
 nList::nList()
 {
-    this->head     = (nNode *) &(this->tail);
+    this->head     = (nNode*)&(this->tail);
     this->tail     = 0;
-    this->tailpred = (nNode *) &(this->head);
+    this->tailpred = (nNode*)&(this->head);
 }
 
 //-----------------------------------------------------------------------------
@@ -86,10 +86,7 @@ nList::GetHead() const
     {
         return this->head;
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -104,10 +101,7 @@ nList::GetTail() const
     {
         return this->tailpred;
     }
-    else
-    {
-        return NULL;
-    }
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -116,9 +110,9 @@ nList::GetTail() const
 */
 inline
 void
-nList::AddHead(nNode *n)
+nList::AddHead(nNode* n)
 {
-    n->InsertAfter((nNode *) &(this->head));
+    n->InsertAfter((nNode*)&(this->head));
 }
 
 //-----------------------------------------------------------------------------
@@ -127,9 +121,9 @@ nList::AddHead(nNode *n)
 */
 inline
 void
-nList::AddTail(nNode *n)
+nList::AddTail(nNode* n)
 {
-    n->InsertBefore((nNode *) &(this->tail));
+    n->InsertBefore((nNode*)&(this->tail));
 }
 
 //-----------------------------------------------------------------------------
@@ -139,18 +133,15 @@ nList::AddTail(nNode *n)
 
     @return the removed node or 0 if list is empty
 */
-inline nNode *nList::RemHead()
+inline nNode* nList::RemHead()
 {
-    nNode *n = this->head;
+    nNode* n = this->head;
     if (n->succ)
     {
         n->Remove();
         return n;
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -160,18 +151,15 @@ inline nNode *nList::RemHead()
 
     @return the removed node or 0 if list is empty
 */
-inline nNode *nList::RemTail()
+inline nNode* nList::RemTail()
 {
-    nNode *n = this->tailpred;
+    nNode* n = this->tailpred;
     if (n->pred)
     {
         n->Remove();
         return n;
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 //--------------------------------------------------------------------
 #endif
