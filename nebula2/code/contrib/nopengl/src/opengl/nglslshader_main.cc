@@ -114,6 +114,7 @@ n_assert_glslstatus(GLhandleARB obj, const nString& msg, GLenum param)
 nGLSLShader::nGLSLShader() :
     hasBeenValidated(false),
     didNotValidate(false),
+    //uniformsUpdated(false),
     programObj(0),
     vertexShader(0),
     fragmentShader(0)
@@ -154,6 +155,8 @@ nGLSLShader::UnloadResource()
     glDeleteObjectARB(this->fragmentShader);
 
     glDeleteObjectARB(this->programObj);
+
+    //uniformsUpdated = false;
 
     // clear current parameter settings
     this->curParams.Clear();
@@ -225,8 +228,9 @@ nGLSLShader::LoadResource()
     this->SetState(Valid);
 
     // validate the effect
-    //this->ValidateEffect();
+    this->ValidateEffect();
 
+    //uniformsUpdated = false;
     this->UpdateParameterHandles();
 
     // TEST
@@ -428,6 +432,7 @@ nGLSLShader::SetFloat4Array(nShaderState::Param p, const nFloat4* arr, int count
 {
     n_assert(p < nShaderState::NumParameters);
 
+    // TODO: check "(float*) arr" expression correctness
     glUniform4fvARB(this->parameterHandles[p], count, (float*) arr);
 
     n_gltrace("nGLSLShader::SetFloat4Array().");
@@ -445,6 +450,7 @@ nGLSLShader::SetVector4Array(nShaderState::Param p, const vector4* arr, int coun
 {
     n_assert(p < nShaderState::NumParameters);
 
+    // TODO: check "(float*) arr" expression correctness
     glUniform4fvARB(this->parameterHandles[p], count, (float*) arr);
 
     n_gltrace("nGLSLShader::SetVector4Array().");
@@ -466,12 +472,12 @@ nGLSLShader::SetMatrix(nShaderState::Param p, const matrix44& val)
 
     //n_printf("SetMatrix: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(&val));
-    glUniformMatrix4fvARB(this->parameterHandles[p], 1, GL_FALSE, (float*) &val);
+    glUniformMatrix4fvARB(this->parameterHandles[p], 1, GL_FALSE, (const GLfloat*)val.m);
 
     nString msg;
     msg.Format("nGLSLShader(%s)::SetMatrix(%s:%d).", this->GetFilename().Get(), nShaderState::ParamToString(p), this->parameterHandles[p]);
     //n_gltrace(msg.Get());
-    n_glsltrace(this->fragmentShader, msg.Get());
+    n_glsltrace(this->programObj, msg.Get());
 
     //printf("%s\n", msg.Get());
 
@@ -488,6 +494,7 @@ nGLSLShader::SetMatrixArray(nShaderState::Param p, const matrix44* arr, int coun
 {
     n_assert(p < nShaderState::NumParameters);
 
+    // TODO: check "(float*) arr" expression correctness
     glUniformMatrix4fvARB(this->parameterHandles[p], count, GL_FALSE, (float*) arr);
 
     n_gltrace("nGLSLShader::SetMatrixArray().");
@@ -505,6 +512,7 @@ nGLSLShader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** arr, 
 {
     n_assert(p < nShaderState::NumParameters);
 
+    // TODO: check "(float*) *arr" expression correctness
     glUniformMatrix4fvARB(this->parameterHandles[p], count, GL_FALSE, (float*) *arr);
 
     n_gltrace("nGLSLShader::SetMatrixPointerArray().");
@@ -541,6 +549,24 @@ nGLSLShader::SetTexture(nShaderState::Param p, nTexture2* tex)
 
 //------------------------------------------------------------------------------
 /**
+*/
+void
+nGLSLShader::BeginParamUpdate()
+{
+    glUseProgramObjectARB(this->programObj);
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void
+nGLSLShader::EndParamUpdate()
+{
+    glUseProgramObjectARB(0);
+}
+
+//------------------------------------------------------------------------------
+/**
 Set a whole shader parameter block at once. This is slightly faster
 (and more convenient) then setting single parameters.
 */
@@ -552,6 +578,8 @@ nGLSLShader::SetParams(const nShaderParams& params)
 #endif
     int numValidParams = params.GetNumValidParams();
     int i;
+
+    glUseProgramObjectARB(this->programObj);
 
     for (i = 0; i < numValidParams; i++)
     {
@@ -615,6 +643,8 @@ nGLSLShader::SetParams(const nShaderParams& params)
         }
     }
 
+    glUseProgramObjectARB(0);
+
     //n_gltrace("nGLSLShader::SetParams().");
     n_glsltrace(this->programObj, "nGLSLShader::SetParams().");
 }
@@ -627,7 +657,9 @@ GLSL parameter handles.
 void
 nGLSLShader::UpdateParameterHandles()
 {
-    memset(this->parameterHandles, 0, sizeof(this->parameterHandles));
+    //if (uniformsUpdated) return;
+
+    memset(this->parameterHandles, -1, sizeof(this->parameterHandles));
 
     n_printf("Start parameters lookup\n");
 
@@ -676,7 +708,11 @@ nGLSLShader::UpdateParameterHandles()
         n_printf("  There are no parameters in this shader.\n");
     }
 
+    glUseProgramObjectARB(0);
+
     n_printf("End parameters lookup\n");
+
+    //uniformsUpdated = true;
 
     //n_gltrace("nGLSLShader::UpdateParameterHandles().");
     n_glsltrace(this->programObj, "nGLSLShader::UpdateParameterHandles().");
@@ -690,7 +726,7 @@ bool
 nGLSLShader::IsParameterUsed(nShaderState::Param p)
 {
     n_assert(p < nShaderState::NumParameters);
-    return (-1 != this->parameterHandles[p]);
+    return (0 <= this->parameterHandles[p]);
 }
 
 //------------------------------------------------------------------------------
@@ -712,7 +748,7 @@ nGLSLShader::ValidateEffect()
     glValidateProgramARB(this->programObj);
     n_assert_glslstatus(this->programObj, "nGLSLShader() warning: shader did not validated!", GL_OBJECT_VALIDATE_STATUS_ARB);
 
-    this->hasBeenValidated = true;
+    //this->hasBeenValidated = true;
     this->didNotValidate = false;
     //this->UpdateParameterHandles();
 
