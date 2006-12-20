@@ -259,9 +259,9 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
             case Model:
                 if (!mvpOnly)
                 {
-                    shd->SetMatrix(nShaderState::Model, this->transform[Model]);
-                    shd->SetMatrix(nShaderState::InvModel, this->transform[InvModel]);
-                    shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
+                    shd->SetMatrix(nShaderState::Model,        this->transform[Model]);
+                    shd->SetMatrix(nShaderState::InvModel,     this->transform[InvModel]);
+                    shd->SetMatrix(nShaderState::ModelView,    this->transform[ModelView]);
                     shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
                 }
                 setModelEyePos = true;
@@ -271,9 +271,9 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
             case View:
                 if (!mvpOnly)
                 {
-                    shd->SetMatrix(nShaderState::View, this->transform[View]);
-                    shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
-                    shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
+                    shd->SetMatrix(nShaderState::View,         this->transform[View]);
+                    shd->SetMatrix(nShaderState::InvView,      this->transform[InvView]);
+                    shd->SetMatrix(nShaderState::ModelView,    this->transform[ModelView]);
                     shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
                     setEyePos = true;
                 }
@@ -321,10 +321,12 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
             case Light:
                 break;
         }
+
         if (setMVP)
         {
             shd->SetMatrix(nShaderState::ModelViewProjection, this->transform[ModelViewProjection]);
         }
+
         if (!mvpOnly && setEyePos)
         {
             shd->SetVector3(nShaderState::EyePos, this->transform[InvView].pos_component());
@@ -335,10 +337,12 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
         {
             shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
         }
+
         if (setEyeDir)
         {
             shd->SetVector3(nShaderState::EyeDir, -this->transform[View].z_component());
         }
+
         n_gltrace("nGLServer2::SetTransform().");
     }
 }
@@ -360,23 +364,29 @@ void
 nGLServer2::Clear(int bufferTypes, float red, float green, float blue, float alpha, float z, int stencil)
 {
     n_assert(this->inBeginScene);
+
     int flags = 0;
+
     if (bufferTypes & ColorBuffer)
     {
         flags |= GL_COLOR_BUFFER_BIT;
         glClearColor(red, green, blue, alpha);
     }
+
     if (bufferTypes & DepthBuffer)
     {
         flags |= GL_DEPTH_BUFFER_BIT;
         glClearDepth(z);
     }
+
     if (bufferTypes & StencilBuffer)
     {
         flags |= GL_STENCIL_BUFFER_BIT;
         glClearStencil(stencil);
     }
+
     glClear(flags);
+
     n_gltrace("nGLServer2::Clear().");
 }
 
@@ -408,17 +418,17 @@ nGLServer2::SetMesh(nMesh2* vbMesh, nMesh2* ibMesh)
             {
                 ((nGLMesh*)ibMesh)->SetIndices(this->indexRangeFirst);
             }
-            else
-            {
-                ((nGLMesh*)ibMesh)->UnsetIndices();
-            }
+            //else
+            //{
+            //    ((nGLMesh*)ibMesh)->UnsetIndices();
+            //}
         }
     }
-    else
-    {
-        ((nGLMesh*)vbMesh)->UnsetVertices();
-        ((nGLMesh*)ibMesh)->UnsetIndices();
-    }
+    //else
+    //{
+    //    ((nGLMesh*)vbMesh)->UnsetVertices();
+    //    ((nGLMesh*)ibMesh)->UnsetIndices();
+    //}
 
     nGfxServer2::SetMesh(vbMesh, ibMesh);
 }

@@ -31,7 +31,7 @@ proc OnStartup {} {
     .setassign "export"   "$proj/export/"
 
     #.setassign "renderpath" "data:shaders"
-    .setassign "shaders"    "data:shaders"
+    .setassign "shd"        "data:shaders"
     .setassign "scripts"    "data:scripts"
     .setassign "physics"    "export:physics/"
     .setassign "meshes"     "export:meshes/"
@@ -69,10 +69,10 @@ proc OnGraphicsStartup {} {
 
     if {[exists /sys/servers/gfx]} {
         if {[/sys/servers/gfx.getclass] == "nglserver2"} {
-            .setassign "renderpath" "shaders:OpenGL"
+            .setassign "renderpath" "shd:OpenGL"
             /sys/servers/scene.setrenderpathfilename "renderpath:glsl_renderpath.xml"
         } else {
-            .setassign "renderpath" "shaders:DirectX"
+            .setassign "renderpath" "shd:DirectX"
             set featureSet [/sys/servers/gfx.getfeatureset]
             if {($featureSet == "dx9") || ($featureSet == "dx9flt")} {
                 # use HDR renderer for dx9 graphics cards (the current

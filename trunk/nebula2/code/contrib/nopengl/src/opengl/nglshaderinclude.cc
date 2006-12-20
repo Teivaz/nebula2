@@ -51,16 +51,16 @@ nGLShaderInclude::Begin(const nString& sourceFile)
     this->tmpFilePath.Append("__tmp__.");
     this->tmpFilePath.Append(mangledPath.GetExtension());
     
+#ifdef __WIN32__
+    this->tmpFilePath.ConvertBackslashes();
+#endif
+
     if (!this->tmpFile->Open(this->tmpFilePath.Get(), "rw"))
     {
         n_error("nGLShaderInclude::Begin(): Could not create file %s\n", this->tmpFilePath.Get());
         this->tmpFile->Release();
         return false;
     }
-
-#ifdef __WIN32__
-    this->tmpFilePath.ConvertBackslashes();
-#endif
 
     Include(this->tmpFile, mangledPath, nArray<nString>());
 
@@ -112,10 +112,12 @@ nGLShaderInclude::End()
         this->tmpFile->Release();
         this->tmpFile = NULL;
     }
-    if (nFileServer2::Instance()->FileExists(this->tmpFilePath.Get()))
+    
+    if (!this->tmpFilePath.IsEmpty() && nFileServer2::Instance()->FileExists(this->tmpFilePath.Get()))
     {
         nFileServer2::Instance()->DeleteFile(this->tmpFilePath.Get());
     }
+    
     this->tmpFilePath = "";
 }
 

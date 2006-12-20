@@ -23,19 +23,19 @@ nGLServer2* nGLServer2::Singleton = 0;
 void
 n_gltrace(const char *msg)
 {
-    //TODO: GL Error handling
     bool errorPresent = false;
-    GLenum error;
     uint errNum = 0;
-    nString message(msg);
-    message.Append(" Error:\n");
-    error = glGetError();
+    GLenum error = glGetError();
+    nString message("\n");
+    message += msg;
+    message += "\n    Error: ";
+
     while (error != GL_NO_ERROR)
     {
         errorPresent = true;
+
         if (errNum < 20)
         {
-            message.Append("    FIXME ");
             switch (error)
             {
                 case GL_OUT_OF_MEMORY:
@@ -58,16 +58,19 @@ n_gltrace(const char *msg)
         }
         else
         {
-            message.Append("    ...");
+            message.Append("...");
             break;
         }
+
         errNum++;
         error = glGetError();
     }
+
     if (errorPresent)
     {
         //n_error(message.Get());
-        n_message(message.Get());
+        //n_message(message.Get());
+        n_printf(message.Get());
     }
 }
 

@@ -2,6 +2,7 @@
 //  nglslshader_main.cc
 //  23-Mar-2005 Haron
 //------------------------------------------------------------------------------
+
 #include "opengl/nglslshader.h"
 #include "opengl/nglshaderinclude.h"
 
@@ -13,73 +14,98 @@
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
 
-//#include "util/nstrlist.h"
-
 nNebulaClass(nGLSLShader, "nshader2");
 
-//------------------------------------------------------------------------------
-/** OGRE example
-    void checkForGLSLError(const String& ogreMethod, const String& errorTextPrefix, const GLhandleARB obj, const bool forceInfoLog, const bool forceException)
-    {
-		GLenum glErr;
-		bool errorsFound = false;
-		String msg = errorTextPrefix;
+void
+n_glsltrace(GLhandleARB obj, const nString& msg)
+{
+    bool errorPresent = false;
+    uint errNum = 0;
+    GLenum error = glGetError();
+    nString message;
 
-		// get all the GL errors
-		glErr = glGetError();
-		while (glErr != GL_NO_ERROR)
+    while (error != GL_NO_ERROR)
+    {
+        errorPresent = true;
+
+        if (errNum < 20)
         {
-			msg += "\n" + String((char*)gluErrorString(glErr)); 
-			glErr = glGetError();
-			errorsFound = true;
+            switch (error)
+            {
+                case GL_OUT_OF_MEMORY:
+                    message += "<GL_OUT_OF_MEM>";
+                    break;
+                case GL_INVALID_ENUM:
+                    message += "<GL_INVALID_ENUM>";
+                    break;
+                case GL_INVALID_VALUE:
+                    message += "<GL_INVALID_VALUE>";
+                    break;
+                case GL_INVALID_OPERATION:
+                    message += "<GL_INVALID_OPERATION>";
+                    break;
+                default:
+                    message += "<GL_ERROR_TYPE: ";
+                    message.AppendInt(error);
+                    message += ">";
+            }
+        }
+        else
+        {
+            message += "...";
+            break;
         }
 
-
-		// if errors were found then put them in the Log and raise and exception
-		if (errorsFound || forceInfoLog)
-		{
-			// if shader or program object then get the log message and send to the log manager
-			msg += logObjectInfo( msg, obj );
-
-            if (forceException) 
-			{
-				OGRE_EXCEPT(Exception::ERR_INTERNAL_ERROR, msg, ogreMethod);
-			}
-		}
+        errNum++;
+        error = glGetError();
     }
 
-    //-----------------------------------------------------------------------------
-	String logObjectInfo(const String& msg, const GLhandleARB obj)
-	{
-		String logMessage = msg;
+    if (errorPresent)
+    {
+        if (obj > 0)
+        {
+            int logLength = 0;
 
-		if (obj > 0)
-		{
-			int infologLength = 0;
+            glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &logLength);
 
-			glGetObjectParameterivARB_ptr(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &infologLength);
+            if (logLength > 0)
+            {
+                GLcharARB* infoLog = new GLcharARB[logLength];
 
-			if (infologLength > 0)
-			{
-				int charsWritten  = 0;
+                glGetInfoLogARB(obj, logLength, NULL, infoLog);
 
-				GLcharARB * infoLog = new GLcharARB[infologLength];
+                n_message("\n%s\n    Error: %s\n    GLSL Error: %s\n", msg.Get(), message.Get(), infoLog);
 
-				glGetInfoLogARB_ptr(obj, infologLength, &charsWritten, infoLog);
-				logMessage += String(infoLog) + "\n";
-				LogManager::getSingleton().logMessage(logMessage);
+                delete [] infoLog;
+            }
+        }
+        else
+        {
+            n_message("\n%s\n    Error: %s\n", msg.Get(), message.Get());
+        }
+    }
+}
 
-				delete [] infoLog;
-			}
-		}
-
-		return logMessage;
-
-	}
-*/
 void
-n_glsltrace(const nString& msg, const GLhandleARB obj)
+n_assert_glslstatus(GLhandleARB obj, const nString& msg, GLenum param)
 {
+    GLint res;
+    glGetObjectParameterivARB(obj, param, &res);
+
+    if (res == GL_FALSE)
+    {
+        GLint logLen = 0;
+        GLint charsWritten = 0;
+
+        glGetObjectParameterivARB(obj, GL_OBJECT_INFO_LOG_LENGTH_ARB, &logLen);
+
+        char *log = n_new_array(char, logLen);
+
+        glGetInfoLogARB(obj, logLen, &charsWritten, log);
+        n_error("%s\n[%s]", msg.Get(), log);
+
+        n_delete_array(log);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -92,7 +118,7 @@ nGLSLShader::nGLSLShader() :
     vertexShader(0),
     fragmentShader(0)
 {
-    memset(this->parameterHandles, 0, sizeof(this->parameterHandles));
+    memset(this->parameterHandles, -1, sizeof(this->parameterHandles));
 }
 
 //------------------------------------------------------------------------------
@@ -100,7 +126,7 @@ nGLSLShader::nGLSLShader() :
 */
 nGLSLShader::~nGLSLShader()
 {
-//    if (!deviceInit) return;
+    //    if (!deviceInit) return;
     if (this->IsLoaded())
     {
         this->Unload();
@@ -120,8 +146,13 @@ nGLSLShader::UnloadResource()
     {
         nGfxServer2::Instance()->SetShader(0);
     }
+
+    glDetachObjectARB(this->programObj, this->vertexShader);
     glDeleteObjectARB(this->vertexShader);
+
+    glDetachObjectARB(this->programObj, this->fragmentShader);
     glDeleteObjectARB(this->fragmentShader);
+
     glDeleteObjectARB(this->programObj);
 
     // clear current parameter settings
@@ -132,7 +163,7 @@ nGLSLShader::UnloadResource()
 
 //------------------------------------------------------------------------------
 /**
-    Load GLSL-shader files.
+Load GLSL-shader files.
 */
 bool
 nGLSLShader::LoadResource()
@@ -143,13 +174,11 @@ nGLSLShader::LoadResource()
     nGLShaderInclude si;
     nString fname = this->GetFilename();
     nString src;
-    int res;
-    char str[4096];
     const char *shaderStrings[1];
 
     fname.StripExtension();
 
-    n_printf("Start shader loading...\n");
+    n_printf("Start shader <%s> loading...\n", this->GetFilename().Get());
 
     this->programObj = glCreateProgramObjectARB(); 
 
@@ -162,18 +191,11 @@ nGLSLShader::LoadResource()
         this->vertexShader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
         glShaderSourceARB(this->vertexShader, 1, shaderStrings, NULL);
         glCompileShaderARB(this->vertexShader);
-        glGetObjectParameterivARB(this->vertexShader, GL_OBJECT_COMPILE_STATUS_ARB, &res); 
 
-        if(res)
-        {
-            glAttachObjectARB(this->programObj, this->vertexShader);
-        }
-	    else
-	    {
-		    glGetInfoLogARB(this->vertexShader, sizeof(str), NULL, str);
-            n_error("nGLSLShader::LoadResource(%s): Vertex Shader Compile Error.\n\t%s",
-                fname.Get(), str);
-	    }
+        n_assert_glslstatus(this->vertexShader, "nGLSLShader::LoadResource(): Vertex Shader Compile Error.", GL_OBJECT_COMPILE_STATUS_ARB);
+
+        glAttachObjectARB(this->programObj, this->vertexShader);
+
         si.End();
     }
 
@@ -186,29 +208,16 @@ nGLSLShader::LoadResource()
         this->fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
         glShaderSourceARB(this->fragmentShader, 1, shaderStrings, NULL);
         glCompileShaderARB(this->fragmentShader);
-        glGetObjectParameterivARB(this->fragmentShader, GL_OBJECT_COMPILE_STATUS_ARB, &res); 
+        
+        n_assert_glslstatus(this->fragmentShader, "nGLSLShader::LoadResource(): Fragment Shader Compile Error.", GL_OBJECT_COMPILE_STATUS_ARB);
 
-        if(res)
-        {
-            glAttachObjectARB(this->programObj, this->fragmentShader);
-        }
-	    else
-	    {
-		    glGetInfoLogARB(this->fragmentShader, sizeof(str), NULL, str);
-            n_error("nGLSLShader::LoadResource(%s): Fragment Shader Compile Error.\n\t%s",
-                    fname.Get(), str);
-	    }
+        glAttachObjectARB(this->programObj, this->fragmentShader);
+
         si.End();
     }
 
     glLinkProgramARB(this->programObj);
-    glGetObjectParameterivARB(this->programObj, GL_OBJECT_LINK_STATUS_ARB, &res);
-
-    if(res == GL_FALSE)
-	{
-		glGetInfoLogARB(this->programObj, sizeof(str), NULL, str);
-        n_error("nGLSLShader::LoadResource(%s): Linking Error.\n\t%s", fname.Get(), str);
-	}
+    n_assert_glslstatus(this->programObj, "nGLSLShader::LoadResource(): Program linking Error.", GL_OBJECT_LINK_STATUS_ARB);
 
     // success
     this->hasBeenValidated = false;
@@ -216,12 +225,24 @@ nGLSLShader::LoadResource()
     this->SetState(Valid);
 
     // validate the effect
-    this->ValidateEffect();
+    //this->ValidateEffect();
+
+    this->UpdateParameterHandles();
+
+    // TEST
+    //matrix44 m;
+    //glUseProgramObjectARB(this->programObj);
+    //GLint p = glGetUniformLocationARB(this->programObj, "ModelViewProjection");
+    //glUniformMatrix4fvARB(p, 1, GL_FALSE, _matrix44_ident);
+    //n_glsltrace(this->programObj, "Testing.");
 
     src.Set("nGLSLShader::LoadResource(");
     src.Append(fname);
     src.Append(").");
+
     n_gltrace(src.Get());
+    n_glsltrace(this->programObj, src.Get());
+
     return true;
 }
 
@@ -232,35 +253,42 @@ void
 nGLSLShader::SetBool(nShaderState::Param p, bool val)
 {
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetBool: %s\n", nShaderState::ParamToString(p));
+
+    //n_printf("SetBool: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     glUniform1iARB(this->parameterHandles[p], val ? 1 : 0);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
     n_gltrace("nGLSLShader::SetBool().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nGLSLShader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
+nGLSLShader::SetBoolArray(nShaderState::Param p, const bool* arr, int count)
 {
     n_assert(p < nShaderState::NumParameters);
-    GLint* ba;
-    ba = n_new_array(GLint, count);
 
+    GLint* ba = n_new_array(GLint, count);
     int i;
+
     for (i = 0; i < count; i++)
-        if (array[i]) ba[i] = 1;
-        else ba[i] = 0;
+    {
+        ba[i] = arr[i] ? 1 : 0;
+    }
+    
     glUniform1ivARB(this->parameterHandles[p], count, ba);
     n_delete_array(ba);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
     n_gltrace("nGLSLShader::SetBoolArray().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -270,27 +298,33 @@ void
 nGLSLShader::SetInt(nShaderState::Param p, int val)
 {
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetInt: %s\n", nShaderState::ParamToString(p));
+
+    //n_printf("SetInt: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     glUniform1iARB(this->parameterHandles[p], val);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
     n_gltrace("nGLSLShader::SetInt().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nGLSLShader::SetIntArray(nShaderState::Param p, const int* array, int count)
+nGLSLShader::SetIntArray(nShaderState::Param p, const int* arr, int count)
 {
     n_assert(p < nShaderState::NumParameters);
-    glUniform1ivARB(this->parameterHandles[p], count, array);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
+    glUniform1ivARB(this->parameterHandles[p], count, arr);
+
     n_gltrace("nGLSLShader::SetIntArray().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -300,27 +334,33 @@ void
 nGLSLShader::SetFloat(nShaderState::Param p, float val)
 {
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetFloat: %s\n", nShaderState::ParamToString(p));
+
+    //n_printf("SetFloat: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     glUniform1fARB(this->parameterHandles[p], val);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
     n_gltrace("nGLSLShader::SetFloat().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nGLSLShader::SetFloatArray(nShaderState::Param p, const float* array, int count)
+nGLSLShader::SetFloatArray(nShaderState::Param p, const float* arr, int count)
 {
     n_assert(p < nShaderState::NumParameters);
-    glUniform1fvARB(this->parameterHandles[p], count, array);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
+    glUniform1fvARB(this->parameterHandles[p], count, arr);
+
     n_gltrace("nGLSLShader::SetFloatArray().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -330,13 +370,16 @@ void
 nGLSLShader::SetVector4(nShaderState::Param p, const vector4& val)
 {
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetVector4: %s\n", nShaderState::ParamToString(p));
+
+    //n_printf("SetVector4: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&val));
     glUniform4fvARB(this->parameterHandles[p], 1, (float*) &val);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
     n_gltrace("nGLSLShader::SetVector4().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -346,13 +389,16 @@ void
 nGLSLShader::SetVector3(nShaderState::Param p, const vector3& val)
 {
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetVector3: %s\n", nShaderState::ParamToString(p));
+
+    //n_printf("SetVector3: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(*(nFloat4*)&val));
     glUniform3fvARB(this->parameterHandles[p], 1, (float*) &val);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
     n_gltrace("nGLSLShader::SetVector3().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -362,41 +408,50 @@ void
 nGLSLShader::SetFloat4(nShaderState::Param p, const nFloat4& val)
 {
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetFloat4: %s\n", nShaderState::ParamToString(p));
+
+    //n_printf("SetFloat4: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(val));
     glUniform4fvARB(this->parameterHandles[p], 1, (float*) &val);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
     n_gltrace("nGLSLShader::SetFloat4().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nGLSLShader::SetFloat4Array(nShaderState::Param p, const nFloat4* array, int count)
+nGLSLShader::SetFloat4Array(nShaderState::Param p, const nFloat4* arr, int count)
 {
     n_assert(p < nShaderState::NumParameters);
-    glUniform4fvARB(this->parameterHandles[p], count, (float*) array);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
+    glUniform4fvARB(this->parameterHandles[p], count, (float*) arr);
+
     n_gltrace("nGLSLShader::SetFloat4Array().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nGLSLShader::SetVector4Array(nShaderState::Param p, const vector4* array, int count)
+nGLSLShader::SetVector4Array(nShaderState::Param p, const vector4* arr, int count)
 {
     n_assert(p < nShaderState::NumParameters);
-    glUniform4fvARB(this->parameterHandles[p], count, (float*) array);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
+    glUniform4fvARB(this->parameterHandles[p], count, (float*) arr);
+
     n_gltrace("nGLSLShader::SetVector4Array().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -406,41 +461,57 @@ void
 nGLSLShader::SetMatrix(nShaderState::Param p, const matrix44& val)
 {
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetMatrix: %s\n", nShaderState::ParamToString(p));
+
+    //GLint pp = glGetUniformLocationARB(this->programObj, nShaderState::ParamToString(p));
+
+    //n_printf("SetMatrix: %s\n", nShaderState::ParamToString(p));
     this->curParams.SetArg(p, nShaderArg(&val));
     glUniformMatrix4fvARB(this->parameterHandles[p], 1, GL_FALSE, (float*) &val);
-    #ifdef __NEBULA_STATS__
+
+    nString msg;
+    msg.Format("nGLSLShader(%s)::SetMatrix(%s:%d).", this->GetFilename().Get(), nShaderState::ParamToString(p), this->parameterHandles[p]);
+    //n_gltrace(msg.Get());
+    n_glsltrace(this->fragmentShader, msg.Get());
+
+    //printf("%s\n", msg.Get());
+
+#ifdef __NEBULA_STATS__
     //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
-    n_gltrace("nGLSLShader::SetMatrix().");
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nGLSLShader::SetMatrixArray(nShaderState::Param p, const matrix44* array, int count)
+nGLSLShader::SetMatrixArray(nShaderState::Param p, const matrix44* arr, int count)
 {
     n_assert(p < nShaderState::NumParameters);
-    glUniformMatrix4fvARB(this->parameterHandles[p], count, GL_FALSE, (float*) array);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
+    glUniformMatrix4fvARB(this->parameterHandles[p], count, GL_FALSE, (float*) arr);
+
     n_gltrace("nGLSLShader::SetMatrixArray().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
 /**
 */
 void
-nGLSLShader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** array, int count)
+nGLSLShader::SetMatrixPointerArray(nShaderState::Param p, const matrix44** arr, int count)
 {
     n_assert(p < nShaderState::NumParameters);
-    glUniformMatrix4fvARB(this->parameterHandles[p], count, GL_FALSE, (float*) *array);
-    #ifdef __NEBULA_STATS__
-    //this->refGfxServer->statsNumRenderStateChanges++;
-    #endif
+
+    glUniformMatrix4fvARB(this->parameterHandles[p], count, GL_FALSE, (float*) *arr);
+
     n_gltrace("nGLSLShader::SetMatrixPointerArray().");
+
+#ifdef __NEBULA_STATS__
+    //this->refGfxServer->statsNumRenderStateChanges++;
+#endif
 }
 
 //------------------------------------------------------------------------------
@@ -451,32 +522,36 @@ nGLSLShader::SetTexture(nShaderState::Param p, nTexture2* tex)
 {
     n_assert(tex);
     n_assert(p < nShaderState::NumParameters);
-    n_printf("SetTexture: %s\n", nShaderState::ParamToString(p));
+
+    //n_printf("SetTexture: %s\n", nShaderState::ParamToString(p));
+
     if ((!this->curParams.IsParameterValid(p)) ||
         (this->curParams.IsParameterValid(p) && (this->curParams.GetArg(p).GetTexture() != tex)))
     {
         this->curParams.SetArg(p, nShaderArg(tex));
         glUniform1iARB(this->parameterHandles[p], (GLint)((nGLTexture*)tex)->GetTexID());
-        #ifdef __NEBULA_STATS__
-        //this->refGfxServer->statsNumTextureChanges++;
-        #endif
+
         n_gltrace("nGLSLShader::SetTexture().");
+
+#ifdef __NEBULA_STATS__
+        //this->refGfxServer->statsNumTextureChanges++;
+#endif
     }
 }
 
 //------------------------------------------------------------------------------
 /**
-    Set a whole shader parameter block at once. This is slightly faster
-    (and more convenient) then setting single parameters.
+Set a whole shader parameter block at once. This is slightly faster
+(and more convenient) then setting single parameters.
 */
 void
 nGLSLShader::SetParams(const nShaderParams& params)
 {
-    #ifdef __NEBULA_STATS__
+#ifdef __NEBULA_STATS__
     //nGLServer2* gfxServer = this->refGfxServer.get();
-    #endif
-    int i;
+#endif
     int numValidParams = params.GetNumValidParams();
+    int i;
 
     for (i = 0; i < numValidParams; i++)
     {
@@ -494,89 +569,122 @@ nGLSLShader::SetParams(const nShaderParams& params)
                 this->curParams.SetArg(curParam, curArg);
                 switch (curArg.GetType())
                 {
-                    case nShaderState::Void:
-                        #ifdef __NEBULA_STATS__
-                        //gfxServer->statsNumRenderStateChanges++;
-                        #endif
-                        break;
+                case nShaderState::Void:
+#ifdef __NEBULA_STATS__
+                    //gfxServer->statsNumRenderStateChanges++;
+#endif
+                    break;
 
-                    case nShaderState::Int:
-                        glUniform1iARB(handle, curArg.GetInt());
-                        #ifdef __NEBULA_STATS__
-                        //gfxServer->statsNumRenderStateChanges++;
-                        #endif
-                        break;
+                case nShaderState::Int:
+                    glUniform1iARB(handle, curArg.GetInt());
+#ifdef __NEBULA_STATS__
+                    //gfxServer->statsNumRenderStateChanges++;
+#endif
+                    break;
 
-                    case nShaderState::Float:
-                        glUniform1fARB(handle, curArg.GetFloat());
-                        #ifdef __NEBULA_STATS__
-                        //gfxServer->statsNumRenderStateChanges++;
-                        #endif
-                        break;
+                case nShaderState::Float:
+                    glUniform1fARB(handle, curArg.GetFloat());
+#ifdef __NEBULA_STATS__
+                    //gfxServer->statsNumRenderStateChanges++;
+#endif
+                    break;
 
-                    case nShaderState::Float4:
-                        glUniform4fvARB(handle, 1, (float*) &(curArg.GetFloat4()));
-                        #ifdef __NEBULA_STATS__
-                        //gfxServer->statsNumRenderStateChanges++;
-                        #endif
-                        break;
+                case nShaderState::Float4:
+                    glUniform4fvARB(handle, 1, (float*) &(curArg.GetFloat4()));
+#ifdef __NEBULA_STATS__
+                    //gfxServer->statsNumRenderStateChanges++;
+#endif
+                    break;
 
-                    case nShaderState::Matrix44:
-                        glUniformMatrix4fvARB(handle, 1, GL_FALSE, (float*) curArg.GetMatrix44());
-                        #ifdef __NEBULA_STATS__
-                        //gfxServer->statsNumRenderStateChanges++;
-                        #endif
-                        break;
+                case nShaderState::Matrix44:
+                    glUniformMatrix4fvARB(handle, 1, GL_FALSE, (float*) curArg.GetMatrix44());
+#ifdef __NEBULA_STATS__
+                    //gfxServer->statsNumRenderStateChanges++;
+#endif
+                    break;
 
-                    case nShaderState::Texture:
-                        glUniform1iARB(handle, (GLint)((nGLTexture*)curArg.GetTexture())->GetTexID());
-                        #ifdef __NEBULA_STATS__
-                        //gfxServer->statsNumTextureChanges++;
-                        #endif
-                        break;
+                case nShaderState::Texture:
+                    glUniform1iARB(handle, (GLint)((nGLTexture*)curArg.GetTexture())->GetTexID());
+#ifdef __NEBULA_STATS__
+                    //gfxServer->statsNumTextureChanges++;
+#endif
+                    break;
                 }
                 //n_error("nGLSLShader::SetParams(): Error while setting parameter.");
             }
         }
     }
-    n_gltrace("nGLSLShader::SetParams().");
+
+    //n_gltrace("nGLSLShader::SetParams().");
+    n_glsltrace(this->programObj, "nGLSLShader::SetParams().");
 }
 
 //------------------------------------------------------------------------------
 /**
-    Update the parameter handles table which maps nShader2 parameters to
-    GLSL parameter handles.
+Update the parameter handles table which maps nShader2 parameters to
+GLSL parameter handles.
 */
 void
 nGLSLShader::UpdateParameterHandles()
 {
     memset(this->parameterHandles, 0, sizeof(this->parameterHandles));
 
-    n_printf("Start parameters lookup for shader <%s>...\n", this->GetFilename().Get());
+    n_printf("Start parameters lookup\n");
 
     // TODO: trace all parameters in shaders, not only nebula ones
-    GLint p;
-    const char* pname;
-    int i;
-    for (i = 0; i < nShaderState::NumParameters; i++)
-    {
-        pname = nShaderState::ParamToString((nShaderState::Param)i);
-        p = glGetUniformLocationARB(this->programObj, pname);
-        if (p != -1)
-        {
-            n_printf("\tParam <%s>\n", pname);
-        }
-        this->parameterHandles[i] = p;
+    int i, n;
+    GLcharARB* uniformName;
+    GLsizei maxLen, len;
+    GLint sz;
+    GLenum tp;
 
+    glUseProgramObjectARB(this->programObj);
+
+    glGetObjectParameterivARB(this->programObj, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &n);
+    glGetObjectParameterivARB(this->programObj, GL_OBJECT_ACTIVE_UNIFORM_MAX_LENGTH_ARB, &maxLen);
+
+    if (n > 0)
+    {
+        n_printf("  Shader contain:");
+        uniformName = n_new_array(GLcharARB, maxLen);
+        for (i = 0; i < n; i++)
+        {
+            glGetActiveUniformARB(this->programObj, i, maxLen, &len, &sz, &tp, uniformName);
+            n_printf(" %s", uniformName);
+        }
+        n_delete_array(uniformName);
+        n_printf("\n");
+        
+        GLint p;
+        const char* pname;
+        for (i = 0; i < nShaderState::NumParameters; i++)
+        {
+            pname = nShaderState::ParamToString((nShaderState::Param)i);
+            p = glGetUniformLocationARB(this->programObj, pname);
+
+            if (p != -1)
+            {
+                n_printf("  %4d: %s\n", p, pname);
+            }
+
+            //n_printf("  Found: %s = %d\n", pname, p);
+            this->parameterHandles[i] = p;
+        }
     }
+    else
+    {
+        n_printf("  There are no parameters in this shader.\n");
+    }
+
     n_printf("End parameters lookup\n");
 
-    n_gltrace("nGLSLShader::UpdateParameterHandles().");
+    //n_gltrace("nGLSLShader::UpdateParameterHandles().");
+    n_glsltrace(this->programObj, "nGLSLShader::UpdateParameterHandles().");
 }
 
 //------------------------------------------------------------------------------
 /**
-    Return true if parameter is used by effect.
+Return true if parameter is used by effect.
 */
 bool
 nGLSLShader::IsParameterUsed(nShaderState::Param p)
@@ -587,36 +695,34 @@ nGLSLShader::IsParameterUsed(nShaderState::Param p)
 
 //------------------------------------------------------------------------------
 /**
-    Find the first valid technique and set it as current.
-    This sets the hasBeenValidated and didNotValidate members
+Find the first valid technique and set it as current.
+This sets the hasBeenValidated and didNotValidate members
 */
 void
 nGLSLShader::ValidateEffect()
 {
     n_assert(!this->hasBeenValidated);
     //n_assert(deviceInit);
-    int res;
+
+    //int res;
+
+    this->hasBeenValidated = true;
+    this->didNotValidate = true;
 
     glValidateProgramARB(this->programObj);
-    glGetProgramivARB(this->programObj, GL_VALIDATE_STATUS, &res);
-    if (res == GL_TRUE)
-    {
-        this->hasBeenValidated = true;
-        this->didNotValidate = false;
-        this->UpdateParameterHandles();
-    }
-    else
-    {
-        n_printf("nGLSLShader() warning: shader '%s' did not validated!\n", this->GetFilename().Get());
-        this->hasBeenValidated = true;
-        this->didNotValidate = true;
-    }
-    n_gltrace("nGLSLShader::ValidateEffect().");
+    n_assert_glslstatus(this->programObj, "nGLSLShader() warning: shader did not validated!", GL_OBJECT_VALIDATE_STATUS_ARB);
+
+    this->hasBeenValidated = true;
+    this->didNotValidate = false;
+    //this->UpdateParameterHandles();
+
+    //n_gltrace("nGLSLShader::ValidateEffect().");
+    n_glsltrace(this->programObj, "nGLSLShader::ValidateEffect().");
 }
 
 //------------------------------------------------------------------------------
 /**
-    begin shader rendering
+begin shader rendering
 */
 int
 nGLSLShader::Begin(bool saveState)
@@ -637,6 +743,7 @@ nGLSLShader::Begin(bool saveState)
     else
     {
         glUseProgramObjectARB(this->programObj);
+        //this->UpdateParameterHandles();
         return 1;
     }
 }
@@ -668,14 +775,14 @@ nGLSLShader::EndPass()
 
 //------------------------------------------------------------------------------
 /**
-    stop shader rendering
+stop shader rendering
 */
 void
 nGLSLShader::End()
 {
     if (!this->didNotValidate)
     {
-        glUseProgramObjectARB(NULL);
+        glUseProgramObjectARB(0);
         n_gltrace("nGLSLShader::End().");
     }
 }
@@ -758,7 +865,7 @@ nGLSLShader::GetTechnique() const
 
 //------------------------------------------------------------------------------
 /**
-    This method is called when the gl device is lost.
+This method is called when the gl device is lost.
 */
 void
 nGLSLShader::OnLost()
@@ -775,7 +882,7 @@ nGLSLShader::OnLost()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called when the gl device has been restored.
+This method is called when the gl device has been restored.
 */
 void
 nGLSLShader::OnRestored()
