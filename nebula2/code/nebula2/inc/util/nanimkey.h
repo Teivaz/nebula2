@@ -34,6 +34,7 @@ public:
     bool operator< (const nAnimKey& right) const;
     /// only compares time
     bool operator> (const nAnimKey& right) const;
+
 private:
     float time;
     TYPE value;

@@ -31,7 +31,7 @@ public:
     void SetF(float f);
     /// Sets the value of this object to the passed string
     void SetS(const char* s);
-    /// Sets the value of this objet to the passed object
+    /// Sets the value of this object to the passed object
     void SetO(nRoot* o);
     /// set float4 value
     void SetF4(const nFloat4& f4);

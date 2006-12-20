@@ -87,10 +87,7 @@ nBlendShapeAnimator::LoadResources()
         this->resourcesValid = true;
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 //------------------------------------------------------------------------------

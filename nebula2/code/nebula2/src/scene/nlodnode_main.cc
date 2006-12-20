@@ -65,9 +65,9 @@ nLodNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
             // get number of child nodes
             int num = 0;
             nSceneNode* curChild;
-            for (curChild = (nSceneNode*) this->GetHead();
+            for (curChild = (nSceneNode*)this->GetHead();
                 curChild;
-                curChild = (nSceneNode*) curChild->GetSucc())
+                curChild = (nSceneNode*)curChild->GetSucc())
             {
                 if (curChild->IsA(this->transformNodeClass))
                 {
@@ -89,10 +89,10 @@ nLodNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
             int index = 0;
             if (this->GetHead())
             {
-                nSceneNode* childToAttach = (nSceneNode*) this->GetHead();
-                for (curChild = (nSceneNode*) childToAttach->GetSucc();
+                nSceneNode* childToAttach = (nSceneNode*)this->GetHead();
+                for (curChild = (nSceneNode*)childToAttach->GetSucc();
                     curChild;
-                    curChild = (nSceneNode*) curChild->GetSucc(), index++)
+                    curChild = (nSceneNode*)curChild->GetSucc(), index++)
                 {
                     if (curChild->IsA(this->transformNodeClass))
                     {

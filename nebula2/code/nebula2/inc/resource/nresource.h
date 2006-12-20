@@ -27,7 +27,7 @@
     the resource is available. In all other cases, IsPending() returns
     false.
 
-    Unloading resources always happend immediately, both in sync and
+    Unloading resources always happened immediately, both in sync and
     async mode.
 
     A resource object can be in one of the following states:
@@ -176,7 +176,7 @@ public:
 protected:
     friend class nResourceServer;
 
-    /// override in subclasse to perform actual resource loading
+    /// override in subclass to perform actual resource loading
     virtual bool LoadResource();
     /// override in subclass to perform actual resource unloading
     virtual void UnloadResource();

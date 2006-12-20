@@ -106,19 +106,13 @@ nResource::Load()
         {
             return true;
         }
-        else
-        {
-            // otherwise, add to resource server's loader jobs
-            this->refResourceServer->AddLoaderJob(this);
-            return true;
-        }
+        // otherwise, add to resource server's loader jobs
+        this->refResourceServer->AddLoaderJob(this);
+        return true;
     }
-    else
     #endif
-    {
-        // the synchronous case is simply
-        return this->LoadResource();
-    }
+    // the synchronous case is simply
+    return this->LoadResource();
 }
 
 //------------------------------------------------------------------------------
@@ -140,7 +134,7 @@ nResource::Load(nFile* /*file*/, int /*offset*/, int /*length*/)
     Unload the resource data, freeing runtime resources. This method will call
     the protected virtual UnloadResources() method which should be overriden
     by subclasses.
-    This method works in sync and async mode and care about the multithreading
+    This method works in sync and async mode and care about the multi-threading
     issues before and after calling LoadResources();
 */
 void
@@ -183,7 +177,7 @@ nResource::UnloadResource()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called if any un-managed contained resources may become
+    This method is called if any unmanaged contained resources may become
     lost (for instance because the the D3D device goes into lost state).
     Subclasses which are affected by lost device state should unload
     their resources and set the resource object's state to Lost. Otherwise
@@ -198,7 +192,7 @@ nResource::OnLost()
 
 //------------------------------------------------------------------------------
 /**
-    This method is called when un-managed contained resources should be
+    This method is called when unmanaged contained resources should be
     restored (for instance because the D3D device is available again).
     Subclasses which were affected by OnLost(), should restore their
     resource objects, and set the resource's state to Restored, if some
@@ -221,6 +215,3 @@ nResource::GetByteSize()
 {
     return 0;
 }
-
-
-

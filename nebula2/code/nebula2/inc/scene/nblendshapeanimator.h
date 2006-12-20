@@ -29,9 +29,9 @@ public:
     virtual Type GetAnimatorType() const;
 
     /// set the animation resource name
-    void SetAnimation(const char* name);
+    void SetAnimation(const nString& name);
     /// get the animation resource name
-    const char* GetAnimation();
+    const nString& GetAnimation();
     /// set the animation group to use
     void SetAnimationGroup(int group);
     /// get which animation group is used
@@ -59,9 +59,9 @@ private:
 */
 inline
 void
-nBlendShapeAnimator::SetAnimation(const char* name)
+nBlendShapeAnimator::SetAnimation(const nString& name)
 {
-    n_assert(name);
+    n_assert(name.IsValid());
     this->UnloadAnimation();
     this->animationName = name;
 }
@@ -71,10 +71,10 @@ nBlendShapeAnimator::SetAnimation(const char* name)
     Get the animation resource name.
 */
 inline
-const char*
+const nString&
 nBlendShapeAnimator::GetAnimation()
 {
-    return this->animationName.Get();
+    return this->animationName;
 }
 
 //------------------------------------------------------------------------------

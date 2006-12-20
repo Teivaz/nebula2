@@ -243,7 +243,7 @@ nOggTheoraPlayer::Open()
     n_assert(this->filename != "");
     // open file
     infile = nFileServer2::Instance()->NewFileObject();
-    infile->Open(this->filename.Get(),"rb");
+    infile->Open(this->filename, "rb");
     // rewind
     Rewind();
     // setup framebuffer

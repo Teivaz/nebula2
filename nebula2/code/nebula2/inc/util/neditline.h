@@ -69,7 +69,7 @@ public:
     void InsertChar(uchar c);
     /// insert a string
     void InsertString(const char* str);
-    /// extract the word left and upto the cursor
+    /// extract the word left and up to the cursor
     nString GetWordToCursor() const;
 
 private:

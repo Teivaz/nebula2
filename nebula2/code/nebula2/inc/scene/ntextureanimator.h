@@ -49,5 +49,14 @@ private:
 
 };
 
-#endif
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+nAnimator::Type
+nTextureAnimator::GetAnimatorType() const
+{
+    return Shader;
+}
 
+#endif

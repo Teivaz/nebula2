@@ -29,15 +29,6 @@ nTextureAnimator::~nTextureAnimator()
 
 //------------------------------------------------------------------------------
 /**
-*/
-nAnimator::Type
-nTextureAnimator::GetAnimatorType() const
-{
-    return Shader;
-}
-
-//------------------------------------------------------------------------------
-/**
     This does the actual work of selecting a texture.
 
     @param  sceneNode       object to texture (must be of class nAbstractShaderNode)
@@ -99,4 +90,3 @@ nTextureAnimator::GetShaderParam() const
 {
     return nShaderState::ParamToString(this->shaderParam);
 }
-

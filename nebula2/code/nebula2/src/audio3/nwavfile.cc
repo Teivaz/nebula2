@@ -31,12 +31,12 @@ mmioProc(LPSTR lpstr, UINT uMsg, LPARAM lParam1, LPARAM lParam2)
                 if (0 == (lpMMIOInfo->dwFlags & (MMIO_WRITE | MMIO_READWRITE)))
                 {
                     // strip the "X.NEB2+" prefix from the file
-                    nString rawName((const char*) lParam1);
+                    nString rawName((const char*)lParam1);
                     nString filename = rawName.ExtractRange(7, rawName.Length() - 7);
 
                     // open a Nebula2 file for reading
                     nFile* file = nFileServer2::Instance()->NewFileObject();
-                    if (file->Open(filename.Get(), "rb"))
+                    if (file->Open(filename, "rb"))
                     {
                         // store nebula file object in mmio struct
                         lpMMIOInfo->adwInfo[0] = (DWORD) file;
@@ -48,13 +48,13 @@ mmioProc(LPSTR lpstr, UINT uMsg, LPARAM lParam1, LPARAM lParam2)
                     }
                 }
 
-                // fallthrough: some error occured
+                // fallthrough: some error occurred
                 return MMIOERR_CANNOTOPEN;
             }
 
         case MMIOM_CLOSE:
             {
-                nFile* file = (nFile*) lpMMIOInfo->adwInfo[0];
+                nFile* file = (nFile*)lpMMIOInfo->adwInfo[0];
                 n_assert(0 != file);
 
                 file->Close();
@@ -66,7 +66,7 @@ mmioProc(LPSTR lpstr, UINT uMsg, LPARAM lParam1, LPARAM lParam2)
 
         case MMIOM_READ:
             {
-                nFile* file = (nFile*) lpMMIOInfo->adwInfo[0];
+                nFile* file = (nFile*)lpMMIOInfo->adwInfo[0];
                 n_assert(0 != file && file->IsOpen());
 
                 int bytesRead = file->Read((HPSTR)lParam1, (LONG)lParam2);
@@ -77,7 +77,7 @@ mmioProc(LPSTR lpstr, UINT uMsg, LPARAM lParam1, LPARAM lParam2)
 
         case MMIOM_SEEK:
             {
-                nFile* file = (nFile*) lpMMIOInfo->adwInfo[0];
+                nFile* file = (nFile*)lpMMIOInfo->adwInfo[0];
                 n_assert(0 != file && file->IsOpen());
 
                 nFile::nSeekType seekType;
@@ -250,13 +250,13 @@ nWavFile::ReadMMIO()
 
     // Expect the 'fmt' chunk to be at least as large as <PCMWAVEFORMAT>;
     // if there are extra parameters at the end, we'll ignore them
-    if (ckIn.cksize < (LONG) sizeof(PCMWAVEFORMAT))
+    if (ckIn.cksize < (LONG)sizeof(PCMWAVEFORMAT))
     {
         return false;
     }
 
     // read fmt chunk into pcmWaveFormat
-    if (mmioRead(this->m_hmmio, (HPSTR) &pcmWaveFormat, sizeof(pcmWaveFormat)) != sizeof(pcmWaveFormat))
+    if (mmioRead(this->m_hmmio, (HPSTR)&pcmWaveFormat, sizeof(pcmWaveFormat)) != sizeof(pcmWaveFormat))
     {
         return false;
     }
@@ -281,7 +281,7 @@ nWavFile::ReadMMIO()
             return false;
         }
 
-        this->m_pwfx = (WAVEFORMATEX*) n_new(char[sizeof(WAVEFORMATEX) + cbExtraBytes]);
+        this->m_pwfx = (WAVEFORMATEX*)n_new(char[sizeof(WAVEFORMATEX) + cbExtraBytes]);
         n_assert(this->m_pwfx);
 
         // Copy the bytes from the pcm structure to the waveformatex structure
@@ -289,7 +289,7 @@ nWavFile::ReadMMIO()
         this->m_pwfx->cbSize = cbExtraBytes;
 
         // Now, read those extra bytes into the structure, if cbExtraAlloc != 0.
-        if (mmioRead(this->m_hmmio, (CHAR*)(((BYTE*)&(m_pwfx->cbSize))+sizeof(WORD)), cbExtraBytes) != cbExtraBytes)
+        if (mmioRead(this->m_hmmio, (CHAR*)(((BYTE*)&(m_pwfx->cbSize)) + sizeof(WORD)), cbExtraBytes) != cbExtraBytes)
         {
             n_delete(this->m_pwfx);
             this->m_pwfx = 0;
@@ -367,10 +367,9 @@ nWavFile::Read(void* buffer, uint bytesToRead)
         }
 
         // copy to buffer
-        *((uchar*)buffer+cT) = *((uchar*)mmioInfoIn.pchNext);
+        *((uchar*)buffer + cT) = *((uchar*)mmioInfoIn.pchNext);
         mmioInfoIn.pchNext++;
     }
     mmioSetInfo(this->m_hmmio, &mmioInfoIn, 0);
     return cbDataIn;
 }
-

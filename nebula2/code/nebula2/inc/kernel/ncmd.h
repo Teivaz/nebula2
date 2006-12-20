@@ -41,7 +41,7 @@ public:
     /// Set input arguments in nCmd from a C variable argument list
     void CopyInArgsFrom(va_list marker);
     /// Copy input arguments from another nCmd
-    void CopyInArgsFrom(nCmd * cmd);
+    void CopyInArgsFrom(nCmd* cmd);
     /// Retrieves index of the in-arg.
     int GetInArgIndex() const;
 
@@ -50,7 +50,7 @@ private:
     {
         N_MAXNUM_ARGS = 16,
     };
-    nCmdProto *cmdProto;
+    nCmdProto* cmdProto;
     int outArgIndex;
     int inArgIndex;
     nArg args[N_MAXNUM_ARGS];
@@ -168,7 +168,7 @@ nCmd::CopyInArgsFrom(va_list marker)
     va_copy(markerCopy, marker);
     for (int i = 0; i < this->GetNumInArgs(); i++)
     {
-        nArg * arg = this->In();
+        nArg* arg = this->In();
         arg->Copy(&markerCopy);
     }
 }
@@ -176,7 +176,7 @@ nCmd::CopyInArgsFrom(va_list marker)
 //------------------------------------------------------------------------------
 inline
 void
-nCmd::CopyInArgsFrom(nCmd * cmd)
+nCmd::CopyInArgsFrom(nCmd* cmd)
 {
     n_assert(cmd);
     n_assert(cmd->GetNumInArgs() == this->cmdProto->GetNumInArgs());
@@ -188,8 +188,8 @@ nCmd::CopyInArgsFrom(nCmd * cmd)
     // copy the arguments from the cmd provided
     for (int i = 0; i < cmd->GetNumInArgs(); i++)
     {
-        nArg * argSrc = cmd->In();
-        nArg * argDst = this->In();
+        nArg* argSrc = cmd->In();
+        nArg* argDst = this->In();
         n_assert(argSrc->GetType() == argDst->GetType());
         argDst->Copy(*argSrc);
     }
