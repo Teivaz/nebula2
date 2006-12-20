@@ -182,7 +182,7 @@ private:
     /// open the gl device
     bool DeviceOpen();
     /// close the gl device
-    void DeviceClose();    
+    void DeviceClose();
     /// called before device destruction, or when device lost
     void OnDeviceCleanup(bool shutdown);
     /// called after device created or restored
@@ -205,7 +205,7 @@ private:
     /// open the window
     //bool WindowOpen();
     /// close the window
-    //void WindowClose();    
+    //void WindowClose();
     #ifdef __WIN32__
     /// prepare window for switching between windowd/fullscreen mode
     //void AdjustWindowForChange();
@@ -270,7 +270,7 @@ private:
     #endif
 
     #ifdef __WIN32__
-    HDC        hDC;                  ///< the device context 
+    HDC        hDC;                  ///< the device context
     HGLRC    context;                ///< the gl render context
     int pixelFormat;
     PIXELFORMATDESCRIPTOR pfDesc;
@@ -285,21 +285,21 @@ public:
     /// translate win32 keycode into Nebula keycode
     //nKey TranslateKey(int vkey);
 */
-    
+
     //bool windowMinimized;           ///< window is currently minimized
     //bool quitRequested;             ///< quit requested by WinProc()
-    #endif   
-    
+    #endif
+
     #ifdef __LINUX__
 private:
     xWindowOpen();
     xWindowClose();
-    
+
     ///xkey to nebulaKey translation
     nKey translateKey(KeySym xkey);
-    
+
     nAutoRef<nInputServer> refInputServer;
-    
+
     ///update the window to the current settings
     void updateWindow(void);
     ///true if the current mode is fullscreen
@@ -312,10 +312,10 @@ private:
     unsigned int border;
     //holds flags for resize and other update needs of a window.
     unsigned int updateWindowMask;
-    
+
     //return a reusable or a new Colormap
     Colormap getColormap(void);
-    
+
     ///the connection to the xserver
     Display *display;
     ///the default screennumber of this display
@@ -329,7 +329,7 @@ private:
     XEvent event;
     //the event description to recive if the Window was destroyed
     Atom wmDeleteWindow;
-    
+
     ///windowmanger window - needed as group leader ?!
     Window  wm_win;
     ///the render window for winodowed mode
@@ -338,7 +338,7 @@ private:
     Window  fs_win;
     ///a pointer to the current window
     Window* current_win;
-    
+
     /*GLX - Handling*/
     ///retrive bit depth of a GLXFBConfig
     int getBufferAttr(GLXFBConfig config,const int attribute);
@@ -390,33 +390,33 @@ nGLServer2::GetGLPrimTypeAndNumIndexed(PrimitiveType primType, GLenum& glPrimTyp
     int glNumPrimitives = 0;
     switch (primType)
     {
-        case PointList:     
+        case PointList:
             glPrimType = GL_POINTS;
             glNumPrimitives = this->indexRangeNum;
             break;
 
-        case LineList:      
-            glPrimType = GL_LINES; 
-            glNumPrimitives = this->indexRangeNum / 2;            
+        case LineList:
+            glPrimType = GL_LINES;
+            glNumPrimitives = this->indexRangeNum / 2;
             break;
 
-        case LineStrip:     
-            glPrimType = GL_LINE_STRIP; 
-            glNumPrimitives = this->indexRangeNum - 1;            
+        case LineStrip:
+            glPrimType = GL_LINE_STRIP;
+            glNumPrimitives = this->indexRangeNum - 1;
             break;
 
-        case TriangleList:  
-            glPrimType = GL_TRIANGLES; 
-            glNumPrimitives = this->indexRangeNum / 3;            
+        case TriangleList:
+            glPrimType = GL_TRIANGLES;
+            glNumPrimitives = this->indexRangeNum / 3;
             break;
 
-        case TriangleStrip: 
-            glPrimType = GL_TRIANGLE_STRIP; 
+        case TriangleStrip:
+            glPrimType = GL_TRIANGLE_STRIP;
             glNumPrimitives = this->indexRangeNum - 2;
             break;
 
-        case TriangleFan:   
-            glPrimType = GL_TRIANGLE_FAN; 
+        case TriangleFan:
+            glPrimType = GL_TRIANGLE_FAN;
             glNumPrimitives = this->indexRangeNum - 2;
             break;
     }
@@ -433,33 +433,33 @@ nGLServer2::GetGLPrimTypeAndNum(PrimitiveType primType, GLenum& glPrimType) cons
     int glNumPrimitives = 0;
     switch (primType)
     {
-        case PointList:     
+        case PointList:
             glPrimType = GL_POINTS;
             glNumPrimitives = this->vertexRangeNum;
             break;
 
-        case LineList:      
-            glPrimType = GL_LINES; 
-            glNumPrimitives = this->vertexRangeNum / 2;            
+        case LineList:
+            glPrimType = GL_LINES;
+            glNumPrimitives = this->vertexRangeNum / 2;
             break;
 
-        case LineStrip:     
-            glPrimType = GL_LINE_STRIP; 
-            glNumPrimitives = this->vertexRangeNum - 1;            
+        case LineStrip:
+            glPrimType = GL_LINE_STRIP;
+            glNumPrimitives = this->vertexRangeNum - 1;
             break;
 
-        case TriangleList:  
-            glPrimType = GL_TRIANGLES; 
-            glNumPrimitives = this->vertexRangeNum / 3;            
+        case TriangleList:
+            glPrimType = GL_TRIANGLES;
+            glNumPrimitives = this->vertexRangeNum / 3;
             break;
 
-        case TriangleStrip: 
-            glPrimType = GL_TRIANGLE_STRIP; 
+        case TriangleStrip:
+            glPrimType = GL_TRIANGLE_STRIP;
             glNumPrimitives = this->vertexRangeNum - 2;
             break;
 
-        case TriangleFan:   
-            glPrimType = GL_TRIANGLE_FAN; 
+        case TriangleFan:
+            glPrimType = GL_TRIANGLE_FAN;
             glNumPrimitives = this->vertexRangeNum - 2;
             break;
     }

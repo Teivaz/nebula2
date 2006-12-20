@@ -99,7 +99,7 @@ private:
 
     bool hasBeenValidated;
     bool didNotValidate;
-    int parameterHandles[nShaderState::NumParameters]; ///< map shader states to CgFX handles
+    int parameterHandles[nShaderState::NumParameters]; ///< map shader states to GL handles
     nShaderParams curParams;					       ///< mirrored to avoid redundant parameters setting
 };
 

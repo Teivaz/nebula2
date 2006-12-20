@@ -82,7 +82,7 @@ nGLTexture::CanLoadAsync() const
     apply texture to mesh and bind texture's buffers
 */
 int
-nGLTexture::ApplyCoords(int stage, GLint size, GLsizei stride, GLvoid *pointer)
+nGLTexture::ApplyCoords(int stage, GLint size, GLsizei stride, GLvoid* pointer)
 {
     //n_printf("Tex[%d][%s]\n", stage, tex->GetFilename());
     if (N_GL_EXTENSION_SUPPORTED(GL_ARB_multitexture))
@@ -722,7 +722,7 @@ nGLTexture::CreateEmptyTexture()
         glBindTexture(GL_TEXTURE_CUBE_MAP, this->texID);
 
         int i;
-        int cube_attrib[] = {WGL_CUBE_MAP_FACE_ARB,WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB,0};
+        int cube_attrib[] = {WGL_CUBE_MAP_FACE_ARB, WGL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB, 0};
         if (compressedTex)
         {
             int imageSize = ((this->width+3)/4) * ((this->height+3)/4) * blockSize;
@@ -835,7 +835,6 @@ struct DDSHeader
     ulong PitchOrLinearSize;    // distance to start of next line (return value only) or Formless late-allocated optimized surface size
     ulong Depth;                // the depth if this is a volume texture
     ulong MipMapCount;          // number of mip-map levels requested
-                                // dwZBufferBitDepth removed, use ddpfPixelFormat one instead
     ulong Reserved1[11];        // reserved
     DDSPixelFormat PixelFormat; // pixel format description of the surface
     ulong Caps1;
@@ -1141,15 +1140,15 @@ nGLTexture::LoadFromDDSCompoundFile()
     // How big will the buffer need to be to load all of the pixel data
     // including mip-maps?
     //
-    if (ddsh.PitchOrLinearSize == 0)
-    {
-        n_printf("DDS file loader: LinearSize is 0!");
-        if (!this->compoundFile)
-        {
-            ddsfile->Close();
-        }
-        return false;
-    }
+    //if (ddsh.PitchOrLinearSize == 0)
+    //{
+    //    n_printf("DDS file loader: LinearSize is 0!");
+    //    if (!this->compoundFile)
+    //    {
+    //        ddsfile->Close();
+    //    }
+    //    return false;
+    //}
 
     // figure out what the image format is
     if (!ParseDDSHeader(&ddsh, &gltexp))
@@ -1703,7 +1702,17 @@ nGLTexture::ParseDDSHeader(DDSHeader* header, GLTexParams* params)
             params->iformat = GL_RGB;
             params->tformat = firstSetBitPos(header->PixelFormat.BBitMask) > firstSetBitPos(header->PixelFormat.RBitMask) ? GL_BGR_EXT : GL_RGB;
             
-            if (header->PixelFormat.RGBBitCount == 24)
+            if (header->PixelFormat.RGBBitCount == 32)
+            {
+                params->iformat = GL_RGBA;
+                if (params->tformat == GL_BGR_EXT) params->tformat = GL_BGRA_EXT;
+                else params->tformat = GL_RGBA;
+
+                this->format = X8R8G8B8;
+                params->ttype = GL_UNSIGNED_INT_8_8_8_8;
+                n_printf("DDS texture format(%d bit): DDS_X8R8G8B8\n", (uint) header->PixelFormat.RGBBitCount);
+            }
+            else if (header->PixelFormat.RGBBitCount == 24)
             {
                 this->format = X8R8G8B8;
                 params->ttype = GL_UNSIGNED_INT_8_8_8_8;
@@ -1748,31 +1757,32 @@ nGLTexture::ParseDDSHeader(DDSHeader* header, GLTexParams* params)
         return false;
     }
 
-    params->pba.PushBack(WGL_TEXTURE_TARGET_ARB);
+    int pt;
+    this->SetType(TEXTURE_2D);
+    target = GL_TEXTURE_2D;
+    pt = WGL_TEXTURE_2D_ARB;
+    //pba[3] = WGL_TEXTURE_2D_ARB;
+
     if (header->Caps1 & DDS_COMPLEX)
     {
         if (header->Caps2 & DDS_CUBEMAP)
         {
             this->SetType(TEXTURE_CUBE);
             target = GL_TEXTURE_CUBE_MAP;
-            params->pba.PushBack(WGL_TEXTURE_CUBE_MAP_ARB);
+            pt = WGL_TEXTURE_CUBE_MAP_ARB;
             //pba[3] = WGL_TEXTURE_CUBE_MAP_ARB;
         }
         //else if ((header->Caps2 & DDS_VOLUME) && (header->Depth > 0))
         //{
         //    this->SetType(TEXTURE_3D);
         //    target = GL_TEXTURE_3D;
-        //    params->pba.PushBack(WGL_TEXTURE_3D_ARB);
+        //    pt = WGL_TEXTURE_3D_ARB;
         //    //pba[3] = WGL_TEXTURE_3D_ARB;
         //}
     }
-    else
-    {
-        this->SetType(TEXTURE_2D);
-        target = GL_TEXTURE_2D;
-        params->pba.PushBack(WGL_TEXTURE_2D_ARB);
-        //pba[3] = WGL_TEXTURE_2D_ARB;
-    }
+
+    params->pba.PushBack(WGL_TEXTURE_TARGET_ARB);
+    params->pba.PushBack(pt);
 
     if (this->GetType() != TEXTURE_2D && this->GetType() != TEXTURE_CUBE)
     {
