@@ -66,6 +66,11 @@ public:
     /// set a whole shader parameter block at once
     virtual void SetParams(const nShaderParams& params);
 
+    /// begin updating shader uniform parameters
+    void BeginParamUpdate();
+    /// finish updating uniforms
+    void EndParamUpdate();
+
     /// begin applying the shader, returns number of passes
     virtual int Begin(bool saveState);
     /// begin a pass
@@ -99,8 +104,10 @@ private:
 
     bool hasBeenValidated;
     bool didNotValidate;
+
     int parameterHandles[nShaderState::NumParameters]; ///< map shader states to GL handles
     nShaderParams curParams;					       ///< mirrored to avoid redundant parameters setting
+    //bool uniformsUpdated;                              ///< true if glsl uniform parameters IDs is up to date
 };
 
 //------------------------------------------------------------------------------

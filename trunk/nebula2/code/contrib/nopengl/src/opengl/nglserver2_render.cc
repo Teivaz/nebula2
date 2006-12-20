@@ -8,7 +8,7 @@
 #include "opengl/ngltexture.h"
 
 #include "gfx2/nshader2.h"
-//#include "opengl/ncgfxshader.h"
+#include "opengl/nglslshader.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -248,12 +248,15 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
     // update the shared shader parameters
     if (this->refSharedShader.isvalid())
     {
-        nShader2* shd = this->refSharedShader.get();
+        //nShader2* shd = this->refSharedShader.get();
+        nGLSLShader* shd = (nGLSLShader*)this->refSharedShader.get();
         bool mvpOnly = this->GetHint(MvpOnly);
         bool setMVP = false;
         bool setEyeDir = false;
         bool setEyePos = false;
         bool setModelEyePos = false;
+
+        shd->BeginParamUpdate();
         switch (type)
         {
             case Model:
@@ -342,6 +345,7 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
         {
             shd->SetVector3(nShaderState::EyeDir, -this->transform[View].z_component());
         }
+        shd->EndParamUpdate();
 
         n_gltrace("nGLServer2::SetTransform().");
     }

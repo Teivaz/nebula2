@@ -23,7 +23,7 @@
 nMesh2*
 nGLServer2::NewMesh(const nString& rsrcName)
 {
-    n_printf("\nNew Mesh: %s.\n", rsrcName);
+    n_printf("\nNew Mesh: %s.\n", rsrcName.Get());
     return (nMesh2*) this->refResource->NewResource("nglmesh", rsrcName, nResource::Mesh);
 }
 
@@ -51,7 +51,7 @@ nGLServer2::NewMeshArray(const nString& rsrcName)
 nTexture2*
 nGLServer2::NewTexture(const nString& rsrcName)
 {
-    n_printf("\nNew Texture: %s.\n", rsrcName);
+    n_printf("\nNew Texture: %s.\n", rsrcName.Get());
     return (nTexture2*) this->refResource->NewResource("ngltexture", rsrcName, nResource::Texture);
 }
 //------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ nGLServer2::NewTexture(const nString& rsrcName)
 nShader2*
 nGLServer2::NewShader(const nString& rsrcName)
 {
-    n_printf("\nNew Shader: %s.\n", rsrcName);
+    n_printf("\nNew Shader: %s.\n", rsrcName.Get());
     return (nShader2*) this->refResource->NewResource("nglslshader", rsrcName, nResource::Shader);
     //return (nShader2*) this->refResource->NewResource("ncgfxshader", rsrcName, nResource::Shader);
 }
@@ -81,7 +81,7 @@ nGLServer2::NewShader(const nString& rsrcName)
 nFont2*
 nGLServer2::NewFont(const nString& rsrcName, const nFontDesc& fontDesc)
 {
-    n_printf("\nNew Font: %s.\n", rsrcName);
+    n_printf("\nNew Font: %s.\n", rsrcName.Get());
     nFont2* font = (nFont2*) this->refResource->NewResource("nglfont", rsrcName, nResource::Font);
     n_assert(font);
     font->SetFontDesc(fontDesc);
