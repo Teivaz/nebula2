@@ -32,7 +32,7 @@ public:
     bool IsEmpty() const;
     /// return true if ringbuffer is full
     bool IsFull() const;
-    /// add unitialized element to buffer
+    /// add uninitialized element to buffer
     TYPE* Add();
     /// deletes the oldest element
     void DeleteTail();

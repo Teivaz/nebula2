@@ -64,7 +64,7 @@ nNpkBuilder::GenerateToc(nDirectory* dir, const nString& dirName)
             n_assert(file);
             int fileLength = 0;
             bool fileOk = false;
-            if (file->Open(fullEntryName.Get(), "rb"))
+            if (file->Open(fullEntryName, "rb"))
             {
                 fileLength = file->GetSize();
                 file->Close();

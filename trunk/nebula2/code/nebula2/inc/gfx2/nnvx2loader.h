@@ -62,7 +62,7 @@ nNvx2Loader::Open()
     n_assert(this->file);
 
     // open the file
-    if (!this->file->Open(this->filename.Get(), "rb"))
+    if (!this->file->Open(this->filename, "rb"))
     {
         n_printf("nNvx2Loader: could not open file '%s'!\n", this->filename.Get());
         this->Close();

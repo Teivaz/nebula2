@@ -66,7 +66,7 @@ static void
 n_getanimation(void* slf, nCmd* cmd)
 {
     nBlendShapeAnimator* self = (nBlendShapeAnimator*) slf;
-    cmd->Out()->SetS(self->GetAnimation());
+    cmd->Out()->SetS(self->GetAnimation().Get());
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ nBlendShapeAnimator::SaveCmds(nPersistServer* ps)
 
         //--- setanimation ---
         cmd = ps->GetCmd(this, 'SANI');
-        cmd->In()->SetS(this->GetAnimation());
+        cmd->In()->SetS(this->GetAnimation().Get());
         ps->PutCmd(cmd);
 
         //--- setanimationgroup ---

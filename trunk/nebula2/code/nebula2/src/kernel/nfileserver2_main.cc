@@ -769,7 +769,7 @@ nFileServer2::Checksum(const nString& filename, uint& crc)
     bool success = false;
     nFile* file = this->NewFileObject();
     n_assert(file);
-    if (file->Open(filename.Get(), "rb"))
+    if (file->Open(filename, "rb"))
     {
         // read file into RAM buffer
         int numBytes = file->GetSize();

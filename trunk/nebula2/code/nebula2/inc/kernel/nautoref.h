@@ -28,7 +28,7 @@ public:
     /// get object pointer
     TYPE* get();
     /// returns the object name
-    const char *getname() const;
+    const char* getname() const;
     /// returns true if the object is valid
     bool isvalid();
     /// override -> operator

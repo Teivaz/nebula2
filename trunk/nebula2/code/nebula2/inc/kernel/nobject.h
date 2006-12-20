@@ -55,7 +55,7 @@ public:
     nClass* GetClass() const;
     /// return true if part of class hierarchy
     bool IsA(const nClass*) const;
-    /// return true if part of class herarchy
+    /// return true if part of class hierarchy
     bool IsA(const char*) const;
     /// return true instance of class
     bool IsInstanceOf(const nClass*) const;
@@ -63,7 +63,7 @@ public:
     bool IsInstanceOf(const char*) const;
     /// invoke nCmd on object
     bool Dispatch(nCmd*);
-    /// get cmd proto list from object
+    /// get cmdproto list from object
     void GetCmdProtos(nHashList*);
 
     /// pointer to kernel server

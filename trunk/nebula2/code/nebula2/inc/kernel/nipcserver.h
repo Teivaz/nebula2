@@ -38,7 +38,7 @@ public:
     bool SendAll(const nIpcBuffer& msg);
 
     nIpcAddress selfAddr;
-    nThread *listenerThread;
+    nThread* listenerThread;
     int uniqueMiniServerId;
     nThreadSafeList miniServerList;
     nThreadSafeList msgList;

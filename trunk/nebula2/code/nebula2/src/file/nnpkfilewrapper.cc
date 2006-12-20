@@ -54,7 +54,7 @@ nNpkFileWrapper::Open(nFileServer2* fs, const char* rootPath, const char* absFil
     n_assert(this->binaryFile);
     n_assert(this->asciiFile);
 
-    if (!this->binaryFile->Open(this->absPath.Get(), "rb"))
+    if (!this->binaryFile->Open(this->absPath, "rb"))
     {
         n_printf("nNpkFileWrapper: could not open file '%s' in read binary mode!\n", this->absPath.Get());
         this->binaryFile->Release();

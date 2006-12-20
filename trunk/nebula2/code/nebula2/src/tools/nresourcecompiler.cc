@@ -472,21 +472,21 @@ nResourceCompiler::WriteResEntry(nFile* file, const ResEntry& resEntry, int data
     // write type
     switch (resEntry.GetType())
     {
-        case nResource::Mesh:
-            file->PutInt('MESH');
-            break;
+    case nResource::Mesh:
+        file->PutInt('MESH');
+        break;
 
-        case nResource::Animation:
-            file->PutInt('MANI');       // a memory-animation vs. streamed animation
-            break;
+    case nResource::Animation:
+        file->PutInt('MANI');       // a memory-animation vs. streamed animation
+        break;
 
-        case nResource::Texture:
-            file->PutInt('TXTR');
-            break;
+    case nResource::Texture:
+        file->PutInt('TXTR');
+        break;
 
-        default:
-            n_error("nResourceCompiler::WriteResEntry(): Unsupported resource type!");
-            break;
+    default:
+        n_error("nResourceCompiler::WriteResEntry(): Unsupported resource type!");
+        break;
     }
 
     // convert filename to resource identifier
@@ -547,7 +547,7 @@ nResourceCompiler::SaveResourceBundle()
     }
 
     // append the data block to the nrb file
-    bool success = this->dataFile->Open(this->dataFilePath.Get(), "rb");
+    bool success = this->dataFile->Open(this->dataFilePath, "rb");
     n_assert(success);
     dstFile->AppendFile(this->dataFile);
     this->dataFile->Close();

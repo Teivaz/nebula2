@@ -7,7 +7,7 @@
 
     An atom table is where atoms store their strings.
 
-    FIXME: hmm, the table can not shrink, is this even desireable???
+    FIXME: hmm, the table can not shrink, is this even desirable???
     (shrinking the table would invalidate all nAtoms out there!).
 
     May be manually, expensive garbage collection pass would help? But in this

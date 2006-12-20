@@ -56,9 +56,5 @@ nShaderAnimator::GetParamName() const
     {
         return 0;
     }
-    else
-    {
-        return nShaderState::ParamToString(this->param);
-    }
+    return nShaderState::ParamToString(this->param);
 }
-

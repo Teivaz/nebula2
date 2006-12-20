@@ -25,7 +25,7 @@ class nClass : public nHashNode, public nSignalRegistry
 {
 public:
     /// constructor
-    nClass(const char* name, nKernelServer *ks, bool (*initFunc)(nClass *, nKernelServer *), void* (*newFunc)());
+    nClass(const char* name, nKernelServer* ks, bool (*initFunc)(nClass*, nKernelServer*), void* (*newFunc)());
     /// class destructor
     ~nClass();
     /// create a new instance of the class
@@ -33,9 +33,9 @@ public:
     /// start defining commands
     void BeginCmds();
     /// add a command to the class
-    void AddCmd(nCmdProto * cmdProto);
+    void AddCmd(nCmdProto* cmdProto);
     /// add a command to the class
-    void AddCmd(const char *proto_def, nFourCC id, void (*)(void *, nCmd *));
+    void AddCmd(const char* proto_def, nFourCC id, void (*)(void*, nCmd*));
     /// finish defining commands
     void EndCmds();
     /// start defining script-side commands
@@ -45,17 +45,17 @@ public:
     /// finish defining script-side commands
     void EndScriptCmds();
     /// find command by name (searches both native & script-side)
-    nCmdProto* FindCmdByName(const char *name);
+    nCmdProto* FindCmdByName(const char* name);
     /// find a native command by name
-    nCmdProtoNative *FindNativeCmdByName(const char *name);
+    nCmdProtoNative* FindNativeCmdByName(const char* name);
     /// find a script-side command by name
-    nCmdProto *FindScriptCmdByName(const char *name);
+    nCmdProto* FindScriptCmdByName(const char* name);
     /// find a native command by fourcc code
     nCmdProto* FindCmdById(nFourCC id);
     /// get pointer to command list
     nHashList* GetCmdList() const;
     /// get super class of this class
-    nClass *GetSuperClass() const;
+    nClass* GetSuperClass() const;
     /// add a sub class to this class
     void AddSubClass(nClass* cl);
     /// remove a subclass from this class
@@ -88,8 +88,8 @@ private:
     int refCount;
     int instanceSize;
 
-    bool (*n_init_ptr)(nClass *, nKernelServer *);      // pointer to class init function
-    void *(*n_new_ptr)();                               // pointer to object construction function
+    bool (*n_init_ptr)(nClass*, nKernelServer*);      // pointer to class init function
+    void* (*n_new_ptr)();                               // pointer to object construction function
 };
 
 //------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ nClass::GetSuperClass() const
 */
 inline
 void
-nClass::AddSubClass(nClass *cl)
+nClass::AddSubClass(nClass* cl)
 {
     this->AddRef();
     cl->superClass = this;
@@ -138,7 +138,7 @@ nClass::AddSubClass(nClass *cl)
 */
 inline
 void
-nClass::RemSubClass(nClass *cl)
+nClass::RemSubClass(nClass* cl)
 {
     this->Release();
     cl->superClass = NULL;
@@ -190,7 +190,7 @@ nClass::GetCmdList() const
 */
 inline
 void
-nClass::SetProperName(const char * name)
+nClass::SetProperName(const char* name)
 {
     this->properName = name;
 }
@@ -199,7 +199,7 @@ nClass::SetProperName(const char * name)
 /**
 */
 inline
-const char *
+const char*
 nClass::GetProperName() const
 {
     return this->properName.Get();

@@ -41,4 +41,3 @@ bool nResourceLoader::Load(const char* /*filename*/, nResource* /*callingResourc
 {
     return false;
 }
-

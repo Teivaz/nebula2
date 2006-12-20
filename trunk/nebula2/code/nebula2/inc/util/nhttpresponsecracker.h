@@ -89,4 +89,3 @@ nHttpResponseCracker::GetValue(const nString& key) const
 //------------------------------------------------------------------------------
 #endif /* __WIN32__ or DOXYGEN */
 #endif
-

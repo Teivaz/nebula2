@@ -67,7 +67,7 @@ nBuffer::Resize(int newSize)
         {
             this->Copy(newData, this->data, this->count);
         }
-        delete [] this->data;
+        delete[] this->data;
         this->data = newData;
         this->capacity = newSize;
     }
@@ -165,4 +165,3 @@ nBuffer::MakeArea(int cap) const
     n_assert(result != 0);
     return result;
 }
-

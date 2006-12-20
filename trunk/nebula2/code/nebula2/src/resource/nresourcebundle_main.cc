@@ -44,11 +44,11 @@ nResourceBundle::LoadResource()
 
     // open the resource bundle file
     nFile* hdrFile = nFileServer2::Instance()->NewFileObject();
-    if (hdrFile->Open(filename.Get(), "rb"))
+    if (hdrFile->Open(filename, "rb"))
     {
         // open a second file handle to the data block
         nFile* dataFile = nFileServer2::Instance()->NewFileObject();
-        success = dataFile->Open(filename.Get(), "rb");
+        success = dataFile->Open(filename, "rb");
         n_assert(success);
 
         // read header and check magic number
@@ -137,16 +137,11 @@ nResourceBundle::LoadResource(int type,
 {
     switch (type)
     {
-        case 'MESH':
-            return this->LoadMesh(resId, dataOffset, dataSize, flags, dataFile);
-
-        case 'MANI':
-            return this->LoadAnimation(resId, dataOffset, dataSize, flags, dataFile);
-
-        case 'TXTR':
-            return this->LoadTexture(resId, dataOffset, dataSize, flags, dataFile);
+    case 'MESH': return this->LoadMesh(resId, dataOffset, dataSize, flags, dataFile);
+    case 'MANI': return this->LoadAnimation(resId, dataOffset, dataSize, flags, dataFile);
+    case 'TXTR': return this->LoadTexture(resId, dataOffset, dataSize, flags, dataFile);
+    default: return false;
     }
-    return false;
 }
 
 //------------------------------------------------------------------------------

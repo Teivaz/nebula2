@@ -456,7 +456,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
 
     // read file into temp memory buffer
     nFile* file = nFileServer2::Instance()->NewFileObject();
-    if (!file->Open(this->GetFilename().Get(), "rb"))
+    if (!file->Open(this->GetFilename(), "rb"))
     {
         n_error("nD3D9Texture::LoadD3DXFile(): Failed to open texture file '%s'!", nFileServer2::Instance()->ManglePath(this->GetFilename()).Get());
         file->Release();
@@ -802,13 +802,13 @@ nD3D9Texture::Lock(LockType lockType, int level, LockInfo& lockInfo)
     DWORD d3dLockFlags = 0;
     switch (lockType)
     {
-        case ReadOnly:
-            d3dLockFlags = D3DLOCK_READONLY;
-            break;
+    case ReadOnly:
+        d3dLockFlags = D3DLOCK_READONLY;
+        break;
 
-        case WriteOnly:
-            d3dLockFlags = D3DLOCK_NO_DIRTY_UPDATE;
-            break;
+    case WriteOnly:
+        d3dLockFlags = D3DLOCK_NO_DIRTY_UPDATE;
+        break;
     }
 
     bool retval = false;
