@@ -19,7 +19,7 @@ class nHashList : public nList
 public:
     // default constructor
     nHashList();
-    /// constructor with given hashtable size
+    /// constructor with given hash table size
     nHashList(int hashsize);
     /// get first node
     nHashNode* GetHead() const;
@@ -71,7 +71,7 @@ inline
 nHashNode*
 nHashList::GetHead() const
 {
-    return (nHashNode *) nList::GetHead();
+    return (nHashNode*)nList::GetHead();
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ inline
 nHashNode*
 nHashList::GetTail() const
 {
-    return (nHashNode *) nList::GetTail();
+    return (nHashNode*)nList::GetTail();
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ nHashList::AddHead(nHashNode* n)
     n_assert(n);
     n->SetHashTable(&(this->h_table));
     this->h_table.Add(&(n->str_node));
-    nList::AddHead((nNode*) n);
+    nList::AddHead((nNode*)n);
 }
 
 //------------------------------------------------------------------------------
@@ -102,12 +102,12 @@ nHashList::AddHead(nHashNode* n)
 */
 inline
 void
-nHashList::AddTail(nHashNode *n)
+nHashList::AddTail(nHashNode* n)
 {
     n_assert(n);
     n->SetHashTable(&(this->h_table));
     this->h_table.Add(&(n->str_node));
-    nList::AddTail((nNode*) n);
+    nList::AddTail((nNode*)n);
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +117,7 @@ inline
 nHashNode*
 nHashList::RemHead()
 {
-    nHashNode *n = (nHashNode *) nList::RemHead();
+    nHashNode* n = (nHashNode*)nList::RemHead();
     if (n)
     {
         n->str_node.Remove();
@@ -133,31 +133,28 @@ inline
 nHashNode*
 nHashList::RemTail()
 {
-    nHashNode *n = (nHashNode *) nList::RemTail();
+    nHashNode* n = (nHashNode*)nList::RemTail();
     if (n)
     {
         n->str_node.Remove();
         n->SetHashTable(0);
     }
     return n;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
 nHashNode*
-nHashList::Find(const char *name) const
+nHashList::Find(const char* name) const
 {
-    nStrNode *sn = this->h_table.Find(name);
+    nStrNode* sn = this->h_table.Find(name);
     if (sn)
     {
-        return (nHashNode *) sn->GetPtr();
+        return (nHashNode*)sn->GetPtr();
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------

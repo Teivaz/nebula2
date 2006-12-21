@@ -28,11 +28,11 @@ public:
     int GetRefCount() const;
 
     /// add external object reference
-    void AddObjectRef(nRef<nReferenced> *);
+    void AddObjectRef(nRef<nReferenced>*);
     /// remove external object reference
-    void RemObjectRef(nRef<nReferenced> *);
+    void RemObjectRef(nRef<nReferenced>*);
     /// get list of refs pointing to me
-    nList *GetRefs();
+    nList* GetRefs();
 
 
 protected:
@@ -71,9 +71,9 @@ nReferenced::AddRef()
 */
 inline
 void
-nReferenced::AddObjectRef(nRef<nReferenced> *r)
+nReferenced::AddObjectRef(nRef<nReferenced>* r)
 {
-    this->refList.AddTail((nNode *)r);
+    this->refList.AddTail((nNode*)r);
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ nReferenced::AddObjectRef(nRef<nReferenced> *r)
 */
 inline
 void
-nReferenced::RemObjectRef(nRef<nReferenced> *r)
+nReferenced::RemObjectRef(nRef<nReferenced>* r)
 {
     ((nNode*)r)->Remove();
 }

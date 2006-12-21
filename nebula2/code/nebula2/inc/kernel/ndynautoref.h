@@ -10,7 +10,9 @@
 #include "kernel/nautoref.h"
 
 //------------------------------------------------------------------------------
-template<class TYPE> class nDynAutoRef : public nAutoRef<TYPE> {
+template<class TYPE>
+class nDynAutoRef : public nAutoRef<TYPE>
+{
 public:
     /// default constructor
     nDynAutoRef();
@@ -23,7 +25,7 @@ public:
 
     /// set path name
     void set(const char* name);
-    /// path name assignemnt operator
+    /// path name assignment operator
     void operator=(const char* name);
     /// object pointer assignment operator (leaves path name invalid)
     void operator=(TYPE* obj);

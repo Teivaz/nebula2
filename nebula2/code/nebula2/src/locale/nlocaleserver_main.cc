@@ -168,6 +168,6 @@ nLocaleServer::AddLocaleTable(const char* filename)
     // cleanup
     sheet.Close();
 
-    // remeber loaded table
+    // remember loaded table
     this->loadedTables.Append(filename);
 }

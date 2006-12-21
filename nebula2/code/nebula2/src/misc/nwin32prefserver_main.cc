@@ -56,12 +56,9 @@ nWin32PrefServer::Open()
         {
             return true;
         }
-        else
-        {
-            this->rootKey = 0;
-            nPrefServer::Close();
-            return false;
-        }
+        this->rootKey = 0;
+        nPrefServer::Close();
+        return false;
     }
     return false;
 }
@@ -122,11 +119,8 @@ nWin32PrefServer::KeyExists(const nString& key)
         RegCloseKey(hKey);
         return true;
     }
-    else
-    {
-        // key does not exist
-        return false;
-    }
+    // key does not exist
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -145,7 +139,7 @@ nWin32PrefServer::WriteGeneric(const nString& key, const nString& value)
                                key.Get(),                   // lpValueName
                                0,                           // Reserved
                                REG_SZ,                      // dwType (normal string)
-                               (const BYTE*) value.Get(),   // lpData
+                               (const BYTE*)value.Get(),   // lpData
                                value.Length() + 1);         // cbData
     return (ERROR_SUCCESS == error);
 }
@@ -177,4 +171,3 @@ nWin32PrefServer::ReadGeneric(const nString& key)
     }
     return returnValue;
 }
-

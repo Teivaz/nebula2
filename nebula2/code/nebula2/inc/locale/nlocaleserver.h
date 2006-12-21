@@ -26,7 +26,7 @@ public:
     static nLocaleServer* Instance();
     /// add locale table filename
     void AddLocaleTable(const char* filename);
-    /// open the server, load filename and parse entrys
+    /// open the server, load filename and parse entries
     bool Open();
     /// close server, cleanup all
     void Close();

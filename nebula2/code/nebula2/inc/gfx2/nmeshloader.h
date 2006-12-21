@@ -249,7 +249,7 @@ nMeshLoader::GetValidVertexComponents()
 //------------------------------------------------------------------------------
 /**
     calculate the vertex components and vertex width for the current file
-    and the set valid vertx components.
+    and the set valid vertex components.
     the real Open() must be implemented in a sub class!
 */
 inline

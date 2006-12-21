@@ -29,7 +29,7 @@ public:
     virtual void UnloadResources();
     /// get the mesh usage flags required by this shape node
     virtual int GetMeshUsage() const;
-    /// perform pre-instancing rending of shader
+    /// perform pre-instancing rendering of shader
     virtual bool ApplyShader(nSceneServer* sceneServer);
     /// perform per-instance-rendering of shader
     virtual bool RenderShader(nSceneServer* sceneServer, nRenderContext* renderContext);

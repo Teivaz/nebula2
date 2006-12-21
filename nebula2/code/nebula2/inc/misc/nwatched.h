@@ -91,35 +91,35 @@ nWatched::Initialize(const nString& name, nArg::Type type)
         this->refEnv = (nEnv*) nKernelServer::Instance()->New("nenv", path.Get());
         switch (type)
         {
-            case nArg::Int:
-                this->refEnv->SetI(0);
-                break;
+        case nArg::Int:
+            this->refEnv->SetI(0);
+            break;
 
-            case nArg::Float:
-                this->refEnv->SetF(0.0f);
-                break;
+        case nArg::Float:
+            this->refEnv->SetF(0.0f);
+            break;
 
-            case nArg::String:
-                this->refEnv->SetS("empty");
-                break;
+        case nArg::String:
+            this->refEnv->SetS("empty");
+            break;
 
-            case nArg::Bool:
-                this->refEnv->SetB(false);
-                break;
+        case nArg::Bool:
+            this->refEnv->SetB(false);
+            break;
 
-            case nArg::Object:
-                this->refEnv->SetO(0);
-                break;
+        case nArg::Object:
+            this->refEnv->SetO(0);
+            break;
 
-            case nArg::Float4:
-                {
-                    nFloat4 f4 = { 0.0f, 0.0f, 0.0f, 0.0f };
-                    this->refEnv->SetF4(f4);
-                }
-                break;
+        case nArg::Float4:
+            {
+                nFloat4 f4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+                this->refEnv->SetF4(f4);
+            }
+            break;
 
-            default:
-                break;
+        default:
+            break;
         }
     }
 }

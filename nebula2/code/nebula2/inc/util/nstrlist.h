@@ -37,7 +37,7 @@ inline
 nStrNode*
 nStrList::GetHead() const
 {
-    return (nStrNode *) this->nList::GetHead();
+    return (nStrNode*)this->nList::GetHead();
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ inline
 nStrNode*
 nStrList::GetTail() const
 {
-    return (nStrNode *) this->nList::GetTail();
+    return (nStrNode*)this->nList::GetTail();
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ inline
 nStrNode*
 nStrList::RemHead()
 {
-    return (nStrNode *) this->nList::RemHead();
+    return (nStrNode*)this->nList::RemHead();
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ inline
 nStrNode*
 nStrList::RemTail()
 {
-    return (nStrNode *) this->nList::RemTail();
+    return (nStrNode*)this->nList::RemTail();
 }
 
 //------------------------------------------------------------------------------
@@ -82,13 +82,13 @@ nStrList::Find(const char* str) const
     {
         const char* nodeName = n->GetName();
         n_assert(nodeName);
-        if (strcmp(str, nodeName) == 0)
+        if (0 == strcmp(str, nodeName))
         {
             return n;
         }
     }
     return 0;
-};
+}
 
 //------------------------------------------------------------------------------
 #endif

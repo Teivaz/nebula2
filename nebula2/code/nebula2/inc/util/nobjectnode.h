@@ -110,7 +110,7 @@ inline
 nObjectNode<TYPE>*
 nObjectNode<TYPE>::GetSucc() const
 {
-    return (nObjectNode<TYPE> *) nNode::GetSucc();
+    return (nObjectNode<TYPE>*)nNode::GetSucc();
 }
 
 //------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ inline
 nObjectNode<TYPE>*
 nObjectNode<TYPE>::GetPred() const
 {
-    return (nObjectNode<TYPE> *) nNode::GetPred();
+    return (nObjectNode<TYPE>*)nNode::GetPred();
 }
 
 //------------------------------------------------------------------------------

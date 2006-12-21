@@ -210,7 +210,7 @@ nNvx2Loader::ReadIndices(void* buffer, int bufferSize)
 
         // read 16 bit indices into tmp buffer
         int size16 = this->numIndices * sizeof(ushort);
-        ushort* ptr16 = (ushort*) n_malloc(size16);
+        ushort* ptr16 = (ushort*)n_malloc(size16);
         n_assert(ptr16);
         file->Read(ptr16, size16);
 
@@ -219,7 +219,7 @@ nNvx2Loader::ReadIndices(void* buffer, int bufferSize)
         int i;
         for (i = 0; i < this->numIndices; i++)
         {
-            ptr32[i] = (uint) ptr16[i];
+            ptr32[i] = (uint)ptr16[i];
         }
 
         // release tmp buffer

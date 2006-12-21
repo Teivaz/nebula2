@@ -13,7 +13,8 @@
 #include "util/nobjectnode.h"
 
 //------------------------------------------------------------------------------
-template <class TYPE> class nObjectList: public nList
+template <class TYPE>
+class nObjectList: public nList
 {
 public:
     /// return first element of list
@@ -34,7 +35,7 @@ inline
 nObjectNode<TYPE>*
 nObjectList<TYPE>::GetHead() const
 {
-    return (nObjectNode<TYPE> *) this->nList::GetHead();
+    return (nObjectNode<TYPE>*)this->nList::GetHead();
 }
 
 //------------------------------------------------------------------------------
@@ -45,7 +46,7 @@ inline
 nObjectNode<TYPE>*
 nObjectList<TYPE>::GetTail() const
 {
-    return (nObjectNode<TYPE> *) this->nList::GetTail();
+    return (nObjectNode<TYPE>*)this->nList::GetTail();
 }
 
 //------------------------------------------------------------------------------
@@ -56,7 +57,7 @@ inline
 nObjectNode<TYPE>*
 nObjectList<TYPE>::RemHead()
 {
-    return (nObjectNode<TYPE> *) this->nList::RemHead();
+    return (nObjectNode<TYPE>*)this->nList::RemHead();
 }
 
 //------------------------------------------------------------------------------
@@ -67,9 +68,8 @@ inline
 nObjectNode<TYPE>*
 nObjectList<TYPE>::RemTail()
 {
-    return (nObjectNode<TYPE> *) this->nList::RemTail();
+    return (nObjectNode<TYPE>*)this->nList::RemTail();
 }
-
 
 //------------------------------------------------------------------------------
 #endif

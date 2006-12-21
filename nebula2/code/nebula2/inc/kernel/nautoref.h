@@ -15,7 +15,8 @@
 #include "kernel/nkernelserver.h"
 
 //------------------------------------------------------------------------------
-template<class TYPE> class nAutoRef : public nRef<TYPE>
+template<class TYPE>
+class nAutoRef : public nRef<TYPE>
 {
 public:
     /// constructor

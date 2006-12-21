@@ -27,7 +27,7 @@ public:
     int GetMsgSize() const;
 
 private:
-    char *msgBuf;
+    char* msgBuf;
     int msgSize;
 };
 
@@ -35,11 +35,11 @@ private:
 /**
 */
 inline
-nMsgNode::nMsgNode(void *buf, int size)
+nMsgNode::nMsgNode(void* buf, int size)
 {
     n_assert(buf);
     n_assert(size > 0);
-    this->msgBuf  = (char*) n_malloc(size);
+    this->msgBuf  = (char*)n_malloc(size);
     this->msgSize = size;
     n_assert(this->msgBuf);
     memcpy(this->msgBuf, buf, size);
@@ -76,3 +76,4 @@ nMsgNode::GetMsgSize() const
 
 //------------------------------------------------------------------------------
 #endif
+

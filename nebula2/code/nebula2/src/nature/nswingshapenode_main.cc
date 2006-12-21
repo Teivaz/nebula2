@@ -139,7 +139,7 @@ nSwingShapeNode::RenderShader(nSceneServer* sceneServer, nRenderContext* renderC
         nVariable* timeVar = renderContext->GetVariable(this->timeVarHandle);
         nVariable* windVar = renderContext->GetVariable(this->windVarHandle);
         n_assert(timeVar && windVar);
-        nTime time = (nTime) timeVar->GetFloat();
+        nTime time = (nTime)timeVar->GetFloat();
         const nFloat4& wind = windVar->GetFloat4();
 
         // build horizontal wind vector

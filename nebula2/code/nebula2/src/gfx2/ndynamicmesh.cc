@@ -41,10 +41,7 @@ nDynamicMesh::IsValid() const
         {
             return false;
         }
-        else
-        {
-            return true;
-        }
+        return true;
     }
     return false;
 }
@@ -282,4 +279,3 @@ nDynamicMesh::End(int numVertices)
     }
     gfxServer->SetMesh(0, 0);
 }
-
