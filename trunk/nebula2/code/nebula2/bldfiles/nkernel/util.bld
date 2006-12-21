@@ -6,9 +6,12 @@ beginbundle kernel::util
     setmodules {
         narray
         nbuffer
+        nhash
         nhttpformdatawrapper
         nhttpsession
+        nlist
         nmd5
+        nnode
         nquadtree
         nstartupchecker
         nstream
@@ -44,7 +47,6 @@ endmodule
 beginmodule nhash
     setdir util
     setheaders {
-        nhashlist
         nhashmap2
         nhashmap
         nhashtable
@@ -81,6 +83,7 @@ beginmodule nlist
         nlist
         nobjectlist
         nstrlist
+        nhashlist
     }
 endmodule
 

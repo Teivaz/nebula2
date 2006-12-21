@@ -149,9 +149,9 @@ nThread::~nThread()
     // flush msg list (all remaining messages will be lost)
     if (!(this->isExtMsgList))
     {
-        nMsgNode *nd;
+        nMsgNode* nd;
         this->msgList->Lock();
-        while ((nd = (nMsgNode *) this->msgList->RemHead()))
+        while ((nd = (nMsgNode*)this->msgList->RemHead()))
         {
             n_delete(nd);
         }
@@ -231,9 +231,9 @@ nMsgNode*
 nThread::GetMsg()
 {
 #ifndef __NEBULA_NO_THREADS__
-    nMsgNode *nd;
+    nMsgNode* nd;
     this->msgList->Lock();
-    nd = (nMsgNode *) this->msgList->RemHead();
+    nd = (nMsgNode*)this->msgList->RemHead();
     this->msgList->Unlock();
     return nd;
 #else
@@ -246,7 +246,7 @@ nThread::GetMsg()
      - 20-Oct-98   floh    created
 */
 void
-nThread::ReplyMsg(nMsgNode *nd)
+nThread::ReplyMsg(nMsgNode* nd)
 {
 #ifndef __NEBULA_NO_THREADS__
     n_delete(nd);

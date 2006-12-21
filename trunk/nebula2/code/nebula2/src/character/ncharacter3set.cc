@@ -59,7 +59,7 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
     nArray<nString> loadedSkins = characterNode->GetFullNamesOfLoadedSkins();
     nString skinList;
     nString variation;
-    if (nCharacter3Node::ReadCharacterStuffFromXML(fileName,skinList,variation))
+    if (nCharacter3Node::ReadCharacterStuffFromXML(fileName, skinList, variation))
     {
         if (variation.IsValid())
         {
@@ -67,14 +67,14 @@ nCharacter3Set::LoadCharacterSetFromXML(nCharacter3Node* characterNode, const nS
         }
 
         nArray<nString> skin;
-        skinList.Tokenize(" ",skin);
+        skinList.Tokenize(" ", skin);
 
         // set skins
-        int i,k;
+        int i, k;
         for (i = 0; i < this->numAvailableSkins; i++)
         {
             nArray<nString> nameTokens;
-            int numTokens = loadedSkins[i].Tokenize("/",nameTokens);
+            int numTokens = loadedSkins[i].Tokenize("/", nameTokens);
 
             bool visible = false;
 

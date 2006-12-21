@@ -112,7 +112,7 @@ nCharacter3Set::IsSkinVisible(const nString& name)
     int index = this->ConvertSkinNameToIndex(name);
     n_assert(index != -1);
     return this->IsSkinVisibleAtIndex(index);
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -153,7 +153,7 @@ int
 nCharacter3Set::GetNumAvailableVariations() const
 {
     return this->numAvailableVariations;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -213,11 +213,11 @@ nCharacter3Set::ConvertSkinNameToIndex(const nString& name)
         {
             result = i;
             break;
-        };
-    };
+        }
+    }
 
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 /**
@@ -235,11 +235,11 @@ nCharacter3Set::ConvertVariationNameToIndex(const nString& name)
         {
             result = i;
             break;
-        };
-    };
+        }
+    }
 
     return result;
-};
+}
 
 //------------------------------------------------------------------------------
 #endif

@@ -95,4 +95,3 @@ nCharJointPalette::GetJointIndexAt(int paletteIndex) const
 
 //------------------------------------------------------------------------------
 #endif
-

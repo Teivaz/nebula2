@@ -33,7 +33,8 @@
 #include "kernel/nreferenced.h"
 
 //------------------------------------------------------------------------------
-template<class TYPE> class nRef : public nNode
+template<class TYPE>
+class nRef : public nNode
 {
 public:
     /// default constructor
@@ -232,7 +233,7 @@ nRef<TYPE>::operator=(const nRef<TYPE>& rhs)
 template<class TYPE>
 inline
 nRef<TYPE>&
-nRef<TYPE>::operator=(TYPE *obj)
+nRef<TYPE>::operator=(TYPE* obj)
 {
     this->set(obj);
     return *this;

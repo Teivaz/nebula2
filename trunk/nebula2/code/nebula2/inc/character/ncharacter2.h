@@ -198,4 +198,3 @@ nCharacter2::GetActiveState() const
 #endif
 
 
-

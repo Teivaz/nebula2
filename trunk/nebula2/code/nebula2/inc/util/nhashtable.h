@@ -20,14 +20,14 @@ public:
     nHashTable(int size);
     /// destructor
     ~nHashTable();
-    /// add an entry to the hashtable
+    /// add an entry to the hash table
     void Add(nStrNode* n);
     /// search hash table for entry
     nStrNode* Find(const char* str) const;
 
 private:
     int htable_size;
-    nStrList *htable;
+    nStrList* htable;
 };
 
 //------------------------------------------------------------------------------
@@ -53,12 +53,15 @@ inline nHashTable::~nHashTable()
 */
 static
 inline
-int hash(const char *str, int htable_size)
+int hash(const char* str, int htable_size)
 {
     int i = 0;
     int j = 1;
     char c;
-    while ((c = *str++)) i += ((uchar)c) * j++;
+    while (c = *str++)
+    {
+        i += ((uchar)c) * j++;
+    }
     return (i % htable_size);
 }
 

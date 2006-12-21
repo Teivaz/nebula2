@@ -64,47 +64,47 @@ public:
     /// save object under different name
     virtual bool SaveAs(const char* name);
     /// create new object as clone of this object
-    virtual nObject *Clone(const char *name);
+    virtual nObject* Clone(const char* name);
 
     /// set name of object
-    void SetName(const char *str);
+    void SetName(const char* str);
     /// get my name
-    const char *GetName() const;
+    const char* GetName() const;
     /// get full path name of object
     nString GetFullName() const;
     /// get relative path name to other object
-    nString GetRelPath(const nRoot *other) const;
+    nString GetRelPath(const nRoot* other) const;
     /// find child object by name using const char*
-    nRoot *Find(const char *str);
+    nRoot* Find(const char* str);
     /// find child object by name using nAtom
     // nRoot* Find(const nAtom& atom);
     /// add child object at start of child list
-    void AddHead(nRoot *n);
+    void AddHead(nRoot* n);
     /// add child object at end of child list
-    void AddTail(nRoot *n);
+    void AddTail(nRoot* n);
     /// remove child object at start of child list
-    nRoot *RemHead();
+    nRoot* RemHead();
     /// remove child object at end of child list
-    nRoot *RemTail();
+    nRoot* RemTail();
     /// remove myself from parent
     void Remove();
     /// sort children alphabetically
     void Sort();
 
     /// get parent object
-    nRoot *GetParent() const;
+    nRoot* GetParent() const;
     /// get first child
-    nRoot *GetHead() const;
+    nRoot* GetHead() const;
     /// get last child
-    nRoot *GetTail() const;
+    nRoot* GetTail() const;
     /// get next sibling
-    nRoot *GetSucc() const;
+    nRoot* GetSucc() const;
     /// get previous sibling
-    nRoot *GetPred() const;
+    nRoot* GetPred() const;
 
-    /// set savemode flags
+    /// set save mode flags
     void SetSaveModeFlags(int);
-    /// unset savemode flags
+    /// unset save mode flags
     void UnsetSaveModeFlags(int);
 
     // object flags (use with SetSaveModeFlag, UnsetFlag, GetFlag)
@@ -131,7 +131,7 @@ protected:
 */
 inline
 void
-nRoot::SetName(const char *str)
+nRoot::SetName(const char* str)
 {
     this->name = str;
 }
@@ -163,7 +163,7 @@ inline
 nRoot*
 nRoot::GetHead() const
 {
-    return (nRoot*) this->childList.GetHead();
+    return (nRoot*)this->childList.GetHead();
 }
 
 //------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ inline
 nRoot*
 nRoot::GetTail() const
 {
-    return (nRoot*) this->childList.GetTail();
+    return (nRoot*)this->childList.GetTail();
 }
 
 //------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ inline
 nRoot*
 nRoot::GetSucc() const
 {
-    return (nRoot *) nNode::GetSucc();
+    return (nRoot*)nNode::GetSucc();
 }
 
 //------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ inline
 nRoot*
 nRoot::GetPred() const
 {
-    return (nRoot*) nNode::GetPred();
+    return (nRoot*)nNode::GetPred();
 }
 
 //------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ nRoot::GetPred() const
 */
 inline
 void
-nRoot::AddHead(nRoot *n)
+nRoot::AddHead(nRoot* n)
 {
     n->parent = this;
     this->childList.AddHead(n);
@@ -212,7 +212,7 @@ nRoot::AddHead(nRoot *n)
 */
 inline
 void
-nRoot::AddTail(nRoot *n)
+nRoot::AddTail(nRoot* n)
 {
     n->parent = this;
     this->childList.AddTail(n);
@@ -225,7 +225,7 @@ inline
 nRoot*
 nRoot::RemHead()
 {
-    nRoot* n = (nRoot*) this->childList.RemHead();
+    nRoot* n = (nRoot*)this->childList.RemHead();
     if (n)
     {
         n->parent = 0;
@@ -240,7 +240,7 @@ inline
 nRoot*
 nRoot::RemTail()
 {
-    nRoot* n = (nRoot*) this->childList.RemTail();
+    nRoot* n = (nRoot*)this->childList.RemTail();
     if (n)
     {
         n->parent = 0;
@@ -266,7 +266,7 @@ nRoot::Remove()
 */
 inline
 nRoot*
-nRoot::Find(const char *str)
+nRoot::Find(const char* str)
 {
     n_assert(str);
 
@@ -277,7 +277,7 @@ nRoot::Find(const char *str)
         {
             return this;
         }
-        else if ((str[1]=='.') && (str[2]==0))
+        if ((str[1] == '.') && (str[2] == 0))
         {
             return this->parent;
         }

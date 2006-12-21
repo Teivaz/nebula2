@@ -65,7 +65,7 @@ private:
         nRef<nRoot> refCwd;
     };
 
-    /// get client context for clientid
+    /// get client context for client id
     nClientContext* GetClientContext(int clientId);
     /// get cwd for a client id, create new client context if not exists yet
     nRoot* GetClientCwd(int clientId);

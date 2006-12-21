@@ -379,7 +379,7 @@ nCharJoint::Evaluate()
             this->localScaledMatrix.translate(this->translate);
 
             this->matrixDirty = false;
-        };
+        }
 
         if (!this->lockMatrix)
         {
@@ -418,8 +418,8 @@ nCharJoint::Evaluate()
         this->skinMatrix44 = this->invPoseMatrix * this->worldScaledMatrix;
 
         this->skinMatrix33.set(this->skinMatrix44.M11, this->skinMatrix44.M12, this->skinMatrix44.M13,
-                            this->skinMatrix44.M21, this->skinMatrix44.M22, this->skinMatrix44.M23,
-                            this->skinMatrix44.M31, this->skinMatrix44.M32, this->skinMatrix44.M33);
+                               this->skinMatrix44.M21, this->skinMatrix44.M22, this->skinMatrix44.M23,
+                               this->skinMatrix44.M31, this->skinMatrix44.M32, this->skinMatrix44.M33);
         this->isUptodate = true;
     }
 }

@@ -39,7 +39,7 @@ nDynamicShaderMesh::SetShader(nShader2* shader)
 nShader2*
 nDynamicShaderMesh::GetShader() const
 {
-    return this->refShader.isvalid() ? this->refShader : 0;
+    return this->refShader.isvalid() ? this->refShader.get() : 0;
 }
 
 //------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ nDynamicShaderMesh::Swap(int numVertices, float*& vertexPointer)
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
-    nShader2* shader = this->refShader;
+    nShader2* shader = this->refShader.get();
 
     mesh->UnlockVertices();
     gfxServer->SetMesh(mesh, mesh);
@@ -117,7 +117,7 @@ nDynamicShaderMesh::End(int numVertices)
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     nMesh2* mesh = this->refMesh.get();
-    nShader2* shader = this->refShader;
+    nShader2* shader = this->refShader.get();
 
     mesh->UnlockVertices();
     if (numVertices > 0)
@@ -137,4 +137,3 @@ nDynamicShaderMesh::End(int numVertices)
         shader->End();
     }
 }
-

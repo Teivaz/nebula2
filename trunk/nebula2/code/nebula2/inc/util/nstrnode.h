@@ -96,7 +96,7 @@ inline
 const char*
 nStrNode::GetName() const
 {
-    return this->name.IsEmpty() ? 0 : this->name.Get();
+    return this->name.IsValid() ? this->name.Get() : 0;
 }
 
 //------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ inline
 nStrNode*
 nStrNode::GetSucc() const
 {
-    return (nStrNode *) nNode::GetSucc();
+    return (nStrNode*)nNode::GetSucc();
 }
 
 //------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ inline
 nStrNode*
 nStrNode::GetPred() const
 {
-    return (nStrNode *) nNode::GetPred();
+    return (nStrNode*)nNode::GetPred();
 }
 
 //------------------------------------------------------------------------------

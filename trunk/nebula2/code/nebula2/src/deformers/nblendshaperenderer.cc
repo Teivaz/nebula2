@@ -106,7 +106,7 @@ nBlendShapeRenderer::Setup()
 
 //------------------------------------------------------------------------------
 /**
-    Toplevel render method, either performes cpu-based or vertex-shader
+    Toplevel render method, either performs cpu-based or vertex-shader
     based blending, based on the cpuBlending parameter to Initialize().
 */
 void

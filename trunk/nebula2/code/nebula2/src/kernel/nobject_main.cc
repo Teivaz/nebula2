@@ -53,10 +53,8 @@ nObject::GetCmdProtos(nHashList* cmd_list)
         nHashList* cl_cmdprotos = cl->GetCmdList();
         if (cl_cmdprotos)
         {
-            nCmdProto* cmd_proto;
-            for (cmd_proto=(nCmdProto*)cl_cmdprotos->GetHead();
-                 cmd_proto;
-                 cmd_proto=(nCmdProto*)cmd_proto->GetSucc())
+            nCmdProto* cmd_proto = (nCmdProto*)cl_cmdprotos->GetHead();
+            for (; cmd_proto; cmd_proto = (nCmdProto*)cmd_proto->GetSucc())
             {
                 nHashNode* node = n_new(nHashNode(cmd_proto->GetName()));
                 node->SetPtr((void*)cmd_proto);

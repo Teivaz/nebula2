@@ -142,7 +142,7 @@ nIpcServer::~nIpcServer()
     // delete pending messages
     nMsgNode* msgNode;
     this->msgList.Lock();
-    while ((msgNode = (nMsgNode*) this->msgList.RemHead()))
+    while ((msgNode = (nMsgNode*)this->msgList.RemHead()))
     {
         n_delete(msgNode);
     }
@@ -179,7 +179,7 @@ nIpcServer::Poll()
 
     // check for new messages on the msg list...
     this->msgList.Lock();
-    nMsgNode* first = (nMsgNode*) this->msgList.GetHead();
+    nMsgNode* first = (nMsgNode*)this->msgList.GetHead();
     this->msgList.Unlock();
 
     return (first != 0);
@@ -196,7 +196,7 @@ bool
 nIpcServer::GetMsg(nIpcBuffer& msg, int& fromClientId)
 {
     // check if any messages came in...
-    nMsgNode* msgNode = (nMsgNode *) this->listenerThread->GetMsg();
+    nMsgNode* msgNode = (nMsgNode*)this->listenerThread->GetMsg();
     if (msgNode)
     {
         // copy contents of message to the nIpcBuffer object

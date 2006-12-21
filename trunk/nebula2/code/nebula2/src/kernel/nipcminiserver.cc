@@ -178,14 +178,14 @@ nIpcMiniServer::Poll()
                 if (!systemMessage)
                 {
                     // an user message, add to msg list of thread
-                    nMsgNode *msgNode = n_new(nMsgNode((void*) curString, strlen(curString) + 1));
+                    nMsgNode* msgNode = n_new(nMsgNode((void*)curString, strlen(curString) + 1));
                     msgNode->SetPtr((void*) this->clientId);
                     this->ipcServer->msgList.Lock();
                     this->ipcServer->msgList.AddTail(msgNode);
                     this->ipcServer->msgList.Unlock();
                     this->ipcServer->msgList.SignalEvent();
                 }
-            } while ((curString = msgBuffer.GetNextString()));
+            } while (curString = msgBuffer.GetNextString());
         }
         if (!this->isConnected)
         {
@@ -193,10 +193,7 @@ nIpcMiniServer::Poll()
         }
         return this->isConnected;
     }
-    else
-    {
-        return true;
-    }
+    return true;
 }
 
 //------------------------------------------------------------------------------
