@@ -23,11 +23,11 @@ public:
     virtual ~nGLShaderInclude();
 	
 	/// resolve all includes recursively
-    bool Begin(const nString& sourceFile);
+    bool Begin(const nString& path);
     /// return temporary file name
     nString& GetFileName();
     /// get source
-    void GetSource(nString& src);
+    nString GetSource();
     /// clean
     void End();
 

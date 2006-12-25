@@ -10,9 +10,13 @@
 #include "opengl/ngltexture.h"
 #include "opengl/nglextensionserver.h"
 
+#include "opengl/npassstate.h"
+
 #include "gfx2/nshaderparams.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+
+#include "tinyxml/tinyxml.h"
 
 nNebulaClass(nGLSLShader, "nshader2");
 
@@ -115,9 +119,10 @@ nGLSLShader::nGLSLShader() :
     hasBeenValidated(false),
     didNotValidate(false),
     //uniformsUpdated(false),
+    activeTechniqueIdx(-1),
     programObj(0),
-    vertexShader(0),
-    fragmentShader(0)
+    vertShader(0),
+    fragShader(0)
 {
     memset(this->parameterHandles, -1, sizeof(this->parameterHandles));
 }
@@ -148,11 +153,11 @@ nGLSLShader::UnloadResource()
         nGfxServer2::Instance()->SetShader(0);
     }
 
-    glDetachObjectARB(this->programObj, this->vertexShader);
-    glDeleteObjectARB(this->vertexShader);
+    glDetachObjectARB(this->programObj, this->vertShader);
+    glDeleteObjectARB(this->vertShader);
 
-    glDetachObjectARB(this->programObj, this->fragmentShader);
-    glDeleteObjectARB(this->fragmentShader);
+    glDetachObjectARB(this->programObj, this->fragShader);
+    glDeleteObjectARB(this->fragShader);
 
     glDeleteObjectARB(this->programObj);
 
@@ -174,80 +179,237 @@ nGLSLShader::LoadResource()
     n_assert(!this->IsLoaded());
     //n_assert(deviceInit);
 
-    nGLShaderInclude si;
-    nString fname = this->GetFilename();
+    //nGLShaderInclude si;
+    //nString fname = this->GetFilename().ExtractDirName();
     nString src;
-    const char *shaderStrings[1];
 
-    fname.StripExtension();
+    //fname.StripExtension();
 
-    n_printf("Start shader <%s> loading...\n", this->GetFilename().Get());
+    n_printf("\nStart shader <%s> loading...\n", this->GetFilename().Get());
 
-    this->programObj = glCreateProgramObjectARB(); 
+    // parse XML
+    nString path = nFileServer2::Instance()->ManglePath(this->GetFilename());
+    nString shdDir = path.ExtractDirName();
+    TiXmlDocument* xmlDocument = n_new(TiXmlDocument);
 
-    // attach vertex shader
-    if (si.Begin(fname + ".vert"))
+    if (xmlDocument->LoadFile(path.Get()))
     {
-        si.GetSource(src);
-        shaderStrings[0] = src.Get();
+        TiXmlElement* child;
+        TiXmlHandle docHandle(xmlDocument);
+        TiXmlElement* elmShader = docHandle.FirstChildElement("shader").Element();
+        n_assert(elmShader);
 
-        this->vertexShader = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-        glShaderSourceARB(this->vertexShader, 1, shaderStrings, NULL);
-        glCompileShaderARB(this->vertexShader);
+        this->programObj = glCreateProgramObjectARB(); 
 
-        n_assert_glslstatus(this->vertexShader, "nGLSLShader::LoadResource(): Vertex Shader Compile Error.", GL_OBJECT_COMPILE_STATUS_ARB);
+        for (child = elmShader->FirstChildElement(); child; child = child->NextSiblingElement())
+        {
+            if (child->Value() == nString("source"))
+            {
+                if (child->Attribute("type") == nString("vertex"))
+                {
+                    this->vertShader = this->CreateGLSLShader(VERTEX, shdDir + child->Attribute("path"));
+                    glAttachObjectARB(this->programObj, this->vertShader);
+                }
+                else if (child->Attribute("type") == nString("fragment"))
+                {
+                    this->fragShader = this->CreateGLSLShader(FRAGMENT, shdDir + child->Attribute("path"));
+                    glAttachObjectARB(this->programObj, this->fragShader);
+                }
+                else
+                {
+                    n_message("nGLSLShader::LoadResource(): Unsupported shader source type <%s>.", child->Attribute("type"));
+                }
+            }
+            else if (child->Value() == nString("technique"))
+            {
+                TiXmlElement* pass;
 
-        glAttachObjectARB(this->programObj, this->vertexShader);
+                for (pass = child->FirstChildElement(); pass; pass = pass->NextSiblingElement())
+                {
+                    if (pass->Value() == nString("pass"))
+                    {
+                        TiXmlElement* param;
+                        int paramCount = 0;
+                        GLuint list = glGenLists(1);
 
-        si.End();
+                        glNewList(list, GL_COMPILE);
+                        for (param = pass->FirstChildElement(); param; param = param->NextSiblingElement())
+                        {
+                            if (param->Value() == nString("param"))
+                            {
+                                if (this->ParsePassParam(param->Attribute("name"), nString(param->Attribute("value"))))
+                                {
+                                    paramCount++;
+                                }
+                            }
+                            else
+                            {
+                                n_message("nGLSLShader::LoadResource(): Unsupported pass tag <%s>. Only <param> tag supported.", param->Value());
+                            }
+                        }
+                        glEndList();
+
+                        if (paramCount > 0)
+                        {
+                        }
+                        else
+                        {
+                            glDeleteLists(list, 1);
+                        }
+                    }
+                    else
+                    {
+                        n_message("nGLSLShader::LoadResource(): Unsupported technique tag <%s>. Only <pass> tag supported.", pass->Value());
+                    }
+                }
+            }
+            else
+            {
+                n_message("nGLSLShader::LoadResource(): Unsupported shader tag <%s>.", child->Value());
+            }
+        }
+
+        glLinkProgramARB(this->programObj);
+        n_assert_glslstatus(this->programObj, "nGLSLShader::LoadResource(): Program linking Error.", GL_OBJECT_LINK_STATUS_ARB);
+
+        // success
+        this->hasBeenValidated = false;
+        this->didNotValidate = false;
+        this->SetState(Valid);
+
+        // validate the effect
+        this->ValidateEffect();
+
+        //uniformsUpdated = false;
+        this->UpdateParameterHandles();
+
+        src.Set("nGLSLShader::LoadResource(");
+        src.Append(this->GetFilename());
+        src.Append(").");
+
+        n_gltrace(src.Get());
+        n_glsltrace(this->programObj, src.Get());
+
+        return true;
     }
 
-    // attach fragment shader
-    if (si.Begin(fname + ".frag"))
+    n_delete(xmlDocument);
+    n_message("nGLSLShader::LoadResource(): Can't load shader file.");
+
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+uint
+nGLSLShader::CreateGLSLShader(GLSLShaderType type, const nString& path)
+{
+    nGLShaderInclude si;
+    GLuint shd;
+
+    if (si.Begin(path))
     {
-        si.GetSource(src);
-        shaderStrings[0] = src.Get();
-
-        this->fragmentShader = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-        glShaderSourceARB(this->fragmentShader, 1, shaderStrings, NULL);
-        glCompileShaderARB(this->fragmentShader);
-        
-        n_assert_glslstatus(this->fragmentShader, "nGLSLShader::LoadResource(): Fragment Shader Compile Error.", GL_OBJECT_COMPILE_STATUS_ARB);
-
-        glAttachObjectARB(this->programObj, this->fragmentShader);
+        const char *shaderStrings[1];
+        nString src = si.GetSource();
 
         si.End();
+
+        shaderStrings[0] = src.Get();
+
+        switch (type)
+        {
+        case VERTEX:   shd = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);   break;
+        case FRAGMENT: shd = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB); break;
+        }
+        n_assert(shd != 0);
+
+        glShaderSourceARB(shd, 1, shaderStrings, NULL);
+        glCompileShaderARB(shd);
+
+        nString msg("nGLSLShader::CreateGLSLShader(");
+        msg += path + "): Shader Compile Error.";
+        n_assert_glslstatus(shd, msg, GL_OBJECT_COMPILE_STATUS_ARB);
+
+        //glAttachObjectARB(this->programObj, shd);
     }
 
-    glLinkProgramARB(this->programObj);
-    n_assert_glslstatus(this->programObj, "nGLSLShader::LoadResource(): Program linking Error.", GL_OBJECT_LINK_STATUS_ARB);
+    return shd;
+}
 
-    // success
-    this->hasBeenValidated = false;
-    this->didNotValidate = false;
-    this->SetState(Valid);
+//------------------------------------------------------------------------------
+/**
+*/
+bool
+nGLSLShader::ParsePassParam(const char* name, nString& val)
+{
+    val.ToLower();
+    switch (nPassState::StringToParam(name))
+    {
+    case nPassState::ZWriteEnable:
+        return true;
 
-    // validate the effect
-    this->ValidateEffect();
+    case nPassState::ZEnable:
+        if (val == nString("true"))
+        {
+            glEnable(GL_DEPTH_TEST);
+        }
+        else
+        {
+            glDisable(GL_DEPTH_TEST);
+        }
+        return true;         
 
-    //uniformsUpdated = false;
-    this->UpdateParameterHandles();
+    case nPassState::ZFunc:
+        if (val == nString("lessequal"))
+        {
+            glDepthFunc(GL_LEQUAL);
+        }
+        // TODO: add other functions
+        return true;         
 
-    // TEST
-    //matrix44 m;
-    //glUseProgramObjectARB(this->programObj);
-    //GLint p = glGetUniformLocationARB(this->programObj, "ModelViewProjection");
-    //glUniformMatrix4fvARB(p, 1, GL_FALSE, _matrix44_ident);
-    //n_glsltrace(this->programObj, "Testing.");
+    case nPassState::ColorWriteEnable:
+        return true;
 
-    src.Set("nGLSLShader::LoadResource(");
-    src.Append(fname);
-    src.Append(").");
+    case nPassState::AlphaBlendEnable:
+        return true;
 
-    n_gltrace(src.Get());
-    n_glsltrace(this->programObj, src.Get());
+    case nPassState::SrcBlend:
+        return true;        
 
-    return true;
+    case nPassState::DestBlend:
+        return true;       
+
+    case nPassState::AlphaTestEnable:
+        return true; 
+
+    case nPassState::StencilEnable:
+        return true;   
+
+    case nPassState::CullMode:
+        // TODO: test this
+        if (val == nString("cw"))
+        {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_FRONT);
+            //glFrontFace(GL_CW);
+        }
+        else if (val == nString("ccw"))
+        {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+            //glFrontFace(GL_CCW);
+        }
+        else
+        {
+            glDisable(GL_CULL_FACE);
+        }
+        return true; 
+
+    default:
+        n_message("nGLSLShader::ParsePassParam(): Unsupported pass parameter <%s>.", name);
+        return false;
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -791,6 +953,7 @@ void
 nGLSLShader::BeginPass(int pass)
 {
     n_gltrace("nGLSLShader::BeginPass().");
+    glCallList(this->technique[activeTechniqueIdx].pass[pass]);
 }
 
 //------------------------------------------------------------------------------
@@ -835,7 +998,7 @@ nGLSLShader::HasTechnique(const char* t) const
     //return (0 != h);
 
     // TODO: add checking technique
-    return false;
+    return -1 != this->techniqueName.FindIndex(t);
 }
 
 //------------------------------------------------------------------------------
@@ -844,6 +1007,7 @@ nGLSLShader::HasTechnique(const char* t) const
 bool
 nGLSLShader::SetTechnique(const char* t)
 {
+    activeTechniqueIdx = this->techniqueName.FindIndex(t);
     //n_assert(t);
     //n_assert(this->effect);
     //
@@ -883,7 +1047,7 @@ nGLSLShader::SetTechnique(const char* t)
     //return true;
 
     // TODO: add setting technique
-    return false;
+    return -1 != activeTechniqueIdx;
 }
 
 //------------------------------------------------------------------------------
@@ -896,7 +1060,8 @@ nGLSLShader::GetTechnique() const
     //return this->effect->GetCurrentTechnique();
 
     // TODO: add getting technique
-    return NULL;
+    if (-1 == activeTechniqueIdx) return NULL;
+    return this->techniqueName[activeTechniqueIdx].Get();
 }
 
 //------------------------------------------------------------------------------

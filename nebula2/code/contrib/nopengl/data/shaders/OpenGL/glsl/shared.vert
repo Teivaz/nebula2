@@ -7,7 +7,6 @@
 //  (C) 2004 RadonLabs GmbH
 //-------------------------------------------------------------------------------
 
-#line 1
 uniform mat4  Model;                  // the model matrix
 uniform mat4  View;                   // the view matrix
 uniform mat4  Projection;             // the projection matrix
@@ -40,4 +39,5 @@ void main(void)
 {
     //gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
     gl_Position = ModelViewProjection * gl_Vertex;
+    //gl_Position = ftransform();
 }

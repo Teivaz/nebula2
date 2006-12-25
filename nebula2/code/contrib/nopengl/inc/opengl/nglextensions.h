@@ -256,3 +256,20 @@ EXTENSION_BEGIN(GL_ARB_multitexture)
     DECL_GLEXT_PROC( PFNGLACTIVETEXTUREARBPROC,       glClientActiveTextureARB)
   #endif
 EXTENSION_END(GL_ARB_multitexture)
+
+
+//-----------------------------------------------------------
+// GL_ARB_occlusion_query
+//-----------------------------------------------------------
+EXTENSION_BEGIN(GL_ARB_occlusion_query)
+  #if defined(GL_ARB_occlusion_query) && !defined(GL_GLEXT_PROTOTYPES)
+    DECL_GLEXT_PROC( PFNGLGENQUERIESARBPROC,        glGenQueriesARB)
+    DECL_GLEXT_PROC( PFNGLDELETEQUERIESARBPROC,     glDeleteQueriesARB)
+    DECL_GLEXT_PROC( PFNGLISQUERYARBPROC,           glIsQueryARB)
+    DECL_GLEXT_PROC( PFNGLBEGINQUERYARBPROC,        glBeginQueryARB)
+    DECL_GLEXT_PROC( PFNGLENDQUERYARBPROC,          glEndQueryARB)
+    DECL_GLEXT_PROC( PFNGLGETQUERYIVARBPROC,        glGetQueryivARB)
+    DECL_GLEXT_PROC( PFNGLGETQUERYOBJECTIVARBPROC,  glGetQueryObjectivARB)
+    DECL_GLEXT_PROC( PFNGLGETQUERYOBJECTUIVARBPROC, glGetQueryObjectuivARB)
+  #endif
+EXTENSION_END(GL_ARB_multitexture)

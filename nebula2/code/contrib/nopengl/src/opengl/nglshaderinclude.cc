@@ -28,41 +28,37 @@ nGLShaderInclude::~nGLShaderInclude()
     Load shader file.
 */
 bool
-nGLShaderInclude::Begin(const nString& sourceFile)
+nGLShaderInclude::Begin(const nString& path)
 {
     n_assert(!this->tmpFile);
 
-    // mangle pathname
-    nString mangledPath;
-    mangledPath = nFileServer2::Instance()->ManglePath(sourceFile.Get());
-
     // check if the shader file actually exist, a non-existing shader file is
     // not a fatal error (result is that no rendering will be done)
-    if (!nFileServer2::Instance()->FileExists(mangledPath.Get()))
+    if (!nFileServer2::Instance()->FileExists(path))
     {
-        n_printf("nGLShaderInclude::Begin() WARNING: shader file '%s' does not exist!\n", mangledPath.Get());
+        n_printf("nGLShaderInclude::Begin() WARNING: shader file '%s' does not exist!\n", path.Get());
         return false;
     }
 
     this->tmpFile = nFileServer2::Instance()->NewFileObject();
     n_assert(this->tmpFile);
 
-    this->tmpFilePath = mangledPath.ExtractDirName();
+    this->tmpFilePath = path.ExtractDirName();
     this->tmpFilePath.Append("__tmp__.");
-    this->tmpFilePath.Append(mangledPath.GetExtension());
+    this->tmpFilePath.Append(path.GetExtension());
     
 #ifdef __WIN32__
     this->tmpFilePath.ConvertBackslashes();
 #endif
 
-    if (!this->tmpFile->Open(this->tmpFilePath.Get(), "rw"))
+    if (!this->tmpFile->Open(this->tmpFilePath, "rw"))
     {
         n_error("nGLShaderInclude::Begin(): Could not create file %s\n", this->tmpFilePath.Get());
         this->tmpFile->Release();
         return false;
     }
 
-    Include(this->tmpFile, mangledPath, nArray<nString>());
+    Include(this->tmpFile, path, nArray<nString>());
 
     this->tmpFile->Seek(0, nFile::START);
 
@@ -72,11 +68,14 @@ nGLShaderInclude::Begin(const nString& sourceFile)
 //------------------------------------------------------------------------------
 /**
 */
-void
-nGLShaderInclude::GetSource(nString& src)
+nString
+nGLShaderInclude::GetSource()
 {
     n_assert(this->tmpFile);
+
+    nString res;
     int s = this->tmpFile->GetSize();
+
     if (s > 0)
     {
         char* buf = n_new_array(char, s);
@@ -89,7 +88,7 @@ nGLShaderInclude::GetSource(nString& src)
         //}
         if (bytes_read == s )
         {
-            src.Set(buf, s);
+            res.Set(buf, s);
         }
         //else
         //{
@@ -98,6 +97,8 @@ nGLShaderInclude::GetSource(nString& src)
         //n_printf("TEST(%d):\n%s\n;TEST\n", s, src.Get());
         n_delete_array(buf);
     }
+
+    return res;
 }
 
 //------------------------------------------------------------------------------

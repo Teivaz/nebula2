@@ -210,55 +210,10 @@ nGLServer2::SetRenderTarget(int index, nTexture2* t)
     n_gltrace("nGLServer2::SetRenderTarget().");
 }
 
-
 //------------------------------------------------------------------------------
 /**
-    Begin rendering the current frame. This is guaranteed to be called
-    exactly once per frame.
-*/
-bool
-nGLServer2::BeginFrame()
-{
-    if (nGfxServer2::BeginFrame())
-    {
-        // check if gl device is in a valid state
-        if (!this->TestResetDevice())
-        {
-            // device could not be restored at this time
-            this->inBeginFrame = false;
-            return false;
-        }
-
-        // update mouse cursor image if necessary
-        this->UpdateCursor();
-
-        // update shared shader parameters
-        //this->UpdatePerFrameSharedShaderParams();
-
-        return true;
-    }
-    return false;
-}
-
-//------------------------------------------------------------------------------
-/**
-    Finish rendering the current frame. This is guaranteed to be called
-    exactly once per frame after PresentScene() has happened.
-*/
-void
-nGLServer2::EndFrame()
-{
-    #ifdef __NEBULA_STATS__
-    // query statistics
-    this->QueryStatistics();
-    #endif
-
-    nGfxServer2::EndFrame();
-}
-
-//------------------------------------------------------------------------------
-/**
-    Start rendering the scene.
+    Start rendering the scene. This can be called several times per frame
+    (each render target requires its own BeginScene()/EndScene().
 */
 bool
 nGLServer2::BeginScene()
@@ -271,14 +226,14 @@ nGLServer2::BeginScene()
         this->inBeginScene = false;
 
         // check if gl device is in a valid state
-        if (!this->TestResetDevice())
-        {
-            // device could not be restored at this time
-            return false;
-        }
+        //if (!this->TestResetDevice())
+        //{
+        //    // device could not be restored at this time
+        //    return false;
+        //}
 
         // update scene shader parameters
-        //this->UpdatePerSceneSharedShaderParams();
+        this->UpdatePerSceneSharedShaderParams();
 
         // update mouse cursor image if necessary
         //this->UpdateCursor();
@@ -286,6 +241,7 @@ nGLServer2::BeginScene()
         //check for context lost
         HDC cur_hDC = wglGetCurrentDC();
         HGLRC cur_context = wglGetCurrentContext();
+
         if ((cur_hDC != hDC) || cur_context != context)
         {
             this->hDC = cur_hDC;
@@ -333,7 +289,8 @@ nGLServer2::PresentScene()
 {
     n_assert(!this->inBeginScene);
     n_assert(this->hDC);
-    bool res = SwapBuffers(this->hDC) == GL_TRUE ? true:false;;
+
+    bool res = SwapBuffers(this->hDC) == GL_TRUE;
     n_assert(res);
 
     nGfxServer2::PresentScene();

@@ -63,6 +63,8 @@ public:
     virtual FeatureSet GetFeatureSet();
     /// return true if vertex shader run in software emulation
     //virtual bool AreVertexShadersEmulated();
+    /// get window handle
+    virtual HWND GetAppHwnd() const;
     /// parent window handle
     virtual HWND GetParentHwnd() const;
     /// returns the number of available stencil bits
@@ -201,6 +203,13 @@ private:
     int GetGLPrimTypeAndNum(PrimitiveType primType, GLenum& glPrimType) const;
     /// update the mouse cursor image and visibility
     void UpdateCursor();
+    /// update shared shader parameters per frame
+    void UpdatePerFrameSharedShaderParams();
+    /// update shared shader parameters per scene
+    void UpdatePerSceneSharedShaderParams();
+
+    /// returns the current render target size in pixels
+    vector2 GetCurrentRenderTargetSize() const;
 
     /// open the window
     //bool WindowOpen();
@@ -368,6 +377,16 @@ nGLServer2::Instance()
 {
     n_assert(0 != Singleton);
     return Singleton;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+HWND
+nGLServer2::GetAppHwnd() const
+{
+    return this->windowHandler.GetAppHwnd();
 }
 
 //------------------------------------------------------------------------------
