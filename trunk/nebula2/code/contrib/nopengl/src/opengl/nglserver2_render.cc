@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //  nglserver2_render.cc
 //  2003      cubejk
-//  2003-2004 Haron
+//  2003-2006 Haron
 //------------------------------------------------------------------------------
 #include "opengl/nglserver2.h"
 #include "opengl/nglmesh.h"
@@ -51,23 +51,22 @@ nGLServer2::SetViewport(nViewport& vp)
 void
 nGLServer2::ClearLights()
 {
-/*    n_assert(this->d3d9Device);
+    n_assert(this->hDC);
 
     nGfxServer2::ClearLights();
     if (FFP == this->lightingType)
     {
         uint i;
-        uint maxLights = this->devCaps.MaxActiveLights;
-        if (maxLights > 8)
+        //uint maxLights = this->devCaps.MaxActiveLights;
+        //if (maxLights > 8)
+        //{
+        //    maxLights = 8;
+        //}
+        for (i = 0; i < 8; i++)
         {
-            maxLights = 8;
+            glDisable(GL_LIGHT0 + i);
         }
-        for (i = 0; i < maxLights; i++)
-        {
-            HRESULT hr = this->d3d9Device->LightEnable(i, FALSE);
-            n_assert(SUCCEEDED(hr));
-        }
-    }*/
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -77,14 +76,13 @@ nGLServer2::ClearLights()
 void
 nGLServer2::ClearLight(int index)
 {
-/*    nGfxServer2::ClearLight(index);
+    nGfxServer2::ClearLight(index);
 
-    uint maxLights = this->devCaps.MaxActiveLights;
-    if(index < (int) maxLights)
+    //uint maxLights = this->devCaps.MaxActiveLights;
+    if(index < 8)
     {
-        HRESULT hr = this->d3d9Device->LightEnable(index, FALSE);
-        n_assert(SUCCEEDED(hr));
-    }*/
+        glDisable(GL_LIGHT0 + index);
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -105,13 +103,71 @@ nGLServer2::AddLight(const nLight& light)
     }
     else if (FFP == this->lightingType)
     {
-        // TODO: Add OpenGL standart light
+        n_assert(this->hDC);
+        n_assert(numLights <= 8);
+        //HRESULT hr;
+
+        GLfloat f4[4];
+        GLenum lightID = GL_LIGHT0 + numLights - 1;
+
+        f4[0] = light.GetDiffuse().x; f4[1] = light.GetDiffuse().y;
+        f4[2] = light.GetDiffuse().z; f4[3] = light.GetDiffuse().w;
+        glLightfv(lightID, GL_DIFFUSE, f4);
+        //glLightfv(lightID, GL_DIFFUSE,  (float*)light.GetDiffuse());
+
+        f4[0] = light.GetSpecular().x; f4[1] = light.GetSpecular().y;
+        f4[2] = light.GetSpecular().z; f4[3] = light.GetSpecular().w;
+        glLightfv(lightID, GL_SPECULAR, f4);
+        //glLightfv(lightID, GL_SPECULAR, (float*)light.GetSpecular());
+
+        f4[0] = light.GetAmbient().x; f4[1] = light.GetAmbient().y;
+        f4[2] = light.GetAmbient().z; f4[3] = light.GetAmbient().w;
+        glLightfv(lightID, GL_AMBIENT, f4);
+        //glLightfv(lightID, GL_AMBIENT,  (float*)light.GetAmbient());
+
+        f4[0] = light.GetTransform().pos_component().x;
+        f4[1] = light.GetTransform().pos_component().y;
+        f4[2] = light.GetTransform().pos_component().z;
+        //f4[3] = 0.0f;
+        glLightfv(lightID, GL_POSITION, f4);
+        //glLightfv(lightID, GL_POSITION, (float*)light.GetTransform().pos_component());
+        
+        const vector3& lightDir = -light.GetTransform().z_component();
+        f4[0] = lightDir.x;
+        f4[1] = lightDir.y;
+        f4[2] = lightDir.z;
+        //f4[3] = 0.0f;
+        glLightfv(lightID, GL_SPOT_DIRECTION, f4);
+        //glLightfv(lightID, GL_SPOT_DIRECTION, (float*)lightDir);
+
+        glLightf(lightID, GL_CONSTANT_ATTENUATION,  0.0f);
+        glLightf(lightID, GL_LINEAR_ATTENUATION,    5.0f / light.GetRange());
+        glLightf(lightID, GL_QUADRATIC_ATTENUATION, 0.0f);
+
+        switch (light.GetType())
+        {
+        case nLight::Spot:
+            glLightf(lightID, GL_SPOT_CUTOFF, 0.5f * light.GetRange());
+            glLightf(lightID, GL_SPOT_EXPONENT, 1.0f); // TODO: check this
+            break;
+        default:
+            glLightf(lightID, GL_SPOT_CUTOFF, 180.0);
+        }
+
+        glEnable(lightID);
+
+        //// set ambient render state if this is the first light
+        //if (1 == numLights)
+        //{
+        //    DWORD amb = D3DCOLOR_COLORVALUE(light.GetAmbient().x, light.GetAmbient().y, light.GetAmbient().z, light.GetAmbient().w);
+        //    this->d3d9Device->SetRenderState(D3DRS_AMBIENT, amb);
+        //}
     }
     else if (Shader == this->lightingType)
     {
         // set light in shader pipeline
         this->SetTransform(nGfxServer2::Light, light.GetTransform());
-        nShader2* shd = this->refSharedShader;
+        nShader2* shd = this->refSharedShader.get_unsafe();
 
         if (light.GetType() == nLight::Directional)
         {
@@ -155,83 +211,8 @@ nGLServer2::AddLight(const nLight& light)
             shd->SetVector4(nShaderState::ShadowIndex, light.GetShadowLightMask());
         }
     }
-    //if (1 == numLights)
-    //{
-    //    this->SetTransform(nGfxServer2::Light, light.GetTransform());
 
-    //    nShader2* shd = (nShader2*)this->refSharedShader.get();
-    //    shd->SetVector4(nShaderState::LightDiffuse, light.GetDiffuse());
-    //    shd->SetVector4(nShaderState::LightSpecular, light.GetSpecular());
-    //    shd->SetVector4(nShaderState::LightAmbient, light.GetAmbient());
-    //    shd->SetVector4(nShaderState::LightDiffuse1, light.GetSecondaryDiffuse());
-    //}
     return numLights;
-/*
-    if (FFP == this->lightingType)
-    {
-        n_assert(this->d3d9Device);
-        HRESULT hr;
-
-        // set ambient render state if this is the first light
-        if (1 == numLights)
-        {
-            DWORD amb = D3DCOLOR_COLORVALUE(light.GetAmbient().x, light.GetAmbient().y, light.GetAmbient().z, light.GetAmbient().w);
-            this->d3d9Device->SetRenderState(D3DRS_AMBIENT, amb);
-        }
-
-        // set light in fixed function pipeline
-        D3DLIGHT9 d3dLight9;
-        memset(&d3dLight9, 0, sizeof(d3dLight9));
-        switch (light.GetType())
-        {
-            case nLight::Point:
-                d3dLight9.Type = D3DLIGHT_POINT;
-                break;
-
-            case nLight::Directional:
-                d3dLight9.Type = D3DLIGHT_DIRECTIONAL;
-                break;
-
-            case nLight::Spot:
-                d3dLight9.Type = D3DLIGHT_SPOT;
-                break;
-        }
-        d3dLight9.Diffuse.r    = light.GetDiffuse().x;
-        d3dLight9.Diffuse.g    = light.GetDiffuse().y;
-        d3dLight9.Diffuse.b    = light.GetDiffuse().z;
-        d3dLight9.Diffuse.a    = light.GetDiffuse().w;
-        d3dLight9.Specular.r   = light.GetSpecular().x;
-        d3dLight9.Specular.g   = light.GetSpecular().y;
-        d3dLight9.Specular.b   = light.GetSpecular().z;
-        d3dLight9.Specular.a   = light.GetSpecular().w;
-        d3dLight9.Ambient.r    = light.GetAmbient().x;
-        d3dLight9.Ambient.g    = light.GetAmbient().y;
-        d3dLight9.Ambient.b    = light.GetAmbient().z;
-        d3dLight9.Ambient.a    = light.GetAmbient().w;
-        d3dLight9.Position.x   = light.GetTransform().pos_component().x;
-        d3dLight9.Position.y   = light.GetTransform().pos_component().y;
-        d3dLight9.Position.z   = light.GetTransform().pos_component().z;
-
-        const vector3& lightDir = -light.GetTransform().z_component();
-        d3dLight9.Direction.x  = lightDir.x;
-        d3dLight9.Direction.y  = lightDir.y;
-        d3dLight9.Direction.z  = lightDir.z;
-        d3dLight9.Range        = light.GetRange();
-        d3dLight9.Falloff      = 1.0f;
-
-        // set the attenuation values so that at the maximum range,
-        // the light intensity is at 20%
-        d3dLight9.Attenuation0 = 0.0f;
-        d3dLight9.Attenuation1 = 5.0f / light.GetRange();
-        d3dLight9.Attenuation2 = 0.0f;
-        d3dLight9.Theta        = 0.0f;
-        d3dLight9.Phi          = N_PI;
-        hr = this->d3d9Device->SetLight(numLights - 1, &d3dLight9);
-        n_assert(SUCCEEDED(hr));
-        hr = this->d3d9Device->LightEnable(numLights - 1, TRUE);
-        n_assert(SUCCEEDED(hr));
-    }
-*/
 }
 
 //------------------------------------------------------------------------------
@@ -324,12 +305,10 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
             case Light:
                 break;
         }
-
         if (setMVP)
         {
             shd->SetMatrix(nShaderState::ModelViewProjection, this->transform[ModelViewProjection]);
         }
-
         if (!mvpOnly && setEyePos)
         {
             shd->SetVector3(nShaderState::EyePos, this->transform[InvView].pos_component());
@@ -340,7 +319,6 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
         {
             shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
         }
-
         if (setEyeDir)
         {
             shd->SetVector3(nShaderState::EyeDir, -this->transform[View].z_component());
@@ -349,6 +327,92 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
 
         n_gltrace("nGLServer2::SetTransform().");
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Updates shared shader parameters for the current frame.
+    This method is called once per frame from within BeginFrame().
+*/
+void
+nGLServer2::UpdatePerFrameSharedShaderParams()
+{
+    if (this->refSharedShader.isvalid())
+    {
+        nShader2* shd = this->refSharedShader;
+
+        // update global time
+        nTime time = this->kernelServer->GetTimeServer()->GetTime();
+        shd->SetFloat(nShaderState::Time, float(time));
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Updates shared shader parameters for the current scene.
+    This method is called once per frame from within BeginScene().
+*/
+void
+nGLServer2::UpdatePerSceneSharedShaderParams()
+{
+    if (this->refSharedShader.isvalid())
+    {
+        nShader2* shd = this->refSharedShader;
+
+        // display resolution (or better, main render target resolution)
+        vector2 rtSize = this->GetCurrentRenderTargetSize();
+        vector4 dispRes(rtSize.x, rtSize.y, 0.0f, 0.0f);
+        shd->SetVector4(nShaderState::DisplayResolution, dispRes);
+        vector4 halfPixelSize;
+        halfPixelSize.x = (1.0f / rtSize.x) * 0.5f;
+        halfPixelSize.y = (1.0f / rtSize.y) * 0.5f;
+        shd->SetVector4(nShaderState::HalfPixelSize, halfPixelSize);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+    Begin rendering the current frame. This is guaranteed to be called
+    exactly once per frame.
+*/
+bool
+nGLServer2::BeginFrame()
+{
+    if (nGfxServer2::BeginFrame())
+    {
+        // check if gl device is in a valid state
+        if (!this->TestResetDevice())
+        {
+            // device could not be restored at this time
+            this->inBeginFrame = false;
+            return false;
+        }
+
+        // update mouse cursor image if necessary
+        this->UpdateCursor();
+
+        // update shared shader parameters
+        this->UpdatePerFrameSharedShaderParams();
+
+        return true;
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Finish rendering the current frame. This is guaranteed to be called
+    exactly once per frame after PresentScene() has happened.
+*/
+void
+nGLServer2::EndFrame()
+{
+    #ifdef __NEBULA_STATS__
+    // query statistics
+    this->QueryStatistics();
+    #endif
+
+    nGfxServer2::EndFrame();
 }
 
 //------------------------------------------------------------------------------
@@ -369,27 +433,27 @@ nGLServer2::Clear(int bufferTypes, float red, float green, float blue, float alp
 {
     n_assert(this->inBeginScene);
 
-    int flags = 0;
+    GLbitfield mask = 0;
 
     if (bufferTypes & ColorBuffer)
     {
-        flags |= GL_COLOR_BUFFER_BIT;
+        mask |= GL_COLOR_BUFFER_BIT;
         glClearColor(red, green, blue, alpha);
     }
 
     if (bufferTypes & DepthBuffer)
     {
-        flags |= GL_DEPTH_BUFFER_BIT;
+        mask |= GL_DEPTH_BUFFER_BIT;
         glClearDepth(z);
     }
 
     if (bufferTypes & StencilBuffer)
     {
-        flags |= GL_STENCIL_BUFFER_BIT;
+        mask |= GL_STENCIL_BUFFER_BIT;
         glClearStencil(stencil);
     }
 
-    glClear(flags);
+    glClear(mask);
 
     n_gltrace("nGLServer2::Clear().");
 }
@@ -422,17 +486,23 @@ nGLServer2::SetMesh(nMesh2* vbMesh, nMesh2* ibMesh)
             {
                 ((nGLMesh*)ibMesh)->SetIndices(this->indexRangeFirst);
             }
-            //else
-            //{
-            //    ((nGLMesh*)ibMesh)->UnsetIndices();
-            //}
+            else if (0 != this->refIbMesh.get_unsafe())
+            {
+                ((nGLMesh*)this->refIbMesh.get_unsafe())->UnsetIndices();
+            }
         }
     }
-    //else
-    //{
-    //    ((nGLMesh*)vbMesh)->UnsetVertices();
-    //    ((nGLMesh*)ibMesh)->UnsetIndices();
-    //}
+    else
+    {
+        if (0 != this->refVbMesh.get_unsafe())
+        {
+            ((nGLMesh*)this->refVbMesh.get_unsafe())->UnsetVertices();
+        }
+        if (0 != this->refIbMesh.get_unsafe())
+        {
+            ((nGLMesh*)this->refIbMesh.get_unsafe())->UnsetIndices();
+        }
+    }
 
     nGfxServer2::SetMesh(vbMesh, ibMesh);
 }

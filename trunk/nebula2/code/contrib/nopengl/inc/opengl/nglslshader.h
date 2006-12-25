@@ -96,11 +96,23 @@ private:
     /// update the parameter handle mapper table
     void UpdateParameterHandles();
 
+    enum GLSLShaderType
+    {
+        VERTEX,
+        FRAGMENT
+    };
+
+    /// create GLSL specific shader
+    uint CreateGLSLShader(GLSLShaderType type, const nString& path);
+
+    /// put proper GL command to GL list
+    bool ParsePassParam(const char* name, nString& val);
+
     friend class nGLServer2;
 
-    uint programObj; //GLhandleARB
-    uint vertexShader; //GLhandleARB
-    uint fragmentShader; //GLhandleARB
+    uint programObj;
+    uint vertShader;
+    uint fragShader;
 
     bool hasBeenValidated;
     bool didNotValidate;
@@ -108,6 +120,16 @@ private:
     int parameterHandles[nShaderState::NumParameters]; ///< map shader states to GL handles
     nShaderParams curParams;					       ///< mirrored to avoid redundant parameters setting
     //bool uniformsUpdated;                              ///< true if glsl uniform parameters IDs is up to date
+
+    struct nGLTechnique
+    {
+        nArray<nString> passName;
+        nArray<uint>    pass;                          ///< GLlist IDs to call with glCallList
+    };
+
+    nArray<nString>      techniqueName;
+    nArray<nGLTechnique> technique;
+    int                  activeTechniqueIdx;
 };
 
 //------------------------------------------------------------------------------

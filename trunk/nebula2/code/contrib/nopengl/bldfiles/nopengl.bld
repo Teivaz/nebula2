@@ -9,9 +9,11 @@ beginbundle nglserver2::gfx2
         nglextensionserver
         nglfont
         nglmesh
+        nglocclusionquery
         nglserver2
         nglshaderinclude
         nglslshader
+        npassstate
         ngltexture
         nglwin32windowhandler
     }
@@ -89,6 +91,16 @@ endmodule
 #        npbuffer
 #    }
 
+beginmodule nglocclusionquery
+    setdir opengl
+    setheaders {
+        nglocclusionquery
+    }
+    setfiles {
+        nglocclusionquery
+    }
+endmodule
+
 beginmodule nglserver2
     setdir opengl
     setheaders {
@@ -156,6 +168,16 @@ beginmodule nglslshader
     }
     setfiles {
         nglslshader_main
+    }
+endmodule
+
+beginmodule npassstate
+    setdir opengl
+    setheaders {
+        npassstate
+    }
+    setfiles {
+        npassstate
     }
 endmodule
 

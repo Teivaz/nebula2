@@ -413,3 +413,27 @@ nGLServer2::UpdateCursor()
     }
     // NOTE: cursor visibility is handled inside WinProc!
 }
+
+//------------------------------------------------------------------------------
+/**
+    Returns the current actual render target size.
+*/
+vector2
+nGLServer2::GetCurrentRenderTargetSize() const
+{
+    vector2 size;
+    nTexture2* renderTarget = this->GetRenderTarget(0);
+    if (renderTarget)
+    {
+        size.x = (float)renderTarget->GetWidth();
+        size.y = (float)renderTarget->GetHeight();
+    }
+    else
+    {
+        const nDisplayMode2& mode = this->GetDisplayMode();
+        size.x = (float)mode.GetWidth();
+        size.y = (float)mode.GetHeight();
+    }
+    return size;
+}
+

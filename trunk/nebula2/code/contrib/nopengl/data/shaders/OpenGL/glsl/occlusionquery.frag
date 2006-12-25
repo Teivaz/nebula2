@@ -1,13 +1,11 @@
 //------------------------------------------------------------------------------
-//  gui.vert
+//  occlusionquery.frag
 //
-//  A 2d rectangle shader for GUI rendering.
+//  Simple shader for occlusion queries. Just renders the passed geometry
+//  with zwrite and color writes disabled.
 //------------------------------------------------------------------------------
-
-uniform mat4 ModelViewProjection;
 
 void main(void)
 {
-    gl_TexCoord[0] = gl_MultiTexCoord0;
-    gl_Position = ModelViewProjection * gl_Vertex;
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
 }

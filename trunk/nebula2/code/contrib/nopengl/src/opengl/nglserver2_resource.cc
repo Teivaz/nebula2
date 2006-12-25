@@ -1,9 +1,11 @@
 //------------------------------------------------------------------------------
 //  nglserver2_resource.cc
 //  29-Jun-2003 cubejk cloned from nd3d9server_resource.cc
+//  2005-2006 haron updated
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
 #include "opengl/nglserver2.h"
+#include "opengl/nglocclusionquery.h"
 
 #include "gfx2/nshader2.h"
 #include "resource/nresourceserver.h"
@@ -65,7 +67,7 @@ nGLServer2::NewTexture(const nString& rsrcName)
 nShader2*
 nGLServer2::NewShader(const nString& rsrcName)
 {
-    n_printf("\nNew Shader: %s.\n", rsrcName.Get());
+    //n_printf("\nNew Shader: %s.\n", rsrcName.Get());
     return (nShader2*) this->refResource->NewResource("nglslshader", rsrcName, nResource::Shader);
     //return (nShader2*) this->refResource->NewResource("ncgfxshader", rsrcName, nResource::Shader);
 }
@@ -135,7 +137,7 @@ nGLServer2::NewRenderTarget(const nString& rsrcName,
 nOcclusionQuery*
 nGLServer2::NewOcclusionQuery()
 {
-    return NULL; //n_new(nGLOcclusionQuery);
+    return n_new(nGLOcclusionQuery);
 }
 
 //------------------------------------------------------------------------------
