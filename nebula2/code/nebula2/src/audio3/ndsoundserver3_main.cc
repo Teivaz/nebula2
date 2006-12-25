@@ -216,7 +216,7 @@ nDSoundServer3::EndScene()
     {
         timeException = true;
     }
-    if ((diff > 0.02) || (timeException))
+    if ((diff > 0.02) || timeException)
     {
         this->lastStreamUpdateCheck = curTime;
 
@@ -224,10 +224,10 @@ nDSoundServer3::EndScene()
         nRoot* cur;
         for (cur = rsrcPool->GetHead(); cur; cur = cur->GetSucc())
         {
-            nDSoundResource* sound = (nDSoundResource*) cur;
+            nDSoundResource* sound = (nDSoundResource*)cur;
             if (sound->GetStreaming())
             {
-                CStreamingSound* snd = (CStreamingSound*) sound->GetCSoundPtr();
+                CStreamingSound* snd = (CStreamingSound*)sound->GetCSoundPtr();
                 if (snd->IsSoundPlaying())
                 {
                     if (snd->CheckStreamUpdate())
@@ -250,7 +250,7 @@ nDSoundServer3::EndScene()
             nRoot* cur;
             for (cur = rsrcPool->GetHead(); cur; cur = cur->GetSucc())
             {
-                nDSound3* snd = (nDSound3*) cur;
+                nDSound3* snd = (nDSound3*)cur;
                 if (snd->GetCategory() == cat && snd->IsPlaying())
                 {
                     snd->Update();
@@ -268,7 +268,7 @@ nDSoundServer3::EndScene()
 nSoundResource*
 nDSoundServer3::NewSoundResource(const char* rsrcName)
 {
-    return (nSoundResource*) nResourceServer::Instance()->NewResource("ndsoundresource", rsrcName, nResource::SoundResource);
+    return (nSoundResource*)nResourceServer::Instance()->NewResource("ndsoundresource", rsrcName, nResource::SoundResource);
 }
 
 //------------------------------------------------------------------------------
@@ -277,7 +277,7 @@ nDSoundServer3::NewSoundResource(const char* rsrcName)
 nSound3*
 nDSoundServer3::NewSound()
 {
-    return (nSound3*) nResourceServer::Instance()->NewResource("ndsound3", 0, nResource::SoundInstance);
+    return (nSound3*)nResourceServer::Instance()->NewResource("ndsound3", 0, nResource::SoundInstance);
 }
 
 //------------------------------------------------------------------------------

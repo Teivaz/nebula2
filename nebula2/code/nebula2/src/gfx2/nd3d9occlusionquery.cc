@@ -54,7 +54,7 @@ nD3D9OcclusionQuery::Clear()
 
 //------------------------------------------------------------------------------
 /**
-    Begin occlusion queries. This initialises a the shader and calls
+    Begin occlusion queries. This initializes a the shader and calls
     BeginShapes() on the gfx server.
 */
 void
@@ -99,7 +99,7 @@ nD3D9OcclusionQuery::AddShapeQuery(nGfxServer2::ShapeType type, const matrix44& 
     HRESULT hr;
 
     // create a new query
-    nD3D9Server* d3d9Server = (nD3D9Server*) nGfxServer2::Instance();
+    nD3D9Server* d3d9Server = (nD3D9Server*)nGfxServer2::Instance();
     IDirect3DDevice9* d3d9Dev = d3d9Server->d3d9Device;
     n_assert(d3d9Dev);
 
@@ -191,24 +191,20 @@ nD3D9OcclusionQuery::GetOcclusionStatus(int queryIndex)
         // always return that we're not occluded
         return false;
     }
-    else
+    // an occlusion query returns the number of pixels which have passed
+    // the z test in a DWORD
+    DWORD numVisiblePixels = 0;
+    n_assert(d3dQuery->GetDataSize() == sizeof(DWORD));
+
+    // note: this method may return S_OK, S_FALSE or D3DERR_DEVICELOST.
+    // S_FALSE is not considered an error!
+    HRESULT hr;
+    do
     {
-        // an occlusion query returns the number of pixels which have passed
-        // the z test in a DWORD
-        DWORD numVisiblePixels = 0;
-        n_assert(d3dQuery->GetDataSize() == sizeof(DWORD));
-
-        // note: this method may return S_OK, S_FALSE or D3DERR_DEVICELOST.
-        // S_FALSE is not considered an error!
-        HRESULT hr;
-        do
-        {
-            hr = d3dQuery->GetData(&numVisiblePixels, sizeof(DWORD), D3DGETDATA_FLUSH);
-        }
-        while (hr == S_FALSE);
-
-        // return true if we're fully occluded
-        return (numVisiblePixels == 0);
+        hr = d3dQuery->GetData(&numVisiblePixels, sizeof(DWORD), D3DGETDATA_FLUSH);
     }
-    return false;
+    while (hr == S_FALSE);
+
+    // return true if we're fully occluded
+    return (numVisiblePixels == 0);
 }

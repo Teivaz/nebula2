@@ -45,7 +45,7 @@ nAnimation*
 nAnimationServer::NewMemoryAnimation(const nString& rsrcName)
 {
     n_assert(rsrcName.IsValid());
-    return (nAnimation*) this->refResourceServer->NewResource("nmemoryanimation", rsrcName, nResource::Animation);
+    return (nAnimation*)this->refResourceServer->NewResource("nmemoryanimation", rsrcName, nResource::Animation);
 }
 
 //------------------------------------------------------------------------------
@@ -63,5 +63,5 @@ nAnimationServer::NewMemoryAnimation(const nString& rsrcName)
 nAnimation*
 nAnimationServer::NewStreamingAnimation()
 {
-    return (nAnimation*) this->refResourceServer->NewResource("nstreaminganimation", 0, nResource::Animation);
+    return (nAnimation*)this->refResourceServer->NewResource("nstreaminganimation", 0, nResource::Animation);
 }

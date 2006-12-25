@@ -747,10 +747,7 @@ nArray<TYPE>::operator==(const nArray<TYPE>& rhs) const
         }
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -1022,7 +1019,7 @@ nArray<TYPE>::Fill(int first, int num, const TYPE& elm)
 //------------------------------------------------------------------------------
 /**
     Returns a new array with all element which are in rhs, but not in this.
-    Carefull, this method may be very slow with large arrays!
+    Be careful, this method may be very slow with large arrays!
 */
 template<class TYPE>
 nArray<TYPE>

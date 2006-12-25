@@ -51,11 +51,11 @@ nShadowServer2::NewShadowCaster(nShadowCaster2::Type t, const char* rsrcName)
     switch (t)
     {
         case nShadowCaster2::Static:
-            newCaster = (nShadowCaster2*) rsrcServer->NewResource("nstaticshadowcaster2", rsrcName, nResource::Mesh);
+            newCaster = (nShadowCaster2*)rsrcServer->NewResource("nstaticshadowcaster2", rsrcName, nResource::Mesh);
             break;
 
         case nShadowCaster2::Skinned:
-            newCaster = (nShadowCaster2*) rsrcServer->NewResource("nskinnedshadowcaster2", rsrcName, nResource::Mesh);
+            newCaster = (nShadowCaster2*)rsrcServer->NewResource("nskinnedshadowcaster2", rsrcName, nResource::Mesh);
             break;
     }
     n_assert(newCaster);

@@ -43,8 +43,8 @@ nD3D9Server::DrawShape(ShapeType type, const matrix44& model, const vector4& col
     this->PushTransform(nGfxServer2::Model, model);
     shd->BeginPass(0);
     HRESULT hr = this->shapeMeshes[type]->DrawSubset(0);
-    shd->EndPass();
     n_dxtrace(hr, "DrawSubset() failed in nD3D9Server::DrawShape()");
+    shd->EndPass();
     this->PopTransform(nGfxServer2::Model);
 }
 
@@ -75,12 +75,12 @@ nD3D9Server::DrawShapePrimitives(PrimitiveType type, int numPrimitives, const ve
     D3DPRIMITIVETYPE d3dPrimType;
     switch (type)
     {
-        case PointList:     d3dPrimType = D3DPT_POINTLIST; break;
-        case LineList:      d3dPrimType = D3DPT_LINELIST; break;
-        case LineStrip:     d3dPrimType = D3DPT_LINESTRIP; break;
-        case TriangleList:  d3dPrimType = D3DPT_TRIANGLELIST; break;
-        case TriangleStrip: d3dPrimType = D3DPT_TRIANGLESTRIP; break;
-        case TriangleFan:   d3dPrimType = D3DPT_TRIANGLEFAN; break;
+    case PointList:     d3dPrimType = D3DPT_POINTLIST; break;
+    case LineList:      d3dPrimType = D3DPT_LINELIST; break;
+    case LineStrip:     d3dPrimType = D3DPT_LINESTRIP; break;
+    case TriangleList:  d3dPrimType = D3DPT_TRIANGLELIST; break;
+    case TriangleStrip: d3dPrimType = D3DPT_TRIANGLESTRIP; break;
+    case TriangleFan:   d3dPrimType = D3DPT_TRIANGLEFAN; break;
     }
 
     // update color in shader
@@ -118,20 +118,20 @@ nD3D9Server::DrawShapeIndexedPrimitives(PrimitiveType type,
     D3DPRIMITIVETYPE d3dPrimType;
     switch (type)
     {
-        case PointList:     d3dPrimType = D3DPT_POINTLIST; break;
-        case LineList:      d3dPrimType = D3DPT_LINELIST; break;
-        case LineStrip:     d3dPrimType = D3DPT_LINESTRIP; break;
-        case TriangleList:  d3dPrimType = D3DPT_TRIANGLELIST; break;
-        case TriangleStrip: d3dPrimType = D3DPT_TRIANGLESTRIP; break;
-        case TriangleFan:   d3dPrimType = D3DPT_TRIANGLEFAN; break;
+    case PointList:     d3dPrimType = D3DPT_POINTLIST; break;
+    case LineList:      d3dPrimType = D3DPT_LINELIST; break;
+    case LineStrip:     d3dPrimType = D3DPT_LINESTRIP; break;
+    case TriangleList:  d3dPrimType = D3DPT_TRIANGLELIST; break;
+    case TriangleStrip: d3dPrimType = D3DPT_TRIANGLESTRIP; break;
+    case TriangleFan:   d3dPrimType = D3DPT_TRIANGLEFAN; break;
     }
 
     D3DFORMAT d3dIndexType;
     switch (indexType)
     {
-        case Index16:   d3dIndexType = D3DFMT_INDEX16; break;
-        case Index32:   d3dIndexType = D3DFMT_INDEX32; break;
-    };
+    case Index16:   d3dIndexType = D3DFMT_INDEX16; break;
+    case Index32:   d3dIndexType = D3DFMT_INDEX32; break;
+    }
 
     // update color in shader
     nShader2* shd = this->refShapeShader;
@@ -169,4 +169,3 @@ nD3D9Server::EndShapes()
     // clear current mesh, otherwise Nebula2's redundancy mechanism may be fooled!
     this->SetMesh(0, 0);
 }
-

@@ -63,7 +63,7 @@ public:
     /// Is `a' greater than or equal to `b'?
     friend bool operator >= (const nString& a, const nString& b);
     /// Subscript operator (read only).
-    const char operator[](int i) const;
+    char operator[](int i) const;
     /// Subscript operator (writable).
     char& operator[](int i);
     /// set as char ptr, with explicit length
@@ -284,20 +284,19 @@ nString::Set(const char* str, int length)
     this->Delete();
     if (str)
     {
-        char* ptr = this->localString;
         if (length >= LOCALSTRINGSIZE)
         {
-            ptr = (char*) n_malloc(length + 1);
-            this->string = ptr;
+            this->string = (char*)n_malloc(length + 1);
+            memcpy(this->string, str, length);
+            this->string[length] = 0;
             this->strLen = length;
         }
         else
         {
-            ptr = this->localString;
+            memcpy(this->localString, str, length);
+            this->localString[length] = 0;
             this->localStrLen = (ushort)length;
         }
-        memcpy(ptr, str, length);
-        ptr[length] = 0;
     }
 }
 
@@ -440,14 +439,11 @@ nString::Get() const
     {
         return this->string;
     }
-    else if (this->localString[0])
+    if (this->localString[0])
     {
         return this->localString;
     }
-    else
-    {
-        return "";
-    }
+    return "";
 }
 
 //------------------------------------------------------------------------------
@@ -493,10 +489,10 @@ nString::AppendRange(const char* str, uint numChars)
         uint tlen = this->Length() + rlen;
         if (this->string)
         {
-            char* ptr = (char*) n_malloc(tlen + 1);
+            char* ptr = (char*)n_malloc(tlen + 1);
             strcpy(ptr, this->string);
             strncat(ptr, str, numChars);
-            n_free((void*) this->string);
+            n_free((void*)this->string);
             this->string = ptr;
             this->strLen = tlen;
         }
@@ -504,7 +500,7 @@ nString::AppendRange(const char* str, uint numChars)
         {
             if (tlen >= LOCALSTRINGSIZE)
             {
-                char* ptr = (char*) n_malloc(tlen + 1);
+                char* ptr = (char*)n_malloc(tlen + 1);
                 strcpy(ptr, this->localString);
                 strncat(ptr, str, numChars);
                 this->localString[0] = 0;
@@ -657,7 +653,7 @@ operator >= (const nString& a, const nString& b)
      - 21-Sep-04    Johannes        the '\\0' is a valid part of the string
 */
 inline
-const char
+char
 nString::operator[](int i) const
 {
     n_assert((0 <= i) && (i <= this->Length()));
@@ -665,10 +661,7 @@ nString::operator[](int i) const
     {
         return this->string[i];
     }
-    else
-    {
-        return this->localString[i];
-    }
+    return this->localString[i];
 }
 
 //------------------------------------------------------------------------------
@@ -679,7 +672,7 @@ inline
 char&
 nString::operator[](int i)
 {
-    n_assert((0 <= i) && (i <= this->Length()));
+    n_assert((0 <= i) && (i < this->Length()));
     if (this->string != 0)
     {
         return this->string[i];
@@ -701,10 +694,7 @@ nString::Length() const
     {
         return this->strLen;
     }
-    else
-    {
-        return this->localStrLen;
-    }
+    return this->localStrLen;
 }
 
 //------------------------------------------------------------------------------
@@ -728,7 +718,7 @@ nString::IsEmpty() const
     {
         return false;
     }
-    else if (this->localString[0] != 0)
+    if (this->localString[0] != 0)
     {
         return false;
     }
@@ -752,11 +742,11 @@ inline
 void
 nString::ToLower()
 {
-    char* str = (char*) (this->string ? this->string : this->localString);
+    char* str = (char*)(this->string ? this->string : this->localString);
     if (str)
     {
         char c;
-        char* ptr = (char*) str;
+        char* ptr = (char*)str;
         while ((c = *ptr))
         {
             *ptr++ = tolower(c);
@@ -771,11 +761,11 @@ inline
 void
 nString::ToUpper()
 {
-    char* str = (char*) (this->string ? this->string : this->localString);
+    char* str = (char*)(this->string ? this->string : this->localString);
     if (str)
     {
         char c;
-        char* ptr = (char*) str;
+        char* ptr = (char*)str;
         while ((c = *ptr))
         {
             *ptr++ = toupper(c);
@@ -814,7 +804,7 @@ const char*
 nString::GetFirstToken(const char* whiteSpace)
 {
     n_assert(whiteSpace);
-    return strtok((char*) this->Get(), whiteSpace);
+    return strtok((char*)this->Get(), whiteSpace);
 }
 
 //------------------------------------------------------------------------------
@@ -856,11 +846,11 @@ nString::Tokenize(const char* whiteSpace, nArray<nString>& tokens) const
 
     // create a temporary string, which will be destroyed during the operation
     nString str(*this);
-    char* ptr = (char*) str.Get();
+    char* ptr = (char*)str.Get();
     const char* token;
     while (0 != (token = strtok(ptr, whiteSpace)))
     {
-        tokens.Append(nString(token));
+        tokens.Append(token);
         ptr = 0;
         numTokens++;
     }
@@ -886,7 +876,7 @@ nString::Tokenize(const char* whiteSpace, uchar fence, nArray<nString>& tokens) 
 {
     // create a temporary string, which will be destroyed during the operation
     nString str(*this);
-    char* ptr = (char*) str.Get();
+    char* ptr = (char*)str.Get();
     char* end = ptr + strlen(ptr);
     while (ptr < end)
     {
@@ -940,7 +930,7 @@ nString::ExtractRange(int from, int numChars) const
 
 //------------------------------------------------------------------------------
 /**
-    Terminates the string at the first occurance of one of the characters
+    Terminates the string at the first occurrence of one of the characters
     in charSet.
 */
 inline
@@ -948,7 +938,7 @@ void
 nString::Strip(const char* charSet)
 {
     n_assert(charSet);
-    char* str = (char*) this->Get();
+    char* str = (char*)this->Get();
     char* ptr = strpbrk(str, charSet);
     if (ptr)
     {
@@ -967,7 +957,7 @@ bool
 nString::ContainsCharFromSet(const char* charSet) const
 {
     n_assert(charSet);
-    char* str = (char*) this->Get();
+    char* str = (char*)this->Get();
     char* ptr = strpbrk(str, charSet);
     return (0 != ptr);
 }
@@ -1028,7 +1018,7 @@ void
 nString::TerminateAtIndex(int index)
 {
     n_assert(index < this->Length());
-    char* ptr = (char*) this->Get();
+    char* ptr = (char*)this->Get();
     ptr[index] = 0;
     this->SetLength(strlen(this->Get()));
 }
@@ -1044,7 +1034,7 @@ nString::StripTrailingSlash()
     if (this->Length() > 0)
     {
         int pos = Length() - 1;
-        char* str = (char*) this->Get();
+        char* str = (char*)this->Get();
         if ((str[pos] == '/') || (str[pos] == '\\'))
         {
             str[pos] = 0;
@@ -1167,7 +1157,7 @@ nString::Trim(const char* charSet) const
 
 //------------------------------------------------------------------------------
 /**
-    Substitute every occurance of origStr with substStr.
+    Substitute every occurrence of origStr with substStr.
 */
 inline
 nString
@@ -1179,7 +1169,7 @@ nString::Substitute(const char* matchStr, const char* substStr) const
     int matchStrLen = strlen(matchStr);
     nString dest;
 
-    // walk original string for occurances of str
+    // walk original string for occurrences of str
     const char* occur;
     while ((occur = strstr(ptr, matchStr)))
     {
@@ -1208,7 +1198,7 @@ inline
 void
 nString::UTF8toANSI()
 {
-    uchar* src = (uchar*) this->Get();
+    uchar* src = (uchar*)this->Get();
     uchar* dst = src;
     uchar c;
     while ((c = *src++))
@@ -1299,7 +1289,7 @@ inline
 void
 nString::SubstituteCharacter(char c, char subst)
 {
-    char* ptr = (char*) this->Get();
+    char* ptr = (char*)this->Get();
     int i;
     for (i = 0; i <= this->Length(); i++)
     {
@@ -1370,7 +1360,7 @@ inline
 void
 nString::StripExtension()
 {
-    char* ext = (char*) this->GetExtension();
+    char* ext = (char*)this->GetExtension();
     if (ext)
     {
         ext[-1] = 0;
@@ -1386,7 +1376,7 @@ inline
 char*
 nString::GetLastSlash() const
 {
-    char* s = (char*) this->Get();
+    char* s = (char*)this->Get();
     char* lastSlash = strrchr(s, '/');
     if (0 == lastSlash) lastSlash = strrchr(s, '\\');
     if (0 == lastSlash) lastSlash = strrchr(s, ':');
@@ -1528,7 +1518,7 @@ void
 nString::ReplaceChars(const char* charSet, char replacement)
 {
     n_assert(charSet);
-    char* ptr = (char*) this->Get();
+    char* ptr = (char*)this->Get();
     char c;
     while (0 != (c = *ptr))
     {
