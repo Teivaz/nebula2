@@ -37,7 +37,7 @@ public:
     IDirect3DVertexDeclaration9* GetVertexDeclaration();
 
 protected:
-    /// override in subclasse to perform actual resource loading
+    /// override in subclass to perform actual resource loading
     virtual bool LoadResource();
     /// override in subclass to perform actual resource unloading
     virtual void UnloadResource();
@@ -58,12 +58,9 @@ nD3D9MeshArray::GetVertexBuffer(int index) const
     nMesh2* mesh = this->GetMeshAt(index);
     if (0 != mesh)
     {
-        return ((nD3D9Mesh*) mesh)->GetVertexBuffer();
+        return ((nD3D9Mesh*)mesh)->GetVertexBuffer();
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -77,12 +74,9 @@ nD3D9MeshArray::GetIndexBuffer() const
     nMesh2* mesh = this->GetMeshAt(0);
     if (0 != mesh)
     {
-        return ((nD3D9Mesh*) mesh)->GetIndexBuffer();
+        return ((nD3D9Mesh*)mesh)->GetIndexBuffer();
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------

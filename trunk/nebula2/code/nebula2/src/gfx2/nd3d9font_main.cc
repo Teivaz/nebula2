@@ -149,11 +149,3 @@ nD3D9Font::OnRestored()
         this->SetState(Valid);
     }
 }
-
-
-
-
-
-
-
-

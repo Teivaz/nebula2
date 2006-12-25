@@ -40,7 +40,7 @@ public:
     virtual void GenerateMipMaps();
 
 protected:
-    /// load texture resource (create rendertarget if render target resource)
+    /// load texture resource (create render target if render target resource)
     virtual bool LoadResource();
     /// unload texture resource
     virtual void UnloadResource();
@@ -59,11 +59,11 @@ private:
     IDirect3DBaseTexture9* GetBaseTexture();
     /// get render target surface (returns 0 if no render target)
     IDirect3DSurface9* GetRenderTarget();
-    /// get optional rendertarget depth stencil surface
+    /// get optional render target depth stencil surface
     IDirect3DSurface9* GetDepthStencil();
     /// get d3d9 texture interface
     IDirect3DTexture9* GetTexture2D();
-    /// verify pixelformat of rendertarget
+    /// verify pixelformat of render target
     bool CheckRenderTargetFormat(IDirect3D9* d3d9, IDirect3DDevice9* d3d9Device, DWORD usage, D3DFORMAT pixelFormat);
     /// convert file format to D3DX file format
     static D3DXIMAGE_FILEFORMAT FileFormatToD3DX(FileFormat fileFormat);
@@ -93,7 +93,7 @@ private:
     IDirect3DSurface9* renderTargetSurface;
     IDirect3DSurface9* depthStencilSurface;
 
-    nVideoPlayer*   videoPlayer;
+    nVideoPlayer* videoPlayer;
 };
 
 //------------------------------------------------------------------------------

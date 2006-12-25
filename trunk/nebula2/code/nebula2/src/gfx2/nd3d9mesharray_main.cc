@@ -68,7 +68,7 @@ nD3D9MeshArray::CreateVertexDeclaration()
 {
     n_assert(0 == this->vertexDeclaration);
 
-    nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+    nD3D9Server* gfxServer = (nD3D9Server*)nGfxServer2::Instance();
     n_assert(gfxServer && gfxServer->d3d9Device);
 
     const int maxElements = 11; //the maximum number of vertex components
@@ -89,11 +89,11 @@ nD3D9MeshArray::CreateVertexDeclaration()
         if (0 != mesh)
         {
             int curOffset  = 0;
-            int vertexComponentMask = ((nD3D9Mesh*) mesh)->GetVertexComponents();
+            int vertexComponentMask = ((nD3D9Mesh*)mesh)->GetVertexComponents();
             int index;
             for (index = 0; index < maxElements; index++)
             {
-                int mask = (1<<index);
+                int mask = 1 << index;
                 if (vertexComponentMask & mask)
                 {
                     bool ignoreElement = false;

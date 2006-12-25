@@ -153,7 +153,7 @@ nD3D9Mesh::OnRestored()
     Create a static d3d vertex buffer and validate the vertexBuffer member.
 
     - 27-Sep-04     floh    DX7 compatibility fix: software processing meshes
-                            now created in system mem, and without the WRITEONLY flag
+                            now created in system memory, and without the WRITEONLY flag
 */
 void
 nD3D9Mesh::CreateVertexBuffer()
@@ -173,7 +173,7 @@ nD3D9Mesh::CreateVertexBuffer()
     }
     else
     {
-        nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+        nD3D9Server* gfxServer = (nD3D9Server*)nGfxServer2::Instance();
         n_assert(gfxServer->d3d9Device);
 
         // this is either a WriteOnce or a WriteOnly vertex buffer,
@@ -248,7 +248,7 @@ nD3D9Mesh::CreateIndexBuffer()
     }
     else
     {
-        nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+        nD3D9Server* gfxServer = (nD3D9Server*)nGfxServer2::Instance();
         n_assert(gfxServer->d3d9Device);
         HRESULT hr;
 
@@ -443,11 +443,11 @@ nD3D9Mesh::LockVertices()
         HRESULT hr = this->vertexBuffer->Lock(0, 0, &ptr, this->d3dVBLockFlags);
         n_dxtrace(hr, "Lock() on vertex buffer failed in nD3D9Mesh()");
         n_assert(ptr);
-        retval = (float*) ptr;
+        retval = (float*)ptr;
     }
     else
     {
-        retval = (float*) this->privVertexBuffer;
+        retval = (float*)this->privVertexBuffer;
     }
     this->UnlockMutex();
     return retval;
@@ -487,11 +487,11 @@ nD3D9Mesh::LockIndices()
         HRESULT hr = this->indexBuffer->Lock(0, 0, &ptr, this->d3dIBLockFlags);
         n_dxtrace(hr, "Lock on index buffer failed in nD3D9Mesh");
         n_assert(ptr);
-        retval = (ushort*) ptr;
+        retval = (ushort*)ptr;
     }
     else
     {
-        retval = (ushort*) this->privIndexBuffer;
+        retval = (ushort*)this->privIndexBuffer;
     }
     this->UnlockMutex();
     return retval;
@@ -527,8 +527,5 @@ nD3D9Mesh::GetByteSize()
         int indexBufferSize  = this->GetNumIndices() * sizeof(ushort);
         return vertexBufferSize + indexBufferSize + nMesh2::GetByteSize();
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }

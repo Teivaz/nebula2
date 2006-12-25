@@ -241,70 +241,70 @@ nD3D9Server::SetTransform(TransformType type, const matrix44& matrix)
         bool setModelEyePos = false;
         switch (type)
         {
-            case Model:
-                if (!mvpOnly)
-                {
-                    shd->SetMatrix(nShaderState::Model, this->transform[Model]);
-                    shd->SetMatrix(nShaderState::InvModel, this->transform[InvModel]);
-                    shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
-                    shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
-                }
-                setModelEyePos = true;
-                setMVP = true;
-                break;
+        case Model:
+            if (!mvpOnly)
+            {
+                shd->SetMatrix(nShaderState::Model, this->transform[Model]);
+                shd->SetMatrix(nShaderState::InvModel, this->transform[InvModel]);
+                shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
+                shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
+            }
+            setModelEyePos = true;
+            setMVP = true;
+            break;
 
-            case View:
-                if (!mvpOnly)
-                {
-                    shd->SetMatrix(nShaderState::View, this->transform[View]);
-                    shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
-                    shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
-                    shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
-                    setEyePos = true;
-                }
-                setModelEyePos = true;
-                setEyeDir = true;
-                setMVP = true;
-                break;
+        case View:
+            if (!mvpOnly)
+            {
+                shd->SetMatrix(nShaderState::View, this->transform[View]);
+                shd->SetMatrix(nShaderState::InvView, this->transform[InvView]);
+                shd->SetMatrix(nShaderState::ModelView, this->transform[ModelView]);
+                shd->SetMatrix(nShaderState::InvModelView, this->transform[InvModelView]);
+                setEyePos = true;
+            }
+            setModelEyePos = true;
+            setEyeDir = true;
+            setMVP = true;
+            break;
 
-            case Projection:
-                if (!mvpOnly)
-                {
-                    shd->SetMatrix(nShaderState::Projection, this->transform[Projection]);
-                }
-                setMVP = true;
-                break;
+        case Projection:
+            if (!mvpOnly)
+            {
+                shd->SetMatrix(nShaderState::Projection, this->transform[Projection]);
+            }
+            setMVP = true;
+            break;
 
-            case Texture0:
-                if (!mvpOnly)
-                {
-                    shd->SetMatrix(nShaderState::TextureTransform0, this->transform[Texture0]);
-                }
-                break;
+        case Texture0:
+            if (!mvpOnly)
+            {
+                shd->SetMatrix(nShaderState::TextureTransform0, this->transform[Texture0]);
+            }
+            break;
 
-            case Texture1:
-                if (!mvpOnly)
-                {
-                    shd->SetMatrix(nShaderState::TextureTransform1, this->transform[Texture1]);
-                }
-                break;
+        case Texture1:
+            if (!mvpOnly)
+            {
+                shd->SetMatrix(nShaderState::TextureTransform1, this->transform[Texture1]);
+            }
+            break;
 
-            case Texture2:
-                if (!mvpOnly)
-                {
-                    shd->SetMatrix(nShaderState::TextureTransform2, this->transform[Texture2]);
-                }
-                break;
+        case Texture2:
+            if (!mvpOnly)
+            {
+                shd->SetMatrix(nShaderState::TextureTransform2, this->transform[Texture2]);
+            }
+            break;
 
-            case Texture3:
-                if (!mvpOnly)
-                {
-                    shd->SetMatrix(nShaderState::TextureTransform3, this->transform[Texture3]);
-                }
-                break;
+        case Texture3:
+            if (!mvpOnly)
+            {
+                shd->SetMatrix(nShaderState::TextureTransform3, this->transform[Texture3]);
+            }
+            break;
 
-            case Light:
-                break;
+        case Light:
+            break;
         }
         if (setMVP)
         {
@@ -759,7 +759,7 @@ nD3D9Server::SetRenderTarget(int index, nTexture2* t)
     Draw the currently set mesh with indexed primitives, texture and shader to
     the current render target.
 
-    FIXME: the multipass renderer should check if state actually needs to
+    FIXME: the multi-pass renderer should check if state actually needs to
     be applied again. This is not necessary if the effect only has 1 pass,
     and is the same effect with the same parameters as in the last
     invocation of Draw().
@@ -821,7 +821,7 @@ nD3D9Server::Draw(PrimitiveType primType)
     n_assert(this->d3d9Device && this->inBeginScene);
     HRESULT hr;
 
-    nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
+    nD3D9Shader* shader = (nD3D9Shader*)this->GetShader();
     n_assert(shader);
 
     // get primitive type and number of primitives
@@ -978,19 +978,19 @@ nD3D9Server::DrawIndexedInstancedNS(PrimitiveType primType)
             nShaderState::Param param = comp.GetParam();
             switch (comp.GetType())
             {
-                case nShaderState::Float:
-                    curShader->SetFloat(param, instStream->ReadFloat());
-                    break;
+            case nShaderState::Float:
+                curShader->SetFloat(param, instStream->ReadFloat());
+                break;
 
-                case nShaderState::Float4:
-                    curShader->SetFloat4(param, instStream->ReadFloat4());
-                    break;
+            case nShaderState::Float4:
+                curShader->SetFloat4(param, instStream->ReadFloat4());
+                break;
 
-                case nShaderState::Matrix44:
-                    // FIXME???
-                    // if modelview matrix, compute dependent matrices?
-                    curShader->SetMatrix(param, instStream->ReadMatrix44());
-                    break;
+            case nShaderState::Matrix44:
+                // FIXME???
+                // if modelview matrix, compute dependent matrices?
+                curShader->SetMatrix(param, instStream->ReadMatrix44());
+                break;
             }
         }
 
@@ -1047,19 +1047,19 @@ nD3D9Server::DrawInstancedNS(PrimitiveType primType)
             nShaderState::Param param = comp.GetParam();
             switch (comp.GetType())
             {
-                case nShaderState::Float:
-                    curShader->SetFloat(param, instStream->ReadFloat());
-                    break;
+            case nShaderState::Float:
+                curShader->SetFloat(param, instStream->ReadFloat());
+                break;
 
-                case nShaderState::Float4:
-                    curShader->SetFloat4(param, instStream->ReadFloat4());
-                    break;
+            case nShaderState::Float4:
+                curShader->SetFloat4(param, instStream->ReadFloat4());
+                break;
 
-                case nShaderState::Matrix44:
-                    // FIXME???
-                    // if modelview matrix, compute dependent matrices?
-                    curShader->SetMatrix(param, instStream->ReadMatrix44());
-                    break;
+            case nShaderState::Matrix44:
+                // FIXME???
+                // if modelview matrix, compute dependent matrices?
+                curShader->SetMatrix(param, instStream->ReadMatrix44());
+                break;
             }
         }
 

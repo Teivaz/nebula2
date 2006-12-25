@@ -64,7 +64,7 @@ nDShowServer::Close()
 {
     n_assert(this->IsOpen());
 
-    while (videoPlayers.Size()>0)
+    while (videoPlayers.Size() > 0)
     {
         this->DeleteVideoPlayer(videoPlayers.At(0));
     }
@@ -92,8 +92,6 @@ nDShowServer::PlayFile(const char* filename)
     n_assert(0 == this->mediaEvent);
     n_assert(0 == this->basicVideo);
 
-    HRESULT hr;
-
     nGfxServer2* gfxServer = nGfxServer2::Instance();
     gfxServer->BeginFrame();
     gfxServer->BeginScene();
@@ -117,7 +115,7 @@ nDShowServer::PlayFile(const char* filename)
     mbstowcs(widePath, mangledPath.Get(), mangledPath.Length() + 1);
 
     // create DirectShow filter graph
-    hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&this->graphBuilder);
+    HRESULT hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&this->graphBuilder);
     if (FAILED(hr))
     {
         n_error("nDShowServer: could not create DirectShow filter graph!");
@@ -325,7 +323,7 @@ nDShowServer::Trigger()
 nVideoPlayer*
 nDShowServer::NewVideoPlayer(nString name)
 {
-    nVideoPlayer* player = (nVideoPlayer*)nResourceServer::Instance()->NewResource("noggtheoraplayer", name.Get(), nResource::Other);
+    nVideoPlayer* player = (nVideoPlayer*)nResourceServer::Instance()->NewResource("noggtheoraplayer", name, nResource::Other);
     player->SetFilename(name);
     videoPlayers.PushBack(player);
     return player;
@@ -341,12 +339,16 @@ nDShowServer::DeleteVideoPlayer(nVideoPlayer* player)
     n_assert(player);
     int i;
     for (i = 0; i < videoPlayers.Size(); i++)
+    {
         if (videoPlayers.At(i) == player)
         {
             videoPlayers.Erase(i);
             break;
         }
+    }
     if (player->IsOpen())
+    {
         player->Close();
+    }
     player->Release();
 }

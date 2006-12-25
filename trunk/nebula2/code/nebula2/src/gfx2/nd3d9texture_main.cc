@@ -266,21 +266,21 @@ nD3D9Texture::CreateRenderTarget()
         D3DFORMAT colorFormat;
         switch (this->format)
         {
-            case X8R8G8B8:      colorFormat = D3DFMT_X8R8G8B8;      break;
-            case A8R8G8B8:      colorFormat = D3DFMT_A8R8G8B8;      break;
-            case G16R16:        colorFormat = D3DFMT_G16R16;        break;
-            case R16F:          colorFormat = D3DFMT_R16F;          break;
-            case G16R16F:       colorFormat = D3DFMT_G16R16F;       break;
-            case A16B16G16R16F: colorFormat = D3DFMT_A16B16G16R16F; break;
-            case R32F:          colorFormat = D3DFMT_R32F;          break;
-            case G32R32F:       colorFormat = D3DFMT_G32R32F;       break;
-            case A32B32G32R32F: colorFormat = D3DFMT_A32B32G32R32F; break;
-            case R5G6B5:        colorFormat = D3DFMT_R5G6B5;        break;
-            case A1R5G5B5:      colorFormat = D3DFMT_A1R5G5B5;      break;
-            case A4R4G4B4:      colorFormat = D3DFMT_A4R4G4B4;      break;
-            default:
-                n_error("nD3D9Texture: invalid render target pixel format!\n");
-                return false;
+        case X8R8G8B8:      colorFormat = D3DFMT_X8R8G8B8;      break;
+        case A8R8G8B8:      colorFormat = D3DFMT_A8R8G8B8;      break;
+        case G16R16:        colorFormat = D3DFMT_G16R16;        break;
+        case R16F:          colorFormat = D3DFMT_R16F;          break;
+        case G16R16F:       colorFormat = D3DFMT_G16R16F;       break;
+        case A16B16G16R16F: colorFormat = D3DFMT_A16B16G16R16F; break;
+        case R32F:          colorFormat = D3DFMT_R32F;          break;
+        case G32R32F:       colorFormat = D3DFMT_G32R32F;       break;
+        case A32B32G32R32F: colorFormat = D3DFMT_A32B32G32R32F; break;
+        case R5G6B5:        colorFormat = D3DFMT_R5G6B5;        break;
+        case A1R5G5B5:      colorFormat = D3DFMT_A1R5G5B5;      break;
+        case A4R4G4B4:      colorFormat = D3DFMT_A4R4G4B4;      break;
+        default:
+            n_error("nD3D9Texture: invalid render target pixel format!\n");
+            return false;
         }
 
         // make sure the format is valid as render target
@@ -365,25 +365,25 @@ nD3D9Texture::QueryD3DTextureAttributes()
 
         switch (desc.Format)
         {
-            case D3DFMT_R8G8B8:
-            case D3DFMT_X8R8G8B8:       this->SetFormat(X8R8G8B8); break;
-            case D3DFMT_A8R8G8B8:       this->SetFormat(A8R8G8B8); break;
-            case D3DFMT_R5G6B5:
-            case D3DFMT_X1R5G5B5:       this->SetFormat(R5G6B5); break;
-            case D3DFMT_A1R5G5B5:       this->SetFormat(A1R5G5B5); break;
-            case D3DFMT_A4R4G4B4:       this->SetFormat(A4R4G4B4); break;
-            case D3DFMT_G16R16:         this->SetFormat(G16R16); break;
-            case D3DFMT_DXT1:           this->SetFormat(DXT1); break;
-            case D3DFMT_DXT2:           this->SetFormat(DXT2); break;
-            case D3DFMT_DXT3:           this->SetFormat(DXT3); break;
-            case D3DFMT_DXT4:           this->SetFormat(DXT4); break;
-            case D3DFMT_DXT5:           this->SetFormat(DXT5); break;
-            case D3DFMT_R16F:           this->SetFormat(R16F); break;
-            case D3DFMT_G16R16F:        this->SetFormat(G16R16F); break;
-            case D3DFMT_A16B16G16R16F:  this->SetFormat(A16B16G16R16F); break;
-            case D3DFMT_R32F:           this->SetFormat(R32F); break;
-            case D3DFMT_G32R32F:        this->SetFormat(G32R32F); break;
-            case D3DFMT_A32B32G32R32F:  this->SetFormat(A32B32G32R32F); break;
+        case D3DFMT_R8G8B8:
+        case D3DFMT_X8R8G8B8:       this->SetFormat(X8R8G8B8); break;
+        case D3DFMT_A8R8G8B8:       this->SetFormat(A8R8G8B8); break;
+        case D3DFMT_R5G6B5:
+        case D3DFMT_X1R5G5B5:       this->SetFormat(R5G6B5); break;
+        case D3DFMT_A1R5G5B5:       this->SetFormat(A1R5G5B5); break;
+        case D3DFMT_A4R4G4B4:       this->SetFormat(A4R4G4B4); break;
+        case D3DFMT_G16R16:         this->SetFormat(G16R16); break;
+        case D3DFMT_DXT1:           this->SetFormat(DXT1); break;
+        case D3DFMT_DXT2:           this->SetFormat(DXT2); break;
+        case D3DFMT_DXT3:           this->SetFormat(DXT3); break;
+        case D3DFMT_DXT4:           this->SetFormat(DXT4); break;
+        case D3DFMT_DXT5:           this->SetFormat(DXT5); break;
+        case D3DFMT_R16F:           this->SetFormat(R16F); break;
+        case D3DFMT_G16R16F:        this->SetFormat(G16R16F); break;
+        case D3DFMT_A16B16G16R16F:  this->SetFormat(A16B16G16R16F); break;
+        case D3DFMT_R32F:           this->SetFormat(R32F); break;
+        case D3DFMT_G32R32F:        this->SetFormat(G32R32F); break;
+        case D3DFMT_A32B32G32R32F:  this->SetFormat(A32B32G32R32F); break;
         }
         this->SetWidth(desc.Width);
         this->SetHeight(desc.Height);
@@ -406,25 +406,25 @@ nD3D9Texture::QueryD3DTextureAttributes()
 
         switch (desc.Format)
         {
-            case D3DFMT_R8G8B8:
-            case D3DFMT_X8R8G8B8:       this->SetFormat(X8R8G8B8); break;
-            case D3DFMT_A8R8G8B8:       this->SetFormat(A8R8G8B8); break;
-            case D3DFMT_R5G6B5:
-            case D3DFMT_X1R5G5B5:       this->SetFormat(R5G6B5); break;
-            case D3DFMT_A1R5G5B5:       this->SetFormat(A1R5G5B5); break;
-            case D3DFMT_A4R4G4B4:       this->SetFormat(A4R4G4B4); break;
-            case D3DFMT_G16R16:         this->SetFormat(G16R16); break;
-            case D3DFMT_DXT1:           this->SetFormat(DXT1); break;
-            case D3DFMT_DXT2:           this->SetFormat(DXT2); break;
-            case D3DFMT_DXT3:           this->SetFormat(DXT3); break;
-            case D3DFMT_DXT4:           this->SetFormat(DXT4); break;
-            case D3DFMT_DXT5:           this->SetFormat(DXT5); break;
-            case D3DFMT_R16F:           this->SetFormat(R16F); break;
-            case D3DFMT_G16R16F:        this->SetFormat(G16R16F); break;
-            case D3DFMT_A16B16G16R16F:  this->SetFormat(A16B16G16R16F); break;
-            case D3DFMT_R32F:           this->SetFormat(R32F); break;
-            case D3DFMT_G32R32F:        this->SetFormat(G32R32F); break;
-            case D3DFMT_A32B32G32R32F:  this->SetFormat(A32B32G32R32F); break;
+        case D3DFMT_R8G8B8:
+        case D3DFMT_X8R8G8B8:       this->SetFormat(X8R8G8B8); break;
+        case D3DFMT_A8R8G8B8:       this->SetFormat(A8R8G8B8); break;
+        case D3DFMT_R5G6B5:
+        case D3DFMT_X1R5G5B5:       this->SetFormat(R5G6B5); break;
+        case D3DFMT_A1R5G5B5:       this->SetFormat(A1R5G5B5); break;
+        case D3DFMT_A4R4G4B4:       this->SetFormat(A4R4G4B4); break;
+        case D3DFMT_G16R16:         this->SetFormat(G16R16); break;
+        case D3DFMT_DXT1:           this->SetFormat(DXT1); break;
+        case D3DFMT_DXT2:           this->SetFormat(DXT2); break;
+        case D3DFMT_DXT3:           this->SetFormat(DXT3); break;
+        case D3DFMT_DXT4:           this->SetFormat(DXT4); break;
+        case D3DFMT_DXT5:           this->SetFormat(DXT5); break;
+        case D3DFMT_R16F:           this->SetFormat(R16F); break;
+        case D3DFMT_G16R16F:        this->SetFormat(G16R16F); break;
+        case D3DFMT_A16B16G16R16F:  this->SetFormat(A16B16G16R16F); break;
+        case D3DFMT_R32F:           this->SetFormat(R32F); break;
+        case D3DFMT_G32R32F:        this->SetFormat(G32R32F); break;
+        case D3DFMT_A32B32G32R32F:  this->SetFormat(A32B32G32R32F); break;
         }
         this->SetWidth(desc.Width);
         this->SetHeight(desc.Height);
@@ -911,9 +911,9 @@ nD3D9Texture::GetByteSize()
         // 3d or cube texture?
         switch (this->GetType())
         {
-            case TEXTURE_3D:   numPixels *= this->GetDepth(); break;
-            case TEXTURE_CUBE: numPixels *= 6; break;
-            default: break;
+        case TEXTURE_3D:   numPixels *= this->GetDepth(); break;
+        case TEXTURE_CUBE: numPixels *= 6; break;
+        default: break;
         }
 
         // mipmaps ?
@@ -921,15 +921,15 @@ nD3D9Texture::GetByteSize()
         {
             switch (this->GetType())
             {
-                case TEXTURE_2D:
-                case TEXTURE_CUBE:
-                    numPixels += numPixels / 3;
-                    break;
+            case TEXTURE_2D:
+            case TEXTURE_CUBE:
+                numPixels += numPixels / 3;
+                break;
 
-                default:
-                    /// 3d texture
-                    numPixels += numPixels / 7;
-                    break;
+            default:
+                /// 3d texture
+                numPixels += numPixels / 7;
+                break;
             }
         }
 
@@ -937,54 +937,51 @@ nD3D9Texture::GetByteSize()
         int size = 0;
         switch (this->GetFormat())
         {
-            case DXT1:
-                // 4 bits per pixel
-                size = numPixels / 2;
-                break;
+        case DXT1:
+            // 4 bits per pixel
+            size = numPixels / 2;
+            break;
 
-            case DXT2:
-            case DXT3:
-            case DXT4:
-            case DXT5:
-            case P8:
-                // 8 bits per pixel
-                size = numPixels;
-                break;
+        case DXT2:
+        case DXT3:
+        case DXT4:
+        case DXT5:
+        case P8:
+            // 8 bits per pixel
+            size = numPixels;
+            break;
 
-            case R5G6B5:
-            case A1R5G5B5:
-            case A4R4G4B4:
-            case R16F:
-                // 16 bits per pixel
-                size = numPixels * 2;
-                break;
+        case R5G6B5:
+        case A1R5G5B5:
+        case A4R4G4B4:
+        case R16F:
+            // 16 bits per pixel
+            size = numPixels * 2;
+            break;
 
-            case X8R8G8B8:
-            case A8R8G8B8:
-            case G16R16:
-            case R32F:
-            case G16R16F:
-                // 32 bits per pixel
-                size = numPixels * 4;
-                break;
+        case X8R8G8B8:
+        case A8R8G8B8:
+        case G16R16:
+        case R32F:
+        case G16R16F:
+            // 32 bits per pixel
+            size = numPixels * 4;
+            break;
 
-            case A16B16G16R16F:
-            case G32R32F:
-                // 64 bits per pixel
-                size = numPixels * 8;
-                break;
+        case A16B16G16R16F:
+        case G32R32F:
+            // 64 bits per pixel
+            size = numPixels * 8;
+            break;
 
-            case A32B32G32R32F:
-                // 128 bits per pixel
-                size = numPixels * 16;
-                break;
+        case A32B32G32R32F:
+            // 128 bits per pixel
+            size = numPixels * 16;
+            break;
         }
         return size;
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -996,16 +993,16 @@ nD3D9Texture::FileFormatToD3DX(FileFormat fileFormat)
 {
     switch (fileFormat)
     {
-        case BMP: return D3DXIFF_BMP;
-        case JPG: return D3DXIFF_JPG;
-        case TGA: return D3DXIFF_TGA;
-        case PNG: return D3DXIFF_PNG;
-        case DDS: return D3DXIFF_DDS;
-        case PPM: return D3DXIFF_PPM;
-        case DIB: return D3DXIFF_DIB;
-        case HDR: return D3DXIFF_HDR;
-        case PFM: return D3DXIFF_PFM;
-        default:  return D3DXIFF_JPG;
+    case BMP: return D3DXIFF_BMP;
+    case JPG: return D3DXIFF_JPG;
+    case TGA: return D3DXIFF_TGA;
+    case PNG: return D3DXIFF_PNG;
+    case DDS: return D3DXIFF_DDS;
+    case PPM: return D3DXIFF_PPM;
+    case DIB: return D3DXIFF_DIB;
+    case HDR: return D3DXIFF_HDR;
+    case PFM: return D3DXIFF_PFM;
+    default:  return D3DXIFF_JPG;
     }
 }
 

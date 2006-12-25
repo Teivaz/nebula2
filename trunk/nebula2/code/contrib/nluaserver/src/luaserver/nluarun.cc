@@ -189,7 +189,7 @@ bool nLuaServer::RunScript(const char *filename, nString& result)
     
     nFile* nfile = nFileServer2::Instance()->NewFileObject();
     nString path = nFileServer2::Instance()->ManglePath(filename);
-    if (!nfile->Open(path.Get(), "r"))
+    if (!nfile->Open(path, "r"))
     {
         result.Clear();
         nfile->Release();
