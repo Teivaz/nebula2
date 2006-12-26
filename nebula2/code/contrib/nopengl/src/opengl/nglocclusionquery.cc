@@ -134,7 +134,7 @@ nGLOcclusionQuery::AddShapeQuery(nGfxServer2::ShapeType type, const matrix44& mo
         newQuery.userData = userData;
         this->queryArray.Append(newQuery);
 
-        n_warning("nGLOcclusionQuery::AddShapeQuery(): CreateQuery failed!");
+        n_message("nGLOcclusionQuery::AddShapeQuery(): CreateQuery failed!");
     }
     //else
     //{

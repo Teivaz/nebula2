@@ -147,6 +147,9 @@ nGLSLShader::UnloadResource()
 {
     n_assert(this->IsLoaded());
 
+    this->techniqueName.Clear();
+    this->technique.Clear();
+
     // if this is the currently set shader, unlink from gfx server
     if (nGfxServer2::Instance()->GetShader() == this)
     {
@@ -222,46 +225,51 @@ nGLSLShader::LoadResource()
             }
             else if (child->Value() == nString("technique"))
             {
-                TiXmlElement* pass;
+                TiXmlElement* passElem;
+                nGLTechnique tech;
 
-                for (pass = child->FirstChildElement(); pass; pass = pass->NextSiblingElement())
+                for (passElem = child->FirstChildElement(); passElem; passElem = passElem->NextSiblingElement())
                 {
-                    if (pass->Value() == nString("pass"))
+                    if (passElem->Value() == nString("pass"))
                     {
-                        TiXmlElement* param;
+                        TiXmlElement* paramElem;
+
                         int paramCount = 0;
                         GLuint list = glGenLists(1);
+                        n_gltrace("nGLSLShader::LoadResource(). glGenLists failed!");
 
                         glNewList(list, GL_COMPILE);
-                        for (param = pass->FirstChildElement(); param; param = param->NextSiblingElement())
+                        for (paramElem = passElem->FirstChildElement(); paramElem; paramElem = paramElem->NextSiblingElement())
                         {
-                            if (param->Value() == nString("param"))
+                            if (paramElem->Value() == nString("param"))
                             {
-                                if (this->ParsePassParam(param->Attribute("name"), nString(param->Attribute("value"))))
+                                if (this->ParsePassParam(paramElem->Attribute("name"), nString(paramElem->Attribute("value"))))
                                 {
                                     paramCount++;
                                 }
                             }
                             else
                             {
-                                n_message("nGLSLShader::LoadResource(): Unsupported pass tag <%s>. Only <param> tag supported.", param->Value());
+                                n_message("nGLSLShader::LoadResource(): Unsupported pass tag <%s>. Only <param> tag supported.", paramElem->Value());
                             }
                         }
                         glEndList();
 
-                        if (paramCount > 0)
-                        {
-                        }
-                        else
+                        if (paramCount == 0)
                         {
                             glDeleteLists(list, 1);
+                            list = 0; // TODO: check this
                         }
+                        tech.passName.Append(passElem->Attribute("name"));
+                        tech.pass.Append(list);
                     }
                     else
                     {
-                        n_message("nGLSLShader::LoadResource(): Unsupported technique tag <%s>. Only <pass> tag supported.", pass->Value());
+                        n_message("nGLSLShader::LoadResource(): Unsupported technique tag <%s>. Only <pass> tag supported.", passElem->Value());
                     }
                 }
+                this->techniqueName.Append(child->Attribute("name"));
+                this->technique.Append(tech);
             }
             else
             {
@@ -914,6 +922,16 @@ nGLSLShader::ValidateEffect()
     this->didNotValidate = false;
     //this->UpdateParameterHandles();
 
+    // FIXME: this is incorrect technique selection
+    if (this->technique.Size() > 0)
+    {
+        this->activeTechniqueIdx = 0;
+    }
+    else
+    {
+        this->activeTechniqueIdx = -1;
+    }
+
     //n_gltrace("nGLSLShader::ValidateEffect().");
     n_glsltrace(this->programObj, "nGLSLShader::ValidateEffect().");
 }
@@ -953,7 +971,16 @@ void
 nGLSLShader::BeginPass(int pass)
 {
     n_gltrace("nGLSLShader::BeginPass().");
-    glCallList(this->technique[activeTechniqueIdx].pass[pass]);
+
+    if (-1 != this->activeTechniqueIdx)
+    {
+        GLuint passID = this->technique[activeTechniqueIdx].pass[pass];
+
+        if (GL_TRUE == glIsList(passID))
+        {
+            glCallList(passID);
+        }
+    }
 }
 
 //------------------------------------------------------------------------------

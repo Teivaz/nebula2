@@ -262,7 +262,7 @@ nGLServer2::TestResetDevice()
         return false;
     }
 */
-    return false;
+    return true;
 }
 
 //------------------------------------------------------------------------------
