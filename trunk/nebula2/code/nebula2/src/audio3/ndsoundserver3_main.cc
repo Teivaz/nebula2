@@ -50,7 +50,7 @@ nDSoundServer3::Open()
     HRESULT hr;
 
     // get public window handle, which has been initialized by the gfx subsystem
-    HWND hwnd = (HWND) this->refHwnd->GetI();
+    HWND hwnd = (HWND)this->refHwnd->GetI();
 
     // create DSUtil CSoundManager object
     this->soundManager = n_new(CSoundManager);
@@ -159,12 +159,11 @@ nDSoundServer3::UpdateListener(const nListener3& l)
 void
 nDSoundServer3::StartSound(nSound3* sound)
 {
-    if (this->noSoundDevice)
+    if (!this->noSoundDevice)
     {
-        return;
+        n_assert(sound);
+        sound->Start();
     }
-    n_assert(sound);
-    sound->Start();
 }
 
 //------------------------------------------------------------------------------
@@ -173,12 +172,11 @@ nDSoundServer3::StartSound(nSound3* sound)
 void
 nDSoundServer3::UpdateSound(nSound3* sound)
 {
-    if (this->noSoundDevice)
+    if (!this->noSoundDevice)
     {
-        return;
+        n_assert(sound);
+        sound->Update();
     }
-    n_assert(sound);
-    sound->Update();
 }
 
 //------------------------------------------------------------------------------
@@ -187,12 +185,11 @@ nDSoundServer3::UpdateSound(nSound3* sound)
 void
 nDSoundServer3::StopSound(nSound3* sound)
 {
-    if (this->noSoundDevice)
+    if (!this->noSoundDevice)
     {
-        return;
+        n_assert(sound);
+        sound->Stop();
     }
-    n_assert(sound);
-    sound->Stop();
 }
 
 //------------------------------------------------------------------------------

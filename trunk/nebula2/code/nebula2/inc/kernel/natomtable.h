@@ -12,7 +12,7 @@
 
     May be manually, expensive garbage collection pass would help? But in this
     case Atoms would need to become invalid some (and need to be able to
-    revalidate themselves). This is only possible if the atom table
+    revalidates themselves). This is only possible if the atom table
     stores pointers to all its atoms.... hmm hmm hmm...
 
     (C) 2004 RadonLabs GmbH

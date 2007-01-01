@@ -6,7 +6,7 @@
     @ingroup NebulaScriptAutoWrapper
     @class nCmdProtoNativeCPP
 
-    nCmdProtoNativeCPP classes are used to make easier thet definition of the script
+    nCmdProtoNativeCPP classes are used to make easier to definition of the script
     commands in Nebula classes (programmed in C++). It avoids to have to program
     the wrapper manually in plain C language.
 
@@ -28,7 +28,7 @@
     @brief Begin n_initcmds function & cl->BeginCmds()
     @param ClassName Name of the C++ class having the commands.
 */
-#define NCMDPROTONATIVECPP_INITCMDS_BEGIN(ClassName)         \
+#define NCMDPROTONATIVECPP_INITCMDS_BEGIN(ClassName)        \
 void                                                        \
 n_initcmds(nClass* cl)                                      \
 {                                                           \
@@ -40,14 +40,14 @@ n_initcmds(nClass* cl)                                      \
     @brief Adds the command to the nClass in n_initcmds functions.
     @param MemberName       name of the C++ member function
 */
-#define NCMDPROTONATIVECPP_ADDCMD(MemberName)                     \
+#define NCMDPROTONATIVECPP_ADDCMD(MemberName)               \
     ScriptClass_::AddCmd_ ## MemberName<ScriptClass_>(cl);
 
 /**
     @def NCMDPROTONATIVECPP_INITCMDS_END()
     @brief End of n_initcmds function & cl->EndCmds()
 */
-#define NCMDPROTONATIVECPP_INITCMDS_END()                         \
+#define NCMDPROTONATIVECPP_INITCMDS_END()                   \
     cl->EndCmds();                                          \
 }
 
@@ -163,7 +163,7 @@ n_initcmds(nClass* cl)                                      \
 */
 #define NCMDPROTONATIVECPP_DECLARE_ADDCMD(FourCC,NAME,TR,MemberName,TLIN,TLOUT)    \
 template <class TClassCast>                                             \
-inline static void AddCmd_ ## NAME (nClass * cl)                        \
+inline static void AddCmd_ ## NAME (nClass* cl)                         \
 {                                                                       \
     char ncmd_signature[N_MAXPATH];                                     \
     unsigned int fourcc = FourCC;                                       \
@@ -173,9 +173,9 @@ inline static void AddCmd_ ## NAME (nClass * cl)                        \
         ncmd_signature, #NAME);                                         \
     fourcc = TCmdProtoNativeCPP::Traits::CalcFourCC(                    \
         #NAME, fourcc);                                                 \
-    TCmdProtoNativeCPP * val =                                          \
+    TCmdProtoNativeCPP* val =                                           \
         n_new( TCmdProtoNativeCPP(                                      \
-            ncmd_signature,fourcc,&ScriptClass_::MemberName)            \
+            ncmd_signature, fourcc, &ScriptClass_::MemberName)          \
         );                                                              \
     cl->AddCmd(val);                                                    \
 }
@@ -189,12 +189,12 @@ class nCmdProtoNativeCPP : public nCmdProto
 {
 public:
 
-    typedef nCmdProtoTraits<TR,TListIn,TListOut> Traits;
+    typedef nCmdProtoTraits<TR, TListIn, TListOut> Traits;
 
     typedef typename Traits::TCmdDispatcher<TClass> TDispatcher;
 
     /// constructor
-    nCmdProtoNativeCPP(const char * signature, int fourcc, typename TDispatcher::TMemberFunction memf) :
+    nCmdProtoNativeCPP(const char* signature, int fourcc, typename TDispatcher::TMemberFunction memf) :
         nCmdProto(signature, fourcc),
         memf_(memf)
     {
@@ -202,9 +202,9 @@ public:
     }
 
     /// constructor with const method
-    nCmdProtoNativeCPP(const char * signature, int fourcc, typename TDispatcher::TMemberFunctionConst memf) :
+    nCmdProtoNativeCPP(const char* signature, int fourcc, typename TDispatcher::TMemberFunctionConst memf) :
         nCmdProto(signature, fourcc),
-        memf_(reinterpret_cast<typename TDispatcher::TMemberFunction> (memf))
+        memf_(reinterpret_cast<typename TDispatcher::TMemberFunction>(memf))
     {
         /// empty
     }
@@ -216,9 +216,9 @@ public:
     }
 
     /// dispatch command
-    virtual bool Dispatch(void * slf, nCmd * cmd)
+    virtual bool Dispatch(void* slf, nCmd* cmd)
     {
-        TClass * obj = reinterpret_cast<TClassCast *> (slf);
+        TClass* obj = reinterpret_cast<TClassCast*>(slf);
         return TDispatcher::Dispatch(obj, memf_, cmd);
     }
 

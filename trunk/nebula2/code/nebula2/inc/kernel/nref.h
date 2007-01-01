@@ -34,7 +34,7 @@
 
 //------------------------------------------------------------------------------
 template<class TYPE>
-class nRef : public nNode
+class nRef : nNode
 {
 public:
     /// default constructor
@@ -46,7 +46,7 @@ public:
     /// destructor
     ~nRef();
     /// assign TYPE pointer
-    nRef& operator=(TYPE *obj);
+    nRef& operator=(TYPE* obj);
     /// assign nRef object
     nRef& operator=(const nRef& rhs);
     /// equality operator
@@ -68,7 +68,7 @@ public:
     /// invalidate the ref
     void invalidate();
     /// set target object
-    void set(TYPE *obj);
+    void set(TYPE* obj);
     /// get target object (safe)
     TYPE* get() const;
     /// get target object (unsafe, may return 0)
@@ -187,7 +187,7 @@ inline
 bool
 nRef<TYPE>::isvalid() const
 {
-    return this->targetObject ? true : false;
+    return this->targetObject != 0;
 }
 
 //------------------------------------------------------------------------------

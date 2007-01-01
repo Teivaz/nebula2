@@ -30,7 +30,7 @@ nTimeServer::nTimeServer() :
     Singleton = this;
 
 #ifdef __WIN32__
-    QueryPerformanceCounter((LARGE_INTEGER *) &(this->time_diff));
+    QueryPerformanceCounter((LARGE_INTEGER*)&(this->time_diff));
 #elif defined(__LINUX__) || defined(__MACOSX__)
     struct timeval tv;
     gettimeofday(&tv,NULL);
@@ -58,7 +58,7 @@ nTimeServer::ResetTime()
     this->lock_time = 0;
 
 #ifdef __WIN32__
-    QueryPerformanceCounter((LARGE_INTEGER *)&(this->time_diff));
+    QueryPerformanceCounter((LARGE_INTEGER*)&(this->time_diff));
 #elif defined(__LINUX__) || defined(__MACOSX__)
     struct timeval tv;
     gettimeofday(&tv,NULL);
@@ -80,9 +80,9 @@ nTimeServer::SetTime(double t)
 #ifdef __WIN32__
     // t nach Ticks umrechnen
     LONGLONG freq;
-    QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
-    LONGLONG td = (LONGLONG) (t * ((double)freq));
-    QueryPerformanceCounter((LARGE_INTEGER *)&(this->time_diff));
+    QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+    LONGLONG td = (LONGLONG)(t * ((double)freq));
+    QueryPerformanceCounter((LARGE_INTEGER*)&(this->time_diff));
     this->time_stop = this->time_diff;
     this->time_diff -= td;
 #elif defined(__LINUX__) || defined(__MACOSX__)
@@ -113,7 +113,7 @@ nTimeServer::StopTime()
         this->stopped = true;
 
 #ifdef __WIN32__
-        QueryPerformanceCounter((LARGE_INTEGER *)&(this->time_stop));
+        QueryPerformanceCounter((LARGE_INTEGER*)&(this->time_stop));
 #elif defined(__LINUX__) || defined(__MACOSX__)
         struct timeval tv;
         gettimeofday(&tv,NULL);
@@ -140,7 +140,7 @@ nTimeServer::StartTime()
 
 #   ifdef __WIN32__
         LONGLONG time,td;
-        QueryPerformanceCounter((LARGE_INTEGER *)&time);
+        QueryPerformanceCounter((LARGE_INTEGER*)&time);
         td = time - this->time_stop;
         this->time_diff += td;
 #   elif defined(__LINUX__) || (__MACOSX__)
@@ -166,10 +166,10 @@ nTimeServer::GetTime()
     if (this->lock_delta_t > 0.0) return this->lock_time;
     else {
 #       ifdef __WIN32__
-        LONGLONG time,freq;
-        QueryPerformanceCounter((LARGE_INTEGER *)&time);
+        LONGLONG time, freq;
+        QueryPerformanceCounter((LARGE_INTEGER*)&time);
         if (this->stopped) time = this->time_stop;
-        QueryPerformanceFrequency((LARGE_INTEGER *)&freq);
+        QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
         LONGLONG td = time - this->time_diff;
         double d_time = ((double)td) / ((double)freq);
         return d_time;
@@ -286,4 +286,3 @@ double nTimeServer::GetFrameTime()
 //------------------------------------------------------------------------------
 //  EOF
 //------------------------------------------------------------------------------
-

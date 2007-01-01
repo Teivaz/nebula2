@@ -162,9 +162,9 @@ nScriptServer::GetSelectMethod() const
 */
 inline
 void
-nScriptServer::SetCurrentTargetObject(nObject *obj)
+nScriptServer::SetCurrentTargetObject(nObject* obj)
 {
-    nScriptServer::currentTargetObject = obj;
+    currentTargetObject = obj;
 }
 
 //------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ inline
 nObject*
 nScriptServer::GetCurrentTargetObject()
 {
-    return nScriptServer::currentTargetObject;
+    return currentTargetObject;
 }
 
 //------------------------------------------------------------------------------

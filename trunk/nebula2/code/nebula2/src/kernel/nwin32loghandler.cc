@@ -193,10 +193,10 @@ nWin32LogHandler::PutMessageBox(MsgType type, const char* msg, va_list argList)
     // the MessageBox() may not be visible
     if (MsgTypeError == type)
     {
-        nEnv* envHwnd = (nEnv*) nKernelServer::Instance()->Lookup("/sys/env/hwnd");
+        nEnv* envHwnd = (nEnv*)nKernelServer::Instance()->Lookup("/sys/env/hwnd");
         if (envHwnd)
         {
-            HWND hwnd = (HWND) envHwnd->GetI();
+            HWND hwnd = (HWND)envHwnd->GetI();
             if (hwnd)
             {
                 ShowWindow(hwnd, SW_MINIMIZE);

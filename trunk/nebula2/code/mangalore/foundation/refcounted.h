@@ -70,7 +70,7 @@ static bool factoryRegistered_##classname = classname::RegisterFactoryFunction()
 #define ImplementFactory(classname) \
 classname* classname::Create() \
 { \
-    return (classname*)classname::InternalCreate(); \
+    return (classname*)InternalCreate(); \
 } \
 Foundation::RefCounted* classname::InternalCreate() \
 { \

@@ -13,19 +13,19 @@
 #include "signals/nsignalserver.h"
 
 //------------------------------------------------------------------------------
-nSignalRegistry *
+nSignalRegistry*
 nSignalEmitter::GetSignalRegistry() const
 {
     /*  Ugly hack, this is more efficient than converting GetSignalRegistry to
         a virtual function. In the case more than one class can be derived from
         nSignalEmitter, or we want to override GetSignalRegistry then convert to
         virtual */
-    return ((static_cast<const nObject *> (this))->GetClass());
+    return ((static_cast<const nObject*>(this))->GetClass());
 }
 
 //------------------------------------------------------------------------------
 bool
-nSignalEmitter::BindSignal(nFourCC signal4cc, nSignalBinding * binding)
+nSignalEmitter::BindSignal(nFourCC signal4cc, nSignalBinding* binding)
 {
     // check signal found in the signal class information
     nSignal * signal = this->GetSignalRegistry()->FindSignalById(signal4cc);
@@ -41,7 +41,7 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nSignalBinding * binding)
     }
 
     // check if signal has already a binding set created
-    nSignalBindingSet * bs = this->FindSignalBindingSet(signal4cc);
+    nSignalBindingSet* bs = this->FindSignalBindingSet(signal4cc);
     if (0 == bs)
     {
         bs = n_new(nSignalBindingSet());
@@ -58,12 +58,12 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nSignalBinding * binding)
    Bind signal to a nCmdProto by its pointer
 */
 bool
-nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdProto, int priority)
+nSignalEmitter::BindSignal(nFourCC signal4cc, nObject* object, nCmdProto* cmdProto, int priority)
 {
     n_assert(object);
     n_assert(cmdProto);
 
-    nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdProto, priority));
+    nSignalBindingCmdProto* binding = n_new(nSignalBindingCmdProto(object, cmdProto, priority));
     bool result = false;
     if (binding)
     {
@@ -81,11 +81,11 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdP
    Bind signal to a nCmdProto by nFourCC (able to rebind on invocation)
 */
 bool
-nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourCC, int priority, bool rebind)
+nSignalEmitter::BindSignal(nFourCC signal4cc, nObject* object, nFourCC cmdFourCC, int priority, bool rebind)
 {
     n_assert(object);
 
-    nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdFourCC, priority, rebind));
+    nSignalBindingCmdProto* binding = n_new(nSignalBindingCmdProto(object, cmdFourCC, priority, rebind));
     bool result = false;
     if (binding)
     {
@@ -103,12 +103,12 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourC
    Bind signal to a nCmdProto by command name (able to rebind on invocation)
 */
 bool
-nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, const char * cmdName, int priority, bool rebind)
+nSignalEmitter::BindSignal(nFourCC signal4cc, nObject* object, const char* cmdName, int priority, bool rebind)
 {
     n_assert(object);
     n_assert(cmdName);
 
-    nSignalBindingCmdProto * binding = n_new(nSignalBindingCmdProto(object, cmdName, priority, rebind));
+    nSignalBindingCmdProto* binding = n_new(nSignalBindingCmdProto(object, cmdName, priority, rebind));
     bool result = false;
     if (binding)
     {
@@ -127,7 +127,7 @@ nSignalEmitter::BindSignal(nFourCC signal4cc, nObject * object, const char * cmd
    Aimed to be used from scripting.
 */
 bool
-nSignalEmitter::BindSignal(const char * signalName, nObject * object, const char * cmdName, int priority)
+nSignalEmitter::BindSignal(const char* signalName, nObject* object, const char* cmdName, int priority)
 {
     n_assert(signalName);
     n_assert(object);
@@ -147,9 +147,9 @@ nSignalEmitter::BindSignal(const char * signalName, nObject * object, const char
     Remove the provided signal binding
 */
 bool
-nSignalEmitter::UnbindSignal(nFourCC signal4cc, nSignalBinding * binding)
+nSignalEmitter::UnbindSignal(nFourCC signal4cc, nSignalBinding* binding)
 {
-    nSignalBindingSet * bs = this->FindSignalBindingSet(signal4cc);
+    nSignalBindingSet* bs = this->FindSignalBindingSet(signal4cc);
     if (0 == bs)
     {
         return false;
@@ -165,7 +165,7 @@ nSignalEmitter::UnbindSignal(nFourCC signal4cc, nSignalBinding * binding)
 bool
 nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject * object, const nCmdProto * cmdProto)
 {
-    nSignalBindingSet * bs = this->FindSignalBindingSet(signal4cc);
+    nSignalBindingSet* bs = this->FindSignalBindingSet(signal4cc);
     if (0 == bs)
     {
         return false;
@@ -179,9 +179,9 @@ nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject * object, const nC
     Remove all bindings matching the given signal, object, cmdproto
 */
 bool
-nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject * object, nFourCC cmdFourCC)
+nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject* object, nFourCC cmdFourCC)
 {
-    nSignalBindingSet * bs = this->FindSignalBindingSet(signal4cc);
+    nSignalBindingSet* bs = this->FindSignalBindingSet(signal4cc);
     if (0 == bs)
     {
         return false;
@@ -195,9 +195,9 @@ nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject * object, nFourCC 
     Remove all bindings matching the given signal, object, command name
 */
 bool
-nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject * object, const char * cmdName)
+nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject* object, const char* cmdName)
 {
-    nSignalBindingSet * bs = this->FindSignalBindingSet(signal4cc);
+    nSignalBindingSet* bs = this->FindSignalBindingSet(signal4cc);
     if (0 == bs)
     {
         return false;
@@ -211,15 +211,15 @@ nSignalEmitter::UnbindSignal(nFourCC signal4cc, const nObject * object, const ch
     Remove all bindings matching the given signal, object, command name
 */
 bool
-nSignalEmitter::UnbindSignal(const char * signalName, const nObject * object, const char * cmdName)
+nSignalEmitter::UnbindSignal(const char * signalName, const nObject* object, const char* cmdName)
 {
-    const nSignal * signal = this->GetSignalRegistry()->FindSignalByName(signalName);
+    const nSignal* signal = this->GetSignalRegistry()->FindSignalByName(signalName);
     if (0 == signal)
     {
         return false;
     }
 
-    nSignalBindingSet * bs = this->FindSignalBindingSet(signal->GetId());
+    nSignalBindingSet* bs = this->FindSignalBindingSet(signal->GetId());
     if (0 == bs)
     {
         return false;
@@ -234,11 +234,11 @@ nSignalEmitter::UnbindSignal(const char * signalName, const nObject * object, co
     Remove all bindings matching the given signal and object provided
 */
 bool
-nSignalEmitter::UnbindTargetObject(nFourCC signal4cc, const nObject * object)
+nSignalEmitter::UnbindTargetObject(nFourCC signal4cc, const nObject* object)
 {
     n_assert(object);
 
-    nSignalBindingSet * bs = this->FindSignalBindingSet(signal4cc);
+    nSignalBindingSet* bs = this->FindSignalBindingSet(signal4cc);
     if (0 == bs)
     {
         return false;
@@ -252,12 +252,12 @@ nSignalEmitter::UnbindTargetObject(nFourCC signal4cc, const nObject * object)
     Remove all bindings matching the given signal and object provided
 */
 bool
-nSignalEmitter::UnbindTargetObject(const char * signalName, const nObject * object)
+nSignalEmitter::UnbindTargetObject(const char* signalName, const nObject* object)
 {
     n_assert(signalName);
     n_assert(object);
 
-    nSignal * signal = this->GetSignalRegistry()->FindSignalByName(signalName);
+    nSignal* signal = this->GetSignalRegistry()->FindSignalByName(signalName);
     if (0 == signal)
     {
         return false;
@@ -271,14 +271,14 @@ nSignalEmitter::UnbindTargetObject(const char * signalName, const nObject * obje
     Remove all binding where the object provided is involved
 */
 bool
-nSignalEmitter::UnbindTargetObject(const nObject * object)
+nSignalEmitter::UnbindTargetObject(const nObject* object)
 {
     n_assert(object);
     bool found = false;
 
     for (int i = 0; i < this->bindingSets->Size(); i++)
     {
-        nSignalBindingSet * bs = this->bindingSets->GetElementAt(i);
+        nSignalBindingSet* bs = this->bindingSets->GetElementAt(i);
         n_assert(bs);
         found |= bs->RemoveBinding(object);
     }
@@ -298,7 +298,7 @@ nSignalEmitter::UnbindAllSignals()
         /// remove all binding sets
         while (this->bindingSets->Size() > 0)
         {
-            nSignalBindingSet * bs = this->bindingSets->GetElementAt(0);
+            nSignalBindingSet* bs = this->bindingSets->GetElementAt(0);
             n_delete(bs);
             this->bindingSets->RemByIndex(0);
         }
@@ -313,14 +313,14 @@ nSignalEmitter::UnbindAllSignals()
     object pointer and va_list
 */
 bool
-nSignalEmitter::PostSignal(nTime relT, nSignal * signal, va_list args)
+nSignalEmitter::PostSignal(nTime relT, nSignal* signal, va_list args)
 {
     n_assert(signal);
 
-    nCmd * cmd = signal->NewCmd();
+    nCmd* cmd = signal->NewCmd();
     n_assert(cmd);
     cmd->CopyInArgsFrom(args);
-    bool ret = nSignalServer::Instance()->PostCmd(relT, static_cast<nObject *>(this), cmd);
+    bool ret = nSignalServer::Instance()->PostCmd(relT, static_cast<nObject*>(this), cmd);
     return ret;
 }
 
@@ -328,21 +328,21 @@ nSignalEmitter::PostSignal(nTime relT, nSignal * signal, va_list args)
 /**
 */
 void
-nSignalEmitter::GetSignals(nHashList *signal_list) const
+nSignalEmitter::GetSignals(nHashList* signal_list) const
 {
     // for each superclass attach it's signal names to the list
-    nClass *cl = static_cast<nClass *> (this->GetSignalRegistry());
+    nClass* cl = static_cast<nClass*>(this->GetSignalRegistry());
 
     // for each superclass...
     do
     {
-        nHashList *cl_signals = cl->GetSignalList();
+        nHashList* cl_signals = cl->GetSignalList();
         if (cl_signals)
         {
-            nSignal * signal;
-            for (signal=(nSignal *) cl_signals->GetHead();
+            nSignal* signal;
+            for (signal=(nSignal*)cl_signals->GetHead();
                  signal;
-                 signal=(nSignal *) signal->GetSucc())
+                 signal=(nSignal*)signal->GetSucc())
             {
                 nHashNode* node = n_new(nHashNode(signal->GetName()));
                 node->SetPtr((void*)signal);

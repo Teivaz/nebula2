@@ -32,17 +32,17 @@ public:
         Methods for managing the bindings in a signal binding set. */
     //@{
     /// add a binding to a binding set
-    bool AddBinding(nSignalBinding * binding);
+    bool AddBinding(nSignalBinding* binding);
     /// remove a binding
-    bool RemoveBinding(nSignalBinding * binding);
+    bool RemoveBinding(nSignalBinding* binding);
     /// remove all bindings to the object provided
-    bool RemoveBinding(const nObject * objectPtr);
+    bool RemoveBinding(const nObject* objectPtr);
     /// remove all bindings for object and command
-    bool RemoveBinding(const nObject * objectPtr, const nCmdProto * cmdPtr);
+    bool RemoveBinding(const nObject* objectPtr, const nCmdProto* cmdPtr);
     /// remove all bindings for object and fourcc
-    bool RemoveBinding(const nObject * objectPtr, nFourCC fcc);
+    bool RemoveBinding(const nObject* objectPtr, nFourCC fcc);
     /// remove all bindings for object and command name
-    bool RemoveBinding(const nObject * objectPtr, const char * name);
+    bool RemoveBinding(const nObject* objectPtr, const char* name);
     /// remove all bindings
     void RemoveAllBindings();
     /// returns true if signal binding found in list
@@ -53,9 +53,9 @@ public:
         Methods for iterating over the bindings in a signal binding set. */
     //@{
     /// get first binding
-    nSignalBinding * GetHead() const;
+    nSignalBinding* GetHead() const;
     /// get last binding
-    nSignalBinding * GetTail() const;
+    nSignalBinding* GetTail() const;
     //@}
 
 private:
@@ -80,17 +80,17 @@ nSignalBindingSet::~nSignalBindingSet()
 //------------------------------------------------------------------------------
 inline
 bool
-nSignalBindingSet::AddBinding(nSignalBinding * binding)
+nSignalBindingSet::AddBinding(nSignalBinding* binding)
 {
     n_assert(binding);
 
     int priority = binding->GetPriority();
 
     // find the proper insertion point (signals ordered by priority)
-    nSignalBinding * node = static_cast<nSignalBinding *> (this->bindings.GetHead());
+    nSignalBinding* node = static_cast<nSignalBinding*>(this->bindings.GetHead());
     while (node && node->GetPriority() < priority)
     {
-        node = static_cast<nSignalBinding *> (node->GetSucc());
+        node = static_cast<nSignalBinding*> (node->GetSucc());
     }
 
     if (node)
@@ -99,7 +99,7 @@ nSignalBindingSet::AddBinding(nSignalBinding * binding)
     }
     else
     {
-        this->bindings.AddTail(static_cast<nNode *> (binding));
+        this->bindings.AddTail(static_cast<nNode*>(binding));
     }
 
     return true;
@@ -107,18 +107,18 @@ nSignalBindingSet::AddBinding(nSignalBinding * binding)
 
 //------------------------------------------------------------------------------
 inline
-nSignalBinding *
+nSignalBinding*
 nSignalBindingSet::GetHead() const
 {
-    return static_cast<nSignalBinding *> (this->bindings.GetHead());
+    return static_cast<nSignalBinding*>(this->bindings.GetHead());
 }
 
 //------------------------------------------------------------------------------
 inline
-nSignalBinding *
+nSignalBinding*
 nSignalBindingSet::GetTail() const
 {
-    return static_cast<nSignalBinding *> (this->bindings.GetTail());
+    return static_cast<nSignalBinding*>(this->bindings.GetTail());
 }
 
 //------------------------------------------------------------------------------

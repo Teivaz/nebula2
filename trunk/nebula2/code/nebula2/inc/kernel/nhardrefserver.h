@@ -30,7 +30,7 @@ public:
     void RegisterTargetObject(nRoot& targetObject);
 
 private:
-    nStrList   strList;
+    nStrList strList;
 };
 //------------------------------------------------------------------------------
 #endif

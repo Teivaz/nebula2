@@ -26,18 +26,18 @@ public:
     static const quaternion identity;
 
 public:
-    float x,y,z,w;
+    float x, y, z, w;
 
     //-- constructors -----------------------------------------------
     quaternion()
         : x(0.0f), y(0.0f), z(0.0f), w(1.0f)
-    {};
+    {}
     quaternion(float _x, float _y, float _z, float _w)
         : x(_x), y(_y), z(_z), w(_w)
-    {};
+    {}
     quaternion(const quaternion& q)
         : x(q.x), y(q.y), z(q.z), w(q.w)
-    {};
+    {}
 
     //-- setting elements -------------------------------------------
     void set(float _x, float _y, float _z, float _w) {
@@ -45,13 +45,13 @@ public:
         y = _y;
         z = _z;
         w = _w;
-    };
+    }
     void set(const quaternion& q) {
         x = q.x;
         y = q.y;
         z = q.z;
         w = q.w;
-    };
+    }
 
     //-- misc operations --------------------------------------------
     void ident() {
@@ -59,51 +59,51 @@ public:
         y = 0.0f;
         z = 0.0f;
         w = 1.0f;
-    };
+    }
 
     void conjugate() {
         x = -x;
         y = -y;
         z = -z;
-    };
+    }
 
     void scale(float s) {
         x *= s;
         y *= s;
         z *= s;
         w *= s;
-    };
+    }
 
     float norm() {
         return x*x + y*y + z*z + w*w;
-    };
+    }
 
     float magnitude() {
         float n = norm();
         if (n > 0.0f) return n_sqrt(n);
         else          return 0.0f;
-    };
+    }
 
     void invert() {
         float n = norm();
         if (n > 0.0f) scale(1.0f / norm());
         conjugate();
-    };
+    }
 
     void normalize() {
         float l = magnitude();
         if (l > 0.0f) scale(1.0f / l);
         else          set(0.0f,0.0f,0.0f,1.0f);
-    };
+    }
 
     //-- operators --------------------------------------------------
     bool operator==(const quaternion& q) {
         return ((x==q.x) && (y==q.y) && (z==q.z) && (w==q.w)) ? true : false;
-    };
+    }
 
     bool operator!=(const quaternion& q) {
         return ((x!=q.x) || (y!=q.y) || (z!=q.z) || (w!=q.w)) ? true : false;
-    };
+    }
 
     const quaternion& operator+=(const quaternion& q) {
         x += q.x;
@@ -111,7 +111,7 @@ public:
         z += q.z;
         w += q.w;
         return *this;
-    };
+    }
 
     const quaternion& operator-=(const quaternion& q) {
         x -= q.x;
@@ -119,7 +119,7 @@ public:
         z -= q.z;
         w -= q.w;
         return *this;
-    };
+    }
 
     const quaternion& operator*=(const quaternion& q) {
         float qx = w*q.x + x*q.w + y*q.z - z*q.y;
@@ -131,7 +131,7 @@ public:
         z = qz;
         w = qw;
         return *this;
-    };
+    }
 
     /// rotate vector by quaternion
     vector3 rotate(const vector3& v) {
@@ -143,7 +143,7 @@ public:
         return vector3(w * q.x + x * q.w + y * q.z - z * q.y,
                        w * q.y + y * q.w + z * q.x - x * q.z,
                        w * q.z + z * q.w + x * q.y - y * q.x);
-    };
+    }
 
     /**
         Create a rotation from one vector to an other. Works only with unit vectors.
@@ -206,7 +206,7 @@ public:
         y = v.y * sin_a;
         z = v.z * sin_a;
         w = cos_a;
-    };
+    }
 
     void set_rotate_x(float a) {
         float sin_a = n_sin(a * 0.5f);
@@ -215,7 +215,7 @@ public:
         y = 0.0f;
         z = 0.0f;
         w = cos_a;
-    };
+    }
 
     void set_rotate_y(float a) {
         float sin_a = n_sin(a * 0.5f);
@@ -224,7 +224,7 @@ public:
         y = sin_a;
         z = 0.0f;
         w = cos_a;
-    };
+    }
 
     void set_rotate_z(float a) {
         float sin_a = n_sin(a * 0.5f);
@@ -233,7 +233,7 @@ public:
         y = 0.0f;
         z = sin_a;
         w = cos_a;
-    };
+    }
 
     void set_rotate_xyz(float ax, float ay, float az) {
         quaternion qx, qy, qz;
@@ -243,7 +243,7 @@ public:
         *this = qx;
         *this *= qy;
         *this *= qz;
-    };
+    }
 
 	//--- fuzzy compare operators -----------------------------------
     bool isequal(const quaternion& v, float tol) const
@@ -253,7 +253,7 @@ public:
         else if (fabs(v.z-z) > tol) return false;
         else if (fabs(v.w-w) > tol) return false;
         return true;
-    };
+    }
 
     //-- rotation interpolation, set this matrix to the -------------
     //-- interpolated result of q0->q1 with l as interpolator -------
@@ -305,29 +305,29 @@ public:
         y = fScale1 * A.y + fScale2 * B.y;
         z = fScale1 * A.z + fScale2 * B.z;
         w = fScale1 * A.w + fScale2 * B.w;
-    };
+    }
 
     void lerp(const quaternion& q0, const quaternion& q1, float l)
     {
         slerp(q0, q1, l);
-    };
+    }
 };
 
 //--- global operators ----------------------------------------------
 static inline quaternion operator+(const quaternion& q0, const quaternion& q1) {
     return quaternion(q0.x+q1.x, q0.y+q1.y, q0.z+q1.z, q0.w+q1.w);
-};
+}
 
 static inline quaternion operator-(const quaternion& q0, const quaternion& q1) {
     return quaternion(q0.x-q1.x, q0.y-q1.y, q0.z-q1.z, q0.w-q1.w);
-};
+}
 
 static inline quaternion operator*(const quaternion& q0, const quaternion& q1) {
     return quaternion(q0.w*q1.x + q0.x*q1.w + q0.y*q1.z - q0.z*q1.y,
                       q0.w*q1.y + q0.y*q1.w + q0.z*q1.x - q0.x*q1.z,
                       q0.w*q1.z + q0.z*q1.w + q0.x*q1.y - q0.y*q1.x,
                       q0.w*q1.w - q0.x*q1.x - q0.y*q1.y - q0.z*q1.z);
-};
+}
 
 //------------------------------------------------------------------------------
 /**

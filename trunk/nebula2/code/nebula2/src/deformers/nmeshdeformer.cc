@@ -29,4 +29,3 @@ nMeshDeformer::Compute()
 {
     // empty
 }
-

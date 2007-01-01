@@ -95,7 +95,7 @@ nDSound3::Start()
     if (this->GetStreaming())
     {
         // reset buffer and fill with new data
-        CStreamingSound* streamingSound = (CStreamingSound*) snd;
+        CStreamingSound* streamingSound = (CStreamingSound*)snd;
         streamingSound->Reset();
         LPDIRECTSOUNDBUFFER dsBuffer = streamingSound->GetBuffer(0);
         streamingSound->FillBufferWithSound(dsBuffer, this->GetLooping());
@@ -155,7 +155,7 @@ nDSound3::Update()
     {
         if (this->GetStreaming())
         {
-            CStreamingSound* streamingSound = (CStreamingSound*) this->GetCSoundPtr();
+            CStreamingSound* streamingSound = (CStreamingSound*)this->GetCSoundPtr();
             n_assert(streamingSound);
             if (streamingSound->IsSoundPlaying())
             {
@@ -190,17 +190,11 @@ nDSound3::IsPlaying()
     {
         if (this->GetStreaming())
         {
-            CStreamingSound* snd = (CStreamingSound*) this->GetCSoundPtr();
+            CStreamingSound* snd = (CStreamingSound*)this->GetCSoundPtr();
             return (0 != snd->IsSoundPlaying());
         }
-        else
-        {
-            CSound* snd = this->GetCSoundPtr();
-            return (0 != snd->IsSoundPlaying(this->soundIndex));
-        }
+        CSound* snd = this->GetCSoundPtr();
+        return (0 != snd->IsSoundPlaying(this->soundIndex));
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }

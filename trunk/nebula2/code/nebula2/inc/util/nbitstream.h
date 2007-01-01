@@ -93,7 +93,7 @@ protected:
     void Clear();
     /// Write bit at current position to stream.
     void WriteBit(bool bit);
-    /// Read bit at currernt position from stream.
+    /// Read bit at current position from stream.
     bool ReadBit();
 
 private:
@@ -259,7 +259,7 @@ nBitStream::WriteInt(int value, int numBits)
     32 bytes will be filled with the correct sign bit.
 
     @param  numBits     number of bits to read
-    @return             the integer, correclty expanded to 32 bits
+    @return             the integer, correctly expanded to 32 bits
 */
 inline
 int
@@ -684,7 +684,7 @@ nBitStream::WriteBit(bool bit)
     n_assert(writable);
 
     // Set bit at current bit in current byte;
-    // assume that all upcomming bits are cleared
+    // assume that all upcoming bits are cleared
     if (bit)
     {
         int v = (bit) ? 1 : 0;

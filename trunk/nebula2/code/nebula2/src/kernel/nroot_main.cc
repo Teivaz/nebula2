@@ -71,16 +71,14 @@ bool
 nRoot::Release()
 {
     n_assert(this->refCount > 0);
-    bool retval = false;
-    this->refCount--;
-    if (this->refCount == 0)
+    if (--this->refCount == 0)
     {
         // do not delete as long as mutex is set
         this->LockMutex();
         n_delete(this);
-        retval = true;
+        return true;
     }
-    return retval;
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -108,7 +106,7 @@ nRoot::GetFullName() const
     i--;
     for (; i >= 0; i--)
     {
-        const char *curName = stack[i]->GetName();
+        const char* curName = stack[i]->GetName();
         str.Append(curName);
 
         // add slash if not hierarchy root, and not last element in path
@@ -235,7 +233,7 @@ nRoot::Sort()
     nRoot* c;
 
     // count child objects
-    for (num=0, c=this->GetHead(); c; c=c->GetSucc(), num++);
+    for (num = 0, c = this->GetHead(); c; c = c->GetSucc(), num++);
 
     if (num > 0)
     {
@@ -283,7 +281,7 @@ nRoot::SaveAs(const char* name)
         nRoot* c;
         if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {
-            // upsidedown: save children first, then own status
+            // upside down: save children first, then own status
             if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW))
             {
                 for (c = this->GetHead(); c; c = c->GetSucc())
@@ -319,7 +317,7 @@ nRoot::SaveAs(const char* name)
 /**
 */
 nObject*
-nRoot::Clone(const char *name)
+nRoot::Clone(const char* name)
 {
     n_assert(name);
     nObject* clone = NULL;
@@ -334,7 +332,7 @@ nRoot::Clone(const char *name)
         nRoot* c;
         if (this->saveModeFlags & N_FLAG_SAVEUPSIDEDOWN)
         {
-            // upsidedown: save children first, then own status
+            // upside down: save children first, then own status
             if (!(this->saveModeFlags & N_FLAG_SAVESHALLOW))
             {
                 for (c = this->GetHead(); c; c = c->GetSucc())

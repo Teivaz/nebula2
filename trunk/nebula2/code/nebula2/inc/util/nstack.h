@@ -68,7 +68,7 @@ nStack<TYPE>::~nStack()
 {
     // delete any remaining elements on stack
     nStackNode* sn;
-    while (sn = (nStackNode*) l.RemHead())
+    while (sn = (nStackNode*)l.RemHead())
     {
         n_delete(sn);
     }
@@ -92,7 +92,7 @@ template<class TYPE>
 TYPE
 nStack<TYPE>::Pop()
 {
-    nStackNode* sn = (nStackNode*) l.RemHead();
+    nStackNode* sn = (nStackNode*)l.RemHead();
     if (sn)
     {
         TYPE t = sn->Get();
@@ -112,7 +112,7 @@ template<class TYPE>
 const TYPE&
 nStack<TYPE>::Top() const
 {
-    nStackNode* sn = (nStackNode*) l.GetHead();
+    nStackNode* sn = (nStackNode*)l.GetHead();
     n_assert(sn);
     return sn->Get();
 }

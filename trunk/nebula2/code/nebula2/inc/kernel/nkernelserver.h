@@ -45,7 +45,7 @@ public:
     ~nKernelServer();
     /// return pointer to single kernel server instance
     static nKernelServer* Instance();
-    /// take the kernel lock (to make the kernel multithreading safe)
+    /// take the kernel lock (to make the kernel multi-threading safe)
     void Lock();
     /// release the kernel lock
     void Unlock();
@@ -103,7 +103,7 @@ public:
     /// add an extension class package to the kernel
     void AddPackage(void (*)());
     /// add a code module to the kernel
-    void AddModule(const char *, bool (*_init_func)(nClass *, nKernelServer *), void* (*_new_func)());
+    void AddModule(const char *, bool (*_init_func)(nClass*, nKernelServer*), void* (*_new_func)());
     /// get pointer to hard ref server
     nHardRefServer* GetHardRefServer() const;
     /// get pointer to file server
@@ -114,7 +114,7 @@ public:
     nRemoteServer* GetRemoteServer() const;
     /// get pointer to time server
     nTimeServer* GetTimeServer() const;
-    /// optionally call to update memory useage variables
+    /// optionally call to update memory usage variables
     void Trigger();
 
 private:
@@ -144,7 +144,7 @@ private:
     nLogHandler* defaultLogHandler; // the default log handler
     nLogHandler* curLogHandler;     // the current log handler
 
-    nEnv* varMemHighWaterSize;              // mem statistics
+    nEnv* varMemHighWaterSize;      // memory statistics
     nEnv* varMemTotalSize;
     nEnv* varMemTotalCount;
 

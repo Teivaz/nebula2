@@ -14,7 +14,7 @@
 #include "kernel/nremoteserver.h"
 #include "kernel/ndefaultloghandler.h"
 
-nKernelServer *nKernelServer::Singleton = 0;
+nKernelServer* nKernelServer::Singleton = 0;
 
 nNebulaUsePackage(nkernel);
 
@@ -37,9 +37,9 @@ nNebulaUsePackage(nkernel);
 nClass*
 nKernelServer::OpenClass(const char* className)
 {
-    this->Lock();
     n_assert(className);
-    nClass *cl = (nClass*) this->classList.Find(className);
+    this->Lock();
+    nClass* cl = (nClass*)this->classList.Find(className);
     this->Unlock();
     return cl;
 }
@@ -61,8 +61,8 @@ nKernelServer::NewUnnamedObject(const char* className)
     n_assert(className);
 
     this->Lock();
-    nClass *cl = this->OpenClass(className);
-    nObject *obj = 0;
+    nClass* cl = this->OpenClass(className);
+    nObject* obj = 0;
     if (cl)
     {
         obj = cl->NewObject();
@@ -92,37 +92,33 @@ nKernelServer::Lookup(const char* path)
     this->Lock();
     nRoot* cur = 0;
 
-    // check for empty string
-    if (path[0])
+    char* nextPathComponent;
+    char strBuf[N_MAXPATH];
+
+    // copy path to scratch buffer
+    char* str = strBuf;
+    n_strncpy2(strBuf, path, sizeof(strBuf));
+
+    if (this->IsAbsolutePath(str))
     {
-        char* nextPathComponent;
-        char strBuf[N_MAXPATH];
+        cur = this->root;
+    }
+    else
+    {
+        cur = this->cwd;
+    }
 
-        // copy path to scratch buffer
-        char *str = strBuf;
-        n_strncpy2(strBuf, path, sizeof(strBuf));
-
-        if (this->IsAbsolutePath(str))
+    while ((nextPathComponent = strtok(str, "/")) && cur)
+    {
+        if (str)
         {
-            cur = this->root;
+            str = NULL;
         }
-        else
-        {
-            cur = this->cwd;
-        }
-
-        while ((nextPathComponent = strtok(str, "/")) && cur)
-        {
-            if (str)
-            {
-                str = NULL;
-            }
-            cur = cur->Find(nextPathComponent);
-        }
+        cur = cur->Find(nextPathComponent);
     }
 
     this->Unlock();
-    return (nRoot *) cur;
+    return cur;
 }
 
 //------------------------------------------------------------------------------
@@ -141,7 +137,7 @@ nKernelServer::Lookup(const char* path)
      - 24-Oct-99   floh    don't break on problems, instead return NULL
 */
 nRoot*
-nKernelServer::CheckCreatePath(const char* className, const char *path, bool dieOnError)
+nKernelServer::CheckCreatePath(const char* className, const char* path, bool dieOnError)
 {
     n_assert(className);
     n_assert(path);
@@ -175,7 +171,7 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
             if (!child)
             {
                 // subdir doesn't exist, fill up
-                child = (nRoot *) this->NewUnnamedObject("nroot");
+                child = (nRoot*)this->NewUnnamedObject("nroot");
                 if (child)
                 {
                     child->SetName(curPathComponent);
@@ -198,28 +194,22 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
         if (!child)
         {
             // create and link object
-            child = (nRoot*) this->NewUnnamedObject(className);
+            child = (nRoot*)this->NewUnnamedObject(className);
             if (child)
             {
                 child->SetName(curPathComponent);
                 parent->AddTail(child);
                 child->Initialize();
+                return child;
             }
-            else
-            {
-                if (dieOnError) n_error("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
-                else            n_printf("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
-                return 0;
-            }
+            if (dieOnError) n_error("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
+            else            n_printf("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
+            return 0;
         }
     }
-    else
-    {
-        if (dieOnError) n_error("nKernelServer: Empty name for new object of class '%s'!\n", className);
-        else            n_printf("nKernelServer: Empty name for new object of class '%s'!\n", className);
-        return 0;
-    }
-    return child;
+    if (dieOnError) n_error("nKernelServer: Empty name for new object of class '%s'!\n", className);
+    else            n_printf("nKernelServer: Empty name for new object of class '%s'!\n", className);
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -232,8 +222,8 @@ nKernelServer::CheckCreatePath(const char* className, const char *path, bool die
                            + nFileServer Object is now called
                            "/sys/servers/file"
      - 15-Jan-99   floh    + there is no nRoot::Init() anymore.
-     - 22-Feb-99   floh    + char_buf initialising
-     - 26-Feb-99   floh    + initialising MemHandler
+     - 22-Feb-99   floh    + char_buf initializing
+     - 26-Feb-99   floh    + initializing MemHandler
      - 11-May-99   floh    + loads by default the Nebula-Package-DLL
      - 25-May-99   floh    + logmsg redirection
      - 26-May-99   floh    + num_objects, var_memnumalloc
@@ -283,7 +273,7 @@ nKernelServer::nKernelServer() :
     n_assert(this->hardRefServer);
 
     // create root object
-    this->root = (nRoot *) this->NewUnnamedObject("nroot");
+    this->root = (nRoot*)this->NewUnnamedObject("nroot");
     n_assert(this->root);
     this->root->SetName("/");
     this->cwd = this->root;
@@ -295,9 +285,9 @@ nKernelServer::nKernelServer() :
     this->timeServer    = (nTimeServer*)    this->New("ntimeserver",    "/sys/servers/time");
 
     // create memory status variables
-    this->varMemHighWaterSize = (nEnv*) this->New("nenv", "/sys/var/mem_highwatersize");
-    this->varMemTotalSize     = (nEnv*) this->New("nenv", "/sys/var/mem_totalsize");
-    this->varMemTotalCount    = (nEnv*) this->New("nenv", "/sys/var/mem_totalcount");
+    this->varMemHighWaterSize = (nEnv*)this->New("nenv", "/sys/var/mem_highwatersize");
+    this->varMemTotalSize     = (nEnv*)this->New("nenv", "/sys/var/mem_totalsize");
+    this->varMemTotalCount    = (nEnv*)this->New("nenv", "/sys/var/mem_totalcount");
 }
 
 //------------------------------------------------------------------------------
@@ -355,11 +345,11 @@ nKernelServer::~nKernelServer()
     while ((!(isEmpty = this->classList.IsEmpty())) && (numZeroRefs > 0))
     {
         numZeroRefs = 0;
-        nClass *actClass = (nClass*) this->classList.GetHead();
-        nClass *nextClass;
+        nClass* actClass = (nClass*)this->classList.GetHead();
+        nClass* nextClass;
         do
         {
-            nextClass = (nClass*) actClass->GetSucc();
+            nextClass = (nClass*)actClass->GetSucc();
             if (actClass->GetRefCount() == 0)
             {
                 numZeroRefs++;
@@ -374,13 +364,13 @@ nKernelServer::~nKernelServer()
         n_printf("~nKernelServer(): ref_count error cleaning up class list!\n");
         n_printf("Offending classes:\n");
         nClass* actClass;
-        for (actClass = (nClass*) this->classList.GetHead();
+        for (actClass = (nClass*)this->classList.GetHead();
              actClass;
-             actClass = (nClass*) actClass->GetSucc())
+             actClass = (nClass*)actClass->GetSucc())
         {
             n_printf("%s: refcount %d\n", actClass->GetName(), actClass->GetRefCount());
         }
-        n_error("nKernelServer: Refcount errors occured during cleanup, check log for details!\n");
+        n_error("nKernelServer: Refcount errors occurred during cleanup, check log for details!\n");
     }
 
     // kill the nHardRefServer
@@ -526,13 +516,13 @@ nKernelServer::Error(const char* str, ...)
      - 17-May-00   floh    created
 */
 void
-nKernelServer::AddClass(const char *superClassName, nClass *cl)
+nKernelServer::AddClass(const char* superClassName, nClass* cl)
 {
     this->Lock();
     n_assert(superClassName);
     n_assert(cl);
 
-    nClass *superClass = this->OpenClass(superClassName);
+    nClass* superClass = this->OpenClass(superClassName);
     if (superClass)
     {
         superClass->AddSubClass(cl);
@@ -553,12 +543,12 @@ nKernelServer::AddClass(const char *superClassName, nClass *cl)
      - 17-May-00   floh    created
 */
 void
-nKernelServer::RemClass(nClass *cl)
+nKernelServer::RemClass(nClass* cl)
 {
     this->Lock();
     n_assert(cl);
 
-    nClass *superClass = cl->GetSuperClass();
+    nClass* superClass = cl->GetSuperClass();
     n_assert(superClass);
     superClass->RemSubClass(cl);
     this->ReleaseClass(superClass);
@@ -581,7 +571,7 @@ nKernelServer::FindClass(const char* className)
 {
     n_assert(className);
     this->Lock();
-    nClass *cl = (nClass *) this->classList.Find(className);
+    nClass* cl = (nClass*)this->classList.Find(className);
     this->Unlock();
     return cl;
 }
@@ -599,7 +589,7 @@ nKernelServer::CreateClass(const char* className)
 {
     n_assert(className);
     this->Lock();
-    nClass *cl = this->OpenClass(className);
+    nClass* cl = this->OpenClass(className);
     if (cl)
     {
         cl->AddRef();
@@ -649,7 +639,7 @@ nKernelServer::New(const char* className, const char* path)
 {
     n_assert(className && path);
     this->Lock();
-    nRoot *o = this->CheckCreatePath(className, path, true);
+    nRoot* o = this->CheckCreatePath(className, path, true);
     n_assert(o);
     this->Unlock();
     return o;
@@ -668,7 +658,7 @@ nKernelServer::New(const char* className)
 {
     n_assert(className);
     this->Lock();
-    nObject *obj = this->NewUnnamedObject(className);
+    nObject* obj = this->NewUnnamedObject(className);
     if (!obj)
     {
         n_error("nKernelServer: Couldn't create object of class '%s'.\n", className);
@@ -690,11 +680,11 @@ nKernelServer::New(const char* className)
                            null pointer should be done on the caller side.
 */
 nRoot*
-nKernelServer::NewNoFail(const char* className, const char *path)
+nKernelServer::NewNoFail(const char* className, const char* path)
 {
     n_assert(className && path);
     this->Lock();
-    nRoot *o = this->CheckCreatePath(className, path, false);
+    nRoot* o = this->CheckCreatePath(className, path, false);
     if (!o)
     {
         n_printf("nKernelServer: Couldn't create object of class '%s'.\n", className);
@@ -715,7 +705,7 @@ nKernelServer::NewNoFail(const char* className)
 {
     n_assert(className);
     this->Lock();
-    nObject *obj = this->NewUnnamedObject(className);
+    nObject* obj = this->NewUnnamedObject(className);
     if (!obj)
     {
         n_printf("nKernelServer: Couldn't create object of class '%s'.\n", className);
@@ -730,7 +720,7 @@ nKernelServer::NewNoFail(const char* className)
     Create a Nebula object from a persistent object file. The created
     object's name is derived from the path name (for nRoot-derived objects).
 
-    @param  path    path of persistent object file in host filesystem
+    @param  path    path of persistent object file in host file system
     @return         pointer to created object, or 0
 
      - 08-Oct-98   floh    created
@@ -751,7 +741,7 @@ nKernelServer::Load(const char* path)
 /*
     Create an nRoot object from a persistent object file with a given name.
 
-    @param  path    path of persistent object file in host filesystem
+    @param  path    path of persistent object file in host file system
     @param  name    object name
     @return         pointer to created object, or 0
 
@@ -767,7 +757,7 @@ nKernelServer::LoadAs(const char* path, const char* name)
     nObject* obj = this->persistServer->LoadObject(path, name);
     n_assert(obj->IsA("nroot"));
     this->Unlock();
-    return (nRoot *)obj;
+    return (nRoot*)obj;
 }
 
 //------------------------------------------------------------------------------
@@ -843,7 +833,7 @@ nRoot*
 nKernelServer::PopCwd()
 {
     this->Lock();
-    nRoot *prevCwd = this->cwd;
+    nRoot* prevCwd = this->cwd;
     this->cwd = this->cwdStack.Pop();
     this->Unlock();
     return prevCwd;
@@ -851,7 +841,7 @@ nKernelServer::PopCwd()
 
 //------------------------------------------------------------------------------
 /**
-    Update mem status variables from mem manager.
+    Update memory status variables from memory manager.
 
      - 13-May-99   floh    created
 */
@@ -883,12 +873,12 @@ nKernelServer::AddPackage(void(*_func)())
     from the n_init() function of a class package.
 */
 void
-nKernelServer::AddModule(const char *name,
-                         bool (*_init_func)(nClass *, nKernelServer *),
-                         void *(*_new_func)())
+nKernelServer::AddModule(const char* name,
+                         bool (*_init_func)(nClass*, nKernelServer*),
+                         void* (*_new_func)())
 {
     this->Lock();
-    nClass *cl = (nClass *) this->classList.Find(name);
+    nClass* cl = (nClass*)this->classList.Find(name);
     if (!cl)
     {
         cl = n_new(nClass(name, this, _init_func, _new_func));
@@ -912,7 +902,7 @@ nKernelServer::ReplaceFileServer(const char* className)
         this->fileServer->Release();
         this->fileServer = 0;
     }
-    this->fileServer = (nFileServer2*) this->New(className, "/sys/servers/file2");
+    this->fileServer = (nFileServer2*)this->New(className, "/sys/servers/file2");
     n_assert(this->fileServer);
     this->Unlock();
 }

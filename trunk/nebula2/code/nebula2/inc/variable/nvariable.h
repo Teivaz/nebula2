@@ -39,7 +39,7 @@ public:
 
     /// default constructor
     nVariable();
-    /// int constuctor
+    /// int constructor
     nVariable(Handle h, int val);
     /// float constructor
     nVariable(Handle h, float val);
@@ -57,7 +57,7 @@ public:
     nVariable(Handle h, Handle val);
     /// constructor
     nVariable(Type t, Handle h);
-    /// copy contstructor
+    /// copy constructor
     nVariable(const nVariable& rhs);
     /// destructor
     ~nVariable();

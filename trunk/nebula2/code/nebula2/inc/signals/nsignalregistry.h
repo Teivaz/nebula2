@@ -30,17 +30,17 @@ public:
     /// start defining signals
     void BeginSignals(int numSignals);
     /// add a signal object already created
-    bool AddSignal(nSignal * signal);
+    bool AddSignal(nSignal* signal);
     /// add a signal object already created
-    bool AddSignal(nSignal & signal);
+    bool AddSignal(nSignal& signal);
     /// add a signal to the signal registry
-    bool AddSignal(const char * proto_def, nFourCC id);
+    bool AddSignal(const char* proto_def, nFourCC id);
     /// finish defining signals
     void EndSignals();
     /// find a signal by name
-    nSignal * FindSignalByName(const char * name);
+    nSignal* FindSignalByName(const char* name);
     /// find a signal by fourcc code
-    nSignal * FindSignalById(nFourCC id);
+    nSignal* FindSignalById(nFourCC id);
     /// Get list of signals
     nHashList* GetSignalList() const;
     //@}
@@ -49,7 +49,7 @@ public:
     int GetNumSignals() const;
 
 private:
-    nHashList * signalList;
+    nHashList* signalList;
     int numSignals;
 };
 

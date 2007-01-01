@@ -137,7 +137,7 @@ public:
     virtual void SetTransform(TransformType type, const matrix44& matrix);
     /// draw the current mesh with indexed primitives
     virtual void DrawIndexed(PrimitiveType primType);
-    /// draw the current mesh witn non-indexed primitives
+    /// draw the current mesh with non-indexed primitives
     virtual void Draw(PrimitiveType primType);
     /// render indexed primitives without applying shader state (NS == No Shader)
     virtual void DrawIndexedNS(PrimitiveType primType);
@@ -234,9 +234,9 @@ private:
     void UpdateCursor();
     /// get a pointer to the global d3dx effect pool
     ID3DXEffectPool* GetEffectPool() const;
-    /// instancer version of DrawIndexedNS()
+    /// instant version of DrawIndexedNS()
     void DrawIndexedInstancedNS(PrimitiveType primType);
-    /// instancer version of DrawNS()
+    /// instant version of DrawNS()
     void DrawInstancedNS(PrimitiveType primType);
     /// update shared shader parameters per frame
     void UpdatePerFrameSharedShaderParams();
@@ -254,7 +254,7 @@ private:
     void UpdateScissorRect();
     /// returns the current render target size in pixels
     vector2 GetCurrentRenderTargetSize() const;
-    /// check for multisample AA compatibility
+    /// check for multi-sample AA compatibility
     D3DMULTISAMPLE_TYPE CheckMultiSampleType(D3DFORMAT backbufferFormat, D3DFORMAT depthFormat, bool windowed);
     /// draw text immediately
     void DrawTextImmediate(nFont2* font, const nString& text, const vector4& color, const rectangle& rect, uint flags);
@@ -304,7 +304,7 @@ private:
     nRef<nD3D9Shader> refSharedShader;          ///< reference shader for shared effect parameters
 
     #ifdef __NEBULA_STATS__
-    IDirect3DQuery9*   queryResourceManager;    ///< for quering the d3d resource manager
+    IDirect3DQuery9*   queryResourceManager;    ///< for querying the d3d resource manager
     nTime timeStamp;                            ///< time stamp for FPS computation
     // query watcher variables
     WATCHER_DECLARE(watchNumPrimitives);

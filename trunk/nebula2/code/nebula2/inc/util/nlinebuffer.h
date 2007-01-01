@@ -22,7 +22,7 @@ public:
     /// write string to line buffer
     void Put(const char*);
     /// return pointer to line defined by line number
-    const char *GetLine(int) const;
+    const char* GetLine(int) const;
     /// get line number of first line
     int GetHeadLine() const;
     /// get line number of last line
@@ -37,7 +37,7 @@ public:
 private:
     /// get next line number
     int nextLine(int) const;
-    /// get previus line number
+    /// get previous line number
     int prevLine(int) const;
 
     /// private class to keep track of lines in buffer
@@ -56,7 +56,7 @@ private:
 
         int line_len;
         int act_pos;
-        char *line;
+        char* line;
     };
 
     enum
@@ -64,7 +64,7 @@ private:
         N_LINE_LEN  = 80,
         N_NUM_LINES = 256,
     };
-    char *c_buf;
+    char* c_buf;
     nLine line_array[N_NUM_LINES];
     int tail_line;
     int head_line;
@@ -120,7 +120,7 @@ nLineBuffer::nLine::Reset()
 */
 inline
 const char*
-nLineBuffer::nLine::Append(const char *s)
+nLineBuffer::nLine::Append(const char* s)
 {
     n_assert(s);
 
@@ -170,7 +170,7 @@ inline
 nLineBuffer::nLineBuffer()
 {
     int i;
-    this->c_buf = (char *) n_calloc(N_LINE_LEN, N_NUM_LINES);
+    this->c_buf = (char*)n_calloc(N_LINE_LEN, N_NUM_LINES);
     n_assert(this->c_buf);
     for (i = 0; i < N_NUM_LINES; i++)
     {
@@ -219,7 +219,7 @@ int nLineBuffer::prevLine(int l) const
 */
 inline
 void
-nLineBuffer::Put(const char *s)
+nLineBuffer::Put(const char* s)
 {
     const char *cont = s;
     while (cont && (*cont) && (cont = this->line_array[this->head_line].Append(cont)))
@@ -307,7 +307,7 @@ nLineBuffer::GetLines(const char** array, int arraySize) const
          (i != -1) && (numLines < arraySize);
          i = this->GetPrevLine(i))
     {
-        const char *l = this->GetLine(i);
+        const char* l = this->GetLine(i);
         if (l)
         {
             if (*l) array[numLines++] = l;

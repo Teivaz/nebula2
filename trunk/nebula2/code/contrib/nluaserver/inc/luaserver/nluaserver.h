@@ -40,21 +40,21 @@ public:
     nLuaServer();
     virtual ~nLuaServer();
  
-    virtual bool Run(const char *, nString&);
-    virtual bool RunScript(const char *, nString&);
-    virtual bool RunFunction(const char *, nString&);
+    virtual bool Run(const char*, nString&);
+    virtual bool RunScript(const char*, nString&);
+    virtual bool RunFunction(const char*, nString&);
     virtual nString Prompt();
     
     const char* GenerateStackTrace();
  
     virtual nFile* BeginWrite(const char* filename, nObject* obj);  
-    virtual bool WriteComment(nFile *, const char *);
-    virtual bool WriteBeginNewObject(nFile *, nRoot *, nRoot *);
-    virtual bool WriteBeginNewObjectCmd(nFile *, nRoot *, nRoot *, nCmd *);
-    virtual bool WriteBeginSelObject(nFile *, nRoot *, nRoot *);
-    virtual bool WriteCmd(nFile *, nCmd *);
-    virtual bool WriteEndObject(nFile *, nRoot *, nRoot *);
-    virtual bool EndWrite(nFile *);
+    virtual bool WriteComment(nFile*, const char*);
+    virtual bool WriteBeginNewObject(nFile*, nRoot*, nRoot*);
+    virtual bool WriteBeginNewObjectCmd(nFile*, nRoot*, nRoot*, nCmd *);
+    virtual bool WriteBeginSelObject(nFile*, nRoot*, nRoot*);
+    virtual bool WriteCmd(nFile*, nCmd*);
+    virtual bool WriteEndObject(nFile*, nRoot*, nRoot*);
+    virtual bool EndWrite(nFile*);
  
     virtual bool Trigger(void);
 
@@ -76,16 +76,16 @@ public:
     static void ListArgToTable(lua_State*, nArg*, bool);
 
 public:
-    static nLuaServer *Instance;
+    static nLuaServer* Instance;
     nString classCacheName;
     nString thunkStoreName;
     
 private:
-    static void ArgToStack( lua_State*, nArg* );
-    static bool StackToArg( lua_State*, nArg*, int index );
-    static void StackToString( lua_State*, int, nString& );
+    static void ArgToStack(lua_State*, nArg*);
+    static bool StackToArg(lua_State*, nArg*, int index);
+    static void StackToString(lua_State*, int, nString&);
     void reg_globalfunc(lua_CFunction, const char*);
-    void write_select_statement(nFile *, nRoot *, nRoot *);
+    void write_select_statement(nFile*, nRoot*, nRoot*);
     bool ExecuteLuaChunk(nString&, int errfunc);
 
     long indent_level;

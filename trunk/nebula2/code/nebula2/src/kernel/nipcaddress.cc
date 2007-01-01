@@ -132,17 +132,17 @@ nIpcAddress::IsInternetAddress(const in_addr& addr)
         // Class A net
         return false;
     }
-    else if ((b1 == 172) && (b2 >= 16) && (b2 <= 31))
+    if ((b1 == 172) && (b2 >= 16) && (b2 <= 31))
     {
         // Class B net
         return false;
     }
-    else if ((b1 == 192) && (b2 == 168) && (b3 >= 0) && (b3 <= 254))
+    if ((b1 == 192) && (b2 == 168) && (b3 >= 0) && (b3 <= 254))
     {
         // Class C net
         return false;
     }
-    else if (b1 < 224)
+    if (b1 < 224)
     {
         // unknown other local net type
         return false;
@@ -192,7 +192,7 @@ nIpcAddress::ValidateIpAddr()
         }
 
         // initialize with the default address
-        this->ipAddr = *((struct in_addr *)he->h_addr);
+        this->ipAddr = *((struct in_addr*)he->h_addr);
         if (this->hostName == "inetself")
         {
             // if internet address requested, scan list of ip addresses
@@ -200,9 +200,9 @@ nIpcAddress::ValidateIpAddr()
             int i;
             for (i = 0; (0 != he->h_addr_list[i]); i++)
             {
-                if (this->IsInternetAddress(*((struct in_addr *)he->h_addr_list[i])))
+                if (this->IsInternetAddress(*((struct in_addr*)he->h_addr_list[i])))
                 {
-                    this->ipAddr = *((struct in_addr *)he->h_addr_list[i]);
+                    this->ipAddr = *((struct in_addr*)he->h_addr_list[i]);
                     break;
                 }
             }
@@ -216,7 +216,7 @@ nIpcAddress::ValidateIpAddr()
             // could not resolve host name!
             return false;
         }
-        this->ipAddr = *((struct in_addr *)he->h_addr);
+        this->ipAddr = *((struct in_addr*)he->h_addr);
     }
 
     // also convert the ip address to a string

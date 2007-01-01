@@ -50,24 +50,24 @@ public:
     /// destructor
     virtual ~nTclServer();
     /// evaluate a string
-    virtual bool Run(const char *, nString&);
+    virtual bool Run(const char*, nString&);
     /// invoke a script function by name, with no parameters
-    virtual bool RunFunction(const char *, nString&);
+    virtual bool RunFunction(const char*, nString&);
     /// evaluate a file
-    virtual bool RunScript(const char *, nString&);
+    virtual bool RunScript(const char*, nString&);
 
     /// write header of a persistent object file
     virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// begin a new object in a persistent object file
-    virtual bool WriteBeginNewObject(nFile*, nRoot *, nRoot *);
+    virtual bool WriteBeginNewObject(nFile*, nRoot*, nRoot*);
     /// begin a new object with custom constructor
-    virtual bool WriteBeginNewObjectCmd(nFile*, nRoot *, nRoot *, nCmd *);
+    virtual bool WriteBeginNewObjectCmd(nFile*, nRoot*, nRoot*, nCmd*);
     /// begin a new object with custom constructor and selection
-    virtual bool WriteBeginSelObject(nFile*, nRoot *, nRoot *);
+    virtual bool WriteBeginSelObject(nFile*, nRoot*, nRoot*);
     /// write a cmd to a persistent object file
-    virtual bool WriteCmd(nFile*, nCmd *);
+    virtual bool WriteCmd(nFile*, nCmd*);
     /// finish a persistent object
-    virtual bool WriteEndObject(nFile*, nRoot *, nRoot *);
+    virtual bool WriteEndObject(nFile*, nRoot*, nRoot*);
     /// finish a persistent object file
     virtual bool EndWrite(nFile*);
 
@@ -81,16 +81,16 @@ public:
 
 #ifndef __MICROTCL__
     /// register Nebula as a Tcl extension
-    virtual void InitAsExtension(Tcl_Interp *);
+    virtual void InitAsExtension(Tcl_Interp*);
 #endif
 
 private:
     /// write a select object statement
-    void WriteSelectStatement(nFile*, nRoot *, nRoot *);
+    void WriteSelectStatement(nFile*, nRoot*, nRoot*);
     /// link to an existing Tcl interpreter (for Tcl extension stuff)
-    void LinkToInterp(Tcl_Interp *, bool);
+    void LinkToInterp(Tcl_Interp*, bool);
     /// unlink from a Tcl interpreter (for Tcl extension stuff)
-    void UnlinkFromInterp(Tcl_Interp *, bool);
+    void UnlinkFromInterp(Tcl_Interp*, bool);
     /// generate an indentation string
     void Indent(int i, char* buf);
 

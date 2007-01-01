@@ -267,7 +267,7 @@ class nCmdProtoTraits
 {
 public:
 
-    typedef typename nCmdProtoTraits<TR,TListIn,TListOut> Traits;
+    typedef typename nCmdProtoTraits<TR, TListIn, TListOut> Traits;
 
     // single types in the input typelist
     typedef typename Loki::TL::TypeAtNonStrict<TListIn, 0>::Result TPI1;
@@ -315,25 +315,25 @@ public:
     };
 
     /// Calculate the fourcc
-    static unsigned int CalcFourCC(const char * cmdname, unsigned int fourcc)
+    static unsigned int CalcFourCC(const char* cmdname, unsigned int fourcc)
     {
         // if provided fourcc is zero then calculate a fourcc based on the CRC of command name
         if (!fourcc)
         {
             nCRC crc;
-            fourcc = crc.Checksum((uchar *)cmdname, static_cast<unsigned int>(strlen(cmdname)));
+            fourcc = crc.Checksum((uchar*)cmdname, static_cast<unsigned int>(strlen(cmdname)));
         }
 
         return fourcc;
     }
 
     /// Calculate the prototype
-    static char * CalcPrototype(char * signature, const char * cmdname)
+    static char* CalcPrototype(char* signature, const char* cmdname)
     {
         n_assert(signature);
         n_assert(cmdname);
 
-        char * ptr = signature;
+        char* ptr = signature;
 
         // check cmdname does not have underscores
         n_assert2((0 == strchr(cmdname, '_')), "Do not use underscores for command/signal names");
@@ -347,7 +347,7 @@ public:
             strcat(ptr, NCMDPROTO_GETSIGNATURE(TR));
         }
 
-        // outparameter signature
+        // out parameter signature
         if (NumOutArgs >= 1)
         {
             strcat(ptr, NCMDPROTO_GETSIGNATURE(TPO1));
@@ -378,7 +378,7 @@ public:
 
         // name
         ptr = ptr + strlen(ptr);
-        const char * ptrname = cmdname;
+        const char* ptrname = cmdname;
         while (*ptrname)
         {
             *ptr++ = static_cast<char>(tolower(*ptrname++));
@@ -526,14 +526,14 @@ public:
         typedef typename TMemberFunctionHelper<TClass, NumAllArgs>::Type TMemberFunction;
         typedef typename TMemberFunctionHelper<TClass, NumAllArgs>::TypeConst TMemberFunctionConst;
 
-        static bool Dispatch(TClass * obj, TMemberFunction memf, nCmd * cmd)
+        static bool Dispatch(TClass* obj, TMemberFunction memf, nCmd* cmd)
         {
             return DispatchCmd<NumInArgs, NumOutArgs, ReturnsVoid>(obj, memf, cmd);
         }
 
     private:
         template <int NumIn, int NumOut, bool RetVoid>
-        static bool DispatchCmd(TClass * pthis, TMemberFunction memf, nCmd * cmd);
+        static bool DispatchCmd(TClass* pthis, TMemberFunction memf, nCmd* cmd);
 
         NCMDPROTO_REPEATIO_ALL()
     };
@@ -547,16 +547,16 @@ public:
         typedef typename TMemberFunctionHelper<TClass, NumAllArgs>::TypeConst TMemberFunctionConst;
 
         template <bool RetVoid>
-        static TR Dispatch(TClass * obj, TMemberFunction memf, va_list args);
+        static TR Dispatch(TClass* obj, TMemberFunction memf, va_list args);
 
         template <>
-        static TR Dispatch<true>(TClass * obj, TMemberFunction memf, va_list args)
+        static TR Dispatch<true>(TClass* obj, TMemberFunction memf, va_list args)
         {
             DispatchValistVoid<NumAllArgs>(obj, memf, args);
         }
 
         template <>
-        static TR Dispatch<false>(TClass * obj, TMemberFunction memf, va_list args)
+        static TR Dispatch<false>(TClass* obj, TMemberFunction memf, va_list args)
         {
             return DispatchValistRet<NumAllArgs>(obj, memf, args);
         }
@@ -566,7 +566,7 @@ public:
         static void DispatchValistVoid(TClass * pthis, TMemberFunction memf, va_list args);
 
         template <int NumArgs>
-        static TR DispatchValistRet(TClass * pthis, TMemberFunction memf, va_list args);
+        static TR DispatchValistRet(TClass* pthis, TMemberFunction memf, va_list args);
 
         NCMDPROTO_REPEATALL_ALL()
     };

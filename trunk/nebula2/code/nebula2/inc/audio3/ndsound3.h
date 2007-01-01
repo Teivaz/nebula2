@@ -37,7 +37,7 @@ public:
     CSound* GetCSoundPtr();
     /// get the volume converted to DirectSound conventions
     LONG GetDSVolume();
-    /// get DirectSound 3D-Soundbuffer properties
+    /// get DirectSound 3D-Sound buffer properties
     DS3DBUFFER* GetDS3DProps();
     /// convert a linear volume into a DirectSound volume value
     static LONG AsDirectSoundVolume(float vol);
@@ -73,7 +73,7 @@ nDSound3::AsDirectSoundVolume(float vol)
         scaledVolume = minVol + (vol * (maxVol - minVol));
     }
     float dsVol = DSBVOLUME_MIN + ((DSBVOLUME_MAX - DSBVOLUME_MIN) * scaledVolume);
-    return (LONG) dsVol;
+    return (LONG)dsVol;
 }
 
 //------------------------------------------------------------------------------

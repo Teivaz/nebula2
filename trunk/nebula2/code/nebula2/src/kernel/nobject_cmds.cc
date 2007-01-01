@@ -279,7 +279,7 @@ static void n_getcmds(void *o, nCmd *cmd)
 */
 static void n_getinstancesize(void* o, nCmd* cmd)
 {
-    nObject* self = (nObject*) o;
+    nObject* self = (nObject*)o;
     cmd->Out()->SetI(self->GetInstanceSize());
 }
 

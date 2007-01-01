@@ -70,7 +70,7 @@ nGuiCheckButtonGroup2::OnShow()
     {
         nString name = "Button";
         name.AppendInt(i);
-        nGuiCheckButton* btn = (nGuiCheckButton*) kernelServer->New("nguicheckbutton", name.Get());
+        nGuiCheckButton* btn = (nGuiCheckButton*)kernelServer->New("nguicheckbutton", name.Get());
         if (this->defaultBrushes.Size() > 0)
         {
             btn->SetDefaultBrush(this->defaultBrushes[i].Get());

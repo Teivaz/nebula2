@@ -38,12 +38,12 @@ public:
     };
 
     /// constructor
-    nThread(int (N_THREADPROC *_thread_func)(nThread *),
+    nThread(int (N_THREADPROC* _thread_func)(nThread*),
             Priority pri,
             int stack_size,
-            void (*_wakeup_func)(nThread *),
-            nThreadSafeList *_ext_msglist,
-            void *_user_data);
+            void (*_wakeup_func)(nThread*),
+            nThreadSafeList* _ext_msglist,
+            void* _user_data);
     /// destructor
     ~nThread();
     /// called by thread func at startup
@@ -76,12 +76,12 @@ private:
     nEvent startupEvent;
     bool stopThread;
     bool shutdownSignalReceived;
-    int (N_THREADPROC *threadFunc)(nThread *);
-    void (*wakeupFunc)(nThread *);
+    int (N_THREADPROC *threadFunc)(nThread*);
+    void (*wakeupFunc)(nThread*);
 
-    nThreadSafeList *msgList;
+    nThreadSafeList* msgList;
     bool isExtMsgList;
-    void *userData;
+    void* userData;
 
 #   ifdef __WIN32__
     HANDLE thread;

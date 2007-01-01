@@ -4,7 +4,7 @@
 /**
     @class nKeyValuePair
 
-    Key/Value pair objects are used by most assiociative container classes,
+    Key/Value pair objects are used by most associative container classes,
     like Dictionary or HashTable. This has been "backported" from
     the Nebula3 Core Layer.
 

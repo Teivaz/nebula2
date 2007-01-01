@@ -25,33 +25,33 @@ public:
 
     triangle() {};
     triangle(const vector3& v0, const vector3& v1, const vector3& v2)
-        : b(v0), e0(v1-v0), e1(v2-v0) {};
+        : b(v0), e0(v1 - v0), e1(v2 - v0) {}
     triangle(const triangle& t)
-        : b(t.b), e0(t.e0), e1(t.e1) {};
+        : b(t.b), e0(t.e0), e1(t.e1) {}
 
     void set(const vector3& v0, const vector3& v1, const vector3& v2) {
         b  = v0;
-        e0 = v1-v0;
-        e1 = v2-v0;
-    };
+        e0 = v1 - v0;
+        e1 = v2 - v0;
+    }
 
     //--- get the face normal of the triangle ---------------------------------
     vector3 normal() const {
         vector3 cross(e0*e1);
         cross.norm();
         return cross;
-    };
+    }
 
     //--- get the midpoint (center of gravity) of the triangle ----------------
     vector3 midpoint() const {
         const float oneThird = 1.0f / 3.0f;
-        return b + ((e0+e1) * oneThird);
-    };
+        return b + ((e0 + e1) * oneThird);
+    }
 
     //--- get the plane of the triangle ---------------------------------------
     plane getplane() const {
-        return plane(b,b+e0,b+e1);
-    };
+        return plane(b, b + e0, b + e1);
+    }
 
     //--- get one the edge points ---------------------------------------------
     vector3 point(int i) const
@@ -63,7 +63,7 @@ public:
             case 2: return b + e1;
             default: return vector3(0.0f, 0.0f, 0.0f);
         }
-    };
+    }
 
     //--- check if and where line intersects triangle -------------------------
     //  Taken from Magic Software (http://www.cs.unc.edu/~eberly)
@@ -93,7 +93,7 @@ public:
         // equation to get Dot(normal,line.b-tri.b) + t*Dot(normal,line.m)
         vector3 kDiff0(line.b - b);
         float fTime = -(norm % kDiff0) / fDenominator;
-        if ((fTime<-fTolerance) || (fTime>(1.0f+fTolerance))) return false;
+        if ((fTime < -fTolerance) || (fTime > (1.0f + fTolerance))) return false;
 
         // Find difference of intersection point of line with plane and vertex
         // of triangle.
@@ -104,7 +104,7 @@ public:
         float fE00 = e0 % e0;
         float fE01 = e0 % e1;
         float fE11 = e1 % e1;
-        float fDet = (float) fabs(fE00*fE11-fE01*fE01);     // = |normal|^2 > 0
+        float fDet = (float)fabs(fE00*fE11-fE01*fE01);     // = |normal|^2 > 0
         float fR0  = e0 % kDiff1;
         float fR1  = e1 % kDiff1;
 
@@ -115,11 +115,10 @@ public:
             // intersection is inside triangle
             ipos = fTime;
             return true;
-        } else {
-            // intersection is outside triangle
-            return false;
         }
-    };
+        // intersection is outside triangle
+        return false;
+    }
 
     //--- check if and where line intersects triangle -------------------------
     //  Taken from Magic Software (http://www.cs.unc.edu/~eberly)
@@ -160,22 +159,21 @@ public:
         float fE00 = e0 % e0;
         float fE01 = e0 % e1;
         float fE11 = e1 % e1;
-        float fDet = (float) fabs(fE00*fE11-fE01*fE01);     // = |normal|^2 > 0
+        float fDet = (float)fabs(fE00*fE11 - fE01*fE01);     // = |normal|^2 > 0
         float fR0  = e0 % kDiff1;
         float fR1  = e1 % kDiff1;
 
         float fS0 = fE11*fR0 - fE01*fR1;
         float fS1 = fE00*fR1 - fE01*fR0;
 
-        if ((fS0>=-fTolerance) && (fS1>=-fTolerance) && (fS0+fS1<=fDet+fTolerance)) {
+        if ((fS0 >= -fTolerance) && (fS1 >= -fTolerance) && (fS0 + fS1 <= fDet + fTolerance)) {
             // intersection is inside triangle
             ipos = fTime;
             return true;
-        } else {
-            // intersection is outside triangle
-            return false;
         }
-    };
+        // intersection is outside triangle
+        return false;
+    }
 };
 //-------------------------------------------------------------------
 #endif

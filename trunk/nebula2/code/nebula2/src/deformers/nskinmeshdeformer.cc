@@ -38,7 +38,7 @@ nSkinMeshDeformer::Compute()
     nMesh2* dstMesh = this->refOutputMesh;
     int numVertices = srcMesh->GetNumVertices();
     n_assert(srcMesh->HasAllVertexComponents(nMesh2::Weights | nMesh2::JIndices));
-    n_assert(dstMesh->HasAllVertexComponents(srcMesh->GetVertexComponents() & ~(nMesh2::Weights|nMesh2::JIndices)));
+    n_assert(dstMesh->HasAllVertexComponents(srcMesh->GetVertexComponents() & ~(nMesh2::Weights | nMesh2::JIndices)));
     n_assert(dstMesh->GetNumVertices() == numVertices);
     n_assert(srcMesh->GetVertexWidth() == (dstMesh->GetVertexWidth() + 8));
 

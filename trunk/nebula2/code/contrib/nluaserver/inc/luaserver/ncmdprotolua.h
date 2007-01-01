@@ -24,7 +24,7 @@ class nCmdProtoLua : public nCmdProto
     /// Class constructor
     nCmdProtoLua(const nCmdProtoLua& rhs);
     
-    bool Dispatch(void *, nCmd *);    
+    bool Dispatch(void*, nCmd*);    
 };
 //--------------------------------------------------------------------
 #endif    

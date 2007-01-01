@@ -149,17 +149,17 @@ public:
     bool pip_const_x(const vector3& p) const
     {
         if ((p.y >= vmin.y) && (p.y <= vmax.y) && (p.z >= vmin.z) && (p.z <= vmax.z)) return true;
-        else return false;
+        return false;
     }
     bool pip_const_y(const vector3& p) const
     {
         if ((p.x >= vmin.x) && (p.x <= vmax.x) && (p.z >= vmin.z) && (p.z <= vmax.z)) return true;
-        else return false;
+        return false;
     }
     bool pip_const_z(const vector3& p) const
     {
         if ((p.x >= vmin.x) && (p.x <= vmax.x) && (p.y >= vmin.y) && (p.y <= vmax.y)) return true;
-        else return false;
+        return false;
     }
 
     vector3 vmin;
@@ -546,14 +546,11 @@ bbox3::clipstatus(const bbox3& other) const
     {
         return Inside;
     }
-    else if (this->intersects(other))
+    if (this->intersects(other))
     {
         return Clipped;
     }
-    else
-    {
-        return Outside;
-    }
+    return Outside;
 }
 
 //------------------------------------------------------------------------------
@@ -592,9 +589,9 @@ bbox3::clipstatus(const matrix44& viewProjection) const
         andFlags &= clip;
         orFlags  |= clip;
     }
-    if (0 == orFlags)       return Inside;
-    else if (0 != andFlags) return Outside;
-    else                    return Clipped;
+    if (0 == orFlags) return Inside;
+    if (0 != andFlags) return Outside;
+    return Clipped;
 }
 
 //------------------------------------------------------------------------------
@@ -675,10 +672,10 @@ int bbox3::line_test(float v0, float v1, float w0, float w1)
 {
     // quick rejection test
     if ((v1 < w0) || (v0 > w1)) return OUTSIDE;
-    else if ((v0 == w0) && (v1 == w1)) return ISEQUAL;
-    else if ((v0 >= w0) && (v1 <= w1)) return ISCONTAINED;
-    else if ((v0 <= w0) && (v1 >= w1)) return CONTAINS;
-    else return CLIPS;
+    if ((v0 == w0) && (v1 == w1)) return ISEQUAL;
+    if ((v0 >= w0) && (v1 <= w1)) return ISCONTAINED;
+    if ((v0 <= w0) && (v1 >= w1)) return CONTAINS;
+    return CLIPS;
 }
 
 //------------------------------------------------------------------------------
@@ -702,13 +699,11 @@ int bbox3::intersect(const bbox3& box)
     and_code &= cz;
     or_code |= cz;
     if (or_code == 0) return OUTSIDE;
-    else if (and_code != 0) return and_code;
-    else {
-        // only if all test produced a non-outside result,
-        // an intersection has occurred
-        if (cx && cy && cz) return CLIPS;
-        else return OUTSIDE;
-    }
+    if (and_code != 0) return and_code;
+    // only if all test produced a non-outside result,
+    // an intersection has occurred
+    if (cx && cy && cz) return CLIPS;
+    return OUTSIDE;
 }
 
 //------------------------------------------------------------------------------

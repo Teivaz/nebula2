@@ -49,10 +49,7 @@ nDSoundResource::GetCSoundPtr()
     {
         return this->dsStreamingSound;
     }
-    else
-    {
-        return this->dsSound;
-    }
+    return this->dsSound;
 }
 
 //------------------------------------------------------------------------------

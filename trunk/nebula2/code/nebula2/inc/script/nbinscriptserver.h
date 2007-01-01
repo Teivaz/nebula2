@@ -28,15 +28,15 @@ public:
     /// write header of a persistent object file
     virtual nFile* BeginWrite(const char* filename, nObject* obj);
     /// begin a new object in a persistent object file
-    virtual bool WriteBeginNewObject(nFile*, nRoot *, nRoot *);
+    virtual bool WriteBeginNewObject(nFile*, nRoot*, nRoot*);
     /// begin a new object with custom constructor
-    virtual bool WriteBeginNewObjectCmd(nFile*, nRoot *, nRoot *, nCmd *);
+    virtual bool WriteBeginNewObjectCmd(nFile*, nRoot*, nRoot*, nCmd*);
     /// begin a new object with custom constructor and selection
-    virtual bool WriteBeginSelObject(nFile*, nRoot *, nRoot *);
+    virtual bool WriteBeginSelObject(nFile*, nRoot*, nRoot*);
     /// write a cmd to a persistent object file
-    virtual bool WriteCmd(nFile*, nCmd *);
+    virtual bool WriteCmd(nFile*, nCmd*);
     /// finish a persistent object
-    virtual bool WriteEndObject(nFile*, nRoot *, nRoot *);
+    virtual bool WriteEndObject(nFile*, nRoot*, nRoot*);
     /// finish a persistent object file
     virtual bool EndWrite(nFile*);
 

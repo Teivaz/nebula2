@@ -47,7 +47,7 @@ class nSignalNative : public nSignal
 public:
 
     // signature information type
-    typedef nCmdProtoTraits<TR,TListIn,TListOut> Traits;
+    typedef nCmdProtoTraits<TR, TListIn, TListOut> Traits;
 
     // shortcut for native binding for this signal
     template <class TClass>
@@ -57,7 +57,7 @@ public:
     };
 
     /// constructor
-    nSignalNative(const char * signalName);
+    nSignalNative(const char* signalName);
     /// destructor
     virtual ~nSignalNative();
 
@@ -65,25 +65,25 @@ public:
     virtual void Release();
 
     /// Emit a signal from scripting
-    virtual bool Dispatch(void * obj, nCmd * cmd);
+    virtual bool Dispatch(void* obj, nCmd* cmd);
     /// Emit a signal with arguments in va_list type
-    virtual bool Dispatch(nSignalEmitter * emitter, va_list args);
+    virtual bool Dispatch(nSignalEmitter* emitter, va_list args);
 
     // Following functors are provided for type-safe calls, but they
     // are really forwarding to the Emit function with va_list argument
-    bool operator()(nSignalEmitter * emitter);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9, typename Traits::TPA10 p10);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9, typename Traits::TPA10 p10, typename Traits::TPA11 p11);
-    bool operator()(nSignalEmitter * emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9, typename Traits::TPA10 p10, typename Traits::TPA11 p11, typename Traits::TPA12 p12);
+    bool operator()(nSignalEmitter* emitter);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9, typename Traits::TPA10 p10);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9, typename Traits::TPA10 p10, typename Traits::TPA11 p11);
+    bool operator()(nSignalEmitter* emitter, typename Traits::TPA1 p1, typename Traits::TPA2 p2, typename Traits::TPA3 p3, typename Traits::TPA4 p4, typename Traits::TPA5 p5, typename Traits::TPA6 p6, typename Traits::TPA7 p7, typename Traits::TPA8 p8, typename Traits::TPA9 p9, typename Traits::TPA10 p10, typename Traits::TPA11 p11, typename Traits::TPA12 p12);
 
 };
 //------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ public:
 */
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
-nSignalNative<TR,TListIn,TListOut,signal4cc>::nSignalNative(const char * signalName)
+nSignalNative<TR, TListIn, TListOut, signal4cc>::nSignalNative(const char* signalName)
     : nSignal(
         signalName,
         Traits::CalcPrototype(_nSignalPrototypeBuffer, signalName),
@@ -106,7 +106,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::nSignalNative(const char * signalN
 */
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
-nSignalNative<TR,TListIn,TListOut,signal4cc>::~nSignalNative()
+nSignalNative<TR, TListIn, TListOut, signal4cc>::~nSignalNative()
 {
     /// empty
 }
@@ -119,7 +119,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::~nSignalNative()
 */
 template <class TR, class TListIn, class TListOut, int signal4cc>
 void
-nSignalNative<TR,TListIn,TListOut,signal4cc>::Release()
+nSignalNative<TR, TListIn, TListOut, signal4cc>::Release()
 {
     /// empty
 }
@@ -127,16 +127,16 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::Release()
 //------------------------------------------------------------------------------
 template <class TR, class TListIn, class TListOut, int signal4cc>
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::Dispatch(void * obj, nCmd * cmd)
+nSignalNative<TR, TListIn, TListOut, signal4cc>::Dispatch(void* obj, nCmd* cmd)
 {
     // get binding list from the emitter for this signal
-    nSignalEmitter * emitter = reinterpret_cast<nObject *> (obj);
-    nSignalBindingSet * bs = this->GetBindingSet(emitter, this->GetId());
+    nSignalEmitter* emitter = reinterpret_cast<nObject*>(obj);
+    nSignalBindingSet* bs = this->GetBindingSet(emitter, this->GetId());
 
     // if binding set exists then call every binding in the list
     if (bs)
     {
-        nSignalBinding * binding = (bs->GetHead());
+        nSignalBinding* binding = bs->GetHead();
         while (binding)
         {
             if (binding->IsValid())
@@ -146,7 +146,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::Dispatch(void * obj, nCmd * cmd)
             }
             else
             {
-                nSignalBinding * tmp = binding->GetSucc();
+                nSignalBinding* tmp = binding->GetSucc();
                 n_delete(binding);
                 binding = tmp;
             }
@@ -159,15 +159,15 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::Dispatch(void * obj, nCmd * cmd)
 //------------------------------------------------------------------------------
 template <class TR, class TListIn, class TListOut, int signal4cc>
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::Dispatch(nSignalEmitter * emitter, va_list args)
+nSignalNative<TR, TListIn, TListOut, signal4cc>::Dispatch(nSignalEmitter* emitter, va_list args)
 {
     // get binding list from the emitter for this signal
-    nSignalBindingSet * bs = this->GetBindingSet(emitter, this->GetId());
+    nSignalBindingSet* bs = this->GetBindingSet(emitter, this->GetId());
 
     // if binding set exists then call every binding in the list
     if (bs)
     {
-        nSignalBinding * binding = (bs->GetHead());
+        nSignalBinding* binding = bs->GetHead();
         while (binding)
         {
             if (binding->IsValid())
@@ -177,7 +177,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::Dispatch(nSignalEmitter * emitter,
             }
             else
             {
-                nSignalBinding * tmp = binding->GetSucc();
+                nSignalBinding* tmp = binding->GetSucc();
                 n_delete(binding);
             }
         }
@@ -192,7 +192,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::Dispatch(nSignalEmitter * emitter,
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter)
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter)
 {
     STATIC_CHECK(0 == Traits::NumAllArgs, Signal_Emission_With_Wrong_Number_Of_Arguments);
     return this->Emit(emitter);
@@ -202,7 +202,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter * emitter,
     typename Traits::TPA1 arg1
 )
 {
@@ -214,7 +214,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter * emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2
 )
@@ -241,7 +241,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -256,7 +256,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -272,7 +272,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -289,7 +289,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -307,7 +307,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -326,7 +326,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -346,7 +346,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -367,7 +367,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,
@@ -389,7 +389,7 @@ nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitte
 template <class TR, class TListIn, class TListOut, int signal4cc>
 inline
 bool
-nSignalNative<TR,TListIn,TListOut,signal4cc>::operator()(nSignalEmitter * emitter,
+nSignalNative<TR, TListIn, TListOut, signal4cc>::operator()(nSignalEmitter* emitter,
     typename Traits::TPA1 arg1,
     typename Traits::TPA2 arg2,
     typename Traits::TPA3 arg3,

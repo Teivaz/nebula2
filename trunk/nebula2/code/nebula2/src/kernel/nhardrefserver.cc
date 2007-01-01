@@ -76,10 +76,10 @@ nHardRefServer::RegisterTargetObject(nRoot& targetObject)
     nString targetName = targetObject.GetFullName();
 
     // parse list of nHardRef for list of matches
-    nStrNode* strNode = (nStrNode*) this->strList.GetHead();
+    nStrNode* strNode = (nStrNode*)this->strList.GetHead();
     while (strNode)
     {
-        nStrNode* nextNode = (nStrNode*) strNode->GetSucc();
+        nStrNode* nextNode = (nStrNode*)strNode->GetSucc();
 
         if (targetName == strNode->GetName())
         {
@@ -92,7 +92,7 @@ nHardRefServer::RegisterTargetObject(nRoot& targetObject)
             // list, because the name of the nStrNode becomes
             // invalid.
 
-            nHardRef<nRoot>* hardRef = (nHardRef<nRoot>*) strNode->GetPtr();
+            nHardRef<nRoot>* hardRef = (nHardRef<nRoot>*)strNode->GetPtr();
             n_assert(hardRef);
             hardRef->resolve();
         }

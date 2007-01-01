@@ -19,15 +19,15 @@ class nCmdProtoNative : public nCmdProto
 {
 public:
     /// constructor
-    nCmdProtoNative(const char *_proto_def, nFourCC _id, void (*)(void *, nCmd *));
+    nCmdProtoNative(const char* _proto_def, nFourCC _id, void (*)(void*, nCmd*));
     /// copy constructor
     nCmdProtoNative(const nCmdProtoNative& rhs);
 
-    bool Dispatch(void *, nCmd *);
+    bool Dispatch(void*, nCmd*);
 
 private:
     /// pointer to C style command handler
-    void (*cmd_proc)(void *, nCmd *);
+    void (*cmd_proc)(void*, nCmd*);
 };
 //--------------------------------------------------------------------
 #endif

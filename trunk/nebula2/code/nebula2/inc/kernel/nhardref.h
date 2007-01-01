@@ -48,15 +48,15 @@ public:
     /// deferred initialization, call if default constructor used
     void initialize(nKernelServer* kServer);
     /// validate name, invalidate object pointer
-    void set(const char *objName);
+    void set(const char* objName);
     /// validate object pointer, invalidate name
-    void set(TYPE *objPointer);
+    void set(TYPE* objPointer);
     /// get (current) target name
     nString getname() const;
     /// assign object pointer, invalidate name
     void operator=(TYPE* obj);
     /// assign name, invalidate object pointer
-    void operator=(const char *objName);
+    void operator=(const char* objName);
 
 private:
     /// if name valid, invalidate it
@@ -64,7 +64,7 @@ private:
     /// manually validate object pointer from name
     void resolve();
 
-    nKernelServer *ks;
+    nKernelServer* ks;
     nStrNode strNode;
 };
 
@@ -76,7 +76,7 @@ private:
 template<class TYPE>
 nHardRef<TYPE>::nHardRef() :
     ks(0),
-    strNode((void*) this)
+    strNode((void*)this)
 {
     // empty
 }
@@ -94,7 +94,7 @@ nHardRef<TYPE>::nHardRef() :
 template<class TYPE>
 nHardRef<TYPE>::nHardRef(nKernelServer* kernelServer):
     ks(kernelServer),
-    strNode((void*) this)
+    strNode((void*)this)
 {
     // empty
 }
@@ -181,7 +181,7 @@ nHardRef<TYPE>::set(const char* objName)
     {
         // set a new name and register with nHardRefServer
         this->strNode.SetName(objName);
-        this->ks->GetHardRefServer()->RegisterHardRef(this->ks, (nHardRef<nRoot> *)this);
+        this->ks->GetHardRefServer()->RegisterHardRef(this->ks, (nHardRef<nRoot>*)this);
     }
     else
     {
@@ -228,7 +228,7 @@ nHardRef<TYPE>::resolve()
     const char *name = this->strNode.GetName();
     if ((!this->isvalid()) && name)
     {
-        TYPE* objPointer = (TYPE *) ks->Lookup(name);
+        TYPE* objPointer = (TYPE*)ks->Lookup(name);
         n_assert(objPointer);
 
         // invalidate name

@@ -17,10 +17,10 @@
     @param initFunc           pointer to n_init function in class package
     @param newFunc            pointer to n_create function in class package
 */
-nClass::nClass(const char *name,
-               nKernelServer *kserv,
-               bool (*initFunc)(nClass *, nKernelServer *),
-               void *(*newFunc)()) :
+nClass::nClass(const char* name,
+               nKernelServer* kserv,
+               bool (*initFunc)(nClass*, nKernelServer*),
+               void* (*newFunc)()) :
     nSignalRegistry(),
     nHashNode(name),
     kernelServer(kserv),
@@ -59,7 +59,7 @@ nClass::~nClass()
     if (this->cmdList)
     {
         nCmdProto* cmdProto;
-        while ((cmdProto = (nCmdProto*) this->cmdList->RemHead()))
+        while ((cmdProto = (nCmdProto*)this->cmdList->RemHead()))
         {
             n_delete(cmdProto);
         }
@@ -74,7 +74,7 @@ nClass::~nClass()
     if (this->scriptCmdList)
     {
         nCmdProto* cmdProto;
-        while ((cmdProto = (nCmdProto *) this->scriptCmdList->RemHead()))
+        while ((cmdProto = (nCmdProto*)this->scriptCmdList->RemHead()))
         {
             n_delete(cmdProto);
         }
@@ -90,7 +90,7 @@ nClass::~nClass()
 nObject*
 nClass::NewObject()
 {
-    nObject *obj = (nObject *) this->n_new_ptr();
+    nObject* obj = (nObject*)this->n_new_ptr();
     n_assert(obj);
     obj->AddRef();
     obj->SetClass(this);
@@ -124,7 +124,7 @@ nClass::BeginCmds()
     @param  cmdProto    pointer to nCmdProto object to be added
 */
 void
-nClass::AddCmd(nCmdProto * cmdProto)
+nClass::AddCmd(nCmdProto* cmdProto)
 {
     n_assert(cmdProto);
     n_assert(this->cmdList);
@@ -138,13 +138,13 @@ nClass::AddCmd(nCmdProto * cmdProto)
     @param  cmd_proc    the command's stub function
 */
 void
-nClass::AddCmd(const char *proto_def, nFourCC id, void (*cmd_proc)(void *, nCmd *))
+nClass::AddCmd(const char* proto_def, nFourCC id, void (*cmd_proc)(void*, nCmd*))
 {
     n_assert(proto_def);
     n_assert(id);
     n_assert(cmd_proc);
     n_assert(this->cmdList);
-    nCmdProtoNative *cp = n_new(nCmdProtoNative(proto_def, id, cmd_proc));
+    nCmdProtoNative* cp = n_new(nCmdProtoNative(proto_def, id, cmd_proc));
     n_assert(cp);
     this->AddCmd(cp);
 }
@@ -164,16 +164,14 @@ nClass::EndCmds()
     n_assert(0 == this->cmdTable);
     n_assert(this->cmdList);
 
-    nClass *cl;
-
     // count commands
     int num_cmds = 0;
-    cl = this;
+    nClass* cl = this;
     do
     {
         if (cl->cmdList)
         {
-            nHashNode *node;
+            nHashNode* node;
             for (node = cl->cmdList->GetHead();
                  node;
                  node = node->GetSucc())
@@ -184,16 +182,16 @@ nClass::EndCmds()
     } while ((cl = cl->GetSuperClass()));
 
     // create and fill command table
-    this->cmdTable = n_new(nKeyArray<nCmdProto *>(num_cmds));
+    this->cmdTable = n_new(nKeyArray<nCmdProto*>(num_cmds));
     cl = this;
     do
     {
         if (cl->cmdList)
         {
-            nCmdProto *cp;
-            for (cp = (nCmdProto *) cl->cmdList->GetHead();
+            nCmdProto* cp;
+            for (cp = (nCmdProto*)cl->cmdList->GetHead();
                  cp;
-                 cp = (nCmdProto *) cp->GetSucc())
+                 cp = (nCmdProto*)cp->GetSucc())
             {
                 this->cmdTable->Add(cp->GetId(),cp);
             }
@@ -202,12 +200,12 @@ nClass::EndCmds()
 
     // check for identical cmd ids
     int i;
-    for (i=0; i<(num_cmds-1); i++)
+    for (i = 0; i < num_cmds - 1; i++)
     {
-        if (this->cmdTable->GetKeyAt(i) == this->cmdTable->GetKeyAt(i+1))
+        if (this->cmdTable->GetKeyAt(i) == this->cmdTable->GetKeyAt(i + 1))
         {
-            nCmdProto *cp0 = (nCmdProto *) this->cmdTable->GetElementAt(i);
-            nCmdProto *cp1 = (nCmdProto *) this->cmdTable->GetElementAt(i+1);
+            nCmdProto* cp0 = (nCmdProto*)this->cmdTable->GetElementAt(i);
+            nCmdProto* cp1 = (nCmdProto*)this->cmdTable->GetElementAt(i + 1);
             n_error("Command id collision in class '%s'\n"
                      "cmd '%s' and cmd '%s' both have id '0x%x'\n",
                      this->GetName(),
@@ -257,25 +255,25 @@ void nClass::EndScriptCmds()
      - 08-Aug-99   floh    Header
 */
 nCmdProto*
-nClass::FindCmdByName(const char *name)
+nClass::FindCmdByName(const char* name)
 {
     n_assert(name);
 
-    nCmdProto *cp = 0;
+    nCmdProto* cp = 0;
     // try the native cmd list first
     if (this->cmdList)
     {
-        cp = (nCmdProto *) this->cmdList->Find(name);
+        cp = (nCmdProto*)this->cmdList->Find(name);
     }
 
     // if that fails try the script cmd list
     if (this->scriptCmdList && !cp)
     {
-        cp = (nCmdProto *) this->scriptCmdList->Find(name);
+        cp = (nCmdProto*)this->scriptCmdList->Find(name);
     }
 
     // if not found or no command list, recursively hand up to parent class
-    if ((!cp) && (this->superClass))
+    if (!cp && this->superClass)
     {
         cp = this->superClass->FindCmdByName(name);
     }
@@ -286,14 +284,14 @@ nClass::FindCmdByName(const char *name)
 /**
   @param name The name of the command to be found
 */
-nCmdProtoNative *nClass::FindNativeCmdByName(const char *name)
+nCmdProtoNative* nClass::FindNativeCmdByName(const char* name)
 {
     n_assert(name);
-    nCmdProtoNative *cp = 0;
+    nCmdProtoNative* cp = 0;
 
     if (this->cmdList)
     {
-        cp = (nCmdProtoNative *) this->cmdList->Find(name);
+        cp = (nCmdProtoNative*)this->cmdList->Find(name);
     }
     // if not found, recursively hand up to parent class
     if ((!cp) && (this->superClass))
@@ -308,17 +306,17 @@ nCmdProtoNative *nClass::FindNativeCmdByName(const char *name)
 /**
   @param name The name of the command to be found
 */
-nCmdProto *nClass::FindScriptCmdByName(const char *name)
+nCmdProto* nClass::FindScriptCmdByName(const char* name)
 {
     n_assert(name);
-    nCmdProto *cp = 0;
+    nCmdProto* cp = 0;
     if (this->scriptCmdList)
     {
-        cp = (nCmdProto *) this->scriptCmdList->Find(name);
+        cp = (nCmdProto*)this->scriptCmdList->Find(name);
     }
 
     // if not found, recursively hand up to parent class
-    if ((!cp) && (this->superClass))
+    if (!cp && this->superClass)
     {
         cp = this->superClass->FindScriptCmdByName(name);
     }
@@ -343,7 +341,7 @@ nClass::FindCmdById(nFourCC id)
     // if the class has no commands, hand the request to the parent class.
     if (!this->cmdTable)
     {
-        nClass *cl = this->GetSuperClass();
+        nClass* cl = this->GetSuperClass();
         if (cl)
         {
             return cl->FindCmdById(id);
@@ -351,7 +349,7 @@ nClass::FindCmdById(nFourCC id)
     }
     else
     {
-        nCmdProto *cp = NULL;
+        nCmdProto* cp = NULL;
         if (this->cmdTable->Find((int)id, cp))
         {
             return cp;
@@ -377,7 +375,7 @@ nClass::IsA(const char* className) const
     if (strcmp(this->GetName(), className) == 0)
         return true;
 
-    nClass *ancestor = this->superClass;
+    nClass* ancestor = this->superClass;
     while (ancestor)
     {
         if (strcmp(ancestor->GetName(), className) == 0)

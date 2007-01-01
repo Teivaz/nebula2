@@ -749,7 +749,7 @@ nFileServer2::CreateFileNode(const nString& name)
         n_error("nFileServer2: file node '%s' exists!", name.Get());
         return 0;
     }
-    nFileNode* fileNode = (nFileNode*) kernelServer->New("nfilenode", path.Get());
+    nFileNode* fileNode = (nFileNode*)kernelServer->New("nfilenode", path.Get());
     return fileNode;
 }
 

@@ -138,7 +138,7 @@ nGuiCategoryBrowser::OnEvent(const nGuiEvent& event)
     }
     else if (event.GetType() == nGuiEvent::SelectionDblClicked)
     {
-        // pass through doubleclick event
+        // pass through double click event
         if (event.GetWidget() == this->refFileLister.get())
         {
             nGuiEvent event(this, nGuiEvent::SelectionDblClicked);

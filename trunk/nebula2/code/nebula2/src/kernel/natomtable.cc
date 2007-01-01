@@ -26,4 +26,3 @@ nAtomTable::~nAtomTable()
     n_assert(0 != Singleton);
     Singleton = 0;
 }
-
