@@ -677,26 +677,23 @@ nD3D9Shader::Begin(bool saveState)
     {
         return 0;
     }
+    // start rendering the effect
+    UINT numPasses;
+    DWORD flags;
+    if (saveState)
+    {
+        // save all state
+        flags = 0;
+    }
     else
     {
-        // start rendering the effect
-        UINT numPasses;
-        DWORD flags;
-        if (saveState)
-        {
-            // save all state
-            flags = 0;
-        }
-        else
-        {
-            // save no state
-            flags = D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESAMPLERSTATE | D3DXFX_DONOTSAVESHADERSTATE;
-        }
-        this->SetVertexProcessingMode();
-        HRESULT hr = this->effect->Begin(&numPasses, flags);
-        n_dxtrace(hr, "nD3D9Shader: Begin() failed on effect");
-        return numPasses;
+        // save no state
+        flags = D3DXFX_DONOTSAVESTATE | D3DXFX_DONOTSAVESAMPLERSTATE | D3DXFX_DONOTSAVESHADERSTATE;
     }
+    this->SetVertexProcessingMode();
+    HRESULT hr = this->effect->Begin(&numPasses, flags);
+    n_dxtrace(hr, "nD3D9Shader: Begin() failed on effect");
+    return numPasses;
 }
 
 //------------------------------------------------------------------------------

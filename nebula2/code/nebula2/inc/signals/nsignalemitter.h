@@ -33,7 +33,7 @@ class nSignalBindingSet;
 class nClass;
 
 //------------------------------------------------------------------------------
-void n_initcmds_nsignalemitter(nClass * cl);
+void n_initcmds_nsignalemitter(nClass* cl);
 
 //------------------------------------------------------------------------------
 class nSignalEmitter
@@ -47,7 +47,7 @@ public:
     /// get signal registry data
     nSignalRegistry * GetSignalRegistry() const;
     /// store the emitter's signal list in <tt>signal_list</tt>
-    void GetSignals(nHashList *signal_list) const;
+    void GetSignals(nHashList* signal_list) const;
 
     /** @name Binding
         Methods for binding a signal. */
@@ -55,24 +55,24 @@ public:
     /// bind an already created signal
     bool BindSignal(nFourCC signal4cc, nSignalBinding * binding);
     /// bind signal to a nCmdProto by its pointer
-    bool BindSignal(nFourCC signal4cc, nObject * object, nCmdProto * cmdProto, int priority);
+    bool BindSignal(nFourCC signal4cc, nObject* object, nCmdProto* cmdProto, int priority);
     /// bind signal to a nCmdProto by fourcc (able to rebind on invocation)
-    bool BindSignal(nFourCC signal4cc, nObject * object, nFourCC cmdFourCC, int priority, bool rebind = false);
+    bool BindSignal(nFourCC signal4cc, nObject* object, nFourCC cmdFourCC, int priority, bool rebind = false);
     /// bind signal to a nCmdProto by command name (able to rebind on invocation)
-    bool BindSignal(nFourCC signal4cc, nObject * object, const char * cmdName, int priority, bool rebind = false);
+    bool BindSignal(nFourCC signal4cc, nObject* object, const char* cmdName, int priority, bool rebind = false);
     /// bind a signal identified by name with a command identified by name
-    bool BindSignal(const char * signalName, nObject * object, const char * cmdName, int priority);
+    bool BindSignal(const char* signalName, nObject* object, const char* cmdName, int priority);
     /// Binding for native signal and receiver & member function
 #ifdef N_ADV_SIGNALS_ENABLED
     template <class TClass, class TSignalNative>
     bool BindSignal(
-        TSignalNative & signal,
-        TClass * receiver,
+        TSignalNative& signal,
+        TClass* receiver,
         typename TSignalNative::Traits::template TCmdDispatcher<TClass>::TMemberFunction memf,
         int priority)
     {
         typedef typename TSignalNative::template TBindingNative<TClass>::Type TBinding;
-        TBinding * binding = n_new(TBinding)(receiver, memf, priority);
+        TBinding* binding = n_new(TBinding)(receiver, memf, priority);
         return this->BindSignal(signal.GetId(), binding);
     }
 #endif
@@ -82,21 +82,21 @@ public:
         Methods for unbinding a signal or object. */
     //@{
     /// remove the provided signal binding
-    bool UnbindSignal(nFourCC signal4cc, nSignalBinding * binding);
+    bool UnbindSignal(nFourCC signal4cc, nSignalBinding* binding);
     /// remove all bindings matching the given signal, object, cmdproto
-    bool UnbindSignal(nFourCC signal4cc, const nObject * object, const nCmdProto * cmdProto);
+    bool UnbindSignal(nFourCC signal4cc, const nObject* object, const nCmdProto* cmdProto);
     /// remove all bindings matching the given signal, object, command fourcc
-    bool UnbindSignal(nFourCC signal4cc, const nObject * object, nFourCC cmdFourCC);
+    bool UnbindSignal(nFourCC signal4cc, const nObject* object, nFourCC cmdFourCC);
     /// remove all bindings matching the given signal, object, command name
-    bool UnbindSignal(nFourCC signal4cc, const nObject * object, const char * cmdName);
+    bool UnbindSignal(nFourCC signal4cc, const nObject* object, const char* cmdName);
     /// remove all bindings matching the given signal, object, command name
-    bool UnbindSignal(const char * signalName, const nObject * object, const char * cmdName);
+    bool UnbindSignal(const char* signalName, const nObject* object, const char* cmdName);
     /// remove all bindings matching the given signal and object provided
-    bool UnbindTargetObject(nFourCC signal4cc, const nObject * object);
+    bool UnbindTargetObject(nFourCC signal4cc, const nObject* object);
     /// remove all bindings matching the given signal and object provided
-    bool UnbindTargetObject(const char * signalName, const nObject * object);
+    bool UnbindTargetObject(const char* signalName, const nObject* object);
     /// remove all bindings where the object provided is involved
-    bool UnbindTargetObject(const nObject * object);
+    bool UnbindTargetObject(const nObject* object);
     /// remove all signal bindings
     void UnbindAllSignals();
     //@}
@@ -105,38 +105,38 @@ public:
         Methods for emitting a signal. */
     //@{
     /// emit signal with provided object pointer and va_list
-    bool EmitSignal(nSignal * signal, va_list args);
+    bool EmitSignal(nSignal* signal, va_list args);
     /// emit signal with provided signal object pointer and var arg list
-    bool EmitSignal(nSignal * signal, ...);
+    bool EmitSignal(nSignal* signal, ...);
     /// emit signal with provided signal fourcc and var arg list
     bool EmitSignal(nFourCC signalId, ...);
     /// emit signal with provided signal name and var arg list
-    bool EmitSignal(const char * signalName, ...);
+    bool EmitSignal(const char* signalName, ...);
     //@}
 
     /** @name Posting
         Methods for posting a signal. */
     //@{
     /// post signal for execution at relative time t with provided object pointer and va_list
-    bool PostSignal(nTime relT, nSignal * signal, va_list args);
+    bool PostSignal(nTime relT, nSignal* signal, va_list args);
     /// post signal for execution at relative time t with provided signal object pointer and var arg list
-    bool PostSignal(nTime relT, nSignal * signal, ...);
+    bool PostSignal(nTime relT, nSignal* signal, ...);
     /// post signal for execution at relative time t with provided signal fourcc and var arg list
     bool PostSignal(nTime relT, nFourCC signalId, ...);
     /// post signal for execution at relative time t with provided signal name and var arg list
-    bool PostSignal(nTime relT, const char * signalName, ...);
+    bool PostSignal(nTime relT, const char* signalName, ...);
     //@}
 
 protected:
     friend class nSignal;
 
-    nSignalBindingSet * FindSignalBindingSet(nFourCC signal4cc);
+    nSignalBindingSet* FindSignalBindingSet(nFourCC signal4cc);
 
     /// return the signal id (fourcc) from the signal name
-    nFourCC GetSignalId(const char * signalName) const;
+    nFourCC GetSignalId(const char* signalName) const;
 
     /// binding set container indexed by signal fourcc
-    nKeyArray<nSignalBindingSet *> * bindingSets;
+    nKeyArray<nSignalBindingSet*>* bindingSets;
 };
 
 //------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ nSignalEmitter::~nSignalEmitter()
 */
 inline
 bool
-nSignalEmitter::EmitSignal(nSignal * signal, va_list args)
+nSignalEmitter::EmitSignal(nSignal* signal, va_list args)
 {
     n_assert(signal);
     return signal->Dispatch(this, args);
@@ -174,7 +174,7 @@ nSignalEmitter::EmitSignal(nSignal * signal, va_list args)
 */
 inline
 bool
-nSignalEmitter::EmitSignal(nSignal * signal, ...)
+nSignalEmitter::EmitSignal(nSignal* signal, ...)
 {
     n_assert(signal);
     va_list marker;
@@ -192,7 +192,7 @@ inline
 bool
 nSignalEmitter::EmitSignal(nFourCC signalId, ...)
 {
-    nSignal * signal = this->GetSignalRegistry()->FindSignalById(signalId);
+    nSignal* signal = this->GetSignalRegistry()->FindSignalById(signalId);
     if (!signal)
     {
         return false;
@@ -212,10 +212,10 @@ nSignalEmitter::EmitSignal(nFourCC signalId, ...)
 */
 inline
 bool
-nSignalEmitter::EmitSignal(const char * signalName, ...)
+nSignalEmitter::EmitSignal(const char* signalName, ...)
 {
     n_assert(signalName);
-    nSignal * signal = this->GetSignalRegistry()->FindSignalByName(signalName);
+    nSignal* signal = this->GetSignalRegistry()->FindSignalByName(signalName);
     if (!signal)
     {
         return false;
@@ -231,7 +231,7 @@ nSignalEmitter::EmitSignal(const char * signalName, ...)
 //------------------------------------------------------------------------------
 inline
 bool
-nSignalEmitter::PostSignal(nTime relT, nSignal * signal, ...)
+nSignalEmitter::PostSignal(nTime relT, nSignal* signal, ...)
 {
     n_assert(signal);
 
@@ -247,7 +247,7 @@ inline
 bool
 nSignalEmitter::PostSignal(nTime relT, nFourCC signalId, ...)
 {
-    nSignal * signal = this->GetSignalRegistry()->FindSignalById(signalId);
+    nSignal* signal = this->GetSignalRegistry()->FindSignalById(signalId);
     if (!signal)
     {
         return false;
@@ -263,10 +263,10 @@ nSignalEmitter::PostSignal(nTime relT, nFourCC signalId, ...)
 //------------------------------------------------------------------------------
 inline
 bool
-nSignalEmitter::PostSignal(nTime relT, const char * signalName, ...)
+nSignalEmitter::PostSignal(nTime relT, const char* signalName, ...)
 {
     n_assert(signalName);
-    nSignal * signal = this->GetSignalRegistry()->FindSignalByName(signalName);
+    nSignal* signal = this->GetSignalRegistry()->FindSignalByName(signalName);
     if (!signal)
     {
         return false;
@@ -281,17 +281,17 @@ nSignalEmitter::PostSignal(nTime relT, const char * signalName, ...)
 
 //------------------------------------------------------------------------------
 inline
-nSignalBindingSet *
+nSignalBindingSet*
 nSignalEmitter::FindSignalBindingSet(nFourCC signal4cc)
 {
     if (!this->bindingSets)
     {
         // the bindingSet need a growable nKeyArray to bind signals from scripting
-        this->bindingSets = n_new(nKeyArray<nSignalBindingSet *>)(this->GetSignalRegistry()->GetNumSignals(),5);
+        this->bindingSets = n_new(nKeyArray<nSignalBindingSet *>)(this->GetSignalRegistry()->GetNumSignals(), 5);
         n_assert(this->bindingSets);
     }
 
-    nSignalBindingSet * bs = NULL;
+    nSignalBindingSet* bs = NULL;
 
     if (this->bindingSets->Find(signal4cc, bs))
     {
@@ -304,9 +304,9 @@ nSignalEmitter::FindSignalBindingSet(nFourCC signal4cc)
 //------------------------------------------------------------------------------
 inline
 nFourCC
-nSignalEmitter::GetSignalId(const char * signalName) const
+nSignalEmitter::GetSignalId(const char* signalName) const
 {
-    const nSignal * signal = this->GetSignalRegistry()->FindSignalByName(signalName);
+    const nSignal* signal = this->GetSignalRegistry()->FindSignalByName(signalName);
 
     if (signal)
     {

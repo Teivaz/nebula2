@@ -42,7 +42,7 @@ protected:
     nString dirPath;
     nRef<nGuiDirLister>  refCatLister;
     nRef<nGuiDirLister>  refFileLister;
-    bool lookUpEnabled ;
+    bool lookUpEnabled;
 };
 
 //------------------------------------------------------------------------------

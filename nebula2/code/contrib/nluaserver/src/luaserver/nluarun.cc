@@ -31,7 +31,7 @@ bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
                            0 /* no args */, 
                            LUA_MULTRET, 
                            errfunc /* stack index of error handler */);
-    if (0 != status) // error occured
+    if (0 != status) // error occurred
     {
         result = this->outputStr; // contains the error info
         n_message(result.Get());
@@ -146,7 +146,7 @@ nString nLuaServer::Prompt()
     @param result The result (if any) of the execution of the Lua code.
     @return true if Lua code ran without any errors, false otherwise.
 */
-bool nLuaServer::Run(const char *cmdStr, nString& result)
+bool nLuaServer::Run(const char* cmdStr, nString& result)
 {
     n_assert(cmdStr);
     // push the error handler on stack
@@ -160,12 +160,9 @@ bool nLuaServer::Run(const char *cmdStr, nString& result)
     {
         return this->ExecuteLuaChunk(result, errfunc);
     }
-    else
-    {
-        // pop error message from the stack
-        result.Clear();
-        this->StackToString(this->L, lua_gettop(this->L) - 1, result);
-    }
+    // pop error message from the stack
+    result.Clear();
+    this->StackToString(this->L, lua_gettop(this->L) - 1, result);
     return false;
 }
 
@@ -179,12 +176,12 @@ bool nLuaServer::Run(const char *cmdStr, nString& result)
     This function will allow explicit return statements from the
     file - and requires it for output.
 */
-bool nLuaServer::RunScript(const char *filename, nString& result)
+bool nLuaServer::RunScript(const char* filename, nString& result)
 {
     n_assert(filename);
     
     int filesize;
-    char *cmdbuf;
+    char* cmdbuf;
     bool retval;
     
     nFile* nfile = nFileServer2::Instance()->NewFileObject();
@@ -229,7 +226,7 @@ bool nLuaServer::RunScript(const char *filename, nString& result)
 /**
     @brief Invoke a Lua function.
 */
-bool nLuaServer::RunFunction(const char *funcName, nString& result)
+bool nLuaServer::RunFunction(const char* funcName, nString& result)
 {
     nString cmdStr = funcName;
     cmdStr.Append("()");
@@ -253,4 +250,3 @@ bool nLuaServer::Trigger(void)
 //--------------------------------------------------------------------
 //  EOF
 //--------------------------------------------------------------------
-

@@ -38,7 +38,7 @@ class nSignal : public nCmdProto
 {
 public:
     /// constructor
-    nSignal(const char * signalName, const char *proto_def, nFourCC id);
+    nSignal(const char* signalName, const char* proto_def, nFourCC id);
     /// destructor
     virtual ~nSignal();
     /// Delete signal if possible
@@ -48,26 +48,26 @@ public:
         Methods for invoking a signal. */
     //@{
     /// Emit a signal from scripting
-    virtual bool Dispatch(void *, nCmd *);
+    virtual bool Dispatch(void*, nCmd*);
     /// Emit a signal with arguments in va_list type
-    virtual bool Dispatch(nSignalEmitter *, va_list args);
+    virtual bool Dispatch(nSignalEmitter*, va_list args);
     /// Emit a signal with variable argument list
-    bool Emit(nSignalEmitter *, ...);
+    bool Emit(nSignalEmitter*, ...);
     //@}
 
     /// Return true if the prototype and the signal are compatible
-    bool CheckCompatibleProto(const char * proto) const;
+    bool CheckCompatibleProto(const char* proto) const;
 
 protected:
 
-    nSignalBindingSet * GetBindingSet(nSignalEmitter * emitter, nFourCC signalId) const;
+    nSignalBindingSet * GetBindingSet(nSignalEmitter* emitter, nFourCC signalId) const;
 };
 
 //------------------------------------------------------------------------------
 /**
 */
 inline
-nSignal::nSignal(const char * signalName, const char *proto_def, nFourCC id) :
+nSignal::nSignal(const char* signalName, const char* proto_def, nFourCC id) :
     nCmdProto(proto_def, id)
 {
     nString name(signalName);
@@ -105,7 +105,7 @@ nSignal::Release()
 */
 inline
 bool
-nSignal::Emit(nSignalEmitter * emitter, ...)
+nSignal::Emit(nSignalEmitter* emitter, ...)
 {
     va_list marker;
     va_start(marker, emitter);
@@ -118,7 +118,7 @@ nSignal::Emit(nSignalEmitter * emitter, ...)
 //------------------------------------------------------------------------------
 inline
 bool
-nSignal::CheckCompatibleProto(const char * proto) const
+nSignal::CheckCompatibleProto(const char* proto) const
 {
     // get info about signal prototype
     ProtoDefInfo infoSignal(this->GetProtoDef());

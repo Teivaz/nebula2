@@ -34,7 +34,6 @@ public:
     /// get list of refs pointing to me
     nList* GetRefs();
 
-
 protected:
     /// destructor (DONT CALL DIRECTLY, USE Release() INSTEAD)
     virtual ~nReferenced();

@@ -101,5 +101,3 @@ nGuiBar::SegmentedFillState(float v) const
     int segmentCount = int(v / segmentSize);
     return float(segmentCount * segmentSize);
 }
-
-

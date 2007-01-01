@@ -35,10 +35,10 @@ nTclServer::nTclServer() :
 #ifndef __MICROTCL__
     // initialize data internal to TCL to make encodings work.
     char buf[N_MAXPATH];
-    kernelServer->GetFileServer()->ManglePath("home:bin/tcl/tcl8.4",buf,sizeof(buf));
+    kernelServer->GetFileServer()->ManglePath("home:bin/tcl/tcl8.4", buf, sizeof(buf));
     #ifdef __WIN32__
         // under Windows let's be nice with backslashes
-        char *tmp;
+        char* tmp;
         while ((tmp = strchr(buf,'/'))) *tmp='\\';
     #endif
     Tcl_FindExecutable(buf);
@@ -108,16 +108,16 @@ nTclServer::LinkToInterp(Tcl_Interp* interp, bool /*isStandAlone*/)
     Tcl_CreateObjCommand(this->interp, "unknown", tclcmd_Unknown, (ClientData)this, 0);
 #endif
 
-    Tcl_CreateObjCommand(this->interp, "new",           tclcmd_New,         (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "delete",        tclcmd_Delete,      (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "sel",           tclcmd_Sel,         (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "psel",          tclcmd_Psel,        (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "get",           tclcmd_Get,         (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "exit",          tclcmd_Exit,        (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "dir",           tclcmd_Dir,         (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "exists",        tclcmd_Exists,      (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "emit",          tclcmd_Emit,        (ClientData)this, 0);
-    Tcl_CreateObjCommand(this->interp, "post",          tclcmd_Post,        (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "new",     tclcmd_New,     (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "delete",  tclcmd_Delete,  (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "sel",     tclcmd_Sel,     (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "psel",    tclcmd_Psel,    (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "get",     tclcmd_Get,     (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "exit",    tclcmd_Exit,    (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "dir",     tclcmd_Dir,     (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "exists",  tclcmd_Exists,  (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "emit",    tclcmd_Emit,    (ClientData)this, 0);
+    Tcl_CreateObjCommand(this->interp, "post",    tclcmd_Post,    (ClientData)this, 0);
 }
 
 //------------------------------------------------------------------------------
@@ -219,12 +219,9 @@ nTclServer::BeginWrite(const char* filename, nObject* obj)
         file->PutS("# ---\n");
         return file;
     }
-    else
-    {
-        n_printf("nTclServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
-        file->Release();
-        return 0;
-    }
+    n_printf("nTclServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
+    file->Release();
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -293,7 +290,7 @@ nTclServer::WriteSelectStatement(nFile* file, nRoot* o, nRoot* owner)
     Write start of persistent object with default constructor.
 */
 bool
-nTclServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
+nTclServer::WriteBeginNewObject(nFile* file, nRoot* o, nRoot* owner)
 {
     n_assert(file);
     n_assert(o);
@@ -301,8 +298,8 @@ nTclServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
     char indentBuf[MAXINDENT];
 
     // write generic 'new' statement
-    const char *objName  = o->GetName();
-    const char *objClass = o->GetClass()->GetName();
+    const char* objName  = o->GetName();
+    const char* objClass = o->GetClass()->GetName();
     this->Indent(this->indentLevel, indentBuf);
 
     file->PutS(indentBuf);
@@ -323,7 +320,7 @@ nTclServer::WriteBeginNewObject(nFile* file, nRoot *o, nRoot *owner)
     defined by command.
 */
 bool
-nTclServer::WriteBeginNewObjectCmd(nFile* file, nRoot *o, nRoot *owner, nCmd *cmd)
+nTclServer::WriteBeginNewObjectCmd(nFile* file, nRoot* o, nRoot* owner, nCmd* cmd)
 {
     n_assert(file);
     n_assert(o);
@@ -343,7 +340,7 @@ nTclServer::WriteBeginNewObjectCmd(nFile* file, nRoot *o, nRoot *owner, nCmd *cm
     write the select statement.
 */
 bool
-nTclServer::WriteBeginSelObject(nFile* file, nRoot *o, nRoot *owner)
+nTclServer::WriteBeginSelObject(nFile* file, nRoot* o, nRoot* owner)
 {
     n_assert(file);
     n_assert(o);
@@ -357,7 +354,7 @@ nTclServer::WriteBeginSelObject(nFile* file, nRoot *o, nRoot *owner)
 /**
 */
 bool
-nTclServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
+nTclServer::WriteEndObject(nFile* file, nRoot* o, nRoot* owner)
 {
     n_assert(file);
     n_assert(o);
@@ -379,13 +376,13 @@ nTclServer::WriteEndObject(nFile* file, nRoot *o, nRoot *owner)
 //------------------------------------------------------------------------------
 /**
 */
-bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
+bool nTclServer::WriteCmd(nFile* file, nCmd* cmd)
 {
     n_assert(file);
     n_assert(cmd);
-    const char *name = cmd->GetProto()->GetName();
+    const char* name = cmd->GetProto()->GetName();
     n_assert(name);
-    nArg *arg;
+    nArg* arg;
 
     char indentBuf[MAXINDENT];
     this->Indent(this->indentLevel, indentBuf);
@@ -405,7 +402,6 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
         arg = cmd->In();
 
         switch (arg->GetType()) {
-
             case nArg::Int:
                 str.AppendInt(arg->GetI());
                 break;
@@ -433,7 +429,7 @@ bool nTclServer::WriteCmd(nFile* file, nCmd *cmd)
 
             case nArg::Object:
                 {
-                    nRoot *o = (nRoot *) arg->GetO();
+                    nRoot* o = (nRoot*)arg->GetO();
                     if (o)
                     {
                         str.Append(o->GetFullName());
@@ -472,13 +468,13 @@ nTclServer::Prompt()
     Evaluate a Tcl statement.
 */
 bool
-nTclServer::Run(const char *cmdStr, nString& result)
+nTclServer::Run(const char* cmdStr, nString& result)
 {
     result.Clear();
-    int errCode = Tcl_EvalEx(this->interp, (char *) cmdStr, -1, TCL_EVAL_DIRECT);
+    int errCode = Tcl_EvalEx(this->interp, (char*)cmdStr, -1, TCL_EVAL_DIRECT);
 
     result = "NO RESULT";
-    Tcl_Obj *res = Tcl_GetObjResult(interp);
+    Tcl_Obj* res = Tcl_GetObjResult(interp);
     result = Tcl_GetString(res);
 
     if (errCode == TCL_ERROR)
@@ -501,7 +497,7 @@ nTclServer::Run(const char *cmdStr, nString& result)
     Invoke a TCL procedure
 */
 bool
-nTclServer::RunFunction(const char *functionName, nString& result)
+nTclServer::RunFunction(const char* functionName, nString& result)
 {
     return this->Run(functionName, result);
 }
@@ -512,14 +508,14 @@ nTclServer::RunFunction(const char *functionName, nString& result)
     Evaluate a Tcl script.
 */
 bool
-nTclServer::RunScript(const char *filename, nString& result)
+nTclServer::RunScript(const char* filename, nString& result)
 {
     result.Clear();
 
 #ifdef __MICROTCL__
     // the microtcl Tcl_EvalFile() implementation accepts Nebula paths
     this->printError = true;
-    int errCode = Tcl_EvalFile(this->interp, (char*) filename);
+    int errCode = Tcl_EvalFile(this->interp, (char*)filename);
     this->printError = false;
 
 #else
@@ -532,7 +528,7 @@ nTclServer::RunScript(const char *filename, nString& result)
     this->printError = false;
 #endif
 
-    Tcl_Obj *res = Tcl_GetObjResult(interp);
+    Tcl_Obj* res = Tcl_GetObjResult(interp);
     result = Tcl_GetString(res);
     if (errCode == TCL_ERROR)
     {
@@ -579,4 +575,3 @@ nTclServer::GetInterp()
 //------------------------------------------------------------------------------
 //  EOF
 //------------------------------------------------------------------------------
-

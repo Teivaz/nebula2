@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 /**
 */
-nCmdProto::nCmdProto(const char *proto_def, nFourCC id)
+nCmdProto::nCmdProto(const char* proto_def, nFourCC id)
 {
     // check prototype definition
     ProtoDefInfo info(proto_def);
@@ -87,12 +87,9 @@ nCmdProto::NewCmd()
         // template object is locked, create a new object
         return n_new(nCmd(*(this->cmdTemplate)));
     }
-    else
-    {
-        this->cmdLocked = true;
-        this->cmdTemplate->Rewind();
-        return this->cmdTemplate;
-    }
+    this->cmdLocked = true;
+    this->cmdTemplate->Rewind();
+    return this->cmdTemplate;
 }
 
 //------------------------------------------------------------------------------
@@ -123,11 +120,11 @@ nCmdProto::RelCmd(nCmd* cmd)
 
     @param proto_def char array containing prototype definition to check & parse
 */
-ProtoDefInfo::ProtoDefInfo(const char * proto_def)
+ProtoDefInfo::ProtoDefInfo(const char* proto_def)
 {
     n_assert(proto_def);
 
-    const char * ptr;
+    const char* ptr;
     char c;
 
     // initialize all output strings & argument counters
@@ -189,12 +186,10 @@ ProtoDefInfo::ProtoDefInfo(const char * proto_def)
     this->inArgs[this->numInArgs] = 0;
 
     // check if found end of string
-    if (0 != c)
+    if (0 == c)
     {
-        return;
+        valid = true;
     }
-
-    valid = true;
 }
 
 //------------------------------------------------------------------------------

@@ -15,11 +15,11 @@
 
     "outargs_name_inargs"
 
-    "outargs" is a list of characters describing number and datatypes
+    "outargs" is a list of characters describing number and data types
     of output arguments, "inargs" describes the input args in the
     same way. "name" is the name of the command.
 
-    The following datatypes are defined:
+    The following data types are defined:
 
       - 'v'     - void
       - 'i'     - int
@@ -44,7 +44,7 @@
 //------------------------------------------------------------------------------
 struct ProtoDefInfo
 {
-    ProtoDefInfo(const char * proto_def);
+    ProtoDefInfo(const char* proto_def);
 
     char outArgs[64];
     char inArgs[64];
@@ -61,13 +61,13 @@ class nCmdProto : public nHashNode
 public:
 
     /// constructor
-    nCmdProto(const char *proto_def, nFourCC id);
+    nCmdProto(const char* proto_def, nFourCC id);
     /// copy constructor
     nCmdProto(const nCmdProto& rhs);
     /// destructor
     virtual ~nCmdProto();
     /// execute a command on the provided object
-    virtual bool Dispatch(void *, nCmd *) = 0;
+    virtual bool Dispatch(void*, nCmd*) = 0;
     /// get fourcc code
     nFourCC GetId() const;
     /// get number of input args
@@ -146,4 +146,3 @@ nCmdProto::GetProtoDef() const
 
 //------------------------------------------------------------------------------
 #endif
-

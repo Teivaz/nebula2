@@ -27,17 +27,17 @@ public:
         : x(0.0f),
           y(0.0f),
           z(0.0f)
-    {};
+    {}
     nEulerAngles(float _x, float _y, float _z)
         : x(_x),
           y(_y),
           z(_z)
-    {};
+    {}
     nEulerAngles(const nEulerAngles& e)
         : x(e.x),
           y(e.y),
           z(e.z)
-    {};
+    {}
     nEulerAngles(const matrix33& m)
     {
         Set(m);
@@ -53,13 +53,13 @@ public:
         x = _x;
         y = _y;
         z = _z;
-    };
+    }
     void Set(const nEulerAngles& e)
     {
         x = e.x;
         y = e.y;
         z = e.z;
-    };
+    }
     void Set(const matrix33& m)
     {
         int i, j, k, h, n, s, f;

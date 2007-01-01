@@ -12,12 +12,12 @@
      - 20-Feb-00   floh    + Win32: rewritten to _beginthreadx() instead
                              of _beginthread()
 */
-nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
+nThread::nThread(int (N_THREADPROC* _thread_func)(nThread*),
                  Priority pri,
                  int stack_size,
-                 void (*_wakeup_func)(nThread *),
-                 nThreadSafeList *_ext_msglist,
-                 void *_user_data)
+                 void (*_wakeup_func)(nThread*),
+                 nThreadSafeList* _ext_msglist,
+                 void* _user_data)
 {
 #ifndef __NEBULA_NO_THREADS__
     n_assert(_thread_func);
@@ -47,10 +47,10 @@ nThread::nThread(int (N_THREADPROC *_thread_func)(nThread *),
     // we are using _beginthreadx() instead of CreateThread(),
     // because we want to use c runtime functions from within the thread
     unsigned int thrdaddr;
-    this->thread = (HANDLE) _beginthreadex(
+    this->thread = (HANDLE)_beginthreadex(
                    NULL,    // security
                    stack_size,
-                   (unsigned (__stdcall *)(void *))_thread_func,
+                   (unsigned (__stdcall*)(void*))_thread_func,
                    this,    // arglist
                    0,       // init_flags
                    &thrdaddr);
@@ -275,7 +275,7 @@ nThread::PutMsg(void* buf, int size)
 #ifndef __NEBULA_NO_THREADS__
     n_assert(buf);
     n_assert(size > 0);
-    nMsgNode *nd = n_new(nMsgNode(buf, size));
+    nMsgNode* nd = n_new(nMsgNode(buf, size));
     this->msgList->Lock();
     this->msgList->AddTail(nd);
     this->msgList->Unlock();

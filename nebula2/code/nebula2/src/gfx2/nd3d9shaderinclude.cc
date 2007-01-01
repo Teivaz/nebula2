@@ -19,7 +19,7 @@ nD3D9ShaderInclude::nD3D9ShaderInclude(const nString& sDir)
 /**
 */
 HRESULT
-nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes)
+nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes)
 {
     nFile* file = nKernelServer::Instance()->GetFileServer()->NewFileObject();
     if (!file)
@@ -32,8 +32,8 @@ nD3D9ShaderInclude::Open(D3DXINCLUDE_TYPE IncludeType, LPCSTR pName, LPCVOID pPa
     if (!file->Open(pName, "r"))
     {
         // try in shader dir
-        nString filePath = (this->shaderDir + pName);
-        if (!file->Open(filePath.Get(), "r"))
+        nString filePath = this->shaderDir + pName;
+        if (!file->Open(filePath, "r"))
         {
             n_printf("nD3D9Shader: could not open include file '%s' nor '%s'!\n", pName, filePath.Get());
             file->Release();

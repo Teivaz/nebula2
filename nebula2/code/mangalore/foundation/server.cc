@@ -76,7 +76,7 @@ Server::~Server()
     // check if the refcounted list is empty
     RefCounted* curObj;
     int numRefLeaks = 0;
-    while (curObj = (RefCounted*) refCountedList.RemHead())
+    while (curObj = (RefCounted*)refCountedList.RemHead())
     {
         n_printf("Object at address '%lx' still referenced (refcount = %d), class '%s'\n",
             curObj, curObj->GetRefCount(), curObj->GetClassName());
@@ -134,7 +134,7 @@ Server::Open()
 
     // replace nFileServer2 with nNpkFileServer
     kernelServer->ReplaceFileServer("nnpkfileserver");
-    nNpkFileServer* npkFileServer = (nNpkFileServer*) nFileServer2::Instance();
+    nNpkFileServer* npkFileServer = (nNpkFileServer*)nFileServer2::Instance();
     npkFileServer->ParseDirectory("home:", "npk");
     npkFileServer->ParseDirectory("home:export", "npk");
     npkFileServer->ParseDirectory("home:data", "npk");

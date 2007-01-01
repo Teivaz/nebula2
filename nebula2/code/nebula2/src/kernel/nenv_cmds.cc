@@ -80,7 +80,7 @@ static void n_gettype(void *o, nCmd *cmd)
         case nArg::Bool:           st = "bool"; break;
         case nArg::Object:         st = "object"; break;
         case nArg::Float4:         st = "float4"; break;
-        default:                   st="void"; break;
+        default:                   st = "void"; break;
     }
     cmd->Out()->SetS(st);
 }

@@ -25,7 +25,7 @@ public:
     typedef typename TCmdDispatcher::TMemberFunction TMemberFunction;
 
     /// constructor
-    nSignalBindingNative(TClass * obj, TMemberFunction memfun, int priority);
+    nSignalBindingNative(TClass* obj, TMemberFunction memfun, int priority);
     /// destructor
     virtual ~nSignalBindingNative();
 
@@ -33,16 +33,16 @@ public:
         Methods for invoking a signal binding. */
     //@{
     /// Invocation used from scripting side
-    virtual bool Invoke(nCmd * cmd);
+    virtual bool Invoke(nCmd* cmd);
     /// Invocation used from native side
     virtual bool Invoke(va_list args);
     //@}
 
     /// Return prototype string
-    virtual const char * GetProtoDef() const;
+    virtual const char* GetProtoDef() const;
 
     /// Return true if binding points to the object provided
-    virtual bool IsBoundWithObject(const nObject * objectPtr) const;
+    virtual bool IsBoundWithObject(const nObject* objectPtr) const;
     /// Return true if the binding is valid
     virtual bool IsValid() const;
 
@@ -56,7 +56,7 @@ protected:
 //------------------------------------------------------------------------------
 template <class TClass, class TR, class TListIn, class TListOut>
 inline
-nSignalBindingNative<TClass,TR,TListIn,TListOut>::nSignalBindingNative(TClass * obj, TMemberFunction memfun, int priority) :
+nSignalBindingNative<TClass,TR,TListIn,TListOut>::nSignalBindingNative(TClass* obj, TMemberFunction memfun, int priority) :
     nSignalBinding(priority),
     refObject(obj),
     memf(memfun)
@@ -79,7 +79,7 @@ nSignalBindingNative<TClass,TR,TListIn,TListOut>::~nSignalBindingNative()
 template <class TClass, class TR, class TListIn, class TListOut>
 inline
 bool
-nSignalBindingNative<TClass,TR,TListIn,TListOut>::Invoke(nCmd * cmd)
+nSignalBindingNative<TClass,TR,TListIn,TListOut>::Invoke(nCmd* cmd)
 {
     cmd->Rewind();
     return TCmdDispatcher::Dispatch(this->refObject.get(), this->memf, cmd);
@@ -99,7 +99,7 @@ nSignalBindingNative<TClass,TR,TListIn,TListOut>::Invoke(va_list args)
 //------------------------------------------------------------------------------
 template <class TClass, class TR, class TListIn, class TListOut>
 inline
-const char *
+const char*
 nSignalBindingNative<TClass,TR,TListIn,TListOut>::GetProtoDef() const
 {
     return this->prototype.Get();
@@ -109,7 +109,7 @@ nSignalBindingNative<TClass,TR,TListIn,TListOut>::GetProtoDef() const
 template <class TClass, class TR, class TListIn, class TListOut>
 inline
 bool
-nSignalBindingNative<TClass,TR,TListIn,TListOut>::IsBoundWithObject(const nObject * objectPtr) const
+nSignalBindingNative<TClass, TR, TListIn, TListOut>::IsBoundWithObject(const nObject* objectPtr) const
 {
     return (this->refObject.get() == objectPtr);
 }
@@ -118,7 +118,7 @@ nSignalBindingNative<TClass,TR,TListIn,TListOut>::IsBoundWithObject(const nObjec
 template <class TClass, class TR, class TListIn, class TListOut>
 inline
 bool
-nSignalBindingNative<TClass,TR,TListIn,TListOut>::IsValid() const
+nSignalBindingNative<TClass, TR, TListIn, TListOut>::IsValid() const
 {
     return this->refObject.isvalid();
 }

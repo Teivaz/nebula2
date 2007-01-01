@@ -464,8 +464,7 @@ nD3D9Mesh::UnlockVertices()
     n_assert(this->vertexBuffer || this->privVertexBuffer);
     if (this->vertexBuffer)
     {
-        HRESULT hr;
-        hr = this->vertexBuffer->Unlock();
+        HRESULT hr = this->vertexBuffer->Unlock();
         n_dxtrace(hr, "Unlock() on vertex buffer failed in nD3D9Mesh");
     }
     this->UnlockMutex();

@@ -74,7 +74,7 @@ nRemoteServer::Close()
 
     // release all client context objects
     nClientContext* curContext;
-    while ((curContext = (nClientContext*) this->clientContexts.RemHead()))
+    while ((curContext = (nClientContext*)this->clientContexts.RemHead()))
     {
         n_delete(curContext);
     }
@@ -121,9 +121,9 @@ nRemoteServer::GetClientContext(int clientId)
 
     // find existing client context
     nClientContext* curContext;
-    for (curContext = (nClientContext*) this->clientContexts.GetHead();
+    for (curContext = (nClientContext*)this->clientContexts.GetHead();
          curContext;
-         curContext = (nClientContext*) curContext->GetSucc())
+         curContext = (nClientContext*)curContext->GetSucc())
     {
         if (clientId == curContext->GetClientId())
         {
@@ -221,7 +221,7 @@ nRemoteServer::Trigger()
                         // send the result string back to the client
                         nIpcBuffer resultMsg(4096);
                         resultMsg.SetString("");
-                        if (false == result.IsEmpty())
+                        if (!result.IsEmpty())
                         {
                             resultMsg.SetString(result.Get());
                         }

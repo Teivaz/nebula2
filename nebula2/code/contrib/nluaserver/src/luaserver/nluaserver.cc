@@ -8,19 +8,14 @@
 //  nLuaServer is licensed under the terms of the Nebula License
 //--------------------------------------------------------------------
 
-#ifndef N_FILESERVER2_H
 #include "kernel/nfileserver2.h"
-#endif
-
-#ifndef N_FILE_H
 #include "kernel/nfile.h"
-#endif
 
 #include "luaserver/nluaserver.h"
 nNebulaClass(nLuaServer, "nscriptserver");
 
 // Initialize static members to NULL
-nLuaServer *nLuaServer::Instance = NULL;
+nLuaServer* nLuaServer::Instance = NULL;
 
 extern "C" {
     //Reference for ThunkNebObject
@@ -247,13 +242,9 @@ nLuaServer::BeginWrite(const char* filename, nObject* obj)
 
         return file;
     }
-    else
-    {
-        n_printf("nLuaServer::WriteBegin(): failed to open file '%s' for writing!\n", 
-                 filename);
-        file->Release();
-        return 0;
-    }
+    n_printf("nLuaServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
+    file->Release();
+    return 0;
 }
 
 //--------------------------------------------------------------------
@@ -275,17 +266,16 @@ nLuaServer::EndWrite(nFile* file)
 //--------------------------------------------------------------------
 //  _indent()
 //--------------------------------------------------------------------
-static void _indent(long i, char *buf)
+static void _indent(long i, char* buf)
 {
-    long j;
     buf[0] = 0;
-    for (j=0; j<i; j++) strcat(buf, "  ");
+    for (long j = 0; j < i; j++) strcat(buf, "  ");
 }
 
 //--------------------------------------------------------------------
 //  WriteComment()
 //--------------------------------------------------------------------
-bool nLuaServer::WriteComment(nFile *file, const char *str)
+bool nLuaServer::WriteComment(nFile* file, const char* str)
 {
     n_assert(file);
     n_assert(str);
@@ -300,7 +290,7 @@ bool nLuaServer::WriteComment(nFile *file, const char *str)
 //  Write the statement to select an object after its creation
 //  statement.
 //--------------------------------------------------------------------
-void nLuaServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
+void nLuaServer::write_select_statement(nFile* file, nRoot* o, nRoot* owner)
 {
     // get relative path from owner to o and write select statement
     _indent(++this->indent_level, this->indent_buf);
@@ -316,7 +306,7 @@ void nLuaServer::write_select_statement(nFile *file, nRoot *o, nRoot *owner)
 //  WriteBeginNewObject()
 //  Write start of persistent object with default constructor.
 //--------------------------------------------------------------------
-bool nLuaServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
+bool nLuaServer::WriteBeginNewObject(nFile* file, nRoot* o, nRoot* owner)
 {
     n_assert(file);
     n_assert(o);
@@ -344,7 +334,7 @@ bool nLuaServer::WriteBeginNewObject(nFile *file, nRoot *o, nRoot *owner)
 //  Write start of persistent object with custom constructor
 //  defined by command.
 //--------------------------------------------------------------------
-bool nLuaServer::WriteBeginNewObjectCmd(nFile *file, nRoot *o, nRoot *owner, nCmd *cmd)
+bool nLuaServer::WriteBeginNewObjectCmd(nFile* file, nRoot* o, nRoot* owner, nCmd* cmd)
 {
     n_assert(file);
     n_assert(o);
@@ -376,7 +366,7 @@ bool nLuaServer::WriteBeginSelObject(nFile *file, nRoot *o, nRoot *owner)
 //--------------------------------------------------------------------
 //  WriteEndObject()
 //--------------------------------------------------------------------
-bool nLuaServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
+bool nLuaServer::WriteEndObject(nFile* file, nRoot* o, nRoot* owner)
 {
     n_assert(file);
     n_assert(o);
@@ -396,12 +386,12 @@ bool nLuaServer::WriteEndObject(nFile *file, nRoot *o, nRoot *owner)
 //--------------------------------------------------------------------
 //  WriteCmd()
 //--------------------------------------------------------------------
-bool nLuaServer::WriteCmd(nFile *file, nCmd *cmd)
+bool nLuaServer::WriteCmd(nFile* file, nCmd* cmd)
 {
     n_assert(file);
     n_assert(cmd);
 
-    const char *name = cmd->GetProto()->GetName();
+    const char* name = cmd->GetProto()->GetName();
     n_assert(name);
     
     //Write the command line
@@ -415,9 +405,9 @@ bool nLuaServer::WriteCmd(nFile *file, nCmd *cmd)
     int num_args = cmd->GetNumInArgs();
     cmd->Rewind();
 
-    nArg *arg;
+    nArg* arg;
     int i;
-    for (i=0; i<num_args; i++) {
+    for (i = 0; i < num_args; i++) {
 
         file->PutS(", ");
 
@@ -445,7 +435,7 @@ bool nLuaServer::WriteCmd(nFile *file, nCmd *cmd)
 
             case nArg::Object:
                 {
-                    nRoot *o = (nRoot *) arg->GetO();
+                    nRoot* o = (nRoot*)arg->GetO();
                     if (o) {
                         char buf[N_MAXPATH];
                         sprintf(buf, "'%s'", o->GetFullName().Get());
@@ -561,11 +551,11 @@ bool nLuaServer::ThunkNebObject(lua_State* L, nRoot* root)
     lua_setmetatable(L, -2);
 
     // put signal functions in object
-    lua_pushstring(L, "emit" );
-    lua_pushcfunction(L, luaobject_Emit );
+    lua_pushstring(L, "emit");
+    lua_pushcfunction(L, luaobject_Emit);
     lua_settable(L, -3);
-    lua_pushstring(L, "post" );
-    lua_pushcfunction(L, luaobject_Post );
+    lua_pushstring(L, "post");
+    lua_pushcfunction(L, luaobject_Post);
     lua_settable(L, -3);
     // leave the thunk on the stack and return
     return true;
@@ -941,33 +931,33 @@ void nLuaServer::ArgToStack(lua_State* L, nArg* arg)
 {
     switch (arg->GetType())
     {
-        case nArg::Void:
-            lua_pushnil(L);
-            break;
+    case nArg::Void:
+        lua_pushnil(L);
+        break;
+
+    case nArg::Int:
+        lua_pushnumber(L, arg->GetI());
+        break;
+
+    case nArg::Float:
+        lua_pushnumber(L, arg->GetF());
+        break;
+
+    case nArg::String:
+        lua_pushstring(L, arg->GetS());
+        break;
     
-        case nArg::Int:
-            lua_pushnumber(L, arg->GetI());
-            break;
-    
-        case nArg::Float:
-            lua_pushnumber(L, arg->GetF());
-            break;
-    
-        case nArg::String:
-            lua_pushstring(L, arg->GetS());
-            break;
-        
-        case nArg::Bool:
-            lua_pushboolean(L, arg->GetB());
-            break;
-      
-        case nArg::Object:
-            nLuaServer::ThunkNebObject(L, (nRoot*)arg->GetO());
-            break;
-      
-        case nArg::List:
-            nLuaServer::ListArgToTable(L, arg, false);
-            break;
+    case nArg::Bool:
+        lua_pushboolean(L, arg->GetB());
+        break;
+  
+    case nArg::Object:
+        nLuaServer::ThunkNebObject(L, (nRoot*)arg->GetO());
+        break;
+  
+    case nArg::List:
+        nLuaServer::ListArgToTable(L, arg, false);
+        break;
     }
 }
 
@@ -1046,4 +1036,3 @@ bool nLuaServer::StackToArg(lua_State* L, nArg* arg, int index)
 //--------------------------------------------------------------------
 //  EOF
 //--------------------------------------------------------------------
-

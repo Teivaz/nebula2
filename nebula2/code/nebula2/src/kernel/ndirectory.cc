@@ -48,12 +48,11 @@ nDirectory::Open(const nString& dirName)
     this->path = nFileServer2::Instance()->ManglePath(dirName);
 
 #ifdef __WIN32__
-    DWORD attr;
     bool retval;
     this->handle = NULL;
 
     // testen, ob File existiert und ein Dir ist...
-    attr = GetFileAttributes(this->path.Get());
+    DWORD attr = GetFileAttributes(this->path.Get());
     if ((attr != 0xffffffff) && (attr & FILE_ATTRIBUTE_DIRECTORY))
     {
         retval = true;
@@ -174,7 +173,7 @@ nDirectory::SetToNextEntry()
     n_assert(this->handle);
     n_assert(this->handle != INVALID_HANDLE_VALUE);
 
-    bool suc = (FindNextFile(this->handle, &(this->findData)) != 0) ? true : false;
+    bool suc = (FindNextFile(this->handle, &(this->findData)) != 0);
 
     return suc;
 #else
@@ -231,11 +230,9 @@ nDirectory::GetEntryType()
 
     if (this->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
         return DIRECTORY;
-    else
-        return FILE;
+    return FILE;
 #else
     // FIXME: LINUX NOT IMPLEMENTED YET
     return INVALID;
 #endif
 }
-

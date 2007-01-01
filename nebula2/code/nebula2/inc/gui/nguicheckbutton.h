@@ -67,7 +67,6 @@ nGuiCheckButton::IsPartOfGroup() const
     return this->partOfGroup;
 }
 
-
 //------------------------------------------------------------------------------
 #endif
 

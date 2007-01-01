@@ -37,29 +37,29 @@ public:
         Methods for iterating over a signal binding set. */
     //@{
     /// get next signal binding in the binding set
-    nSignalBinding * GetSucc () const;
+    nSignalBinding* GetSucc () const;
     /// get previous signal binding in the binding set
-    nSignalBinding * GetPred () const;
+    nSignalBinding* GetPred () const;
     //@}
 
     /** @name Invocation
         Methods for invoking a signal binding. */
     //@{
     /// Invoke the signal binding (cmd keeps the signal parameters values)
-    virtual bool Invoke(nCmd * cmd) = 0;
+    virtual bool Invoke(nCmd* cmd) = 0;
     /// Invoke the signal with variable list arguments
     virtual bool Invoke(va_list args) = 0;
     //@}
 
     /// Return prototype string
-    virtual const char * GetProtoDef() const = 0;
+    virtual const char* GetProtoDef() const = 0;
 
     /// Return true if binding bounds to the object provided
-    virtual bool IsBoundWithObject(const nObject * objectPtr) const;
+    virtual bool IsBoundWithObject(const nObject* objectPtr) const;
     /// Return true if binding bounds to a command with the cmdproto provided
-    virtual bool IsBoundWithCmdProto(const nCmdProto * cmdProto) const;
+    virtual bool IsBoundWithCmdProto(const nCmdProto* cmdProto) const;
     /// Return true if binding bounds to a command with the name provided
-    virtual bool IsBoundWithCmdName(const char * name) const;
+    virtual bool IsBoundWithCmdName(const char* name) const;
     /// Return true if binding bounds to a command with the fourcc provided
     virtual bool IsBoundWithCmdFourCC(nFourCC fourcc) const;
     /// Return true if the binding is valid
@@ -97,18 +97,18 @@ nSignalBinding::~nSignalBinding()
 
 //------------------------------------------------------------------------------
 inline
-nSignalBinding *
+nSignalBinding*
 nSignalBinding::GetSucc() const
 {
-    return static_cast<nSignalBinding *> (nNode::GetSucc());
+    return static_cast<nSignalBinding*>(nNode::GetSucc());
 }
 
 //------------------------------------------------------------------------------
 inline
-nSignalBinding *
+nSignalBinding*
 nSignalBinding::GetPred() const
 {
-    return static_cast<nSignalBinding *> (nNode::GetPred());
+    return static_cast<nSignalBinding*>(nNode::GetPred());
 }
 
 //------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ nSignalBinding::GetPriority() const
 */
 inline
 bool
-nSignalBinding::IsBoundWithObject(const nObject * /*objectPtr*/) const
+nSignalBinding::IsBoundWithObject(const nObject* /*objectPtr*/) const
 {
     return false;
 }
@@ -136,7 +136,7 @@ nSignalBinding::IsBoundWithObject(const nObject * /*objectPtr*/) const
 */
 inline
 bool
-nSignalBinding::IsBoundWithCmdProto(const nCmdProto * /*cmdProto*/) const
+nSignalBinding::IsBoundWithCmdProto(const nCmdProto* /*cmdProto*/) const
 {
     return false;
 }
@@ -147,7 +147,7 @@ nSignalBinding::IsBoundWithCmdProto(const nCmdProto * /*cmdProto*/) const
 */
 inline
 bool
-nSignalBinding::IsBoundWithCmdName(const char * /*name*/) const
+nSignalBinding::IsBoundWithCmdName(const char* /*name*/) const
 {
     return false;
 }

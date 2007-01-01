@@ -87,7 +87,7 @@ nWin32WindowHandler::OpenWindow()
     wc.hInstance     = this->hInst;
     wc.hIcon         = icon;
     wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH) GetStockObject(NULL_BRUSH);
+    wc.hbrBackground = (HBRUSH)GetStockObject(NULL_BRUSH);
     wc.lpszMenuName  = NULL;
     wc.lpszClassName = "Nebula2 window class";
     wc.hIconSm       = NULL;

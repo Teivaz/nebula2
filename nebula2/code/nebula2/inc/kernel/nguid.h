@@ -125,7 +125,7 @@ nGuid::Generate()
         UuidCreate(&guid);
         uchar* guidStr;
         UuidToString(&guid, &guidStr);
-        this->guidString = (const char*) guidStr;
+        this->guidString = (const char*)guidStr;
         RpcStringFree(&guidStr);
     #elif defined(__LINUX__)
         uuid_t guid;

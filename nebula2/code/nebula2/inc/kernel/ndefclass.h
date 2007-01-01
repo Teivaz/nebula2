@@ -51,8 +51,8 @@
         clazz->SetInstanceSize(sizeof(CLASS)); \
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         return true; \
-    }; \
-    void* n_create() { return n_new(CLASS()); };
+    } \
+    void* n_create() { return n_new(CLASS()); }
 
 //------------------------------------------------------------------------------
 /**
@@ -74,8 +74,8 @@
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         INITSTATICDATAFUNC(); \
         return true; \
-    }; \
-    void* n_create() { return n_new(CLASS()); };
+    } \
+    void* n_create() { return n_new(CLASS()); }
 
 //------------------------------------------------------------------------------
 /**
@@ -94,15 +94,15 @@
 #define nNebulaScriptClass(CLASS, SUPERCLASSNAME) \
     extern bool n_init(nClass* clazz, nKernelServer* kernelServer); \
     extern void* n_create(); \
-    extern void n_initcmds(nClass *); \
+    extern void n_initcmds(nClass*); \
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         kernelServer->AddClass(SUPERCLASSNAME, clazz); \
         n_initcmds(clazz); \
         return true; \
-    }; \
-    void* n_create() { return n_new(CLASS()); };
+    } \
+    void* n_create() { return n_new(CLASS()); }
 
 //------------------------------------------------------------------------------
 /**
@@ -118,7 +118,7 @@
 #define nNebulaScriptClassStaticInit(CLASS, SUPERCLASSNAME, INITSTATICDATAFUNC) \
     extern bool n_init(nClass* clazz, nKernelServer* kernelServer); \
     extern void* n_create(); \
-    extern void n_initcmds(nClass *); \
+    extern void n_initcmds(nClass*); \
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
@@ -126,8 +126,8 @@
         INITSTATICDATAFUNC(); \
         n_initcmds(clazz); \
         return true; \
-    }; \
-    void* n_create() { return n_new(CLASS()); };
+    } \
+    void* n_create() { return n_new(CLASS()); }
 
 //------------------------------------------------------------------------------
 /**
@@ -142,15 +142,15 @@
     nKernelServer* CLASS::kernelServer = 0; \
     extern bool n_init(nClass* clazz, nKernelServer* kernelServer); \
     extern void* n_create(); \
-    extern void n_initcmds(nClass *); \
+    extern void n_initcmds(nClass*); \
     bool n_init(nClass* clazz, nKernelServer* kernelServer) {\
         CLASS::kernelServer = kernelServer; \
         clazz->SetProperName(#CLASS); \
         clazz->SetInstanceSize(sizeof(CLASS)); \
         n_initcmds(clazz); \
         return true; \
-    }; \
-    void* n_create() { return n_new(CLASS()); };
+    } \
+    void* n_create() { return n_new(CLASS()); }
 
 //------------------------------------------------------------------------------
 #endif

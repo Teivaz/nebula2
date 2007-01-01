@@ -7,7 +7,7 @@
 
     Nebula metaclass. nRoot derived objects are not created directly
     in C++, but by nClass objects. nClass objects wrap dynamic demand-loading
-    of classes, and do other householding stuff.
+    of classes, and do other house holding stuff.
 
     (C) 2002 RadonLabs GmbH
 */
@@ -83,7 +83,7 @@ private:
     nString properName;
     nHashList* cmdList;
     nKeyArray<nCmdProto*>* cmdTable;
-    /// The hashed script commandlist of this class
+    /// The hashed script command list of this class
     nHashList* scriptCmdList;
     int refCount;
     int instanceSize;

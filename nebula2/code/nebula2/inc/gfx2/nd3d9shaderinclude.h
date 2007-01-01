@@ -19,7 +19,7 @@ public:
     /// constructor
     nD3D9ShaderInclude(const nString& sDir);
     /// open an include file and read its contents
-    STDMETHOD(Open)(D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID *ppData, UINT *pBytes);
+    STDMETHOD(Open)(D3DXINCLUDE_TYPE IncludeType, LPCSTR pFileName, LPCVOID pParentData, LPCVOID* ppData, UINT* pBytes);
     /// close an include file
     STDMETHOD(Close)(LPCVOID pData);
 

@@ -58,12 +58,9 @@ nBinScriptServer::BeginWrite(const char* filename, nObject* obj)
         this->PutString(file, buf);
         return file;
     }
-    else
-    {
-        n_printf("nBinScriptServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
-        file->Release();
-        return 0;
-    }
+    n_printf("nBinScriptServer::WriteBegin(): failed to open file '%s' for writing!\n", filename);
+    file->Release();
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -278,7 +275,7 @@ nBinScriptServer::WriteCmd(nFile* file, nCmd* cmd)
                 break;
 
             case nArg::Object:
-                this->PutObject(file, (nRoot*) arg->GetO());
+                this->PutObject(file, (nRoot*)arg->GetO());
                 break;
 
             case nArg::Void:
@@ -476,7 +473,7 @@ nBinScriptServer::GetBool(nFile* file, bool& val)
     n_assert(file);
     char c;
     int bytesRead = file->Read(&c, sizeof(char));
-    val = (0 == c) ? false : true;
+    val = (0 != c);
     return (sizeof(char) == bytesRead);
 }
 
@@ -536,10 +533,7 @@ nBinScriptServer::GetHeader(nFile* file)
         nString dummyStr;
         return this->GetString(file, dummyStr);
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -742,7 +736,6 @@ nBinScriptServer::ReadBlock(nFile* file)
 bool
 nBinScriptServer::RunScript(const char* filename, nString& result)
 {
-    bool retval = false;
     result.Clear();
 
     // create and open file object
@@ -767,15 +760,12 @@ nBinScriptServer::RunScript(const char* filename, nString& result)
         kernelServer->PopCwd();
 
         file->Close();
-        retval = true;
+        file->Release();
+        return true;
     }
-    else
-    {
-        n_printf("nBinScriptServer::RunScript(): could not open file '%s'\n", filename);
-    }
+    n_printf("nBinScriptServer::RunScript(): could not open file '%s'\n", filename);
     file->Release();
-    return retval;
+    return false;
 }
 
 //------------------------------------------------------------------------------
-

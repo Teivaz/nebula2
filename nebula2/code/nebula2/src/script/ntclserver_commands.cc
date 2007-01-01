@@ -9,7 +9,7 @@
 /**
     Put an "unknown object" error message.
 */
-static void tclUnknownObject(Tcl_Interp* interp, const char *objName)
+static void tclUnknownObject(Tcl_Interp* interp, const char* objName)
 {
     n_assert(objName);
     char buf[N_MAXPATH];
@@ -22,17 +22,17 @@ static void tclUnknownObject(Tcl_Interp* interp, const char *objName)
     Execute a replaced command with the argument list
     of another command.
 */
-static int tclPipeCommand(Tcl_Interp *interp, const char *cmd, int objc, Tcl_Obj *CONST objv[])
+static int tclPipeCommand(Tcl_Interp* interp, const char* cmd, int objc, Tcl_Obj* const objv[])
 {
     const int maxArgs = 64;
 
     n_assert(objc < maxArgs);
     int i;
-    Tcl_Obj *newObjv[maxArgs];
+    Tcl_Obj* newObjv[maxArgs];
     int res = TCL_OK;
 
     // increment refcount of original args
-    for (i=1; i<objc; i++)
+    for (i = 1; i < objc; i++)
     {
         newObjv[i] = objv[i];
         Tcl_IncrRefCount(newObjv[i]);
@@ -57,7 +57,7 @@ static int tclPipeCommand(Tcl_Interp *interp, const char *cmd, int objc, Tcl_Obj
 /**
     Implement 'new' command.
 */
-int tclcmd_New(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+int tclcmd_New(ClientData /*cdata*/, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
     if (objc != 3)
@@ -66,12 +66,12 @@ int tclcmd_New(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
     }
     else
     {
-        char *className = Tcl_GetString(objv[1]);
-        char *objName   = Tcl_GetString(objv[2]);
-        nRoot *o = nTclServer::kernelServer->NewNoFail(className, objName);
+        char* className = Tcl_GetString(objv[1]);
+        char* objName   = Tcl_GetString(objv[2]);
+        nRoot* o = nTclServer::kernelServer->NewNoFail(className, objName);
         if (o)
         {
-            Tcl_SetResult(interp, (char*) o->GetFullName().Get(), TCL_VOLATILE);
+            Tcl_SetResult(interp, (char*)o->GetFullName().Get(), TCL_VOLATILE);
             retval = TCL_OK;
         }
     }
@@ -83,7 +83,7 @@ int tclcmd_New(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
     Implement 'delete' command.
 */
 int
-tclcmd_Delete(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Delete(ClientData /*cdata*/, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
     if (objc != 2)
@@ -92,7 +92,7 @@ tclcmd_Delete(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
     }
     else
     {
-        nRoot *o = nTclServer::kernelServer->Lookup(Tcl_GetString(objv[1]));
+        nRoot* o = nTclServer::kernelServer->Lookup(Tcl_GetString(objv[1]));
         if (o)
         {
             o->Release();
@@ -111,7 +111,7 @@ tclcmd_Delete(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
     Implement 'sel' command.
 */
 int
-tclcmd_Sel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Sel(ClientData /*cdata*/, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
     if (objc != 2)
@@ -120,14 +120,13 @@ tclcmd_Sel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     }
     else
     {
-        char *objName = Tcl_GetString(objv[1]);
+        char* objName = Tcl_GetString(objv[1]);
         nRoot* obj = nTclServer::kernelServer->Lookup(objName);
         if (obj)
         {
             nTclServer::kernelServer->SetCwd(obj);
-            Tcl_SetResult(interp, (char*) obj->GetFullName().Get(), TCL_VOLATILE);
+            Tcl_SetResult(interp, (char*)obj->GetFullName().Get(), TCL_VOLATILE);
             retval = TCL_OK;
-
         }
         else
         {
@@ -142,7 +141,7 @@ tclcmd_Sel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     Implement 'psel' command.
 */
 int
-tclcmd_Psel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*objv*/[])
+tclcmd_Psel(ClientData /*cdata*/, Tcl_Interp* interp, int objc, Tcl_Obj* const /*objv*/[])
 {
     int retval = TCL_ERROR;
     if (objc != 1)
@@ -151,9 +150,9 @@ tclcmd_Psel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /
     }
     else
     {
-        nRoot *obj = nTclServer::kernelServer->GetCwd();
+        nRoot* obj = nTclServer::kernelServer->GetCwd();
         n_assert(obj);
-        Tcl_SetResult(interp, (char*) obj->GetFullName().Get(), TCL_VOLATILE);
+        Tcl_SetResult(interp, (char*)obj->GetFullName().Get(), TCL_VOLATILE);
         retval = TCL_OK;
     }
     return retval;
@@ -164,7 +163,7 @@ tclcmd_Psel(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /
     Implement 'dir' command.
 */
 int
-tclcmd_Dir(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*objv*/[])
+tclcmd_Dir(ClientData /*cdata*/, Tcl_Interp* interp, int objc, Tcl_Obj* const /*objv*/[])
 {
     int retval = TCL_ERROR;
     Tcl_ResetResult(interp);
@@ -174,14 +173,14 @@ tclcmd_Dir(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*
     }
     else
     {
-        nRoot *cwd = nTclServer::kernelServer->GetCwd();
+        nRoot* cwd = nTclServer::kernelServer->GetCwd();
         n_assert(cwd);
-        nRoot *obj;
-        Tcl_Obj *res = Tcl_GetObjResult(interp);
+        nRoot* obj;
+        Tcl_Obj* res = Tcl_GetObjResult(interp);
         for (obj = cwd->GetHead(); obj; obj = obj->GetSucc())
         {
-            const char *n = obj->GetName();
-            Tcl_AppendToObj(res, (char *)n, strlen(n));
+            const char* n = obj->GetName();
+            Tcl_AppendToObj(res, (char*)n, strlen(n));
             Tcl_AppendToObj(res, " ", 1);
         }
         retval = TCL_OK;
@@ -194,7 +193,7 @@ tclcmd_Dir(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*
     Implement 'get' command.
 */
 int
-tclcmd_Get(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Get(ClientData /*cdata*/, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
     if (objc != 2)
@@ -203,15 +202,15 @@ tclcmd_Get(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     }
     else
     {
-        char *objName = Tcl_GetString(objv[1]);
-        nObject *obj = nTclServer::kernelServer->Load(objName);
+        char* objName = Tcl_GetString(objv[1]);
+        nObject* obj = nTclServer::kernelServer->Load(objName);
         if (obj)
         {
             bool isRoot = obj->IsA("nroot");
             n_assert(isRoot);
             if (isRoot)
             {
-                Tcl_SetResult(interp, (char*) ((nRoot *)obj)->GetFullName().Get(), TCL_VOLATILE);
+                Tcl_SetResult(interp, (char*)((nRoot*)obj)->GetFullName().Get(), TCL_VOLATILE);
                 retval = TCL_OK;
             }
             else
@@ -237,160 +236,156 @@ tclcmd_Get(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
 */
 static
 bool
-_getInArgs(Tcl_Interp *interp, nCmd *cmd, int objc, Tcl_Obj *CONST objv[])
+_getInArgs(Tcl_Interp* interp, nCmd* cmd, int objc, Tcl_Obj* const objv[])
 {
-    long num_args;
-
-    num_args = cmd->GetNumInArgs();
-    if (num_args == objc)
+    long num_args = cmd->GetNumInArgs();
+    if (num_args != objc) {
+        return false;
+    }
+    // read out arguments
+    int i;
+    nArg* arg;
+    cmd->Rewind();
+    for (i = 0; i < num_args; i++)
     {
-        // read out arguments
-        int i;
-        nArg *arg;
-        cmd->Rewind();
-        for (i=0; i<num_args; i++)
+        bool arg_ok = false;
+        arg = cmd->In();
+        switch (arg->GetType())
         {
-            bool arg_ok = false;
-            arg = cmd->In();
-            switch (arg->GetType())
+        case nArg::Int:
+        {
+            int n;
+            if (Tcl_GetIntFromObj(interp, objv[i], &n) == TCL_OK)
             {
-                case nArg::Int:
-                {
-                    int n;
-                    if (Tcl_GetIntFromObj(interp,objv[i],&n)==TCL_OK)
-                    {
-                        arg->SetI(n);
-                        arg_ok = true;
-                    }
-                }
-                break;
+                arg->SetI(n);
+                arg_ok = true;
+            }
+        }
+        break;
 
-                case nArg::Float:
-                {
-                    double d;
-                    if (Tcl_GetDoubleFromObj(interp,objv[i],&d)==TCL_OK)
-                    {
-                        float f = (float) d;
-                        arg->SetF(f);
-                        arg_ok = true;
-                    }
-                }
-                break;
+        case nArg::Float:
+        {
+            double d;
+            if (Tcl_GetDoubleFromObj(interp, objv[i], &d) == TCL_OK)
+            {
+                float f = (float)d;
+                arg->SetF(f);
+                arg_ok = true;
+            }
+        }
+        break;
 
+        case nArg::String:
+        {
+            const char* str = Tcl_GetString(objv[i]);
+            if (strcmp(":null:", str) == 0)
+            {
+                str = NULL;
+            }
+            arg->SetS(str);
+            arg_ok = true;
+        }
+        break;
 
-                case nArg::String:
+        case nArg::Bool:
+        {
+            int bi;
+            if (Tcl_GetBooleanFromObj(interp, objv[i], &bi) == TCL_OK)
+            {
+                bool b = bi ? true : false;
+                arg->SetB(b);
+                arg_ok = true;
+            }
+        }
+        break;
+
+        case nArg::Object:
+            {
+                nRoot* o;
+                char* o_name = Tcl_GetString(objv[i]);
+                if (strcmp("null", o_name) == 0)
                 {
-                    const char *str = Tcl_GetString(objv[i]);
-                    if (strcmp(":null:",str)==0)
-                    {
-                        str = NULL;
-                    }
-                    arg->SetS(str);
+                    o = NULL;
                     arg_ok = true;
                 }
-                break;
-
-                case nArg::Bool:
+                else
                 {
-                    int bi;
-                    if (Tcl_GetBooleanFromObj(interp,objv[i],&bi)==TCL_OK)
+                    o = nTclServer::kernelServer->Lookup(o_name);
+                    if (o) arg_ok = true;
+                    else
                     {
-                        bool b = bi ? true : false;
-                        arg->SetB(b);
-                        arg_ok = true;
+                        n_printf("could not lookup '%s' as object!\n",o_name);
                     }
                 }
-                break;
-
-                case nArg::Object:
-                    {
-                        nRoot *o;
-                        char *o_name = Tcl_GetString(objv[i]);
-                        if (strcmp("null",o_name)==0)
-                        {
-                            o = NULL;
-                            arg_ok = true;
-                        }
-                        else
-                        {
-                            o = nTclServer::kernelServer->Lookup(o_name);
-                            if (o) arg_ok = true;
-                            else
-                            {
-                                n_printf("could not lookup '%s' as object!\n",o_name);
-                            }
-                        }
-                        arg->SetO(o);
-                    }
-                    break;
-
-                case nArg::Void:
-                    break;
-
-                case nArg::List:
-                    n_printf("List values aren't acceptable in arguments.");
-                    arg_ok = false;
-                    break;
-
-                default:
-                    n_error("nTclServer::_getInArg(): unsupported data type!");
-                    break;
+                arg->SetO(o);
             }
-            if (!arg_ok) return false;
+            break;
+
+        case nArg::Void:
+            break;
+
+        case nArg::List:
+            n_printf("List values aren't acceptable in arguments.");
+            arg_ok = false;
+            break;
+
+        default:
+            n_error("nTclServer::_getInArg(): unsupported data type!");
+            break;
         }
-        return true;
+        if (!arg_ok) return false;
     }
-    return false;
+    return true;
 }
 
 //--------------------------------------------------------------------
 /**
     utility function for nArg of type List
 */
-static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
+static Tcl_Obj* _putOutListArg(Tcl_Interp* interp, nArg* listArg)
 {
     n_assert(nArg::List == listArg->GetType());
 
     nArg* args;
     int num_args = listArg->GetL(args);
 
-    Tcl_Obj* res = Tcl_NewListObj(0,0);
+    Tcl_Obj* res = Tcl_NewListObj(0, 0);
 
     nArg* arg = args;
-    for (int i=0; i<num_args; i++)
+    for (int i = 0; i < num_args; i++)
     {
         switch (arg->GetType())
         {
             case nArg::Int:
             {
-                Tcl_Obj *io = Tcl_NewIntObj(arg->GetI());
-                Tcl_ListObjAppendElement(interp,res,io);
+                Tcl_Obj* io = Tcl_NewIntObj(arg->GetI());
+                Tcl_ListObjAppendElement(interp, res, io);
             }
             break;
 
             case nArg::Float:
             {
-                Tcl_Obj *fo = Tcl_NewDoubleObj((double)arg->GetF());
-                Tcl_ListObjAppendElement(interp,res,fo);
+                Tcl_Obj* fo = Tcl_NewDoubleObj((double)arg->GetF());
+                Tcl_ListObjAppendElement(interp, res, fo);
             }
             break;
 
             case nArg::String:
             {
-                const char *s = arg->GetS();
+                const char* s = arg->GetS();
                 if (!s)
                 {
                     s = ":null:";
                 }
-                Tcl_Obj *so = Tcl_NewStringObj((char *)s, strlen(s));
+                Tcl_Obj* so = Tcl_NewStringObj((char*)s, strlen(s));
                 Tcl_ListObjAppendElement(interp, res, so);
             }
             break;
 
             case nArg::Bool:
             {
-                const char *s = arg->GetB() ? "true" : "false";
-                Tcl_Obj *so = Tcl_NewStringObj((char *)s, strlen(s));
+                const char* s = arg->GetB() ? "true" : "false";
+                Tcl_Obj* so = Tcl_NewStringObj((char*)s, strlen(s));
                 Tcl_ListObjAppendElement(interp, res, so);
             }
             break;
@@ -398,7 +393,7 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
             case nArg::Object:
             {
                 nString str;
-                nRoot *o = (nRoot *) arg->GetO();
+                nRoot* o = (nRoot*)arg->GetO();
                 if (o)
                 {
                     str = o->GetFullName();
@@ -407,13 +402,13 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
                 {
                     str = "null";
                 }
-                Tcl_Obj *so = Tcl_NewStringObj(str.Get(), str.Length());
-                Tcl_ListObjAppendElement(interp,res,so);
+                Tcl_Obj* so = Tcl_NewStringObj(str.Get(), str.Length());
+                Tcl_ListObjAppendElement(interp, res, so);
             }
             break;
 
             case nArg::List:
-                Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
+                Tcl_ListObjAppendElement(interp, res, _putOutListArg(interp,arg));
                 break;
 
             case nArg::Void:
@@ -440,14 +435,14 @@ static Tcl_Obj* _putOutListArg(Tcl_Interp *interp, nArg *listArg)
 */
 static
 void
-_putOutArgs(Tcl_Interp *interp, nCmd *cmd)
+_putOutArgs(Tcl_Interp* interp, nCmd* cmd)
 {
-    nArg *arg;
+    nArg* arg;
     int num_args = cmd->GetNumOutArgs();
     cmd->Rewind();
 
     Tcl_ResetResult(interp);
-    Tcl_Obj *res = Tcl_GetObjResult(interp);
+    Tcl_Obj* res = Tcl_GetObjResult(interp);
 
     // handle single return args (no need to create list)
     if (1 == num_args)
@@ -456,35 +451,35 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
         switch (arg->GetType())
         {
             case nArg::Int:
-                Tcl_SetIntObj(res,arg->GetI());
+                Tcl_SetIntObj(res, arg->GetI());
                 break;
 
             case nArg::Float:
-                Tcl_SetDoubleObj(res,arg->GetF());
+                Tcl_SetDoubleObj(res, arg->GetF());
                 break;
 
             case nArg::String:
                 {
-                    const char *s = arg->GetS();
+                    const char* s = arg->GetS();
                     if (!s)
                     {
                         s = ":null:";
                     }
-                    Tcl_SetStringObj(res,(char *)s,strlen(s));
+                    Tcl_SetStringObj(res, (char*)s, strlen(s));
                 }
                 break;
 
             case nArg::Bool:
                 {
-                    const char *s = arg->GetB() ? "true" : "false";
-                    Tcl_SetStringObj(res,(char *)s,strlen(s));
+                    const char* s = arg->GetB() ? "true" : "false";
+                    Tcl_SetStringObj(res, (char*)s, strlen(s));
                 }
                 break;
 
             case nArg::Object:
                 {
                     nString str;
-                    nRoot *o = (nRoot *) arg->GetO();
+                    nRoot* o = (nRoot*)arg->GetO();
                     if (o)
                     {
                         str = o->GetFullName();
@@ -493,7 +488,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                     {
                         str = "null";
                     }
-                    Tcl_SetStringObj(res, (char *) str.Get(), str.Length());
+                    Tcl_SetStringObj(res, (char*)str.Get(), str.Length());
                 }
                 break;
 
@@ -501,7 +496,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                 break;
 
             case nArg::List:
-                Tcl_ListObjAppendList(interp,res,_putOutListArg(interp,arg));
+                Tcl_ListObjAppendList(interp, res, _putOutListArg(interp, arg));
                 break;
 
             default:
@@ -513,49 +508,49 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
     {
         // more then one output arg, create a list
         int i;
-        for (i=0; i<num_args; i++)
+        for (i = 0; i < num_args; i++)
         {
             arg = cmd->Out();
             switch (arg->GetType())
             {
                 case nArg::Int:
                     {
-                        Tcl_Obj *io = Tcl_NewIntObj(arg->GetI());
-                        Tcl_ListObjAppendElement(interp,res,io);
+                        Tcl_Obj* io = Tcl_NewIntObj(arg->GetI());
+                        Tcl_ListObjAppendElement(interp, res, io);
                     }
                     break;
 
                 case nArg::Float:
                     {
-                        Tcl_Obj *fo = Tcl_NewDoubleObj((double)arg->GetF());
-                        Tcl_ListObjAppendElement(interp,res,fo);
+                        Tcl_Obj* fo = Tcl_NewDoubleObj((double)arg->GetF());
+                        Tcl_ListObjAppendElement(interp, res, fo);
                     }
                     break;
 
                 case nArg::String:
                     {
-                        const char *s = arg->GetS();
+                        const char* s = arg->GetS();
                         if (!s)
                         {
                             s = ":null:";
                         }
-                        Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
-                        Tcl_ListObjAppendElement(interp,res,so);
+                        Tcl_Obj* so = Tcl_NewStringObj((char*)s, strlen(s));
+                        Tcl_ListObjAppendElement(interp, res, so);
                     }
                     break;
 
                 case nArg::Bool:
                     {
-                        const char *s = arg->GetB() ? "true" : "false";
-                        Tcl_Obj *so = Tcl_NewStringObj((char *)s,strlen(s));
-                        Tcl_ListObjAppendElement(interp,res,so);
+                        const char* s = arg->GetB() ? "true" : "false";
+                        Tcl_Obj* so = Tcl_NewStringObj((char*)s, strlen(s));
+                        Tcl_ListObjAppendElement(interp, res, so);
                     }
                     break;
 
                 case nArg::Object:
                     {
                         nString str;
-                        nRoot *o = (nRoot *) arg->GetO();
+                        nRoot* o = (nRoot*)arg->GetO();
                         if (o)
                         {
                             str = o->GetFullName();
@@ -564,7 +559,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                         {
                             str = "null";
                         }
-                        Tcl_Obj *so = Tcl_NewStringObj(str.Get(), str.Length());
+                        Tcl_Obj* so = Tcl_NewStringObj(str.Get(), str.Length());
                         Tcl_ListObjAppendElement(interp, res, so);
                     }
                     break;
@@ -573,7 +568,7 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
                     break;
 
                 case nArg::List:
-                    Tcl_ListObjAppendElement(interp,res,_putOutListArg(interp,arg));
+                    Tcl_ListObjAppendElement(interp, res, _putOutListArg(interp, arg));
                     break;
 
                 default:
@@ -590,15 +585,15 @@ _putOutArgs(Tcl_Interp *interp, nCmd *cmd)
 */
 static
 void
-tcl_objcmderror(Tcl_Interp *interp,
-                nTclServer *tcl,
-                const char *msg,    // message, must contain 2 '%s'
-                nObject *o,         // name is 1st '%s'
-                char *cmd_name)     // 2nd '%s'
+tcl_objcmderror(Tcl_Interp* interp,
+                nTclServer* tcl,
+                const char* msg,    // message, must contain 2 '%s'
+                nObject* o,         // name is 1st '%s'
+                char* cmd_name)     // 2nd '%s'
 {
     char errorBuf[1024];
     if (o->IsA("nroot"))
-        snprintf(errorBuf, sizeof(errorBuf), msg, ((nRoot *)o)->GetFullName().Get(), cmd_name);
+        snprintf(errorBuf, sizeof(errorBuf), msg, ((nRoot*)o)->GetFullName().Get(), cmd_name);
     else
         snprintf(errorBuf, sizeof(errorBuf), msg, "nObject", cmd_name);
     Tcl_SetResult(interp,  errorBuf, TCL_VOLATILE);
@@ -620,24 +615,24 @@ tcl_objcmderror(Tcl_Interp *interp,
     Unknown-Kommando weitergereicht.
 */
 int
-tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Unknown(ClientData cdata, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer *) cdata;
+    nTclServer* tcl = (nTclServer*)cdata;
 
-    char *obj_name;
-    char *cmd_name;
-    char *dot;
+    char* obj_name;
+    char* cmd_name;
+    char* dot;
     char cmd[N_MAXPATH];
-    nObject *o;
+    nObject* o;
     bool has_dot = false;
 
     // extract object name and cmd name
     n_strncpy2(cmd, Tcl_GetString(objv[1]), sizeof(cmd));
-    dot = strchr(cmd,'.');
+    dot = strchr(cmd, '.');
 
     // special case handle path components
-    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot=strchr(++dot,'.');
+    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot = strchr(++dot, '.');
     if (dot)
     {
         has_dot = true;
@@ -647,7 +642,7 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         {
             obj_name = 0;
         }
-        cmd_name = dot+1;
+        cmd_name = dot + 1;
     }
     else
     {
@@ -681,17 +676,17 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     }
 
     // invoke command
-    nClass *cl = o->GetClass();
-    nCmdProto *cmd_proto = (nCmdProto *) cl->FindCmdByName(cmd_name);
+    nClass* cl = o->GetClass();
+    nCmdProto* cmd_proto = (nCmdProto*)cl->FindCmdByName(cmd_name);
     if (cmd_proto)
     {
-        nCmd *cmd = cmd_proto->NewCmd();
+        nCmd* cmd = cmd_proto->NewCmd();
         n_assert(cmd);
 
         // retrieve input args (skip the 'unknown' and cmd statement)
-        if (!_getInArgs(interp,cmd,objc-2,objv+2))
+        if (!_getInArgs(interp, cmd, objc - 2, objv + 2))
         {
-            tcl_objcmderror(interp,tcl,"Broken input args, object '%s', command '%s'",o,cmd_name);
+            tcl_objcmderror(interp, tcl, "Broken input args, object '%s', command '%s'", o, cmd_name);
             cmd_proto->RelCmd(cmd);
             return TCL_ERROR;
         }
@@ -700,11 +695,11 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         if (o->Dispatch(cmd))
         {
             retval = TCL_OK;
-            _putOutArgs(interp,cmd);
+            _putOutArgs(interp, cmd);
         }
         else
         {
-            tcl_objcmderror(interp,tcl,"Dispatch error, object '%s', command '%s'",o,cmd_name);
+            tcl_objcmderror(interp, tcl, "Dispatch error, object '%s', command '%s'", o, cmd_name);
         }
         cmd_proto->RelCmd(cmd);
 
@@ -719,7 +714,7 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
         {
             // NOTE: use SetFailOnError(false) before loading script
             // files if you don't want the program to abort
-            tcl_objcmderror(interp,tcl,"Object '%s' doesn't accept command '%s'",o,cmd_name);
+            tcl_objcmderror(interp, tcl, "Object '%s' doesn't accept command '%s'", o, cmd_name);
             retval = TCL_ERROR;
         }
         else
@@ -744,10 +739,10 @@ tclcmd_Unknown(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST ob
     Implement the 'exit' command.
 */
 int
-tclcmd_Exit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*objv*/[])
+tclcmd_Exit(ClientData cdata, Tcl_Interp* interp, int objc, Tcl_Obj* const /*objv*/[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer *) cdata;
+    nTclServer* tcl = (nTclServer*)cdata;
     if (objc != 1)
     {
         Tcl_SetResult(interp, "Syntax is 'exit'", TCL_STATIC);
@@ -786,7 +781,7 @@ tclcmd_Exit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST /*obj
     kernel.
 */
 int
-tclcmd_Puts(ClientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Puts(ClientData, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval     = TCL_OK;
     bool is_stdout = true;
@@ -795,11 +790,11 @@ tclcmd_Puts(ClientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
     if (objc > 1)
     {
         bool newline = true;
-        char *str = Tcl_GetString(objv[objc-1]);
+        char* str = Tcl_GetString(objv[objc-1]);
         int i;
         for (i = 1; i < (objc - 1); i++)
         {
-            char *s = Tcl_GetString(objv[i]);
+            char* s = Tcl_GetString(objv[i]);
             if (strcmp(s, "-nonewline") == 0)
             {
                 newline = false;
@@ -838,7 +833,7 @@ tclcmd_Puts(ClientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
     Implement the 'exists' command.
 */
 int
-tclcmd_Exists(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Exists(ClientData /*cdata*/, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
     if (objc != 2)
@@ -847,7 +842,7 @@ tclcmd_Exists(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
     }
     else
     {
-        nRoot *o = nTclServer::kernelServer->Lookup(Tcl_GetString(objv[1]));
+        nRoot* o = nTclServer::kernelServer->Lookup(Tcl_GetString(objv[1]));
         if (o) Tcl_SetResult(interp, "1", TCL_STATIC);
         else   Tcl_SetResult(interp, "0", TCL_STATIC);
         retval = TCL_OK;
@@ -862,24 +857,24 @@ tclcmd_Exists(ClientData /*cdata*/, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
     emit object.signal arg1 arg2 arg3
 */
 int
-tclcmd_Emit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Emit(ClientData cdata, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer *) cdata;
+    nTclServer* tcl = (nTclServer*)cdata;
 
-    char *obj_name;
-    char *cmd_name;
-    char *dot;
+    char* obj_name;
+    char* cmd_name;
+    char* dot;
     char cmd[N_MAXPATH];
-    nObject *o;
+    nObject* o;
     bool has_dot = false;
 
     // extract object name and cmd name
     n_strncpy2(cmd, Tcl_GetString(objv[1]), sizeof(cmd));
-    dot = strchr(cmd,'.');
+    dot = strchr(cmd, '.');
 
     // special case handle path components
-    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot=strchr(++dot,'.');
+    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot = strchr(++dot, '.');
     if (dot)
     {
         has_dot = true;
@@ -923,17 +918,17 @@ tclcmd_Emit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
     }
 
     // invoke command
-    nClass *cl = o->GetClass();
-    nCmdProto *cmd_proto = (nCmdProto *) cl->FindSignalByName(cmd_name);
+    nClass* cl = o->GetClass();
+    nCmdProto* cmd_proto = (nCmdProto*)cl->FindSignalByName(cmd_name);
     if (cmd_proto)
     {
-        nCmd *cmd = cmd_proto->NewCmd();
+        nCmd* cmd = cmd_proto->NewCmd();
         n_assert(cmd);
 
         // retrieve input args (skip the 'unknown' and cmd statement)
-        if (!_getInArgs(interp,cmd,objc-2,objv+2))
+        if (!_getInArgs(interp, cmd, objc - 2, objv + 2))
         {
-            tcl_objcmderror(interp,tcl,"Broken input args, object '%s', signal '%s'",o,cmd_name);
+            tcl_objcmderror(interp,tcl,"Broken input args, object '%s', signal '%s'", o, cmd_name);
             cmd_proto->RelCmd(cmd);
             return TCL_ERROR;
         }
@@ -942,18 +937,18 @@ tclcmd_Emit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
         if (o->Dispatch(cmd))
         {
             retval = TCL_OK;
-            _putOutArgs(interp,cmd);
+            _putOutArgs(interp, cmd);
         }
         else
         {
-            tcl_objcmderror(interp,tcl,"Dispatch error, object '%s', signal '%s'",o,cmd_name);
+            tcl_objcmderror(interp, tcl, "Dispatch error, object '%s', signal '%s'", o, cmd_name);
         }
         cmd_proto->RelCmd(cmd);
 
     }
     else
     {
-        tcl_objcmderror(interp,tcl,"Object '%s' doesn't accept signal '%s'",o,cmd_name);
+        tcl_objcmderror(interp, tcl, "Object '%s' doesn't accept signal '%s'", o, cmd_name);
         retval = TCL_ERROR;
     }
     return retval;
@@ -971,16 +966,16 @@ tclcmd_Emit(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
     - signal can be either be a signal name or command name
 */
 int
-tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+tclcmd_Post(ClientData cdata, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
 {
     int retval = TCL_ERROR;
-    nTclServer *tcl = (nTclServer *) cdata;
+    nTclServer* tcl = (nTclServer*)cdata;
 
-    char *obj_name;
-    char *cmd_name;
-    char *dot;
+    char* obj_name;
+    char* cmd_name;
+    char* dot;
     char cmd[N_MAXPATH];
-    nObject *o;
+    nObject* o;
     bool has_dot = false;
 
     // extract time and convert time
@@ -989,10 +984,10 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
 
     // extract object name and cmd name
     n_strncpy2(cmd, Tcl_GetString(objv[2]), sizeof(cmd));
-    dot = strchr(cmd,'.');
+    dot = strchr(cmd, '.');
 
     // special case handle path components
-    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot=strchr(++dot,'.');
+    while (dot && ((dot[1] == '.')||(dot[1] == '/'))) dot = strchr(++dot, '.');
     if (dot)
     {
         has_dot = true;
@@ -1036,30 +1031,30 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
     }
 
     // invoke command
-    nClass *cl = o->GetClass();
-    nCmdProto *cmd_proto = (nCmdProto *) cl->FindSignalByName(cmd_name);
+    nClass* cl = o->GetClass();
+    nCmdProto* cmd_proto = (nCmdProto*)cl->FindSignalByName(cmd_name);
     if (0 == cmd_proto)
     {
-        cmd_proto = (nCmdProto *) cl->FindCmdByName(cmd_name);
+        cmd_proto = (nCmdProto*)cl->FindCmdByName(cmd_name);
     }
     if (cmd_proto)
     {
-        nCmd *cmd = cmd_proto->NewCmd();
+        nCmd* cmd = cmd_proto->NewCmd();
         n_assert(cmd);
 
         // retrieve input args (skip the 'unknown' and cmd statement)
-        if (!_getInArgs(interp,cmd,objc-3,objv+3))
+        if (!_getInArgs(interp, cmd, objc - 3, objv + 3))
         {
-            tcl_objcmderror(interp,tcl,"Broken input args, object '%s', command/signal '%s'",o,cmd_name);
+            tcl_objcmderror(interp, tcl, "Broken input args, object '%s', command/signal '%s'", o, cmd_name);
             cmd_proto->RelCmd(cmd);
             return TCL_ERROR;
         }
 
         // let object handle the command
-        nSignalServer * signalServer = nSignalServer::Instance();
+        nSignalServer* signalServer = nSignalServer::Instance();
         if (0 == signalServer)
         {
-            tcl_objcmderror(interp,tcl,"Signal server not available, object '%s', command/signal '%s'",o,cmd_name);
+            tcl_objcmderror(interp, tcl, "Signal server not available, object '%s', command/signal '%s'", o, cmd_name);
             cmd_proto->RelCmd(cmd);
             return TCL_ERROR;
         }
@@ -1071,12 +1066,12 @@ tclcmd_Post(ClientData cdata, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[
         else
         {
             cmd_proto->RelCmd(cmd);
-            tcl_objcmderror(interp,tcl,"Post error, object '%s', command/signal '%s'",o,cmd_name);
+            tcl_objcmderror(interp, tcl, "Post error, object '%s', command/signal '%s'", o, cmd_name);
         }
     }
     else
     {
-        tcl_objcmderror(interp,tcl,"Object '%s' doesn't accept signal '%s'",o,cmd_name);
+        tcl_objcmderror(interp, tcl, "Object '%s' doesn't accept signal '%s'", o, cmd_name);
         retval = TCL_ERROR;
     }
     return retval;

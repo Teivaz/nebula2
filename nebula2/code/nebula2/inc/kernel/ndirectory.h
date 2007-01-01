@@ -79,7 +79,7 @@ inline
 bool
 nDirectory::IsOpen() const
 {
-    return ((this->path.IsEmpty()) ? false : true);
+    return !this->path.IsEmpty();
 }
 
 //------------------------------------------------------------------------------

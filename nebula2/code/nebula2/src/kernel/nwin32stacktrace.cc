@@ -80,7 +80,7 @@ nWin32StackTrace::WalkStack(HANDLE thread, CONTEXT& context)
     DWORD strLen = GetModuleFileName(0,  buf, sizeof(buf));
     nString path = buf;
     nString dirPath = path.ExtractDirName();
-    SymInitialize(this->process, (PSTR) dirPath.Get(), true);
+    SymInitialize(this->process, (PSTR)dirPath.Get(), true);
 
     STACKFRAME64 stackFrame = { 0 };
     stackFrame.AddrPC.Offset    = context.Eip;
@@ -119,7 +119,7 @@ void
 nWin32StackTrace::ShowFrame(STACKFRAME64& frame)
 {
     const int maxNameLen = 512;
-    SYMBOL_INFO* symbol = (SYMBOL_INFO*) n_malloc(sizeof(SYMBOL_INFO) + maxNameLen);
+    SYMBOL_INFO* symbol = (SYMBOL_INFO*)n_malloc(sizeof(SYMBOL_INFO) + maxNameLen);
     ZeroMemory(symbol, sizeof(SYMBOL_INFO) + maxNameLen);
     symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
     symbol->MaxNameLen = maxNameLen;

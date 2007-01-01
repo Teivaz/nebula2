@@ -150,10 +150,7 @@ sphere::inside(const bbox3& box) const
     {
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -216,8 +213,8 @@ sphere::ClipStatus
 sphere::clipstatus(const bbox3& box) const
 {
     if (this->inside(box)) return Inside;
-    else if (this->intersects(box)) return Clipped;
-    else return Outside;
+    if (this->intersects(box)) return Clipped;
+    return Outside;
 }
 
 //------------------------------------------------------------------------------
@@ -226,9 +223,9 @@ sphere::clipstatus(const bbox3& box) const
     Taken from "Simple Intersection Tests For Games"
     article in Gamasutra, Oct 18 1999
 
-    @param  va  [in] distance travelled by 'this'
+    @param  va  [in] distance traveled by 'this'
     @param  sb  [in] the other sphere
-    @param  vb  [in] distance travelled by sb
+    @param  vb  [in] distance traveled by sb
     @param  u0  [out] normalized intro contact
     @param  u1  [out] normalized outro contact
 */
@@ -247,45 +244,35 @@ sphere::intersect_sweep(const vector3& va, const sphere&  sb, const vector3& vb,
         u1 = 0.0f;
         return true;
     }
-    else
+    // check if they hit each other
+    float a = vab % vab;
+    if ((a < -TINY) || (a > TINY))
     {
-        // check if they hit each other
-        float a = vab % vab;
-        if ((a < -TINY) || (a > TINY))
+        // if a is '0' then the objects don't move relative to each other
+        float b = (vab % ab) * 2.0f;
+        float c = (ab % ab) - (rab * rab);
+        float q = b*b - 4*a*c;
+        if (q >= 0.0f)
         {
-            // if a is '0' then the objects don't move relative to each other
-            float b = (vab % ab) * 2.0f;
-            float c = (ab % ab) - (rab * rab);
-            float q = b*b - 4*a*c;
-            if (q >= 0.0f)
+            // 1 or 2 contacts
+            float sq = (float) sqrt(q);
+            float d  = 1.0f / (2.0f*a);
+            float r1 = (-b + sq) * d;
+            float r2 = (-b - sq) * d;
+            if (r1 < r2)
             {
-                // 1 or 2 contacts
-                float sq = (float) sqrt(q);
-                float d  = 1.0f / (2.0f*a);
-                float r1 = (-b + sq) * d;
-                float r2 = (-b - sq) * d;
-                if (r1 < r2)
-                {
-                    u0 = r1;
-                    u1 = r2;
-                }
-                else
-                {
-                    u0 = r2;
-                    u1 = r1;
-                }
-                return true;
+                u0 = r1;
+                u1 = r2;
             }
             else
             {
-                return false;
+                u0 = r2;
+                u1 = r1;
             }
-        }
-        else
-        {
-            return false;
+            return true;
         }
     }
+    return false;
 }
 
 //------------------------------------------------------------------------------
