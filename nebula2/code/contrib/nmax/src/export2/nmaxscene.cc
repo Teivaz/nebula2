@@ -34,17 +34,9 @@
 #include "variable/nvariableserver.h"
 #include "scene/ntransformnode.h"
 #include "scene/nskinshapenode.h"
-//begin nskynode
+
 #include "scene/nskynode.h"
 #include "scene/nskystate.h"
-//#include "scene/nanimator.h"
-//#include "scene/ntransformanimator.h"
-//#include "scene/nshaderanimator.h"
-//#include "scene/nblendshapeanimator.h"
-//#include "scene/nfloatanimator.h"
-//#include "scene/nintanimator.h"
-//#include "scene/nvectoranimator.h"
-//end nskynode
 
 //-----------------------------------------------------------------------------
 /**
@@ -609,6 +601,9 @@ bool nMaxScene::Postprocess()
     {
         meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Shadow, false);
 
+        // remove useless components if those are.
+        this->globalShadowMeshBuilder.ForceVertexComponents(nMeshBuilder::Vertex::COORD);
+
         ProcessOnMeshBuilder(this->globalShadowMeshBuilder, true, meshFileName);
 
         // remove useless components if those are.
@@ -623,6 +618,10 @@ bool nMaxScene::Postprocess()
     if (this->globalSkinnedShadowMeshBuilder.GetNumVertices())
     {
         meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Shadow, true);
+
+        // remove useless components if those are.
+        this->globalSkinnedShadowMeshBuilder.ForceVertexComponents(
+            nMeshBuilder::Vertex::COORD | nMeshBuilder::Vertex::WEIGHTS | nMeshBuilder::Vertex::JINDICES);
 
         ProcessOnMeshBuilder(this->globalSkinnedShadowMeshBuilder, true, meshFileName);
 
@@ -717,7 +716,7 @@ bool nMaxScene::Postprocess()
                 }
                 else
                 {
-                    this->sceneDir = scenePath;
+                    this->sceneDir = nFileServer2::Instance()->ManglePath(scenePath);
                 }
             }
         }
@@ -1221,10 +1220,13 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     if (!(flag & SCL_IDENT))
     {
         vector3 scale (ap.k.x, ap.k.z, ap.k.y);
-        if (ap.f < 0.0f) {
+        if (ap.f < 0.0f) 
+        {
             tn->SetScale(scale * -1);
-        } else {
-        tn->SetScale(scale);
+        }
+        else 
+        {
+            tn->SetScale(scale);
         }
 
         bXForm = true;
