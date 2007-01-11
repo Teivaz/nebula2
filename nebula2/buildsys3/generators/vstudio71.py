@@ -208,7 +208,7 @@ class vstudio71:
                 # calculate these once for the workspace
                 self.vcprojLocation = workspace.GetWorkspacePath(defaultLocation)
                 self.incDirStr = workspace.GetIncSearchDirsString(defaultLocation)
-                self.libDirStr = workspace.GetLibSearchDirsString('win32_vc71_i386',
+                self.libDirStr = workspace.GetLibSearchDirsString('win32_vc_i386',
                                                                   defaultLocation)
 
                 # make sure the workspace/projects directory exists
