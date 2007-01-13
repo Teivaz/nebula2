@@ -756,7 +756,7 @@ nGLServer2::DrawNS(PrimitiveType primType)
 {
     n_assert(this->hDC && this->inBeginScene);
 
-    n_printf("nGLServer2::DrawNS()\n");
+    //n_printf("nGLServer2::DrawNS()\n");
     // get primitive type and number of primitives
     GLenum glPrimType;
     int glNumPrimitives = this->GetGLPrimTypeAndNum(primType, glPrimType);

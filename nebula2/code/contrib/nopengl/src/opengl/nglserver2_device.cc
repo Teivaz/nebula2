@@ -152,7 +152,7 @@ nGLServer2::DeviceOpen()
     // check required extensions
     n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_shader_objects),       "nGLServer2::DeviceOpen(): GL_ARB_shader_objects extention not supported!");
     n_assert2(N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object), "nGLServer2::DeviceOpen(): GL_ARB_vertex_buffer_object extention not supported!");
-    //n_assert2(N_GL_EXTENSION_SUPPORTED(WGL_ARB_render_texture), "nGLServer2::DeviceOpen(): WGL_ARB_render_texture extention not supported!");
+    //n_assert2(N_GL_EXTENSION_SUPPORTED(WGL_ARB_render_texture),      "nGLServer2::DeviceOpen(): WGL_ARB_render_texture extention not supported!");
 
     // reload any resources if necessary
     this->OnDeviceInit(true);

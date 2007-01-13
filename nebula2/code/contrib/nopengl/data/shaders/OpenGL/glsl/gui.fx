@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <shader>
+<!--
+  gui.fx
+
+  A 2d rectangle shader for GUI rendering.
+
+  Cloned from RadonLabs gui.fx
+
+  (C) 2006 Oleg Khryptul (Haron)
+-->
     <source type="vertex"   path="gui.vert" />
     <source type="fragment" path="gui.frag" />
 

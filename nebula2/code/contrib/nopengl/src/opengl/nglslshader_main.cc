@@ -15,6 +15,7 @@
 #include "gfx2/nshaderparams.h"
 #include "kernel/nfileserver2.h"
 #include "kernel/nfile.h"
+#include "variable/nvariableserver.h"
 
 #include "tinyxml/tinyxml.h"
 
@@ -118,13 +119,14 @@ n_assert_glslstatus(GLhandleARB obj, const nString& msg, GLenum param)
 nGLSLShader::nGLSLShader() :
     hasBeenValidated(false),
     didNotValidate(false),
-    //uniformsUpdated(false),
+    activeTechnique(NULL),
     activeTechniqueIdx(-1),
     programObj(0),
     vertShader(0),
     fragShader(0)
 {
-    memset(this->parameterHandles, -1, sizeof(this->parameterHandles));
+    //memset(this->parameterHandles, -1, sizeof(this->parameterHandles));
+    //memset(this->techParameterHandles, false, sizeof(this->techParameterHandles));
 }
 
 //------------------------------------------------------------------------------
@@ -149,6 +151,9 @@ nGLSLShader::UnloadResource()
 
     this->techniqueName.Clear();
     this->technique.Clear();
+
+    this->activeTechnique = NULL;
+    this->activeTechniqueIdx = -1;
 
     // if this is the currently set shader, unlink from gfx server
     if (nGfxServer2::Instance()->GetShader() == this)
@@ -190,10 +195,15 @@ nGLSLShader::LoadResource()
 
     n_printf("\nStart shader <%s> loading...\n", this->GetFilename().Get());
 
+    memset(this->parameterHandles,     -1,    sizeof(this->parameterHandles));
+    memset(this->techParameterHandles, false, sizeof(this->techParameterHandles));
+
     // parse XML
     nString path = nFileServer2::Instance()->ManglePath(this->GetFilename());
     nString shdDir = path.ExtractDirName();
     TiXmlDocument* xmlDocument = n_new(TiXmlDocument);
+
+    this->activeTechnique = NULL;
 
     if (xmlDocument->LoadFile(path.Get()))
     {
@@ -220,19 +230,31 @@ nGLSLShader::LoadResource()
                 }
                 else
                 {
-                    n_message("nGLSLShader::LoadResource(): Unsupported shader source type <%s>.", child->Attribute("type"));
+                    n_message("nGLSLShader::LoadResource(): Unsupported shader source type <%s>.\n", child->Attribute("type"));
                 }
             }
             else if (child->Value() == nString("technique"))
             {
                 TiXmlElement* passElem;
-                nGLTechnique tech;
+                nGLSLTechnique tech;
+
+                this->activeTechnique = &tech;
+
+                tech.pass.Clear();
+                //tech.passName.Clear();
+
+                this->techniqueName.Append(child->Attribute("name"));
+
+                //this->activeTechniqueIdx++;
 
                 for (passElem = child->FirstChildElement(); passElem; passElem = passElem->NextSiblingElement())
                 {
                     if (passElem->Value() == nString("pass"))
                     {
                         TiXmlElement* paramElem;
+                        nGLSLPass pass;
+
+                        pass.paramDpendentStates.Clear();
 
                         int paramCount = 0;
                         GLuint list = glGenLists(1);
@@ -243,14 +265,43 @@ nGLSLShader::LoadResource()
                         {
                             if (paramElem->Value() == nString("param"))
                             {
-                                if (this->ParsePassParam(paramElem->Attribute("name"), nString(paramElem->Attribute("value"))))
+                                nPassState::Param passStateParam = nPassState::StringToParam(paramElem->Attribute("name"));
+                                n_assert(passStateParam != nPassState::InvalidParameter);
+
+                                nString indexStr(paramElem->Attribute("index"));
+                                int index = indexStr.IsValidInt() ? indexStr.AsInt() : -1;
+                                
+                                const char* valStr = paramElem->Attribute("value");
+                                const char* varStr = paramElem->Attribute("variable");
+
+                                if (varStr) // variable parameter value. It will be setuped by SetParams method
                                 {
-                                    paramCount++;
+                                    nGLSLPassParamVar ppVar;
+                                    nShaderState::Param shaderStateParam = nShaderState::StringToParam(varStr);
+                                    n_assert(shaderStateParam != nShaderState::InvalidParameter);
+
+                                    this->techParameterHandles[shaderStateParam] = true;
+                                    ppVar.passStateParam   = passStateParam;
+                                    ppVar.index            = index;
+                                    ppVar.shaderStateParam = shaderStateParam;
+
+                                    pass.paramDpendentStates.Append(ppVar);
+                                }
+                                else if (valStr) // constant parameter value. Put them into GL list
+                                {
+                                    if (this->ParsePassParam(paramElem->Attribute("name"), index, nString(valStr)))
+                                    {
+                                        paramCount++;
+                                    }
+                                }
+                                else
+                                {
+                                    n_message("nGLSLShader::LoadResource(): Parameter <%s> must have <value> or <variable> attribute. Parameter skipped.\n", paramElem->Attribute("name"));
                                 }
                             }
                             else
                             {
-                                n_message("nGLSLShader::LoadResource(): Unsupported pass tag <%s>. Only <param> tag supported.", paramElem->Value());
+                                n_message("nGLSLShader::LoadResource(): Unsupported pass tag <%s>. Only <param> tag supported.\n", paramElem->Value());
                             }
                         }
                         glEndList();
@@ -260,22 +311,26 @@ nGLSLShader::LoadResource()
                             glDeleteLists(list, 1);
                             list = 0; // TODO: check this
                         }
-                        tech.passName.Append(passElem->Attribute("name"));
-                        tech.pass.Append(list);
+                        pass.name = passElem->Attribute("name");
+                        pass.listID = list;
+                        tech.pass.Append(pass);
+                        //tech.passName.Append(passElem->Attribute("name"));
+                        //tech.pass.Append(list);
                     }
                     else
                     {
-                        n_message("nGLSLShader::LoadResource(): Unsupported technique tag <%s>. Only <pass> tag supported.", passElem->Value());
+                        n_message("nGLSLShader::LoadResource(): Unsupported technique tag <%s>. Only <pass> tag supported.\n", passElem->Value());
                     }
                 }
-                this->techniqueName.Append(child->Attribute("name"));
                 this->technique.Append(tech);
             }
             else
             {
-                n_message("nGLSLShader::LoadResource(): Unsupported shader tag <%s>.", child->Value());
+                n_message("nGLSLShader::LoadResource(): Unsupported shader tag <%s>.\n", child->Value());
             }
         }
+
+        this->activeTechnique = NULL;
 
         glLinkProgramARB(this->programObj);
         n_assert_glslstatus(this->programObj, "nGLSLShader::LoadResource(): Program linking Error.", GL_OBJECT_LINK_STATUS_ARB);
@@ -302,7 +357,7 @@ nGLSLShader::LoadResource()
     }
 
     n_delete(xmlDocument);
-    n_message("nGLSLShader::LoadResource(): Can't load shader file.");
+    n_message("nGLSLShader::LoadResource(): Can't load shader file.\n");
 
     return false;
 }
@@ -348,88 +403,16 @@ nGLSLShader::CreateGLSLShader(GLSLShaderType type, const nString& path)
 //------------------------------------------------------------------------------
 /**
 */
-bool
-nGLSLShader::ParsePassParam(const char* name, nString& val)
-{
-    val.ToLower();
-    switch (nPassState::StringToParam(name))
-    {
-    case nPassState::ZWriteEnable:
-        return true;
-
-    case nPassState::ZEnable:
-        if (val == nString("true"))
-        {
-            glEnable(GL_DEPTH_TEST);
-        }
-        else
-        {
-            glDisable(GL_DEPTH_TEST);
-        }
-        return true;         
-
-    case nPassState::ZFunc:
-        if (val == nString("lessequal"))
-        {
-            glDepthFunc(GL_LEQUAL);
-        }
-        // TODO: add other functions
-        return true;         
-
-    case nPassState::ColorWriteEnable:
-        return true;
-
-    case nPassState::AlphaBlendEnable:
-        return true;
-
-    case nPassState::SrcBlend:
-        return true;        
-
-    case nPassState::DestBlend:
-        return true;       
-
-    case nPassState::AlphaTestEnable:
-        return true; 
-
-    case nPassState::StencilEnable:
-        return true;   
-
-    case nPassState::CullMode:
-        // TODO: test this
-        if (val == nString("cw"))
-        {
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_FRONT);
-            //glFrontFace(GL_CW);
-        }
-        else if (val == nString("ccw"))
-        {
-            glEnable(GL_CULL_FACE);
-            glCullFace(GL_BACK);
-            //glFrontFace(GL_CCW);
-        }
-        else
-        {
-            glDisable(GL_CULL_FACE);
-        }
-        return true; 
-
-    default:
-        n_message("nGLSLShader::ParsePassParam(): Unsupported pass parameter <%s>.", name);
-        return false;
-    }
-}
-
-//------------------------------------------------------------------------------
-/**
-*/
 void
 nGLSLShader::SetBool(nShaderState::Param p, bool val)
 {
     n_assert(p < nShaderState::NumParameters);
 
     //n_printf("SetBool: %s\n", nShaderState::ParamToString(p));
-    this->curParams.SetArg(p, nShaderArg(val));
+    if (-1 != this->parameterHandles[p] || this->techParameterHandles[p])
+    {
+        this->curParams.SetArg(p, nShaderArg(val));
+    }
     glUniform1iARB(this->parameterHandles[p], val ? 1 : 0);
 
     n_gltrace("nGLSLShader::SetBool().");
@@ -737,8 +720,8 @@ nGLSLShader::EndParamUpdate()
 
 //------------------------------------------------------------------------------
 /**
-Set a whole shader parameter block at once. This is slightly faster
-(and more convenient) then setting single parameters.
+    Set a whole shader parameter block at once. This is slightly faster
+    (and more convenient) then setting single parameters.
 */
 void
 nGLSLShader::SetParams(const nShaderParams& params)
@@ -754,20 +737,30 @@ nGLSLShader::SetParams(const nShaderParams& params)
     for (i = 0; i < numValidParams; i++)
     {
         nShaderState::Param curParam = params.GetParamByIndex(i);
+        const nShaderArg& curArg = params.GetArgByIndex(i);
 
-        // parameter used in shader?
+        // early out if parameter is void
+        if (curArg.GetType() == nShaderState::Void)
+        {
+            continue;
+        }
+
+        // is parameter used in any technique?
+        bool curParamNeedsUpdate = this->techParameterHandles[curParam] && !this->curParams.IsParameterValid(curParam);
+
+        // is parameter used in the shader?
         GLint handle = this->parameterHandles[curParam];
         if (handle != -1)
         {
             // avoid redundant state switches
-            const nShaderArg& curArg = params.GetArgByIndex(i);
             if ((!this->curParams.IsParameterValid(curParam)) ||
                 (!(curArg == this->curParams.GetArg(curParam))))
             {
-                this->curParams.SetArg(curParam, curArg);
+                curParamNeedsUpdate = true;
                 switch (curArg.GetType())
                 {
-                case nShaderState::Void:
+                case nShaderState::Bool:
+                    glUniform1iARB(handle, curArg.GetBool() ? 1 : 0);
 #ifdef __NEBULA_STATS__
                     //gfxServer->statsNumRenderStateChanges++;
 #endif
@@ -811,6 +804,11 @@ nGLSLShader::SetParams(const nShaderParams& params)
                 //n_error("nGLSLShader::SetParams(): Error while setting parameter.");
             }
         }
+
+        if (curParamNeedsUpdate)
+        {
+            this->curParams.SetArg(curParam, curArg);
+        }
     }
 
     glUseProgramObjectARB(0);
@@ -821,8 +819,8 @@ nGLSLShader::SetParams(const nShaderParams& params)
 
 //------------------------------------------------------------------------------
 /**
-Update the parameter handles table which maps nShader2 parameters to
-GLSL parameter handles.
+    Update the parameter handles table which maps nShader2 parameters to
+    GLSL parameter handles.
 */
 void
 nGLSLShader::UpdateParameterHandles()
@@ -890,19 +888,19 @@ nGLSLShader::UpdateParameterHandles()
 
 //------------------------------------------------------------------------------
 /**
-Return true if parameter is used by effect.
+    Return true if parameter is used by effect.
 */
 bool
 nGLSLShader::IsParameterUsed(nShaderState::Param p)
 {
     n_assert(p < nShaderState::NumParameters);
-    return (0 <= this->parameterHandles[p]);
+    return (0 <= this->parameterHandles[p] || this->techParameterHandles[p]);
 }
 
 //------------------------------------------------------------------------------
 /**
-Find the first valid technique and set it as current.
-This sets the hasBeenValidated and didNotValidate members
+    Find the first valid technique and set it as current.
+    This sets the hasBeenValidated and didNotValidate members
 */
 void
 nGLSLShader::ValidateEffect()
@@ -922,13 +920,15 @@ nGLSLShader::ValidateEffect()
     this->didNotValidate = false;
     //this->UpdateParameterHandles();
 
-    // FIXME: this is incorrect technique selection
+    // TODO: this is incorrect technique selection
     if (this->technique.Size() > 0)
     {
+        this->activeTechnique = &this->technique[0];
         this->activeTechniqueIdx = 0;
     }
     else
     {
+        this->activeTechnique = NULL;
         this->activeTechniqueIdx = -1;
     }
 
@@ -959,6 +959,7 @@ nGLSLShader::Begin(bool saveState)
     else
     {
         glUseProgramObjectARB(this->programObj);
+        n_gltrace("nGLSLShader::Begin().");
         //this->UpdateParameterHandles();
         return 1;
     }
@@ -970,16 +971,37 @@ nGLSLShader::Begin(bool saveState)
 void
 nGLSLShader::BeginPass(int pass)
 {
-    n_gltrace("nGLSLShader::BeginPass().");
-
     if (-1 != this->activeTechniqueIdx)
     {
-        GLuint passID = this->technique[activeTechniqueIdx].pass[pass];
+        //GLuint passID = this->technique[activeTechniqueIdx].pass[pass];
+        //GLuint passID = this->technique[activeTechniqueIdx].pass[pass].listID;
+        nGLSLPass& passEl = this->activeTechnique->pass[pass];
 
-        if (GL_TRUE == glIsList(passID))
+        // set constant pass params
+        //if (GL_TRUE == glIsList(passEl.listID))
+        //{
+        glCallList(passEl.listID);
+        //}
+
+        int i, sz = passEl.paramDpendentStates.Size();
+
+        // set Nebula shader param dependent pass params
+        for (i = 0 ; i < sz; i++)
         {
-            glCallList(passID);
+            nGLSLPassParamVar& ppv = passEl.paramDpendentStates[i];
+            if (this->curParams.IsParameterValid(ppv.shaderStateParam))
+            {
+                this->passParamFunc[ppv.passStateParam](ppv.index, this->curParams.GetArg(ppv.shaderStateParam));
+            }
+            else
+            {
+                // TODO: shared.fx method not works for GLSL shaders. Should be other way to do uniforms initialization
+                nShaderArg shaderArg;
+                this->passParamFunc[ppv.passStateParam](ppv.index, shaderArg);
+            }
         }
+
+        n_gltrace("nGLSLShader::BeginPass().");
     }
 }
 
@@ -1001,7 +1023,7 @@ nGLSLShader::EndPass()
 
 //------------------------------------------------------------------------------
 /**
-stop shader rendering
+    stop shader rendering
 */
 void
 nGLSLShader::End()
@@ -1034,7 +1056,16 @@ nGLSLShader::HasTechnique(const char* t) const
 bool
 nGLSLShader::SetTechnique(const char* t)
 {
-    activeTechniqueIdx = this->techniqueName.FindIndex(t);
+    this->activeTechniqueIdx = this->techniqueName.FindIndex(t);
+
+    if (-1 != this->activeTechniqueIdx)
+    {
+        this->activeTechnique = &this->technique[this->activeTechniqueIdx];
+        return true;
+    }
+    this->activeTechnique = NULL;
+    return false;
+
     //n_assert(t);
     //n_assert(this->effect);
     //
@@ -1074,7 +1105,6 @@ nGLSLShader::SetTechnique(const char* t)
     //return true;
 
     // TODO: add setting technique
-    return -1 != activeTechniqueIdx;
 }
 
 //------------------------------------------------------------------------------
@@ -1087,8 +1117,7 @@ nGLSLShader::GetTechnique() const
     //return this->effect->GetCurrentTechnique();
 
     // TODO: add getting technique
-    if (-1 == activeTechniqueIdx) return NULL;
-    return this->techniqueName[activeTechniqueIdx].Get();
+    return (-1 == activeTechniqueIdx) ? NULL : this->techniqueName[activeTechniqueIdx].Get();
 }
 
 //------------------------------------------------------------------------------
