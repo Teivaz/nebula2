@@ -11,6 +11,7 @@
 */
 #include "gfx2/nshader2.h"
 #include "gfx2/nshaderparams.h"
+#include "opengl/npassstate.h"
 
 class nGLServer2;
 
@@ -106,7 +107,7 @@ private:
     uint CreateGLSLShader(GLSLShaderType type, const nString& path);
 
     /// put proper GL command to GL list
-    bool ParsePassParam(const char* name, nString& val);
+    bool ParsePassParam(const char* name, int index, nString& val);
 
     friend class nGLServer2;
 
@@ -119,17 +120,36 @@ private:
 
     int parameterHandles[nShaderState::NumParameters]; ///< map shader states to GL handles
     nShaderParams curParams;					       ///< mirrored to avoid redundant parameters setting
-    //bool uniformsUpdated;                              ///< true if glsl uniform parameters IDs is up to date
 
-    struct nGLTechnique
+    struct nGLSLPassParamVar
     {
-        nArray<nString> passName;
-        nArray<uint>    pass;                          ///< GLlist IDs to call with glCallList
+        nPassState::Param passStateParam;
+        int index;
+        nShaderState::Param shaderStateParam;
     };
 
-    nArray<nString>      techniqueName;
-    nArray<nGLTechnique> technique;
-    int                  activeTechniqueIdx;
+    struct nGLSLPass
+    {
+        nString  name;
+        uint     listID;                          ///< states GLlist IDs to call with glCallList
+        nArray<nGLSLPassParamVar> paramDpendentStates;
+    };
+
+    struct nGLSLTechnique
+    {
+        nArray<nGLSLPass>    pass;
+        //nArray<nString> passName;
+        //nArray<uint>    pass;                          ///< GLlist IDs to call with glCallList
+    };
+
+    nArray<nString>        techniqueName;
+    nArray<nGLSLTechnique> technique;
+
+    nGLSLTechnique*        activeTechnique;
+    int                    activeTechniqueIdx;
+
+    bool techParameterHandles[nShaderState::NumParameters]; ///< true if shader state used in technique
+    static void (*passParamFunc[nPassState::NumParameters])(int index, const nShaderArg&);
 };
 
 //------------------------------------------------------------------------------

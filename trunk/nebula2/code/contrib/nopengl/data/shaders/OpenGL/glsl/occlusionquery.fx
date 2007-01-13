@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <shader>
+<!--
+  occlusionquery.fx
+
+  Simple shader for occlusion queries. Just renders the passed geometry
+  with zwrite and color writes disabled.
+
+  Cloned from RadonLabs occlusionquery.fx
+
+  (C) 2006 Oleg Khryptul (Haron)
+-->
     <source type="vertex"   path="occlusionquery.vert" />
     <source type="fragment" path="occlusionquery.frag" />
 
@@ -18,4 +28,3 @@
         </pass>
     </technique>
 </shader>
- 

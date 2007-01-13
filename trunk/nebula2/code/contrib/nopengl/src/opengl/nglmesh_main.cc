@@ -46,7 +46,6 @@ nGLMesh::nGLMesh() :
     texCoordNum(0),
     texCoordFirst(Uv0)
 {
-    //empty
     this->componentOffset = n_new_array(ushort, firstSetBitPos(nMesh2::AllComponents + 1));
 }
 
@@ -55,7 +54,7 @@ nGLMesh::nGLMesh() :
 */
 nGLMesh::~nGLMesh()
 {
-    if (this->IsValid())
+    if (this->IsLoaded())
     {
         this->Unload();
     }
@@ -84,8 +83,8 @@ bool
 nGLMesh::LoadResource()
 {
     n_assert(!this->IsLoaded());
-    n_assert(0 == this->vertexBuffer && 0 == this->privVertexBuffer);
-    n_assert(0 == this->indexBuffer  && 0 == this->privIndexBuffer );
+    n_assert(0 == this->vertexBuffer);
+    n_assert(0 == this->indexBuffer);
 
     bool success = nMesh2::LoadResource();
     
@@ -108,7 +107,7 @@ nGLMesh::LoadResource()
 void
 nGLMesh::UnloadResource()
 {
-    n_assert(this->IsValid());
+    n_assert(this->IsLoaded());
 
     nMesh2::UnloadResource();
 
