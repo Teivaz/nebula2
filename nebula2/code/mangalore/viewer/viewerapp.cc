@@ -452,12 +452,14 @@ ViewerApp::SetupGui()
 void
 ViewerApp::SetupCeGui()
 {
+#ifdef USE_MCEGUI
     ceuiServer->CreateFont("Commonwealth-10.font");
     ceuiServer->LoadScheme("TaharezLook.scheme");
     ceuiServer->SetDefaultMouseCursor("TaharezLook", "MouseArrow");
     CEGUI::Window* rootWnd = ceuiServer->LoadWindowLayout("mviewer.layout");
     ceuiServer->SetRootWindow(rootWnd);
     ceuiServer->DisplayGui();
+#endif
 }
 
 } // namespace Viewer
