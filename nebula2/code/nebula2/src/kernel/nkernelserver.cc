@@ -200,16 +200,22 @@ nKernelServer::CheckCreatePath(const char* className, const char* path, bool die
                 child->SetName(curPathComponent);
                 parent->AddTail(child);
                 child->Initialize();
-                return child;
             }
-            if (dieOnError) n_error("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
-            else            n_printf("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
-            return 0;
+            else
+            {
+                if (dieOnError) n_error("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
+                else            n_printf("nKernelServer: Couldn't create object '%s' of class '%s'.\n", path, className);
+                return 0;
+            }
         }
     }
-    if (dieOnError) n_error("nKernelServer: Empty name for new object of class '%s'!\n", className);
-    else            n_printf("nKernelServer: Empty name for new object of class '%s'!\n", className);
-    return 0;
+    else
+    {
+        if (dieOnError) n_error("nKernelServer: Empty name for new object of class '%s'!\n", className);
+        else            n_printf("nKernelServer: Empty name for new object of class '%s'!\n", className);
+        return 0;
+    }
+    return child;
 }
 
 //------------------------------------------------------------------------------
