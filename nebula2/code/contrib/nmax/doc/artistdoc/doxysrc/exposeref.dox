@@ -26,7 +26,7 @@
 @endverbatim
           <br>
       - <B>dir</B><I>()</I> <br>
-          Return a array containing the names of the children of the
+          Return an array containing the names of the children of the
           current working directory in the NOH.<br>    
           <br>
       - <B>sel</B> <I>"path"</I><br>
@@ -43,19 +43,20 @@
           Return object name if there's the object in given path.<br>
           <br>
       - <B>nprint</B> <I>"message"</I> <br>
-          Put message on Nebula's log file (if it exist) and listener.
+          Put a message on Nebula's log file (if it exist) and listener.
           <br>
 
       - <B>call</B> <I>"command"</I> <I>"arguments"</I> <br>
-          Execute the command given by command on the currently selected
-          object in the NOH. It also can be executed with given path and 
+          Execute with the given command on the currently selected
+          object in the NOH. It also can be executed with the given path and 
           command.
-          A command which doesn't have any argument(void type) must be 
-          provided empty array.<br>
-          An arguments should be provided by maxscript array type.<br>
+          For a command which doesn't have any arguments(void type) an empty array  
+          must be provided for an argument.
+          And the argument provided is maxscript array type.<br>
+          You can use <b><i>callv</i></b> command instead of <i>call</i>.
           <br>
           @note 
-            There's no way to execute <I>call</I> command with no argument even 
+            There is no way to execute <I>call</I> command with no argument even 
             the command does not have any arguments. You should provide
             empty array in that case. <br>
           <br>
@@ -68,7 +69,7 @@
 @endverbatim
           <br>
       - <B>callv</B> <I>"command"</I> <br>
-          Synonym for <I>call</I> command except it takes no arguments.
+          Synonym to <I>call</I> command except it takes no arguments.
           It is convenient when you call void type of command. <br>
           <br>
           example:
