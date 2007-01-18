@@ -656,7 +656,7 @@ inline
 char
 nString::operator[](int i) const
 {
-    n_assert((0 <= i) && (i < this->Length()));
+    n_assert((0 <= i) && (i <= this->Length()));
     if (this->string != 0)
     {
         return this->string[i];
@@ -672,7 +672,7 @@ inline
 char&
 nString::operator[](int i)
 {
-    n_assert((0 <= i) && (i < this->Length()));
+    n_assert((0 <= i) && (i <= this->Length()));
     if (this->string != 0)
     {
         return this->string[i];
