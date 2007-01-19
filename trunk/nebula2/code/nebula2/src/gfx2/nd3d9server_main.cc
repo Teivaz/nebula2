@@ -306,10 +306,7 @@ nD3D9Server::AreVertexShadersEmulated()
     {
         return true;
     }
-    else
-    {
-        return 0 == (this->deviceBehaviourFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING);
-    }
+    return 0 == (this->deviceBehaviourFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING);
 #endif
 }
 

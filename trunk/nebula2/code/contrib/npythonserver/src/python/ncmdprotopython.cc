@@ -39,4 +39,3 @@ nCmdProtoPython::Dispatch(void* obj, nCmd* cmd)
 
     return nPythonServer::Instance->RunFunction(funcName, result);
 }
-

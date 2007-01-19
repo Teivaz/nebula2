@@ -35,7 +35,7 @@ public:
     /// per frame trigger
     virtual void Trigger(double time);
     /// create a new input event object
-    nInputEvent *NewEvent();
+    nInputEvent* NewEvent();
     /// release an input event object
     void ReleaseEvent(nInputEvent* event);
     /// link input event object into global input event list
@@ -45,9 +45,9 @@ public:
     /// flush (clear) global input event list
     void FlushEvents();
     /// return pointer to first input event in global input event list
-    nInputEvent *FirstEvent();
+    nInputEvent* FirstEvent();
     /// return pointer to next event in global input event list
-    nInputEvent *NextEvent(nInputEvent *);
+    nInputEvent* NextEvent(nInputEvent*);
     /// begin mapping input events
     void BeginMap();
     /// map an input event to an input state
@@ -97,9 +97,9 @@ protected:
     /// convert an input event string into an input event
     bool MapStrToEvent(const char* str, nInputEvent* event);
     /// return pointer to first matching event
-    nInputEvent *FirstIdenticalEvent(nInputEvent *pattern);
+    nInputEvent* FirstIdenticalEvent(nInputEvent* pattern);
     /// return pointer to next matching event
-    nInputEvent *NextIdenticalEvent(nInputEvent *pattern, nInputEvent *cur);
+    nInputEvent* NextIdenticalEvent(nInputEvent* pattern, nInputEvent* cur);
     /// do actual input mapping
     void DoInputMapping();
     /// begin adding a script to execute
@@ -155,7 +155,7 @@ protected:
     nHashList is_list;          // list of nInputState's
 
     int act_script;
-    const char *script_array[N_MAXNUM_SCRIPTS];
+    const char* script_array[N_MAXNUM_SCRIPTS];
 
     double long_pressed_time;
     double double_click_time;

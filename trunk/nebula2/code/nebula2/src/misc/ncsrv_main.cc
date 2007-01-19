@@ -222,7 +222,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     {
         n_strncpy2(line, lineArray[curLine], sizeof(line) - 3);
         n_strcat(line, "\n", sizeof(line));
-        gfxServer->DrawText(line, textColor, rect, nFont2::Top|nFont2::Left, false);
+        gfxServer->DrawText(line, textColor, rect, nFont2::Top | nFont2::Left, false);
         rect.v0.y += dy;
     }
 
@@ -245,7 +245,7 @@ nConServer::RenderConsole(int displayHeight, int fontHeight)
     while ((*to++ = *from++));
 
     // and render it
-    gfxServer->DrawText(line, textColor, rect, nFont2::Top|nFont2::Left, false);
+    gfxServer->DrawText(line, textColor, rect, nFont2::Top | nFont2::Left, false);
 }
 
 //------------------------------------------------------------------------------
@@ -274,7 +274,7 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
         rectangle rect(vector2(0.0, 0.0f), vector2(1.0f, 1.0f));
         float dy = 1.0f / float(maxLinesOnScreen);
         nEnv* curVar;
-        for (curVar = (nEnv*) watcherVars->GetHead(); curVar; curVar = (nEnv*) curVar->GetSucc())
+        for (curVar = (nEnv*)watcherVars->GetHead(); curVar; curVar = (nEnv*)curVar->GetSucc())
         {
             if (curVar->IsA(this->envClass))
             {
@@ -310,7 +310,7 @@ nConServer::RenderWatchers(int displayHeight, int fontHeight)
                             sprintf(line,"%s: <unknown data type>\n", varName);
                             break;
                     }
-                    gfxServer->DrawText(line, textColor, rect, nFont2::Top|nFont2::Left, false);
+                    gfxServer->DrawText(line, textColor, rect, nFont2::Top | nFont2::Left, false);
                     rect.v0.y += dy;
                 }
             }

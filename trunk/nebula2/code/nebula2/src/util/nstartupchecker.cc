@@ -90,18 +90,12 @@ nStartupChecker::CheckAlreadyRunning(const nString& vendorName,
             }
             return true;
         }
-        else
-        {
-            // app is probably running in a different session, show a message box
-            MessageBox(0, errorMsg.Get(), errorTitle.Get(), MB_OK | MB_ICONERROR);
-            return true;
-        }
+        // app is probably running in a different session, show a message box
+        MessageBox(0, errorMsg.Get(), errorTitle.Get(), MB_OK | MB_ICONERROR);
+        return true;
     }
-    else
-    {
-        // the app was not already running
-        return false;
-    }
+    // the app was not already running
+    return false;
 #else
     return false;
 #endif
@@ -125,12 +119,9 @@ nStartupChecker::CheckDirect3D(const nString& errorTitle, const nString& errorMs
         d3d9->Release();
         return true;
     }
-    else
-    {
-        // display error message box
-        MessageBox(0, errorMsg.Get(), errorTitle.Get(), MB_OK | MB_ICONERROR);
-        return false;
-    }
+    // display error message box
+    MessageBox(0, errorMsg.Get(), errorTitle.Get(), MB_OK | MB_ICONERROR);
+    return false;
 }
 #endif
 
@@ -153,11 +144,8 @@ nStartupChecker::CheckDirectSound(const nString& errorTitle, const nString& erro
         ds8->Release();
         return true;
     }
-    else
-    {
-        // display error message box
-        MessageBox(0, errorMsg.Get(), errorTitle.Get(), MB_OK | MB_ICONERROR);
-        return false;
-    }
+    // display error message box
+    MessageBox(0, errorMsg.Get(), errorTitle.Get(), MB_OK | MB_ICONERROR);
+    return false;
 }
 #endif

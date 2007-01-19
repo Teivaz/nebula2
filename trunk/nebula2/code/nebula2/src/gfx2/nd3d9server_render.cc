@@ -1079,4 +1079,3 @@ nD3D9Server::DrawInstancedNS(PrimitiveType primType)
     }
     #endif
 }
-

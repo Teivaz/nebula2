@@ -184,7 +184,7 @@ nPythonServer::RunScript(const char *filename, nString& result)
     nString fname = file2->ManglePath(filename);
     nFile* file = file2->NewFileObject();
 
-    if (file->Open(fname.Get(), "r")) 
+    if (file->Open(fname, "r")) 
     {
         // We only opened this to be able to report the error ourselves.
         // So, go on, close it now.

@@ -134,10 +134,10 @@ nFileServer2::ResetAssigns()
 void
 nFileServer2::CleanupPathName(nString& str)
 {
-    nString pathString(str.Get());
+    nString pathString(str);
     pathString.ConvertBackslashes();
     pathString.StripTrailingSlash();
-    str = pathString.Get();
+    str = pathString;
 
 /*    n_assert(path);
 
@@ -563,7 +563,7 @@ nFileServer2::MakePath(const nString& dirName)
     n_assert(dir);
 
     // build stack of non-existing dir components
-    nString path = this->ManglePath(dirName).Get();
+    nString path = this->ManglePath(dirName);
     nArray<nString> pathStack;
     while (!path.IsEmpty() && !dir->Open(path))
     {

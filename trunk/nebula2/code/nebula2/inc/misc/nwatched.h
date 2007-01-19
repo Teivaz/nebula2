@@ -88,7 +88,7 @@ nWatched::Initialize(const nString& name, nArg::Type type)
     this->refEnv = path.Get();
     if (!this->refEnv.isvalid())
     {
-        this->refEnv = (nEnv*) nKernelServer::Instance()->New("nenv", path.Get());
+        this->refEnv = (nEnv*)nKernelServer::Instance()->New("nenv", path.Get());
         switch (type)
         {
         case nArg::Int:

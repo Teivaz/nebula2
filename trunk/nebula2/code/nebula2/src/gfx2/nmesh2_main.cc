@@ -101,7 +101,7 @@ nMesh2::LoadResource()
         // no filename, just create empty vertex and/or index buffers
         return this->CreateEmpty();
     }
-    else if (this->refResourceLoader.isvalid())
+    if (this->refResourceLoader.isvalid())
     {
         // if the resource loader reference is valid, let it take a stab at the file
         success = this->refResourceLoader->InitResource(filename.Get(), this);
@@ -248,7 +248,7 @@ nMesh2::CreateEdgeBuffer()
 {
     n_assert(0 == this->privEdgeBuffer);
     n_assert(this->edgeBufferByteSize > 0);
-    this->privEdgeBuffer = (Edge*) n_malloc(this->edgeBufferByteSize);
+    this->privEdgeBuffer = (Edge*)n_malloc(this->edgeBufferByteSize);
     n_assert(this->privEdgeBuffer);
 }
 
@@ -364,10 +364,7 @@ nMesh2::GetByteSize()
     {
         return this->numEdges * sizeof(Edge);
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------

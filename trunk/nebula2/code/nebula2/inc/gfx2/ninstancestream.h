@@ -71,7 +71,7 @@ public:
     /// type for stream declaration
     typedef nArray<Component> Declaration;
 
-    /// lock tyes
+    /// lock types
     enum LockFlags
     {
         Read = (1<<0),

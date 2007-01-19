@@ -132,10 +132,7 @@ nDI8Device::GetInstanceName()
     {
         return 0;
     }
-    else
-    {
-        return this->instanceName.Get();
-    }
+    return this->instanceName.Get();
 }
 
 //------------------------------------------------------------------------------
@@ -160,10 +157,7 @@ nDI8Device::GetProductName()
     {
         return 0;
     }
-    else
-    {
-        return this->productName.Get();
-    }
+    return this->productName.Get();
 }
 
 //------------------------------------------------------------------------------

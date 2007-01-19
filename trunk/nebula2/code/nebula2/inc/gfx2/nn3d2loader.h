@@ -84,7 +84,7 @@ nN3d2Loader::Open()
         {
             continue;
         }
-        else if (0 == strcmp(keyWord, "type"))
+        if (0 == strcmp(keyWord, "type"))
         {
             // type must be 'n3d2'
             const char* typeString = strtok(0, N_WHITESPACE);
@@ -216,7 +216,7 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
     n_assert(this->file);
 
     // check required buffer size
-    n_assert((this->numVertices * this->vertexWidth * int(sizeof(float))) == bufferSize);
+    n_assert((this->numVertices * this->vertexWidth * sizeof(float)) == bufferSize);
     float* endOfBuffer = ((float*)buffer) + (this->numVertices * this->vertexWidth);
 
     // load vertices
@@ -349,9 +349,9 @@ nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
 
         if (Index16 == this->indexType)
         {
-            indexBuffer16[index++] = (ushort) i0;
-            indexBuffer16[index++] = (ushort) i1;
-            indexBuffer16[index++] = (ushort) i2;
+            indexBuffer16[index++] = (ushort)i0;
+            indexBuffer16[index++] = (ushort)i1;
+            indexBuffer16[index++] = (ushort)i2;
             n_assert(&(indexBuffer16[index]) <= endOfBuffer);
         }
         else
@@ -384,7 +384,7 @@ nN3d2Loader::ReadEdges(void* buffer, int bufferSize)
     n_assert(bufferSize == (this->numEdges * 4 * int(sizeof(ushort))));
     endOfBuffer = ((ushort*)buffer) + this->numEdges * 4;
 
-    nMesh2::Edge* edgeBuffer = (nMesh2::Edge*) buffer;
+    nMesh2::Edge* edgeBuffer = (nMesh2::Edge*)buffer;
 
     int edgeIndex;
     int index = 0;
@@ -420,4 +420,3 @@ nN3d2Loader::ReadEdges(void* buffer, int bufferSize)
 
 //------------------------------------------------------------------------------
 #endif
-

@@ -46,7 +46,7 @@ public:
     nNpkTocEntry* AddDirEntry(const char* entryName);
     /// add a file entry
     nNpkTocEntry* AddFileEntry(const char* entryName, int fileOffset, int fileLength);
-    /// find a sub entry by name (dirs only)
+    /// find a sub entry by name (directories only)
     nNpkTocEntry* FindEntry(const char* name);
     /// get the first entry
     nNpkTocEntry* GetFirstEntry();
@@ -112,7 +112,7 @@ nNpkTocEntry::~nNpkTocEntry()
     if (this->entryList)
     {
         nNpkTocEntry* curEntry;
-        while ((curEntry = (nNpkTocEntry*) this->entryList->RemHead()))
+        while ((curEntry = (nNpkTocEntry*)this->entryList->RemHead()))
         {
             n_delete(curEntry);
         }
@@ -224,12 +224,9 @@ nNpkTocEntry::FindEntry(const char* entryName)
     n_assert(DIR == this->type);
     if (this->entryList)
     {
-        return (nNpkTocEntry*) this->entryList->Find(entryName);
+        return (nNpkTocEntry*)this->entryList->Find(entryName);
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -242,12 +239,9 @@ nNpkTocEntry::GetFirstEntry()
     n_assert(DIR == this->type);
     if (this->entryList)
     {
-        return (nNpkTocEntry*) this->entryList->GetHead();
+        return (nNpkTocEntry*)this->entryList->GetHead();
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -259,7 +253,7 @@ nNpkTocEntry::GetNextEntry(nNpkTocEntry* curEntry)
 {
     n_assert(DIR == this->type);
     n_assert(curEntry);
-    return (nNpkTocEntry*) curEntry->GetSucc();
+    return (nNpkTocEntry*)curEntry->GetSucc();
 }
 
 //------------------------------------------------------------------------------

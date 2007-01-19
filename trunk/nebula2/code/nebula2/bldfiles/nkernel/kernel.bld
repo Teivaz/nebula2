@@ -161,8 +161,6 @@ endmodule
 beginmodule nfile
     setdir kernel
     setheaders {
-        _filetime_posix.h
-        _filetime_win32.h
         nfile
         nfiletime
     }

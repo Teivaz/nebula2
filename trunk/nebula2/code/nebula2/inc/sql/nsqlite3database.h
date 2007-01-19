@@ -53,7 +53,7 @@ public:
     virtual void ReplaceRow(const nString& tableName, const nSqlRow& row);
     /// simple update of existing row with single key/value pair
     virtual void UpdateRow(const nString& tableName, const nString& keyColumn, const nString& keyVal, const nSqlRow& row);
-    /// update of existing row with complexe WHERE clause
+    /// update of existing row with complex WHERE clause
     virtual void UpdateRow(const nString& tableName, const nString& whereClause, const nSqlRow& row);
     /// delete an existing row with single key/value pair
     virtual void DeleteRow(const nString& tableName, const nString& keyColumn, const nString& keyVal);
@@ -69,7 +69,7 @@ public:
     virtual void EndTransaction();
 
 protected:
-    /// load texture resource (create rendertarget if render target resource)
+    /// load texture resource (create render target if render target resource)
     virtual bool LoadResource();
     /// unload texture resource
     virtual void UnloadResource();

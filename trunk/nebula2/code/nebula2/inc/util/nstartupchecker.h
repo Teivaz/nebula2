@@ -26,7 +26,7 @@ public:
     nStartupChecker();
     /// destructor
     ~nStartupChecker();
-    /// check if the app is alreading running
+    /// check if the app is already running
     bool CheckAlreadyRunning(const nString& vendorName, const nString& appName, const nString& appWindowTitle, const nString& errorTitle, const nString& errorMsg);
 #if defined(__WIN32__) || defined(DOXYGEN)
     /// check for correct Direct3D version
@@ -37,9 +37,8 @@ public:
 
 private:
 #if defined(__WIN32__) || defined(DOXYGEN)
-    HANDLE globalMutex;         // required for the check whether the app is alreading running
+    HANDLE globalMutex;         // required for the check whether the app is already running
 #endif
 };
 //------------------------------------------------------------------------------
 #endif
-

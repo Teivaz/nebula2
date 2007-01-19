@@ -50,11 +50,8 @@ nRpXmlParser::OpenXml()
         this->renderPath->SetShaderPath(elmRenderPath->Attribute("shaderPath"));
         return true;
     }
-    else
-    {
-        n_delete(this->xmlDocument);
-        this->xmlDocument = 0;
-    }
+    n_delete(this->xmlDocument);
+    this->xmlDocument = 0;
     return false;
 }
 
@@ -209,42 +206,42 @@ nRpXmlParser::ParseVariable(nVariable::Type dataType, TiXmlElement* elm)
     nVariable newVariable(dataType, varHandle);
     switch (dataType)
     {
-        case nVariable::Int:
-            newVariable.SetInt(this->GetIntAttr(elm, "value", 0));
-            break;
+    case nVariable::Int:
+        newVariable.SetInt(this->GetIntAttr(elm, "value", 0));
+        break;
 
-        case nVariable::Float:
-            newVariable.SetFloat(this->GetFloatAttr(elm, "value", 0.0f));
-            break;
+    case nVariable::Float:
+        newVariable.SetFloat(this->GetFloatAttr(elm, "value", 0.0f));
+        break;
 
-        case nVariable::Vector4:
+    case nVariable::Vector4:
+        {
+            vector4 v4(0.0f, 0.0f, 0.0f, 0.0f);
+            newVariable.SetVector4(this->GetVector4Attr(elm, "value", v4));
+        }
+        break;
+
+    case nVariable::Object:
+        {
+            // initialize a texture object
+            const char* filename = elm->Attribute("value");
+            n_assert(filename);
+            nTexture2* tex = nGfxServer2::Instance()->NewTexture(filename);
+            if (!tex->IsLoaded())
             {
-                vector4 v4(0.0f, 0.0f, 0.0f, 0.0f);
-                newVariable.SetVector4(this->GetVector4Attr(elm, "value", v4));
-            }
-            break;
-
-        case nVariable::Object:
-            {
-                // initialize a texture object
-                const char* filename = elm->Attribute("value");
-                n_assert(filename);
-                nTexture2* tex = nGfxServer2::Instance()->NewTexture(filename);
-                if (!tex->IsLoaded())
+                tex->SetFilename(filename);
+                if (!tex->Load())
                 {
-                    tex->SetFilename(filename);
-                    if (!tex->Load())
-                    {
-                        n_error("nRpXmlParser::ParseGlobalVariable(): could not load texture '%s'!", filename);
-                    }
+                    n_error("nRpXmlParser::ParseGlobalVariable(): could not load texture '%s'!", filename);
                 }
-                newVariable.SetObj(tex);
             }
-            break;
+            newVariable.SetObj(tex);
+        }
+        break;
 
-        default:
-            n_error("nRpXmlParser::ParseGlobalVariable(): invalid datatype for variable '%s'!", varName);
-            break;
+    default:
+        n_error("nRpXmlParser::ParseGlobalVariable(): invalid datatype for variable '%s'!", varName);
+        break;
     }
     return newVariable;
 }
@@ -399,42 +396,42 @@ nRpXmlParser::ParseShaderState(nShaderState::Type type, TiXmlElement* elm, nRpPa
         // this is a constant shader parameter
         switch (type)
         {
-            case nShaderState::Int:
-                arg.SetInt(this->GetIntAttr(elm, "value", 0));
-                break;
+        case nShaderState::Int:
+            arg.SetInt(this->GetIntAttr(elm, "value", 0));
+            break;
 
-            case nShaderState::Float:
-                arg.SetFloat(this->GetFloatAttr(elm, "value", 0.0f));
-                break;
+        case nShaderState::Float:
+            arg.SetFloat(this->GetFloatAttr(elm, "value", 0.0f));
+            break;
 
-            case nShaderState::Float4:
+        case nShaderState::Float4:
+            {
+                nFloat4 f4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+                arg.SetFloat4(this->GetFloat4Attr(elm, "value", f4));
+            }
+            break;
+
+        case nShaderState::Texture:
+            {
+                // initialize a texture object
+                const char* filename = elm->Attribute("value");
+                n_assert(filename);
+                nTexture2* tex = nGfxServer2::Instance()->NewTexture(filename);
+                if (!tex->IsLoaded())
                 {
-                    nFloat4 f4 = { 0.0f, 0.0f, 0.0f, 0.0f };
-                    arg.SetFloat4(this->GetFloat4Attr(elm, "value", f4));
-                }
-                break;
-
-            case nShaderState::Texture:
-                {
-                    // initialize a texture object
-                    const char* filename = elm->Attribute("value");
-                    n_assert(filename);
-                    nTexture2* tex = nGfxServer2::Instance()->NewTexture(filename);
-                    if (!tex->IsLoaded())
+                    tex->SetFilename(filename);
+                    if (!tex->Load())
                     {
-                        tex->SetFilename(filename);
-                        if (!tex->Load())
-                        {
-                            n_error("nRpXmlParser::ParseGlobalVariable(): could not load texture '%s'!", filename);
-                        }
+                        n_error("nRpXmlParser::ParseGlobalVariable(): could not load texture '%s'!", filename);
                     }
-                    arg.SetTexture(tex);
                 }
-                break;
+                arg.SetTexture(tex);
+            }
+            break;
 
-            default:
-                n_error("nRpXmlParser::ParseShaderState(): invalid datatype '%s'!", elm->Attribute("name"));
-                break;
+        default:
+            n_error("nRpXmlParser::ParseShaderState(): invalid datatype '%s'!", elm->Attribute("name"));
+            break;
         }
         pass->AddConstantShaderParam(p, arg);
     }
@@ -461,42 +458,42 @@ nRpXmlParser::ParseShaderState(nShaderState::Type type, TiXmlElement* elm, nRpSe
         // this is a constant shader parameter
         switch (type)
         {
-            case nShaderState::Int:
-                arg.SetInt(this->GetIntAttr(elm, "value", 0));
-                break;
+        case nShaderState::Int:
+            arg.SetInt(this->GetIntAttr(elm, "value", 0));
+            break;
 
-            case nShaderState::Float:
-                arg.SetFloat(this->GetFloatAttr(elm, "value", 0.0f));
-                break;
+        case nShaderState::Float:
+            arg.SetFloat(this->GetFloatAttr(elm, "value", 0.0f));
+            break;
 
-            case nShaderState::Float4:
+        case nShaderState::Float4:
+            {
+                nFloat4 f4 = { 0.0f, 0.0f, 0.0f, 0.0f };
+                arg.SetFloat4(this->GetFloat4Attr(elm, "value", f4));
+            }
+            break;
+
+        case nShaderState::Texture:
+            {
+                // initialize a texture object
+                const char* filename = elm->Attribute("value");
+                n_assert(filename);
+                nTexture2* tex = nGfxServer2::Instance()->NewTexture(filename);
+                if (!tex->IsLoaded())
                 {
-                    nFloat4 f4 = { 0.0f, 0.0f, 0.0f, 0.0f };
-                    arg.SetFloat4(this->GetFloat4Attr(elm, "value", f4));
-                }
-                break;
-
-            case nShaderState::Texture:
-                {
-                    // initialize a texture object
-                    const char* filename = elm->Attribute("value");
-                    n_assert(filename);
-                    nTexture2* tex = nGfxServer2::Instance()->NewTexture(filename);
-                    if (!tex->IsLoaded())
+                    tex->SetFilename(filename);
+                    if (!tex->Load())
                     {
-                        tex->SetFilename(filename);
-                        if (!tex->Load())
-                        {
-                            n_error("nRpXmlParser::ParseGlobalVariable(): could not load texture '%s'!", filename);
-                        }
+                        n_error("nRpXmlParser::ParseGlobalVariable(): could not load texture '%s'!", filename);
                     }
-                    arg.SetTexture(tex);
                 }
-                break;
+                arg.SetTexture(tex);
+            }
+            break;
 
-            default:
-                n_error("nRpXmlParser::ParseShaderState(): invalid datatype '%s'!", elm->Attribute("name"));
-                break;
+        default:
+            n_error("nRpXmlParser::ParseShaderState(): invalid datatype '%s'!", elm->Attribute("name"));
+            break;
         }
         seq->AddConstantShaderParam(p, arg);
     }
@@ -578,4 +575,3 @@ nRpXmlParser::ParseSequence(TiXmlElement* elm, nRpPhase* phase)
     }
     phase->AddSequence(newSequence);
 }
-

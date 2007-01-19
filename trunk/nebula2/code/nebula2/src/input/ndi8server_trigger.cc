@@ -141,14 +141,14 @@ nDI8Server::Trigger(double time)
     HRESULT hr;
 
     // compute frame time
-    float frameTime = (float) (time - this->timeStamp);
+    float frameTime = (float)(time - this->timeStamp);
     if ((frameTime <= 0.0001f) || (frameTime > 2.0f))
     {
         frameTime = 0.0001f;
     }
 
     // see if hwnd has changed since last frame
-    HWND curHwnd = (HWND) this->refHwnd->GetI();
+    HWND curHwnd = (HWND)this->refHwnd->GetI();
     if (curHwnd != this->hwnd)
     {
         this->hwnd = curHwnd;

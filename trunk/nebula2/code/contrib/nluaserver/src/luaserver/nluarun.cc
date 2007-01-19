@@ -27,9 +27,9 @@ bool nLuaServer::ExecuteLuaChunk(nString& result, int errfunc)
     n_assert2(errfunc > 0, "Error function stack index must be absolute!");
     
     // call chunk main
-    int status = lua_pcall(this->L, 
-                           0 /* no args */, 
-                           LUA_MULTRET, 
+    int status = lua_pcall(this->L,
+                           0 /* no args */,
+                           LUA_MULTRET,
                            errfunc /* stack index of error handler */);
     if (0 != status) // error occurred
     {
@@ -183,7 +183,7 @@ bool nLuaServer::RunScript(const char* filename, nString& result)
     int filesize;
     char* cmdbuf;
     bool retval;
-    
+
     nFile* nfile = nFileServer2::Instance()->NewFileObject();
     nString path = nFileServer2::Instance()->ManglePath(filename);
     if (!nfile->Open(path, "r"))
@@ -192,7 +192,7 @@ bool nLuaServer::RunScript(const char* filename, nString& result)
         nfile->Release();
         return false;
     }
-    
+
     nfile->Seek(0, nFile::END);
     filesize = nfile->Tell();
     nfile->Seek(0, nFile::START);
@@ -201,10 +201,10 @@ bool nLuaServer::RunScript(const char* filename, nString& result)
     n_assert2(cmdbuf, "Failed to allocate command buffer!");
     nfile->Read(cmdbuf, filesize + 1);
     cmdbuf[filesize] = 0;
-    
+
     nfile->Close();
     nfile->Release();
-    
+
     retval = this->Run(cmdbuf, result);
     if (!retval)
     {
@@ -236,7 +236,7 @@ bool nLuaServer::RunFunction(const char* funcName, nString& result)
 //--------------------------------------------------------------------
 //  Trigger()
 //--------------------------------------------------------------------
-bool nLuaServer::Trigger(void)
+bool nLuaServer::Trigger()
 {
     // The Trigger, she does nothing...
     return nScriptServer::Trigger();

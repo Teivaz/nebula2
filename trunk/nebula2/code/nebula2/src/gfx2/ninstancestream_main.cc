@@ -97,10 +97,7 @@ nInstanceStream::GetByteSize()
     {
         return this->streamStride * this->streamArray.AllocSize() * sizeof(float);
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -145,4 +142,3 @@ nInstanceStream::Unlock()
     this->readPtr = 0;
     this->lockFlags = 0;
 }
-

@@ -575,7 +575,7 @@ nD3D9Server::TestResetDevice()
     {
         return true;
     }
-    else if (D3DERR_DEVICENOTRESET == hr)
+    if (D3DERR_DEVICENOTRESET == hr)
     {
         // device is ready to be reset, invoke the reanimation procedure...
         this->OnDeviceCleanup(false);
@@ -614,11 +614,8 @@ nD3D9Server::TestResetDevice()
 
         return true;
     }
-    else
-    {
-        // device cannot be restored at this time
-        return false;
-    }
+    // device cannot be restored at this time
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -632,10 +629,7 @@ nD3D9Server::GetFeatureSet()
     {
         return this->featureSetOverride;
     }
-    else
-    {
-        return this->featureSet;
-    }
+    return this->featureSet;
 }
 
 //------------------------------------------------------------------------------
