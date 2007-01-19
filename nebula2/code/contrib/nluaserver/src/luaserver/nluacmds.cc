@@ -32,13 +32,12 @@ int _luaDispatch(lua_State* L, nObject* obj, nCmdProto* cmd_proto, bool print)
     n_assert(cmd_proto); // -- unfriendly isn't it?
     nCmd* cmd = cmd_proto->NewCmd();
     n_assert(cmd);
-    
+
     // Need to get the proper args in...
     int numargs = cmd->GetNumInArgs();
     if ((lua_gettop(L) - 1) != numargs)
     {
-        n_message("Wrong number of arguments for command: %s\n", 
-                    cmd_proto->GetProtoDef());
+        n_message("Wrong number of arguments for command: %s\n", cmd_proto->GetProtoDef());
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
@@ -46,8 +45,7 @@ int _luaDispatch(lua_State* L, nObject* obj, nCmdProto* cmd_proto, bool print)
 
     if (!nLuaServer::StackToInArgs(L, cmd))
     {
-        n_message("Incorrect arguments for: %s\n",
-                    cmd_proto->GetProtoDef());
+        n_message("Incorrect arguments for: %s\n", cmd_proto->GetProtoDef());
         lua_settop(L, 0);
         lua_pushnil(L);
         return 1;
@@ -57,8 +55,7 @@ int _luaDispatch(lua_State* L, nObject* obj, nCmdProto* cmd_proto, bool print)
 
     if (!obj->Dispatch(cmd))
     {
-        n_message("Could not dispatch the command: %s\n",
-                    cmd_proto->GetProtoDef());
+        n_message("Could not dispatch the command: %s\n", cmd_proto->GetProtoDef());
         lua_pushnil(L);
         return 1;
     }
@@ -101,7 +98,7 @@ int luacmd_StackDump(lua_State* L)
 //  luacmd_Panic()
 //--------------------------------------------------------------------
 int luacmd_Panic(lua_State* L)
-{  
+{
     n_error("Lua paniced!");
     nScriptServer* ss = (nScriptServer*)lua_touserdata(L, lua_upvalueindex(1));
     ss->SetQuitRequested(1);
@@ -169,8 +166,7 @@ int luacmd_NewThunk(lua_State* L)
     nRoot* obj = nLuaServer::kernelServer->NewNoFail(className, objectName);
     if (!obj)
     {
-        n_message("Could not create object '%s' of class '%s'\n", 
-                    objectName, className);
+        n_message("Could not create object '%s' of class '%s'\n", objectName, className);
         lua_pushnil(L);
     }
     else
@@ -373,7 +369,7 @@ int luacmd_Psel(lua_State* L)
         {
             lua_settop(L, 0);
             nLuaServer::Instance->ThunkNebObject(L, o);
-        }   
+        }
     }
     else
     {
@@ -490,7 +486,7 @@ int luacmd_CmdDispatch(lua_State* L)
 {
     // Thunks *only* come here
     // Get the nRoot* out of the table self ref first
-    // The parent table is only guarenteed to be first
+    // The parent table is only guaranteed to be first
     // if the : syntax is used - otherwise this fails
     if (!lua_istable(L, 1))
     {
@@ -503,7 +499,7 @@ int luacmd_CmdDispatch(lua_State* L)
     nRoot* root = nLuaServer::UnpackThunkRoot(L, 1);
     // haul out the particular call - in the upvalue
     nCmdProto* cmdproto = (nCmdProto*)lua_touserdata(L, lua_upvalueindex(1));
-    
+
     return _luaDispatch(L, root, cmdproto, false);
 }
 
@@ -530,7 +526,7 @@ int luacmd_Call(lua_State* L)
         obj = nKernelServer::Instance()->GetCwd();
     const char* cmdname = lua_tostring(L, 1);
     nClass* cl = obj->GetClass();
-    nCmdProto* cmd_proto = (nCmdProto*) cl->FindCmdByName(cmdname);
+    nCmdProto* cmd_proto = (nCmdProto*)cl->FindCmdByName(cmdname);
     if (!cmd_proto)
     {
         n_message("Could not find the command '%s'\n", cmdname);
@@ -564,7 +560,7 @@ int luacmd_ConCall(lua_State* L)
     nRoot* root = nLuaServer::kernelServer->GetCwd();
     const char* cmdname = lua_tostring(L, 1);
     nClass* cl = root->GetClass();
-    nCmdProto* cmd_proto = (nCmdProto*) cl->FindCmdByName(cmdname);
+    nCmdProto* cmd_proto = (nCmdProto*)cl->FindCmdByName(cmdname);
     if (!cmd_proto)
     {
         n_message("Could not find the command '%s'\n", cmdname);
@@ -622,7 +618,7 @@ int luacmd_Mangle(lua_State* L)
         lua_pushnil(L);
         return 1;
     }
-    
+
     nString path = nFileServer2::Instance()->ManglePath(lua_tostring(L, -1));
     if (path.IsEmpty())
     {
@@ -677,7 +673,7 @@ int luacmd_BeginCmds(lua_State* L)
         clazz->BeginScriptCmds(int(lua_tonumber(L, -1)));
     else
         n_error("Failed to open class %s!\n", className);
-    
+
     lua_settop(L, 0);
     return 0;
 }
@@ -695,7 +691,7 @@ int luacmd_AddCmd(lua_State* L)
         lua_settop(L, 0);
         return 0;
     }
-    
+
     nCmdProtoLua* cmdProto = new nCmdProtoLua(lua_tostring(L, -1));
     const char* className = lua_tostring(L, -2);
     nClass* clazz = nLuaServer::kernelServer->FindClass(className);
@@ -721,14 +717,14 @@ int luacmd_EndCmds(lua_State* L)
         lua_settop(L, 0);
         return 0;
     }
-    
+
     const char* className = lua_tostring(L, -1);
     nClass* clazz = nLuaServer::kernelServer->FindClass(className);
     if (clazz)
         clazz->EndScriptCmds();
     else
         n_error("Failed to find class %s!\n", className);
-        
+
     lua_settop(L, 0);
     return 0;
 }
@@ -798,7 +794,7 @@ int luacmd_PushCwd(lua_State* L)
         lua_pushboolean(L, false);
         return 1;
     }
-    
+
     if (lua_istable(L, -1)) // thunk case
     {
         lua_pushstring(L, "_");
@@ -830,7 +826,7 @@ int luacmd_PushCwd(lua_State* L)
             lua_pushboolean(L, false);
         }
     }
-        
+
     return 1;
 }
 
@@ -855,7 +851,7 @@ int luacmd_PopCwd(lua_State* L)
 //--------------------------------------------------------------------
 //  luaobject_Emit()
 //--------------------------------------------------------------------
-int luaobject_Emit( lua_State *L )
+int luaobject_Emit(lua_State* L)
 {
     if (!lua_istable(L, 1))
     {
@@ -866,8 +862,8 @@ int luaobject_Emit( lua_State *L )
     }
 
     // find the object
-    nObject * obj = nLuaServer::UnpackThunkRoot(L, 1);
-    if( !obj )
+    nObject* obj = nLuaServer::UnpackThunkRoot(L, 1);
+    if (!obj)
     {
         n_printf( "Object not found in object:emit( ... )\n");
         lua_settop(L, 0);
@@ -875,34 +871,34 @@ int luaobject_Emit( lua_State *L )
     }
 
     // check the parameters
-    if( lua_gettop(L)<2 || !lua_isstring(L, 2) )
+    if (lua_gettop(L) < 2 || !lua_isstring(L, 2))
     {
         n_printf( "Usage is object:emit( 'signal', ... )\n");
         lua_settop(L, 0);
         return 0;
     }
 
-    nString signal( lua_tostring(L, 2) );
+    nString signal(lua_tostring(L, 2));
 
     // find the command
-    nCmdProto *cmd_proto = static_cast<nCmdProto *>( obj->GetClass()->FindSignalByName( signal.Get() ) );
-    if( !cmd_proto )
+    nCmdProto* cmd_proto = static_cast<nCmdProto*>(obj->GetClass()->FindSignalByName(signal.Get()));
+    if (!cmd_proto)
     {
-        n_printf( "Signal not found in object:emit( '%s', ... )\n", signal.Get() );
+        n_printf("Signal not found in object:emit( '%s', ... )\n", signal.Get());
         lua_settop(L, 0);
         return 0;
     }
 
     // quit object from stack
-    lua_remove( L, 1 );
+    lua_remove(L, 1);
 
-    return _luaDispatch( L, obj, cmd_proto, false );
+    return _luaDispatch(L, obj, cmd_proto, false);
 }
 
 //--------------------------------------------------------------------
 //  luaobject_Post()
 //--------------------------------------------------------------------
-int luaobject_Post( lua_State *L )
+int luaobject_Post(lua_State* L)
 {
     if (!lua_istable(L, 1))
     {
@@ -913,40 +909,40 @@ int luaobject_Post( lua_State *L )
     }
 
     // find the object
-    nObject * obj = nLuaServer::UnpackThunkRoot(L, 1);
-    if( !obj )
+    nObject* obj = nLuaServer::UnpackThunkRoot(L, 1);
+    if (!obj)
     {
-        n_printf( "Object not found in object:emit( ... )\n");
+        n_printf("Object not found in object:emit( ... )\n");
         lua_settop(L, 0);
         return 0;
     }
 
     // check the parameters
-    if( lua_gettop(L)<3 || !lua_isnumber(L,2) || !lua_isstring(L, 3) )
+    if (lua_gettop(L) < 3 || !lua_isnumber(L, 2) || !lua_isstring(L, 3))
     {
         n_printf( "Usage is object:post( time, 'signal', ... )\n");
         lua_settop(L, 0);
         return 0;
     }
 
-    double timeValue = lua_tonumber( L, 2 );
-    nString signal( lua_tostring(L, 3) );
+    double timeValue = lua_tonumber(L, 2);
+    nString signal(lua_tostring(L, 3));
 
     // find the command in signal list or in regular command list
-    nCmdProto *cmd_proto = static_cast<nCmdProto *>( obj->GetClass()->FindSignalByName( signal.Get() ) );
-    if( !cmd_proto )
+    nCmdProto* cmd_proto = static_cast<nCmdProto*>(obj->GetClass()->FindSignalByName(signal.Get()));
+    if (!cmd_proto)
     {
-        cmd_proto = static_cast<nCmdProto*>( obj->GetClass()->FindCmdByName( signal.Get() ) );
-        if( !cmd_proto )
+        cmd_proto = static_cast<nCmdProto*>(obj->GetClass()->FindCmdByName(signal.Get()));
+        if (!cmd_proto)
         {
-            n_printf( "Signal not found in object:emit( '%s', ... )\n", signal.Get() );
+            n_printf("Signal not found in object:emit( '%s', ... )\n", signal.Get());
             lua_settop(L, 0);
             return 0;
         }
     }
 
     // quit object from stack
-    lua_remove( L, 1 );
+    lua_remove(L, 1);
 
     nCmd* cmd = cmd_proto->NewCmd();
     n_assert(cmd);
@@ -961,15 +957,15 @@ int luaobject_Post( lua_State *L )
     lua_settop(L, 0);
 
     // let signal server object handle the command
-    nSignalServer * signalServer = nSignalServer::Instance();
-    n_assert( signalServer );
-    if( signalServer )
+    nSignalServer* signalServer = nSignalServer::Instance();
+    n_assert(signalServer);
+    if (signalServer)
     {
-        if( ! signalServer->PostCmd( timeValue, obj, cmd) )
+        if (!signalServer->PostCmd(timeValue, obj, cmd))
         {
-            n_printf( "Post error, in object of class '%s', with signal '%s'", 
-                obj->GetClass()->GetName(), signal.Get() );
-            cmd_proto->RelCmd( cmd );
+            n_printf("Post error, in object of class '%s', with signal '%s'", 
+                obj->GetClass()->GetName(), signal.Get());
+            cmd_proto->RelCmd(cmd);
         }
     }
     else

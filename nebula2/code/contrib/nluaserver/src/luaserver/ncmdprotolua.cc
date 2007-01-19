@@ -29,9 +29,9 @@ nCmdProtoLua::nCmdProtoLua(const nCmdProtoLua& rhs)
 bool nCmdProtoLua::Dispatch(void* obj, nCmd* cmd)
 {
     lua_State* L = nLuaServer::Instance->GetContext();
-    
+
     int top = lua_gettop(L);
-        
+
     // find the thunk that corresponds to the object
     // use the object pointer as a key into thunks table
     lua_pushstring(L, nLuaServer::Instance->thunkStoreName.Get());
@@ -47,14 +47,14 @@ bool nCmdProtoLua::Dispatch(void* obj, nCmd* cmd)
         // bail out - no script-side script commands were defined
         return false;
     }
-        
+
     // at this point the correct thunk is on top of the stack
     // find the function of interest
     lua_pushstring(L, cmd->GetProto()->GetName());
     lua_rawget(L, -2);
     if (0 == lua_isfunction(L, -1)) // function doesn't exist?
         return false;
-    
+
     // shift thunk to be the first arg to the function
     lua_pushvalue(L, -2);
     lua_remove(L, -3);
@@ -70,8 +70,8 @@ bool nCmdProtoLua::Dispatch(void* obj, nCmd* cmd)
     }
     // put out-args into the cmd
     nLuaServer::StackToOutArgs(L, cmd);
-    
-    lua_settop(L, top);    
+
+    lua_settop(L, top);
     return true;
 }
 

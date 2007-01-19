@@ -215,7 +215,7 @@ nNvx2Loader::ReadIndices(void* buffer, int bufferSize)
         file->Read(ptr16, size16);
 
         // expand to 32 bit indices
-        uint* ptr32 = (uint*) buffer;
+        uint* ptr32 = (uint*)buffer;
         int i;
         for (i = 0; i < this->numIndices; i++)
         {

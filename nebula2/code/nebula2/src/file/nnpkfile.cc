@@ -193,10 +193,7 @@ nNpkFile::Tell() const
     {
         return nFile::Tell();
     }
-    else
-    {
-        return this->filePos;
-    }
+    return this->filePos;
 }
 
 //------------------------------------------------------------------------------
@@ -212,50 +209,46 @@ nNpkFile::Seek(int byteOffset, nSeekType origin)
     {
         return nFile::Seek(byteOffset, origin);
     }
+    n_assert(this->tocEntry);
+
+    bool retval = false;
+    int fileLength = this->tocEntry->GetFileLength();
+    int seekPos = 0;
+    switch (origin)
+    {
+        case CURRENT:
+            seekPos = this->filePos + byteOffset;
+            break;
+
+        case START:
+            seekPos = byteOffset;
+            break;
+
+        case END:
+            seekPos = fileLength + byteOffset;
+            break;
+    }
+
+    // clamp endPos
+    if (seekPos >= fileLength)
+    {
+        // end of file reached
+        this->filePos = fileLength;
+        retval = false;
+    }
+    else if (seekPos < 0)
+    {
+        // before start of file
+        this->filePos = 0;
+        retval = true;
+    }
     else
     {
-        n_assert(this->tocEntry);
-
-        bool retval = false;
-        int fileLength = this->tocEntry->GetFileLength();
-        int seekPos = 0;
-        switch (origin)
-        {
-            case CURRENT:
-                seekPos = this->filePos + byteOffset;
-                break;
-
-            case START:
-                seekPos = byteOffset;
-                break;
-
-            case END:
-                seekPos = fileLength + byteOffset;
-                break;
-        }
-
-        // clamp endPos
-        if (seekPos >= fileLength)
-        {
-            // end of file reached
-            this->filePos = fileLength;
-            retval = false;
-        }
-        else if (seekPos < 0)
-        {
-            // before start of file
-            this->filePos = 0;
-            retval = true;
-        }
-        else
-        {
-            // normal case
-            this->filePos = seekPos;
-            retval = true;
-        }
-
-        return true;
+        // normal case
+        this->filePos = seekPos;
+        retval = true;
     }
+    return true;
 }
 
 //------------------------------------------------------------------------------
@@ -270,11 +263,8 @@ nNpkFile::GetSize() const
     {
         return nFile::GetSize();
     }
-    else
-    {
-        n_assert(this->tocEntry);
-        return this->tocEntry->GetFileLength();
-    }
+    n_assert(this->tocEntry);
+    return this->tocEntry->GetFileLength();
 }
 
 //------------------------------------------------------------------------------
@@ -289,11 +279,8 @@ nNpkFile::Eof() const
     {
         return nFile::Eof();
     }
-    else
-    {
-        n_assert(this->tocEntry);
-        return (this->filePos >= this->tocEntry->GetFileLength());
-    }
+    n_assert(this->tocEntry);
+    return (this->filePos >= this->tocEntry->GetFileLength());
 }
 
 //------------------------------------------------------------------------------
@@ -309,12 +296,9 @@ nNpkFile::GetLastWriteTime() const
     {
         return nFile::GetLastWriteTime();
     }
-    else
-    {
-        // return a dummy file time.
-        nFileTime fileTime;
-        return fileTime;
-    }
+    // return a dummy file time.
+    nFileTime fileTime;
+    return fileTime;
 }
 
 //------------------------------------------------------------------------------

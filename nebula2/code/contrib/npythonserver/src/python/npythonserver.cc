@@ -159,7 +159,7 @@ nPythonServer::nPythonServer()
     this->indent_level         = 0;
     this->indent_buf[0]        = 0;
 
-    // Store a handy refernece to this instance
+    // Store a handy reference to this instance
     nPythonServer::Instance = this;
 
     // Clear the Trigger() callback function

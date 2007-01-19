@@ -23,9 +23,8 @@ class nCmdProtoLua : public nCmdProto
     nCmdProtoLua(const char* protoDef);
     /// Class constructor
     nCmdProtoLua(const nCmdProtoLua& rhs);
-    
-    bool Dispatch(void*, nCmd*);    
+
+    bool Dispatch(void*, nCmd*);
 };
 //--------------------------------------------------------------------
-#endif    
-
+#endif

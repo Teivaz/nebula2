@@ -27,7 +27,7 @@ public:
     nCmdProtoPython(const char* protodef);
     nCmdProtoPython(const nCmdProtoPython& rhs);
 
-    bool Dispatch(void *, nCmd *);
+    bool Dispatch(void*, nCmd*);
 };
 //------------------------------------------------------------------------------
 #endif

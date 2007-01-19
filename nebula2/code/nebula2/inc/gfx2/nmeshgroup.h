@@ -31,7 +31,7 @@ public:
     int GetNumVertices() const;
     /// set first index
     void SetFirstIndex(int i);
-    /// get index of first primitve index
+    /// get index of first primitive index
     int GetFirstIndex() const;
     /// set number of indices
     void SetNumIndices(int i);
@@ -226,4 +226,3 @@ nMeshGroup::GetBoundingBox() const
 
 //------------------------------------------------------------------------------
 #endif
-

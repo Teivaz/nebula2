@@ -34,7 +34,7 @@ nSQLite3Server::NewDatabase(const nString& resName)
     // Nebula2 way, but keeps the database resource directory somewhat readable
     nString strippedName = resName.ExtractFileName();
     strippedName.StripExtension();
-    nSqlDatabase* db = (nSqlDatabase*) nResourceServer::Instance()->NewResource("nsqlite3database", strippedName, nResource::Database);
+    nSqlDatabase* db = (nSqlDatabase*)nResourceServer::Instance()->NewResource("nsqlite3database", strippedName, nResource::Database);
     if (!db->IsLoaded())
     {
         db->SetFilename(resName);

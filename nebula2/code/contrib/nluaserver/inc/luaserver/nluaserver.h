@@ -15,7 +15,7 @@
 
     Implements an nScriptServer that runs Lua 5, extended
     by default with a few Nebula specific commands.
-    
+
     (C) 2003  Matthew T. Welker & Vadim Macagon
 */
 #include <string.h>
@@ -44,31 +44,31 @@ public:
     virtual bool RunScript(const char*, nString&);
     virtual bool RunFunction(const char*, nString&);
     virtual nString Prompt();
-    
+
     const char* GenerateStackTrace();
- 
+
     virtual nFile* BeginWrite(const char* filename, nObject* obj);  
     virtual bool WriteComment(nFile*, const char*);
     virtual bool WriteBeginNewObject(nFile*, nRoot*, nRoot*);
-    virtual bool WriteBeginNewObjectCmd(nFile*, nRoot*, nRoot*, nCmd *);
+    virtual bool WriteBeginNewObjectCmd(nFile*, nRoot*, nRoot*, nCmd*);
     virtual bool WriteBeginSelObject(nFile*, nRoot*, nRoot*);
     virtual bool WriteCmd(nFile*, nCmd*);
     virtual bool WriteEndObject(nFile*, nRoot*, nRoot*);
     virtual bool EndWrite(nFile*);
- 
-    virtual bool Trigger(void);
+
+    virtual bool Trigger();
 
     virtual lua_State* GetContext();
-    
+
     // manipulate _nebthunks table
     static void RemoveThunk(lua_State*, void*);
     static void AddThunk(lua_State*, void*);
     static void FindThunk(lua_State*, void*);
-    
+
     static void AddClassToCache(lua_State*, nClass*);
     static bool ThunkNebObject(lua_State*, nRoot*);
-    static nRoot* UnpackThunkRoot( lua_State*, int );
-    
+    static nRoot* UnpackThunkRoot(lua_State*, int);
+
     static void InArgsToStack(lua_State*, nCmd*);
     static void OutArgsToStack(lua_State*, nCmd*, bool);
     static bool StackToInArgs(lua_State*, nCmd*);
@@ -79,7 +79,7 @@ public:
     static nLuaServer* Instance;
     nString classCacheName;
     nString thunkStoreName;
-    
+
 private:
     static void ArgToStack(lua_State*, nArg*);
     static bool StackToArg(lua_State*, nArg*, int index);
@@ -90,12 +90,11 @@ private:
 
     long indent_level;
     char indent_buf[N_MAXPATH];
-    lua_State* L;   
+    lua_State* L;
     bool echo;
     bool selgrab;
     nString outputStr;
 };
-
 
 //--------------------------------------------------------------------
 #endif

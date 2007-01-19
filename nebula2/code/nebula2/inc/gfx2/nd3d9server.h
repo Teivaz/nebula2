@@ -148,7 +148,7 @@ public:
     virtual bool Trigger();
 
     /// draw text (immediately)
-    virtual void DrawText(const nString& text, const vector4& color, const rectangle& rect, uint flags, bool immediate=true);
+    virtual void DrawText(const nString& text, const vector4& color, const rectangle& rect, uint flags, bool immediate = true);
     /// get text extents
     virtual vector2 GetTextExtent(const nString& text);
     /// draw accumulated text buffer

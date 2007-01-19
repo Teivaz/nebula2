@@ -23,7 +23,7 @@ endmodule
 beginmodule luacorelib
     setdir lua
     settype c
-    setfiles { 	
+    setfiles {
     	lapi lcode ldebug ldo ldump lfunc lgc llex
         lmem lobject lopcodes lparser lstate lstring
         ltable ltests ltm lundump lvm lzio

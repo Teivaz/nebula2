@@ -96,7 +96,7 @@ private:
 
     nAutoRef<nInputServer>  refInputServer;
     nAutoRef<nScriptServer> refScriptServer;
-    nClass *envClass;
+    nClass* envClass;
 
     bool consoleOpen;
     bool watchersOpen;

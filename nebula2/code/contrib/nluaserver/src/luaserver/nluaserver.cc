@@ -96,8 +96,7 @@ nLuaServer::nLuaServer() :
         {"mathlib", lua_mathlibopen},
         {NULL, NULL}
     };
-    luaL_reg* lreg = lualibs;
-    for (; lreg->name; lreg++) 
+    for (luaL_reg* lreg = lualibs; lreg->name; lreg++) 
     {
         lreg->func(this->L);
         lua_settop(this->L, 0);  /* discard any results */
@@ -174,9 +173,8 @@ nLuaServer::~nLuaServer()
 const char* nLuaServer::GenerateStackTrace()
 {
     n_assert(this->L);
-    n_assert2(1 == lua_gettop(this->L),
-              "Only error message should be on stack!");
-    
+    n_assert2(1 == lua_gettop(this->L), "Only error message should be on stack!");
+
     this->outputStr.Set("nLuaServer encountered a problem...\n");
     this->outputStr.Append(lua_tostring(this->L, -1));
     this->outputStr.Append("\n\n-- Stack Trace --\n");
@@ -310,10 +308,10 @@ bool nLuaServer::WriteBeginNewObject(nFile* file, nRoot* o, nRoot* owner)
 {
     n_assert(file);
     n_assert(o);
-    const char *o_name  = o->GetName();
+    const char* o_name = o->GetName();
 
     // write generic 'new' statement
-    const char *o_class = o->GetClass()->GetName();
+    const char* o_class = o->GetClass()->GetName();
     _indent(this->indent_level, this->indent_buf);
 
     file->PutS(this->indent_buf);
@@ -322,8 +320,7 @@ bool nLuaServer::WriteBeginNewObject(nFile* file, nRoot* o, nRoot* owner)
     file->PutS("','");
     file->PutS(o_name);
     file->PutS("')\n");
-    
-    
+
     // write select object statement
     this->write_select_statement(file, o, owner);
     return true;
@@ -353,7 +350,7 @@ bool nLuaServer::WriteBeginNewObjectCmd(nFile* file, nRoot* o, nRoot* owner, nCm
 //  Write start of persisting object without constructor, only
 //  write the select statement.
 //--------------------------------------------------------------------
-bool nLuaServer::WriteBeginSelObject(nFile *file, nRoot *o, nRoot *owner)
+bool nLuaServer::WriteBeginSelObject(nFile* file, nRoot* o, nRoot* owner)
 {
     n_assert(file);
     n_assert(o);
@@ -411,7 +408,7 @@ bool nLuaServer::WriteCmd(nFile* file, nCmd* cmd)
 
         file->PutS(", ");
 
-        arg=cmd->In();
+        arg = cmd->In();
 
         switch(arg->GetType()) {
 
@@ -500,7 +497,7 @@ void nLuaServer::AddClassToCache(lua_State* L, nClass* clazz)
             }
         }
     } while ((clazz = clazz->GetSuperClass()));
-        
+
     // store table in the global class cache
     lua_settable(L, -3);
 }
@@ -966,7 +963,7 @@ void nLuaServer::ArgToStack(lua_State* L, nArg* arg)
   @brief Convert a value from the LUA stack to an nArg of the 
   specified type.
   @param index The absolute stack index of the value to convert.
-  @return True if arg was successfuly retrieved and converted.
+  @return True if arg was successfully retrieved and converted.
 */
 bool nLuaServer::StackToArg(lua_State* L, nArg* arg, int index)
 {
