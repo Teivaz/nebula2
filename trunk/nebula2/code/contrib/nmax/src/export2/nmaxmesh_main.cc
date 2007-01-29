@@ -349,10 +349,7 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
 
                 // The directory parameter has "" for default string. It is absolutely necessary in Max6.
                 // Without that, the exporter is not usable as the panels that have those controls in them don't work.
-                if (this->meshPath == "")
-                {
-                    this->meshPath = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetMeshesAssign());
-                }
+                this->meshPath = nFileServer2::Instance()->ManglePath(this->meshPath.IsEmpty() ? nMaxOptions::Instance()->GetMeshesAssign() : this->meshPath);
             }
         }
     }
@@ -566,9 +563,12 @@ nSceneNode* nMaxMesh::Export(INode* inode)
             // save mesh file and specifies it to the shape node.
             SetMeshFile(createdNode);
             
-            // set cwd to the parent to put the shape in the same hierarchy.
-            // (cause all these shapes belong to same mesh)
-            nKernelServer::Instance()->PopCwd();
+            if (createdNode)
+            {
+                // set cwd to the parent to put the shape in the same hierarchy.
+                // (cause all these shapes belong to same mesh)
+                nKernelServer::Instance()->PopCwd();
+            }
         }
 
         // specifies local bouding box of multi-sub transform node's.
@@ -784,8 +784,7 @@ vector3 nMaxMesh::GetVertexPosition(Mesh* mesh, int index)
 vector3 nMaxMesh::GetVertexNormal(Mesh* mesh, Face& face, int faceNo, int vtxIdx)
 {
     vector3 normal;
-    Point3& vn = GetVertexNormal(mesh, faceNo, mesh->getRVertPtr((face.getVert(vtxIdx))));
-
+    Point3& vn = GetVertexNormal(mesh, faceNo, mesh->getRVertPtr(face.getVert(vtxIdx)));
     normal.set(-vn.x, vn.z, vn.y);
 
     return normal;
@@ -811,32 +810,32 @@ Point3 nMaxMesh::GetVertexNormal(Mesh* mesh, int faceNo, RVertex* rv)
     // If normal is not specified it's only available if the face belongs
     // to a smoothing group
     else 
-        if ((numNormals = rv->rFlags & NORCT_MASK) && smGroup) 
+    if ((numNormals = rv->rFlags & NORCT_MASK) && smGroup) 
+    {
+        // If there is only one vertex is found in the rn member.
+        if (numNormals == 1) 
         {
-            // If there is only one vertex is found in the rn member.
-            if (numNormals == 1) 
-            {
-                vertexNormal = rv->rn.getNormal();
-            }
-            else
-            {
-                // If two or more vertices are there you need to step through them
-                // and find the vertex with the same smoothing group as the current face.
-                // You will find multiple normals in the ern member.
-                for (int i = 0; i < numNormals; i++)
-                {
-                    if (rv->ern[i].getSmGroup() & smGroup)
-                    {
-                        vertexNormal = rv->ern[i].getNormal();
-                    }
-                }
-            }
+            vertexNormal = rv->rn.getNormal();
         }
         else
         {
-            // Get the normal from the Face if no smoothing groups are there
-            vertexNormal = mesh->getFaceNormal(faceNo);
+            // If two or more vertices are there you need to step through them
+            // and find the vertex with the same smoothing group as the current face.
+            // You will find multiple normals in the ern member.
+            for (int i = 0; i < numNormals; i++)
+            {
+                if (rv->ern[i].getSmGroup() & smGroup)
+                {
+                    vertexNormal = rv->ern[i].getNormal();
+                }
+            }
         }
+    }
+    else
+    {
+        // Get the normal from the Face if no smoothing groups are there
+        vertexNormal = mesh->getFaceNormal(faceNo);
+    }
 
     return vertexNormal;
 }
