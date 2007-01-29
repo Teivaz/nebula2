@@ -106,7 +106,7 @@ void
 nStream::GetDocumentAsString(nString& rsString)
 {
     rsString = "";
-    AddNode2String(rsString,this->xmlDocument->FirstChild());
+    AddNode2String(rsString, this->xmlDocument->FirstChild());
 }
 
 
@@ -246,13 +246,10 @@ nStream::OpenString(const nString& n)
 
         // set the current node to the root node
         this->curNode = this->xmlDocument->RootElement();
+        return true;
     }
-    else
-    {
-        // no empty string allowed
-        return false;
-    }
-    return true;
+    // no empty string allowed
+    return false;
 }
 //------------------------------------------------------------------------------
 /**
@@ -351,10 +348,7 @@ nStream::GetCurrentNodeLineNumber() const
     {
         return this->curNode->Row();
     }
-    else
-    {
-        return 0;
-    }
+    return 0;
 }
 
 //------------------------------------------------------------------------------
@@ -572,10 +566,7 @@ nStream::SetToFirstChild(const nString& name)
         this->curNode = child;
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -605,11 +596,8 @@ nStream::SetToNextChild(const nString& name)
         this->curNode = sib;
         return true;
     }
-    else
-    {
-        this->SetToParent();
-        return false;
-    }
+    this->SetToParent();
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -628,10 +616,7 @@ nStream::SetToParent()
         this->curNode = parent->ToElement();
         return true;
     }
-    else
-    {
-        return false;
-    }
+    return false;
 }
 
 //------------------------------------------------------------------------------
@@ -709,10 +694,7 @@ nStream::GetOptionalString(const nString& name, const nString& defaultValue) con
     {
         return this->GetString(name);
     }
-    else
-    {
-        return defaultValue;
-    }
+    return defaultValue;
 }
 
 //------------------------------------------------------------------------------
@@ -740,10 +722,7 @@ nStream::GetOptionalBool(const nString& name, bool defaultValue) const
     {
         return this->GetBool(name);
     }
-    else
-    {
-        return defaultValue;
-    }
+    return defaultValue;
 }
 
 //------------------------------------------------------------------------------
@@ -769,10 +748,7 @@ nStream::GetOptionalInt(const nString& name, int defaultValue) const
     {
         return this->GetInt(name);
     }
-    else
-    {
-        return defaultValue;
-    }
+    return defaultValue;
 }
 
 //------------------------------------------------------------------------------
@@ -798,10 +774,7 @@ nStream::GetOptionalFloat(const nString& name, float defaultValue) const
     {
         return this->GetFloat(name);
     }
-    else
-    {
-        return defaultValue;
-    }
+    return defaultValue;
 }
 
 //------------------------------------------------------------------------------
@@ -827,10 +800,7 @@ nStream::GetOptionalVector3(const nString& name, const vector3& defaultValue) co
     {
         return this->GetVector3(name);
     }
-    else
-    {
-        return defaultValue;
-    }
+    return defaultValue;
 }
 
 //------------------------------------------------------------------------------
@@ -856,10 +826,7 @@ nStream::GetOptionalVector4(const nString& name, const vector4& defaultValue) co
     {
         return this->GetVector4(name);
     }
-    else
-    {
-        return defaultValue;
-    }
+    return defaultValue;
 }
 
 //------------------------------------------------------------------------------
@@ -894,10 +861,7 @@ nStream::GetOptionalMatrix44(const nString& name, const matrix44& defaultValue) 
     {
         return this->GetMatrix44(name);
     }
-    else
-    {
-        return defaultValue;
-    }
+    return defaultValue;
 }
 
 //------------------------------------------------------------------------------

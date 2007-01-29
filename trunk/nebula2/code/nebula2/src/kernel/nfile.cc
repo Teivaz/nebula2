@@ -329,13 +329,13 @@ nFile::Eof() const
     n_assert(this->IsOpen());
 
 #ifdef __WIN32__
-    DWORD fpos = SetFilePointer(this->handle,0,NULL,FILE_CURRENT);
-    DWORD size = GetFileSize(this->handle,NULL);
+    DWORD fpos = SetFilePointer(this->handle, 0, NULL, FILE_CURRENT);
+    DWORD size = GetFileSize(this->handle, NULL);
 
     // NOTE: THE '>=' IS NOT A BUG!!!
-    return (fpos >= size)? true:false;
+    return fpos >= size;
 #else
-    return (!feof(this->fp))? false:true;
+    return feof(this->fp);
 #endif
 }
 
