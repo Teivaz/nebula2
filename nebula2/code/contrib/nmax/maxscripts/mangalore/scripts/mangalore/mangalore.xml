@@ -1,0 +1,51 @@
+<?xml version="1.1" encoding="ascii" ?>
+<mangalore>
+    <table name="_Entities" >
+        <column name = "_Type" label = "Type" type = "Integer" gui = "1" def = "2" itemlist="Template, Instance"/>
+        <column name = "GUID" label = "Guid" type = "String" gui = "1" def = "" />
+        <column name = "_ID" label = "_ID" type = "String" gui = "1" def = "" />
+	<column name = "_Category" label = "Category" type = "Integer" gui = "1" def = "2" 
+                itemlist = "Player, Camera, Light, _Environment"
+        />
+        <column name = "_Level" label = "Level" type = "String" gui = "1" def ="" />
+        <column name = "Tansform" label = "Transform" type = "String" gui = "0" def = "" />
+        <column name = "LightType" label = "LightType" type = "Integer" gui = "1" def = "1" itemlist="Point, Directional, Spot"/>
+        <column name = "LightColor" label = "LightColor" type = "Color" gui = "1" def = "255.0, 255.0, 255.0, 255.0" />
+        <column name = "LightRange" label = "LightRange" type = "String" gui = "1" def = "" />
+        <column name = "LightAmbient" label = "LightAmbient" type = "String" gui = "1" def = "" />
+        <column name = "LightCastShadow" label = "LightCastShadow" type = "Boolean" gui = "1" def = "False" />
+        <column name = "AnimPath" label = "AnimPath" type = "String" gui = "1" def = "" />
+        <column name = "Graphics" label = "Graphics" type = "String" gui = "1" def = "" />
+        <column name = "Physics" label = "Physics" type = "String" gui = "1" def = "" />
+        <column name = "Center" label = "Center" type = "String" gui = "1" def = "" />
+        <column name = "Extents" label = "Extents" type = "String" gui = "1" def = "" />
+        <column name = "StartLevel" label = "StartLevel" type = "String" gui = "1" def = "" />
+        <column name = "Id" label = "Id" type = "String" gui = "1" def = "" />
+        <column name = "Placeholder" label = "PlaceHolder" type = "String" gui = "1" def = "" />
+        <column name = "Name" label = "Name" type = "String" gui = "1" def = "" />
+        <column name = "AnimSet" label = "AnimSet" type = "String" gui = "1" def = "" />
+        <column name = "InputFocus" label = "InputFocus" type = "Boolean" gui = "1" def = "False" />
+        <column name = "CameraFocus" label = "CameraFocus" type = "Boolean" gui = "1" def = "False" />
+        <column name = "MaxVelocity" label = "MaxVelocity" type = "Float" gui = "1" def = "1.0" />
+        <column name = "FieldOfView" label = "FieldOfView" type = "Float" gui = "1" def = "0.0" />
+        <column name = "Time" label = "Time" type = "Float" gui = "1" def = "0.0" />
+    </table>
+    <table name="_Categories">
+        <column name = "Name" />
+            <row name = "Player" />
+            <row name = "Camera" />
+            <row name = "Light" />
+            <row name = "_Environment" />
+    </table>
+    <table name="_Navigation">
+        <column name="GUID" />
+        <column name="_Level" />
+        <column name="Transform" />
+        <column name="File" />
+    </table>
+    <table name="_Global">
+        <column name="_Dummy" def="" />
+        <column name="CurrentLevel" def="" />
+    </table>
+</mangalore>
+
