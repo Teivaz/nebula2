@@ -124,15 +124,13 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
 */
 void nMaxSkinAnimator::BuildAnimClips(nSkinAnimator* animator, nMaxNoteTrack& noteTrack)
 {
-    const nMaxAnimState& state = noteTrack.GetState(0);
-
-    int numClips = state.clipArray.Size();
+    int numClips = noteTrack.GetNumStates();
     animator->BeginClips(numClips);
 
     for (int i=0; i<numClips; i++)
     {
-        const nString& weightChannelName = state.GetClip(i);
-        animator->SetClip(i, i, weightChannelName.Get());
+        const nMaxAnimState& clip = noteTrack.GetState(i);
+        animator->SetClip(i, i, clip.name);
     }
 
     animator->EndClips();
