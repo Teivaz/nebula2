@@ -15,7 +15,7 @@
 #include "scene/nlightnode.h"
 #include "scene/nskinanimator.h"
 #include "scene/ncharacter3skinanimator.h"
-#include "anim2/nanimstate.h"
+//#include "anim2/nanimstate.h"
 #include "variable/nvariable.h"
 #include "variable/nvariableserver.h"
 #include "tools/nnodelist.h"
@@ -69,6 +69,7 @@ nGuiCharacterControlWindow::ExistsCharacter2() const
 {
     // find skin animator
     nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
+    //nRoot* startNode = this->kernelServer->Lookup("/res/gfx/examples");
     n_assert(0 != startNode);
     nSkinAnimator* firstFoundNode = (nSkinAnimator*) this->FindFirstInstance(startNode, this->skinAnimatorClass);
     return (0 != firstFoundNode);
@@ -82,6 +83,7 @@ nGuiCharacterControlWindow::ExistsCharacter3() const
 {
     // find character 3 skin animator
     nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
+    //nRoot* startNode = this->kernelServer->Lookup("/res/gfx/examples");
     n_assert(0 != startNode);
     nSkinAnimator* firstFoundNode = (nSkinAnimator*) this->FindFirstInstance(startNode, this->character3SkinAnimatorClass);
     return (0 != firstFoundNode);
@@ -647,6 +649,8 @@ nGuiCharacterControlWindow::FindFirstInstance(nRoot* node, nClass* classType) co
 
 //------------------------------------------------------------------------------
 /**
+    -14-Feb-07  kims  Roughly fixed the bug that it does not find proper node in nNodeList
+                      to get rendering context of the character.
 */
 void
 nGuiCharacterControlWindow::FindCharacter2()
@@ -655,6 +659,7 @@ nGuiCharacterControlWindow::FindCharacter2()
 
     // find skin animator
     nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
+    //nRoot* startNode = this->kernelServer->Lookup("/res/gfx/examples");
     n_assert(0 != startNode);
     nSkinAnimator* firstFoundNode = (nSkinAnimator*) this->FindFirstInstance(startNode, this->skinAnimatorClass);
     if (firstFoundNode)
@@ -663,23 +668,31 @@ nGuiCharacterControlWindow::FindCharacter2()
 
         // lookup parent of parent of the skin animator registered in the nodelist
         // to acquire the render context
-        nRoot* parentOfSkinAnimator = this->refSkinAnimator->GetParent();
-        n_assert(parentOfSkinAnimator);
-        parentOfSkinAnimator = parentOfSkinAnimator->GetParent();
-        n_assert(parentOfSkinAnimator);
-        parentOfSkinAnimator = parentOfSkinAnimator->GetParent();
-        n_assert(parentOfSkinAnimator);
+        bool found = false;
 
         int numObjects = nNodeList::Instance()->GetCount();
         int i;
         for ( i = 0; i < numObjects; i++)
         {
+            nRoot* parentOfSkinAnimator = this->refSkinAnimator->GetParent();
+            n_assert(parentOfSkinAnimator);
+
             nTransformNode* node = nNodeList::Instance()->GetNodeAt(i);
-            if (node == parentOfSkinAnimator)
-            {
-                this->characterRenderContext = nNodeList::Instance()->GetRenderContextAt(i);
-                break;
+
+            while (parentOfSkinAnimator)
+            {                
+                if (node == parentOfSkinAnimator)
+                {
+                    this->characterRenderContext = nNodeList::Instance()->GetRenderContextAt(i);
+                    found = true;
+                    break;
+                }
+
+                parentOfSkinAnimator = parentOfSkinAnimator->GetParent();
             }
+
+            if (found)
+                break;
         }
         n_assert(0 != this->characterRenderContext);
     }
@@ -695,6 +708,7 @@ nGuiCharacterControlWindow::FindCharacter3()
 
     // find skin animator
     nRoot* startNode = this->kernelServer->Lookup("/usr/scene");
+    //nRoot* startNode = this->kernelServer->Lookup("/res/gfx/examples");
     n_assert(0 != startNode);
     nSkinAnimator* firstFoundNode = (nSkinAnimator*) this->FindFirstInstance(startNode, this->character3SkinAnimatorClass);
     if (firstFoundNode)

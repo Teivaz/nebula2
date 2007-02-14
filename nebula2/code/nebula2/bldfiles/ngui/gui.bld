@@ -67,9 +67,9 @@ beginbundle ngui::ngui
         nguiwatcherwindow
         nguiwidget
         nguiwindow
+        nguicharactercontrolwindow
     }
 endbundle
-#       nguicharactercontrolwindow
 
 beginmodule nguiadjustdisplaywindow
     setdir gui
@@ -140,7 +140,7 @@ beginmodule nguicharactercontrolwindow
     setfiles {
         nguicharactercontrolwindow_main
     }
-#endmodule
+endmodule
 
 beginmodule nguicheckbutton
     setdir gui
