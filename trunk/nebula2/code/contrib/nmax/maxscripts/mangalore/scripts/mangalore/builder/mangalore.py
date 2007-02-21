@@ -3,6 +3,7 @@
 #
 #  (c)2007  Kim Hyoun Woo
 #--------------------------------------------------------------------------
+import re
 import xml.dom.minidom
 from xml.dom.minidom import Node
 from maxscript import *
@@ -131,13 +132,16 @@ class Mangalore:
                         items.append(i)
                 """
 
-		items = ""
-		if attrs.has_key('itemlist'):
+                # tokenize the string by comma.
+                items = ""
+                if attrs.has_key('itemlist'):
                     items = col.attributes['itemlist'].value
+
+                itemList = re.split(',', items)
 
                 # write rollout ui controls
                 rollout += self.maxScript.GenerateRollout(name.value, datatype.value, 
-					label.value, defval.value, items)
+					label.value, defval.value, itemList)
 
         params += "\t)\n"
 

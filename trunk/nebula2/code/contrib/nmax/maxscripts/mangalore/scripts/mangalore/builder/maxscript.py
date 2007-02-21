@@ -64,11 +64,11 @@ class MaxScript:
             #if items != "":
 
             str += "items:#("
-            str += items
-                #for i in items:
-                #    str += "\"%s\" " % i
-                #    if len(items) > items.index(i) + 1:
-                #       str += ","
+            #str += items
+            for i in items:
+                str += "\"%s\"" % i
+                if len(items) > items.index(i) + 1:
+                    str += ", "
             str += ")"
             return ("dropdownlist %s \"%s\" %s align:#left \n" % (uiname, label, str))
 
