@@ -5,7 +5,7 @@
         <column name = "GUID" label = "Guid" type = "String" gui = "1" def = "" />
         <column name = "_ID" label = "_ID" type = "String" gui = "1" def = "" />
 	<column name = "_Category" label = "Category" type = "Integer" gui = "1" def = "2" 
-                itemlist = "Player, Camera, Light, _Environment"
+                itemlist = "Actor, Camera, Simple, Light, _Environment"
         />
         <column name = "_Level" label = "Level" type = "String" gui = "1" def ="" />
         <column name = "Tansform" label = "Transform" type = "String" gui = "0" def = "" />
@@ -32,8 +32,9 @@
     </table>
     <table name="_Categories">
         <column name = "Name" />
-            <row name = "Player" />
+            <row name = "Actor" />
             <row name = "Camera" />
+            <row name = "Simple" />
             <row name = "Light" />
             <row name = "_Environment" />
     </table>
