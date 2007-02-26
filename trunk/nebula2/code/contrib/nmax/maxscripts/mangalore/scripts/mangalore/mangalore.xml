@@ -1,15 +1,15 @@
 <?xml version="1.1" encoding="ascii" ?>
 <mangalore>
     <table name="_Entities" >
-        <column name = "_Type" label = "Type" type = "Integer" gui = "1" def = "2" itemlist="Template, Instance"/>
+        <column name = "_Type" label = "Type" type = "Integer" gui = "1" def = "2" itemlist="Template,Instance"/>
         <column name = "GUID" label = "Guid" type = "String" gui = "1" def = "" />
         <column name = "_ID" label = "_ID" type = "String" gui = "1" def = "" />
 	<column name = "_Category" label = "Category" type = "Integer" gui = "1" def = "2" 
-                itemlist = "Actor, Camera, Simple, Light, _Environment"
+                itemlist = "Actor,Camera,Simple,Light,_Environment"
         />
         <column name = "_Level" label = "Level" type = "String" gui = "1" def ="" />
-        <column name = "Tansform" label = "Transform" type = "String" gui = "0" def = "" />
-        <column name = "LightType" label = "LightType" type = "Integer" gui = "1" def = "1" itemlist="Point, Directional, Spot"/>
+        <column name = "Transform" label = "Transform" type = "String" gui = "0" def = "" />
+        <column name = "LightType" label = "LightType" type = "Integer" gui = "1" def = "1" itemlist="Point,Directional,Spot"/>
         <column name = "LightColor" label = "LightColor" type = "Color" gui = "1" def = "255.0, 255.0, 255.0, 255.0" />
         <column name = "LightRange" label = "LightRange" type = "String" gui = "1" def = "" />
         <column name = "LightAmbient" label = "LightAmbient" type = "String" gui = "1" def = "" />
