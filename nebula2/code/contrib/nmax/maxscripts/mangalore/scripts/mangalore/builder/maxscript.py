@@ -30,10 +30,19 @@ class MaxScript:
     """
     def GenerateParameter(self, name, label, type, defval):
         # 'c' is prefix which means the column element
-        name = "c%s" % name
+        paramname = "c%s" % name
         default = self.GetDefVal(type, defval)
         uiname = self.GetUIControlName(type, label)
-        return "%s type:#%s %s animatable:true ui:%s\n" % (name, type.lower(), default, uiname)
+
+	ret = ""
+        ret += "\t\t"
+        ret +=  "%s type:#%s %s animatable:true ui:%s\n" % (paramname, type.lower(), default, uiname)
+	
+        if type == "Integer":
+            ret += "\t\t"
+            ret += "strtab%s type:#stringTab tabSizeVariable:true\n" % (paramname)
+
+        return ret
 
     """ Make a new UI control name by the given its type and label.
     """
@@ -60,16 +69,16 @@ class MaxScript:
         uiname = self.GetUIControlName(type, label)
 
         if type == "Integer" :
-            str = ""
-            #if items != "":
 
+            str = ""
             str += "items:#("
-            #str += items
             for i in items:
+                i.strip (' ')
                 str += "\"%s\"" % i
                 if len(items) > items.index(i) + 1:
                     str += ", "
             str += ")"
+
             return ("dropdownlist %s \"%s\" %s align:#left \n" % (uiname, label, str))
 
         elif type == "String" :
@@ -88,4 +97,21 @@ class MaxScript:
         else:
             return ("label %s \"%s\" align:#left \n" % (uiname, label)) 
 
+    """
+    """
+    def GenerateStrTab(self, name, type, items):
+        if type == "Integer" :
+            strItems = ""
+            for i in items:
+                strItems += "\"%s\"" % i
+                if len(items) > items.index(i) + 1:
+                    strItems += ", "
+
+            strTab = "strtab"
+            # prefix for the parameter
+	    strTab += "c"
+            strTab += name
+            return ("%s = #(%s)\n" % (strTab, strItems))
+        else:
+            return ""
 
