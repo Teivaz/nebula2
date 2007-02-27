@@ -4,6 +4,7 @@
 //  (C)2004 Johannes Kellner 
 //------------------------------------------------------------------------------
 #include "base/nmaxloghandler.h"
+#include "kernel/ndefaultloghandler.h"
 
 //------------------------------------------------------------------------------
 /**
@@ -89,8 +90,10 @@ nMaxLogHandler::doLog(logType type, const char* msg, va_list argList)
 		n_delete_array(buf);
 	}
 	else
+    {
 		this->numMsgDismissed++;
 	    //TODO: add a fifo for the messeages before we have a ptr to the max syslog 
+    }
 }
 
 //------------------------------------------------------------------------------

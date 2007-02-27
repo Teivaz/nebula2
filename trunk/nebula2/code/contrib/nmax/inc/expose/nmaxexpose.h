@@ -49,7 +49,7 @@ class INebulaInterface : public FPStaticInterface
 class nMaxExpose : public ReferenceTarget//, public INebulaInterface
 {
 public:
-    nMaxExpose(){ }
+    nMaxExpose() {}
 
     void DeleteThis() { delete this; }
 
