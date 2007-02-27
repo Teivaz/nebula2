@@ -77,7 +77,6 @@ class Mangalore:
         openHandler += "\t\t\tlocal classid = genclassid returnvalue:true\n"
         openHandler += "\t\t\tc_Id = ((classid[1] as string) + (classid[2] as string))\n"
 
-
         # A generated MAXScript code which is saved on the disk.
         script = ""
         script += "------------------------------------------------------------------------------\n"
@@ -99,10 +98,19 @@ class Mangalore:
 
         #script += custAttr
         #script += "(\n"
+        script += "\tlocal isLight = false\n"
+
+        attachHandler = ""
+        attachHandler += "\ton attachedToNode node do\n"
+        attachHandler += "\t(\n"
+        attachHandler += "\t\tisLight = iskindof node 'light'\n"
+        attachHandler += "\t)\n"
 
         # A string for rollout MAXScript 
         params = ""
         rollout = ""
+
+        attachHandleForOpen = ""
 
         params += "\t" + paramDef + "\n" + "\t(\n"
         rollout += "\t" + rolloutDef + "\n" +  "\t(\n"
@@ -153,7 +161,18 @@ class Mangalore:
                         openHandler +="\t\t\t"
                         openHandler += tmp
 
+                    #FIXME: 
+		    ret = name.value.find('Light')
+                    if ret >= 0 :
+                        uiname = self.maxScript.GetUIControlName(datatype.value, label.value)
+                        attachHandleForOpen  += ("\t\t\t\t%s.enabled = false\n" % uiname)
+
         params += "\t)\n"
+
+        openHandler += "\t\t\tif islight == false do\n"
+        openHandler += "\t\t\t(\n"
+        openHandler += attachHandleForOpen
+        openHandler += "\t\t\t)\n"
 
         openHandler += "\t\t)\n"
         rollout += openHandler
@@ -162,7 +181,8 @@ class Mangalore:
 
         script += params
         script += rollout
-        #script += ")\n"
+
+	script += attachHandler 
 
         script += ")\n"
 
@@ -208,6 +228,17 @@ class Mangalore:
     def WriteParserScript (self, file):
         script = ""
 
+        # A generated MAXScript code which is saved on the disk.
+        script = ""
+        script += "------------------------------------------------------------------------------\n"
+        script += "--  !!MACHINE GENERATED FILE!!\n"
+        script += "--\n"
+        script += "--  %s\n" % file
+        script += "--\n"
+        script += "--  (c)2007 Kim Hyoun Woo\n"
+        script += "------------------------------------------------------------------------------\n"
+        script += "\n"
+
         script += "fn nParseMangaloreEntity obj =\n" 
         script += "(\n"
 
@@ -220,32 +251,63 @@ class Mangalore:
             if attrs.has_key('gui'):
                 name = col.attributes['name']
                 datatype = col.attributes['type']
+                label = col.attributes['label']
                 hasGUI = col.attributes['gui']
 
                 if hasGUI.value == "1":
                     script += "\t"
                     script += ("val = obj.modifiers[\"Mangalore Entity\"].c%s\n" % name.value)
-                    script += "\t"
-                    script += "if val != \"\" or (val != undefined) do\n"
-                    script += "\t"
-                    script += "(\n"
-                    script += "\t"
-                    script += "\tcolumns += " + ("c%s\n" % name.value)
+
+                    uiname = self.maxScript.GetUIControlName(datatype.value, label.value)
+                    script += ("\tstatus = obj.modifiers[\"Mangalore Entity\"].rEntityAttr.%s.enabled\n" % uiname)
 
                     type = datatype.value
 
                     if type == "Integer":
                         tmp = ""
-                        tmp += ("\tvalues += obj.modifiers[\"Mangalore Entity\"].strtabc%s[val]\n" % name.value)
-                        script += "\t"
+                        tmp += "\tif val != \"\" or (val != undefined) do\n"
+                        tmp += "\t(\n"
+                        tmp += "\t\tif status == true do\n"
+                        tmp += "\t\t(\n"
+                        tmp += "\t\tcolumns += " + ("\"%s\"\n" % name.value)
+                        tmp += ("\t\tvalues += obj.modifiers[\"Mangalore Entity\"].strtabc%s[val]\n" % name.value)
+                        tmp += "\t\t)\n"
+                        tmp += "\t)\n"
                         script += tmp
                     elif type == "Color":
                         script += ""
 
                     elif type == "String":
                         tmp = ""
+                        tmp += "\tif val != \"\" do\n"
+                        tmp += "\t(\n"
+                        tmp += "\t\tif status == true do\n"
+                        tmp += "\t\t(\n"
+                        tmp += "\t\tcolumns += " + ("\"%s\"\n" % name.value)
+                        tmp += "\t\tvalues += val as string\n"
+                        tmp += "\t\t)\n"
+                        tmp += "\t)\n"
+                        script += tmp
+                    elif type == "Boolean":
+                        tmp = ""
+                        if name.value == "Transform":
+                            tmp += "\tcolumns += \"Transform\"\n"
+                            tmp += "\ttm = nConvertTM obj.transform\n"
+                            tmp += "\tvalues += tm as string\n" 
+                        else:
+                            tmp += "\tif status == true do\n"
+                            tmp += "\t(\n"
+                            tmp += "\tcolumns += " + ("\"%s\"\n" % name.value)
+                            tmp += "\tvalues += val as string\n" 
+                            tmp += "\t)\n"
+                        script += tmp
+                    elif type == "Float":
+                        tmp = ""
+                        tmp += "\tif status == true do\n"
+                        tmp += "\t(\n"
+                        tmp += "\tcolumns += " + ("\"%s\"\n" % name.value)
                         tmp += "\tvalues += val as string\n"
-                        script += "\t"
+                        tmp += "\t)\n"
                         script += tmp
                     else:
                         tmp = ""
@@ -253,8 +315,8 @@ class Mangalore:
                         script += "\t"
                         script += tmp
 
-                    script += "\t"
-                    script += ")\n"
+                    script += "\tcolumns += \" \"\n"
+                    script += "\tvalues += \" \"\n"
 
         script += "\tappend ret columns\n"
         script += "\tappend ret values\n"
