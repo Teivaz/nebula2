@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Mon Nov 20 14:20:40 2006
+/* at Tue Feb 27 10:17:11 2007
  */
 /* Compiler settings for .\nmaxenvelopecurve.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)

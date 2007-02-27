@@ -22,9 +22,9 @@ IMPLEMENT_DYNCREATE(nmaxenvelopecurveCtrl, COleControl)
 
 BEGIN_MESSAGE_MAP(nmaxenvelopecurveCtrl, COleControl)
     ON_MESSAGE(ECN_CHANGEDVALUE, OnECNChangedValue )
-    //ON_MESSAGE(ECCN_CHANGEDVALUE, OnECCNChangedValue )
     ON_OLEVERB(AFX_IDS_VERB_PROPERTIES, OnProperties)
     ON_WM_CREATE()
+    ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -40,8 +40,6 @@ BEGIN_DISPATCH_MAP(nmaxenvelopecurveCtrl, COleControl)
     DISP_PROPERTY_EX_ID(nmaxenvelopecurveCtrl, "ModulationFunc", dispidFunction, GetFunction, SetFunction, VT_UI1)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "GetSelectedCurve", dispidGetSelectedCurve, GetSelectedCurve, VT_UI1, VTS_NONE)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "UpdateDialogControls", dispidUpdateDialogControls, UpdateDialogControls, VT_EMPTY, VTS_NONE)
-    DISP_PROPERTY_EX_ID(nmaxenvelopecurveCtrl, "Name", dispidName, GetName, SetName, VT_BSTR)
-    DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "init", dispidinit, init, VT_EMPTY, VTS_UI1 VTS_BSTR VTS_PR4 VTS_R4 VTS_R4)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "GetData", dispidGetData, GetData, VT_BSTR, VTS_NONE)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "SetPos", dispidSetPos, SetPos, VT_EMPTY, VTS_UI1 VTS_R4)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "GetPos", dispidGetPos, GetPos, VT_R4, VTS_UI1)
@@ -49,6 +47,8 @@ BEGIN_DISPATCH_MAP(nmaxenvelopecurveCtrl, COleControl)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "GetValue", dispidGetValue, GetValue, VT_R4, VTS_UI1)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "SetColor", dispidSetColor, SetColor, VT_EMPTY, VTS_UI1 VTS_COLOR)
     DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "GetColor", dispidGetColor, GetColor, VT_COLOR, VTS_UI1)
+    DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "InitColorCurve", dispidInitColorCurve, InitColorCurve, VT_EMPTY, VTS_BSTR)
+    DISP_FUNCTION_ID(nmaxenvelopecurveCtrl, "InitCurve", dispidInitCurve, InitCurve, VT_EMPTY, VTS_BSTR)
 END_DISPATCH_MAP()
 
 
@@ -174,23 +174,97 @@ int nmaxenvelopecurveCtrl::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     m_CurveDlg.Create( nmaxenvelopecurveDialog::IDD, this );
     m_ColorCurveDlg.Create( nmaxenvelopecolorcurveDialog::IDD, this );
+    
+    m_CurveDlg.ShowWindow(SW_HIDE);
+    m_ColorCurveDlg.ShowWindow(SW_HIDE);
 
-    SetControlType( CT_Curve );
-
-/*
-    CRect rcClient;
-    switch( m_ControlType )
-    {
-    case CT_Curve:
-        m_CurveDlg.Create( nmaxenvelopecurveDialog::IDD, this );
-        break;
-    case CT_ColorCurve:
-        m_ColorCurveDlg.Create( nmaxenvelopecolorcurveDialog::IDD, this );
-        break;
-    }
-*/
     return 0;
 }
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nmaxenvelopecurveCtrl::InitCurve(LPCTSTR parambuffer)
+{
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+    SetControlType(CT_Curve);
+
+    float params[11];
+    memset(params, 0, sizeof(params) );
+
+    int index = 0;
+    int curPos = 0;
+    CString aaa;
+    CString strBuffer(parambuffer);
+    strBuffer.TrimLeft("#(");
+    strBuffer.TrimRight(")");
+    CString strData = strBuffer.Tokenize(", ", curPos);
+    while( strData.GetLength() )
+    {
+        params[index] = atof(strData.GetBuffer());
+        strData = strBuffer.Tokenize(", ", curPos);
+        index++;
+    }
+
+    for( int i = 0; i < 4; ++i )
+    {
+        SetValue(i, params[i] );
+    }
+
+    SetPos(1, params[4] );
+    SetPos(2, params[5] );
+
+    SetFrequency(params[6]);
+    SetAmplitude(params[7]);
+    SetFunction(int(params[8]));
+    SetMin(params[9]);
+    SetMax(params[10]);
+
+    UpdateDialogControls();
+}
+
+
+//-----------------------------------------------------------------------------
+/**
+*/
+void nmaxenvelopecurveCtrl::InitColorCurve(LPCTSTR parambuffer)
+{
+    AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
+    SetControlType(CT_ColorCurve);
+
+    float params[14];
+    memset(params, 0, sizeof(params) );
+
+    int index = 0;
+    int curPos = 0;
+    CString strBuffer(parambuffer);
+    strBuffer.TrimLeft("#(");
+    strBuffer.TrimRight(")");
+    CString strData = strBuffer.Tokenize(", ", curPos);
+    while( strData.GetLength() )
+    {
+        params[index] = atof(strData.GetBuffer());
+        strData = strBuffer.Tokenize(", ", curPos);
+        index++;
+    }    
+
+    for( int i = 0, index = 0; i < 4; ++i, index+=3 )
+    {
+        BYTE r = params[index] * 255;
+        BYTE g = params[index + 1] * 255;
+        BYTE b = params[index + 2] * 255;
+
+        SetColor(i, RGB(r,g,b) );
+    }
+
+    SetPos(1, params[12] );
+    SetPos(2, params[13] );
+
+    UpdateDialogControls();
+}
+
 
 //-----------------------------------------------------------------------------
 /**
@@ -243,56 +317,6 @@ void nmaxenvelopecurveCtrl::SetControlType(BYTE newVal)
         m_ControlType = newVal;
     }
 
-    SetModifiedFlag();
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-BSTR nmaxenvelopecurveCtrl::GetName(void)
-{
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());
-
-    CString strResult;
-
-    switch( m_ControlType )
-    {
-    case CT_Curve:
-        {
-            m_CurveDlg.GetWindowText(strResult);
-        }
-        break;
-    case CT_ColorCurve:
-        {
-            m_ColorCurveDlg.GetWindowText(strResult);
-        }
-        break;
-    }
-
-    return strResult.AllocSysString();
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-void nmaxenvelopecurveCtrl::SetName(LPCTSTR newVal)
-{
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());
-
-    switch( m_ControlType )
-    {
-    case CT_Curve:
-        {
-            m_CurveDlg.SetWindowText(newVal);
-        }
-        break;
-    case CT_ColorCurve:
-        {
-            m_ColorCurveDlg.SetWindowText(newVal);
-        }
-        break;
-    }
-  
     SetModifiedFlag();
 }
 
@@ -478,29 +502,6 @@ void nmaxenvelopecurveCtrl::UpdateDialogControls(void)
         }
         break;
     }
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-void nmaxenvelopecurveCtrl::init(BYTE type, LPCTSTR name, FLOAT* defValue, FLOAT min, FLOAT max)
-{
-    AFX_MANAGE_STATE(AfxGetStaticModuleState());
-
-    SetControlType( type );
-    SetName( name );
-
-    for( int i = 0; i < 4; ++i )
-        SetValue( i, defValue[i] );
-    
-    SetPos( 1, defValue[4] );
-    SetPos( 2, defValue[5] );
-    SetFrequency(defValue[6]);
-    SetAmplitude(defValue[7]);
-    SetMin( min );
-    SetMin( max );
-
-    UpdateDialogControls();
 }
 
 //-----------------------------------------------------------------------------

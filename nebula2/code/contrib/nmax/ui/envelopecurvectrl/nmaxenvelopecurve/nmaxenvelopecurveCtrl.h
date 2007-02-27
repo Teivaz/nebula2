@@ -48,6 +48,8 @@ protected:
 // dispatch and event ID.
 public:
     enum {
+        dispidInitCurve = 27L,
+        dispidInitColorCurve = 26L,
         dispidGetColor = 24L,
         dispidSetColor = 23L,
         dispidGetValue = 22L,
@@ -56,8 +58,6 @@ public:
         dispidSetPos = 19L,
         dispidGetData = 16L,
         eventidOnChangedValue = 1L,
-        dispidinit = 15L,
-        dispidName = 13,
         dispidUpdateDialogControls = 12L,
         dispidGetSelectedCurve = 10L,
         dispidFunction = 9,
@@ -77,14 +77,14 @@ protected:
         CT_MAX,
     };
 
+    void InitCurve(LPCTSTR parambuffer);
+    void InitColorCurve(LPCTSTR parambuffer);
+
     BSTR GetData(void);
 
     BYTE m_ControlType;
     BYTE GetControlType(void);
     void SetControlType(BYTE newVal);
-
-    BSTR GetName(void);
-    void SetName(LPCTSTR newVal);
 
     void SetPos(BYTE index, FLOAT value);
     FLOAT GetPos(BYTE index);
@@ -108,7 +108,6 @@ protected:
     BYTE GetSelectedCurve(void);
     
     void UpdateDialogControls(void);
-    void init(BYTE type, LPCTSTR name, FLOAT* defValue, FLOAT min, FLOAT max);
 
     afx_msg LRESULT OnECNChangedValue(WPARAM wParam, LPARAM lParam);
     void OnChangedValue(void)

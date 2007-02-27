@@ -32,7 +32,6 @@ library nmaxenvelopecurveLib
 methods:
 		[id(10), helpstring("메서드 GetSelectedCurve")] BYTE GetSelectedCurve(void);
 		[id(12), helpstring("메서드 UpdateDialogControls")] void UpdateDialogControls(void);
-		[id(15), helpstring("메서드 init")] void init(BYTE type, BSTR name, FLOAT* defValue, FLOAT min, FLOAT max);
 		[id(16), helpstring("메서드 GetData")] BSTR GetData(void);
 		[id(19), helpstring("메서드 SetPos")] void SetPos(BYTE index, FLOAT value);
 		[id(20), helpstring("메서드 GetPos")] FLOAT GetPos(BYTE index);
@@ -40,6 +39,8 @@ methods:
 		[id(22), helpstring("메서드 GetValue")] FLOAT GetValue(BYTE index);
 		[id(23), helpstring("메서드 SetColor")] void SetColor(BYTE index, OLE_COLOR value);
 		[id(24), helpstring("메서드 GetColor")] OLE_COLOR GetColor(BYTE index);
+		[id(26), helpstring("메서드 InitColorCurve")] void InitColorCurve(BSTR parambuffer);
+		[id(27), helpstring("메서드 InitCurve")] void InitCurve(BSTR parambuffer);
 	};
 
 	// nmaxenvelopecurveCtrl의 이벤트 디스패치 인터페이스입니다.

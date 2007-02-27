@@ -320,17 +320,6 @@ void nmaxenvelopecurveDialog::OnBnClickedBtnToggle()
 void nmaxenvelopecurveDialog::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-
-    CRect rc;
-    GetDlgItem(IDC_STATIC_NAME)->GetWindowRect(&rc);
-    ScreenToClient(&rc);
-
-    CString strName;
-    GetWindowText(strName);
-    dc.SelectStockObject(SYSTEM_FONT);
-    dc.SetBkMode(TRANSPARENT);
-    dc.DrawText( strName, &rc, DT_SINGLELINE );
-    //dc.DrawText( "Particle Spread Max", &rc, DT_SINGLELINE );
 }
 
 //-----------------------------------------------------------------------------

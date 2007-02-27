@@ -292,12 +292,15 @@ void CEnvelopeCurve::FlipCruveVertical()
 */
 void CEnvelopeCurve::FlipCurveHorizontal()
 {
-    float temp = m_fPos[CP_B];
-    m_fPos[CP_B] = m_fPos[CP_C];
-    m_fPos[CP_C] = temp;
+    float temp = m_fValue[CP_B];
+    m_fValue[CP_B] = m_fValue[CP_C];
+    m_fValue[CP_C] = temp;
+
+    temp = m_fValue[CP_A];
+    m_fValue[CP_A] = m_fValue[CP_D];
+    m_fValue[CP_D] = temp;
 
     // data -> control
-    
 }
 
 //-----------------------------------------------------------------------------
@@ -538,7 +541,7 @@ void CEnvelopeCurve::OnRButtonDown(UINT nFlags, CPoint point)
     menu.CreatePopupMenu();
 
     menu.AppendMenu(MF_STRING, EC_FLIP_CURVE_VERTICAL, "Flip Curve Vertical");
-    menu.AppendMenu(MF_STRING, EC_FLIP_CURVE_HORIZONTAL, "Flip Curve Vertical");
+    menu.AppendMenu(MF_STRING, EC_FLIP_CURVE_HORIZONTAL, "Flip Curve Horizeontal");
     menu.AppendMenu(MF_STRING, EC_STRAIGHTEN_CURVE, "Straighten Curve");
     menu.AppendMenu(MF_STRING, EC_COPY_CURVE, "Copy Curve");
     menu.AppendMenu(MF_STRING, EC_PASTE_CURVE, "Paste Curve");
