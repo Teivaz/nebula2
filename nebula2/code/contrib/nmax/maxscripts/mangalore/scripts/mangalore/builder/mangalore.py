@@ -162,7 +162,7 @@ class Mangalore:
                         openHandler += tmp
 
                     #FIXME: 
-		    ret = name.value.find('Light')
+                    ret = name.value.find('Light')
                     if ret >= 0 :
                         uiname = self.maxScript.GetUIControlName(datatype.value, label.value)
                         attachHandleForOpen  += ("\t\t\t\t%s.enabled = false\n" % uiname)
@@ -182,7 +182,7 @@ class Mangalore:
         script += params
         script += rollout
 
-	script += attachHandler 
+        script += attachHandler 
 
         script += ")\n"
 
