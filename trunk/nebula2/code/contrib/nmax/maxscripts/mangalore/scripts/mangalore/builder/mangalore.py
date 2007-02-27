@@ -35,9 +35,9 @@ class Mangalore:
                 tblAttr = tbl.attributes['name']
 
                 # retrieved categories are used for '_Category' dropdownlist's items.
-		if tblAttr.value == "_Categories":
+                if tblAttr.value == "_Categories":
                     rows = tbl.getElementsByTagName('row')
-		    """
+                    """
                     env = False
                     for r in rows:
                         c = r.attributes['name'].value
@@ -46,7 +46,7 @@ class Mangalore:
                             env = True
                         self.categoryList.append(c)
                     # append '_Envirionment' category
-		    if env == False:
+                    if env == False:
                         self.categoryList.append('_Environment')
                     """
 
@@ -76,10 +76,10 @@ class Mangalore:
         openHandler += "\t\t(\n"
         openHandler += "\t\t\tlocal classid = genclassid returnvalue:true\n"
         openHandler += "\t\t\tc_Id = ((classid[1] as string) + (classid[2] as string))\n"
-        openHandler += "\t\t)\n"
+
 
         # A generated MAXScript code which is saved on the disk.
-	script = ""
+        script = ""
         script += "------------------------------------------------------------------------------\n"
         script += "--  !!MACHINE GENERATED FILE!!\n"
         script += "--\n"
@@ -90,10 +90,11 @@ class Mangalore:
         script += "\n"
 
         script += "plugin modifier mlEntitiy\n"
-	script += "name:\"Mangalore Entity\"\n"
+        script += "name:\"Mangalore Entity\"\n"
         script += "classID:#(0x418f91ee, 0x3c44f19b)\n"
         script += "category:\"mangalore\"\n"
         script += "extends:EmptyModifier\n"
+        #script += "caMangaloreEntity = attributes \"Mangalore Entity\"\n"
         script += "(\n"
 
         #script += custAttr
@@ -108,43 +109,53 @@ class Mangalore:
 
         for col in self.pblockcolumns:
             attrs = col.attributes
-	    if attrs.has_key('gui'):
+            if attrs.has_key('gui'):
                 name = col.attributes['name']
                 label = col.attributes['label']
                 datatype = col.attributes['type']
                 defval = col.attributes['def']
+                                
+                hasGUI = col.attributes['gui']
 
-                # write parameters
-                params += "\t\t"
-                params += self.maxScript.GenerateParameter(name.value, label.value, 
-                                                                   datatype.value, defval.value)
+                if hasGUI.value == "1":
+                    # write parameters
+                    #params += "\t\t"
+                    params += self.maxScript.GenerateParameter(name.value, label.value, 
+                        datatype.value, defval.value)
 
-                rollout += "\t\t"
+                    rollout += "\t\t"
 
-                """
-                items = []
-                if name.value == "_Type":
-                    items.append("Template") 
-                    items.append("Instance") 
+                    """
+                    items = []
+                    if name.value == "_Type":
+                        items.append("Template") 
+                        items.append("Instance") 
 
-                if name.value == "_Category":
-                    for i in self.categoryList:
-                        items.append(i)
-                """
+                    if name.value == "_Category":
+                        for i in self.categoryList:
+                            items.append(i)
+                    """
 
-                # tokenize the string by comma.
-                items = ""
-                if attrs.has_key('itemlist'):
-                    items = col.attributes['itemlist'].value
+                    # tokenize the string by comma.
+                    items = ""
+                    if attrs.has_key('itemlist'):
+                        items = col.attributes['itemlist'].value
 
-                itemList = re.split(',', items)
+                    itemList = re.split(',', items)
 
-                # write rollout ui controls
-                rollout += self.maxScript.GenerateRollout(name.value, datatype.value, 
-					label.value, defval.value, itemList)
+                    # write rollout ui controls
+                    rollout += self.maxScript.GenerateRollout(name.value, datatype.value, 
+                        label.value, defval.value, itemList)
+
+                    tmp = "" 
+                    tmp = self.maxScript.GenerateStrTab(name.value, datatype.value, itemList)
+                    if tmp != "" :
+                        openHandler +="\t\t\t"
+                        openHandler += tmp
 
         params += "\t)\n"
 
+        openHandler += "\t\t)\n"
         rollout += openHandler
 
         rollout += "\t)\n"
@@ -156,7 +167,7 @@ class Mangalore:
         script += ")\n"
 
         # for debugging
-	#print script
+        #print script
 
         # write generated script on the disk.
         f = open(file, 'w')
@@ -170,7 +181,7 @@ class Mangalore:
         script = ""
         script += "fn nCreateTablesAndColumns database =\n"
         script += "(\n"
- 	for key, value in self.tableArray.iteritems():
+        for key, value in self.tableArray.iteritems():
 
             keycolumn = ""
             columns = ""
@@ -180,7 +191,7 @@ class Mangalore:
                 columns += " "
                 keycolumn = name.value
 
-	    script += ("\tnCreateTable database \"%s\" \"%s\" \"%s\"\n" % (key, columns, keycolumn))
+            script += ("\tnCreateTable database \"%s\" \"%s\" \"%s\"\n" % (key, columns, keycolumn))
 
         script += ")\n"
 
@@ -188,6 +199,69 @@ class Mangalore:
         #print script
 
         # write generated script on the disk.
+        f = open(file, 'w')
+        f.write(script)
+        f.close()
+
+    """
+    """
+    def WriteParserScript (self, file):
+        script = ""
+
+        script += "fn nParseMangaloreEntity obj =\n" 
+        script += "(\n"
+
+        script += "\tcolumns = \"\"\n"
+        script += "\tvalues =  \"\"\n"
+        script += "\tret = #()\n"
+
+        for col in self.pblockcolumns:
+            attrs = col.attributes
+            if attrs.has_key('gui'):
+                name = col.attributes['name']
+                datatype = col.attributes['type']
+                hasGUI = col.attributes['gui']
+
+                if hasGUI.value == "1":
+                    script += "\t"
+                    script += ("val = obj.modifiers[\"Mangalore Entity\"].c%s\n" % name.value)
+                    script += "\t"
+                    script += "if val != \"\" or (val != undefined) do\n"
+                    script += "\t"
+                    script += "(\n"
+                    script += "\t"
+                    script += "\tcolumns += " + ("c%s\n" % name.value)
+
+                    type = datatype.value
+
+                    if type == "Integer":
+                        tmp = ""
+                        tmp += ("\tvalues += obj.modifiers[\"Mangalore Entity\"].strtabc%s[val]\n" % name.value)
+                        script += "\t"
+                        script += tmp
+                    elif type == "Color":
+                        script += ""
+
+                    elif type == "String":
+                        tmp = ""
+                        tmp += "\tvalues += val as string\n"
+                        script += "\t"
+                        script += tmp
+                    else:
+                        tmp = ""
+                        tmp += "\tvalues += val as string\n"
+                        script += "\t"
+                        script += tmp
+
+                    script += "\t"
+                    script += ")\n"
+
+        script += "\tappend ret columns\n"
+        script += "\tappend ret values\n"
+        script += "\treturn ret\n"
+
+        script += ")\n"
+
         f = open(file, 'w')
         f.write(script)
         f.close()
