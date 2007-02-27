@@ -37,9 +37,8 @@ rollout roCurveControl "Envelope Curve Control"
         -- Init Control 
         -- if ControlType = 0, EnvelopeCurve
         -- if ControlType = 1, EnvelopeColorCurve
-        ax.ControlType = 0
-        ax.Name = "Particle Emitter"
-        
+        -- ax.ControlType = 1
+            
         -- The following command is used for SetXXX method in the ActiveX control.
         -- There might be an error message box which shows the ActiveX control has Get/Set 
         -- concerned bug in the 3dsmax even the changed values are correctly specified though.
@@ -49,28 +48,50 @@ rollout roCurveControl "Envelope Curve Control"
         ax.SetValue 0 0.9
         testvalue = ax.GetValue 0
         format "testvalue - %\n" testvalue
+        
+        params = #(0.0, 0.0, 0.0)
+        ax.InitCurve (params as string)
+        --ax.InitColorCurve (params as string) 
+
     )
     
     on roCurveControl close do 
     (    
         enableAccelerators = previous_enableAccelerators
     )
-    
+        
     on ax OnChangedValue do
     (
         format "The value of the contorl point is changed!\n"
 
-        v0 = ax.GetValue 0
-        v1 = ax.GetValue 1
-        v2 = ax.GetValue 3
-        v3 = ax.GetValue 4
-        p0 = ax.GetPos 0
-        p1 = ax.GetPos 1
-        freqency = ax.Frequency
-        amplitude = ax.amplitude 
-        modFunc = ax.ModulationFunc
-        
-        format " %f %f %f %f %f %f %f %f %f \n" v0 v1 v2 v3 p0 p1 freqency amplitude modFunc
+        if( ax.ControlType == 0 ) then 
+        (
+            v0 = ax.GetValue 0
+            v1 = ax.GetValue 1
+            v2 = ax.GetValue 2
+            v3 = ax.GetValue 3
+            p1 = ax.GetPos 1
+            p2 = ax.GetPos 2
+            freqency = ax.Frequency
+            amplitude = ax.amplitude 
+            modFunc = ax.ModulationFunc
+            
+            format " %f %f %f %f %f %f %f %f %f \n" v0 v1 v2 v3 p1 p2 freqency amplitude modFunc
+        )
+        else
+        (
+            cr = (bit.and 0xff (ax.GetColor 0) ) / 255.0
+            cg = (bit.and 0xff (bit.shift (ax.GetColor 0) -8)) / 255.0
+            cb = (bit.and 0xff (bit.shift (ax.GetColor 0) -16)) / 255.0
+            c1 = ax.GetColor 1
+            c2 = ax.GetColor 2
+            c3 = ax.GetColor 3
+            p1 = ax.GetPos 1
+            p2 = ax.GetPos 2
+                        
+            format "% % % % % % % % \n" cr cg cb c1 c2 c3 p1 p2
+        )
+      
     )
 )
 

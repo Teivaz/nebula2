@@ -155,6 +155,12 @@ LRESULT nmaxenvelopecolorcurveDialog::OnECCNChangedValue(WPARAM wParam, LPARAM l
 
     GetDlgItem(IDC_BTN_SELECTED_COLOR)->RedrawWindow();
 
+    // dialog -> activex event
+    CWnd* pOwner = GetOwner();
+    ASSERT( pOwner );
+    if( pOwner )
+        pOwner->SendMessage(ECCN_CHANGEDVALUE, (WPARAM)this, 0 );
+
     return S_OK;
 }
 
@@ -197,6 +203,12 @@ void nmaxenvelopecolorcurveDialog::OnBnDoubleclickedBtnSelectedColor()
         pControl->Invalidate();
 
         GetDlgItem(IDC_BTN_SELECTED_COLOR)->Invalidate();
+
+        // dialog -> activex event
+        CWnd* pOwner = GetOwner();
+        ASSERT( pOwner );
+        if( pOwner )
+            pOwner->SendMessage(ECCN_CHANGEDVALUE, (WPARAM)this, 0 );
     }
 }
 
@@ -206,16 +218,6 @@ void nmaxenvelopecolorcurveDialog::OnBnDoubleclickedBtnSelectedColor()
 void nmaxenvelopecolorcurveDialog::OnPaint()
 {
     CPaintDC dc(this); // device context for painting
-
-    CRect rc;
-    GetDlgItem(IDC_STATIC_NAME)->GetWindowRect(&rc);
-    ScreenToClient(&rc);
-
-    CString strName;
-    GetWindowText(strName);
-    dc.SelectStockObject(SYSTEM_FONT);
-    dc.SetBkMode(TRANSPARENT);
-    dc.DrawText( strName, &rc, DT_SINGLELINE );
 }
 
 //-----------------------------------------------------------------------------

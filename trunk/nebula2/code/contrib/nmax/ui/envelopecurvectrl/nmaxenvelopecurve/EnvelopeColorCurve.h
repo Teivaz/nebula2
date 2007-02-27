@@ -3,7 +3,7 @@
 
 // CEnvelopeColorCurve
 
-#define ECCN_CHANGEDVALUE            (WM_USER + 3000)
+#define ECCN_CHANGEDVALUE            (WM_USER + 1001)
 
 #define ECC_FLIP_RAMP                (WM_USER + 3001)
 #define ECC_ALL_KEYS_LIKE_THE_FIRST  (WM_USER + 3002)

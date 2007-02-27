@@ -615,7 +615,23 @@ static
 nString AddVectorEnvelopeCurveEventHandler(nString &paramName)
 {
     nString s;
-#if !USE_ACTIVEX_ENVELOPECURVE_CTRL
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
+    nString tmp;
+    int i, index;
+    for (i = 0, index = 1; i < 4; i++, index += 3)
+    {
+        tmp.Format("\t\t\t%s[%d] = (bit.and 0xff (%s%s.GetColor %d) ) / 255.0\n", paramName.Get(), index + 0, particlePrefix, paramName.Get(), i);
+        s += tmp;
+        tmp.Format("\t\t\t%s[%d] = (bit.and 0xff (bit.shift (%s%s.GetColor %d) -8)) / 255.0\n", paramName.Get(), index + 1, particlePrefix, paramName.Get(), i);
+        s += tmp;
+        tmp.Format("\t\t\t%s[%d] = (bit.and 0xff (bit.shift (%s%s.GetColor %d) -16)) / 255.0\n", paramName.Get(), index + 2, particlePrefix, paramName.Get(), i);
+        s += tmp;
+    }
+
+    tmp.Format("\t\t\t%s[%d] = %s%s.GetPos 1 \n", paramName.Get(), index + 0, particlePrefix, paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[%d] = %s%s.GetPos 2 \n", paramName.Get(), index + 1, particlePrefix, paramName.Get());  s += tmp;
+    
+#else
     nString tmp;
     int i, index;
     for (i = 0, index = 1; i < 4; i++, index += 3)
@@ -626,6 +642,7 @@ nString AddVectorEnvelopeCurveEventHandler(nString &paramName)
     }
     tmp.Format("\t\t\t%s[%d] = %s_p1.value\n", paramName.Get(), index + 0, paramName.Get());  s += tmp;
     tmp.Format("\t\t\t%s[%d] = %s_p2.value\n", paramName.Get(), index + 1, paramName.Get());  s += tmp;
+
 #endif
     return s;
 }
@@ -637,18 +654,22 @@ static
 nString AddEnvelopeCurveEventHandler(nString &paramName)
 {
     nString s;
+
+    // add min, max param
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
     s += "\t\t\t"; s += paramName; s += "[1]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 0\n";
     s += "\t\t\t"; s += paramName; s += "[2]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 1\n";
     s += "\t\t\t"; s += paramName; s += "[3]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 2\n";
     s += "\t\t\t"; s += paramName; s += "[4]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetValue 3\n";
 
-    s += "\t\t\t"; s += paramName; s += "[5]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 0\n";
-    s += "\t\t\t"; s += paramName; s += "[6]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 1\n";
+    s += "\t\t\t"; s += paramName; s += "[5]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 1 \n";
+    s += "\t\t\t"; s += paramName; s += "[6]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 2 \n";
 
     s += "\t\t\t"; s += paramName; s += "[7]"; s += " = "; s += particlePrefix; s += paramName; s += ".Frequency\n";
     s += "\t\t\t"; s += paramName; s += "[8]"; s += " = "; s += particlePrefix; s += paramName; s += ".Amplitude\n";
     s += "\t\t\t"; s += paramName; s += "[9]"; s += " = "; s += particlePrefix; s += paramName; s += ".ModulationFunc\n";
+    s += "\t\t\t"; s += paramName; s += "[10]"; s += " = "; s += particlePrefix; s += paramName; s += ".Min\n";
+    s += "\t\t\t"; s += paramName; s += "[11]"; s += " = "; s += particlePrefix; s += paramName; s += ".Max\n";
 #else
     nString tmp;
     tmp.Format("\t\t\t%s[1] = %s_v0.value\n", paramName.Get(), paramName.Get());  s += tmp;
@@ -680,24 +701,13 @@ nString AddToolkitServerScriptForEnvelopeCurve(const nString &shdName, const nSt
 
     s += "\t\t\t\t"; s += "param = \"\" \n";
 
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[1]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[2]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[3]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[4]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[5]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[6]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[7]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[8]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
-    s += "\t\t\t\t"; s += "param += "; s += paramName; s += "[9]"; s += " as string \n";
-    s += "\t\t\t\t"; s += "param += "; s += "\" \" \n";
+    // add params(min,max)
+    nString tmp;
+    for (int i = 1; i <= 11; i++)
+    {
+        tmp.Format("\t\t\t\tparam += %s[%d] as string\n", paramName.Get(), i); s += tmp;
+        tmp.Format("\t\t\t\tparam += \" \"\n"); s += tmp;
+    }
 
     s += "\n";
 
@@ -764,29 +774,13 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
     // use color picker due to that we don't have envelope color curve control yet.
     if (paramName == "ParticleRGB")
     {
-        float defP1 = .3f, defP2 = .7f;
-        // n_assert(count == 16);
-        tmp.Format("\t\t\tlabel %s_l1 \"Values\" align:#left offset:[0, 0] width:64 height:13 across:4\n", paramName.Get());
-        uiScript += tmp;
-        tmp.Format("\t\t\tspinner %s_p1 \"p1\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defP1);
-        uiScript += tmp;
-        tmp.Format("\t\t\tspinner  %s_p2 \"p2\" type:#float range:[0, 1, %f] scale:0.0001 align:#left offset:[0, 0] width:64 height:16 fieldwidth:45\n", paramName.Get(), defP2);
-        uiScript += tmp;
-        tmp.Format("\t\t\tlabel %s_dummy \"\"\n", paramName.Get());
-        uiScript += tmp;
-        tmp.Format("\t\t\tcolorPicker %s_v0 \"v0\" align:#left offset:[0, 0] width:64 height:16 across:4\n", paramName.Get());
-        uiScript += tmp;
-        tmp.Format("\t\t\tcolorPicker %s_v1 \"v1\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
-        uiScript += tmp;
-        tmp.Format("\t\t\tcolorPicker %s_v2 \"v2\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
-        uiScript += tmp;
-        tmp.Format("\t\t\tcolorPicker %s_v3 \"v3\" align:#left offset:[0, 0] width:64 height:16\n", paramName.Get());
+        tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:60 \n", particlePrefix, paramName.Get());
         uiScript += tmp;
     }
     else
     {
         // nmaxenvelopecurve control.
-        tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:130 \n", particlePrefix, paramName.Get());
+        tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:110 \n", particlePrefix, paramName.Get());
         uiScript += tmp;
     }
 #else
@@ -860,8 +854,8 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
     if (paramName == "ParticleRGB")
     {
-        // add controls event handlers
-        tmp.Format("\t\tfn update_%s=\n", paramName.Get());
+        // add activex contorl event handler
+        tmp.Format("\t\ton %s%s OnChangedValue do\n", particlePrefix, paramName.Get());
         uiScript += tmp;
     }
     else
@@ -901,6 +895,7 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
 
     // use color picker due to that we don't have envelope color curve control yet.
+    /*
     if (paramName == "ParticleRGB")
     {
         tmp.Format("\t\ton %s_v0 changed val do update_%s()\n", paramName.Get(), paramName.Get());
@@ -917,6 +912,7 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
         tmp.Format("\t\ton %s_p2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
         uiScript += tmp;
     }
+    */
 
 #else
     if (paramName == "ParticleRGB")
@@ -962,5 +958,6 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 
     return uiScript;
 }
+
 
 

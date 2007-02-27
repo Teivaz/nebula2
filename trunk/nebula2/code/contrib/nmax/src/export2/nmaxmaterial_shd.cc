@@ -21,6 +21,11 @@
 #include "tinyxml/tinyxml.h"
 #include "gfx2/nshaderstate.h"
 
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
+// prefix of the envelopecurve activex control 
+extern const char* particlePrefix;
+#endif
+
 /// contains shader name which to be filtered out.
 static nArray<nString> shaderFilterArray;
 
@@ -146,10 +151,12 @@ nString GetParameterType(const nString &shdType)
     else
     if (shdType == "EnvelopeCurve")
         //return "#maxObject";
-        return "#floatTab tabSize:9 tabSizeVariable:false";
+        return "#floatTab tabSize:11 tabSizeVariable:false";
     else
     if (shdType == "ColorEnvelopeCurve" )
+        // add 2 params(min,max)
         return "#floatTab tabSize:14 tabSizeVariable:false";
+
     else
     {
         return "<<unknown>>";
@@ -639,7 +646,18 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
             {
                 // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
                 // it is hard to bind those control type with parameters block.
-#if !USE_ACTIVEX_ENVELOPECURVE_CTRL
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
+                // why???? unable to convert: #(collection array ) to string
+                //tmp.Format("\t\t\t%s%s.InitCurve (%s as string)\n", particlePrefix, paramName.Get(), paramName.Get() );    openEvent += tmp;
+
+                tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
+                for( int i = 1; i<11; ++i )
+                {
+                    tmp.Format("\t\t\tparams += (%s[%d] as string) + \", \"\n", paramName.Get(), i);    openEvent += tmp;
+                }
+                tmp.Format("\t\t\tparams += (%s[%d] as string)\n", paramName.Get(), i);    openEvent += tmp;
+                tmp.Format("\t\t\t%s%s.InitCurve params\n", particlePrefix, paramName.Get() );    openEvent += tmp;
+#else
                 // 'ui' name should be same as parameter name.
                 strParamBlock += "ui:";
                 nString name = paramName;
@@ -661,15 +679,26 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
             else
             if (paramType == "ColorEnvelopeCurve")
             {
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
+                // why???? unable to convert: #(collection array ) to string
+                //tmp.Format("\t\t\t%s%s.InitColorCurve (%s as string)\n", particlePrefix, paramName.Get(), paramName.Get() );    openEvent += tmp;
+
+                tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
+                for( int i = 1; i< 14; ++i )
+                {
+                    tmp.Format("\t\t\tparams += (%s[%d] as string) + \", \"\n", paramName.Get(), i);    openEvent += tmp;
+                }
+                tmp.Format("\t\t\tparams += (%s[%d] as string)\n", paramName.Get(), i);    openEvent += tmp;
+                tmp.Format("\t\t\t%s%s.InitColorCurve params\n", particlePrefix, paramName.Get() );    openEvent += tmp;
+#else
                 // use color picker due to that we don't have envelope color curve control yet.
-//#if !USE_ACTIVEX_ENVELOPECURVE_CTRL
                 tmp.Format("\t\t\t%s_v0.color = (color (%s[1]*255) (%s[2]*255) (%s[3]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_v1.color = (color (%s[4]*255) (%s[5]*255) (%s[6]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_v2.color = (color (%s[7]*255) (%s[8]*255) (%s[9]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_v3.color = (color (%s[10]*255) (%s[11]*255) (%s[12]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_p1.value = %s[13]\n", paramName.Get(), paramName.Get()); openEvent += tmp;
                 tmp.Format("\t\t\t%s_p2.value = %s[14]\n", paramName.Get(), paramName.Get()); openEvent += tmp;
-//#endif
+#endif
             }
             else
             {
@@ -956,7 +985,7 @@ bool EvalCustomMaterialPlugin()
         if (DoFilter(name))
             continue;
 
-		nString caName = name;
+        nString caName = name;
 
         // get shader name.
         nString effectFile;
