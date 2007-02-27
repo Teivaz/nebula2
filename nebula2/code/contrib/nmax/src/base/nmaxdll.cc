@@ -4,6 +4,7 @@
 //  (C)2004 Johannes Kellner
 //------------------------------------------------------------------------------
 #include "base/nmaxdll.h"
+#include "kernel/nwin32loghandler.h"
 
 ///the dllHandle
 HINSTANCE hInstance;
@@ -153,8 +154,12 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
             {
                 kernelServer = new nKernelServer();
 
+                const char* plugDir = GetCOREInterface()->GetDir(APP_PLUGCFG_DIR);
+                nLogHandler* logHandler = new nWin32LogHandler("nmaxtoolbox", plugDir);
+                //logHandler->Open();
+
                 //setup the new log handler
-                kernelServer->SetLogHandler(static_cast<nLogHandler*>(new nMaxLogHandler()));
+                kernelServer->SetLogHandler(logHandler);
 
                 if (!nMaxPluginInitialize())
                     return FALSE;
@@ -165,7 +170,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
         {
             nMaxPluginUninitialize();
 
-                    //cleanup the the list of classes here
+            //cleanup the the list of classes here
             if (registeredClassDesc::array != NULL)
             {
                 n_delete(registeredClassDesc::array);
@@ -173,7 +178,9 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, ULONG fdwReason, LPVOID lpvReserved)
 
             if (kernelServer != 0)
             {
-                delete static_cast<nMaxLogHandler*>(kernelServer->GetLogHandler());
+                nWin32LogHandler* logHandler = static_cast<nWin32LogHandler*>(kernelServer->GetLogHandler());
+                //logHandler->Close();
+                delete logHandler;
                 delete kernelServer;
             }
         }

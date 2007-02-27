@@ -172,8 +172,8 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
     n_assert(inf);
 
     // init the maxLogHandler to redirect error message of nebula to 3dsmax.
-    nLogHandler* logHandler = nKernelServer::Instance()->GetLogHandler();
-    static_cast<nMaxLogHandler*>(logHandler)->SetLogSys(inf->Log());
+    //nLogHandler* logHandler = nKernelServer::Instance()->GetLogHandler();
+    //static_cast<nMaxLogHandler*>(logHandler)->SetLogSys(inf->Log());
 
     // create log dialog.
     nMaxLogDlg* logDlg = nMaxLogDlg::Instance();
