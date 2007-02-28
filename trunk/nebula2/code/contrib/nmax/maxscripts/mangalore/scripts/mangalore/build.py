@@ -36,6 +36,7 @@ def Build(xml, entity, table):
     mangalore.Parse(xml)
     mangalore.WriteEntityScript(entity)
     mangalore.WriteTableScript(table)
+    mangalore.WriteParserScript('parse.ms')
    
 #--------------------------------------------------------------------------
 def main():
