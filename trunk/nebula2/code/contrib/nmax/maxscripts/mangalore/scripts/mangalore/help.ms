@@ -12,7 +12,7 @@ fn mlShowHelp =
     -- get 'scrips' directory in 3dsmax installed directory
     -- e.g. 'c:/3dsmax7/scripts'
     scriptDir = GetDir #scripts
-    chmFilename = scriptDir + "\\nebula2\\nmaxtoolbox.chm"
+    chmFilename = scriptDir + "\\mangalore\\mangaloretool.chm"
 
     -- show up 'nmaxtoolbox.chm' nebula help file.
     ShellLaunch chmFilename ""
