@@ -63,6 +63,7 @@ include "mangalore/parse.ms"
 --  Export entities.
 -- 
 -------------------------------------------------------------------------------
+
 fn mlExport = 
 (
     try
@@ -87,11 +88,11 @@ fn mlExport =
         ) 
 
         -- no database is opened, any database should be opened before we export a scene.
-        if foundIndex == -1 do
+        if (foundIndex == -1) then
         (
-            msg = "No database is opened, any database should be opened before we export a scene."
+            msg = "No database is opened, any database should be opened before a scene is exported."
             messageBox msg title:"Warning"
-            return
+            return ""
         )
         else
         (
@@ -99,10 +100,10 @@ fn mlExport =
             database = (rootNode.mlDatabase as string)
         )
 
-        if database = "" do
+        if database == "" do
         (
             print "Error: Unexpected behavior. Database is exist but we cannot retrieve its name.\n"
-            return
+            return ""
         )
 
         --FIXME: export entities only at the moment. 
@@ -129,6 +130,7 @@ fn mlExport =
         format "ERROR: Unexpected error when export % \n" obj.name to:listener
     )
 )
+
 -------------------------------------------------------------------------------
 -- EOF
 -------------------------------------------------------------------------------
