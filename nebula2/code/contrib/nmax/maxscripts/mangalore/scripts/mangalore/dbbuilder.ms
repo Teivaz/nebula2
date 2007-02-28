@@ -32,25 +32,6 @@ mlDatabaseCA = attributes "MangaloreDatabase"
 -------------------------------------------------------------------------------
 fn mlCreateDatabase = 
 (
-/*
-    -- retrieve database which we write tables and columns into.
-    mangaloreIniFile = getDir #plugcfg
-    mangaloreIniFile += "\\"
-    mangaloreIniFile += "mangalore.ini"
-
-    path =  getINISetting mangaloreIniFile "Database" "filepath"
-    fname = getINISetting mangaloreIniFile "Database" "filename"
-
-    print path
-    print fname
-
-    dbPath = path + "\\" + fname
-    if path == "" or fname == "" then
-    (
-        print "Incorrect DB path or filename.\n"
-        return undefined
-    )
-*/
     filepath = getSaveFileName caption:"Create Mangalore Database File" \
                     types:"Database(*.db3)|*.db3|All|*.*|"
 
