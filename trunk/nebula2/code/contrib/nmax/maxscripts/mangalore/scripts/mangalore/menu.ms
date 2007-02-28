@@ -6,7 +6,8 @@
 --  (c)2007 Kim, Hyoun Woo
 ---------------------------------------------------------------------------------
 
-fileIn "mangalore/export.ms"
+--fileIn "mangalore/export.ms"
+include "mangalore/export.ms"
 fileIn "mangalore/dbbuilder.ms"
 
 ---------------------------------------------------------------------------------
@@ -19,12 +20,13 @@ tooltip:"Export"
 ( 	   
     on execute do
     (
+        fileIn "mangalore/export.ms"
         mlExport()
     )
 )
 
 ---------------------------------------------------------------------------------
--- macro script for 'Batch Export' menu item.
+-- macro script for 'Create Database' menu item.
 ---------------------------------------------------------------------------------
 macroScript Mangalore_CreateDatabase
 category:"mangalore" 
@@ -34,6 +36,20 @@ tooltip:"Create Database File"
     on execute do
     (    	        
         mlCreateDatabase()
+    )
+)
+
+---------------------------------------------------------------------------------
+-- macro script for 'Open Database' menu item.
+---------------------------------------------------------------------------------
+macroScript Mangalore_OpenDatabase
+category:"mangalore" 
+buttonText:"Open Database..."
+tooltip:"Open Database File" 
+( 
+    on execute do
+    (    	        
+        mlOpenDatabase()
     )
 )
 
@@ -106,6 +122,7 @@ fn mlAddMenu =
         append ItemsTemp (menuMan.createSeparatorItem())	
 
         append ItemsTemp (menuMan.createActionItem "Mangalore_CreateDatabase" "mangalore")
+        append ItemsTemp (menuMan.createActionItem "Mangalore_OpenDatabase" "mangalore")
         append ItemsTemp (menuMan.createSeparatorItem())	
 		
         append ItemsTemp (menuMan.createActionItem "Mangalore_Preferences" "mangalore")
