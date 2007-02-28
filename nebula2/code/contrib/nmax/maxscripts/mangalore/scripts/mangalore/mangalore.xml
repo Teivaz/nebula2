@@ -8,7 +8,7 @@
                 itemlist = "Actor,Camera,Simple,Light,_Environment"
         />
         <column name = "_Level" label = "Level" type = "String" gui = "1" def ="" />
-        <column name = "Transform" label = "Transform" type = "String" gui = "0" def = "" />
+        <column name = "Transform" label = "Transform" type = "Boolean" gui = "1" def = "True" />
         <column name = "LightType" label = "LightType" type = "Integer" gui = "1" def = "1" itemlist="Point,Directional,Spot"/>
         <column name = "LightColor" label = "LightColor" type = "Color" gui = "1" def = "255.0, 255.0, 255.0, 255.0" />
         <column name = "LightRange" label = "LightRange" type = "String" gui = "1" def = "" />
