@@ -30,7 +30,7 @@ bool nMeshCopyResourceLoader::InitResource(const char* sFilename, nResource* cal
     n_assert(callingResource);
     n_assert(callingResource->IsA("nmesh2"));
 
-    nMesh2* dstMesh = (nMesh2*) callingResource;
+    nMesh2* dstMesh = (nMesh2*)callingResource;
     nMesh2* srcMesh = this->srcMesh.get();
 
     if (!dstMesh->IsLoaded())
@@ -63,7 +63,7 @@ bool nMeshCopyResourceLoader::Load(const char* sFilename, nResource* callingReso
     n_assert(callingResource);
     n_assert(callingResource->IsA("nmesh2"));
 
-    nMesh2* dstMesh = (nMesh2*) callingResource;
+    nMesh2* dstMesh = (nMesh2*)callingResource;
     nMesh2* srcMesh = this->srcMesh.get();
 
 
@@ -91,11 +91,11 @@ bool nMeshCopyResourceLoader::Load(const char* sFilename, nResource* callingReso
             int curComp = mask & intComponents;
             if (curComp)
             {
-                int dstCompOffset = dstMesh->GetVertexComponentOffset((nMesh2::VertexComponent) curComp);
-                int srcCompOffset = srcMesh->GetVertexComponentOffset((nMesh2::VertexComponent) curComp);
+                int dstCompOffset = dstMesh->GetVertexComponentOffset((nMesh2::VertexComponent)curComp);
+                int srcCompOffset = srcMesh->GetVertexComponentOffset((nMesh2::VertexComponent)curComp);
                 int compWidth = dstMesh->GetVertexWidthFromMask(curComp);
                 int i;
-                for (i=0; i < compWidth; i++)
+                for (i = 0; i < compWidth; i++)
                 {
                     dstVertices[dstOffset + dstCompOffset + i] = srcVertices[srcOffset + srcCompOffset + i];
                 }
@@ -120,4 +120,3 @@ bool nMeshCopyResourceLoader::Load(const char* sFilename, nResource* callingReso
     this->reloaded = true;
     return true;
 }
-

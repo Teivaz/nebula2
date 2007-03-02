@@ -404,19 +404,13 @@ const char* TiXmlBase::ReadName(const char* p, TIXML_STRING * name, TiXmlEncodin
 	// algorithm is generous.
 	//
 	// After that, they can be letters, underscores, numbers,
-	// hyphens, or colons. (Colons are valid ony for namespaces,
+	// hyphens, or colons. (Colons are valid only for namespaces,
 	// but tinyxml can't tell namespaces from names.)
-	if (   p && *p
-		 && (IsAlpha((unsigned char) *p, encoding) || *p == '_'))
+	if (p && *p && (IsAlpha((unsigned char)*p, encoding) || *p == '_'))
 	{
-		while (		p && *p
-				&&	(		IsAlphaNum((unsigned char) *p, encoding)
-						 || *p == '_'
-						 || *p == '-'
-						 || *p == '.'
-						 || *p == ':'))
+		while (p && *p && (IsAlphaNum((unsigned char)*p, encoding) || *p == '_' || *p == '-' || *p == '.' || *p == ':'))
 		{
-			(*name) += *p;
+			*name += *p;
 			++p;
 		}
 		return p;
@@ -570,9 +564,7 @@ const char* TiXmlBase::ReadText(	const char* p,
 		 || !condenseWhiteSpace)	// if true, whitespace is always kept
 	{
 		// Keep all the white space.
-		while (	   p && *p
-				&& !StringEqual(p, endTag, caseInsensitive, encoding)
-			 )
+		while (p && *p && !StringEqual(p, endTag, caseInsensitive, encoding))
 		{
 			int len;
 			char cArr[4] = { 0, 0, 0, 0 };
@@ -586,8 +578,7 @@ const char* TiXmlBase::ReadText(	const char* p,
 
 		// Remove leading white space:
 		p = SkipWhiteSpace(p, encoding);
-		while (	   p && *p
-				&& !StringEqual(p, endTag, caseInsensitive, encoding))
+		while (p && *p && !StringEqual(p, endTag, caseInsensitive, encoding))
 		{
 			if (*p == '\r' || *p == '\n')
 			{

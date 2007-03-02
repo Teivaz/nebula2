@@ -52,7 +52,7 @@ private:
     int CountRows(TiXmlElement* xmlTable);
     /// count valid columns in table
     int CountCols(TiXmlElement* xmlTable);
-    /// setup xml tables from xml document
+    /// setup XML tables from XML document
     void SetupTables(TiXmlDocument* doc);
 
     nString filename;

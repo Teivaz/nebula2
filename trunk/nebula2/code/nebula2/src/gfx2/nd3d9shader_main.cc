@@ -219,7 +219,7 @@ nD3D9Shader::SetBoolArray(nShaderState::Param p, const bool* array, int count)
     n_assert(this->effect && p < nShaderState::NumParameters);
 
     // FIXME Floh: is the C++ bool datatype really identical to the Win32 BOOL datatype?
-    HRESULT hr = this->effect->SetBoolArray(this->parameterHandles[p], (const BOOL*) array, count);
+    HRESULT hr = this->effect->SetBoolArray(this->parameterHandles[p], (const BOOL*)array, count);
     #ifdef __NEBULA_STATS__
     this->refGfxServer->statsNumRenderStateChanges++;
     #endif

@@ -72,27 +72,27 @@ nD3D9Texture::UnloadResource()
     // release d3d resources
     if (this->renderTargetSurface)
     {
-        int ref = this->renderTargetSurface->Release();
+        this->renderTargetSurface->Release();
         this->renderTargetSurface = 0;
     }
     if (this->depthStencilSurface)
     {
-        int ref = this->depthStencilSurface->Release();
+        this->depthStencilSurface->Release();
         this->depthStencilSurface = 0;
     }
     if (this->baseTexture)
     {
-        int ref = this->baseTexture->Release();
+        this->baseTexture->Release();
         this->baseTexture = 0;
     }
     if (this->texture2D)
     {
-        int ref = this->texture2D->Release();
+        this->texture2D->Release();
         this->texture2D = 0;
     }
     if (this->textureCube)
     {
-        int ref = this->textureCube->Release();
+        this->textureCube->Release();
         this->textureCube = 0;
     }
 
@@ -115,7 +115,7 @@ nD3D9Texture::LoadResource()
     //n_printf("nD3D9Texture::LoadResource(): %s\n", this->GetName());
 
     bool success = false;
-    nString filename = this->GetFilename().Get();
+    nString filename = this->GetFilename();
 
     if (this->IsRenderTarget())
     {

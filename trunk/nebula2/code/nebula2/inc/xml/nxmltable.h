@@ -138,8 +138,7 @@ inline
 int
 nXmlTable::FindColIndex(const nString& colName) const
 {
-    int col;
-    for (col = 0; col < this->numCols; col++)
+    for (int col = 0; col < this->numCols; col++)
     {
         if (colName == this->Cell(0, col).AsString())
         {
@@ -174,11 +173,8 @@ nXmlTable::Cell(int row, const nString& colName) const
     {
         return this->Cell(row, col);
     }
-    else
-    {
-        n_error("nXmlTable::Cell: invalid column title '%s'!", colName.Get());
-        return this->Cell(0, 0);
-    }
+    n_error("nXmlTable::Cell: invalid column title '%s'!", colName.Get());
+    return this->Cell(0, 0);
 }
 
 //------------------------------------------------------------------------------
