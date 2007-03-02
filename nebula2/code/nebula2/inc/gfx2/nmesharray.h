@@ -88,7 +88,7 @@ nMeshArray::GetFilenameAt(int index) const
 
 //------------------------------------------------------------------------------
 /**
-    only valid inbetween of Load-/UnloadResource(),
+    only valid in between of Load-/UnloadResource(),
 */
 inline
 nMesh2*

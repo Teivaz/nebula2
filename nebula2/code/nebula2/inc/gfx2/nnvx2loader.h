@@ -143,7 +143,7 @@ nNvx2Loader::ReadVertices(void* buffer, int bufferSize)
     }
     else
     {
-        float* destBuf = (float*) buffer;
+        float* destBuf = (float*)buffer;
         float* readBuffer = n_new_array(float, this->fileVertexWidth);
         const int readSize = int(sizeof(float)) * this->fileVertexWidth;
         int v = 0;

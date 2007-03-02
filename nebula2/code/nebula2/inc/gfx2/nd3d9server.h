@@ -304,7 +304,7 @@ private:
     nRef<nD3D9Shader> refSharedShader;          ///< reference shader for shared effect parameters
 
     #ifdef __NEBULA_STATS__
-    IDirect3DQuery9*   queryResourceManager;    ///< for querying the d3d resource manager
+    IDirect3DQuery9* queryResourceManager;      ///< for querying the d3d resource manager
     nTime timeStamp;                            ///< time stamp for FPS computation
     // query watcher variables
     WATCHER_DECLARE(watchNumPrimitives);

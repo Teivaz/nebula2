@@ -80,7 +80,7 @@ nD3D9Font::LoadResource()
         DEFAULT_CHARSET,
         OUT_DEFAULT_PRECIS,
         this->fontDesc.GetAntiAliased() ? ANTIALIASED_QUALITY : NONANTIALIASED_QUALITY,
-        DEFAULT_PITCH|FF_DONTCARE,
+        DEFAULT_PITCH | FF_DONTCARE,
         this->fontDesc.GetTypeFace(),
         &this->d3dFont);
 

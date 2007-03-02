@@ -179,7 +179,7 @@ nShaderArg::operator==(const nShaderArg& rhs) const
                         }
                     }
                     return equal;
-                };
+                }
 
             case nShaderState::Texture:
                 return (this->tex.get_unsafe() == rhs.tex.get_unsafe());
@@ -387,7 +387,7 @@ inline
 const matrix44*
 nShaderArg::GetMatrix44() const
 {
-    return (matrix44*) this->m;
+    return (matrix44*)this->m;
 }
 
 //------------------------------------------------------------------------------

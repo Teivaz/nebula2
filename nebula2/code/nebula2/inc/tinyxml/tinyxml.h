@@ -545,17 +545,17 @@ public:
 	TiXmlNode* LinkEndChild(TiXmlNode* addThis);
 
 	/** Add a new node related to this. Adds a child before the specified child.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or NULL if an error occurred.
 	*/
 	TiXmlNode* InsertBeforeChild(TiXmlNode* beforeThis, const TiXmlNode& addThis);
 
 	/** Add a new node related to this. Adds a child after the specified child.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or NULL if an error occurred.
 	*/
 	TiXmlNode* InsertAfterChild( TiXmlNode* afterThis, const TiXmlNode& addThis);
 
 	/** Replace a child of this node.
-		Returns a pointer to the new object or NULL if an error occured.
+		Returns a pointer to the new object or NULL if an error occurred.
 	*/
 	TiXmlNode* ReplaceChild(TiXmlNode* replaceThis, const TiXmlNode& withThis);
 

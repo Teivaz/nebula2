@@ -267,11 +267,11 @@ nFontDesc::WeightToString(nFontDesc::Weight renderFlag)
 {
     switch (renderFlag)
     {
-        case nFontDesc::Thin:          return nString("Thin"); break;
-        case nFontDesc::Light:         return nString("Light"); break;
-        case nFontDesc::Normal:        return nString("Normal"); break;
-        case nFontDesc::Bold:          return nString("Bold"); break;
-        case nFontDesc::ExtraBold:     return nString("ExtraBold"); break;
+        case nFontDesc::Thin:          return nString("Thin");
+        case nFontDesc::Light:         return nString("Light");
+        case nFontDesc::Normal:        return nString("Normal");
+        case nFontDesc::Bold:          return nString("Bold");
+        case nFontDesc::ExtraBold:     return nString("ExtraBold");
         default:
             n_error("nFontDesc::WeightToString(): invalid weight!");
     }
@@ -291,27 +291,24 @@ nFontDesc::StringToWeight(const nString& str)
     {
         return Thin;
     }
-    else if ("Light" == str)
+    if ("Light" == str)
     {
         return Light;
     }
-    else if ("Normal" == str)
+    if ("Normal" == str)
     {
         return Normal;
     }
-    else if ("Bold" == str)
+    if ("Bold" == str)
     {
         return Bold;
     }
-    else if ("ExtraBold" == str)
+    if ("ExtraBold" == str)
     {
         return ExtraBold;
     }
-    else
-    {
-        n_error("nFontDesc::StringToWeight(): invalid weight!");
-        return InvalidWeight;
-    }
+    n_error("nFontDesc::StringToWeight(): invalid weight!");
+    return InvalidWeight;
 }
 
 //------------------------------------------------------------------------------

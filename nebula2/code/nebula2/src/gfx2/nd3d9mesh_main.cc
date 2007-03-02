@@ -231,7 +231,7 @@ nD3D9Mesh::CreateVertexBuffer()
     Create a static d3d index buffer and validate the index buffer member.
 
     - 27-Sep-04     floh    DX7 compatibility fix: software processing meshes
-                            now created in system mem, and without the WRITEONLY flag
+                            now created in system memory, and without the WRITEONLY flag
 */
 void
 nD3D9Mesh::CreateIndexBuffer()

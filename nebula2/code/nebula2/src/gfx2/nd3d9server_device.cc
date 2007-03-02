@@ -64,10 +64,10 @@ nD3D9Server::InitDeviceState()
     // update the viewport rectangle
     D3DVIEWPORT9 dvp;
     this->d3d9Device->GetViewport(&dvp);
-    this->viewport.x      = (float) dvp.X;
-    this->viewport.y      = (float) dvp.Y;
-    this->viewport.width  = (float) dvp.Width;
-    this->viewport.height = (float) dvp.Height;
+    this->viewport.x      = (float)dvp.X;
+    this->viewport.y      = (float)dvp.Y;
+    this->viewport.width  = (float)dvp.Width;
+    this->viewport.height = (float)dvp.Height;
     this->viewport.nearz  = dvp.MinZ;
     this->viewport.farz   = dvp.MaxZ;
 
@@ -886,10 +886,8 @@ nD3D9Server::OnDeviceInit(bool startup)
     n_assert(0 == this->backBufferSurface);
     n_assert(0 == this->captureSurface);
 
-    HRESULT hr;
-
     // get a pointer to the back buffer and depth/stencil surface
-    hr = this->d3d9Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &(this->backBufferSurface));
+    HRESULT hr = this->d3d9Device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &this->backBufferSurface);
     n_dxtrace(hr, "GetBackBuffer() on device failed.");
     n_assert(this->backBufferSurface);
 
@@ -992,20 +990,17 @@ nD3D9Server::GetSoftwareVertexProcessing()
     {
         return false;
     }
-    else if (this->deviceBehaviourFlags & D3DCREATE_SOFTWARE_VERTEXPROCESSING)
+    if (this->deviceBehaviourFlags & D3DCREATE_SOFTWARE_VERTEXPROCESSING)
     {
         return true;
     }
-    else if (this->deviceBehaviourFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
+    if (this->deviceBehaviourFlags & D3DCREATE_MIXED_VERTEXPROCESSING)
     {
         BOOL b = this->d3d9Device->GetSoftwareVertexProcessing();
         return b ? true : false;
     }
-    else
-    {
-        n_error("nD3D9Server::GetSoftwareProcessing(): can't happen!");
-        return false;
-    }
+    n_error("nD3D9Server::GetSoftwareProcessing(): can't happen!");
+    return false;
 }
 
 //------------------------------------------------------------------------------
