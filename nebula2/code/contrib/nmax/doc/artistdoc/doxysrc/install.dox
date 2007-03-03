@@ -1,7 +1,7 @@
 /**
     @page NMaxInstallation Installation
 
-    Once the <b>Nebula2 Toolkit for 3DS Max</b> was built, you can get the 3DS Max 
+    Once the <b>Nebula2 Toolkit for 3ds Max</b> was built, you can get the 3ds Max 
     plugin, <b>nmaxtoolbox.dlu</b> file.
 
     The following image shows the 3dsmax installed directory.
@@ -13,7 +13,7 @@
     </td>
     <td> 
         - 1) copy <b>nmaxtoolbox.dlu</b> to the <tt>$3dsmax/plugins</tt> directory.
-             copy <b>nmaximport.dli</b> to the same directory, if you need Nebula 3DS max importer.
+             copy <b>nmaximport.dli</b> to the same directory, if you need Nebula 3ds max importer.
 
         - 2) copy the directory <b>scripts</b> and all files under the directory to the <tt>$3dsmax/scripts</tt> 
            directory.
@@ -22,19 +22,22 @@
         - 3) copy <b>plugcfg</b> directory and all files under the directory to <tt>$3dsmax/plugcfg</tt> 
            directory.
           - You can find <tt>plugcfg</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/plugcfg</tt>.
+          - 3dsmax9 uses <tt>Documents and Settings\%user%\Local Settings\Application Data\Autodesk\3dsmax\9 - 32bit\enu\</tt>
+            for its user folder. So <tt>nmaxtoolbox.ini</tt> file should be copied the <tt>%plugcfg%</tt> 
+            folder which is under above mentioned folder.
 
         - 4) Build nmaxtoolbox.chm for the artist's document. See <tt>nmax/doc/artistdoc/doxycfg</tt> directory.
-             You can build the doc with typing <tt>'>doxygen toolkitdocs'</tt> in commandline.
+             You can build the doc with typing <tt>'>doxygen toolkitdocs.cfg'</tt> in commandline.
              This will generate bunch of html files under <tt>nmax/doc/artistdoc/doxydoc/toolkit/html</tt>.
-             Compiled it using 'HTML Help Workshop'. It will generate <tt>nmaxtoolbox.chm</tt> and then copy it
-             to <tt>$3dsmax/scripts</tt> directory to be available it within 3DSMax.
+             Compile it through using 'HTML Help Workshop'. It will generate <tt>nmaxtoolbox.chm</tt> and then copy it
+             to <tt>$3dsmax/scripts/nebula2</tt> directory to be available it within 3ds Max.
              
 
     <td>
     </tr>
     </table>
 
-    After all files are copied, run 3DS Max.
+    After all files are copied, run 3ds Max.
 
     @image html install02.png
 
@@ -57,7 +60,7 @@
 
     @subsection NMaxInstallRegistActiveX Registeration of ActiveX Control
 
-    To use the custom activex control such as envelope curve control for particle2 shader within 3dsmax, 
+    To use the custom activex control such as envelope curve control for particle2 shader within 3ds Max, 
     it should be registered before it is used.
 
     Please, open command-line console and type the following and return:
