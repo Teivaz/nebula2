@@ -436,15 +436,21 @@ nSceneNode* nMaxMesh::Export(INode* inode)
     Object* obj = nMaxUtil::GetBaseObject(inode, 0);
     if (GetCustAttrib(obj))
     {
+        n_maxlog(Medium, "Base Object of %s node has custom attributes.", inode->GetName());
+    }
+
+    if (GetCustAttrib(inode))
+    {
         n_maxlog(Medium, "%s node has custom attributes.", inode->GetName());
     }
 
-    GetCustAttrib(inode);
-
-    // this is needes for an object which is any modifier is applied.
+    // this is needed for an object which one is what any modifier is applied.
     if(inode->GetObjectRef() != obj)
     {
-        GetCustAttrib(inode->GetObjectRef());
+        if (GetCustAttrib(inode->GetObjectRef()))
+        {
+            n_maxlog(Medium, "ObjectRef of %s node has custom attributes.", inode->GetName());
+        }
     }
 
     n_maxlog(High, "End to retrieve custom attributes from the node %s.", inode->GetName());
