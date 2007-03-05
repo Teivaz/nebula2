@@ -363,20 +363,30 @@ int nMaxBoneManager::GetRootBones(INode *sceneRoot, nArray<INode*> &boneNodeArra
     depth = boneLevelArray[0].depth;
     for (int i=0; i<boneLevelArray.Size(); i++) 
     {
+        // check the root bone has any custom attributes.
+        INode* inode = boneLevelArray[i].node; 
+        Object* obj = nMaxUtil::GetBaseObject(inode, 0);
+        if (GetCustAttrib(obj))
+        {
+            n_maxlog(Medium, "Base object of %s node has custom attributes.", inode->GetName());
+        }
+
+        if (GetCustAttrib(inode))
+        {
+            n_maxlog(Medium, "%s node has custom attributes.", inode->GetName());
+        }
+
+        // this is needes for an object which is any modifier is applied.
+        if(inode->GetObjectRef() != obj)
+        {
+            if (GetCustAttrib(inode->GetObjectRef()))
+            {
+                n_maxlog(High, "ObjectRef of the %s node has custom attributes.", inode->GetName());
+            }
+        }
+
         if (boneLevelArray[i].depth == depth) 
         {
-            // check the root bone has any custom attributes.
-            INode* inode = boneLevelArray[i].node; 
-            Object* obj = nMaxUtil::GetBaseObject(inode, 0);
-
-            if(inode->GetObjectRef() != obj)
-            {
-                if (GetCustAttrib(inode->GetObjectRef()))
-                {
-                    n_maxlog(High, "The root bone %s has custom attributes.", inode->GetName());
-                }
-            }
-
             // add the root bone to the array.
             rootBonesNodeArray.Append(inode);
         }
