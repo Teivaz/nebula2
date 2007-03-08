@@ -3,19 +3,45 @@
 
     @section MangaloreToolOverview Overview
 
+    Welcome to the <b>Nebula2 Mangalore Toolkit for 3DS Max</b>.
+
+    The Nebula2 Mangalore Toolkit for 3DS Max provides various facilities to use 3dsmax 
+    for a level editor of a Nebula game.
+
+    This manual gives you the information on how to construct database file for mangalore 
+    level with 3dsmax and some other tips for tweaking mangalore application.
+
 
     @section MangaloreToolSystemRequirements System Requirements
 
+      - Discreet <b>3dsmax7</b> or higher version.
+      - A <tt>nmaxtoolbox.dlu</tt>, Nebula2 3DS Max Toolkit plug-in.
+      - A DX9 graphics cards which supports DX shader model 2.0 is recommended.
+      - Nebula2 SDK
 
     @section MangaloreToolIntallation Installation
 
+    ...
 
     @section MangaloreToolUsage Usage
 
+    ...
 
     @section MangaloreToolAdditionalNotes Additional Notes
 
+    This manual mainly provides useful information for level designers who create 
+    level manp for The Nebula Devices 2 Mangalore application.
+
+    See the @ref NMaxKnownIusses page if you want to know anything about the toolkit 
+    related issues or current limitations.
+
+    See @ref NMaxChangeLog page to see what features are newly added.
 
     @section MangaloreToolCredits Credits
+
+    These are the people who have contributed to Nebula2 Mangalore Toolkit for 3DS Max.(random order)
+
+      - <tt>Kim Hyoun Woo</tt> - principal author.
+      - <tt>Cho Jun Hyeong</tt> - MAXScripted plug-in for mangalore physics. 
 
 */
