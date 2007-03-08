@@ -39,7 +39,6 @@ nMeshOptionsCA = attributes "nMeshOptions"
     parameters MeshDirSetting rollout:rOptions
     (
         meshDir type:#string default:"" animatable:false ui:edtMeshDirSetting
-        gfxDir  type:#string default:"" animatable:false ui:edtGfxDirSetting
     )
 
     rollout rOptions "Nebula2 Mesh Options"
@@ -88,10 +87,6 @@ nMeshOptionsCA = attributes "nMeshOptions"
             label lblMeshDirSetting "Dest Directory for a Mesh : " align:#left
             edittext edtMeshDirSetting "" align:#left fieldWidth:100 across:2
             button btnMeshDirSetting  "<<" align:#right width:20 height:18
-
-            label lblGfxDirSetting "Dest Directory for a Gfx : " align:#left
-            edittext edtGfxDirSetting "" align:#left fieldWidth:100 across:2
-            button btnGfxDirSetting  "<<" align:#right width:20 height:18
         )
 
         on btnMeshDirSetting pressed do
@@ -100,15 +95,6 @@ nMeshOptionsCA = attributes "nMeshOptions"
             if meshPath != undefined then
             (
                 edtMeshDirSetting.text = meshPath
-            )
-        )
-
-        on btnGfxDirSetting pressed do
-        (
-            gfxPath = getSavePath caption:"Select a directory where the .n2 gfx file to be exported."
-            if gfxPath != undefined then
-            (
-                edtGfxDirSetting.text = gfxPath
             )
         )
 
