@@ -22,6 +22,9 @@
 
     <i>...need doc about other steps to create and export skinned character</i>
 
+
+    <i>begin deprecated --> </i>
+
     @subsection NMaxHowtoCharactersMotionFlow Using Motion Flow Editor for Animation States
 
     Nebula2 animation system supports transitions between each of animations 
@@ -88,6 +91,8 @@
     @note
     You don't have to use the motion flow editor to create animation states.
     You can manually create it by creating <tt>Note Tracks</tt>.
+
+    <i>-->end deprecated</i>
 
     You can also use maxscript to create notetrack and key by the way you want.
     The following maxscript code snip shows how to create and specify notetrack and its key 

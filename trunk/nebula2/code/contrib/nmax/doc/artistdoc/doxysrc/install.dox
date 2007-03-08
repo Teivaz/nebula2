@@ -22,9 +22,9 @@
         - 3) copy <b>plugcfg</b> directory and all files under the directory to <tt>$3dsmax/plugcfg</tt> 
            directory.
           - You can find <tt>plugcfg</tt> directory under the directory, <tt>maxscript/nmaxtoolbox/plugcfg</tt>.
-          - 3dsmax9 uses <tt>Documents and Settings\%user%\Local Settings\Application Data\Autodesk\3dsmax\9 - 32bit\enu\</tt>
-            for its user folder. So <tt>nmaxtoolbox.ini</tt> file should be copied the <tt>%plugcfg%</tt> 
-            folder which is under above mentioned folder.
+          - <b>NOTE:</b>3dsmax9 uses <tt>'Documents and Settings\\%user%\\Local Settings\\Application Data\\Autodesk\\3dsmax9 - 32bit\\enu'</tt>
+            directory for its user folder. So the <tt>nmaxtoolbox.ini</tt> file should be copied to the <tt>'plugcfg'</tt> 
+            folder which is located under above mentioned folder.
 
         - 4) Build nmaxtoolbox.chm for the artist's document. See <tt>nmax/doc/artistdoc/doxycfg</tt> directory.
              You can build the doc with typing <tt>'>doxygen toolkitdocs.cfg'</tt> in commandline.
