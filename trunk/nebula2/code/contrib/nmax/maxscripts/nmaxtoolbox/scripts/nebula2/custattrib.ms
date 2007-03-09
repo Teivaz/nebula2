@@ -60,7 +60,10 @@ fn AddCustomAttributes obj ca =
     if foundIndex <= 0 do
     (
         custAttributes.add obj ca
+        return true
     )
+    
+    return false
 )
 
 
