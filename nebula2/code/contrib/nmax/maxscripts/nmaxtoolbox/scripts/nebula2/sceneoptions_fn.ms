@@ -13,8 +13,9 @@ include "nebula2/sceneoptions_ca.ms"
 fn AddSceneOptionsCustomAttributes = 
 (
 	removerollout nUtilityOption
-        AddCustomAttributes rootnode nSceneOptionsCA
-        addrollout nUtilityOption
+        result = AddCustomAttributes rootnode nSceneOptionsCA
+        if (result == true) then
+            addrollout nUtilityOption
 )
 
 -------------------------------------------------------------------------------
