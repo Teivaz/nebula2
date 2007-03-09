@@ -50,7 +50,8 @@ utility nUtilityOption "Nebula2 Scene Options" rolledup:false
 
     on chkUseSameDirSetting changed value do
     (
-        rootnode.useSameDir = value
+        if (rootnode.useSameDir != undefined) then
+            rootnode.useSameDir = value
     )
         
     on nUtilityOption open do
