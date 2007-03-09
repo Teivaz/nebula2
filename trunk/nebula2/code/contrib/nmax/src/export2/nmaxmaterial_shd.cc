@@ -534,7 +534,7 @@ nString GetEventHandler(const nString &shdName, const nString &paramName)
 */
 static
 void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParamBlock, 
-                    nString &strRollout, nString &openEvent, nString &closeEvent)
+                    nString &strRollout, nString &openEvent, nString &closeEvent, nString &createEvent)
 {
     nString tmp;
 
@@ -650,6 +650,7 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 // why???? unable to convert: #(collection array ) to string
                 //tmp.Format("\t\t\t%s%s.InitCurve (%s as string)\n", particlePrefix, paramName.Get(), paramName.Get() );    openEvent += tmp;
 
+                // openEvent
                 tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
                 for( int i = 1; i<11; ++i )
                 {
@@ -657,6 +658,12 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 }
                 tmp.Format("\t\t\tparams += (%s[%d] as string)\n", paramName.Get(), i);    openEvent += tmp;
                 tmp.Format("\t\t\t%s%s.InitCurve params\n", particlePrefix, paramName.Get() );    openEvent += tmp;
+
+                // createEvent
+                tmp.Format("\t\t\tfor i = 1 to initCurve.count do\n"); createEvent +=tmp;
+                tmp.Format("\t\t\t(\n"); createEvent +=tmp;
+                tmp.Format("\t\t\t\t%s[i] = initCurve[i]\n", paramName.Get()); createEvent +=tmp;
+                tmp.Format("\t\t\t)\n"); createEvent +=tmp;
 #else
                 // 'ui' name should be same as parameter name.
                 strParamBlock += "ui:";
@@ -683,6 +690,7 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 // why???? unable to convert: #(collection array ) to string
                 //tmp.Format("\t\t\t%s%s.InitColorCurve (%s as string)\n", particlePrefix, paramName.Get(), paramName.Get() );    openEvent += tmp;
 
+                // open event
                 tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
                 for( int i = 1; i< 14; ++i )
                 {
@@ -690,6 +698,14 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 }
                 tmp.Format("\t\t\tparams += (%s[%d] as string)\n", paramName.Get(), i);    openEvent += tmp;
                 tmp.Format("\t\t\t%s%s.InitColorCurve params\n", particlePrefix, paramName.Get() );    openEvent += tmp;
+
+                // createEvent
+                tmp.Format("\t\t\tfor i = 1 to initColorCurve.count do\n"); createEvent +=tmp;
+                tmp.Format("\t\t\t(\n"); createEvent +=tmp;
+                tmp.Format("\t\t\t\t%s[i] = initColorCurve[i]\n", paramName.Get()); createEvent +=tmp;
+                tmp.Format("\t\t\t)\n"); createEvent +=tmp;
+
+
 #else
                 // use color picker due to that we don't have envelope color curve control yet.
                 tmp.Format("\t\t\t%s_v0.color = (color (%s[1]*255) (%s[2]*255) (%s[3]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
@@ -764,7 +780,7 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
 */
 static
 void ParseParams(TiXmlElement* elemShader, nString& shdName, nString& strParamBlock, 
-                 nString &strRollout, nString &openEvent, nString &closeEvent)
+                 nString &strRollout, nString &openEvent, nString &closeEvent, nString &createEvent)
 {
     nString tmp;
 
@@ -781,7 +797,7 @@ void ParseParams(TiXmlElement* elemShader, nString& shdName, nString& strParamBl
     TiXmlElement* elemParam = elemShader->FirstChild("param")->ToElement();
     for (elemParam; elemParam; elemParam = elemParam->NextSiblingElement())
     {
-        GenerateScript(elemParam, shdName, strParamBlock, strRollout, openEvent, closeEvent);
+        GenerateScript(elemParam, shdName, strParamBlock, strRollout, openEvent, closeEvent, createEvent);
     }
 }
 
@@ -1008,7 +1024,7 @@ bool EvalCustomMaterialPlugin()
         custattrib += tmp;
 
         // parameter block and rollout clause.
-        nString paramBlock, rollout, openEvent, closeEvent;
+        nString paramBlock, rollout, openEvent, closeEvent, createEvent;
 
         nString shdName = nMaxUtil::CorrectName(name);
 
@@ -1024,7 +1040,7 @@ bool EvalCustomMaterialPlugin()
         rollout += "\t(\n";
 
         // parse each param elements in shader element.
-        ParseParams(child, caName, paramBlock, rollout, openEvent, closeEvent);
+        ParseParams(child, caName, paramBlock, rollout, openEvent, closeEvent, createEvent);
 
         paramBlock += "\t)\n";
 
@@ -1063,6 +1079,16 @@ bool EvalCustomMaterialPlugin()
         }
 
         rollout += "\t)\n";;
+
+        if( !createEvent.IsEmpty() )
+        {
+            tmp.Format("\t\ton create do\n\t\t(\n");
+            rollout += tmp;
+            rollout += "\t\t\tinitCurve = #(0.0, 0.3, 0.7, 1.0, 0.2, 0.8, 0.0, 0.0, 0.0, 0.0, 1.0)\n";
+            rollout += "\t\t\tinitColorCurve = #(1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.8)\n";
+            rollout += createEvent;
+            rollout += "\t\t)\n";
+        }
 
         custattrib += paramBlock;
         custattrib += rollout;
