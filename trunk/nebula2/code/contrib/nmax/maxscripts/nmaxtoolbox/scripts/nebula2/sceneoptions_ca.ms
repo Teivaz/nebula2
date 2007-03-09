@@ -20,6 +20,7 @@ nSceneOptionsCA = attributes "nSceneOptions"
         -- because that there is no way to make it animatable with specified
         -- ui control even it is not possible to connect the parameter to ui.
         gfxDir  type:#string default:"" animatable:false 
+        useSameDir type:#boolean default:true
     )
    
     rollout rOptions "Nebula2 Scene Options"
@@ -30,11 +31,13 @@ nSceneOptionsCA = attributes "nSceneOptions"
 -------------------------------------------------------------------------------
 --  utility panel rollout.
 -------------------------------------------------------------------------------
-utility nUtilityOption "Nebula2 Scene Options" rolledup:true
+utility nUtilityOption "Nebula2 Scene Options" rolledup:false
 (
     label lblGfxDirSetting "Dest Directory for a Gfx : " align:#left
     edittext edtGfxDirSetting "" align:#left fieldWidth:100 across:2 
     button btnGfxDirSetting  "<<" align:#right width:20 height:18
+    checkbox chkUseSameDirSetting "Use same dir" checked:true align:#left 
+    
     on btnGfxDirSetting pressed do
     (
         gfxPath = getSavePath caption:"Select a directory where the .n2 gfx file to be exported."
@@ -44,14 +47,26 @@ utility nUtilityOption "Nebula2 Scene Options" rolledup:true
             rootnode.gfxdir = gfxPath
         )
     )
-		
+
+    on chkUseSameDirSetting changed value do
+    (
+        rootnode.useSameDir = value
+    )
+        
     on nUtilityOption open do
     (
         if (custAttributes.count rootnode > 0 )do
-	(
-	    if (rootnode.gfxDir != undefined) then
+        (
+            if (rootnode.gfxDir != undefined) then
+            (
                 edtGfxDirSetting.text = rootnode.gfxDir
-	)
+                chkUseSameDirSetting.checked = rootnode.useSameDir
+            )
+        )
     )
 )
+
+
+
+
 
