@@ -94,6 +94,8 @@ public:
 
     int GetSkelForNode(INode* inode);
 
+    const nString& GetAnimPath() const;
+
 protected:
     // @name Helper functions to collect bones in the scene.
     // @{
@@ -194,6 +196,12 @@ inline
 int nMaxBoneManager::GetNumSkeletons() const 
 {
     return this->skeletonsArray.Size();
+}
+
+inline
+const nString& nMaxBoneManager::GetAnimPath() const
+{
+    return this->animPath;
 }
 //---------------------------------------------------------------------------
 #endif

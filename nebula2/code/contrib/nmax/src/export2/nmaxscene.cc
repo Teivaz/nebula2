@@ -128,6 +128,8 @@ bool nMaxScene::Begin(INode *rootNode)
         return false;
     }
 
+    nMaxOptions::Instance()->LoadSceneOptions();
+
     return true;
 }
 
@@ -682,49 +684,7 @@ bool nMaxScene::Postprocess()
     // save node to export.(save .n2 file on disk)
     //
 
-    INode* sceneRoot = nMaxInterface::Instance()->GetInterface()->GetRootNode();
-
-    TiXmlDocument xmlDoc;
-    nMaxCustAttrib custAttrib;
-
-    // HACK: sceneRoot is root node in the current 3dsmax viewport.
-    if (custAttrib.Convert(sceneRoot, xmlDoc))
-    {
-        TiXmlHandle xmlHandle(&xmlDoc);
-
-        // parameter block name for gfx directory setting.
-        const char* dirParamName = "SceneDirSetting";
-        TiXmlElement* e;
-        e = xmlHandle.FirstChild(dirParamName).Element();
-        if (e)
-        {
-            // find parameter with the given its name.
-            TiXmlElement* child;
-            child = xmlHandle.FirstChild(dirParamName).FirstChild("gfxDir").Child("", 0).Element();
-            if (child)
-            {
-                nString scenePath = child->Attribute("value");
-
-                // The directory parameter has "" for default string. It is absolutely necessary in Max6.
-                // Without that, the exporter is not usable as the panels that have those controls in them don't work.
-                if (scenePath == "")
-                {
-                    // The given scene (which to be exported) has already scene option custom attribute
-                    // but the directory is not specified so we just use default gfx assign value for it.
-                    // (the directory path which is specified in "Directory Setting Dialog".)
-                    this->sceneDir = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetGfxLibAssign());
-                }
-                else
-                {
-                    this->sceneDir = nFileServer2::Instance()->ManglePath(scenePath);
-                }
-            }
-        }
-    }
-    else
-    {
-        n_maxlog(Low, "A scene option custom attribute is not specified.");
-    }
+    this->sceneDir = nMaxOptions::Instance()->GetSceneDir();
 
     // we only save .n2 gfx object in the case that there are nodes to export exist.
     // we don't need to save .n2 file when only export collision meshes.
@@ -765,7 +725,19 @@ nString nMaxScene::GetAnimFileNameToSaveBase()
 {
     nString animFilename;
     animFilename += nMaxOptions::Instance()->GetSaveFileName();
-    animFilename = nMaxOptions::Instance()->GetAnimAssign() + animFilename;
+    //animFilename = nMaxOptions::Instance()->GetAnimAssign() + animFilename;
+
+    nString animPath;
+    if( nMaxOptions::Instance()->UseSameDir() )
+    {
+        animPath = nMaxOptions::Instance()->GetAnimExportPath();
+    }
+    else
+    {
+        animPath = nMaxBoneManager::Instance()->GetAnimPath();
+    }
+
+    animFilename = nMaxUtil::RelacePathToAssign(nMaxUtil::Anim, animPath, animFilename);
 
     return animFilename;
 }
