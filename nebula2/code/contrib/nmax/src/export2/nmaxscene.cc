@@ -584,7 +584,7 @@ bool nMaxScene::Postprocess()
     {
         meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Shape, false);
 
-        ProcessOnMeshBuilder(this->globalMeshBuilder, false, meshFileName);
+        ProcessOnMeshBuilder(meshArray[0], this->globalMeshBuilder, false, meshFileName);
 
         // specify bounding box.
         rootBBox = globalMeshBuilder.GetBBox();
@@ -598,7 +598,7 @@ bool nMaxScene::Postprocess()
     {
         meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Shape, true);
 
-        ProcessOnMeshBuilder(this->globalSkinnedMeshBuilder, false, meshFileName);
+        ProcessOnMeshBuilder(skinnedMeshArray[0], this->globalSkinnedMeshBuilder, false, meshFileName);
 
         rootBBox = globalSkinnedMeshBuilder.GetBBox();
 
@@ -613,7 +613,7 @@ bool nMaxScene::Postprocess()
         // remove useless components if those are.
         this->globalShadowMeshBuilder.ForceVertexComponents(nMeshBuilder::Vertex::COORD);
 
-        ProcessOnMeshBuilder(this->globalShadowMeshBuilder, true, meshFileName);
+        ProcessOnMeshBuilder(shadowMeshArray[0], this->globalShadowMeshBuilder, true, meshFileName);
 
         // remove useless components if those are.
         this->globalShadowMeshBuilder.ForceVertexComponents(nMeshBuilder::Vertex::COORD);
@@ -632,7 +632,7 @@ bool nMaxScene::Postprocess()
         this->globalSkinnedShadowMeshBuilder.ForceVertexComponents(
             nMeshBuilder::Vertex::COORD | nMeshBuilder::Vertex::WEIGHTS | nMeshBuilder::Vertex::JINDICES);
 
-        ProcessOnMeshBuilder(this->globalSkinnedShadowMeshBuilder, true, meshFileName);
+        ProcessOnMeshBuilder(skinnedShadowMeshArray[0], this->globalSkinnedShadowMeshBuilder, true, meshFileName);
 
         // remove useless components if those are.
         this->globalSkinnedShadowMeshBuilder.ForceVertexComponents(
@@ -648,7 +648,7 @@ bool nMaxScene::Postprocess()
     {
         meshFileName = this->GetMeshFileNameToSave(globalMeshPath, nMaxMesh::Particle2, false);
 
-        ProcessOnMeshBuilder(this->globalParticle2MeshBuilder, false, meshFileName);
+        ProcessOnMeshBuilder(particle2MeshArray[0], this->globalParticle2MeshBuilder, false, meshFileName);
 
         // remove useless components if those are.
         this->globalParticle2MeshBuilder.ForceVertexComponents(
@@ -1237,7 +1237,7 @@ void nMaxScene::ExportXForm(INode* inode, nSceneNode* sceneNode, TimeValue &anim
     @param meshName     - mesh file name.
 
 */
-void nMaxScene::ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName)
+void nMaxScene::ProcessOnMeshBuilder(nMaxMesh* mesh, nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName)
 {
     // remove redundant vertices.
     meshBuilder.Cleanup(0);
@@ -1245,7 +1245,7 @@ void nMaxScene::ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMes
     if (!isShadowMesh)
     {
         // build mesh tangents and normals (also vertex normal if it does not exist)
-        if (!nMaxMesh::BuildMeshTangentNormals(meshBuilder))
+        if (0 != mesh && !mesh->BuildMeshTangentNormals(meshBuilder))
         {
             n_maxlog(Error, "Failed to build tangent and normal.");
         }

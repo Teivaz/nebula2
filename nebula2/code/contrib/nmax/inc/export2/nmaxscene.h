@@ -106,7 +106,7 @@ protected:
     bool IsExportedNode(INode* inode);
 
     ///
-    virtual void ProcessOnMeshBuilder(nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName);
+    virtual void ProcessOnMeshBuilder(nMaxMesh* mesh, nMeshBuilder& meshBuilder, bool isShadowMesh, nString meshName);
     ///
     void AddMeshByType(nMaxMesh* mesh);
 

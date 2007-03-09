@@ -1425,11 +1425,11 @@ bool nMaxMesh::BuildMeshTangentNormals(nMeshBuilder &meshBuilder)
     const nMeshBuilder::Vertex& v = meshBuilder.GetVertexAt(0);
 
     bool buildTangentNormals = false;
-    //if( HasCustomAttribute() )
-    //{
-    //    buildTangentNormals = ExportNormals() || ExportTangents();
-    //}
-    //else
+    if( HasCustomAttribute() )
+    {
+        buildTangentNormals = ExportNormals() || ExportTangents();
+    }
+    else
     {
         buildTangentNormals = nMaxOptions::Instance()->ExportNormals() || nMaxOptions::Instance()->ExportTangents();
     }
