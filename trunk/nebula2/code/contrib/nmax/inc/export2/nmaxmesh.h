@@ -78,7 +78,7 @@ public:
     void SetBaseGroupIndex(int baseGroupIndex);
 
     ///
-    static bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
+    bool BuildMeshTangentNormals(nMeshBuilder &meshBuilder);
     ///
     static void CheckGeometryErrors(nMeshBuilder& meshBuilder, nString& meshName);
 
