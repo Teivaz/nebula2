@@ -158,6 +158,17 @@ protected:
     ///
     int GetNumBones();
 
+    ///
+    bool HasCustomAttribute();
+    ///
+    bool ExportNormals();
+    ///
+    bool ExportColors();
+    ///
+    bool ExportUvs();
+    ///
+    bool ExportTangents();
+
     ///@name physique and skin variables.
     ///@{
     bool beginSkin;
@@ -197,6 +208,7 @@ protected:
     };
 
     /// vertex option of the mesh.
+    bool hasCustomAttr;
     uint vertexFlag;
 
     /// 3dsmax geometry node which we extract the mesh data.
@@ -301,5 +313,35 @@ nString nMaxMesh::GetSkyElementNameToLink() const
 {
     return this->skyLinkElemName;
 }
+inline
+bool nMaxMesh::HasCustomAttribute()
+{
+    return this->hasCustomAttr;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxMesh::ExportNormals()
+{
+    return (this->vertexFlag & VertexNormal) ? true : false;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxMesh::ExportColors()
+{
+    return (this->vertexFlag & VertexColor) ? true : false;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxMesh::ExportUvs()
+{
+    return (this->vertexFlag & VertexUvs) ? true : false;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxMesh::ExportTangents()
+{
+    return (this->vertexFlag & VertexTangent) ? true : false;
+}
+
 //-----------------------------------------------------------------------------
 #endif

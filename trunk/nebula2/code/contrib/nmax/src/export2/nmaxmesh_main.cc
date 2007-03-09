@@ -41,9 +41,10 @@ nMaxMesh::nMaxMesh() :
     beginSkin(false),
     isSkinned(false),
     isPhysique(false),
-    meshType (Shape)
+    meshType (Shape),
+    hasCustomAttr(false)
 {
-    vertexFlag = VertexNormal | VertexColor | VertexUvs;
+    vertexFlag = 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -222,6 +223,8 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
 //    xmlDoc.SaveFile("c:\\custattrb.xml");
 //#endif
 
+    this->hasCustomAttr = true;
+
     TiXmlHandle xmlHandle(&xmlDoc);
 
     TiXmlElement* e;
@@ -278,6 +281,8 @@ bool nMaxMesh::GetCustAttrib(Animatable* obj)
     {
         // retrieves mesh vertex options from xml.
         int flag;
+
+        this->vertexFlag = 0;
 
         TiXmlElement* child;
         //for (e; e; e = e->NextSiblingElement())
@@ -727,35 +732,69 @@ nMeshBuilder::Vertex nMaxMesh::GetVertex(Mesh* mesh, Face& face, int faceNo, int
 
     nMaxOptions* option = nMaxOptions::Instance();
 
-    // vertex normal.
-    if (option->ExportNormals())
+    if( this->hasCustomAttr )
     {
-        vector3 norm = GetVertexNormal(mesh, face, faceNo, vIdx);
-        vertex.SetNormal(norm);
-    }
-
-    // vertex color.
-    if (option->ExportColors())
-    {
-        vector4 col = GetVertexColor(mesh, faceNo, vIdx);
-        vertex.SetColor(col);
-    }
-
-    // vertex uvs.
-    if (option->ExportUvs())
-    {
-        //FIXME: is 'm' identical to map channel?
-        int layer = 0;
-        for (int m=1; m<MAX_MESHMAPS-1; m++)
+        // vertex normal.
+        if (this->ExportNormals())
         {
-            if (mesh->mapSupport(m))
+            vector3 norm = GetVertexNormal(mesh, face, faceNo, vIdx);
+            vertex.SetNormal(norm);
+        }
+
+        // vertex color.
+        if (this->ExportColors())
+        {
+            vector4 col = GetVertexColor(mesh, faceNo, vIdx);
+            vertex.SetColor(col);
+        }
+
+        // vertex uvs.
+        if (this->ExportUvs())
+        {
+            //FIXME: is 'm' identical to map channel?
+            int layer = 0;
+            for (int m=1; m<MAX_MESHMAPS-1; m++)
             {
-                vector2 uvs = GetVertexUv(mesh, faceNo, vIdx, m);
-                vertex.SetUv(layer++, uvs);
+                if (mesh->mapSupport(m))
+                {
+                    vector2 uvs = GetVertexUv(mesh, faceNo, vIdx, m);
+                    vertex.SetUv(layer++, uvs);
+                }
             }
         }
     }
+    else
+    {
+        // vertex normal.
+        if (option->ExportNormals())
+        {
+            vector3 norm = GetVertexNormal(mesh, face, faceNo, vIdx);
+            vertex.SetNormal(norm);
+        }
 
+        // vertex color.
+        if (option->ExportColors())
+        {
+            vector4 col = GetVertexColor(mesh, faceNo, vIdx);
+            vertex.SetColor(col);
+        }
+
+        // vertex uvs.
+        if (option->ExportUvs())
+        {
+            //FIXME: is 'm' identical to map channel?
+            int layer = 0;
+            for (int m=1; m<MAX_MESHMAPS-1; m++)
+            {
+                if (mesh->mapSupport(m))
+                {
+                    vector2 uvs = GetVertexUv(mesh, faceNo, vIdx, m);
+                    vertex.SetUv(layer++, uvs);
+                }
+            }
+        }
+    }
+    
     if (IsPhysique() || IsSkinned())
     {
         vector4 joints, weights;
@@ -1326,6 +1365,11 @@ void nMaxMesh::SetMeshFile(nSceneNode* createdNode)
 {
     if (createdNode)
     {
+        if( nMaxOptions::Instance()->UseSameDir() )
+        {
+            this->meshPath = nMaxOptions::Instance()->GetMeshExportPath();
+        }
+
         // specify shape node's name.
         nString meshname, meshFileName;
 
@@ -1380,7 +1424,17 @@ bool nMaxMesh::BuildMeshTangentNormals(nMeshBuilder &meshBuilder)
 {
     const nMeshBuilder::Vertex& v = meshBuilder.GetVertexAt(0);
 
-    if (nMaxOptions::Instance()->ExportNormals() || nMaxOptions::Instance()->ExportTangents())
+    bool buildTangentNormals = false;
+    //if( HasCustomAttribute() )
+    //{
+    //    buildTangentNormals = ExportNormals() || ExportTangents();
+    //}
+    //else
+    {
+        buildTangentNormals = nMaxOptions::Instance()->ExportNormals() || nMaxOptions::Instance()->ExportTangents();
+    }
+
+    if (buildTangentNormals)
     {
         // build triangle normals, vertex normals and tangents.
         n_maxlog(Low, "Build tangents and normals...");

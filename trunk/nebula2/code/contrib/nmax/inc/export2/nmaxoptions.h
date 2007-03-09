@@ -30,6 +30,13 @@ public:
     bool LoadUtilityOptions();
     void SaveUtilityOptions();
 
+    void LoadSceneOptions();
+
+    bool UseSameDir();
+    const nString& GetSceneDir() const;
+    const nString& GetMeshExportPath() const;
+    const nString& GetAnimExportPath() const;
+
     void SetSaveFileName(const nString&);
     nString GetSaveFileName() const;
     const nString& GetSaveFilePath() const;
@@ -130,6 +137,12 @@ protected:
     void EndINIPref(nIniPrefServer* iniFIle);
 
 protected:
+    ///
+    bool useSameDir;
+    nString sceneDir;
+    nString meshExportPath;
+    nString animExportPath;
+
     /// @name export option variables.
     /// @{
     bool exportNormal;
@@ -241,6 +254,31 @@ nMaxOptions::Instance()
 
     return Singleton;
 }
+//-----------------------------------------------------------------------------
+inline
+bool nMaxOptions::UseSameDir()
+{
+    return this->useSameDir;
+}
+//-----------------------------------------------------------------------------
+inline
+const nString& nMaxOptions::GetSceneDir() const
+{
+    return this->sceneDir;
+}
+//-----------------------------------------------------------------------------
+inline
+const nString& nMaxOptions::GetMeshExportPath() const
+{
+    return this->meshExportPath;
+}
+//-----------------------------------------------------------------------------
+inline
+const nString& nMaxOptions::GetAnimExportPath() const
+{
+    return this->animExportPath;
+}
+
 //-----------------------------------------------------------------------------
 inline
 void 
