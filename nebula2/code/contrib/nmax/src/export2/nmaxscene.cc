@@ -313,6 +313,13 @@ bool nMaxScene::End()
         n_delete(mesh);
     }
 
+    // skin animated mesh.
+    for (int i=0; i<this->skinnedMeshArray.Size(); i++)
+    {
+        nMaxMesh* mesh = this->skinnedMeshArray[i];
+        n_delete(mesh);
+    }
+
     // shadow meshes.
     for (int i=0;i<this->shadowMeshArray.Size(); i++)
     {
