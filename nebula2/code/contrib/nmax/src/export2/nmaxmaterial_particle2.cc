@@ -223,7 +223,7 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                 }
 
                                 //FIXME: onlue nParticle2ShapeNode::SetRGBCurve() has 14 in-args.
-                                if (tabSize > 9)
+                                if (tabSize > 11)
                                 {
                                     n_assert2(tabSize == 14, "It is not particle rgb.\n");
 
@@ -239,11 +239,25 @@ void nMaxMaterial::GetParticle2Material(Mtl* mtl, nShapeNode* shapeNode)
                                     nParticle2Emitter::CurveType curveType;
                                     curveType = GetCurveTpe(name);
 
+                                    // for previously version
+                                    if( values[9] == 0.0f && values[10] == 0.0f)
+                                    {
+                                        // empty
+                                    }
+                                    // use min max
+                                    else
+                                    {
+                                        values[0] = n_lerp(values[9], values[10], values[0]);
+                                        values[1] = n_lerp(values[9], values[10], values[1]);
+                                        values[2] = n_lerp(values[9], values[10], values[2]);
+                                        values[3] = n_lerp(values[9], values[10], values[3]);
+                                    }
+
                                     nEnvelopeCurve envelopeCurve 
                                     (
                                         values[0], values[1], values[2], values[3],
                                         values[4], values[5], values[6], values[7],
-                                        (int)(values[9])
+                                        (int)(values[8])
                                     );
 
                                     if (curveType < nParticle2Emitter::CurveTypeCount)
