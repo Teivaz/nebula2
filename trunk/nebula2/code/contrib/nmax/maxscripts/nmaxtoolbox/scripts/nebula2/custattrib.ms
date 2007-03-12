@@ -39,7 +39,7 @@ fn AddCustomAttributes obj ca =
         strContents = strContents + "'?"
         bRemove = queryBox strContents title:"Warning" beep:false 
 
-        if bRemove do
+        if bRemove then
         (
             -- since there is a chance that there are more than one custom attributes, 
             -- so we should not just delete only one duplicated custom attribute 
@@ -53,6 +53,10 @@ fn AddCustomAttributes obj ca =
                     custAttributes.delete obj i
                 )
             ) 
+        )
+        else
+        (
+            return true
         )
     )
 		
