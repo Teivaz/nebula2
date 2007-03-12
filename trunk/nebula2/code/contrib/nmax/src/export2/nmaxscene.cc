@@ -526,7 +526,14 @@ bool nMaxScene::Postprocess()
             mesh = this->collisionMeshArray[i];
             nMeshBuilder& meshBuilder = mesh->GetMeshBuilder();
 
-            meshPath = mesh->GetMeshPath();
+            if( nMaxOptions::Instance()->UseSameDir() )
+            {
+                meshPath = nMaxOptions::Instance()->GetMeshExportPath();
+            }
+            else
+            {
+                meshPath = mesh->GetMeshPath();
+            }
 
             // Unlike other types of mesh, collision meshes are individually saved.
             meshFileName = this->GetMeshFileNameToSave(meshPath, nMaxMesh::Collision, false);
