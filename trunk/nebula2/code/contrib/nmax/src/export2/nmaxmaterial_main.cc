@@ -34,7 +34,10 @@ nMaxMaterial::~nMaxMaterial()
 
 //-----------------------------------------------------------------------------
 /**
-export material.
+    Export material.
+
+    -14-Mar-07  Fixed to handle null material. Thank Cho Jun Heung for the patch.
+
 */
 void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
 {
@@ -105,7 +108,13 @@ void nMaxMaterial::Export(Mtl* mtl, nShapeNode* shapeNode, int matID)
             }
             else
             {
+                //HACK: It can be reached here when we removed a material from slot.
+                //      By the way, even inspite of the material was removed, total number of 
+                //      materials are not changed. I have NO idea that is a bug or intended.
+
                 n_maxlog(Error, "multi material but no sub-material");
+                // no material exist, so just create default material.
+                CreateDefaultMaterial(shapeNode);
             }
         }
         else 
@@ -538,4 +547,5 @@ Texmap* nMaxMaterial::GetSubTexmap(Mtl* mtl, int subMapIdx)
     }
     return map;
 }
+
 
