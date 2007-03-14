@@ -423,6 +423,8 @@ nSceneNode* nMaxMesh::CreateShapeNode(INode* inode, nString &nodename)
 /**
     Get mesh and material data from the given node.
 
+    -14-Mar-07  Fixed to handle null material. Thank Cho Jun Heung for the patch.
+
     @param inode
     @param globalMeshBuilder mesh builder to merge each of mesh data into it.
     @param useIndivisualMesh save mesh data per 3dsmax geometry node if it is true.
@@ -537,6 +539,19 @@ nSceneNode* nMaxMesh::Export(INode* inode)
 
         for (int matIdx=0; matIdx<numMaterials; matIdx++)
         {
+            // build mesh.
+            int numVertices = this->localMeshBuilder.GetNumVertices();
+            int baseGroupIndex = GetMesh(inode, &this->localMeshBuilder, matIdx, numMaterials);
+
+            // we have null material in the slot of the material editor.
+            if( numVertices == this->localMeshBuilder.GetNumVertices())
+            {
+                //HACK: this case might happen when we removed a material from slot.
+                //      By the way, even inspite of the the material was removed, total number of 
+                //      materials are not changed. I have NO idea that is a bug or intended.
+                continue;
+            }
+
             // create node name. we append material index to the end of the node name.
             nString nodename;
             nodename += inode->GetName();
@@ -549,9 +564,6 @@ nSceneNode* nMaxMesh::Export(INode* inode)
 
             createdNode = this->CreateShapeNode(inode, nodename);
             this->sceneNodeArray.Append(createdNode);
-
-            // build mesh.
-            int baseGroupIndex = GetMesh(inode, &this->localMeshBuilder, matIdx, numMaterials);
 
             // save group index for skin partitioning and mesh fragments.
             if (createdNode)
