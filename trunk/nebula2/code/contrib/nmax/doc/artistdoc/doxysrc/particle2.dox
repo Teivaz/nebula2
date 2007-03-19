@@ -70,6 +70,10 @@
     <i>Start Delay:</i> <br>
     From time = 0 the emission will be delayed by the amount of seconds set here.
 
+    <i>Emit On Surface:</i> <br>
+    Generate particles from vertices or randomly from the mesh surfaces. This is useful when you need
+    an area of emission. Such as rain, snow, etc.
+
     <i>Precalculation at Start:</i> <br>
     Use this to get rid of the annoying "come-into-a-room-and-the-fire-starts-burning"-syndrom. 
     It fast-forwards the particle system by the given number of seconds at creation.

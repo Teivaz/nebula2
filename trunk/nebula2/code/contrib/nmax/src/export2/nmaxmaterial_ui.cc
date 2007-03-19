@@ -170,7 +170,7 @@ AddToolkitServerScriptForCheckBox(const nString &shdName, const nString &shaderH
 */
 static
 nString
-AddToolkitServerScriptForDropdownList(const nString &shdName, const nString &shaderHandler, const nString &paramName)
+AddToolkitServerScriptForVector4Spinner(const nString &shdName, const nString &shaderHandler, const nString &paramName)
 {
     nString s, tmp;
 
@@ -191,11 +191,12 @@ AddToolkitServerScriptForDropdownList(const nString &shdName, const nString &sha
 
 //-----------------------------------------------------------------------------
 /**
-Add script code to be sent to the viewer through IPC.
+    Add script code to be sent to the viewer through IPC.
 */
 static
 nString
-AddToolkitServerScriptForVector4Spinner(const nString &shdName, const nString &shaderHandler, const nString &paramName)
+AddToolkitServerScriptForDropdownList
+(const nString &shdName, const nString &shaderHandler, const nString &paramName)
 {
     nString s, tmp;
 
@@ -489,25 +490,23 @@ AddVector4Spinner(const nString &shdName, const nString &shaderHandler, TiXmlEle
     for (int i=0; i<4; i++)
     {
         name.AppendInt(i);
-        
-        //switch(i)
-        //{
-        //case 0: label = "x:"; break;
-        //case 1: label = "y:"; break;
-        //case 2: label = "z:"; break;
-        //case 3: label = "w:"; break;
-        //}
-
         tmp.Format("\t\tspinner %s align:#left fieldwidth:36 range:[-100000, 100000, %s]\n", name.Get(), defs[i].Get()); uiScript += tmp;
-        tmp.Format("\t\ton %s changed val do\n", name.Get()); uiScript += tmp;
-        tmp.Format("\t\t(\n");    uiScript += tmp;
-        tmp.Format("\t\t\tupdate_%s\n", paramName.Get()); uiScript += tmp;
-        tmp.Format("\t\t)\n");    uiScript += tmp;
     }
+
     tmp.Format("\t\tfn update_%s =\n", paramName.Get()); uiScript += tmp;
     tmp.Format("\t\t(\n"); uiScript += tmp;
     uiScript += AddToolkitServerScriptForVector4Spinner(shdName, shaderHandler, paramName);
     tmp.Format("\t\t)\n"); uiScript += tmp;
+
+    name = paramName;
+    for (int i=0; i<4; i++)
+    {
+        name.AppendInt(i);
+        tmp.Format("\t\ton %s changed val do\n", name.Get()); uiScript += tmp;
+        tmp.Format("\t\t(\n");    uiScript += tmp;
+        tmp.Format("\t\t\tupdate_%s()\n", paramName.Get()); uiScript += tmp;
+        tmp.Format("\t\t)\n");    uiScript += tmp;
+    }
 
     return uiScript;
 }
@@ -958,6 +957,7 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 
     return uiScript;
 }
+
 
 
 

@@ -251,6 +251,9 @@ bool nMaxTexture::CopyTexture(const char* textureName, const char *destName /* =
     }
     else if (!fileServer->FileExists(to))
     {
+        // make sure the output path exist
+        fileServer->MakePath(nString(to).ExtractDirName());
+
         // if the texture file does not exist, copy it to texture assign directory.
         if (!fileServer->CopyFile(from, to))
         {
