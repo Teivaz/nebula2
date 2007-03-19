@@ -14,17 +14,13 @@
 -------------------------------------------------------------------------------
 nSceneOptionsCA = attributes "nSceneOptions"
 (
-    parameters SceneDirSetting rollout:rOptions 
+    parameters SceneDirSetting
     (
         -- scene options parameter does not have default value
         -- because that there is no way to make it animatable with specified
         -- ui control even it is not possible to connect the parameter to ui.
-        gfxDir  type:#string default:"" animatable:false 
+        gfxDir  type:#string default:"" animatable:false
         useSameDir type:#boolean default:true
-    )
-   
-    rollout rOptions "Nebula2 Scene Options"
-    (
     )
 )
 
@@ -46,6 +42,11 @@ utility nUtilityOption "Nebula2 Scene Options" rolledup:false
             edtGfxDirSetting.text = gfxPath
             rootnode.gfxdir = gfxPath
         )
+    )
+    on edtGfxDirSetting changed newstr do
+    (
+        edtGfxDirSetting.text = newstr
+        rootnode.gfxdir = newstr
     )
 
     on chkUseSameDirSetting changed value do

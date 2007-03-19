@@ -265,6 +265,41 @@ nToolkitServer::ChangeTypeCommon(nMaterialNode* node,
             }
         }
     }
+    else
+    {
+        nShaderState::Param param = nShaderState::StringToParam(paramID.Get());
+        if (param != nShaderState::InvalidParameter && node->HasParam(param))
+        {
+            switch(param)
+            {
+            case nShaderState::SkyBottom:
+            case nShaderState::SunFlat:
+            case nShaderState::SunRange:
+            case nShaderState::Lightness:
+            case nShaderState::Density:
+            case nShaderState::Glow:
+            case nShaderState::Map0uvRes:
+            case nShaderState::Map1uvRes:
+            case nShaderState::BumpFactor:
+            case nShaderState::Weight:
+                node->SetFloat(param, paramValue.AsFloat());
+                break;
+            case nShaderState::SunColor:
+            case nShaderState::CloudMod:
+            case nShaderState::CloudPos:
+            case nShaderState::CloudGrad:
+            case nShaderState::Brightness:
+            case nShaderState::Saturation:
+            case nShaderState::TopColor:
+            case nShaderState::BottomColor:
+            case nShaderState::Move:
+            case nShaderState::Position:
+            case nShaderState::ScaleVector:
+                node->SetVector(param, paramValue.AsVector4());
+                break;
+            }
+        }
+    }
 
     return result;
 }
@@ -536,6 +571,13 @@ nToolkitServer::DoHotLoading(const nString& objPath)
 {
     nNodeList* nodeList = nNodeList::Instance();
 
+    nFileServer2 *fileServer = nKernelServer::Instance()->GetFileServer();
+    n_assert(fileServer);
+    if (!fileServer->IsA("nramfileserver"))
+    {
+        nKernelServer::Instance()->ReplaceFileServer("nramfileserver");
+        n_assert(nKernelServer::Instance()->GetFileServer());
+    }
     // remove all objects under '/usr/scene'.
     nodeList->Clear();
 

@@ -477,38 +477,44 @@ nSceneNode* nMaxMesh::Export(INode* inode)
     if (numMaterials == 1)
     {
         // we have single material.
-     
-        nString nodename(inode->GetName());
-
-        this->nodeName = inode->GetName();
-
-        // In case of the shadow node, add '_shadow' postfix.
-        if (this->meshType == Shadow)
-            nodename += "_shadow";
-
-        createdNode = this->CreateShapeNode(inode, nodename);
-        this->sceneNodeArray.Append(createdNode);
-
         int baseGroupIndex = GetMesh(inode, &this->localMeshBuilder, -1, 1);
 
-        // save group index for skin partitioning and mesh fragments.
-        if (createdNode)
+        if (baseGroupIndex >= 0)
         {
-            SetSkinAnimator(inode, (nShapeNode*)createdNode, numMaterials);
+            nString nodename(inode->GetName());
 
-            // specifies local bounding box.
-            bbox3 localBox;
-            localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
+            this->nodeName = inode->GetName();
 
-            ((nShapeNode*)createdNode)->SetLocalBox(localBox);
+            // In case of the shadow node, add '_shadow' postfix.
+            if (this->meshType == Shadow)
+                nodename += "_shadow";
+
+            createdNode = this->CreateShapeNode(inode, nodename);
+            this->sceneNodeArray.Append(createdNode);
+
+
+            // save group index for skin partitioning and mesh fragments.
+            if (createdNode)
+            {
+                SetSkinAnimator(inode, (nShapeNode*)createdNode, numMaterials);
+
+                // specifies local bounding box.
+                bbox3 localBox;
+                localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
+
+                ((nShapeNode*)createdNode)->SetLocalBox(localBox);
+            }
+
+            // build material
+            if (this->meshType == Shape || this->meshType == Swing || this->meshType == Particle2)
+                GetMaterial(inode, (nShapeNode*)createdNode, 0);
+
+            if (createdNode)
+            {
+                // save mesh file and specifies it to the shape node.
+                SetMeshFile(createdNode);
+            }
         }
-
-        // build material
-        if (this->meshType == Shape || this->meshType == Swing || this->meshType == Particle2)
-            GetMaterial(inode, (nShapeNode*)createdNode, 0);
-
-        // save mesh file and specifies it to the shape node.
-        SetMeshFile(createdNode);
     }
     else
     {
@@ -542,6 +548,10 @@ nSceneNode* nMaxMesh::Export(INode* inode)
             // build mesh.
             int numVertices = this->localMeshBuilder.GetNumVertices();
             int baseGroupIndex = GetMesh(inode, &this->localMeshBuilder, matIdx, numMaterials);
+
+            // if mesh with matIdx has no faces, ignore it at all.
+            if (baseGroupIndex < 0)
+                continue;
 
             // we have null material in the slot of the material editor.
             if( numVertices == this->localMeshBuilder.GetNumVertices())
@@ -670,11 +680,14 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
 
     int v1, v2, v3;
 
+    bool hasFaces = false;
+
     for (i=0; i<numFaces; i++)
     {
         if (!HasSameMaterial(mesh, i, matIdx, numMats))
             continue;
 
+        hasFaces = true;
         Face& face = mesh->faces[i];
 
         if (HasNegativeScale(inode))
@@ -724,7 +737,7 @@ int nMaxMesh::GetMesh(INode* inode, nMeshBuilder* meshBuilder, const int matIdx,
                                                              meshBuilder->GetNumVertices());
 #endif
     //return true;
-    return baseGroupIndex;
+    return hasFaces ? baseGroupIndex : -1;
 }
 
 //-----------------------------------------------------------------------------

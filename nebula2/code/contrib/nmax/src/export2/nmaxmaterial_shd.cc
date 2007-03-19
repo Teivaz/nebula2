@@ -151,12 +151,19 @@ nString GetParameterType(const nString &shdType)
     else
     if (shdType == "EnvelopeCurve")
         //return "#maxObject";
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
         return "#floatTab tabSize:11 tabSizeVariable:false";
+#else
+        return "#floatTab tabSize:9 tabSizeVariable:false";
+#endif
     else
     if (shdType == "ColorEnvelopeCurve" )
+#if USE_ACTIVEX_ENVELOPECURVE_CTRL
         // add 2 params(min,max)
         return "#floatTab tabSize:14 tabSizeVariable:false";
-
+#else
+        return "#floatTab tabSize:12 tabSizeVariable:false";
+#endif
     else
     {
         return "<<unknown>>";
