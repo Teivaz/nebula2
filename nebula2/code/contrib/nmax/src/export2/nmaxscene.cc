@@ -727,7 +727,8 @@ bool nMaxScene::Postprocess()
         for (nRoot *child = exportNode->GetHead(); child; child = child->GetSucc())
         {
             //FIXME: any other nscenenode derived class should be checked?
-            if (!child->IsA("nshapenode"))
+            bool checkNode = child->IsA("nshapenode") || child->IsA("nshadownode") || child->IsA("nshadowskinshapenode");
+            if ( checkNode == false )
                 continue;
 
             nShapeNode* sceneNode = (nShapeNode*)child;
@@ -751,7 +752,11 @@ bool nMaxScene::Postprocess()
         // child nodes should be inversed by amount of the root node is transformed.
         for (nRoot *child = exportNode->GetHead(); child; child = child->GetSucc())
         {
-            if (!child->IsA("nshapenode"))
+            // adjust only when the parent node of this child node is root node.
+            if( child->GetParent() != exportNode )
+                continue;
+
+            if (!child->IsA("ntransformnode"))
                 continue;
 
             nShapeNode* sceneNode = (nShapeNode*)child;
