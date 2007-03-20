@@ -8,6 +8,7 @@
 #include "export2/nmaxlight.h"
 #include "export2/nmaxutil.h"
 #include "export2/nmaxvectoranimator.h"
+#include "export2/nmaxoptions.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -101,6 +102,10 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
                 size = 500.f; // use default
             }
             light->SetFloat(nShaderState::LightRange, size);
+            
+            // apply geom scale
+            float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+            size *= geomScale;
             bbox3 box;
             box.set(vector3(), vector3(size, size, size));
             light->SetLocalBox(box);

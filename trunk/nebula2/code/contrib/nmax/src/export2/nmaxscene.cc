@@ -717,8 +717,50 @@ bool nMaxScene::Postprocess()
         gfxObjFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Gfx, this->sceneDir, gfxname);
         gfxObjFileName += ".n2";
 
+        // begin merge of bbox.
+
+        // Merge all object's bounding boxes of the given scene.
+        bbox3 mergeSceneBBox;
+        mergeSceneBBox.begin_extend();
+
+        // iterate all child node of the root node and retrieve its bounding box then merge.
+        for (nRoot *child = exportNode->GetHead(); child; child = child->GetSucc())
+        {
+            //FIXME: any other nscenenode derived class should be checked?
+            if (!child->IsA("nshapenode"))
+                continue;
+
+            nShapeNode* sceneNode = (nShapeNode*)child;
+
+            matrix44 transform = sceneNode->GetTransform();
+            bbox3 bbox = sceneNode->GetLocalBox();
+            // transfrom its original position
+            bbox.transform(transform);
+
+            mergeSceneBBox.extend(bbox);
+        }
+        mergeSceneBBox.end_extend();
+
         // specify boundbox of the top level exported node.
-        exportNode->SetLocalBox(rootBBox);
+        bbox3 newRootBBox(vector3::zero, mergeSceneBBox.extents());
+        exportNode->SetLocalBox(newRootBBox);
+
+        //HACK: !!!Need it to make it to be compatible to Mangalore!!!
+        exportNode->SetPosition(mergeSceneBBox.center());
+
+        // child nodes should be inversed by amount of the root node is transformed.
+        for (nRoot *child = exportNode->GetHead(); child; child = child->GetSucc())
+        {
+            if (!child->IsA("nshapenode"))
+                continue;
+
+            nShapeNode* sceneNode = (nShapeNode*)child;
+
+            // assume it is axis-align bbox(AABB). 
+            vector3 pos = sceneNode->GetPosition();
+            sceneNode->SetPosition( pos - mergeSceneBBox.center() );
+        }
+	    // end merge of bbox.
 
         // save gfx object.
         if (!exportNode->SaveAs(gfxObjFileName.Get()))

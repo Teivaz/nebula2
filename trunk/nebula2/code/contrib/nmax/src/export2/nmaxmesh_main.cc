@@ -502,6 +502,12 @@ nSceneNode* nMaxMesh::Export(INode* inode)
                 bbox3 localBox;
                 localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
 
+                // scale transformation for local mesh bounding box.
+                float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+                matrix44 matScale;
+                matScale.scale(vector3(geomScale, geomScale, geomScale));
+                localBox.transform(matScale);
+
                 ((nShapeNode*)createdNode)->SetLocalBox(localBox);
             }
 
@@ -584,6 +590,12 @@ nSceneNode* nMaxMesh::Export(INode* inode)
                 bbox3 localBox;
                 localBox = this->localMeshBuilder.GetGroupBBox(baseGroupIndex);
 
+                // scale transformation for local mesh bounding box.
+                float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+                matrix44 matScale;
+                matScale.scale(vector3(geomScale, geomScale, geomScale));
+                localBox.transform(matScale);
+
                 ((nShapeNode*)createdNode)->SetLocalBox(localBox);
 
                 parentLocalBox.extend(localBox);
@@ -603,6 +615,12 @@ nSceneNode* nMaxMesh::Export(INode* inode)
                 nKernelServer::Instance()->PopCwd();
             }
         }
+
+        // scale transformation for local mesh bounding box.
+        float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+        matrix44 matScale;
+        matScale.scale(vector3(geomScale, geomScale, geomScale));
+        parentLocalBox.transform(matScale);
 
         // specifies local bouding box of multi-sub transform node's.
         transformNode->SetLocalBox(parentLocalBox);
