@@ -9,6 +9,7 @@
 #include "export2/nmaxikanimator.h"
 #include "export2/nmaxtransformcurveanimator.h"
 #include "export2/nMaxAnimator.h"
+#include "export2/nmaxutil.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -52,6 +53,16 @@ void nMaxAnimator::Export(INode* inode)
 nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 {
     n_assert(inode);
+
+    // A node has pysique or skin modifier is not affected by key frame animation 
+    // in 3dsmax. So we just Ignore animations if the node has physique or skin modifier. 
+    // An exported node which has both physique and key frame animation rendered 
+    // in wrong position in Nebula2.
+    // TODO: Is there any other modifier except physique or skin?
+    if( nMaxUtil::FindPhysique(inode) || nMaxUtil::FindSkin(inode) )
+    {
+        return NULL;
+    }
 
     // retrieves the node's transform controller. 
     Control* control = inode->GetTMController();
@@ -140,5 +151,6 @@ nMaxNode* nMaxAnimator::CreateAnimator(INode* inode)
 
     return createdNode;
 }
+
 
 
