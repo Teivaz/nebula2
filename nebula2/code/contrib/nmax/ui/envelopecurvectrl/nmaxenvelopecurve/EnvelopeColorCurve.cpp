@@ -433,8 +433,8 @@ void CEnvelopeColorCurve::OnLButtonDown(UINT nFlags, CPoint point)
 void CEnvelopeColorCurve::OnMouseMove(UINT nFlags, CPoint point)
 {
     if( m_bSelectedCurve &&
-        (MK_LBUTTON & nFlags) &&
-        (MK_CONTROL & nFlags) )
+        //(MK_CONTROL & nFlags)  &&
+        (MK_LBUTTON & nFlags))
     {
         if( CP_A == m_iSelectedCurve ||
             CP_D == m_iSelectedCurve )

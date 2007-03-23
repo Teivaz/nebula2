@@ -664,11 +664,20 @@ nString AddEnvelopeCurveEventHandler(nString &paramName)
     s += "\t\t\t"; s += paramName; s += "[5]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 1 \n";
     s += "\t\t\t"; s += paramName; s += "[6]"; s += " = "; s += particlePrefix; s += paramName; s += ".GetPos 2 \n";
 
+    /*
     s += "\t\t\t"; s += paramName; s += "[7]"; s += " = "; s += particlePrefix; s += paramName; s += ".Frequency\n";
     s += "\t\t\t"; s += paramName; s += "[8]"; s += " = "; s += particlePrefix; s += paramName; s += ".Amplitude\n";
     s += "\t\t\t"; s += paramName; s += "[9]"; s += " = "; s += particlePrefix; s += paramName; s += ".ModulationFunc\n";
     s += "\t\t\t"; s += paramName; s += "[10]"; s += " = "; s += particlePrefix; s += paramName; s += ".Min\n";
     s += "\t\t\t"; s += paramName; s += "[11]"; s += " = "; s += particlePrefix; s += paramName; s += ".Max\n";
+    */
+
+    nString tmp;
+    tmp.Format("\t\t\t%s[7] = %s_freq.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[8] = %s_ampl.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[9] = %s_modulation.selection\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[10] = %s_min.value\n", paramName.Get(), paramName.Get());  s += tmp;
+    tmp.Format("\t\t\t%s[11] = %s_max.value\n", paramName.Get(), paramName.Get());  s += tmp;
 #else
     nString tmp;
     tmp.Format("\t\t\t%s[1] = %s_v0.value\n", paramName.Get(), paramName.Get());  s += tmp;
@@ -778,8 +787,39 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
     }
     else
     {
+        nArray<nString> defValues;
+        int count = defaultVal.Tokenize(" \t\n", defValues);
+        // default min, max value
+        nString minVal = elemParam->Attribute("min"); 
+        nString maxVal = elemParam->Attribute("max");
+
+        n_assert(count == 9 || count == 8);
+        // FIXME: check the default values' type
+        nArray<float> defFloatValues;
+        for (int i = 0; i < 8; i++)
+        {
+            defFloatValues.Append(atof(defValues[i].Get()));
+        }
+        int modulation = 1;
+        if (count == 9)
+        {
+            modulation = atoi(defValues[8].Get()) + 1;
+        }
+
         // nmaxenvelopecurve control.
-        tmp.Format("\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:110 \n", particlePrefix, paramName.Get());
+        tmp.Format("\t\t\tactiveXControl %s%s \"{EDA6DBCD-A8BB-4709-AB92-40181C0C58CE}\" height:130 width:180\n", particlePrefix, paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner %s_max \"Max\" type:#float range:[-10000.0, 10000.0, %f] scale:0.1 align:#right offset:[0, -135] width:50 height:16 fieldwidth:50\n", paramName.Get(), maxVal.AsFloat());
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner %s_min \"Min\" type:#float range:[-10000.0, 10000.0, %f] scale:0.1 align:#right offset:[0, -2] width:50 height:16 fieldwidth:50\n", paramName.Get(), minVal.AsFloat());
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner %s_freq \"Frequency\" type:#float range:[0, 10000.0, %f] scale:0.01 align:#right offset:[0, -2] width:50 height:16 fieldwidth:50\n", paramName.Get(), defFloatValues[6]);
+        uiScript += tmp;
+        tmp.Format("\t\t\tspinner %s_ampl \"Amplitude\" type:#float range:[0, 10000.0, %f] scale:0.01 align:#right offset:[0, -2] width:50 height:16 fieldwidth:50\n", paramName.Get(), defFloatValues[7]);
+        uiScript += tmp;
+        tmp.Format("\t\t\tlabel %s_modulation_label \"Function\" align:#right offset:[-55, 2] width:50 height:16\n", paramName.Get());
+        uiScript += tmp;
+        tmp.Format("\t\t\tdropdownList %s_modulation items:#(\"sine\", \"cosine\") selection:%d align:#right offset:[0, -25] width:60 height:16\n", paramName.Get(), modulation);
         uiScript += tmp;
     }
 #else
@@ -859,8 +899,8 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
     }
     else
     {
-        // add activex contorl event handler
-        tmp.Format("\t\ton %s%s OnChangedValue do\n", particlePrefix, paramName.Get());
+     
+        tmp.Format("\t\tfn update_%s=\n", paramName.Get());
         uiScript += tmp;
     }
 
@@ -894,24 +934,29 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
 
     // use color picker due to that we don't have envelope color curve control yet.
-    /*
     if (paramName == "ParticleRGB")
     {
-        tmp.Format("\t\ton %s_v0 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        // 
+    }
+    // curve envelop
+    else
+    {
+        // add activex contorl event handler
+        tmp.Format("\t\ton %s%s OnChangedValue do ( update_%s(); )\n", particlePrefix, paramName.Get(), paramName.Get());
         uiScript += tmp;
-        tmp.Format("\t\ton %s_v1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        tmp.Format("\t\ton %s_freq changed val do update_%s()\n", paramName.Get(), paramName.Get());
         uiScript += tmp;
-        tmp.Format("\t\ton %s_v2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        tmp.Format("\t\ton %s_ampl changed val do update_%s()\n", paramName.Get(), paramName.Get());
         uiScript += tmp;
-        tmp.Format("\t\ton %s_v3 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        tmp.Format("\t\ton %s_modulation selected i do ( update_%s();)\n", paramName.Get(), paramName.Get() );
         uiScript += tmp;
-
-        tmp.Format("\t\ton %s_p1 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        tmp.Format("\t\ton %s_min changed val do ( if val > %s_max.value then %s_min.value = %s_max.value; update_%s(); )\n", 
+            paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get());
         uiScript += tmp;
-        tmp.Format("\t\ton %s_p2 changed val do update_%s()\n", paramName.Get(), paramName.Get());
+        tmp.Format("\t\ton %s_max changed val do ( if val < %s_min.value then %s_max.value = %s_min.value; update_%s(); )\n", 
+            paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get());
         uiScript += tmp;
     }
-    */
 
 #else
     if (paramName == "ParticleRGB")
@@ -957,6 +1002,7 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 
     return uiScript;
 }
+
 
 
 
