@@ -727,7 +727,8 @@ bool nMaxScene::Postprocess()
         for (nRoot *child = exportNode->GetHead(); child; child = child->GetSucc())
         {
             //FIXME: any other nscenenode derived class should be checked?
-            bool checkNode = child->IsA("nshapenode") || child->IsA("nshadownode") || child->IsA("nshadowskinshapenode");
+            //bool checkNode = child->IsA("nshapenode") || child->IsA("nshadownode") || child->IsA("nshadowskinshapenode");
+            bool checkNode = child->IsA("ntransformnode");
             if ( checkNode == false )
                 continue;
 
@@ -742,9 +743,16 @@ bool nMaxScene::Postprocess()
         }
         mergeSceneBBox.end_extend();
 
+        // specify bbox by world coordinate.
+        // if it is set by local box, after the root node is transformed then should inverse the transform to 
+        // its child node. But a shapenode which has any animator does not apply its transform.
+        // so there is no other solution but to specify by world coordinate at the moment.
+        exportNode->SetLocalBox(mergeSceneBBox);
+
+        /*
         // specify boundbox of the top level exported node.
         bbox3 newRootBBox(vector3::zero, mergeSceneBBox.extents());
-        exportNode->SetLocalBox(newRootBBox);
+        exportNode->SetLocalBox(mergeSceneBBox);
 
         //HACK: !!!Need it to make it to be compatible to Mangalore!!!
         exportNode->SetPosition(mergeSceneBBox.center());
@@ -761,11 +769,18 @@ bool nMaxScene::Postprocess()
 
             nShapeNode* sceneNode = (nShapeNode*)child;
 
+            int numAnimator = sceneNode->GetNumAnimators();
+            if( numAnimator > 0 )
+            {
+                // FIXME : no transform
+            }
+
             // assume it is axis-align bbox(AABB). 
-            vector3 pos = sceneNode->GetPosition();
-            sceneNode->SetPosition( pos - mergeSceneBBox.center() );
+            vector3 translate = sceneNode->GetPosition() - mergeSceneBBox.center();
+            sceneNode->SetPosition(translate);
         }
-	    // end merge of bbox.
+        // end merge of bbox.
+        */
 
         // save gfx object.
         if (!exportNode->SaveAs(gfxObjFileName.Get()))
