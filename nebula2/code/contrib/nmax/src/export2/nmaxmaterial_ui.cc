@@ -82,7 +82,7 @@ GetDefault(TiXmlElement* elemParam)
         defScript += defVal;
     }
     else
-    if (paramType == "Vector" || paramType == "EnvelopeCurve" || paramType == "ColorEnvelopeCurve")
+    if (paramType == "Vector" || paramType == "ColorEnvelopeCurve")
     {
         nArray<nString> tokens;
         int numValues = defVal.Tokenize(" ", tokens);
@@ -95,6 +95,29 @@ GetDefault(TiXmlElement* elemParam)
                 defScript += ", ";
         }
         defScript += ")";
+    }
+    else
+    if( paramType == "EnvelopeCurve")
+    {
+        nArray<nString> tokens;
+        int numValues = defVal.Tokenize(" ", tokens);
+        nString minVal = elemParam->Attribute("min");
+        nString maxVal = elemParam->Attribute("max");
+
+        // revision modulation
+        tokens[8].Format("%.1f", tokens[8].AsFloat() + 1.0f );
+
+        defScript += "#(";
+        for (int i=0; i<numValues; i++)
+        {
+            defScript += tokens[i];
+            defScript += ", ";
+        }
+        
+        defScript += minVal + ", ";
+        defScript += maxVal;
+        defScript += ")";
+        
     }
     else
     {
