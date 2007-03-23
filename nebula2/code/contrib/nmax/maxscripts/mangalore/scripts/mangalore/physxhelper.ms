@@ -6,10 +6,10 @@
 
 
 -------------------------------------------------------------------------------
--- @desc
--- rigid body shape 를 max helper 객체로 만들려고 했으나
--- ode shape에 맞는 적절한 helper 객체의 모양이 없는 이유로
--- geometry 객체로 만들게 되었으므로 model export 시 이점 유념해야함.
+-- @Desc
+-- First it was tried to make rigid body shape with max helper but 
+-- there is no proper helper shape fit to the ode shape
+-- so it uses geometry object. Keep it mind when exports model.
 -------------------------------------------------------------------------------
 
 g_materials = #()
@@ -17,15 +17,16 @@ g_materials = #()
 -------------------------------------------------------------------------------
 -- @name CollectMaterials
 --
--- @bug density 항목을 제대로 읽을수가 없다.(undefined 값으로 읽음. 왜?)
---
+-- @bug density element is not read properly : it read just undefined.
 -------------------------------------------------------------------------------
 
 -- Collect material info of materials.xml
 fn CollectMaterials =
 (
     excel = createOLEObject "excel.application"
-    excel.workbooks.open "k:\\materials.xml"
+
+    xmlpath = getINISetting "../plugcfg/mangalore.ini" "Material" "xmlpath"
+    excel.workbooks.open xmlpath
 
     row = 3;
     col = 1;
