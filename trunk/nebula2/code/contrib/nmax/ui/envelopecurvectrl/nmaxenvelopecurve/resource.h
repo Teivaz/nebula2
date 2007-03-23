@@ -13,6 +13,7 @@
 #define IDC_BTN_                        202
 #define IDC_BTN_TOGGLE                  202
 #define IDC_EDIT_SELECTED_VALUE         203
+#define IDD_ENVELOPE_CURVE1             203
 #define IDC_EDIT_FREQUENCY              204
 #define IDC_EDIT_AMPLITUDE              205
 #define IDC_COMBO1                      206

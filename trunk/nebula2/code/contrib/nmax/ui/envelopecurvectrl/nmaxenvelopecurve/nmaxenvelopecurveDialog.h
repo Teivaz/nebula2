@@ -19,7 +19,7 @@ public:
     virtual ~nmaxenvelopecurveDialog();
     
     /// Dialog data.
-    enum { IDD = IDD_ENVELOPE_CURVE };
+    enum { IDD = IDD_ENVELOPE_CURVE1 };
 
 private:
     CEnvelopeCurve m_CurveControl;

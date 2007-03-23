@@ -97,6 +97,8 @@ LRESULT nmaxenvelopecurveDialog::OnECNChangedValue(WPARAM wParam, LPARAM lParam)
     GetDlgItem(IDC_EDIT_SELECTED_POS)->SetWindowText( strValue );
     strValue.Format( "%.4f", pControl->GetSelectedCurveValue() );
     GetDlgItem(IDC_EDIT_SELECTED_VALUE)->SetWindowText( strValue );
+
+    /*
     strValue.Format( "%.4f", pControl->GetMax() );
     GetDlgItem(IDC_EDIT_MAX)->SetWindowText( strValue );
     strValue.Format( "%.4f", pControl->GetMin() );
@@ -107,6 +109,7 @@ LRESULT nmaxenvelopecurveDialog::OnECNChangedValue(WPARAM wParam, LPARAM lParam)
     GetDlgItem(IDC_EDIT_AMPLITUDE)->SetWindowText( strValue );
 
     ((CComboBox*)GetDlgItem(IDC_COMBO_FUNCTION))->SetCurSel( pControl->GetFunction() );
+    */
 
     // dialog -> activex event
     CWnd* pOwner = GetOwner();

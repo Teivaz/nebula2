@@ -450,7 +450,7 @@ void CEnvelopeCurve::OnLButtonDown(UINT nFlags, CPoint point)
 void CEnvelopeCurve::OnMouseMove(UINT nFlags, CPoint point)
 {
     if( (MK_LBUTTON & nFlags) &&
-        (MK_CONTROL & nFlags) &&
+        //(MK_CONTROL & nFlags) &&
         m_bSelectedCurve )
     {
         int iPrevious = m_iSelectedCurve - 1;

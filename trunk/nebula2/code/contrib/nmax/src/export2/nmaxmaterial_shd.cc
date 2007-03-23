@@ -659,18 +659,31 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
 
                 // openEvent
                 tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
-                for( int i = 1; i<11; ++i )
+                for( int i = 1; i<6; ++i )
                 {
                     tmp.Format("\t\t\tparams += (%s[%d] as string) + \", \"\n", paramName.Get(), i);    openEvent += tmp;
                 }
                 tmp.Format("\t\t\tparams += (%s[%d] as string)\n", paramName.Get(), i);    openEvent += tmp;
                 tmp.Format("\t\t\t%s%s.InitCurve params\n", particlePrefix, paramName.Get() );    openEvent += tmp;
+                tmp.Format("\t\t\t%s_modulation.selection = %s[9];\n", paramName.Get(), paramName.Get(), paramName.Get() );    openEvent += tmp;
 
                 // createEvent
                 tmp.Format("\t\t\tfor i = 1 to initCurve.count do\n"); createEvent +=tmp;
                 tmp.Format("\t\t\t(\n"); createEvent +=tmp;
                 tmp.Format("\t\t\t\t%s[i] = initCurve[i]\n", paramName.Get()); createEvent +=tmp;
                 tmp.Format("\t\t\t)\n"); createEvent +=tmp;
+
+                // link ui
+                strParamBlock += "ui:";
+                nString name = paramName;
+                nString activeXName = particlePrefix + paramName + ", ";
+                strParamBlock += "(" + activeXName + activeXName + activeXName + activeXName + activeXName + activeXName;
+                strParamBlock += name + "_freq, ";
+                strParamBlock += name + "_ampl, ";
+                strParamBlock += name + "_modulation, ";
+                strParamBlock += name + "_min, ";
+                strParamBlock += name + "_max";
+                strParamBlock += ")";
 #else
                 // 'ui' name should be same as parameter name.
                 strParamBlock += "ui:";

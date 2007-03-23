@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 6.00.0361 */
-/* at Tue Feb 27 10:17:11 2007
+/* at Fri Mar 23 10:17:13 2007
  */
 /* Compiler settings for .\nmaxenvelopecurve.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
@@ -44,13 +44,13 @@
 #ifndef ___Dnmaxenvelopecurve_FWD_DEFINED__
 #define ___Dnmaxenvelopecurve_FWD_DEFINED__
 typedef interface _Dnmaxenvelopecurve _Dnmaxenvelopecurve;
-#endif     /* ___Dnmaxenvelopecurve_FWD_DEFINED__ */
+#endif 	/* ___Dnmaxenvelopecurve_FWD_DEFINED__ */
 
 
 #ifndef ___DnmaxenvelopecurveEvents_FWD_DEFINED__
 #define ___DnmaxenvelopecurveEvents_FWD_DEFINED__
 typedef interface _DnmaxenvelopecurveEvents _DnmaxenvelopecurveEvents;
-#endif     /* ___DnmaxenvelopecurveEvents_FWD_DEFINED__ */
+#endif 	/* ___DnmaxenvelopecurveEvents_FWD_DEFINED__ */
 
 
 #ifndef __nmaxenvelopecurve_FWD_DEFINED__
@@ -62,7 +62,7 @@ typedef class nmaxenvelopecurve nmaxenvelopecurve;
 typedef struct nmaxenvelopecurve nmaxenvelopecurve;
 #endif /* __cplusplus */
 
-#endif     /* __nmaxenvelopecurve_FWD_DEFINED__ */
+#endif 	/* __nmaxenvelopecurve_FWD_DEFINED__ */
 
 
 #ifdef __cplusplus
@@ -98,7 +98,7 @@ EXTERN_C const IID DIID__Dnmaxenvelopecurve;
     {
     };
     
-#else     /* C style interface */
+#else 	/* C style interface */
 
     typedef struct _DnmaxenvelopecurveVtbl
     {
@@ -157,35 +157,35 @@ EXTERN_C const IID DIID__Dnmaxenvelopecurve;
 #ifdef COBJMACROS
 
 
-#define _Dnmaxenvelopecurve_QueryInterface(This,riid,ppvObject)    \
+#define _Dnmaxenvelopecurve_QueryInterface(This,riid,ppvObject)	\
     (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
 
-#define _Dnmaxenvelopecurve_AddRef(This)    \
+#define _Dnmaxenvelopecurve_AddRef(This)	\
     (This)->lpVtbl -> AddRef(This)
 
-#define _Dnmaxenvelopecurve_Release(This)    \
+#define _Dnmaxenvelopecurve_Release(This)	\
     (This)->lpVtbl -> Release(This)
 
 
-#define _Dnmaxenvelopecurve_GetTypeInfoCount(This,pctinfo)    \
+#define _Dnmaxenvelopecurve_GetTypeInfoCount(This,pctinfo)	\
     (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo)
 
-#define _Dnmaxenvelopecurve_GetTypeInfo(This,iTInfo,lcid,ppTInfo)    \
+#define _Dnmaxenvelopecurve_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
     (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo)
 
-#define _Dnmaxenvelopecurve_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)    \
+#define _Dnmaxenvelopecurve_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
     (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)
 
-#define _Dnmaxenvelopecurve_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)    \
+#define _Dnmaxenvelopecurve_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)
 
 #endif /* COBJMACROS */
 
 
-#endif     /* C style interface */
+#endif 	/* C style interface */
 
 
-#endif     /* ___Dnmaxenvelopecurve_DISPINTERFACE_DEFINED__ */
+#endif 	/* ___Dnmaxenvelopecurve_DISPINTERFACE_DEFINED__ */
 
 
 #ifndef ___DnmaxenvelopecurveEvents_DISPINTERFACE_DEFINED__
@@ -204,7 +204,7 @@ EXTERN_C const IID DIID__DnmaxenvelopecurveEvents;
     {
     };
     
-#else     /* C style interface */
+#else 	/* C style interface */
 
     typedef struct _DnmaxenvelopecurveEventsVtbl
     {
@@ -263,35 +263,35 @@ EXTERN_C const IID DIID__DnmaxenvelopecurveEvents;
 #ifdef COBJMACROS
 
 
-#define _DnmaxenvelopecurveEvents_QueryInterface(This,riid,ppvObject)    \
+#define _DnmaxenvelopecurveEvents_QueryInterface(This,riid,ppvObject)	\
     (This)->lpVtbl -> QueryInterface(This,riid,ppvObject)
 
-#define _DnmaxenvelopecurveEvents_AddRef(This)    \
+#define _DnmaxenvelopecurveEvents_AddRef(This)	\
     (This)->lpVtbl -> AddRef(This)
 
-#define _DnmaxenvelopecurveEvents_Release(This)    \
+#define _DnmaxenvelopecurveEvents_Release(This)	\
     (This)->lpVtbl -> Release(This)
 
 
-#define _DnmaxenvelopecurveEvents_GetTypeInfoCount(This,pctinfo)    \
+#define _DnmaxenvelopecurveEvents_GetTypeInfoCount(This,pctinfo)	\
     (This)->lpVtbl -> GetTypeInfoCount(This,pctinfo)
 
-#define _DnmaxenvelopecurveEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)    \
+#define _DnmaxenvelopecurveEvents_GetTypeInfo(This,iTInfo,lcid,ppTInfo)	\
     (This)->lpVtbl -> GetTypeInfo(This,iTInfo,lcid,ppTInfo)
 
-#define _DnmaxenvelopecurveEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)    \
+#define _DnmaxenvelopecurveEvents_GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)	\
     (This)->lpVtbl -> GetIDsOfNames(This,riid,rgszNames,cNames,lcid,rgDispId)
 
-#define _DnmaxenvelopecurveEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)    \
+#define _DnmaxenvelopecurveEvents_Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)	\
     (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr)
 
 #endif /* COBJMACROS */
 
 
-#endif     /* C style interface */
+#endif 	/* C style interface */
 
 
-#endif     /* ___DnmaxenvelopecurveEvents_DISPINTERFACE_DEFINED__ */
+#endif 	/* ___DnmaxenvelopecurveEvents_DISPINTERFACE_DEFINED__ */
 
 
 EXTERN_C const CLSID CLSID_nmaxenvelopecurve;

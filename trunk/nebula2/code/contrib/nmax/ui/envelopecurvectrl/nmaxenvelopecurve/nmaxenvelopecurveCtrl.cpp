@@ -215,11 +215,13 @@ void nmaxenvelopecurveCtrl::InitCurve(LPCTSTR parambuffer)
     SetPos(1, params[4] );
     SetPos(2, params[5] );
 
+    /*
     SetFrequency(params[6]);
     SetAmplitude(params[7]);
     SetFunction(int(params[8]));
     SetMin(params[9]);
     SetMax(params[10]);
+    */
 
     UpdateDialogControls();
 }
