@@ -654,10 +654,8 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 // we do not combine ui if the parameter is envelopecurve or colorenvelopecurve due to 
                 // it is hard to bind those control type with parameters block.
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
-                // why???? unable to convert: #(collection array ) to string
-                //tmp.Format("\t\t\t%s%s.InitCurve (%s as string)\n", particlePrefix, paramName.Get(), paramName.Get() );    openEvent += tmp;
-
                 // openEvent
+                tmp.Format("\t\t\t%s_modulation.selection = %s[9];\n", paramName.Get(), paramName.Get(), paramName.Get() );    openEvent += tmp;
                 tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
                 for( int i = 1; i<6; ++i )
                 {
@@ -665,12 +663,13 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 }
                 tmp.Format("\t\t\tparams += (%s[%d] as string)\n", paramName.Get(), i);    openEvent += tmp;
                 tmp.Format("\t\t\t%s%s.InitCurve params\n", particlePrefix, paramName.Get() );    openEvent += tmp;
-                tmp.Format("\t\t\t%s_modulation.selection = %s[9];\n", paramName.Get(), paramName.Get(), paramName.Get() );    openEvent += tmp;
 
                 // createEvent
-                tmp.Format("\t\t\tfor i = 1 to initCurve.count do\n"); createEvent +=tmp;
+                nString defaultValue = GetDefault(elemParam);
+                tmp.Format("\t\t\t%s_def = %s", paramName.Get(), defaultValue.Get()); createEvent +=tmp;
+                tmp.Format("\t\t\tfor i = 1 to %s_def.count do\n", paramName.Get()); createEvent +=tmp;
                 tmp.Format("\t\t\t(\n"); createEvent +=tmp;
-                tmp.Format("\t\t\t\t%s[i] = initCurve[i]\n", paramName.Get()); createEvent +=tmp;
+                tmp.Format("\t\t\t\t%s[i] = %s_def[i]\n", paramName.Get(), paramName.Get()); createEvent +=tmp;
                 tmp.Format("\t\t\t)\n"); createEvent +=tmp;
 
                 // link ui
@@ -707,9 +706,6 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
             if (paramType == "ColorEnvelopeCurve")
             {
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
-                // why???? unable to convert: #(collection array ) to string
-                //tmp.Format("\t\t\t%s%s.InitColorCurve (%s as string)\n", particlePrefix, paramName.Get(), paramName.Get() );    openEvent += tmp;
-
                 // open event
                 tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
                 for( int i = 1; i< 14; ++i )
@@ -724,8 +720,6 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 tmp.Format("\t\t\t(\n"); createEvent +=tmp;
                 tmp.Format("\t\t\t\t%s[i] = initColorCurve[i]\n", paramName.Get()); createEvent +=tmp;
                 tmp.Format("\t\t\t)\n"); createEvent +=tmp;
-
-
 #else
                 // use color picker due to that we don't have envelope color curve control yet.
                 tmp.Format("\t\t\t%s_v0.color = (color (%s[1]*255) (%s[2]*255) (%s[3]*255))\n", paramName.Get(), paramName.Get(), paramName.Get(), paramName.Get()); openEvent += tmp;
