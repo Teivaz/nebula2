@@ -2,7 +2,7 @@
 //  nSendMessage.cc
 //  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "network/nSendMessage.h"
+#include "network/nsendmessage.h"
 #include "network/nbuddyclient.h"
 
 

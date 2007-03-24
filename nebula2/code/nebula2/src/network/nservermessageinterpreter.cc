@@ -85,12 +85,14 @@ void nServerMessageInterpreter::HandleMessage(nStream& query)
 
     nBuddyClient::Instance()->AddUpdate(message);
 
-     SetConsoleTextAttribute(
-     GetStdHandle(STD_OUTPUT_HANDLE),
-     FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
+    #ifdef __WIN32__
+    SetConsoleTextAttribute(
+    GetStdHandle(STD_OUTPUT_HANDLE),
+    FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY);
+    #endif // __WIN32__
 
-     nString message_str = nString("\nMessage from ") + user + nString(": ") + text;
-     printf(message_str.Get());
+    nString message_str = nString("\nMessage from ") + user + nString(": ") + text;
+    printf(message_str.Get());
 }
 
 void nServerMessageInterpreter::AddPendingCommand(nCommand* command)

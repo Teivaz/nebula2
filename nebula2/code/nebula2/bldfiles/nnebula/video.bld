@@ -28,6 +28,10 @@ beginmodule noggtheoraplayer
         ogg_d.lib
         theora_d.lib
     }
+    setlibs_linux {
+        ogg
+        theora
+    }
 endmodule
 
 beginmodule nvideocontroller

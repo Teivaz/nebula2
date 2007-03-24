@@ -25,8 +25,8 @@ public:
 
    bool Execute();
 
-   void SetPassword(nString& p);
-   void SetUsername(nString& u);
+   void SetPassword(const nString& p);
+   void SetUsername(const nString& u);
 
 private:
 
@@ -40,7 +40,7 @@ private:
 */
 inline
 void
-nCreateUser::SetUsername(nString& u)
+nCreateUser::SetUsername(const nString& u)
 {
     this->username = u;
 }
@@ -51,7 +51,7 @@ nCreateUser::SetUsername(nString& u)
 */
 inline
 void
-nCreateUser::SetPassword(nString& p)
+nCreateUser::SetPassword(const nString& p)
 {
     this->password = p;
 }

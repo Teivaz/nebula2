@@ -2,7 +2,7 @@
 //  nBuddyCommandHandler.cc
 //  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "network/nBuddyCommandHandler.h"
+#include "network/nbuddycommandhandler.h"
 
 //nNebulaClass(nBuddyCommandHandler, "nroot");
 

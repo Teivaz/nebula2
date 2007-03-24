@@ -9,7 +9,7 @@
     (C) 2006 RadonLabs GmbH
 */
 #include "kernel/nroot.h"
-#include "util/nStream.h"
+#include "util/nstream.h"
 
 //------------------------------------------------------------------------------
 class nBuddyCommandHandler

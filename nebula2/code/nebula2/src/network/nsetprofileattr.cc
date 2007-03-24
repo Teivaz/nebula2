@@ -4,7 +4,7 @@
 //------------------------------------------------------------------------------
 #include "network/nsetprofileattr.h"
 #include "network/nbuddyclient.h"
-#include "network/nSendMessage.h"
+#include "network/nsendmessage.h"
 
 
 //------------------------------------------------------------------------------

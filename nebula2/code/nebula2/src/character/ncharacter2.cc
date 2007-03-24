@@ -46,7 +46,6 @@ nCharacter2::~nCharacter2()
 //------------------------------------------------------------------------------
 /**
 */
-inline
 void
 nCharacter2::SetSkinAnimator(nSkinAnimator* animator)
 {
@@ -65,7 +64,6 @@ nCharacter2::SetSkinAnimator(nSkinAnimator* animator)
 //------------------------------------------------------------------------------
 /**
 */
-inline
 void
 nCharacter2::SetAnimEventHandler(nAnimEventHandler* handler)
 {

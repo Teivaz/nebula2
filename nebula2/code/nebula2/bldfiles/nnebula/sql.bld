@@ -39,6 +39,9 @@ beginmodule nsqlite3database
     setlibs_win32_debug {
         sqlite_d.lib
     }
+    setlibs_linux {
+        sqlite3
+    }
 endmodule
 
 beginmodule nsqlite3query

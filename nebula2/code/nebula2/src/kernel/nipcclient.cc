@@ -238,7 +238,6 @@ nIpcClient::Receive(nIpcBuffer& msg)
     }
     else
     {
-        int a= WSAGetLastError();
         // either an error occured, or the method would block
         if (N_SOCKET_LAST_ERROR == N_EWOULDBLOCK)
         {

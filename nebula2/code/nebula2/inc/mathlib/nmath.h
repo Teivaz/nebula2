@@ -12,6 +12,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "kernel/ntypes.h"
+
 #ifdef _MSC_VER
 #define isnan _isnan
 #define isinf _isinf

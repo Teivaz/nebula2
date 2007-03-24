@@ -37,6 +37,7 @@ endmodule
 
 beginmodule niniprefserver
     setdir misc
+    setplatform win32
     setheaders {
         niniprefserver
     }
@@ -65,6 +66,7 @@ endmodule
 
 beginmodule nwin32prefserver
     setdir misc
+    setplatform win32
     setheaders {
         nwin32prefserver
     }

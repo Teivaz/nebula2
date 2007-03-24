@@ -9,7 +9,12 @@
     (C) 2005 Radon Labs GmbH
 */
 #include "sql/nsqldatabase.h"
+
+#ifdef __WIN32__
 #include "sqlite/sqlite3.h"
+#else
+#include <sqlite3.h>
+#endif // __WIN32__
 
 //------------------------------------------------------------------------------
 class nSQLite3Database : nSqlDatabase

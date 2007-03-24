@@ -2,7 +2,7 @@
 //  nparticle_main.cc
 //  (C) 2003 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "particle/nParticle2Emitter.h"
+#include "particle/nparticle2emitter.h"
 #include "particle/nparticle2.h"
 #include "mathlib/vector.h"
 

@@ -10,7 +10,7 @@
 #include "tools/ncmdlineargs.h"
 #include "sql/nsqlserver.h"
 #include "network/nbuddydatabase.h"
-#include "network/nUserController.h"
+#include "network/nusercontroller.h"
 #include "resource/nresourceserver.h"
 #include "kernel/ncrc.h"
 

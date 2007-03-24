@@ -186,6 +186,7 @@ endmodule
 #-------------------------------------------------------------------------------
 beginmodule nanalyzeexport
     setdir tools
+    setplatform win32
     setfiles {
         nanalyzeexport
     }
@@ -284,6 +285,7 @@ endmodule
 
 beginmodule nsetpath
     setdir tools
+    setplatform win32
     setfiles {
         nsetpath
     }

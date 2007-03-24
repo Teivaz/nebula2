@@ -189,6 +189,7 @@ endbundle
 
 beginmodule nd3d9font
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9font
     }
@@ -199,6 +200,7 @@ endmodule
 
 beginmodule nd3d9mesh
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9mesh
     }
@@ -209,6 +211,7 @@ endmodule
 
 beginmodule nd3d9mesharray
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9mesharray
     }
@@ -219,6 +222,7 @@ endmodule
 
 beginmodule nd3d9occlusionquery
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9occlusionquery
     }
@@ -229,6 +233,7 @@ endmodule
 
 beginmodule nd3d9server
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9server
     }
@@ -254,6 +259,7 @@ endmodule
 
 beginmodule nd3d9shader
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9shader
     }
@@ -264,6 +270,7 @@ endmodule
 
 beginmodule nd3d9shaderinclude
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9shaderinclude
     }
@@ -274,6 +281,7 @@ endmodule
 
 beginmodule nd3d9texture
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9texture
     }
@@ -284,6 +292,7 @@ endmodule
 
 beginmodule nd3d9windowhandler
     setdir gfx2
+    setplatform win32
     setheaders {
         nd3d9windowhandler
     }

@@ -31,8 +31,8 @@ public:
    bool Execute();
    void EvaluateResult(nStream& result);
 
-   void SetBuddy(nString& b);
-   void SetMessageText(nString& t);
+   void SetBuddy(const nString& b);
+   void SetMessageText(const nString& t);
 
    static void MaskXMLChars(nString& message);
 
@@ -48,7 +48,7 @@ private:
 */
 inline
 void
-nSendMessage::SetBuddy(nString& b)
+nSendMessage::SetBuddy(const nString& b)
 {
     this->buddy = b;
 }
@@ -59,7 +59,7 @@ nSendMessage::SetBuddy(nString& b)
 */
 inline
 void
-nSendMessage::SetMessageText(nString& t)
+nSendMessage::SetMessageText(const nString& t)
 {
     this->messageText = t;
 }

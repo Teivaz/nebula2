@@ -2,7 +2,7 @@
 //  nCreateUser.cc
 //  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "network/nCreateUser.h"
+#include "network/ncreateuser.h"
 #include "network/nbuddyclient.h"
 
 
