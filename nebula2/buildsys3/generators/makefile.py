@@ -107,7 +107,7 @@ class makefile:
             # spring clean
             makeFile.write("clean: \n")
             makeFile.write("\t$(RM) $(N_TARGETDIR)*\n")
-            makeFile.write("\t$(RM) $(N_INTERDIR)\n")
+            makeFile.write("\t$(RM) $(N_INTERDIR)*\n")
 
             makeFile.write("default: all\n")
 
