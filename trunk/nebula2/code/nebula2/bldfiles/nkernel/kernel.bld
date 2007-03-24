@@ -199,6 +199,9 @@ beginmodule nguid
     setlibs_win32 {
         rpcrt4.lib
     }
+    setlibs_linux {
+        uuid
+    }
 endmodule
 
 beginmodule nhardrefserver
@@ -414,6 +417,7 @@ endmodule
 
 beginmodule nwin32loghandler
     setdir kernel
+    setplatform win32
     setheaders {
         nwin32loghandler
     }
@@ -424,6 +428,7 @@ endmodule
 
 beginmodule nwin32stacktrace
     setdir kernel
+    setplatform win32
     setheaders {
         nwin32stacktrace
     }
@@ -437,6 +442,7 @@ endmodule
 
 beginmodule nwin32wrapper
     setdir kernel
+    setplatform win32
     setheaders {
         nsystem
         nwin32wrapper

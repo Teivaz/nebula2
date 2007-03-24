@@ -26,7 +26,7 @@ public:
    bool Execute();
    void EvaluateResult(nStream& result);
 
-   void SetBuddy(nString& b);
+   void SetBuddy(const nString& b);
 
 private:
 
@@ -39,7 +39,7 @@ private:
 */
 inline
 void
-nAddBuddy::SetBuddy(nString& b)
+nAddBuddy::SetBuddy(const nString& b)
 {
     this->buddy = b;
 }

@@ -27,8 +27,8 @@ public:
    bool Execute();
    void EvaluateResult(nStream& result);
 
-   void SetPassword(nString& p);
-   void SetUsername(nString& u);
+   void SetPassword(const nString& p);
+   void SetUsername(const nString& u);
 
    const nString& GetUsername();
 
@@ -48,7 +48,7 @@ private:
 */
 inline
 void
-nLogin::SetUsername(nString& u)
+nLogin::SetUsername(const nString& u)
 {
     this->username = u;
 }
@@ -69,7 +69,7 @@ nLogin::GetUsername()
 */
 inline
 void
-nLogin::SetPassword(nString& p)
+nLogin::SetPassword(const nString& p)
 {
     this->password = p;
 }

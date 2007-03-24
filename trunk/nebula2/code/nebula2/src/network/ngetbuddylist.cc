@@ -2,7 +2,7 @@
 //  nGetBuddylist.cc
 //  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "network/nGetBuddylist.h"
+#include "network/ngetbuddylist.h"
 #include "network/nbuddyclient.h"
 
 

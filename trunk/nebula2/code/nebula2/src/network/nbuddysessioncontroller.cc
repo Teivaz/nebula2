@@ -3,7 +3,7 @@
 //------------------------------------------------------------------------------
 #include "kernel/nsystem.h"
 #include "kernel/nkernelserver.h"
-#include "network/nBuddySessionController.h"
+#include "network/nbuddysessioncontroller.h"
 #include "util/nstring.h"
 #include "network/nbuddyserver.h"
 

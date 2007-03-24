@@ -89,13 +89,14 @@ main(int argc, const char** argv)
 
     nResourceServer* resServer = (nResourceServer*)kernelServer.New("nresourceserver", "/sys/servers/resource");
 
+    #ifdef __WIN32__
     WSADATA wsa;
     if(WSAStartup(MAKEWORD(2, 0), &wsa) == SOCKET_ERROR)
     {
         printf("Error %d returned by WSAStartup\n", GetLastError());
         exit(1);
     }
-
+    #endif // __WIN32__
 
     nBuddyClient* buddyClient = (nBuddyClient*)kernelServer.New("nbuddyclient", "/sys/servers/buddyclient");
     buddyClient->SetServerHostName(serverArg.Get());
@@ -158,9 +159,10 @@ main(int argc, const char** argv)
     buddyClient->Close();
     buddyClient->Release();
 
-
+    #ifdef __WIN32__
     // Shutdown WinSock subsystem.
     WSACleanup();
+    #endif // __WIN32__
 
     return 0;
 }

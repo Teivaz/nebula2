@@ -7,7 +7,7 @@
 #include "network/nusercontroller.h"
 #include "network/nbuddyserver.h"
 #include "util/nmd5.h"
-#include "network/nSendMessage.h"
+#include "network/nsendmessage.h"
 
 nNebulaClass(nBuddyCommandInterpreter, "nroot");
 

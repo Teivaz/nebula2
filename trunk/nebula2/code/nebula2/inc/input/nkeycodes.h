@@ -150,7 +150,7 @@ struct nStrToKey {
     nKey key;
 };
 
-nStrToKey key_remaptable[];
+extern nStrToKey key_remaptable[];
 #endif
 
 //------------------------------------------------------------------------------

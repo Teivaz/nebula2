@@ -375,7 +375,7 @@ private:
     };
 
     /// static user data pointer for qsort hook
-    static nMeshBuilder* nMeshBuilder::qsortData;
+    static nMeshBuilder* qsortData;
     /// a qsort() hook for generating a sorted index array
     static int __cdecl VertexSorter(const void* elm0, const void* elm1);
     /// qsort hook for sorting triangles by their group index

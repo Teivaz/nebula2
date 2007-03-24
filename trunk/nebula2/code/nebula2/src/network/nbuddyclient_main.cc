@@ -103,10 +103,11 @@ nBuddyClient::Trigger()
     n_assert(this->ipcClient);
     n_assert(Invalid != this->GetClientStatus());
 
-
+    #ifdef __WIN32__
     SetConsoleTextAttribute(
             GetStdHandle(STD_OUTPUT_HANDLE),
             FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+    #endif // __WIN32__
 
      //alle paar millisecs
 
@@ -163,10 +164,11 @@ if (!(bla % 100))
             const char* curMsg = msgBuffer.GetFirstString();
             if (curMsg) do
             {
-
+                #ifdef __WIN32__
                 SetConsoleTextAttribute(
                 GetStdHandle(STD_OUTPUT_HANDLE),
                 FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+                #endif // __WIN32__
 
                 nString message = curMsg;
 

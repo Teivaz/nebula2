@@ -157,7 +157,8 @@ endmodule
 
 beginmodule ndinputerror
     setdir input
+    setplatform win32
     setfiles {
-    ndinputerror
+        ndinputerror
     }
 endmodule

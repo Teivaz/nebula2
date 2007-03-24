@@ -15,6 +15,7 @@ endbundle
 
 beginmodule naudiofile
     setdir audio3
+    setplatform win32
     setheaders {
         naudiofile
     }
@@ -37,6 +38,7 @@ endmodule
 
 beginmodule noggfile
     setdir audio3
+    setplatform win32
     setheaders {
         noggfile
     }
@@ -75,6 +77,7 @@ endmodule
 
 beginmodule nwavfile
     setdir audio3
+    setplatform win32
     setheaders {
         nwavfile
     }
@@ -114,6 +117,7 @@ endmodule
 
 beginmodule ndsound3
     setdir audio3
+    setplatform win32
     setheaders {
         ndsound3
     }
@@ -124,6 +128,7 @@ endmodule
 
 beginmodule ndsoundresource
     setdir audio3
+    setplatform win32
     setheaders {
         ndsoundresource
     }
@@ -134,6 +139,7 @@ endmodule
 
 beginmodule ndsoundserver3
     setdir audio3
+    setplatform win32
     setheaders {
         ndsoundserver3
     }

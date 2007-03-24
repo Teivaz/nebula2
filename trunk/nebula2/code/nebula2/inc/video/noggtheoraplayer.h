@@ -12,7 +12,13 @@
     (C) 2005 RadonLabs GmbH
 */
 #include "video/nvideoplayer.h"
+
+#ifdef __WIN32__
 #include "ogg/theora.h"
+#else
+#include <theora/theora.h>
+#endif // __WIN32__
+
 #include "kernel/nfileserver2.h"
 
 //------------------------------------------------------------------------------

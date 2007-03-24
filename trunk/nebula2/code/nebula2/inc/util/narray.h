@@ -17,6 +17,8 @@
 */
 #include "kernel/ntypes.h"
 
+#include <algorithm> // std::sort
+
 //------------------------------------------------------------------------------
 template<class TYPE> class nArray
 {

@@ -2,7 +2,7 @@
 //  nAddBuddy.cc
 //  (C) 2006 RadonLabs GmbH
 //------------------------------------------------------------------------------
-#include "network/nAddBuddy.h"
+#include "network/naddbuddy.h"
 #include "network/nbuddyclient.h"
 
 

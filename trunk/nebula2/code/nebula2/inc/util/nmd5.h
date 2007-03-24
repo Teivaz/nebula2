@@ -35,7 +35,7 @@
 
 
 
-#include "nString.h"
+#include "nstring.h"
 
 typedef unsigned       int uint4;
 typedef unsigned short int uint2;

@@ -42,6 +42,7 @@ typedef int SOCKET;
 #define SOCKET_ERROR           (-1)
 #define N_SOCKET_LAST_ERROR    errno
 #define N_EWOULDBLOCK          EWOULDBLOCK
+#define N_ECONNRESET           ECONNRESET
 #endif
 
 #define N_SOCKET_MIN_PORTNUM   (12000)
