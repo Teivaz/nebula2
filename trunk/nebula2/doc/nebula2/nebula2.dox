@@ -107,20 +107,13 @@ It runs on Windows, with ports being done to Linux and Mac OS X.
 
 @section Nebula2GSObtaining Obtaining Nebula 2
 
-Full information on how to obtain Nebula 2 can be found on our
-<a href="http://nebuladevice.cubik.org/downloads/">website</a>. We highly
-recommend using CVS directly as that is the easiest way to remain up to
-date with the evolving Nebula 2 codebase, as well as submit your own changes
-back to us.  If you are on Windows, we recommend that you use <a href="http://www.tortoisecvs.org/">TortoiseCVS</a>.
+Full information on how to obtain Nebula 2 can be found on our <a href="http://nebuladevice.cubik.org/downloads/">website</a>. We highly recommend using SVN directly as that is the easiest way to remain up to date with the evolving Nebula 2 codebase, as well as submit your own changes back to us. If you are on Windows, we recommend that you use <a href="http://tortoisesvn.tigris.org/">TortoiseSVN</a>.
 
-  - @subpage Nebula2ObtainingTortoiseCVS
-  - @subpage Nebula2ObtainingWinCVS
+  - @subpage Nebula2ObtainingTortoiseSVN
 
 @section Nebula2GSCompiling Compiling Nebula 2
 
-For information on compiling The Nebula Device, see @ref Nebula2Compiling. For
-information on the specialized build system that Nebula 2 uses, see
-@ref NebulaBuildSystem.
+For information on compiling The Nebula Device, see @ref Nebula2Compiling. For information on the specialized build system that Nebula 2 uses, see @ref NebulaBuildSystem.
 
 @section Nebula2GSExtending Extending Nebula 2
 

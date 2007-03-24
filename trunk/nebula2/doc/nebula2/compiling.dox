@@ -6,30 +6,19 @@
     - @subpage Nebula2CompilingOSOSX
     - @subpage Nebula2CompilingOSLinux
   
-At the moment, Nebula 2 will compile on Win32, Linux and Mac OSX.  However, the only @ref nGfxServer2 and @ref nInputServer currently available are @ref nD3D9Server and @ref nDI8Server for Win32.
+At the moment, Nebula 2 will compile on Win32 and Linux, Mac OSX may need some work. However, the only @ref nGfxServer2 and @ref nInputServer currently available are @ref nD3D9Server and @ref nDI8Server for Win32, there is also a contributed OpenGL gfx server that needs some loving.
 
 @section Nebula2CompilingRequirements General Requirements
 
-Nebula has a script based build system that generates projects, solutions, workspaces or makefiles that you can open in your IDE or feed to your compiler.
+Nebula has a Python based build system that generates projects, solutions, or makefiles that you can open in your IDE or feed to your compiler of choice. Currently it supports MS Visual C++ (7.0 or later) on Win32, and GCC/G++ on Linux/Win32/MacOSX (at least in theory). To run the build system you need to install the following:
 
-If you are using Microsoft Visual C++ (7.0 or later) you will need to install
-the following in order to run the build system:
+    - <a href="http://www.python.org">Python (2.4 or later recommended)</a>
+    - <a href="http://www.wxpython.org">WxPython (2.6 or 2.8 recommended, 2.7 is <b>not recommended</b>)</a>
 
-    - <a href="http://www.python.org">Python (2.4 recommended)</a>
-    - <a href="http://www.wxpython.org">WxPython (2.6 recommended)</a>
+Note that wxPython is only neccessary if you want to use the build system via the GUI, this is highly recommended, especially for first time users. However if you're unable or unwilling to install wxPython you can use the build system via the commandline interface.
 
-If you are using some XCode, GNU/Linux, or the Visual C++ 2003 Toolkit
-(the free download, without Visual Studio), you will need Tcl8.4 to run
-the older build system. You can download Tcl8.4 from:
-
-    - <A HREF="http://www.tcl.tk">Tcl Developer Xchange</A> or
-    - <A HREF="http://tcl.sourceforge.net">Sourceforge</A> or 
-    - <A HREF="http://www.activestate.com">ActiveState</A>
-
-We are in the process of converting from the TCL-based build system
-to the Python-based build system, so these directions are expected
-to change in the future.
 */
+
 /**
 @page Nebula2CompilingOSWin32 Compiling Nebula2 on Windows
 
@@ -88,7 +77,7 @@ Navigate to <code>nebula2/</code> and double click on <code>update.py</code>, if
 
 @note If you're experimenting with vcbuild - generate build files for Visual C++ 7.1 as described above instead of using update.tcl as described below.
 
-Navigate to <code>nebula2/</code> and double click <code>update.tcl</code>. Makefiles for the Visual C++ 2003 Toolkit are located in the directory <code>nebula2/build/makefile</code>. You can tell that <code>update.tcl</code> has completed successfully when it pops up a featureless grey window.
+Navigate to <code>nebula2/</code> and double click <code>update.py</code>. Makefiles for the Visual C++ 2003 Toolkit are generated in the directory <code>nebula2/build/makefile</code>.
 
 @section Nebula2CompilingOSWin32Compiling Compiling
 
@@ -148,78 +137,109 @@ Install one of the supported versions of the DirectX 9 SDK, as described above.
 @page Nebula2CompilingOSOSX Compiling Nebula2 on Mac OS X
 
     - @ref Nebula2CompilingOSOSXPreparation
-    - @ref Nebula2CompilingOSOSXBuildFiles
+    - @ref Nebula2CompilingOSOSXMakefiles
     - @ref Nebula2CompilingOSOSXCompiling
 
 @section Nebula2CompilingOSOSXPreparation Preparation
 
-  - If you are using Panther (10.3), Apple has included TCL 8.4 so you
-    will not need to worry about installing this yourself.
+  - Cross your fingers and your toes, and repeat "The MacOSX build will work!" over and over again.
+  - If the MacOSX build does not in fact work you obviously just don't want it bad enough.
+  - If you really really want it but it still doesn't work, your only option is to write a new generator for the build system to support MacOSX, or update the existing makefile generator.
 
-  - Add <code>nebula2/bin/macosx</code> to your path
+@section Nebula2CompilingOSOSXMakefiles Generate The Makefiles
 
-@section Nebula2CompilingOSOSXBuildFiles Create The Build Files
-
-From the command line, go to <code>nebula2/</code> and type
+From the commandline, navigate to <code>nebula2/</code> and type
 
 @verbatim
-  tclsh8.4 update.tcl -build xcode
+  python update.py
 @endverbatim
 
-<b>Note:</b> The executable name on OS X is <tt>tclsh8.4</tt> and not <tt>tclsh84</tt> as it is on Windows.
+If you correctly installed Python and wxPython you should see the Nebula 2 Build System application displayed, if it does not appear check the gui.log in the root nebula2 directory for any errors. You can use this application to generate the makefiles for g++ by selecting the makefile generator from the Generator drop-down. Makefiles will be generated in the directory <code>nebula2/build/makefile</code>. Read the manual that's available through Help->Manual on the Main Menu to figure out what you need to do before proceeding to the next step. The GUI is entirely optional, if you wish to use the commandline interface a list of supported commands can be obtained by typing
 
-This will build the XCode projects which will be located in the @c nebula2/build/xcode directory.  Any time files are added or removed from Nebula 2 this step must be repeated.
+@verbatim
+  python update.py -help
+@endverbatim
+
+Anytime .bld files are added, modified or removed this step must be repeated.
 
 @section Nebula2CompilingOSOSXCompiling Compiling
 
-Open the Xcode projects found in @c nebula2/build/xcode and build them.
+From the commandline, navigate to <code>nebula2/build/makefile</code>, and type
 
-The binaries will be located in <code>nebula2/bin/macosx/</code>.
+@verbatim
+  make OSTYPE=darwin [workspace]
+@endverbatim
+
+This will compile the specified workspace, or alternatively if a workspace is not specified, everything. Binary files will be output to <code>nebula2/bin/macosx</code>.
+
+If you wish to compile a debug build, set the "N_DEBUG" parameter to "true"
+
+@verbatim
+  make OSTYPE=darwin N_DEBUG=true [workspace]
+@endverbatim
+
+Binary files from a debug build will be output to <code>nebula2/bin/macosxd</code>. Additionally you can set "N_PROFILE" to add profiling flags.
+
 */
+
 /**
+
 @page Nebula2CompilingOSLinux Compiling Nebula2 on Linux
 
     - @ref Nebula2CompilingOSLinuxRequirements
-    - @ref Nebula2CompilingOSLinuxPreparation
-    - @ref Nebula2CompilingOSLinuxBuildFiles
+    - @ref Nebula2CompilingOSLinuxMakefiles
     - @ref Nebula2CompilingOSLinuxCompiling
 
 @section Nebula2CompilingOSLinuxRequirements Additional Requirements
 
   - GCC version 3.0 or later
-  - GNU make  
+  - GNU make
+  - Theora, Ogg, Sqlite3 and UUID development packages, the Ubuntu specific versions are listed below, names may differ on other Linux distros.
+  
+@subsection Nebula2CompilingOSLinuxUbuntuPackages Ubuntu Edgy Packages
 
-@section Nebula2CompilingOSLinuxPreparation Preparation
+You can find and install these packages using Synaptic or Adept Manager.
 
-  - Add <code>nebula2/bin/linux</code> to your path
+  - g++ (will install the latest gcc)
+  - make
+  - libtheora-dev
+  - libogg-dev
+  - sqlite3-dev
+  - uuid-dev
 
-@section Nebula2CompilingOSLinuxBuildFiles Create The Build Files
+@section Nebula2CompilingOSLinuxMakefiles Generate The Makefiles
 
-From a terminal, go to <code>nebula2/</code> and type
+Open a terminal window, navigate to <code>nebula2/</code>, and type
 
 @verbatim
-  tclsh update.tcl -build makefile
+  python update.py
 @endverbatim
 
-This will use the <code>.bld</code> files to create the Makefile's for compiling on linux, which are located in the directory <code>nebula2/build/makefile</code>. Anytime files are added or removed from Nebula 2 this step must be repeated.
+If you correctly installed Python and wxPython you should see the Nebula 2 Build System application displayed, if it does not appear check the gui.log in the root nebula2 directory for any errors. You can use this application to generate the makefiles for g++ by selecting the makefile generator from the Generator drop-down. Makefiles will be generated in the directory <code>nebula2/build/makefile</code>. Read the manual that's available through Help->Manual on the Main Menu to figure out what you need to do before proceeding to the next step. The GUI is entirely optional, if you wish to use the commandline interface a list of supported commands can be obtained by typing
+
+@verbatim
+  python update.py -help
+@endverbatim
+
+Anytime .bld files are added, modified or removed this step must be repeated.
 
 @section Nebula2CompilingOSLinuxCompiling Compiling
 
-From the command line, go to <code>nebula2/build/makefile</code>, and type
+In the terminal window, navigate to <code>nebula2/build/makefile</code>, and type
 
 @verbatim
   make OSTYPE=linux [workspace]
 @endverbatim
 
-This will compile the workspace "[workspace]", or alternatively if a workspace is not specified, everything. Binary files will be located in <code>nebula2/bin/linux</code>.
+This will compile the specified workspace, or alternatively if a workspace is not specified, everything. Binary files will be output to <code>nebula2/bin/linux</code>.
 
-If you wish to compile a debug build, set the "N_DEBUG" parameter to "true", e.g.:
+If you wish to compile a debug build, set the "N_DEBUG" parameter to "true"
 
 @verbatim
   make OSTYPE=linux N_DEBUG=true [workspace]
 @endverbatim
 
-Binary files will be located in <code>nebula2/bin/linuxd</code>. Additionally you can set "N_PROFILE" to add profiling flags.
+Binary files from a debug build will be output to <code>nebula2/bin/linuxd</code>. Additionally you can set "N_PROFILE" to add profiling flags.
 
 */
 
