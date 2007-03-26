@@ -24,7 +24,7 @@ nAnimOptionsCA = attributes "nAnimOptions"
 
         on btnAnimDirSetting pressed do
         (
-            include "nebula2/utilstring.ms"
+            include "nebula2/utilz.ms"
 
             projDir = nGetProjDir();
             animAssign = nebula2.call "/sys/servers/file2.getassign" "anims"
