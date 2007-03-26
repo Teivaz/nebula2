@@ -168,12 +168,46 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
     {
         // get texture name.
         nString mapFileName = ((BitmapTex*)texmap)->GetMapName();
+        mapFileName.ConvertBackslashes();
+        mapFileName.ToLower();
 
-        // e.g. destination path : d:/nebula2/exports/textrues/char2
-        //      texture map      : char2_1.dds
-        //      it changes to 'textures:char2/char2_1.dds'.
+        nString textureAssign = nMaxOptions::Instance()->GetTextureAssign();
+        nString texturePath = nFileServer2::Instance()->ManglePath(textureAssign) + "/";
+
+        bool doNotCopy = false;
         nString textureName;
-        textureName = nMaxUtil::RelacePathToAssign(nMaxUtil::Texture, texPath, mapFileName);
+        int findIndex = mapFileName.FindStringIndex(texturePath, 0);
+        if( findIndex > -1 )
+        {
+            // export:textures/abc/abc.dds -> textures:abc/abc.dds
+            textureName = mapFileName.Substitute(texturePath.Get(), "textures:");
+            doNotCopy = true;
+        }
+        else
+        {
+            static nString definedTexPath = "/textures/";
+            findIndex = mapFileName.FindStringIndex(definedTexPath, 0);
+            if( findIndex >  -1 )
+            {
+                // c:/anything name/textures/abc/abc.dds
+                // -> abc/abc.dds
+                // -> textures:abc/abc.dds
+                int stripLength = findIndex + definedTexPath.Length();
+                nString subPathName = mapFileName.ExtractRange(stripLength, mapFileName.Length() - stripLength);
+                textureName = "textures:" + subPathName;
+
+                // make directory
+                nString textureDir = textureName.ExtractDirName();
+                nFileServer2::Instance()->MakePath(textureDir);
+            }
+            else
+            {
+                // e.g. destination path : d:/nebula2/exports/textrues/char2
+                //      texture map      : char2_1.dds
+                //      it changes to 'textures:char2/char2_1.dds'.
+                textureName = nMaxUtil::RelacePathToAssign(nMaxUtil::Texture, texPath, mapFileName);
+            }
+        }
 
         // set the texture to the given node.
         shapeNode->SetTexture(param, textureName.Get());
@@ -181,9 +215,12 @@ void nMaxTexture::Export(Texmap* texmap, nShaderState::Param param, nShapeNode* 
         //TODO: check the texture image file already exist and the overwrite option.
 
         // copy textures.
-        if (CopyTexture(mapFileName.Get(), textureName.Get()))
+        if( doNotCopy == false)
         {
-            n_maxlog(Medium, "'%s' is copied.", mapFileName.Get());
+            if (CopyTexture(mapFileName.Get(), textureName.Get()))
+            {
+                n_maxlog(Medium, "'%s' is copied.", mapFileName.Get());
+            }
         }
 
         // get uv transform if it exist.

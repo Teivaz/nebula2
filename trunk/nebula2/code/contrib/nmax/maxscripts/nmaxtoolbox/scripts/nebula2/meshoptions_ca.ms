@@ -4,6 +4,7 @@
 --  (c)2005 Kim, Hyoun Woo
 -------------------------------------------------------------------------------
 
+
 -------------------------------------------------------------------------------
 --  custom attributes for mesh options.
 --  executed in 'Mesh Options' menu item of 'Nebula2' menu
@@ -91,10 +92,27 @@ nMeshOptionsCA = attributes "nMeshOptions"
 
         on btnMeshDirSetting pressed do
         (
-            meshPath = getSavePath caption:"Select a directory where the mesh to be exported."
+            include "nebula2/utilz.ms"
+
+            projDir = nGetProjDir();
+            meshAssign = nebula2.call "/sys/servers/file2.getassign" "meshes"
+            meshAssign = nebula2.call "/sys/servers/file2.manglepath" meshAssign
+            meshAssign = nReplaceSlash meshAssign[1]
+
+            meshPath = getSavePath initialDir:meshAssign caption:"Select a directory where the mesh to be exported."
             if meshPath != undefined then
             (
-                edtMeshDirSetting.text = meshPath
+                findIndex = findString meshPath meshAssign
+                if findIndex != undefined  then 
+                (
+                    subDir = substring meshPath (meshAssign.count + 2) meshPath.count
+                    exportMeshDir = "meshes:" + subDir
+                    edtMeshDirSetting.text = exportMeshDir
+                )
+                else
+                (
+                    format "% is not subdirectory of %s" meshPath meshAssign
+                )
             )
         )
 
