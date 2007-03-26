@@ -36,7 +36,7 @@ fn getAnimName value =
 -------------------------------------------------------------------------------
 struct ExcelUtil
 (
-   excel,
+    excel,
    
     -- create 'excel' OLE object and open the given xml file.
     -- e.g. openExcel "e:\\anims.xml"
@@ -81,7 +81,9 @@ struct ExcelUtil
 )
 
 -------------------------------------------------------------------------------
+--  Extract key of the note track and insert it to the exist animation XML file.
 --
+--  e.g. appendAnimToXml "d:/nebula2/data/tables/anims.xml" "player"
 -------------------------------------------------------------------------------
 fn appendAnimToXml path category = 
 (
@@ -93,15 +95,20 @@ fn appendAnimToXml path category =
     for i=1 to nt_keys.count do
     (
         val = nt_keys[i].value
-        str = stringStream val
-        line = readLine str
+        if val != "" do
+        (
+            str = stringStream val
+            line = readLine str
+            if line != undefined do
+            (
+                animClipName = getAnimName line        
         
-        animClipName = getAnimName line        
+                --trimRight animClipName
+                print animClipName + "\n"
         
-        --trimRight animClipName
-        print animClipName + "\n"
-        
-        append animClipNames animClipName
+                append animClipNames animClipName
+            )
+        )
     )
     
     -- open animation xml file.
