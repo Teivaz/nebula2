@@ -1,7 +1,7 @@
 #--------------------------------------------------------------------------
 # 3rd Generation Nebula 2 Build System
 #
-# (c) 2005 Vadim Macagon
+# (c) 2007 Vadim Macagon
 #
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
@@ -76,6 +76,7 @@ def GetStandardBuildCfgFileName():
 
 #--------------------------------------------------------------------------
 def PrintWorkspaceList():
+    print 'Please wait while the .bld files are processed...\n'
     buildSys = BuildSys(updateDir, GetStandardBuildCfgFileName())
     if buildSys.Prepare():
         numWorkspaces = len(buildSys.workspaces)
@@ -83,8 +84,13 @@ def PrintWorkspaceList():
             print '************************\n' \
                   '* Available Workspaces *\n' \
                   '************************'
-            for workspaceName in buildSys.workspaces.keys():
-                print workspaceName
+            sortedNames = buildSys.workspaces.keys()
+            sortedNames.sort(key = str.lower)
+            for name in sortedNames:
+                if '' == buildSys.workspaces[name].annotation:
+                    print name + '\n    ' + '<needs annotation>'
+                else:
+                    print name + '\n    ' + buildSys.workspaces[name].annotation
             print '************************'
         else:
             print '************************\n' \
