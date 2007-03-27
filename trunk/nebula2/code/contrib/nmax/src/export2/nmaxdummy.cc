@@ -37,6 +37,9 @@ nMaxDummy::~nMaxDummy()
 /**
     @note 
         Do not create more than one nSceneNode derived node from the given node.
+
+    -27-Mar-07  kims  Changed to export all kind of dummy node as transform node
+                      except which has biped control. Thank Cho Jun Heung for the patch.
 */
 nSceneNode* nMaxDummy::Export(INode* inode)
 {
@@ -53,8 +56,9 @@ nSceneNode* nMaxDummy::Export(INode* inode)
     }
     else
     {
-        // special case of a dummy node.
-        if (inode->IsGroupHead())
+        // Any kind of dummy nodes should can be exproted because artists might use it.
+        // But we do not export a dummy node which has biped control.
+        if( nMaxBoneManager::IsDummy(inode) )
         {
             // the node is group owner node.
             // If this node is a group owner node(this is a dummy node in max), add 
