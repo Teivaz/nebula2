@@ -199,6 +199,10 @@ Matrix3 UniformMatrix(Matrix3 sMatrix)
 /**
     Retrieves local transformation from the given node.
 
+    -27-Mar-07    kims    Changed to adjust parent transform if parent node of the node 
+                          is not a bone(or biped) but the node is bone(or biped).
+                          Thank Cho Jun Heung for the patch.
+
     -22-Sep-05    kims    Fixed wrong rotation problem of non-biped mirrored bone.(#322 on Bugzilla)
                           Thanks Jind©ªich Rohlik for pointing it out.
 */
@@ -215,6 +219,16 @@ Matrix3 nMaxTransform::GetLocalTM(INode *inode, TimeValue time)
     {
         nodeTM   = UniformMatrix(nodeTM);
         parentTM = UniformMatrix(parentTM);
+    }
+    
+    //HACK: adjust parent transform to make it has same trasform as 3dsmax.
+    //      e.g. dummy(parent) - bone(child) is the case.
+    bool isBone = nMaxBoneManager::IsBone(inode);
+    bool isParentBone = nMaxBoneManager::IsBone(inode->GetParentNode());
+
+    if( isBone && (isParentBone == false) )
+    {
+        parentTM.IdentityMatrix();
     }
 
     result = nodeTM * Inverse(parentTM);

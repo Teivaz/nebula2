@@ -694,11 +694,25 @@ bool nMaxBoneManager::IsFootStep(INode* inode)
 
 //-----------------------------------------------------------------------------
 /**
+    -27-Mar-07  kims  Added to check whether the dummy node has biped or not.
+                      Thank Cho Jun Heung for the patch.
 */
 bool nMaxBoneManager::IsDummy(INode* inode)
 {
     if (NULL == inode)
         return false;
+
+    //HACK: check the node has biped constrol
+    Control* control = 0;
+    control = inode->GetTMController();
+
+    if (control)
+    {
+        // if the node has biped, consider that it is not a dummy.
+        if ((control->ClassID() == BIPSLAVE_CONTROL_CLASS_ID) ||
+            (control->ClassID() == BIPBODY_CONTROL_CLASS_ID))
+            return false;
+    }
 
     ObjectState os;
     os = inode->EvalWorldState(0);
