@@ -61,8 +61,6 @@ NebulaObject_New(nRoot * nebulaObj)
     self->in_weakreflist = NULL;
     self->nebula_object = n_new(nRef<nRoot>);
     n_assert(self->nebula_object);
-    //self->nebula_object->initialize(NULL);
-    self->nebula_object->SetPtr(NULL);
     self->nebula_object->set(nebulaObj);
 
     cObject = PyCObject_FromVoidPtr((void *) nebulaObj, NULL);
