@@ -4,7 +4,9 @@
 //------------------------------------------------------------------------------
 #include "scene/nattachmentnode.h"
 #include "scene/nsceneserver.h"
+#include "scene/nskinanimator.h"
 #include "gfx2/ngfxserver2.h"
+
 
 nNebulaScriptClass(nAttachmentNode, "ntransformnode");
 
@@ -12,8 +14,7 @@ nNebulaScriptClass(nAttachmentNode, "ntransformnode");
 /**
 */
 nAttachmentNode::nAttachmentNode() :
-    isFinalDirty(false),
-    isJointSet(false)
+    jointIndex(-1)
 {
     // empty
 }
@@ -40,24 +41,22 @@ nAttachmentNode::RenderTransform(nSceneServer* sceneServer,
     n_assert(renderContext);
 
     this->InvokeAnimators(nAnimator::Transform, renderContext);
-    this->UpdateFinalTransform();
+    this->UpdateJointTransform(renderContext);
     if (this->GetLockViewer())
     {
         // if lock viewer active, copy viewer position
         const matrix44& viewMatrix = nGfxServer2::Instance()->GetTransform(nGfxServer2::InvView);
-        matrix44 m = this->finalMatrix;
+        matrix44 m = this->GetTransform();
         m.M41 = viewMatrix.M41;
         m.M42 = viewMatrix.M42;
         m.M43 = viewMatrix.M43;
-        sceneServer->SetModelTransform(m * parentMatrix);
+        sceneServer->SetModelTransform(m);
     }
     else
     {
         // default case
-        sceneServer->SetModelTransform(this->finalMatrix * parentMatrix);
+        sceneServer->SetModelTransform(this->GetTransform());
     }
-
-    this->isFinalDirty = true;
 
     return true;
 
@@ -68,24 +67,43 @@ nAttachmentNode::RenderTransform(nSceneServer* sceneServer,
     Compute the final transformation matrix for the nAttachmentNode
 */
 void
-nAttachmentNode::UpdateFinalTransform()
+nAttachmentNode::UpdateJointTransform(nRenderContext* renderContext)
 {
-    // A joint must be set for this to do anything at all.  If no joint is set, default
-    // to the normal transform value (act as an nTransformNode).
-    if (!this->isJointSet)
+    if (this->jointIndex != -1 )
     {
-        this->finalMatrix = this->tform.getmatrix();
-        return;
-    }
-
-    if (this->isFinalDirty)
-    {
-        // Multiply the local matrix by the joint matrix (which we get through lengthy means via the parent nSkinShapeNode)
-        finalMatrix = this->tform.getmatrix() * ((nSkinShapeNode*)this->parent)->GetCharSkeleton()->GetJointAt(this->jointIndex).GetMatrix();
-
-        this->isFinalDirty = false;
+        nKernelServer::Instance()->PushCwd(this);
+        if( this->refSkinAnimator.isvalid() )
+        {
+            this->refSkinAnimator->Animate(this, renderContext);
+            nVariable& charVar = renderContext->GetLocalVar( this->refSkinAnimator->GetCharacterVarIndexHandle() );
+            nCharacter2* char2 = (nCharacter2*)charVar.GetObj();
+            this->tform.setmatrix( char2->GetSkeleton().GetJointAt(this->jointIndex).GetMatrix() );
+        }
+        nKernelServer::Instance()->PopCwd();
     }
 }
+
+//------------------------------------------------------------------------------
+/**
+    Set relative path to the skin animator object.
+*/
+void
+nAttachmentNode::SetSkinAnimator(const char* path)
+{
+    n_assert(path);
+    this->refSkinAnimator = path;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Get relative path to the skin animator object
+*/
+const char*
+nAttachmentNode::GetSkinAnimator() const
+{
+    return this->refSkinAnimator.getname();
+}
+
 
 //------------------------------------------------------------------------------
 /**
@@ -96,27 +114,23 @@ nAttachmentNode::UpdateFinalTransform()
 void
 nAttachmentNode::SetJointByName(const char* jointName)
 {
-    /*if (strcmp(this->parent->GetClass()->GetName(), "nskinshapenode"))
+    nKernelServer::Instance()->PushCwd(this);
+    if( this->refSkinAnimator.isvalid() )
     {
-        n_printf("Error: nAttachmentNode can only function if it is parented by an nSkinShapeNode\n");
-        return;
-    }
-
-    kernelServer->PushCwd(this->parent);
-    nSkinAnimator *skinAnimator = (nSkinAnimator *)this->kernelServer->Lookup(((nSkinShapeNode*)this->parent)->GetSkinAnimator());
-    n_assert(skinAnimator);
-    kernelServer->PopCwd();
-
-    int newIndex = skinAnimator->GetJointByName(jointName);
-    if (newIndex != -1)
-    {
-        this->jointIndex = newIndex;
-        this->isJointSet = true;
+        this->jointIndex = this->refSkinAnimator->GetJointByName(jointName);
+        if (this->jointIndex == -1)
+        {
+            matrix44 matIdent;
+            this->tform.setmatrix(matIdent);            
+        }
     }
     else
     {
-        n_printf("Error: Unable to find joint of name '%s' on parent nSkinAnimator\n", jointName);
-    }*/
+        n_printf("Error: invalid skinanimator\n");
+    }
+    nKernelServer::Instance()->PopCwd();
+    
+    
 }
 
 //------------------------------------------------------------------------------
@@ -128,12 +142,19 @@ nAttachmentNode::SetJointByName(const char* jointName)
 void
 nAttachmentNode::SetJointByIndex(unsigned int newIndex)
 {
-    if (strcmp(this->parent->GetClass()->GetName(), "nskinshapenode"))
-    {
-        n_printf("Error: nAttachmentNode can only function if it is parented by an nSkinShapeNode\n");
-        return;
-    }
-
     this->jointIndex = newIndex;
-    this->isJointSet = true;
+    if( newIndex == -1 )
+    {
+        matrix44 matIdent;
+        this->tform.setmatrix(matIdent);
+    }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+int
+nAttachmentNode::GetJointByIndex() const
+{
+    return this->jointIndex;
 }

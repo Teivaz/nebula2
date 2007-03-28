@@ -191,8 +191,6 @@ protected:
 
     ///
     void SetSkinAnimator(INode* inode, nSceneNode* createdNode, int numMaterials);
-    ///
-    nString GetSkinAnimatorName(const char* baseName, int skelIndex);
 
 protected:
 

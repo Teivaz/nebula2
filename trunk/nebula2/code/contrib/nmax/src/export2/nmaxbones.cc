@@ -19,6 +19,9 @@
 #include "tools/nanimbuilder.h"
 #include "tinyxml/tinyxml.h"
 
+#include "scene/nscenenode.h"
+#include "scene/nattachmentnode.h"
+
 nMaxBoneManager* nMaxBoneManager::Singleton = 0;
 
 //---------------------------------------------------------------------------
@@ -182,6 +185,13 @@ void nMaxBoneManager::GetBoneByClassID(const nArray<INode*>& nodeArray,
 */
 bool nMaxBoneManager::BuildBones(INode* node)
 {
+    // clean up.
+    skeletonsArray.Clear();
+    nodeToBone.clear();
+    nodeToSkel.clear();
+    boneToSkel.clear();
+    noteTracksArray.Clear();
+
     INode* root = nMaxInterface::Instance()->GetInterface()->GetRootNode();
     n_assert(root == node);
 
@@ -701,6 +711,10 @@ bool nMaxBoneManager::IsDummy(INode* inode)
 {
     if (NULL == inode)
         return false;
+        
+    // optimizing
+    if( inode->NumChildren() == 0 )
+        return false;
 
     //HACK: check the node has biped constrol
     Control* control = 0;
@@ -1017,4 +1031,77 @@ bool nMaxBoneManager::GetCustAttrib(Animatable* obj)
     }
 
     return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    parent (bone) - child (not bone)
+    
+    -> attachmentNode - child
+
+    child ( dummy, object, light, camera, ... )
+*/
+void nMaxBoneManager::BuildAttachmentNode(INode* inode, nSceneNode* createdNode, int numMaterials)
+{
+    INode* pnode = inode->GetParentNode();
+
+    // if parent is bone and child is not bone
+    if( IsBone(pnode) == true && IsBone(inode) == false )
+    {
+        // crate attachment node
+        nString attachmentNodeName = inode->GetName();
+        attachmentNodeName = nMaxUtil::CorrectName(attachmentNodeName) + "_link";
+
+        //nKernelServer::Instance()->PopCwd();
+        //nAttachmentNode* attachNode = (nAttachmentNode*)CreateNebulaObject("nattachmentnode", attachmentNodeName.Get() );
+        //nKernelServer::Instance()->PopCwd();
+        //nKernelServer::Instance()->PushCwd(createdNode);
+        nAttachmentNode* attachNode = (nAttachmentNode*)(nKernelServer::Instance()->NewNoFail( "nattachmentnode", attachmentNodeName.Get()) );
+        if(attachNode == NULL) 
+        {
+            n_maxlog(Error, "Failed to create Nebula object for [%s] node.", attachmentNodeName.Get());
+            return;
+        }
+
+        // set skin animator
+        int skelIndex = GetSkelForNode(pnode);
+        if (numMaterials > 1)
+            attachNode->SetSkinAnimator(GetSkinAnimatorName("../../skinanimator", skelIndex).Get());
+        else
+            attachNode->SetSkinAnimator(GetSkinAnimatorName("../skinanimator", skelIndex).Get());
+
+        // set joint index
+        nString jointName = pnode->GetName();
+        jointName = nMaxUtil::CorrectName(jointName);
+        int jointIndex = FindBoneIDByName(jointName);
+        attachNode->SetJointByIndex(jointIndex);
+
+        // reconstruct hierarchy
+        // unlink
+        createdNode->Remove();
+        attachNode->Remove();
+
+        // link ( exportNode - attachnode - createnode )
+        nRoot* exportNode = nKernelServer::Instance()->Lookup("/export");
+        exportNode->AddTail(attachNode);
+        attachNode->AddTail(createdNode);
+    }
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+nString nMaxBoneManager::GetSkinAnimatorName(const char* baseName, int skelIndex) 
+{
+    n_assert(baseName);
+    nString name(baseName);
+    if (skelIndex != -1) 
+    {
+        name.AppendInt(skelIndex);
+    }
+    else
+    {
+        name.AppendInt(0);
+    }
+    return name;
 }

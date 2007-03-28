@@ -5,6 +5,7 @@
 #include "scene/nskinanimator.h"
 #include "scene/nskinshapenode.h"
 #include "scene/nshadowskinshapenode.h"
+#include "scene/nattachmentnode.h"
 #include "scene/nrendercontext.h"
 #include "anim2/nanimation.h"
 #include "anim2/nanimationserver.h"
@@ -24,8 +25,10 @@ nSkinAnimator::nSkinAnimator() :
 {
     this->skinShapeNodeClass = kernelServer->FindClass("nskinshapenode");
     this->shadowSkinShapeNodeClass = kernelServer->FindClass("nshadowskinshapenode");
+    this->attachmentNodeClass = kernelServer->FindClass("nattachmentnode");
     n_assert(this->skinShapeNodeClass);
     n_assert(this->shadowSkinShapeNodeClass);
+    n_assert(this->attachmentNodeClass);
 }
 
 //------------------------------------------------------------------------------
@@ -231,6 +234,11 @@ nSkinAnimator::Animate(nSceneNode* sceneNode, nRenderContext* renderContext)
         nShadowSkinShapeNode* shadowSkinShapeNode = (nShadowSkinShapeNode*)sceneNode;
         shadowSkinShapeNode->SetCharSkeleton(&curCharacter->GetSkeleton());
     }
+    else if (sceneNode->IsA(this->attachmentNodeClass))
+    {
+        //HACK: disabled due to make nattachmentnode to call animator function.
+        ;
+    }
     else
     {
         n_error("nSkinAnimator::Animate(): invalid scene node class\n");
@@ -413,4 +421,15 @@ nSkinAnimator::DeleteCharacterSet(nRenderContext* renderContext)
     nCharacter2Set* characterSet = (nCharacter2Set*)var.GetObj();
     n_assert(characterSet);
     characterSet->Release();
+}
+
+
+//------------------------------------------------------------------------------
+/**
+*/
+int 
+nSkinAnimator::GetJointByName(const char* jointName)
+{
+    n_assert(jointName);
+    return this->character.GetSkeleton().GetJointIndexByName(jointName);
 }

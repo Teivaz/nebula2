@@ -29,6 +29,7 @@
 #include "scene/nshadownode.h"
 #include "scene/nparticleshapenode2.h"
 #include "nature/nswingshapenode.h"
+#include "scene/nattachmentnode.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -1293,9 +1294,9 @@ void nMaxMesh::SetSkinAnimator(INode* inode, nSceneNode* createdNode, int numMat
         {
             nSkinShapeNode *skinShapeNode = static_cast<nSkinShapeNode*>(createdNode);
             if (numMaterials > 1)
-                skinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../../skinanimator", skelIndex).Get());
+                skinShapeNode->SetSkinAnimator(nMaxBoneManager::Instance()->GetSkinAnimatorName("../../skinanimator", skelIndex).Get());
             else
-                skinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../skinanimator", skelIndex).Get());
+                skinShapeNode->SetSkinAnimator(nMaxBoneManager::Instance()->GetSkinAnimatorName("../skinanimator", skelIndex).Get());
         }
         else
         if (this->meshType == Shadow)
@@ -1303,29 +1304,15 @@ void nMaxMesh::SetSkinAnimator(INode* inode, nSceneNode* createdNode, int numMat
             nShadowSkinShapeNode *shadowSkinShapeNode = static_cast<nShadowSkinShapeNode*>(createdNode);
 
             if (numMaterials > 1)
-                shadowSkinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../../skinanimator", skelIndex).Get());
+                shadowSkinShapeNode->SetSkinAnimator(nMaxBoneManager::Instance()->GetSkinAnimatorName("../../skinanimator", skelIndex).Get());
             else
-                shadowSkinShapeNode->SetSkinAnimator(GetSkinAnimatorName("../skinanimator", skelIndex).Get());
+                shadowSkinShapeNode->SetSkinAnimator(nMaxBoneManager::Instance()->GetSkinAnimatorName("../skinanimator", skelIndex).Get());
         }
-    }
-}
-
-//-----------------------------------------------------------------------------
-/**
-*/
-nString nMaxMesh::GetSkinAnimatorName(const char* baseName, int skelIndex) 
-{
-    n_assert(baseName);
-    nString name(baseName);
-    if (skelIndex != -1) 
-    {
-        name.AppendInt(skelIndex);
     }
     else
     {
-        name.AppendInt(0);
+        nMaxBoneManager::Instance()->BuildAttachmentNode(inode, createdNode, numMaterials);
     }
-    return name;
 }
 
 //-----------------------------------------------------------------------------
