@@ -42,7 +42,7 @@ public:
     void SetActiveWindowColor(const vector4& c);
     /// get the active window color
     const vector4& GetActiveWindowColor() const;
-    /// set the innactive window color
+    /// set the inactive window color
     void SetInactiveWindowColor(const vector4& c);
     /// get the inactive window color
     const vector4& GetInactiveWindowColor() const;

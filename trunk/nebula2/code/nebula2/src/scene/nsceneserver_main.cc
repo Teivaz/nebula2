@@ -465,13 +465,13 @@ nSceneServer::SplitNodes()
                     // If later other cameras are used this must be fixed. A way must be found
                     // to decide if 2 cameras are the same, or creating different rendertarget results.
 
-                    // check if we alread have a camera using the same renderpath section
+                    // check if we already have a camera using the same renderpath section
                     int c;
                     bool uniqueCamera = true;
                     for (c = 0; c < this->cameraArray.Size(); c++)
                     {
                         Group& group = this->groupArray[this->cameraArray[c]];
-                        nAbstractCameraNode* existingCamera = (nAbstractCameraNode*) group.sceneNode;
+                        nAbstractCameraNode* existingCamera = (nAbstractCameraNode*)group.sceneNode;
                         if (existingCamera->GetRenderPathSection() == newCamera->GetRenderPathSection())
                         {
                             uniqueCamera = false;
@@ -565,12 +565,12 @@ nSceneServer::CompareNodes(const ushort* i1, const ushort* i2)
 	{
 		// (closest first)
         if (diff < 0.001f)      return -1;
-		else if (diff > 0.001f) return 1;
+        if (diff > 0.001f)      return 1;
     }
 	else if (sortingOrder == nRpPhase::BackToFront)
     {
         if (diff > 0.001f)      return -1;
-        else if (diff < 0.001f) return 1;
+        if (diff < 0.001f)      return 1;
     }
 
     // nodes are identical
@@ -604,8 +604,8 @@ nSceneServer::CompareShadowLights(const LightInfo* i1, const LightInfo* i2)
     float intensity2 = n_saturate(dist2.len() / range2);
     float diff = intensity1 - intensity2;
     if (diff < 0.001f)      return -1;
-    else if (diff > 0.001f) return 1;
-    else                    return 0;
+    if (diff > 0.001f)      return 1;
+    return 0;
 }
 
 //------------------------------------------------------------------------------

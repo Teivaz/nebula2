@@ -36,7 +36,7 @@ Query::~Query()
     given, the entire table contents will be returned.
 
     If attributes are used in where or result that does not exists
-    as colum of the table the function return false.
+    as column of the table the function return false.
 */
 void
 Query::BuildSelectStatement()

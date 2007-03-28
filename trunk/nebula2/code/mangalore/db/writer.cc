@@ -82,12 +82,12 @@ Writer::Close()
     nSqlDatabase* sqlDatabase = Server::Instance()->GetSqlDatabase();
     n_assert(0 != sqlDatabase);
 
-    // cleanup the current table entrys if requested
+    // cleanup the current table entries if requested
     if (this->flushTable)
     {
         if (sqlDatabase->HasTable(this->tableName))
         {
-            // delete all existing entrys in the table
+            // delete all existing entries in the table
             sqlDatabase->DeleteRow(this->tableName, "");
         }
     }

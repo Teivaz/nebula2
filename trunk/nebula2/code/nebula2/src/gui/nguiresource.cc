@@ -82,4 +82,3 @@ nGuiResource::GetRelUvRect()
 
     return this->relUvRect;
 }
-

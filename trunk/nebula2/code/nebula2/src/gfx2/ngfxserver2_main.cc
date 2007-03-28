@@ -994,7 +994,7 @@ nGfxServer2::BreakLines(const nString& inText, const rectangle& rect, nString& o
     n_assert(!inText.IsEmpty());
     n_assert(this->refFont->IsValid());
 
-    // text lenght
+    // text length
     const int textLength = inText.Length();
     n_assert(textLength > 0);
 

@@ -52,7 +52,7 @@ public:
     nGuiWindow* NewWindow(const char* className, bool visible);
     /// create a new skin
     nGuiSkin* NewSkin(const char* skinName);
-    /// immediatly release all windows under the current root window
+    /// immediately release all windows under the current root window
     void DiscardWindows(const char* className);
     /// find window of given class under root window
     nGuiWindow* FindWindowByClass(const char* className, nGuiWindow* curWindow);
@@ -100,7 +100,7 @@ public:
     void DrawBrush(const rectangle& r, nGuiBrush& brush);
     /// compute brush size in screen space, assume 1:1 texel/pixel mapping
     vector2 ComputeScreenSpaceBrushSize(const char* brushName);
-    /// return true iff the named brush exists in the current skin
+    /// return true if the named brush exists in the current skin
     bool BrushExists(const char* brushName);
     /// push clipping rectangle into stack
     void PushClipRect(rectangle& cr);

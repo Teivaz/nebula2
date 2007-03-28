@@ -81,7 +81,7 @@ nDynamicMesh::Initialize(nGfxServer2::PrimitiveType primType,
             n_assert(rsrcBaseName.Length() < 64);
             char resName[128];
             strcpy(resName, rsrcBaseName.Get());
-            int charIndex = (int) strlen(resName);
+            int charIndex = (int)strlen(resName);
             if (vertexComponents & nMesh2::Coord)       resName[charIndex++] = 'a';
             if (vertexComponents & nMesh2::Normal)      resName[charIndex++] = 'b';
             if (vertexComponents & nMesh2::Tangent)     resName[charIndex++] = 'c';
@@ -270,8 +270,7 @@ nDynamicMesh::End(int numVertices)
     n_assert(!this->indexedRendering);
 
     nGfxServer2* gfxServer = nGfxServer2::Instance();
-    nMesh2* mesh = this->refMesh.get();
-    mesh->UnlockVertices();
+    this->refMesh->UnlockVertices();
     if (0 != numVertices)
     {
         gfxServer->SetVertexRange(0, numVertices);

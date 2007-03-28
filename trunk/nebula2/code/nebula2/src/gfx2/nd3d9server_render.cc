@@ -720,7 +720,7 @@ nD3D9Server::SetRenderTarget(int index, nTexture2* t)
     HRESULT hr;
     if (t)
     {
-        nD3D9Texture* d3d9Tex = (nD3D9Texture*) t;
+        nD3D9Texture* d3d9Tex = (nD3D9Texture*)t;
         IDirect3DSurface9* renderTarget = d3d9Tex->GetRenderTarget();
         IDirect3DSurface9* depthStencil = d3d9Tex->GetDepthStencil();
         if (renderTarget)
@@ -770,7 +770,7 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
     n_assert(this->d3d9Device && this->inBeginScene);
     HRESULT hr;
 
-    nD3D9Shader* shader = (nD3D9Shader*) this->GetShader();
+    nD3D9Shader* shader = (nD3D9Shader*)this->GetShader();
     n_assert(shader);
 
     // get primitive type and number of primitives
@@ -874,16 +874,14 @@ nD3D9Server::DrawIndexedNS(PrimitiveType primType)
     }
     else
     {
-        // do single instance rendering
-        HRESULT hr;
-
         // get primitive type and number of primitives
         D3DPRIMITIVETYPE d3dPrimType;
         int d3dNumPrimitives = this->GetD3DPrimTypeAndNumIndexed(primType, d3dPrimType);
 
         this->refShader->CommitChanges();
 
-	    hr = this->d3d9Device->DrawIndexedPrimitive(
+        // do single instance rendering
+        HRESULT hr = this->d3d9Device->DrawIndexedPrimitive(
             d3dPrimType,
             0,
             this->vertexRangeFirst,
