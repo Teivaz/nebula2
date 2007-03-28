@@ -61,7 +61,7 @@ nTimeServer::ResetTime()
     QueryPerformanceCounter((LARGE_INTEGER*)&(this->time_diff));
 #elif defined(__LINUX__) || defined(__MACOSX__)
     struct timeval tv;
-    gettimeofday(&tv,NULL);
+    gettimeofday(&tv, NULL);
     this->time_diff = tv2micro(tv);
 #else
 #error "Method not implemented!"
@@ -139,7 +139,7 @@ nTimeServer::StartTime()
         this->stopped = false;
 
 #   ifdef __WIN32__
-        LONGLONG time,td;
+        LONGLONG time, td;
         QueryPerformanceCounter((LARGE_INTEGER*)&time);
         td = time - this->time_stop;
         this->time_diff += td;
@@ -164,31 +164,27 @@ double
 nTimeServer::GetTime()
 {
     if (this->lock_delta_t > 0.0) return this->lock_time;
-    else {
-#       ifdef __WIN32__
-        LONGLONG time, freq;
-        QueryPerformanceCounter((LARGE_INTEGER*)&time);
-        if (this->stopped) time = this->time_stop;
-        QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
-        LONGLONG td = time - this->time_diff;
-        double d_time = ((double)td) / ((double)freq);
-        return d_time;
-        return 0.0;
-    }
+#   ifdef __WIN32__
+    LONGLONG time, freq;
+    QueryPerformanceCounter((LARGE_INTEGER*)&time);
+    if (this->stopped) time = this->time_stop;
+    QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+    LONGLONG td = time - this->time_diff;
+    double d_time = ((double)td) / ((double)freq);
+    return d_time;
 #   elif defined(__LINUX__) || defined(__MACOSX__)
-        long long int time;
-        long long int td;
-        double d_time;
-        if (this->stopped) time = this->time_stop;
-        else {
-            struct timeval tv;
-            gettimeofday(&tv,NULL);
-            time = tv2micro(tv);
-        }
-        td = time - this->time_diff;
-        d_time = ((double)td) / N_MICROSEC_FLOAT;
-        return d_time;
+    long long int time;
+    long long int td;
+    double d_time;
+    if (this->stopped) time = this->time_stop;
+    else {
+        struct timeval tv;
+        gettimeofday(&tv,NULL);
+        time = tv2micro(tv);
     }
+    td = time - this->time_diff;
+    d_time = ((double)td) / N_MICROSEC_FLOAT;
+    return d_time;
 #   else
 #error "Method not implemented!"
 #   endif
@@ -280,7 +276,7 @@ void nTimeServer::DisableFrameTime()
 double nTimeServer::GetFrameTime()
 {
     if (this->frame_enabled) return this->frame_time;
-    else                     return this->GetTime();
+    return this->GetTime();
 }
 
 //------------------------------------------------------------------------------

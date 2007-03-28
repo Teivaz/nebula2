@@ -600,5 +600,3 @@ nSQLite3Database::EndTransaction()
         n_error("nSQLite3Database::DeleteRow(): sqlite3_exec() failed with '%s'", sqlite3_errmsg(this->sqliteHandle));
     }
 }
-
-

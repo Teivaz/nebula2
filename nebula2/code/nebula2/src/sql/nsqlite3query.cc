@@ -207,5 +207,3 @@ nSQLite3Query::GetResultAsString() const
 {
     return nString("NOT IMPLEMENTED YET");
 }
-
-

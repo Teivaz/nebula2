@@ -120,7 +120,7 @@ nGuiServer::NewWindow(const char* className, bool visible)
     {
         kernelServer->PushCwd(this->refGui.get());
     }
-    nGuiWindow* window = (nGuiWindow*) kernelServer->New(className, windowName);
+    nGuiWindow* window = (nGuiWindow*)kernelServer->New(className, windowName);
     kernelServer->PopCwd();
     if (window)
     {
@@ -298,7 +298,7 @@ nGuiServer::SetRootWindow(const char* name)
     nGuiWindow* window = 0;
     if (name)
     {
-        window = (nGuiWindow*) this->refGui->Find(name);
+        window = (nGuiWindow*)this->refGui->Find(name);
         if (!window)
         {
             n_error("nGuiServer: window '%s' not found!", name);
@@ -356,14 +356,14 @@ nGuiServer::Trigger()
         nGuiWindow* rootWindow = this->refCurrentRootWindow.get();
 
         // check for dismissed windows from the last frame, and release them
-        nGuiWidget* curWidget = (nGuiWidget*) rootWindow->GetHead();
+        nGuiWidget* curWidget = (nGuiWidget*)rootWindow->GetHead();
         nGuiWidget* nextWidget;
         while (curWidget)
         {
-            nextWidget = (nGuiWidget*) curWidget->GetSucc();
+            nextWidget = (nGuiWidget*)curWidget->GetSucc();
             if (curWidget->IsA(this->guiWindowClass))
             {
-                nGuiWindow* curWindow = (nGuiWindow*) curWidget;
+                nGuiWindow* curWindow = (nGuiWindow*)curWidget;
                 if (curWindow->IsDismissed())
                 {
                     if (curWindow->IsShown())
@@ -379,7 +379,7 @@ nGuiServer::Trigger()
         // check for invalid listener references (listeners which
         // have disappeared and did not unregister themselves)
         nArray<nRef<nGuiWidget> >::iterator iter = this->eventListeners.Begin();
-        for (; iter != this->eventListeners.End();)
+        while (iter != this->eventListeners.End())
         {
             if (!iter->isvalid())
             {
@@ -584,7 +584,7 @@ nGuiServer::DrawTexture(const rectangle& rect, const rectangle& uvRect, const ve
 
     if (this->GetClipRect(clipRect))
     {
-        // get intersection of brush rectangle and clipping recttangle
+        // get intersection of brush rectangle and clipping rectangle
         rectMesh = clipRect * rect;
 
         // check if rectangles really intersect
@@ -763,7 +763,7 @@ nGuiServer::Render()
             {
                 if (!this->refMouseCursor.isvalid())
                 {
-                    this->refMouseCursor = (nGuiMouseCursor*) this->refGui->Find("GuiMouseCursor");
+                    this->refMouseCursor = (nGuiMouseCursor*)this->refGui->Find("GuiMouseCursor");
                 }
                 if (this->refMouseCursor.isvalid())
                 {
@@ -1215,7 +1215,7 @@ nGuiServer::ComputeScreenSpaceBrushSize(const char* brushName)
 
 //-----------------------------------------------------------------------------
 /**
-    Returns true iff the named brush exists in the current skin
+    Returns true if the named brush exists in the current skin
 */
 bool
 nGuiServer::BrushExists(const char* brushName)
@@ -1402,4 +1402,3 @@ nGuiServer::PushClipRect(rectangle& cr)
         this->clipRectStack.Append(cr);
     }
 }
-

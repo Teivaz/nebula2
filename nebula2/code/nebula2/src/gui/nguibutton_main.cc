@@ -141,4 +141,3 @@ nGuiButton::Render()
     }
     return false;
 }
-

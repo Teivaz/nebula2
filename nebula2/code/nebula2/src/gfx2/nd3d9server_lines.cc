@@ -30,7 +30,7 @@ nD3D9Server::DrawLines3d(const vector3* vertexList, int numVertices, const vecto
     n_assert(this->d3dxLine);
     D3DCOLOR d3dColor = N_COLORVALUE(color.x, color.y, color.z, color.w);
     const matrix44& modelViewProj = this->GetTransform(nGfxServer2::ModelViewProjection);
-    HRESULT hr = this->d3dxLine->DrawTransform((CONST D3DXVECTOR3*) vertexList, numVertices, (CONST D3DXMATRIX*) &modelViewProj, d3dColor);
+    HRESULT hr = this->d3dxLine->DrawTransform((CONST D3DXVECTOR3*)vertexList, numVertices, (CONST D3DXMATRIX*)&modelViewProj, d3dColor);
     n_dxtrace(hr, "ID3DXLine::DrawTransform() failed!");
 }
 
