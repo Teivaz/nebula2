@@ -14,7 +14,7 @@
 #include "scene/ntransformnode.h"
 #include "scene/nlodnode.h"
 #include "scene/nskynode.h"
-
+#include "scene/nattachmentnode.h"
 
 
 //-----------------------------------------------------------------------------
@@ -67,6 +67,9 @@ nSceneNode* nMaxDummy::Export(INode* inode)
             transformNode = static_cast<nTransformNode*>(CreateNebulaObject("ntransformnode", 
                                                                             inode->GetName()));
             createdNode = transformNode;
+
+            // if it needs attachment node in its hierarchy, it creates attachmentnode - createnode hierarchy.
+            nMaxBoneManager::Instance()->BuildAttachmentNode(inode, createdNode, 0);
         }
     }
     
@@ -286,7 +289,6 @@ nMaxDummy::ExportSkyState(INode *inode, TiXmlHandle &xmlHandle, const char* para
             
             const char* elementName = child->Attribute("value");
             this->elemOfSkyState = elementName;
-            
         }
 
         child = xmlHandle.FirstChild(paramName).FirstChild("stateTime").Child("", 0).Element();

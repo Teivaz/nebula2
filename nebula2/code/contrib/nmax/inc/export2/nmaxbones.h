@@ -37,6 +37,8 @@
 #include "util/nstring.h"
 #include <map>
 
+class nSceneNode;
+
 //---------------------------------------------------------------------------
 class nMaxBoneManager
 {
@@ -95,6 +97,12 @@ public:
     int GetSkelForNode(INode* inode);
 
     const nString& GetAnimPath() const;
+
+    ///
+    void BuildAttachmentNode(INode* inode, nSceneNode* createdNode, int numMaterials);
+
+    ///
+    nString GetSkinAnimatorName(const char* baseName, int skelIndex);
 
 protected:
     // @name Helper functions to collect bones in the scene.

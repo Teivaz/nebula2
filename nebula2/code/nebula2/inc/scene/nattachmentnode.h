@@ -15,6 +15,10 @@
     world space matrix of the bone origin offset by the specified transformations.
 
     Please note that nAttachmentNode assumes its parent is the target nSkinShapeNode.
+
+    -28-Mar-07  kims  Changed to be enable to export a max object which is under 
+                      a bone. Thank Cho Jun Heung for the patch.
+
 */
 #include "scene/nscenenode.h"
 #include "scene/ntransformnode.h"
@@ -40,35 +44,22 @@ public:
     virtual bool RenderTransform(nSceneServer* sceneServer, nRenderContext* renderContext, const matrix44& parentMatrix);
 
     /// updates the final transformation, combing local matrix with joint matrix data if necessary
-    virtual void UpdateFinalTransform();
-
-    const matrix44& GetFinalTransform();
-
+    virtual void UpdateJointTransform(nRenderContext* renderContext);
+    /// set the skin animator
+    void SetSkinAnimator(const char* path);
+    /// get the skin animator
+    const char* GetSkinAnimator() const;
     /// specifies the target joint by name
-    virtual void SetJointByName(const char* jointName);
+    void SetJointByName(const char* jointName);
     /// specifies the target joint by index
-    virtual void SetJointByIndex(unsigned int newIndex);
+    void SetJointByIndex(unsigned int newIndex);
+    ///
+    int GetJointByIndex() const;
 
 protected:
-    matrix44 jointMatrix, finalMatrix;
-    bool isFinalDirty, isJointSet;
     int jointIndex;
+    nDynAutoRef<nSkinAnimator> refSkinAnimator;
 };
-
-//------------------------------------------------------------------------------
-/**
-    Get the final transformation matrix that represents the bone's position in object space
-
-    @return the transformation matrix requested
-*/
-inline
-const matrix44&
-nAttachmentNode::GetFinalTransform()
-{
-    this->UpdateFinalTransform();
-
-    return this->finalMatrix;
-}
 
 //------------------------------------------------------------------------------
 #endif

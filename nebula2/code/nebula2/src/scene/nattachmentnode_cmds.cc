@@ -5,6 +5,8 @@
 #include "scene/nattachmentnode.h"
 #include "kernel/npersistserver.h"
 
+static void n_setskinanimator(void* slf, nCmd* cmd);
+static void n_getskinanimator(void* slf, nCmd* cmd);
 static void n_setjointbyname(void* slf, nCmd* cmd);
 static void n_setjointbyindex(void* slf, nCmd* cmd);
 
@@ -29,9 +31,47 @@ void
 n_initcmds(nClass* cl)
 {
     cl->BeginCmds();
+    cl->AddCmd("v_setskinanimator_s",  'SSKA', n_setskinanimator);
+    cl->AddCmd("s_getskinanimator_v",  'GSKA', n_getskinanimator);
     cl->AddCmd("v_setjointbyname_s",   'SJBN', n_setjointbyname);
     cl->AddCmd("v_setjointbyindex_i",  'SJBI', n_setjointbyindex);
     cl->EndCmds();
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    setskinanimator
+    @input
+    s(RelPath)
+    @output
+    v
+    @info
+    Set relative path to a skin animator object.
+*/
+static void
+n_setskinanimator(void* slf, nCmd* cmd)
+{
+    nAttachmentNode* self = (nAttachmentNode*) slf;
+    self->SetSkinAnimator(cmd->In()->GetS());
+}
+
+//------------------------------------------------------------------------------
+/**
+    @cmd
+    getskinanimator
+    @input
+    v
+    @output
+    s(RelPath)
+    @info
+    Get relative path to a skin animator object.
+*/
+static void
+n_getskinanimator(void* slf, nCmd* cmd)
+{
+    nAttachmentNode* self = (nAttachmentNode*) slf;
+    cmd->Out()->SetS(self->GetSkinAnimator());
 }
 
 //------------------------------------------------------------------------------
@@ -82,14 +122,23 @@ nAttachmentNode::SaveCmds(nPersistServer* ps)
 {
     if (nTransformNode::SaveCmds(ps))
     {
-        if (this->isJointSet)
-        {
-            nCmd* cmd;
+        nCmd* cmd;
 
+        //--- setskinanimator ---
+        if( this->GetSkinAnimator() )
+        {
+            cmd = ps->GetCmd(this, 'SSKA');
+            cmd->In()->SetS(this->GetSkinAnimator());
+            ps->PutCmd(cmd);
+        }
+
+        if (this->GetJointByIndex() != -1)
+        {
             cmd = ps->GetCmd(this, 'SJBI');
             cmd->In()->SetI(this->jointIndex);
             ps->PutCmd(cmd);
         }
+
         return true;
     }
     return false;

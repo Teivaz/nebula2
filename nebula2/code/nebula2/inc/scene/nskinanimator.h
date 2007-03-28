@@ -96,6 +96,10 @@ public:
     //void SetCharacterSetIndexHandle(int handle);
     /// get index of character set variable in render context
     int GetCharacterSetIndexHandle() const;
+    ///
+    int GetCharacterVarIndexHandle() const;
+    ///
+    int GetJointByName(const char* jointName);
 
 protected:
     /// character set factory function
@@ -118,8 +122,19 @@ protected:
     uint frameId;
     nClass* skinShapeNodeClass;
     nClass* shadowSkinShapeNodeClass;
+    nClass* attachmentNodeClass;
     nAutoRef<nAnimationServer> refAnimServer;
 };
+
+//------------------------------------------------------------------------------
+/**
+*/
+inline
+int
+nSkinAnimator::GetCharacterVarIndexHandle() const
+{
+    return this->characterVarIndex;
+}
 
 //------------------------------------------------------------------------------
 /**
