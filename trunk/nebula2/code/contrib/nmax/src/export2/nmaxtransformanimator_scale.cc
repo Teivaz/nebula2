@@ -89,8 +89,8 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
 
         vector3 scale;
         scale.x = key.val.s.x;
-        scale.y = key.val.s.y;
-        scale.z = key.val.s.z;
+        scale.y = key.val.s.z;
+        scale.z = key.val.s.y;
 
         float time = key.time * SECONDSPERTICK;
 
@@ -133,8 +133,8 @@ int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
 
         vector3 scale;
         scale.x = key.val.s.x;
-        scale.y = key.val.s.y;
-        scale.z = key.val.s.z;
+        scale.y = key.val.s.z;
+        scale.z = key.val.s.y;
 
         float time = key.time * SECONDSPERTICK;
 
@@ -174,8 +174,8 @@ int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys,
 
         vector3 scale;
         scale.x = key.val.s.x;
-        scale.y = key.val.s.y;
-        scale.z = key.val.s.z;
+        scale.y = key.val.s.z;
+        scale.z = key.val.s.y;
 
         float time = key.time * SECONDSPERTICK;
 
@@ -222,8 +222,8 @@ int nMaxTransformAnimator::ExportSampledScale(nTransformAnimator* animator)
         //HACK: note that we only support uniform scale at the moment.
         vector3 scale;
         scale.x = sampleKey.pos.x;
-        scale.y = sampleKey.pos.y;
-        scale.z = sampleKey.pos.z;
+        scale.y = sampleKey.pos.z;
+        scale.z = sampleKey.pos.y;
 
         // There should be any value at 0.0 sec, the start time.
         // If the value is not exist the second key value can be used for it 
