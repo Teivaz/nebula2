@@ -163,114 +163,142 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
                                     int sampleRate, nMaxControlType type, bool optimize)
 {
     n_assert(control);
-
+    nArray<TimeValue> sampleTimes;
     TimeValue t;
     TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
     TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+    TimeValue delta = GetTicksPerFrame() * sampleRate;
+    int i;
 
-    int  delta	= GetTicksPerFrame() * sampleRate;
-
-    int numKeys = 0;
-
-    for (t=start; t<end; t+=delta, numKeys++)
+    // create sample times array
+    if (control->IsKeyable())
     {
-        nMaxSampleKey sampleKey;
-
-        Interval interv;
-        if (type == nMaxFloat)
+        // Control *pKPC = control->GetPositionController();
+        IKeyControl *keyControl = GetKeyControlInterface(control);
+        n_assert(keyControl);
+        IKey *key = (IKey *)n_malloc(keyControl->GetKeySize());
+        int numKeys = keyControl->GetNumKeys();
+        size_t lastOutTanType = size_t(-1);
+        TimeValue lastKeyTime = start;
+        for (i = 0; i < numKeys; i++)
         {
-            float value;
-            control->GetValue(t, &value, interv, CTRL_ABSOLUTE);
+            Interval interv;
+            keyControl->GetKey(i, key);
+            size_t inTanType = GetInTanType(key->flags);
+            switch(lastOutTanType)
+            {
+            case BEZKEY_SMOOTH:
+                sampleTimes.AppendArray(SampleTime(lastKeyTime, key->time, delta));
+                break;
+            case BEZKEY_LINEAR:
+                if (inTanType == BEZKEY_LINEAR) // both linear tangent type, could ignore them
+                    break;
+                else
+                    sampleTimes.AppendArray(SampleTime(lastKeyTime, key->time, delta));
+                break;
+            case BEZKEY_STEP:
+                // last out tangent type is step, so just ignore the current in tangent type
+                sampleTimes.Append(n_max(lastKeyTime, key->time - 1));
+                break;
+            case BEZKEY_FAST:
+            case BEZKEY_SLOW:
+            case BEZKEY_USER:
+            case BEZKEY_FLAT:
+                sampleTimes.AppendArray(SampleTime(lastKeyTime, key->time, delta));
+                break;
+            case size_t(-1):
+                break;
+            default:
+                n_assert2(0, "Invalid tangent type.");
+                break;
+            }
+            
+            // append the key time
+            sampleTimes.Append(key->time);
 
-            sampleKey.fval = value;
+            lastOutTanType = GetOutTanType(key->flags);
+            lastKeyTime = key->time;
         }
-
-        if (type == nMaxPoint3)
-        {
-            Point3 value;
-            control->GetValue(t, &value, interv);
-
-            sampleKey.pos = value;
-        }
-
-        if (type == nMaxPoint4)
-        {
-            Point4 value;
-            control->GetValue(t, &value, interv);
-
-            sampleKey.pt4 = value;
-        }
-
-        sampleKey.time = t * SECONDSPERTICK;
-
-        sampleKeyArray.Append(sampleKey);
+        n_free(key);
     }
-
+    else
+    {
+        // generate fixed period sample times
+        sampleTimes.AppendArray(SampleTime(start, end, delta));
+    }
     // sample last key for exact looping.
-    //if (t != end)
+    sampleTimes.Append(end);
+
+    // get samples
+    int numKeys = sampleTimes.Size();
+    TimeValue lastKeyTime = start - 1;
+    for (i = 0; i < numKeys; i++)
     {
-        t = end;
+        t = sampleTimes[i];
+        if (t == lastKeyTime) // ignore same time
+            continue;
+
+        lastKeyTime = t;
 
         nMaxSampleKey sampleKey;
-
         Interval interv;
-        if (type == nMaxFloat)
+        switch(type)
         {
-            float value;
-            control->GetValue(t, &value, interv, CTRL_ABSOLUTE);
+        case nMaxFloat:
+            {
+                float value;
+                control->GetValue(t, &value, interv, CTRL_ABSOLUTE);
 
-            sampleKey.fval = value;
-        }
+                sampleKey.fval = value;
+            }
+            break;
+        case nMaxPoint3:
+            {
+                Point3 value;
+                control->GetValue(t, &value, interv);
 
-        if (type == nMaxPoint3)
-        {
-            Point3 value;
-            control->GetValue(t, &value, interv);
+                sampleKey.pos = value;
+            }
+            break;
+        case nMaxPoint4:
+            {
+                Point4 value;
+                control->GetValue(t, &value, interv);
 
-            sampleKey.pos = value;
-        }
-
-        if (type == nMaxPoint4)
-        {
-            Point4 value;
-            control->GetValue(t, &value, interv);
-
-            sampleKey.pt4 = value;
+                sampleKey.pt4 = value;
+            }
+            break;
         }
 
         sampleKey.time = t * SECONDSPERTICK;
-
         sampleKeyArray.Append(sampleKey);
     }
 
-    if (optimize)
+    if (optimize && sampleKeyArray.Size() > 2)
     {
         // remove redundant keys
         nArray<nMaxSampleKey> tmpKeyArray;
 
-        for(int i = 0; i < sampleKeyArray.Size(); ++i)
+        // first and last keys are important
+        tmpKeyArray.Append(sampleKeyArray.Front());
+
+        for(i = 1; i < sampleKeyArray.Size() - 1; ++i)
         {
-            if((i == 0) || (i == sampleKeyArray.Size() - 1))
+            // current key is important if keys on either side are different to it.
+            const nMaxSampleKey &previousKey = sampleKeyArray[i - 1];
+            const nMaxSampleKey &currentKey = sampleKeyArray[i];
+            const nMaxSampleKey &nextKey = sampleKeyArray[i + 1];
+            if(/*!AreKeysEqual(currentKey, previousKey, type) || 
+                !AreKeysEqual(currentKey, nextKey, type) ||*/
+                !AreKeysLerp(currentKey, previousKey, nextKey, type))
             {
-                // first and last keys are important
-                tmpKeyArray.Append(sampleKeyArray[i]);
-            }
-            else
-            {
-                // current key is important if keys on either side are different to it.
-                nMaxSampleKey previousKey = sampleKeyArray[i - 1];
-                nMaxSampleKey currentKey = sampleKeyArray[i];
-                nMaxSampleKey nextKey = sampleKeyArray[i + 1];
-                if(/*!AreKeysEqual(currentKey, previousKey, type) || 
-                   !AreKeysEqual(currentKey, nextKey, type) ||*/
-                   !AreKeysLerp(currentKey, previousKey, nextKey, type))
-                {
-                    tmpKeyArray.Append(currentKey);
-                }
+                tmpKeyArray.Append(currentKey);
             }
         }
+        // first and last keys are important
+        tmpKeyArray.Append(sampleKeyArray.Back());
 
-        sampleKeyArray.Clear();
+        // sampleKeyArray.Clear(); // seems no need to clear it
         sampleKeyArray = tmpKeyArray;
     }
 }
@@ -344,25 +372,25 @@ bool nMaxControl::AreKeysLerp(const nMaxSampleKey& key, const nMaxSampleKey& key
     {
     case nMaxPoint4:
         {
-            vector4 p(key.pt4.x, key.pt4.y, key.pt4.z, key.pt4.w);
-            vector4 p1(key1.pt4.x, key1.pt4.y, key1.pt4.z, key1.pt4.w);
-            vector4 p2(key2.pt4.x, key2.pt4.y, key2.pt4.z, key2.pt4.w);
+            const vector4 p(key.pt4.x, key.pt4.y, key.pt4.z, key.pt4.w);
+            const vector4 p1(key1.pt4.x, key1.pt4.y, key1.pt4.z, key1.pt4.w);
+            const vector4 p2(key2.pt4.x, key2.pt4.y, key2.pt4.z, key2.pt4.w);
             return AreKeysLerp(p, p1, p2, lerpVal);
         }
         break;
     case nMaxRot:
         {
-            vector4 p(key.rot.x, key.rot.y, key.rot.z, key.rot.w);
-            vector4 p1(key1.rot.x, key1.rot.y, key1.rot.z, key1.rot.w);
-            vector4 p2(key2.rot.x, key2.rot.y, key2.rot.z, key2.rot.w);
+            const vector4 p(key.rot.x, key.rot.y, key.rot.z, key.rot.w);
+            const vector4 p1(key1.rot.x, key1.rot.y, key1.rot.z, key1.rot.w);
+            const vector4 p2(key2.rot.x, key2.rot.y, key2.rot.z, key2.rot.w);
             return AreKeysLerp(p, p1, p2, lerpVal);
         }
         break;
     case nMaxScale:
         {
-            vector3 p(key.scale.x, key.scale.y, key.scale.z);
-            vector3 p1(key1.scale.x, key1.scale.y, key1.scale.z);
-            vector3 p2(key2.scale.x, key2.scale.y, key2.scale.z);
+            const vector3 p(key.scale.x, key.scale.y, key.scale.z);
+            const vector3 p1(key1.scale.x, key1.scale.y, key1.scale.z);
+            const vector3 p2(key2.scale.x, key2.scale.y, key2.scale.z);
             return AreKeysLerp(p, p1, p2, lerpVal);
         }
         break;
@@ -370,9 +398,9 @@ bool nMaxControl::AreKeysLerp(const nMaxSampleKey& key, const nMaxSampleKey& key
         // nMaxPos is acctually the same with nMaxPoint3
     case nMaxPoint3:
         {
-            vector3 p(key.pos.x, key.pos.y, key.pos.z);
-            vector3 p1(key1.pos.x, key1.pos.y, key1.pos.z);
-            vector3 p2(key2.pos.x, key2.pos.y, key2.pos.z);
+            const vector3 p(key.pos.x, key.pos.y, key.pos.z);
+            const vector3 p1(key1.pos.x, key1.pos.y, key1.pos.z);
+            const vector3 p2(key2.pos.x, key2.pos.y, key2.pos.z);
             return AreKeysLerp(p, p1, p2, lerpVal);
         }
         break;
@@ -396,6 +424,7 @@ bool nMaxControl::AreKeysLerp(const nMaxSampleKey& key, const nMaxSampleKey& key
     }
     return false;
 }
+
 //-----------------------------------------------------------------------------
 /**
     Get Controller type with given Control.
@@ -430,4 +459,22 @@ nMaxControl::Type nMaxControl::GetType(Control *control)
     default:
         return Unknown;
     }
+}
+
+//-----------------------------------------------------------------------------
+/**
+*/
+nArray<TimeValue> nMaxControl::SampleTime(TimeValue start, TimeValue end, TimeValue delta)
+{
+    n_assert(start < end && delta > 0);
+    nArray<TimeValue> array;
+    for (TimeValue t = start + delta / 2; t < end; t += delta)
+        array.Append(t);
+
+    // delta is too big, but we will generate at least one time
+    if (array.Empty())
+    {
+        array.Append((start + end) / 2);
+    }
+    return array;
 }

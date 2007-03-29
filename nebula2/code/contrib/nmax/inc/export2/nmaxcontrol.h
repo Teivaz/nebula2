@@ -61,37 +61,37 @@ struct nMaxSampleKey
 class nMaxControl
 {
 public:
-	enum Type 
-	{
-		TCBFloat,
-		TCBPosition,
-		TCBRotation,
-		TCBScale,
+    enum Type 
+    {
+        TCBFloat,
+        TCBPosition,
+        TCBRotation,
+        TCBScale,
         TCBPoint3,
-		HybridFloat,
-		HybridPosition,
-		HybridRotation,
-		HybridScale,
+        HybridFloat,
+        HybridPosition,
+        HybridRotation,
+        HybridScale,
         HybridPoint3,
-		LinearFloat,
-		LinearPosition,
-		LinearRotation,
-		LinearScale,
+        LinearFloat,
+        LinearPosition,
+        LinearRotation,
+        LinearScale,
         EulerRotation,
         Unknown,
-	};
+    };
     static const float key_tolerance;
 
     nMaxControl();
     virtual ~nMaxControl();
 
     static void GetSampledKey(INode* node, nArray<nMaxSampleKey> & sampleKeyArray, 
-                           int sampleRate, nMaxControlType type, bool optimize = false);
+                              int sampleRate, nMaxControlType type, bool optimize = false);
 
     static void GetSampledKey(Control* control, nArray<nMaxSampleKey> & sampleKeyArray, 
-        int sampleRate, nMaxControlType type, bool optimize = false);
+                              int sampleRate, nMaxControlType type, bool optimize = false);
 
-	static Type GetType(Control *control);
+    static Type GetType(Control *control);
 
     static bool AreKeysEqual(const nMaxSampleKey& key1, const nMaxSampleKey& key2, nMaxControlType type);
 
@@ -100,6 +100,7 @@ public:
 protected:
     static bool AreKeysLerp(const vector4& key, const vector4& key1, const vector4& key2, float lerpVal);
     static bool AreKeysLerp(const vector3& key, const vector3& key1, const vector3& key2, float lerpVal);
+    static nArray<TimeValue> SampleTime(TimeValue start, TimeValue end, TimeValue delta);
 };
 //-----------------------------------------------------------------------------
 #endif

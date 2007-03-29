@@ -9,6 +9,7 @@
 #include "export2/nmaxuvanimator.h"
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxoptions.h"
+#include "export2/nmaxcustattrib.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -240,6 +241,28 @@ nAnimator* nMaxUVAnimator::Export(Texmap* texmap)
         }
 
         createdAnimator->SetChannel("time");
+
+#if 0
+        // FIXME: kaiaki:i don't know how to attach custom attributes on texture maps.
+        // check if the channel was set in custom attributes
+        nMaxCustAttrib custAttrib;
+        TiXmlDocument xmlDoc;
+        if (custAttrib.Convert(texmap, xmlDoc))
+        {
+            // xmlDoc.SaveFile("c:\\animatorCustAttrib.xml");
+            TiXmlHandle h(&xmlDoc);
+            TiXmlElement* child = h.FirstChild().FirstChild("channel").Child("", 0).Element();
+            if (child)
+            {
+                const char *channel = child->Attribute("value");
+                if (channel)
+                {
+                    createdAnimator->SetChannel(channel);
+                }
+            }
+        }
+#endif
+
         //FIXME: 'oneshot' loop type should be available too.
         createdAnimator->SetLoopType(nAnimLoopType::Loop);
         return createdAnimator;
