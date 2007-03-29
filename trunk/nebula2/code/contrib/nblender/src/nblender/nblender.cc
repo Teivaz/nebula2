@@ -10,7 +10,7 @@ nNebulaUsePackage(nnetwork);
 nNebulaUsePackage(ndirect3d9);
 nNebulaUsePackage(ndinput8);
 nNebulaUsePackage(npythonserver);
-nNebulaUsePackage(nscriptabletools);
+nNebulaUsePackage(ntoollib);
 
 void
 nPythonRegisterPackages(nKernelServer* kernelServer)
@@ -20,7 +20,7 @@ nPythonRegisterPackages(nKernelServer* kernelServer)
     kernelServer->AddPackage(ndirect3d9);
     kernelServer->AddPackage(ndinput8);
     kernelServer->AddPackage(npythonserver);
-    kernelServer->AddPackage(nscriptabletools);
+    kernelServer->AddPackage(ntoollib);
 }
 
 extern "C" {
