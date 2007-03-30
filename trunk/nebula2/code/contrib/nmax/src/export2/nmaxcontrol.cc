@@ -93,7 +93,7 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
     }
 
     // sample last key for exact looping.
-    if (t != end)
+    // end key should be inserted to get correct animation.
     {
         t = end;
 
