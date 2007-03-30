@@ -27,13 +27,13 @@ nAnimOptionsCA = attributes "nAnimOptions"
             include "nebula2/utilz.ms"
 
             projDir = nGetProjDir();
-            animAssign = nebula2.call "/sys/servers/file2.getassign" "anims"
-            animAssign = nebula2.call "/sys/servers/file2.manglepath" animAssign
+            animAssign = nebula2.call "/sys/servers/file2.manglepath" "anims:"
             animAssign = nReplaceSlash animAssign[1]
 
             animPath = getSavePath initialDir:animAssign caption:"Select a directory where the animation file to be exported."
             if animPath != undefined then 
             (
+                animPath = nReplaceSlash animPath
                 findIndex = findString animPath animAssign
                 if findIndex != undefined  then 
                 (
@@ -43,8 +43,34 @@ nAnimOptionsCA = attributes "nAnimOptions"
                 )
                 else
                 (
-                    format "% is not subdirectory of %s" animPath animAssign
+                    format "(%) is not subdirectory of (%)\n" animPath animAssign
                 )
+            )
+        )
+
+        on edtAnimDirSetting entered newval do
+        (
+            include "nebula2/utilz.ms"
+
+            projDir = nGetProjDir();
+            -- NOTE: nebula2.call returns array type
+            animAssign = nebula2.call "/sys/servers/file2.manglepath" "anims:"
+            animAssign = nReplaceSlash animAssign[1]
+
+            animPath = nebula2.call "/sys/servers/file2.manglepath" newval
+            animPath = animPath[1]
+            findIndex = findString animPath animAssign
+            if findIndex != undefined  then 
+            (
+                subDir = substring animPath (animAssign.count + 2) animPath.count
+                exportAnimDir = "anims:" + subDir
+                edtAnimDirSetting.text = exportAnimDir
+            )
+            else
+            (
+                format "(%) is not subdirectory of (%)\n" animPath animAssign
+                exportAnimDir = ""
+                edtAnimDirSetting.text = ""
             )
         )
     )

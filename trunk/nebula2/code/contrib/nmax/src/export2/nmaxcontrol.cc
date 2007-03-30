@@ -197,6 +197,10 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
         {
             Interval interv;
             keyControl->GetKey(i, key);
+
+            if( key->time < start)
+                continue;
+
             size_t inTanType = GetInTanType(key->flags);
             switch(lastOutTanType)
             {
@@ -239,6 +243,14 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
         // generate fixed period sample times
         sampleTimes.AppendArray(SampleTime(start, end, delta));
     }
+
+    // insert start frame
+    if( sampleTimes[0] > start )
+    {
+        TimeValue t = start;
+        sampleTimes.Insert(0, t);
+    }
+
     // sample last key for exact looping.
     sampleTimes.Append(end);
 
@@ -283,7 +295,7 @@ void nMaxControl::GetSampledKey(Control* control, nArray<nMaxSampleKey> & sample
             break;
         }
 
-        sampleKey.time = t * SECONDSPERTICK;
+        sampleKey.time = (t - start) * SECONDSPERTICK;
         sampleKeyArray.Append(sampleKey);
     }
 
