@@ -87,7 +87,7 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
         if (type == nMaxScale || type == nMaxTM)
             sampleKey.scale = ap.k;
 
-        sampleKey.time = t * SECONDSPERTICK;
+        sampleKey.time = (t - start) * SECONDSPERTICK;
       
         sampleKeyArray.Append(sampleKey);
     }
@@ -100,6 +100,19 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
         nMaxSampleKey sampleKey;
   
         sampleKey.tm = nMaxTransform::GetLocalTM(inode, t);
+
+        // transform scale
+        float scale = nMaxOptions::Instance()->GetGeomScaleValue();
+        if (scale != 0.0f)
+        {
+            Point3 scaleVal(scale, scale, scale);
+
+            Matrix3 scaleTM;
+            scaleTM.IdentityMatrix();
+            scaleTM.Scale(scaleVal);
+
+            sampleKey.tm = sampleKey.tm * scaleTM;
+        }
 
         AffineParts ap;
 
@@ -114,7 +127,7 @@ void nMaxControl::GetSampledKey(INode* inode, nArray<nMaxSampleKey> & sampleKeyA
         if (type == nMaxScale || type == nMaxTM)
             sampleKey.scale = ap.k;
 
-        sampleKey.time  = t * SECONDSPERTICK;
+        sampleKey.time  = (t - start) * SECONDSPERTICK;
 
         sampleKeyArray.Append(sampleKey);
     }

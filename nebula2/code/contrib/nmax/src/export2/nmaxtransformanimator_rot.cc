@@ -7,6 +7,7 @@
 #include "export2/nmaxoptions.h"
 #include "export2/nmaxcontrol.h"
 #include "export2/nmaxtransformanimator.h"
+#include "export2/nmaxinterface.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -93,28 +94,64 @@ int nMaxTransformAnimator::ExportHybridRotation(IKeyControl* ikc, int numKeys,
     n_maxlog(Warning, "The bezier controller is used for rotation. \
                       Only rotation value will be exported.");
 
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
+    nArray<IBezQuatKey> keyArray;
+
+    // collect key
     for (int i=0; i<numKeys; i++) 
     {
         IBezQuatKey key;
         ikc->GetKey(i, &key);
 
+        if( key.time < start || end < key.time )
+            continue;
+
+        keyArray.Append(key);
+    }
+
+    // start key
+    if( keyArray.Size() == 0 || keyArray.Front().time > start )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(start), &ap );
+
         quaternion rot;
-        rot.x = -key.val.x;
-        rot.y = key.val.z;
-        rot.z = key.val.y;
-        rot.w = -key.val.w;
+        rot.x = -ap.q.x;
+        rot.y = ap.q.z;
+        rot.z = ap.q.y;
+        rot.w = -ap.q.w;
 
-        float time = key.time * SECONDSPERTICK;
+        animator->AddQuatKey(0.0f, rot);
+    }
 
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f &&
-            animator->GetNumQuatKeys() == 0)
-        {
-            animator->AddQuatKey(0.0f, rot);
-        }
+    // key array
+    for( int i = 0; i < keyArray.Size(); ++i )
+    {
+        quaternion rot;
+        rot.x = -keyArray[i].val.x;
+        rot.y = keyArray[i].val.z;
+        rot.z = keyArray[i].val.y;
+        rot.w = -keyArray[i].val.w;
+
+        float time = (keyArray[i].time - start) * SECONDSPERTICK;
+        animator->AddQuatKey(time, rot);
+    }
+
+    // end key
+    if( keyArray.Size() == 0 || keyArray.Back().time != end )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(end), &ap );
+
+        quaternion rot;
+        rot.x = -ap.q.x;
+        rot.y = ap.q.z;
+        rot.z = ap.q.y;
+        rot.w = -ap.q.w;
+
+        float time =  (end - start) * SECONDSPERTICK;
 
         animator->AddQuatKey(time, rot);
     }
@@ -133,28 +170,65 @@ int nMaxTransformAnimator::ExportHybridRotation(IKeyControl* ikc, int numKeys,
 int nMaxTransformAnimator::ExportLinearRotation(IKeyControl* ikc, int numKeys,
                                                 nTransformAnimator* animator)
 {
-    for (int i=0; i<numKeys; i++)
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
+
+    nArray<ILinRotKey> keyArray;
+
+    // collect key
+    for (int i=0; i<numKeys; i++) 
     {
-        ILinRotKey key; //quaternion value
+        ILinRotKey key;
         ikc->GetKey(i, &key);
 
+        if( key.time < start || end < key.time )
+            continue;
+
+        keyArray.Append(key);
+    }
+
+    // start key
+    if( keyArray.Size() == 0 || keyArray.Front().time > start )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(start), &ap );
+
         quaternion rot;
-        rot.x = -key.val.x;
-        rot.y = key.val.z;
-        rot.z = key.val.y;
-        rot.w = -key.val.w;
+        rot.x = -ap.q.x;
+        rot.y = ap.q.z;
+        rot.z = ap.q.y;
+        rot.w = -ap.q.w;
 
-        float time = key.time * SECONDSPERTICK;
+        animator->AddQuatKey(0.0f, rot);
+    }
 
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f &&
-            animator->GetNumQuatKeys() == 0)
-        {
-            animator->AddQuatKey(0.0f, rot);
-        }
+    // key array
+    for( int i = 0; i < keyArray.Size(); ++i )
+    {
+        quaternion rot;
+        rot.x = -keyArray[i].val.x;
+        rot.y = keyArray[i].val.z;
+        rot.z = keyArray[i].val.y;
+        rot.w = -keyArray[i].val.w;
+
+        float time = (keyArray[i].time - start) * SECONDSPERTICK;
+        animator->AddQuatKey(time, rot);
+    }
+
+    // end key
+    if( keyArray.Size() == 0 || keyArray.Back().time != end )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(end), &ap );
+
+        quaternion rot;
+        rot.x = -ap.q.x;
+        rot.y = ap.q.z;
+        rot.z = ap.q.y;
+        rot.w = -ap.q.w;
+
+        float time =  (end - start) * SECONDSPERTICK;
 
         animator->AddQuatKey(time, rot);
     }
@@ -190,6 +264,9 @@ int nMaxTransformAnimator::ExportSampledKeyRotation(nTransformAnimator* animator
 
     nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxRot, true);
 
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
     // assign sample keys to animator.
     for (int i=0; i<sampleKeyArray.Size(); i++)
     {
@@ -202,16 +279,6 @@ int nMaxTransformAnimator::ExportSampledKeyRotation(nTransformAnimator* animator
         rot.w = -(sampleKey.rot.w);
 
         float time = sampleKey.time;
-
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f &&
-            animator->GetNumQuatKeys() == 0)
-        {
-            animator->AddQuatKey(0.0f, rot);
-        }
 
         animator->AddQuatKey(time, rot);
     }
