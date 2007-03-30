@@ -8,6 +8,7 @@
 #include "export2/nmaxtransformanimator.h"
 #include "export2/nmaxtransform.h"
 #include "export2/nmaxoptions.h"
+#include "export2/nmaxinterface.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
@@ -82,27 +83,61 @@ int nMaxTransformAnimator::ExportTCBScale(IKeyControl* ikc, int numKeys,
 {
     n_maxlog(Warning, "The TCB controller is used for scaling. Only scale value will be exported.");
 
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
+    nArray<ITCBScaleKey> keyArray;
+
+    // collect key
     for (int i=0; i<numKeys; i++)
     {
         ITCBScaleKey key;
         ikc->GetKey(i, &key);
 
+        if( key.time < start || end < key.time )
+            continue;
+
+        keyArray.Append(key);
+    }
+
+    // start key
+    if( keyArray.Size() == 0 || keyArray.Front().time > start )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(start), &ap );
+
         vector3 scale;
-        scale.x = key.val.s.x;
-        scale.y = key.val.s.z;
-        scale.z = key.val.s.y;
+        scale.x = ap.k.x;
+        scale.y = ap.k.z;
+        scale.z = ap.k.y;
 
-        float time = key.time * SECONDSPERTICK;
+        animator->AddScaleKey(0.0f, scale);
+    }
 
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
-        {
-            animator->AddScaleKey(0.0f, scale);
-        }
+    // key array
+    for( int i = 0; i < keyArray.Size(); ++i )
+    {
+        vector3 scale;
+        scale.x = keyArray[i].val.s.x;
+        scale.y = keyArray[i].val.s.z;
+        scale.z = keyArray[i].val.s.y;
 
+        float time = (keyArray[i].time - start) * SECONDSPERTICK;
+        animator->AddScaleKey(time, scale);
+    }
+
+    // end key
+    if( keyArray.Size() == 0 || keyArray.Back().time != end )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(end), &ap );
+
+        vector3 scale;
+        scale.x = ap.k.x;
+        scale.y = ap.k.z;
+        scale.z = ap.k.y;
+
+        float time =  (end - start) * SECONDSPERTICK;
         animator->AddScaleKey(time, scale);
     }
 
@@ -126,29 +161,64 @@ int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
 {
     n_maxlog(Warning, "Warning: The bezier controller is used for scaling. Only scale value will be exported.");
 
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
+    nArray<IBezScaleKey> keyArray;
+
+    // collect key
     for (int i=0; i<numKeys; i++)
     {
         IBezScaleKey key;
         ikc->GetKey(i, &key);
 
+        if( key.time < start || end < key.time )
+            continue;
+
+        keyArray.Append(key);
+    }
+
+     // start key
+    if( keyArray.Size() == 0 || keyArray.Front().time > start )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(start), &ap );
+
         vector3 scale;
-        scale.x = key.val.s.x;
-        scale.y = key.val.s.z;
-        scale.z = key.val.s.y;
+        scale.x = ap.k.x;
+        scale.y = ap.k.z;
+        scale.z = ap.k.y;
 
-        float time = key.time * SECONDSPERTICK;
+        animator->AddScaleKey(0.0f, scale);
+    }
 
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
-        {
-            animator->AddScaleKey(0.0f, scale);
-        }
+    // key array
+    for( int i = 0; i < keyArray.Size(); ++i )
+    {
+        vector3 scale;
+        scale.x = keyArray[i].val.s.x;
+        scale.y = keyArray[i].val.s.z;
+        scale.z = keyArray[i].val.s.y;
 
+        float time = (keyArray[i].time - start) * SECONDSPERTICK;
         animator->AddScaleKey(time, scale);
     }
+
+    // end key
+    if( keyArray.Size() == 0 || keyArray.Back().time != end )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(end), &ap );
+
+        vector3 scale;
+        scale.x = ap.k.x;
+        scale.y = ap.k.z;
+        scale.z = ap.k.y;
+
+        float time =  (end - start) * SECONDSPERTICK;
+        animator->AddScaleKey(time, scale);
+    }
+
 
     return numKeys;
 }
@@ -167,29 +237,64 @@ int nMaxTransformAnimator::ExportHybridScale(IKeyControl* ikc, int numKeys,
 int nMaxTransformAnimator::ExportLinearScale(IKeyControl* ikc, int numKeys, 
                                              nTransformAnimator* animator)
 {
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
+    nArray<ILinScaleKey> keyArray;
+
+    // collect key
     for (int i=0; i<numKeys; i++)
     {
         ILinScaleKey key;
         ikc->GetKey(i, &key);
 
+        if( key.time < start || end < key.time )
+            continue;
+
+        keyArray.Append(key);
+    }
+
+    // start key
+    if( keyArray.Size() == 0 || keyArray.Front().time > start )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(start), &ap );
+
         vector3 scale;
-        scale.x = key.val.s.x;
-        scale.y = key.val.s.z;
-        scale.z = key.val.s.y;
+        scale.x = ap.k.x;
+        scale.y = ap.k.z;
+        scale.z = ap.k.y;
 
-        float time = key.time * SECONDSPERTICK;
+        animator->AddScaleKey(0.0f, scale);
+    }
 
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
-        {
-            animator->AddScaleKey(0.0f, scale);
-        }
+    // key array
+    for( int i = 0; i < keyArray.Size(); ++i )
+    {
+        vector3 scale;
+        scale.x = keyArray[i].val.s.x;
+        scale.y = keyArray[i].val.s.z;
+        scale.z = keyArray[i].val.s.y;
 
+        float time = (keyArray[i].time - start) * SECONDSPERTICK;
         animator->AddScaleKey(time, scale);
     }
+
+    // end key
+    if( keyArray.Size() == 0 || keyArray.Back().time != end )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(end), &ap );
+
+        vector3 scale;
+        scale.x = ap.k.x;
+        scale.y = ap.k.z;
+        scale.z = ap.k.y;
+
+        float time =  (end - start) * SECONDSPERTICK;
+        animator->AddScaleKey(time, scale);
+    }
+
 
     return numKeys;
 }
@@ -224,15 +329,6 @@ int nMaxTransformAnimator::ExportSampledScale(nTransformAnimator* animator)
         scale.x = sampleKey.pos.x;
         scale.y = sampleKey.pos.z;
         scale.z = sampleKey.pos.y;
-
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f && animator->GetNumScaleKeys() == 0)
-        {
-            animator->AddScaleKey(0.0f, scale);
-        }
 
         animator->AddScaleKey(time, scale);
     }

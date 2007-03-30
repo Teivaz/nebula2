@@ -254,7 +254,7 @@ bool nMaxBoneManager::BuildBones(INode* node)
         if (this->noteTracksArray[i].GetNumStates() <= 0) 
         {
             //FIXME: fix to get proper first frame.
-            int firstframe   = 0;
+            int firstframe   = nMaxInterface::Instance()->GetAnimStartTime() /  GetTicksPerFrame();
             int duration     = nMaxInterface::Instance()->GetNumFrames();
             float fadeintime = 0.0f;
             this->noteTracksArray[i].AddAnimState(firstframe, duration, fadeintime);
@@ -412,8 +412,7 @@ void nMaxBoneManager::ReconstructBoneHierarchy(int parentID, int skeleton, INode
                                                nArray<INode*> &boneNodeArray) 
 {
     Bone bone;
-
-    bone.localTransform = nMaxTransform::GetLocalTM(node, 0);
+    bone.localTransform = nMaxTransform::GetLocalTM(node, nMaxInterface::Instance()->GetAnimStartTime());
     bone.parentID       = parentID;
     bone.id             = this->skeletonsArray[skeleton].Size();
     bone.name           = nMaxUtil::CorrectName(nString(node->GetName()));
@@ -859,11 +858,16 @@ bool nMaxBoneManager::Export(int skelIndex, const char* animFileName)
         TimeValue stateStart = animState.firstFrame * GetTicksPerFrame();
         TimeValue stateEnd   = animState.duration * GetTicksPerFrame();
 
+        stateStart -= nMaxInterface::Instance()->GetAnimStartTime();
+
         int numClips = animState.clipArray.Size();
 
         int firstKey     = animState.firstFrame / sampleRate;
         int numStateKeys = animState.duration / sampleRate;
         int numClipKeys  = numStateKeys / numClips;
+
+        int startKey    = (nMaxInterface::Instance()->GetAnimStartTime() / GetTicksPerFrame() ) / sampleRate;
+        firstKey -= startKey;
 
         // do not add anim group, if the number of the state key or the clip keys are 0.
         if (numStateKeys <= 0 || numClipKeys <= 0)

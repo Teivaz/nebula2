@@ -8,12 +8,14 @@
 #include "export2/nmaxtransformanimator.h"
 #include "export2/nmaxtransform.h"
 #include "export2/nmaxoptions.h"
+#include "export2/nmaxinterface.h"
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
 #include "kernel/ntypes.h"
 #include "util/narray.h"
 #include "scene/ntransformanimator.h"
+
 
 //-----------------------------------------------------------------------------
 /**
@@ -127,26 +129,66 @@ int nMaxTransformAnimator::ExportHybridPosition(IKeyControl* ikc, int numKeys,
 int nMaxTransformAnimator::ExportLinearPosition(IKeyControl* ikc, int numKeys, 
                                                  nTransformAnimator* animator)
 {
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
+    nArray<ILinPoint3Key> keyArray;
+
+    // collect key
     for (int i=0; i<numKeys; i++)
     {
         ILinPoint3Key key;
         ikc->GetKey(i, &key);
 
+        if( key.time < start || end < key.time )
+            continue;
+
+        keyArray.Append(key);
+    }
+
+    // start key
+    if( keyArray.Size() == 0 || keyArray.Front().time > start )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(start), &ap );
+
         vector3 pos;
-        pos.x = -(key.val.x);
-        pos.y = key.val.z;
-        pos.z = key.val.y;
+        pos.x = -ap.t.x;
+        pos.y = ap.t.z;
+        pos.z = ap.t.y;
 
-        float time = key.time * SECONDSPERTICK;
+        pos *= nMaxOptions::Instance()->GetGeomScaleValue();
 
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f && animator->GetNumPosKeys() == 0)
-        {
-            animator->AddPosKey(0.0f, pos);
-        }
+        animator->AddPosKey(0.0f, pos);
+    }
+
+    for( int i = 0; i < keyArray.Size(); ++i )
+    {
+        vector3 pos;
+        pos.x = -(keyArray[i].val.x);
+        pos.y = keyArray[i].val.z;
+        pos.z = keyArray[i].val.y;
+
+        pos *= nMaxOptions::Instance()->GetGeomScaleValue();
+
+        float time = (keyArray[i].time - start) * SECONDSPERTICK;
+        animator->AddPosKey(time, pos);
+    }
+
+    // end key
+    if( keyArray.Size() == 0 || keyArray.Back().time != end )
+    {
+        AffineParts ap;
+        decomp_affine( maxNode->GetNodeTM(end), &ap );
+
+        vector3 pos;
+        pos.x = -ap.t.x;
+        pos.y = ap.t.z;
+        pos.z = ap.t.y;
+
+        pos *= nMaxOptions::Instance()->GetGeomScaleValue();
+        
+        float time =  (end - start) * SECONDSPERTICK;
 
         animator->AddPosKey(time, pos);
     }
@@ -170,26 +212,20 @@ int nMaxTransformAnimator::ExportSampledPosition(nTransformAnimator* animator)
 
     nMaxControl::GetSampledKey(this->maxNode, sampleKeyArray, sampleRate, nMaxPos, true);
 
+    TimeValue start = nMaxInterface::Instance()->GetAnimStartTime();
+    TimeValue end   = nMaxInterface::Instance()->GetAnimEndTime();
+
     // assign sample keys to animator.
     for (int i=0; i<sampleKeyArray.Size(); i++)
     {
         nMaxSampleKey sampleKey = sampleKeyArray[i];
-
-        float time = sampleKey.time;
 
         vector3 pos;
         pos.x = -(sampleKey.pos.x);
         pos.y = sampleKey.pos.z;
         pos.z = sampleKey.pos.y;
 
-        // There should be any value at 0.0 sec, the start time.
-        // If the value is not exist the second key value can be used for it 
-        // because 3dsmax uses the second key instead of the first 
-        // if the first one is not exist.
-        if (time > 0.0f && animator->GetNumPosKeys() == 0)
-        {
-            animator->AddPosKey(0.0f, pos);
-        }
+        float time = sampleKey.time;
 
         animator->AddPosKey(time, pos);
     }
