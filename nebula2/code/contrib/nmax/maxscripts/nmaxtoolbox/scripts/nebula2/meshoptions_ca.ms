@@ -95,13 +95,13 @@ nMeshOptionsCA = attributes "nMeshOptions"
             include "nebula2/utilz.ms"
 
             projDir = nGetProjDir();
-            meshAssign = nebula2.call "/sys/servers/file2.getassign" "meshes"
-            meshAssign = nebula2.call "/sys/servers/file2.manglepath" meshAssign
+            meshAssign = nebula2.call "/sys/servers/file2.manglepath" "meshes:"
             meshAssign = nReplaceSlash meshAssign[1]
 
             meshPath = getSavePath initialDir:meshAssign caption:"Select a directory where the mesh to be exported."
             if meshPath != undefined then
             (
+                meshPath = nReplaceSlash meshPath
                 findIndex = findString meshPath meshAssign
                 if findIndex != undefined  then 
                 (
@@ -111,8 +111,34 @@ nMeshOptionsCA = attributes "nMeshOptions"
                 )
                 else
                 (
-                    format "% is not subdirectory of %s" meshPath meshAssign
+                    format "(%) is not subdirectory of (%)\n" meshPath meshAssign
                 )
+            )
+        )
+
+        on edtMeshDirSetting entered newval do
+        (
+            include "nebula2/utilz.ms"
+
+            projDir = nGetProjDir();
+            -- NOTE: nebula2.call returns array type
+            meshAssign = nebula2.call "/sys/servers/file2.manglepath" "meshes:"
+            meshAssign = nReplaceSlash meshAssign[1]
+
+            meshPath = nebula2.call "/sys/servers/file2.manglepath" newval
+            meshPath = meshPath[1]
+            findIndex = findString meshPath meshAssign
+            if findIndex != undefined  then 
+            (
+                subDir = substring meshPath (meshAssign.count + 2) meshPath.count
+                exportMeshDir = "meshes:" + subDir
+                edtMeshDirSetting.text = exportMeshDir
+            )
+            else
+            (
+                format "(%) is not subdirectory of (%)\n" meshPath meshAssign
+                exportMeshDir = ""
+                edtMeshDirSetting.text = ""
             )
         )
 

@@ -36,17 +36,56 @@ utility nUtilityOption "Nebula2 Scene Options" rolledup:false
     
     on btnGfxDirSetting pressed do
     (
-        gfxPath = getSavePath caption:"Select a directory where the .n2 gfx file to be exported."
+        include "nebula2/utilz.ms"
+
+        projDir = nGetProjDir();
+        gfxAssign = nebula2.call "/sys/servers/file2.manglepath" "gfxlib:"
+        gfxAssign = nReplaceSlash gfxAssign[1]
+
+        gfxPath = getSavePath initialDir:gfxlibAssign caption:"Select a directory where the .n2 gfx file to be exported."
         if gfxPath != undefined then 
         (
-            edtGfxDirSetting.text = gfxPath
-            rootnode.gfxdir = gfxPath
+            gfxPath = nReplaceSlash gfxPath
+            findIndex = findString gfxPath gfxAssign
+            if findIndex != undefined  then 
+            (
+                subDir = substring gfxPath (gfxAssign.count + 2) gfxPath.count
+                exportDir = "gfxlib:" + subDir
+                edtGfxDirSetting.text = exportDir
+                rootnode.gfxdir = exportDir
+            )
+            else
+            (
+                format "(%) is not subdirectory of (%)\n" gfxPath gfxAssign
+            )
         )
     )
-    on edtGfxDirSetting changed newstr do
+
+    on edtGfxDirSetting entered newstr do
     (
-        edtGfxDirSetting.text = newstr
-        rootnode.gfxdir = newstr
+        include "nebula2/utilz.ms"
+
+        projDir = nGetProjDir();
+        -- NOTE: nebula2.call returns array type
+        gfxAssign = nebula2.call "/sys/servers/file2.manglepath" "gfxlib:"
+        gfxAssign = nReplaceSlash gfxAssign[1]
+
+        gfxPath = nebula2.call "/sys/servers/file2.manglepath" newstr
+        gfxPath = gfxPath[1]
+        findIndex = findString gfxPath gfxAssign
+        if findIndex != undefined  then 
+        (
+            subDir = substring gfxPath (gfxAssign.count + 2) gfxPath.count
+            exportDir = "gfxlib:" + subDir
+            edtGfxDirSetting.text = exportDir
+            rootnode.gfxdir = exportDir
+        )
+        else
+        (
+            format "(%) is not subdirectory of (%)\n" gfxPath gfxAssign
+            edtGfxDirSetting.text = ""
+            rootnode.gfxdir = ""
+        )
     )
 
     on chkUseSameDirSetting changed value do

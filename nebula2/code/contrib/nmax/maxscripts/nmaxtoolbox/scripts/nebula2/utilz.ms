@@ -50,9 +50,9 @@ fn nReplaceSlash str =
     result = ""
     for i = 1 to str.count do
     (
-        if( str[i] == "/" ) then
+        if( str[i] == "\\" ) then
         (
-            result += "\\"
+            result += "/"
         )
         else
         (

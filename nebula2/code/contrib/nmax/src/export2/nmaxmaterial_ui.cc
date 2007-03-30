@@ -609,22 +609,103 @@ AddSetDirDlg(TiXmlElement* elemParam)
     // button handler scrpt code
     tmp.Format("\t\ton btn%s%s pressed do\n\t\t(\n", uiPrefix.Get(), uiname.Get());
     uiScript += tmp;
-    
-    tmp.Format("\t\t\tmapPath = getSavePath caption:\"Select a directory where the %s to be exported.\"\n", caption.Get());
+    tmp.Format("\t\t\tinclude \"nebula2/utilz.ms\"\n");
     uiScript += tmp;
-    
-    tmp.Format("\t\t\tif mapPath != undefined then \n\t\t\t(\n");
+    tmp.Format("\t\t\tprojDir = nGetProjDir();\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\ttexAssign = nebula2.call \"/sys/servers/file2.manglepath\" \"textures:\"\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\ttexAssign = nReplaceSlash texAssign[1]\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\tmapPath = getSavePath initialDir:texAssign caption:\"Select a directory where the %s to be exported.\"\n", caption.Get());
+    uiScript += tmp;
+    tmp.Format("\t\t\tif mapPath != undefined then\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t(\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tmapPath = nReplaceSlash mapPath\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tfindIndex = findString mapPath texAssign\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tif findIndex != undefined  then \n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t(\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t\tsubDir = substring mapPath (texAssign.count + 2) mapPath.count\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t\texportDir = \"textuers:\" + subDir\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t\tedt%s%s.text = exportDir\n", uiPrefix.Get(), uiname.Get());
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t\tdirSetting%s = exportDir\n", uiname.Get());
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t)\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\telse\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t(\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t\tformat \"(%%) is not subdirectory of (%%)\\n\" mapPath texAssign\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\t)\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t)\n");
+    uiScript += tmp;
+    tmp.Format("\t\t)\n");
     uiScript += tmp;
 
-    //HACK: the string 'dirSetting' should be same with the string
-    //      which can be found in GenerateScript() function and
-    //      nMaxMaterial::GetNebulaMaterial() function.
-    //      code : dirSettngDiffmap0 = mapPath
-    tmp.Format("\t\t\t\tdirSetting%s = mapPath\n", uiname.Get());
+    // edit handler scrpt code
+    tmp.Format("\t\ton edt%s%s entered newstr do\n", uiPrefix.Get(), uiname.Get());
     uiScript += tmp;
-
-    // code : edtFldDiffMap0.text = mapPath
-    tmp.Format("\t\t\t\tedt%s%s.text = mapPath\n\t\t\t)\n\t\t)\n", uiPrefix.Get(), uiname.Get());
+    tmp.Format("\t\t(\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\tinclude \"nebula2/utilz.ms\"\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\tprojDir = nGetProjDir();\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t-- NOTE: nebula2.call returns array type\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\ttexAssign = nebula2.call \"/sys/servers/file2.manglepath\" \"textures:\"\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\ttexAssign = nReplaceSlash texAssign[1]\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\tmapPath = nebula2.call \"/sys/servers/file2.manglepath\" newstr\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\tmapPath = mapPath[1]\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\tfindIndex = findString mapPath texAssign\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\tif findIndex != undefined  then \n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t(\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tsubDir = substring mapPath (texAssign.count + 2) mapPath.count\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\texportDir = \"textures:\" + subDir\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tedt%s%s.text = exportDir\n", uiPrefix.Get(), uiname.Get());
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tdirSetting%s = exportDir\n", uiname.Get());
+    uiScript += tmp;
+    tmp.Format("\t\t\t)\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\telse\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t(\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tformat \"(%%) is not subdirectory of (%%)\\n\" mapPath texAssign\n");
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tedt%s%s.text = \"\"\n", uiPrefix.Get(), uiname.Get());
+    uiScript += tmp;
+    tmp.Format("\t\t\t\tdirSetting%s = \"\"\n", uiname.Get());
+    uiScript += tmp;
+    tmp.Format("\t\t\t)\n");
+    uiScript += tmp;
+    tmp.Format("\t\t)\n");
     uiScript += tmp;
 
     return uiScript;
@@ -1025,6 +1106,7 @@ nString AddEnvelopeCurve(const nString &shdName, const nString &shaderHandler, T
 
     return uiScript;
 }
+
 
 
 
