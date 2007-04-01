@@ -28,6 +28,18 @@ begintarget mangalore
         util
         vfx
     }
+    settargetdeps {
+        nkernel
+        nnebula
+        microtcl
+        ndinput8
+        ndirect3d9
+        ndsound
+        ndshow
+        ngui
+        nnetwork
+        ntoollib
+    }
 endtarget
 
 begintarget mcegui
