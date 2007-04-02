@@ -39,7 +39,7 @@ nKeyboardDevice::Export(nRoot* dir)
 void
 nKeyboardDevice::EmitButtonEvents(int btnNum, bool /*pressed*/)
 {
-    n_assert((btnNum >= 0) && (btnNum < this->numButtons));
+    n_assert((btnNum >= 0) && (btnNum < 256));
 
     // empty
 }
