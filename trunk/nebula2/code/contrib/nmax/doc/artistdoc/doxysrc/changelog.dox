@@ -4,6 +4,23 @@
     This section of the document lists the change history of The Nebula2 3dsmax
     Toolkit.
 
+    @section N2ChangeLog_2007_03 2006.03.
+    - Fixed to have correct animation range. Now only valid range of
+    animation frames are exported not force to export from 0 frame.
+    - Changed to be able to export all kind of dummy node.
+    - Changed to be able to export any dummy node under biped.
+    - Bug fixes and updated on asset path.
+    - Various improvements on curved control.
+    - Changed to extract custom attributes which are added to not by on the modifier. 
+    - various bug fixes.
+
+    @section N2ChangeLog_2007_03 2006.02.
+    - Changed to log handler system. Now it opens messagebox to show any
+    errors and messages.
+
+    @section N2ChangeLog_2007_03 2006.01.
+    - various bug fixes.
+
     @section N2ChangeLog_2006_12 2006.12.
     - Added "preferences" menu item. Now you can change mesh suffix or adjust
     viewer options.
