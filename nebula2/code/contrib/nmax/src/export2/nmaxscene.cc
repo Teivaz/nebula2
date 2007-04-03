@@ -717,22 +717,25 @@ bool nMaxScene::Postprocess()
         gfxObjFileName += nMaxUtil::RelacePathToAssign(nMaxUtil::Gfx, this->sceneDir, gfxname);
         gfxObjFileName += ".n2";
 
-        // begin merge of bbox.
+        // collect all child node
+        nArray<nRoot*> nodeArray;
+        CollectChildNode(exportNode, nodeArray);
 
+        // begin merge of bbox.
         // Merge all object's bounding boxes of the given scene.
         bbox3 mergeSceneBBox;
         mergeSceneBBox.begin_extend();
 
         // iterate all child node of the root node and retrieve its bounding box then merge.
-        for (nRoot *child = exportNode->GetHead(); child; child = child->GetSucc())
+        for( int i = 0; i < nodeArray.Size(); ++i )
         {
-            //FIXME: any other nscenenode derived class should be checked?
-            //bool checkNode = child->IsA("nshapenode") || child->IsA("nshadownode") || child->IsA("nshadowskinshapenode");
-            bool checkNode = child->IsA("ntransformnode");
+            nRoot* node = nodeArray[i];
+
+            bool checkNode = node->IsA("ntransformnode");
             if ( checkNode == false )
                 continue;
 
-            nShapeNode* sceneNode = (nShapeNode*)child;
+            nTransformNode* sceneNode = (nTransformNode*)node;
 
             matrix44 transform = sceneNode->GetTransform();
             bbox3 bbox = sceneNode->GetLocalBox();
@@ -1453,4 +1456,23 @@ void nMaxScene::ProcessOnSkyNode()
 
         }// end of for each sky elements.
     }// end of for each nebula objects.
+}
+
+//-----------------------------------------------------------------------------
+/**
+    recursive collect child  node
+*/
+void nMaxScene::CollectChildNode(nRoot* node, nArray<nRoot*>& array)
+{
+    n_assert(node);
+
+    nRoot* child = node->GetHead();
+    while( child )
+    {
+        array.Append(child);
+
+        CollectChildNode( child, array);
+
+        child = child->GetSucc();
+    }
 }
