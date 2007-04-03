@@ -115,6 +115,8 @@ protected:
     ///
     void AddDummyByType(nMaxDummy* dummy);
 
+    void CollectChildNode(nRoot* node, nArray<nRoot*>& array);
+
 protected:
     /// variable server
     nRef<nVariableServer> varServer;
