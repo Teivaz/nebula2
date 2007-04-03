@@ -378,70 +378,69 @@ void nMaxOptions::LoadSceneOptions()
     nMaxCustAttrib custAttrib;
 
     // HACK: sceneRoot is root node in the current 3dsmax viewport.
-    if (custAttrib.Convert(sceneRoot, xmlDoc))
-    {
-        TiXmlHandle xmlHandle(&xmlDoc);
-
-        // parameter block name for gfx directory setting.
-        const char* dirParamName = "SceneDirSetting";
-        TiXmlElement* e;
-        e = xmlHandle.FirstChild(dirParamName).Element();
-        if (e)
-        {
-            // find parameter with the given its name.
-            TiXmlElement* child;
-            child = xmlHandle.FirstChild(dirParamName).FirstChild("gfxDir").Child("", 0).Element();
-            if (child)
-            {
-                nString scenePath = child->Attribute("value");
-
-                // The directory parameter has "" for default string. It is absolutely necessary in Max6.
-                // Without that, the exporter is not usable as the panels that have those controls in them don't work.
-                if (scenePath == "")
-                {
-                    // The given scene (which to be exported) has already scene option custom attribute
-                    // but the directory is not specified so we just use default gfx assign value for it.
-                    // (the directory path which is specified in "Directory Setting Dialog".)
-                    this->sceneDir = nFileServer2::Instance()->ManglePath(nMaxOptions::Instance()->GetGfxLibAssign());
-                }
-                else
-                {
-                    this->sceneDir = nFileServer2::Instance()->ManglePath(scenePath);
-                }
-            }
-
-            child = xmlHandle.FirstChild(dirParamName).FirstChild("useSameDir").Child("", 0).Element();
-            if (child)
-            {
-                nString samePath = child->Attribute("value");
-                this->useSameDir = (samePath == "1") ? true:false;
-                if( this->useSameDir )
-                {
-                    nFileServer2* fileServer = nFileServer2::Instance();
-                    nString gfxPath = fileServer->GetAssign("gfxlib");
-                    gfxPath = nFileServer2::Instance()->ManglePath(gfxPath);
-
-                    nString exportPath = this->sceneDir.ExtractRange(gfxPath.Length(), sceneDir.Length() - gfxPath.Length());
-                    this->meshExportPath = fileServer->GetAssign("meshes");
-                    this->meshExportPath = nFileServer2::Instance()->ManglePath(this->meshExportPath);
-                    this->meshExportPath += exportPath;
-                    this->animExportPath  = fileServer->GetAssign("anims");
-                    this->animExportPath = nFileServer2::Instance()->ManglePath(this->animExportPath);
-                    this->animExportPath += exportPath;
-
-                    fileServer->MakePath(this->meshExportPath);
-
-                    if( nMaxBoneManager::Instance()->GetNumBones() > 0 )
-                    {
-                        fileServer->MakePath(this->animExportPath);
-                    }
-                }
-            }
-        }
-    }
-    else
+    if (!custAttrib.Convert(sceneRoot, xmlDoc))
     {
         n_maxlog(Low, "A scene option custom attribute is not specified.");
+        return;
+    }
+    TiXmlHandle xmlHandle(&xmlDoc);
+
+    // parameter block name for gfx directory setting.
+    const char* dirParamName = "SceneDirSetting";
+    TiXmlElement* e;
+    e = xmlHandle.FirstChild(dirParamName).Element();
+    if (!e)
+        return;
+
+    nFileServer2* fileServer = nFileServer2::Instance();
+
+    // find parameter with the given its name.
+    TiXmlElement* child;
+    child = xmlHandle.FirstChild(dirParamName).FirstChild("gfxDir").Child("", 0).Element();
+    if (child)
+    {
+        nString scenePath = child->Attribute("value");
+
+        // The directory parameter has "" for default string. It is absolutely necessary in Max6.
+        // Without that, the exporter is not usable as the panels that have those controls in them don't work.
+        if (scenePath.IsEmpty())
+        {
+            // The given scene (which to be exported) has already scene option custom attribute
+            // but the directory is not specified so we just use default gfx assign value for it.
+            // (the directory path which is specified in "Directory Setting Dialog".)
+            this->sceneDir = fileServer->ManglePath(nMaxOptions::Instance()->GetGfxLibAssign());
+        }
+        else
+        {
+            this->sceneDir = fileServer->ManglePath(scenePath);
+        }
+        fileServer->MakePath(this->sceneDir);
+    }
+
+    child = xmlHandle.FirstChild(dirParamName).FirstChild("useSameDir").Child("", 0).Element();
+    if (!child)
+        return;
+
+    nString samePath = child->Attribute("value");
+    this->useSameDir = samePath == "1";
+    if (this->useSameDir)
+    {
+        nString gfxPath = fileServer->ManglePath("gfxlib:");
+        nString exportPath = this->sceneDir.ExtractRange(gfxPath.Length(), sceneDir.Length() - gfxPath.Length());
+
+        this->meshExportPath = fileServer->GetAssign("meshes");
+        this->meshExportPath = fileServer->ManglePath(this->meshExportPath);
+        this->meshExportPath += exportPath;
+        this->animExportPath = fileServer->GetAssign("anims");
+        this->animExportPath = fileServer->ManglePath(this->animExportPath);
+        this->animExportPath += exportPath;
+
+        fileServer->MakePath(this->meshExportPath);
+
+        if( nMaxBoneManager::Instance()->GetNumBones() > 0 )
+        {
+            fileServer->MakePath(this->animExportPath);
+        }
     }
 }
 
