@@ -36,7 +36,7 @@
         <Shader name="multilayered" file="shaders:shaders.fx" />
         <Shader name="particle" file="shaders:shaders.fx" />
         <Shader name="particle2" file="shaders:shaders.fx" />
-        <Shader name="gui3d" file="shaders:shaders.fx" />
+        <Shader name="gui3d" file="shaders:gui.fx" />
         <Shader name="water" file="shaders:water.fx" />
         <!-- ASIM -->
         <Shader name="underwaterground" file ="shaders:asim.fx" />
@@ -53,7 +53,7 @@
         <Pass name="color" shader="passes" technique="tPassColor" clearColor="0.0 0.0 0.0 1.0" clearDepth="1.0" clearStencil="0">
 
             <Float4 name="FogDistances" variable="FogDistances" />
-            <Float4 name="FogColor" variable="FogColor" />\
+            <Float4 name="FogColor" variable="FogColor" />
 
             <Phase name="opaque_nolight_nofog" shader="phases" technique="tPhaseOpaqueNoLightNoFog" sort="FrontToBack" lightMode="Off">
                 <Sequence shader="default_nolight_nofog" technique="tStatic" />

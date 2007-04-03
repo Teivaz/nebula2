@@ -62,7 +62,7 @@ public:
     /// get the best supported feature set
     virtual FeatureSet GetFeatureSet();
     /// return true if vertex shader run in software emulation
-    //virtual bool AreVertexShadersEmulated();
+    virtual bool AreVertexShadersEmulated();
     /// get window handle
     virtual HWND GetAppHwnd() const;
     /// parent window handle

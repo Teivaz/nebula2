@@ -1,7 +1,7 @@
-#ifdef __WIN32__ 
+#ifdef __WIN32__
 //------------------------------------------------------------------------------
 //  win32 specific window handling
-//  07-Sep-2003 cubejk 
+//  07-Sep-2003 cubejk
 //------------------------------------------------------------------------------
 #include "opengl/nglserver2.h"
 #include "opengl/nglextensionserver.h"
@@ -18,7 +18,7 @@ ChooseAcceleratedPixelFormat(HDC hdc, CONST PIXELFORMATDESCRIPTOR* ppfd)
 {
     int pixelformat = ChoosePixelFormat(hdc, ppfd);
 
-    if (pixelformat == 0)
+    if (pixelformat != 0)
     {
         return pixelformat;
     }
@@ -40,56 +40,60 @@ ChooseAcceleratedPixelFormat(HDC hdc, CONST PIXELFORMATDESCRIPTOR* ppfd)
 
 //-----------------------------------------------------------------------------
 /**
+    history:
+     - 31-Mar-2007   je.a.le    modified
 */
 void
 nGLServer2::ContextOpen(void)
-{    
+{
     //n_assert(this->windowOpen);
     n_assert(this->hDC);
 
-    PIXELFORMATDESCRIPTOR pfd = 
+    glGetError();
+
+    PIXELFORMATDESCRIPTOR pfd =
     {
         sizeof(PIXELFORMATDESCRIPTOR),    // size of this pfd
         1,                                // version number
-        PFD_DRAW_TO_WINDOW |            // support window
+        PFD_DRAW_TO_WINDOW |              // support window
         PFD_DOUBLEBUFFER |                // support double buffering
-        PFD_SUPPORT_OPENGL,                // support OpenGL
+        PFD_SUPPORT_OPENGL,               // support OpenGL
         PFD_TYPE_RGBA,                    // RGBA type
-        32,                                // color depth /GetDeviceCaps(this->hDC,BITSPIXEL)/
-        0, 0, 0, 0, 0, 0,                // color bits/shifts
-        8, 0,                            // alpha bits/shifts
+        32,                               // color depth /GetDeviceCaps(this->hDC,BITSPIXEL)/
+        0, 0, 0, 0, 0, 0,                 // color bits/shifts
+        0, 0,                             // alpha bits/shifts
         0,                                // accum bits
-        0, 0, 0, 0,                        // r/g/b/a accum bits
-        24,                                // depth bits
-        8,                                // stencil bits
+        0, 0, 0, 0,                       // r/g/b/a accum bits
+        16,                               // depth bits
+        0,                                // stencil bits
         0,                                // auxiliary buffers
-        PFD_MAIN_PLANE,                    // main layer
+        PFD_MAIN_PLANE,                   // main layer
         0, 0, 0, 0                        // masks
     };
 
     PIXELFORMATDESCRIPTOR* pPFDtoUse;
 
     // let the user override the default pixel format
-    pPFDtoUse = &pfd; 
- 
+    pPFDtoUse = &pfd;
+
     int pixelformat;
 
     // First try to get a 24b depth buffer
     pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
 
     if (pixelformat == 0) {
-        
+
         // Now try a 16b depth buffer
         pPFDtoUse->cDepthBits = 16;
         pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
         if (pixelformat == 0) {
-        
+
             // Now try a 24b depth buffer without stencil
             pPFDtoUse->cDepthBits = 24;
             pPFDtoUse->cStencilBits = 0;
             pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
             if (pixelformat == 0) {
-                
+
                 // Now try a 16b depth buffer without stencil
                 pPFDtoUse->cDepthBits = 16;
                 pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
@@ -104,18 +108,18 @@ nGLServer2::ContextOpen(void)
                     // First try to get a 24b depth buffer
                     pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
                     if (pixelformat == 0) {
-        
+
                         // Now try a 16b depth buffer
                         pPFDtoUse->cDepthBits = 16;
                         pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
                         if (pixelformat == 0) {
-        
+
                             // Now try a 24b depth buffer without stencil
                             pPFDtoUse->cDepthBits = 24;
                             pPFDtoUse->cStencilBits = 0;
                             pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
                             if (pixelformat == 0) {
-                
+
                                 // Now try a 16b depth buffer without stencil
                                 pPFDtoUse->cDepthBits = 16;
                                 pixelformat = ChooseAcceleratedPixelFormat(this->hDC, pPFDtoUse);
@@ -155,7 +159,7 @@ nGLServer2::ContextOpen(void)
     {
         n_error("nGLServer2: wglCreateContext() failed!");
     }
-    
+
     // make it the calling thread's current rendering context
     if (!wglMakeCurrent(this->hDC, this->context))
     {
@@ -181,7 +185,7 @@ nGLServer2::ContextClose()
 
 //------------------------------------------------------------------------------
 /**
-    Set a new render target. This method must be called outside 
+    Set a new render target. This method must be called outside
     BeginScene()/EndScene() with a pointer to a nTexture2 object
     which must have been created as render target. A 0 pointer
     restores the original back buffer as render target.
@@ -197,7 +201,7 @@ nGLServer2::SetRenderTarget(int index, nTexture2* t)
     nGfxServer2::SetRenderTarget(index, t);
 
     BOOL res;
-    if (t)    
+    if (t)
     {
         nGLTexture* glTex = (nGLTexture*) t;
         res = wglMakeCurrent(glTex->hPBufferDC, glTex->hPBufferRC);
@@ -276,7 +280,7 @@ nGLServer2::EndScene()
     //// query statistics
     //this->QueryStatistics();
     //#endif
-    
+
     nGfxServer2::EndScene();
 }
 

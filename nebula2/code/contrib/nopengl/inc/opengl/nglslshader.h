@@ -133,6 +133,10 @@ private:
         nString  name;
         uint     listID;                          ///< states GLlist IDs to call with glCallList
         nArray<nGLSLPassParamVar> paramDpendentStates;
+
+        uint programObj;
+        uint vertShader;
+        uint fragShader;
     };
 
     struct nGLSLTechnique
