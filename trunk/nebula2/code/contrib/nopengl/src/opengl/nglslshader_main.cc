@@ -21,6 +21,9 @@
 
 nNebulaClass(nGLSLShader, "nshader2");
 
+//------------------------------------------------------------------------------
+/**
+*/
 void
 n_glsltrace(GLhandleARB obj, const nString& msg)
 {
@@ -91,6 +94,9 @@ n_glsltrace(GLhandleARB obj, const nString& msg)
     }
 }
 
+//------------------------------------------------------------------------------
+/**
+*/
 void
 n_assert_glslstatus(GLhandleARB obj, const nString& msg, GLenum param)
 {
@@ -116,6 +122,17 @@ n_assert_glslstatus(GLhandleARB obj, const nString& msg, GLenum param)
 //------------------------------------------------------------------------------
 /**
 */
+bool
+IsNULLValue(nString& val)
+{
+    val.ToLower();
+    if (val == nString("null") || val == nString("0")) return true;
+    return false;
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
 nGLSLShader::nGLSLShader() :
     hasBeenValidated(false),
     didNotValidate(false),
@@ -125,8 +142,6 @@ nGLSLShader::nGLSLShader() :
     vertShader(0),
     fragShader(0)
 {
-    //memset(this->parameterHandles, -1, sizeof(this->parameterHandles));
-    //memset(this->techParameterHandles, false, sizeof(this->techParameterHandles));
 }
 
 //------------------------------------------------------------------------------
@@ -134,7 +149,7 @@ nGLSLShader::nGLSLShader() :
 */
 nGLSLShader::~nGLSLShader()
 {
-    //    if (!deviceInit) return;
+    //if (!deviceInit) return;
     if (this->IsLoaded())
     {
         this->Unload();
@@ -161,15 +176,43 @@ nGLSLShader::UnloadResource()
         nGfxServer2::Instance()->SetShader(0);
     }
 
-    glDetachObjectARB(this->programObj, this->vertShader);
-    glDeleteObjectARB(this->vertShader);
+    if (0 != this->programObj)
+    {
+        glDetachObjectARB(this->programObj, this->vertShader);
+        glDeleteObjectARB(this->vertShader);
 
-    glDetachObjectARB(this->programObj, this->fragShader);
-    glDeleteObjectARB(this->fragShader);
+        glDetachObjectARB(this->programObj, this->fragShader);
+        glDeleteObjectARB(this->fragShader);
 
-    glDeleteObjectARB(this->programObj);
+        glDeleteObjectARB(this->programObj);
+    }
 
-    //uniformsUpdated = false;
+    int i, j, n, m;
+
+    n = this->technique.Size();
+
+    // delete passes program objects
+    for (i = 0; i < n; i++)
+    {
+        nArray<nGLSLPass>& pass = this->technique[i].pass;
+        m = pass.Size();
+
+        for (j = 0; j < m; j++)
+        {
+            if (0 != pass[j].programObj)
+            {
+                glDetachObjectARB(pass[j].programObj, pass[j].vertShader);
+                glDeleteObjectARB(pass[j].vertShader);
+
+                glDetachObjectARB(pass[j].programObj, pass[j].fragShader);
+                glDeleteObjectARB(pass[j].fragShader);
+
+                glDeleteObjectARB(pass[j].programObj);
+            }
+        }
+    }
+    this->technique.Clear();
+    this->techniqueName.Clear();
 
     // clear current parameter settings
     this->curParams.Clear();
@@ -187,11 +230,7 @@ nGLSLShader::LoadResource()
     n_assert(!this->IsLoaded());
     //n_assert(deviceInit);
 
-    //nGLShaderInclude si;
-    //nString fname = this->GetFilename().ExtractDirName();
     nString src;
-
-    //fname.StripExtension();
 
     n_printf("\nStart shader <%s> loading...\n", this->GetFilename().Get());
 
@@ -212,19 +251,25 @@ nGLSLShader::LoadResource()
         TiXmlElement* elmShader = docHandle.FirstChildElement("shader").Element();
         n_assert(elmShader);
 
-        this->programObj = glCreateProgramObjectARB(); 
-
         for (child = elmShader->FirstChildElement(); child; child = child->NextSiblingElement())
         {
             if (child->Value() == nString("source"))
             {
                 if (child->Attribute("type") == nString("vertex"))
                 {
+                    if (0 == this->programObj)
+                    {
+                        this->programObj = glCreateProgramObjectARB(); 
+                    }
                     this->vertShader = this->CreateGLSLShader(VERTEX, shdDir + child->Attribute("path"));
                     glAttachObjectARB(this->programObj, this->vertShader);
                 }
                 else if (child->Attribute("type") == nString("fragment"))
                 {
+                    if (0 == this->programObj)
+                    {
+                        this->programObj = glCreateProgramObjectARB(); 
+                    }
                     this->fragShader = this->CreateGLSLShader(FRAGMENT, shdDir + child->Attribute("path"));
                     glAttachObjectARB(this->programObj, this->fragShader);
                 }
@@ -255,6 +300,9 @@ nGLSLShader::LoadResource()
                         nGLSLPass pass;
 
                         pass.paramDpendentStates.Clear();
+                        pass.programObj = 0;
+                        pass.vertShader = 0;
+                        pass.fragShader = 0;
 
                         int paramCount = 0;
                         GLuint list = glGenLists(1);
@@ -289,7 +337,45 @@ nGLSLShader::LoadResource()
                                 }
                                 else if (valStr) // constant parameter value. Put them into GL list
                                 {
-                                    if (this->ParsePassParam(paramElem->Attribute("name"), index, nString(valStr)))
+                                    if (nPassState::VertexShader == passStateParam)
+                                    {
+                                        if (0 != pass.vertShader)
+                                        {
+                                            if (!IsNULLValue(nString(valStr)))
+                                            {
+                                                if (0 == pass.programObj)
+                                                {
+                                                    pass.programObj = glCreateProgramObjectARB(); 
+                                                }
+                                                pass.vertShader = this->CreateGLSLShader(VERTEX, shdDir + valStr);
+                                                glAttachObjectARB(pass.programObj, pass.vertShader);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            n_message("nGLSLShader::LoadResource(): Duplicate Vertex Shader definition.\n");
+                                        }
+                                    }
+                                    else if (nPassState::FragmentShader == passStateParam)
+                                    {
+                                        if (0 != pass.fragShader)
+                                        {
+                                            if (!IsNULLValue(nString(valStr)))
+                                            {
+                                                if (0 == pass.programObj)
+                                                {
+                                                    pass.programObj = glCreateProgramObjectARB(); 
+                                                }
+                                                pass.fragShader = this->CreateGLSLShader(FRAGMENT, shdDir + valStr);
+                                                glAttachObjectARB(pass.programObj, pass.fragShader);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            n_message("nGLSLShader::LoadResource(): Duplicate Fragment Shader definition.\n");
+                                        }
+                                    }
+                                    else if (this->ParsePassParam(paramElem->Attribute("name"), index, nString(valStr)))
                                     {
                                         paramCount++;
                                     }
@@ -953,13 +1039,13 @@ nGLSLShader::Begin(bool saveState)
     if (this->didNotValidate)
     {
         //TODO: FIXME - validation not working!
-        //return 0;
-        return 1;
+        return 0;
+        //return 1;
     }
     else
     {
-        glUseProgramObjectARB(this->programObj);
-        n_gltrace("nGLSLShader::Begin().");
+        //glUseProgramObjectARB(this->programObj);
+        //n_gltrace("nGLSLShader::Begin().");
         //this->UpdateParameterHandles();
         return 1;
     }
@@ -1001,6 +1087,15 @@ nGLSLShader::BeginPass(int pass)
             }
         }
 
+        if (0 != passEl.programObj)
+        {
+            glUseProgramObjectARB(passEl.programObj);
+        }
+        else
+        {
+            glUseProgramObjectARB(this->programObj);
+        }
+
         n_gltrace("nGLSLShader::BeginPass().");
     }
 }
@@ -1019,6 +1114,11 @@ nGLSLShader::CommitChanges()
 void
 nGLSLShader::EndPass()
 {
+    if (!this->didNotValidate)
+    {
+        glUseProgramObjectARB(0);
+        n_gltrace("nGLSLShader::EndPass().");
+    }
 }
 
 //------------------------------------------------------------------------------
@@ -1028,11 +1128,11 @@ nGLSLShader::EndPass()
 void
 nGLSLShader::End()
 {
-    if (!this->didNotValidate)
-    {
-        glUseProgramObjectARB(0);
-        n_gltrace("nGLSLShader::End().");
-    }
+    //if (!this->didNotValidate)
+    //{
+    //    glUseProgramObjectARB(0);
+    //    n_gltrace("nGLSLShader::End().");
+    //}
 }
 
 //------------------------------------------------------------------------------

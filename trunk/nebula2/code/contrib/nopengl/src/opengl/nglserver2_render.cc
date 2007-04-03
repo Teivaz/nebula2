@@ -305,10 +305,12 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
             case Light:
                 break;
         }
+
         if (setMVP)
         {
             shd->SetMatrix(nShaderState::ModelViewProjection, this->transform[ModelViewProjection]);
         }
+
         if (!mvpOnly && setEyePos)
         {
             shd->SetVector3(nShaderState::EyePos, this->transform[InvView].pos_component());
@@ -319,6 +321,7 @@ nGLServer2::SetTransform(TransformType type, const matrix44& matrix)
         {
             shd->SetVector3(nShaderState::ModelEyePos, this->transform[InvModelView].pos_component());
         }
+
         if (setEyeDir)
         {
             shd->SetVector3(nShaderState::EyeDir, -this->transform[View].z_component());
@@ -763,7 +766,7 @@ nGLServer2::DrawNS(PrimitiveType primType)
 
     this->refShader->CommitChanges();
 
-    glDrawArrays(glPrimType, 0, glNumPrimitives); // 0 - ???
+    //glDrawArrays(glPrimType, 0, glNumPrimitives); // 0 - ???
     n_gltrace("nGLServer2::DrawNS(): glDrawArrays().");
     
     #ifdef __NEBULA_STATS__

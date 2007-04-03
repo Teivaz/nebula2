@@ -326,3 +326,12 @@ nGLServer2::SetWindowTitle(const char* title)
 {
     this->windowHandler.SetWindowTitle(title);
 }
+
+//-----------------------------------------------------------------------------
+/**
+    @return true if vertex shader run in software emulation
+*/
+bool nGLServer2::AreVertexShadersEmulated()
+{
+    return false;
+}

@@ -14,6 +14,9 @@
 /**
     Initialize the default state of the device. Must be called after
     creating or resetting the gl device.
+
+    history:
+     - 31-Mar-2007   je.a.le    modified
 */
 void
 nGLServer2::InitDeviceState()
@@ -23,12 +26,12 @@ nGLServer2::InitDeviceState()
     // update the viewport rectangle
     //D3DVIEWPORT9 dvp;
     //this->d3d9Device->GetViewport(&dvp);
-    //this->viewport.x      = (float) dvp.X;
-    //this->viewport.y      = (float) dvp.Y;
-    //this->viewport.width  = (float) dvp.Width;
-    //this->viewport.height = (float) dvp.Height;
-    //this->viewport.nearz  = dvp.MinZ;
-    //this->viewport.farz   = dvp.MaxZ;
+    this->viewport.x      = 0.0;
+    this->viewport.y      = 0.0;
+    this->viewport.width  = 640.0;
+    this->viewport.height = 480.0;
+    this->viewport.nearz  = 0.0;
+    this->viewport.farz   = 1.0;
 
     // update the projection matrix
     this->SetCamera(this->GetCamera());
@@ -36,10 +39,12 @@ nGLServer2::InitDeviceState()
     // set initial renderstates
     glFrontFace(GL_CW);
     glEnable(GL_DITHER);
-    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
 
-    glCullFace(GL_FRONT_AND_BACK);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); //GL_FILL
+    //glCullFace(GL_FRONT_AND_BACK);
+    glPolygonMode(GL_FRONT, GL_FILL); //GL_LINE
+
+    glViewport(this->viewport.x, this->viewport.y, this->viewport.width, this->viewport.height);
 
     n_gltrace("nGLServer2::InitDeviceState().");
 }
@@ -70,7 +75,7 @@ nGLServer2::UpdateFeatureSet()
             n_printf("nD3D9Server: DX9 feature set implemented.\n");
         }
         else
-  
+
         {
             this->featureSet = DX7;
             n_printf("nD3D9Server: DX7 feature set implemented.\n");
@@ -145,7 +150,7 @@ nGLServer2::DeviceOpen()
     n_printf("    Version:  %s\n", glGetString(GL_VERSION));
     n_printf("\nSupported GL extensions:\n");
     nGLExtensionServer::PrintExtensions(nString((const char*)glGetString(GL_EXTENSIONS)));
-    
+
     //init extensitions
     nGLExtensionServer::InitExtensions();
 
@@ -162,7 +167,7 @@ nGLServer2::DeviceOpen()
 
     // restore window
     this->windowHandler.RestoreWindow();
-    
+
     n_gltrace("nGLServer2::DeviceOpen().");
     return true; //res;
 }
@@ -196,7 +201,7 @@ nGLServer2::DeviceClose()
     // destroy gl device
     ReleaseDC(this->windowHandler.GetAppHwnd(), this->hDC);
     this->hDC = NULL;
-    
+
     // minimze the app window
     this->windowHandler.MinimizeWindow();
     n_gltrace("nGLServer2::DeviceClose().");

@@ -109,7 +109,7 @@ main(int argc, const char** argv)
 
     nString scriptServerClass    = args.GetStringArg("-scriptserver", "ntclserver");
     nString startupArg           = args.GetStringArg("-startup", "home:code/contrib/nopengl/data/scripts/startup.tcl");
-    nString viewArg              = args.GetStringArg("-view", "");
+    nString viewArg              = args.GetStringArg("-view", "gfxlib:examples/opelblitz.n2");
     nString stageArg             = args.GetStringArg("-stage", "home:export/gfxlib/stdlight.n2");
     bool fullscreenArg           = args.GetBoolArg("-fullscreen");
     bool alwaysOnTopArg          = args.GetBoolArg("-alwaysontop");
