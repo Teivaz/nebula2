@@ -1,7 +1,7 @@
 #--------------------------------------------------------------------------
 # Visual Studio 2003 (7.1) Project & Solution Generator
 #
-# (c) 2005 Vadim Macagon
+# (c) 2007 Vadim Macagon
 #
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
@@ -18,7 +18,7 @@ STR_PROJECT_HEADER = '''\
     Version="7.10"
     Name="%(targetName)s"
     Keyword="Win32Proj"
-    ProjectGUID="%(targetUUID)s">
+    ProjectGUID="{%(targetUUID)s}">
     <Platforms>
         <Platform Name="Win32"/>
     </Platforms>
@@ -55,6 +55,27 @@ STR__NOCFG_SRC_FILE = '''\
                     RelativePath="%(relPath)s" />
 '''
 
+STR_DUMMY_SRC_FILE = '''\
+            <Filter
+                Name="VC Fix"
+                Filter="cpp">
+                <File
+                    RelativePath="dummy.cpp">
+                    <FileConfiguration
+                        Name="Debug|Win32"
+                        ExcludedFromBuild="TRUE">
+                        <Tool
+                            Name="VCCLCompilerTool"/>
+                    </FileConfiguration>
+                    <FileConfiguration
+                        Name="Release|Win32"
+                        ExcludedFromBuild="TRUE">
+                        <Tool
+                            Name="VCCLCompilerTool"/>
+                    </FileConfiguration>
+                </File>
+            </Filter>
+'''
 
 STR_SLN_PROJECT_CONFIGS = '''\
 \t\t{%(uuid)s}.Debug.ActiveCfg = Debug|Win32
@@ -135,14 +156,12 @@ STR_PROJ_CONFIG_LINKER_TOOL_S1 = '''\
 '''
 
 STR_PROJ_CONFIG_LINKER_TOOL_S2_DEBUG = '''\
-                IgnoreDefaultLibraryNames="libcmtd"
                 GenerateDebugInformation="TRUE"
                 LinkIncremental="2"
                 ProgramDatabaseFile="%s"
 '''
 
 STR_PROJ_CONFIG_LINKER_TOOL_S2_RELEASE = '''\
-                IgnoreDefaultLibraryNames="libcmt"
                 LinkIncremental="1"
                 OptimizeReferences="2"
                 EnableCOMDATFolding="2"
@@ -528,6 +547,11 @@ class vstudio71:
             if module.dir:
                 continue
             self.writeModuleFiles(target, module, projFile)
+
+        # dummy.cpp doesn't actually exist, we just need it to work around a
+        # bug in VC (C/C++ properties don't show up for the project if it
+        # doesn't contain any files with the extension of c/cpp)
+        projFile.write(STR_DUMMY_SRC_FILE)
 
         # if the module definition file is set and target is dll then add it
         if ('' != target.modDefFile) and ('dll' == target.type):
