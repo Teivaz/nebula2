@@ -19,24 +19,23 @@
 
     We have our own build system so that we can provide equal support
     for all build systems on all platforms that we support or intend
-    to support.  Due to this, we're able to support, out of the box, the
-    following toolchains:
+    to support. Though some build systems are more equal than others. 
+    Due to this, we're able to support, out of the box, the following toolchains:
 
-      - Microsoft Visual C++ 6.0
       - Microsoft Visual C++ 7.0 (.NET)
       - Microsoft Visual C++ 7.1 (.NET 2003)
       - Microsoft Visual C++ 8.0 (.NET 2005, beta)
       - Microsoft Visual C++ Toolkit 2003 via GNU Make
       - Linux via GNU Make and gcc
-      - Apple's XCode
 
-    And we will soon support:
+    And we could support (with a little bit of work):
+      - Apple's XCode
       - Cygwin/MingW via GNU Make and gcc
       - Possibly Eclipse's CDT
 
     We use a set of descriptions stored in <tt>.bld</tt> files to generate the
-    workspaces, Makefiles, etc.  These files are implemented simply as
-    TCL scripts, but no knowledge of TCL is required.
+    workspaces, Makefiles, etc. These files are easily readable and simple to
+    understand.
 
     @subsection NebulaBuildSystemIntroOverview Overview
 
@@ -256,7 +255,9 @@ endworkspace
       </tr>
 
       <tr>
-        <td>setmodules</td> <td>{ modulename ... }</td> <td>""</td>
+        <td><a name="setmodules">setmodules</a></td>
+        <td>{ modulename ... }</td>
+        <td>""</td>
         <td>Sets the list of modules to be included in this target.</td>
       </tr>
 
@@ -269,7 +270,9 @@ endworkspace
       </tr>
 
       <tr>
-        <td>settargetdeps</td> <td>{ targetname ... }</td> <td>""</td>
+        <td><a name="settargetdeps">settargetdeps</a></td> 
+        <td>{ targetname ... }</td> 
+        <td>""</td>
         <td>Specifies the targets that must be built before this target.</td>
       </tr>
 
@@ -407,6 +410,17 @@ endworkspace
         a target. (Only the first found will be used, but it's
         possible to have more than one for a target.)</td>
       </tr>
+      
+      <tr>
+        <td>set_extra_includes</td>
+        <td>filename</td>
+        <td>""</td>
+        <td>Specifies additional include directories that should be set when
+        compiling this module. In practice these include directories are
+        propagated from the module to the target that includes it,
+        and from there to all targets in the workspace that includes that
+        particular target.</td>
+      </tr>
 
       <tr>
         <td>endmodule</td><td></td><td></td>
@@ -417,9 +431,11 @@ endworkspace
 
     @subsection NebulaBuildSystemCommandsBundle Bundle
 
-    @note No one currently uses bundles, so we have no clear explanation
-    on what they, what they're for, how they work, or if they even work
-    at all.
+    A bundle is a group of modules and/or targets. When you add a bundle
+    to a target, the modules in the bundle are treated the same as modules 
+    added to the target through <a href="#setmodules">setmodules</a>, and
+    the targets listed in the bundle are treated the same as targets added 
+    through <a href="#settargetdeps">settargetdeps</a>.
 
     <table>
       <tr>
@@ -457,32 +473,7 @@ endworkspace
 
     @section NebulaBuildSystemFAQ FAQ
 
-    @subsection Error01 When I run update.tcl, I get the error, 'ERROR: target 'my_target' not defined!'
-
-    This error means that there is no corresponding target in the bld files.
-    Check the appropriate bld file, and make sure the target and target name
-    are setup correctly.
-
-    @subsection Error02 When I run update.tcl, I get the error, 'can't read "modulename_to_sortedindex&lt;my_module&gt;": no such element in array'
-
-    This error means that there's no module named @e my_module.
-
-    This error can also occur when the superclass name which is defined in
-    the nNebulaClass or nNebulaScriptClass macro in the implementation file
-    is incorrect.
-
-    Check the bld file first, if the module is defined correctly, check the
-    nNebulaClass or nNebulaScriptClass macro in the <tt>.cc</tt>
-    implementation file of @e my_module to be sure that the superclass name
-    is correct.
-
-    @code
-    // check that the superclass name is correct and that the module which
-    // contains superclass exists in one of the bld files.
-    nNebulaScriptClass("class", "superclass");
-    @endcode
-
-    @subsection Error03 When I tried to build my application with VC, I got LNK2005 link errors. 
+    @subsection Error01 When I tried to build my application with VC, I got LNK2005 link errors. 
 
     The following illustrates the errors:
     @verbatim

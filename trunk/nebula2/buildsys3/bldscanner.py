@@ -1,5 +1,5 @@
 #--------------------------------------------------------------------------
-# (c) 2005 Vadim Macagon
+# (c) 2007 Vadim Macagon
 #
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
@@ -47,7 +47,8 @@ class BldScanner(Scanner):
                     'setframeworks_macosx'  : 'm_setframeworks_macosx',
                     'setmoduledeps'         : 'm_setmoduledeps',
                     'setnopkg'              : 'm_setnopkg',
-                    'setmoddeffile'         : 'm_setmoddeffile'}
+                    'setmoddeffile'         : 'm_setmoddeffile',
+                    'set_extra_includes'    : 'm_set_extra_includes'}
     # maps tokens to target states
     targetStates = {'annotate'           : 't_annotate',
                     'settype'            : 't_settype',
@@ -343,6 +344,12 @@ class BldScanner(Scanner):
         self.CheckModuleNameDefined()
         self.modules[len(self.modules) - 1].modDefFile = text
         self.begin('module') # switch back to parent state
+        
+    def AddExtraIncludeDir(self, text):
+        self.CheckModuleNameDefined()
+        self.modules[len(self.modules) - 1].extraIncDirs.append(text)
+        if not self.InBlock():
+            self.begin('module') # switch back to parent state
 
     #
     # target actions
@@ -588,6 +595,12 @@ class BldScanner(Scanner):
                         ]),
                         State('m_setmoddeffile', [
                             (pathname, SetModuleDefFile),
+                            (AnyChar, IGNORE)
+                        ]),
+                        State('m_set_extra_includes', [
+                            (Str('{'), StartBlock),
+                            (Str('}'), EndBlock),
+                            (pathname, AddExtraIncludeDir),
                             (AnyChar, IGNORE)
                         ]),
                         (Str('begintarget'), BeginTarget),

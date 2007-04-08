@@ -1,5 +1,5 @@
 #--------------------------------------------------------------------------
-# (c) 2005 Vadim Macagon
+# (c) 2007 Vadim Macagon
 #
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
@@ -117,10 +117,17 @@ class Workspace:
         for targetName in self.targets:
             target = self.buildSys.targets[targetName]
             for moduleName in target.modules:
+                # implicit include dirs
                 module = self.buildSys.modules[moduleName]
                 if '' != module.codeDir:
                     incPath = self.buildSys.FindRelPath(workspacePath,
                                                         module.GetBaseIncDir())
+                    if incPath not in incPaths:
+                        incPaths.append(incPath)
+                # explicit include dirs
+                extraIncDirs = module.GetExtraIncDirs()
+                for incDir in extraIncDirs:
+                    incPath = self.buildSys.FindRelPath(workspacePath, incDir)
                     if incPath not in incPaths:
                         incPaths.append(incPath)
 
