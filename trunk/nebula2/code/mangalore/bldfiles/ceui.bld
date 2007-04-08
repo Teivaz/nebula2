@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 #  bldfiles/ceui.bld
-#  (c) 2006 Nebula2 Community
+#  (c) 2007 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule ceui
     setdir ceui
@@ -20,20 +20,17 @@ beginmodule ceui
         server
         texture
     }
+    set_extra_includes {
+        code/mangalore/cegui
+    }
     setlibs_win32_release {
         CEGUIBase.lib
         CEGUIFalagardWRBase.lib
         CEGUITinyXMLParser.lib
-        freetype.lib
-        pcre.lib
-        tinyxml.lib
     }
     setlibs_win32_debug {
         CEGUIBase_d.lib
         CEGUIFalagardWRBase_d.lib
         CEGUITinyXMLParser_d.lib
-        freetype_d.lib
-        pcre_d.lib
-        tinyxml_d.lib
     }
 endmodule

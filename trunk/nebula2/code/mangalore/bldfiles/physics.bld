@@ -1,6 +1,6 @@
 #-------------------------------------------------------------------------------
 #  bldfiles/physics.bld
-#  (c) 2006 Nebula2 Community
+#  (c) 2007 Nebula2 Community
 #-------------------------------------------------------------------------------
 beginmodule physics
     setdir physics
@@ -68,10 +68,8 @@ beginmodule physics
     }
     setlibs_win32_release {
         ode.lib
-        OPCODE.lib
     }
     setlibs_win32_debug {
         ode_d.lib
-        OPCODE_d.lib
     }
 endmodule

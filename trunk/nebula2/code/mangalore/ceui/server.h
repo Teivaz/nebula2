@@ -6,8 +6,8 @@
 #define CEUI_SERVER_H
 
 #include "foundation/refcounted.h"
-#include "cegui/CEGUISystem.h"
-#include "cegui/CEGUIWindow.h"
+#include "CEGUISystem.h"
+#include "CEGUIWindow.h"
 
 namespace CEUI
 {
@@ -17,7 +17,7 @@ class Renderer;
 class Server : public Foundation::RefCounted
 {
     DeclareRtti;
-	DeclareFactory(Server);
+    DeclareFactory(Server);
 
 public:
     /// constructor

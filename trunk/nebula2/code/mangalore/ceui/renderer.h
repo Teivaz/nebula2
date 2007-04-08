@@ -5,7 +5,7 @@
 #ifndef CEUI_RENDERER_H
 #define CEUI_RENDERER_H
 
-#include "cegui/CEGUIRenderer.h"
+#include "CEGUIRenderer.h"
 #include "gfx2/ndynamicshadermesh.h"
 
 namespace CEUI
