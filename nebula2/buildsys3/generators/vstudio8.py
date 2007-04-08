@@ -1,7 +1,7 @@
 #--------------------------------------------------------------------------
 # Visual Studio 2005 (8.0) Project & Solution Generator
 #
-# (c) 2005 Vadim Macagon
+# (c) 2007 Vadim Macagon
 #
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
@@ -17,7 +17,7 @@ STR_PROJECT_HEADER = '''\
     ProjectType="Visual C++"
     Version="8.00"
     Name="%(targetName)s"
-    ProjectGUID="%(targetUUID)s"
+    ProjectGUID="{%(targetUUID)s}"
     RootNamespace="%(targetName)s"
     Keyword="Win32Proj">
     <Platforms>
@@ -151,7 +151,6 @@ STR_PROJ_CONFIG_LINKER_TOOL_S2_RELEASE = '''\
 STR_PROJ_CONFIG_LINKER_TOOL_S3 = '''\
                 AdditionalLibraryDirectories="%(libDirs)s"
                 ModuleDefinitionFile="%(modDef)s"
-                IgnoreDefaultLibraryNames="libcp.lib"
                 SubSystem="0"
                 TargetMachine="1"/>
 '''
