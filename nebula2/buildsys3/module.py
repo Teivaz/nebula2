@@ -1,5 +1,5 @@
 #--------------------------------------------------------------------------
-# (c) 2005 Vadim Macagon
+# (c) 2007 Vadim Macagon
 #
 # Contents are licensed under the Nebula license.
 #--------------------------------------------------------------------------
@@ -30,6 +30,7 @@ class Module:
         self.putInPkg = True
         self.modDefFile = ''
         self.bldFile = bldFilename
+        self.extraIncDirs = []
         # these are deduced after reading in the bld files
         self.ancestor = None
         self.resolvedFiles = []
@@ -47,7 +48,14 @@ class Module:
 
     #--------------------------------------------------------------------------
     def Clean(self):
+        """
+        Perform some simple reformatting of the data read from the .bld file.
+        This method gets called as soon as the module is fully read from the
+        .bld file (so no heavy processing should be done here).
+        """
         self.modDefFile = self.buildSys.CleanRelPath(self.modDefFile)
+        for i in range(len(self.extraIncDirs)):
+            self.extraIncDirs[i] = self.buildSys.CleanRelPath(self.extraIncDirs[i].strip('"'))
 
     #--------------------------------------------------------------------------
     # Sort files and headers
@@ -91,6 +99,14 @@ class Module:
             if len(tempDir) > len(modProjectDir):
                 modProjectDir = tempDir
         return modProjectDir
+
+    #--------------------------------------------------------------------------
+    def GetExtraIncDirs(self):
+        """
+        Get the list of additional include directories that were explicitely
+        specified for this module.
+        """
+        return self.extraIncDirs
 
     #--------------------------------------------------------------------------
     # Resolve the filenames in the module definition to real paths, relative
