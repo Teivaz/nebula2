@@ -51,11 +51,14 @@ If you are using Visual C++ Toolkit 2003, then you will need an updated <a href=
 
 @subsection  Nebula2CompilingOSWin32PreparationVS7 Visual C++ 7.0 and later
 
-Under "Tools->Options->Projects->VC++ Directories" make sure that the DX9 libs and include directories are before VStudio's lib and include directory paths (Note: Do not do this if you are using VC 8.0, the headers included with VC 8.0 are newer than those in the DX SDK).
+- Download the <a href="http://sourceforge.net/project/showfiles.php?group_id=7192&package_id=192229&release_id=421415">Nebula</a> and <a href="http://sourceforge.net/project/showfiles.php?group_id=7192&package_id=192229&release_id=499383">Mangalore</a> dependency packages and extract them into your source checkout. Make sure you download the right ones for you compiler (vc8 means Visual C++ 2005, vc71 means Visual C++ 2003).
+- Under "Tools->Options->Projects->VC++ Directories" make sure that the DX9 libs and include directories are before VStudio's lib and include directory paths (Note: Do not do this if you are using VC 8.0, the headers included with VC 8.0 are newer than those in the DX SDK).
 
 @subsection  Nebula2CompilingOSWin32PreparationVCTK Visual C++ 2003 Toolkit
 
 These instructions also apply if you are building using make and a regular copy of Visual C++.
+
+Download the <a href="http://sourceforge.net/project/showfiles.php?group_id=7192&package_id=192229&release_id=421415">Nebula</a> and <a href="http://sourceforge.net/project/showfiles.php?group_id=7192&package_id=192229&release_id=499383">Mangalore</a> dependency packages and extract them into your source checkout. Make sure you download the right ones for you compiler (vc8 means Visual C++ 2005, vc71 means Visual C++ 2003).
 
 @note Instead of using GNU Make or Cygwin you might want to experiment with <a href="http://www.gotdotnet.com/team/cplusplus/">vcbuild</a>, we haven't tried it though so it may not work.
 

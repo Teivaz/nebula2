@@ -5,7 +5,7 @@
 #ifndef CEUI_LOGGER_H
 #define CEUI_LOGGER_H
 
-#include "cegui/CEGUILogger.h"
+#include "CEGUILogger.h"
 
 namespace CEUI
 {

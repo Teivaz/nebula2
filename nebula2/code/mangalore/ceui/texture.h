@@ -5,7 +5,7 @@
 #ifndef CEGUI_TEXTURE_H
 #define CEGUI_TEXTURE_H
 
-#include "cegui/CEGUITexture.h"
+#include "CEGUITexture.h"
 #include "gfx2/ntexture2.h"
 
 namespace CEUI

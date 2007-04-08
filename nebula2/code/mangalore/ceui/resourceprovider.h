@@ -5,7 +5,7 @@
 #ifndef CEUI_RESOURCEPROVIDER_H
 #define CEUI_RESOURCEPROVIDER_H
 
-#include "cegui/CEGUIDefaultResourceProvider.h"
+#include "CEGUIDefaultResourceProvider.h"
 
 namespace CEUI
 {
