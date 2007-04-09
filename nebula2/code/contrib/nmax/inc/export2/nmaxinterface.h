@@ -88,7 +88,7 @@ int nMaxInterface::GetNumFrames() const
 {
     TimeValue animOffset;
     animOffset = (this->GetAnimEndTime() - this->GetAnimStartTime());
-    return ((animOffset / GetTicksPerFrame()));
+    return ((animOffset / GetTicksPerFrame()) + 1);
 }
 //-----------------------------------------------------------------------------
 inline
