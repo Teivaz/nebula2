@@ -300,7 +300,7 @@ Map::Connect(int node0, int node1)
 
 //------------------------------------------------------------------------------
 /**
-    qsort() hook - sort tempEdges by vertex indicies
+    qsort() hook - sort tempEdges by vertex indices
 
     sort by:
     - vertex index
@@ -317,7 +317,7 @@ Map::CornerCompare(const void* a, const void* b)
 
 //------------------------------------------------------------------------------
 /**
-    qsort() hook - sort tempEdges by vertex indicies
+    qsort() hook - sort tempEdges by vertex indices
 
     sort by:
     - 1st vertex index

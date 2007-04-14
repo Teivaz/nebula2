@@ -239,7 +239,7 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
             {
                 const char* curFloatStr = strtok(0, N_WHITESPACE);
                 n_assert(curFloatStr);
-                float curFloat = (float) atof(curFloatStr);
+                float curFloat = (float)atof(curFloatStr);
                 vPtr[i] = curFloat;
                 n_assert(&(vPtr[i]) < endOfBuffer);
             }
@@ -276,12 +276,11 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
                 if (this->vertexComponents & mask)
                 {
                     // read the vertex component
-                    int f;
-                    for (f = 0; f < width; f++)
+                    for (int f = 0; f < width; f++)
                     {
                         const char* curFloatStr = strtok(0, N_WHITESPACE);
                         n_assert(curFloatStr);
-                        float curFloat = (float) atof(curFloatStr);
+                        float curFloat = (float)atof(curFloatStr);
                         *(vPtr++) = curFloat;
                         n_assert(vPtr <= endOfBuffer)
                     }
@@ -289,8 +288,7 @@ nN3d2Loader::ReadVertices(void* buffer, int bufferSize)
                 else
                 {
                     // skip the vertex component
-                    int f;
-                    for (f = 0; f < width; f++)
+                    for (int f = 0; f < width; f++)
                     {
                         const char* curFloatStr = strtok(0, N_WHITESPACE);
                         n_assert(curFloatStr);
@@ -325,8 +323,8 @@ nN3d2Loader::ReadIndices(void* buffer, int bufferSize)
         endOfBuffer = ((uint*)buffer) + this->numIndices;
     }
 
-    ushort* indexBuffer16 = (ushort*) buffer;
-    uint* indexBuffer32 = (uint*) buffer;
+    ushort* indexBuffer16 = (ushort*)buffer;
+    uint* indexBuffer32 = (uint*)buffer;
 
     int triangleIndex;
     int index = 0;

@@ -161,7 +161,6 @@ nD3D9Mesh::CreateVertexBuffer()
     n_assert(this->vertexBufferByteSize > 0);
     n_assert(0 == this->privVertexBuffer);
     n_assert(0 == this->vertexBuffer);
-    n_assert(this->vertexBufferByteSize > 0);
 
     if (ReadOnly & this->vertexUsage)
     {
@@ -178,8 +177,6 @@ nD3D9Mesh::CreateVertexBuffer()
 
         // this is either a WriteOnce or a WriteOnly vertex buffer,
         // in both cases we create a D3D vertex buffer object
-        HRESULT hr;
-
         DWORD d3dUsage = D3DUSAGE_WRITEONLY;
         D3DPOOL d3dPool = D3DPOOL_MANAGED;
         this->d3dVBLockFlags = 0;
@@ -214,7 +211,7 @@ nD3D9Mesh::CreateVertexBuffer()
         }
 
         // create the vertex buffer
-        hr = gfxServer->d3d9Device->CreateVertexBuffer(
+        HRESULT hr = gfxServer->d3d9Device->CreateVertexBuffer(
                 this->vertexBufferByteSize,
                 d3dUsage,
                 0,
@@ -239,7 +236,6 @@ nD3D9Mesh::CreateIndexBuffer()
     n_assert(this->indexBufferByteSize > 0);
     n_assert(0 == this->indexBuffer);
     n_assert(0 == this->privIndexBuffer);
-    n_assert(this->indexBufferByteSize > 0);
 
     if (ReadOnly & this->indexUsage)
     {
@@ -250,7 +246,6 @@ nD3D9Mesh::CreateIndexBuffer()
     {
         nD3D9Server* gfxServer = (nD3D9Server*)nGfxServer2::Instance();
         n_assert(gfxServer->d3d9Device);
-        HRESULT hr;
 
         DWORD d3dUsage       = D3DUSAGE_WRITEONLY;
         D3DPOOL d3dPool      = D3DPOOL_MANAGED;
@@ -284,7 +279,7 @@ nD3D9Mesh::CreateIndexBuffer()
             d3dPool = D3DPOOL_SYSTEMMEM;
         }
 
-        hr = gfxServer->d3d9Device->CreateIndexBuffer(
+        HRESULT hr = gfxServer->d3d9Device->CreateIndexBuffer(
                 this->indexBufferByteSize,
                 d3dUsage,
                 D3DFMT_INDEX16,
@@ -304,7 +299,7 @@ void
 nD3D9Mesh::CreateVertexDeclaration()
 {
     n_assert(0 == this->vertexDeclaration);
-    nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+    nD3D9Server* gfxServer = (nD3D9Server*)nGfxServer2::Instance();
     n_assert(gfxServer->d3d9Device);
 
     const int maxElements = NumVertexComponents;
@@ -314,7 +309,7 @@ nD3D9Mesh::CreateVertexDeclaration()
     int index;
     for (index = 0; index < maxElements; index++)
     {
-        int mask = (1<<index);
+        int mask = (1 << index);
         if (this->vertexComponentMask & mask)
         {
             decl[curElement].Stream = 0;

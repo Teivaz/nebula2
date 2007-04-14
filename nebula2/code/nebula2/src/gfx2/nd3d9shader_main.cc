@@ -111,7 +111,7 @@ nD3D9Shader::LoadResource()
     #endif
 
     // create include file handler
-    nString shaderPath(mangledPath.Get());
+    nString shaderPath(mangledPath);
     nD3D9ShaderInclude includeHandler(shaderPath.ExtractDirName());
 
     // get global effect pool from gfx server
@@ -573,7 +573,7 @@ nD3D9Shader::ValidateEffect()
     n_assert(!this->hasBeenValidated);
     n_assert(this->effect);
     n_assert(this->refGfxServer->d3d9Device);
-    nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
+    nD3D9Server* gfxServer = (nD3D9Server*)nGfxServer2::Instance();
     IDirect3DDevice9* d3d9Device = gfxServer->d3d9Device;
     n_assert(d3d9Device);
     HRESULT hr;
@@ -844,7 +844,7 @@ nD3D9Shader::D3DXParamToShaderStateParam(D3DXHANDLE h)
     {
         if (this->parameterHandles[i] == h)
         {
-            return (nShaderState::Param) i;
+            return (nShaderState::Param)i;
         }
     }
     // fallthrough: invalid handle

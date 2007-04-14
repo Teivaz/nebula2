@@ -532,7 +532,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
             return false;
         }
         this->SetType(TEXTURE_2D);
-        hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
+        hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**)&(this->baseTexture));
         n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9) failed");
     }
     else if (D3DRTYPE_CUBETEXTURE == imgInfo.ResourceType)
@@ -561,7 +561,7 @@ nD3D9Texture::LoadD3DXFile(bool genMipMaps)
             return false;
         }
         this->SetType(TEXTURE_CUBE);
-        hr = this->textureCube->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
+        hr = this->textureCube->QueryInterface(IID_IDirect3DBaseTexture9, (void**)&(this->baseTexture));
         n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9) failed");
     }
     else
@@ -628,7 +628,7 @@ nD3D9Texture::CreateEmptyTexture()
             n_error("nD3D9Texture::CreateEmptyTexture(): Failed to create 2D texture!\n");
             return false;
         }
-        hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
+        hr = this->texture2D->QueryInterface(IID_IDirect3DBaseTexture9, (void**)&(this->baseTexture));
         n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9)");
     }
     else if (this->GetType() == TEXTURE_CUBE)
@@ -646,7 +646,7 @@ nD3D9Texture::CreateEmptyTexture()
             n_error("nD3D9Texture::CreateEmptyTexture(): Failed to create cube texture!\n");
             return false;
         }
-        hr = this->textureCube->QueryInterface(IID_IDirect3DBaseTexture9, (void**) &(this->baseTexture));
+        hr = this->textureCube->QueryInterface(IID_IDirect3DBaseTexture9, (void**)&(this->baseTexture));
         n_dxtrace(hr, "QueryInterface(IID_IDirect3DBaseTexture9) failed");
     }
     else
