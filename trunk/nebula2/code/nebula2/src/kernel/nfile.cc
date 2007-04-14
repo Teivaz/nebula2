@@ -408,11 +408,8 @@ nFile::PutS(const nString& buffer)
     {
         return false;
     }
-    else
-    {
-        this->lineNumber++;
-        return true;
-    }
+    this->lineNumber++;
+    return true;
 }
 
 //------------------------------------------------------------------------------

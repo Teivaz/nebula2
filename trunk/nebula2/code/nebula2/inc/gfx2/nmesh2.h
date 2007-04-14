@@ -166,7 +166,7 @@ public:
 
     struct Edge
     {
-        ushort fIndex[2];  // face indicies - the 2nd face index could be = InvalidIndex when the edge is a geometry border
+        ushort fIndex[2];  // face indices - the 2nd face index could be = InvalidIndex when the edge is a geometry border
         ushort vIndex[2];  // vertex indices
     };
 
@@ -263,7 +263,7 @@ protected:
     void SetEdgeBufferByteSize(int s);
     /// update the group bounding boxes (slow!)
     void UpdateGroupBoundingBoxes(float* vertexBufferData, ushort* indexBufferData);
-    /// load file with the provided meshloader
+    /// load file with the provided mesh loader
     bool LoadFile(nMeshLoader* meshLoader);
 
     int vertexUsage;
