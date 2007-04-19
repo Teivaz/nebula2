@@ -409,3 +409,95 @@ nD3D9Mesh::GetByteSize()
     }
     return 0;
 }
+
+//------------------------------------------------------------------------------
+/**
+    optimize faces to improve the post-tnl cache
+*/
+void
+nD3D9Mesh::OptimizeFaces(ushort* indices, int numFaces, int numVertices)
+{
+    DWORD* pdwRemap = n_new_array(DWORD, numFaces);
+    D3DXOptimizeFaces(indices, numFaces, numVertices, FALSE, pdwRemap);
+
+    ushort* dstIndices = n_new_array(ushort, numFaces * 3);
+    n_assert(dstIndices);
+    memcpy(dstIndices, indices, numFaces * 6); // = 3 * sizeof(ushort)
+
+    for (int i = 0; i < numFaces; ++i)
+    {
+        int newFace = (int) pdwRemap[i];
+        for (int j = 0; j < 3; ++j)
+        {
+            indices[newFace * 3 + j] = dstIndices[i * 3 + j];
+        }
+    }
+
+    n_delete_array(dstIndices);
+    n_delete_array(pdwRemap);
+}
+
+//------------------------------------------------------------------------------
+/**
+    optimize vertices to improve the pre-tnl cache
+*/
+void
+nD3D9Mesh::OptimizeVertices(float* vertices, ushort* indices, int numVertices, int numFaces)
+{
+    DWORD* pdwRemap = n_new_array(DWORD, numVertices);
+
+    D3DXOptimizeVertices(indices, numFaces, numVertices, FALSE, pdwRemap);
+
+    // remap vertices
+    float* dstVertices = n_new_array(float, numVertices * this->GetVertexWidth());
+    n_assert(dstVertices);
+    memcpy(dstVertices, vertices, numVertices * this->GetVertexWidth() * sizeof(float));
+
+    for (int i = 0; i < numVertices; ++i)
+    {
+        float* src = dstVertices + (i * this->GetVertexWidth());
+        float* dst = vertices + (pdwRemap[i] * this->GetVertexWidth());
+        memcpy(dst, src, this->GetVertexWidth() * sizeof(float));
+    }
+
+    // remap triangles
+    for (int faceIndex = 0; faceIndex < numFaces; ++faceIndex)
+    {
+        for (int index = 0; index < 3; ++index)
+        {
+            indices[faceIndex * 3 + index] = (ushort) pdwRemap[indices[faceIndex * 3 + index]];
+        }
+    }
+
+    n_delete_array(dstVertices);
+    n_delete_array(pdwRemap);
+}
+
+//------------------------------------------------------------------------------
+/**
+    Optimizes the mesh indices and vertices
+
+    - 27-Nov-06     mateu.batle     created
+*/
+bool
+nD3D9Mesh::OptimizeMesh(OptimizationFlag flags, float * vertices, int numVertices, ushort * indices, int numIndices)
+{
+    n_assert(vertices);
+    n_assert(numVertices > 0);
+    n_assert(indices);
+    n_assert(numIndices > 0);
+
+    // optimize faces to improve the post-TnL cache
+    if (flags & nMesh2::Faces)
+    {
+        this->OptimizeFaces(indices, numIndices / 3, numVertices);
+    }
+
+    // optimize vertices to improve the pre-tnl cache
+    if (flags & nMesh2::Vertices)
+    {
+        this->OptimizeVertices(vertices, indices, numVertices, numIndices / 3);
+    }
+
+    return true;
+}

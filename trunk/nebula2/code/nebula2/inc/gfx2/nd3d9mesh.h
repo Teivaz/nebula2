@@ -33,6 +33,9 @@ public:
     /// get an estimated byte size of the resource data (for memory statistics)
     virtual int GetByteSize();
 
+    /// optimize the mesh (can be redefined for each platform)
+    virtual bool OptimizeMesh(OptimizationFlag flags, float * vertices, int numVertices, ushort * indices, int numIndices);
+
 protected:
     /// load mesh resource
     virtual bool LoadResource();
@@ -59,6 +62,11 @@ private:
     IDirect3DIndexBuffer9* GetIndexBuffer();
     /// get the d3d vertex declaration
     IDirect3DVertexDeclaration9* GetVertexDeclaration();
+
+    /// optimize by reorganizing faces
+    void OptimizeFaces(ushort* indices, int numFaces, int numVertices);
+    /// optimize by reorganizing vertices
+    void OptimizeVertices(float* vertices, ushort* indices, int numVertices, int numFaces);
 
     DWORD d3dVBLockFlags;
     DWORD d3dIBLockFlags;
@@ -103,4 +111,5 @@ nD3D9Mesh::GetVertexDeclaration()
 }
 //------------------------------------------------------------------------------
 #endif
+
 

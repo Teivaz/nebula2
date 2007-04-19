@@ -12,6 +12,10 @@
 
 nNebulaClass(nMesh2, "nresource");
 
+#ifndef NGAME
+bool nMesh2::optimizeMesh = true;
+#endif //NGAME
+
 //------------------------------------------------------------------------------
 /**
 */
@@ -305,6 +309,17 @@ nMesh2::LoadFile(nMeshLoader* meshLoader)
     res = meshLoader->ReadIndices(indexBufferPtr, ibSize);
     n_assert(res);
     this->UpdateGroupBoundingBoxes(vertexBufferPtr, indexBufferPtr);
+
+    #ifndef NGAME
+    if (optimizeMesh)
+    #endif
+    {
+        if (this->GetUsage() == WriteOnce)
+        {
+            this->OptimizeMesh(nMesh2::AllOptimizations, vertexBufferPtr, this->GetNumVertices(), indexBufferPtr, this->GetNumIndices());
+        }
+    }
+
     this->UnlockIndices();
     this->UnlockVertices();
 
@@ -482,5 +497,17 @@ nMesh2::CreateEmpty()
     //n_printf("nMesh2::LoadResource(): initialized empty mesh %s!\n", this->GetName());
 
     this->SetState(Empty);
+    return true;
+}
+
+//------------------------------------------------------------------------------
+/**
+    Optimizes the mesh indices and vertices
+
+    - 27-Nov-06     mateu.batle     created
+*/
+bool
+nMesh2::OptimizeMesh(OptimizationFlag /*flags*/, float * /*vertices*/, int /*numVertices*/, ushort * /*indices*/, int /*numIndices*/)
+{
     return true;
 }
