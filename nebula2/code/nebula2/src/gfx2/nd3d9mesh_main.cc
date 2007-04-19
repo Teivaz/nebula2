@@ -294,131 +294,17 @@ nD3D9Mesh::CreateIndexBuffer()
 //------------------------------------------------------------------------------
 /**
     Create the d3d9 vertex declaration from the vertex component mask.
+
+    -19-April-07  kims  Fixed not to create a new vertex declaration if the declaration 
+                        is already created one. The patch from Trignarion.
 */
 void
 nD3D9Mesh::CreateVertexDeclaration()
 {
     n_assert(0 == this->vertexDeclaration);
-    nD3D9Server* gfxServer = (nD3D9Server*)nGfxServer2::Instance();
+    nD3D9Server* gfxServer = (nD3D9Server*) nGfxServer2::Instance();
     n_assert(gfxServer->d3d9Device);
-
-    const int maxElements = NumVertexComponents;
-    D3DVERTEXELEMENT9 decl[maxElements];
-    int curElement = 0;
-    int curOffset  = 0;
-    int index;
-    for (index = 0; index < maxElements; index++)
-    {
-        int mask = (1 << index);
-        if (this->vertexComponentMask & mask)
-        {
-            decl[curElement].Stream = 0;
-            decl[curElement].Offset = curOffset;
-            decl[curElement].Method = D3DDECLMETHOD_DEFAULT;
-            switch (mask)
-            {
-                case Coord:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
-                    decl[curElement].Usage      = D3DDECLUSAGE_POSITION;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 3 * sizeof(float);
-                    break;
-
-                case Coord4:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
-                    decl[curElement].Usage      = D3DDECLUSAGE_POSITION;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 4 * sizeof(float);
-                    break;
-
-                case Normal:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
-                    decl[curElement].Usage      = D3DDECLUSAGE_NORMAL;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 3 * sizeof(float);
-                    break;
-
-                case Tangent:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
-                    decl[curElement].Usage      = D3DDECLUSAGE_TANGENT;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 3 * sizeof(float);
-                    break;
-
-                case Binormal:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
-                    decl[curElement].Usage      = D3DDECLUSAGE_BINORMAL;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 3 * sizeof(float);
-                    break;
-
-                case Color:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
-                    decl[curElement].Usage      = D3DDECLUSAGE_COLOR;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 4 * sizeof(float);
-                    break;
-
-                case Uv0:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
-                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 2 * sizeof(float);
-                    break;
-
-                case Uv1:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
-                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
-                    decl[curElement].UsageIndex = 1;
-                    curOffset += 2 * sizeof(float);
-                    break;
-
-                case Uv2:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
-                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
-                    decl[curElement].UsageIndex = 2;
-                    curOffset += 2 * sizeof(float);
-                    break;
-
-                case Uv3:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
-                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
-                    decl[curElement].UsageIndex = 3;
-                    curOffset += 2 * sizeof(float);
-                    break;
-
-                case Weights:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
-                    decl[curElement].Usage      = D3DDECLUSAGE_BLENDWEIGHT;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 4 * sizeof(float);
-                    break;
-
-                case JIndices:
-                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
-                    decl[curElement].Usage      = D3DDECLUSAGE_BLENDINDICES;
-                    decl[curElement].UsageIndex = 0;
-                    curOffset += 4 * sizeof(float);
-                    break;
-
-                default:
-                    n_error("Unknown vertex component in vertex component mask");
-                    break;
-            }
-            curElement++;
-        }
-    }
-
-    // write vertex declaration terminator element, see D3DDECL_END() macro in d3d9types.h for details
-    decl[curElement].Stream = 0xff;
-    decl[curElement].Offset = 0;
-    decl[curElement].Type   = D3DDECLTYPE_UNUSED;
-    decl[curElement].Method = 0;
-    decl[curElement].Usage  = 0;
-    decl[curElement].UsageIndex = 0;
-
-    HRESULT hr = gfxServer->d3d9Device->CreateVertexDeclaration(decl, &(this->vertexDeclaration));
-    n_dxtrace(hr, "CreateVertexDeclaration() failed in nD3D9Mesh");
+    this->vertexDeclaration = gfxServer->NewVertexDeclaration(this->vertexComponentMask);
     n_assert(this->vertexDeclaration);
 }
 

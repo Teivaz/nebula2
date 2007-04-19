@@ -130,3 +130,149 @@ nD3D9Server::NewOcclusionQuery()
 {
     return n_new(nD3D9OcclusionQuery);
 }
+
+//------------------------------------------------------------------------------
+/**
+    Create a new occlusion query object.
+
+    -19-April-07  kims  Fixed not to create a new vertex declaration if the declaration 
+                        is already created one. It was moved from nd3d9mesh to nd3d9server.
+                        The patch from Trignarion.
+
+    @return     pointer to a new d3d vertex declaration.
+
+*/
+IDirect3DVertexDeclaration9*
+nD3D9Server::NewVertexDeclaration(const int vertexComponentMask)
+{
+    IDirect3DVertexDeclaration9* d3d9vdecl(0);
+    if (this->vertexDeclarationCache.HasKey(vertexComponentMask))
+    {
+        d3d9vdecl = this->vertexDeclarationCache.GetElement(vertexComponentMask);
+        d3d9vdecl->AddRef();
+        return d3d9vdecl;
+    }
+
+    const int maxElements = nMesh2::NumVertexComponents;
+    D3DVERTEXELEMENT9 decl[maxElements];
+    int curElement = 0;
+    int curOffset  = 0;
+    int index;
+    for (index = 0; index < maxElements; index++)
+    {
+        int mask = (1<<index);
+        if (vertexComponentMask & mask)
+        {
+            decl[curElement].Stream = 0;
+            n_assert( curOffset <= int( 0xffff ) );
+            decl[curElement].Offset = static_cast<WORD>( curOffset );
+            decl[curElement].Method = D3DDECLMETHOD_DEFAULT;
+            switch (mask)
+            {
+                case nMesh2::Coord:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
+                    decl[curElement].Usage      = D3DDECLUSAGE_POSITION;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 3 * sizeof(float);
+                    break;
+
+                case nMesh2::Coord4:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
+                    decl[curElement].Usage      = D3DDECLUSAGE_POSITION;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 4 * sizeof(float);
+                    break;
+
+                case nMesh2::Normal:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
+                    decl[curElement].Usage      = D3DDECLUSAGE_NORMAL;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 3 * sizeof(float);
+                    break;
+
+                case nMesh2::Tangent:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
+                    decl[curElement].Usage      = D3DDECLUSAGE_TANGENT;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 3 * sizeof(float);
+                    break;
+
+                case nMesh2::Binormal:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT3;
+                    decl[curElement].Usage      = D3DDECLUSAGE_BINORMAL;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 3 * sizeof(float);
+                    break;
+
+                case nMesh2::Color:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
+                    decl[curElement].Usage      = D3DDECLUSAGE_COLOR;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 4 * sizeof(float);
+                    break;
+
+                case nMesh2::Uv0:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
+                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 2 * sizeof(float);
+                    break;
+
+                case nMesh2::Uv1:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
+                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
+                    decl[curElement].UsageIndex = 1;
+                    curOffset += 2 * sizeof(float);
+                    break;
+
+                case nMesh2::Uv2:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
+                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
+                    decl[curElement].UsageIndex = 2;
+                    curOffset += 2 * sizeof(float);
+                    break;
+
+                case nMesh2::Uv3:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT2;
+                    decl[curElement].Usage      = D3DDECLUSAGE_TEXCOORD;
+                    decl[curElement].UsageIndex = 3;
+                    curOffset += 2 * sizeof(float);
+                    break;
+
+                case nMesh2::Weights:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
+                    decl[curElement].Usage      = D3DDECLUSAGE_BLENDWEIGHT;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 4 * sizeof(float);
+                    break;
+
+                case nMesh2::JIndices:
+                    decl[curElement].Type       = D3DDECLTYPE_FLOAT4;
+                    decl[curElement].Usage      = D3DDECLUSAGE_BLENDINDICES;
+                    decl[curElement].UsageIndex = 0;
+                    curOffset += 4 * sizeof(float);
+                    break;
+
+                default:
+                    n_error("Unknown vertex component in vertex component mask");
+                    break;
+            }
+            curElement++;
+        }
+    }
+
+    // write vertex declaration terminator element, see D3DDECL_END() macro in d3d9types.h for details
+    decl[curElement].Stream = 0xff;
+    decl[curElement].Offset = 0;
+    decl[curElement].Type   = D3DDECLTYPE_UNUSED;
+    decl[curElement].Method = 0;
+    decl[curElement].Usage  = 0;
+    decl[curElement].UsageIndex = 0;
+
+    //n_dxverify(//gfxServer->d3d9Device->CreateVertexDeclaration(decl, &(this->vertexDeclaration)),
+    HRESULT hr = this->d3d9Device->CreateVertexDeclaration(decl, &d3d9vdecl);
+    d3d9vdecl->AddRef();
+    this->vertexDeclarationCache.Add(vertexComponentMask, d3d9vdecl);
+
+    return d3d9vdecl;
+}
