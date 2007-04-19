@@ -159,6 +159,13 @@ public:
         NeedsVertexShader = (1<<7),
     };
 
+    enum OptimizationFlag
+    {
+        Faces       = (1<<0),
+        Vertices    = (1<<1),
+        AllOptimizations = Faces | Vertices
+    };
+
     enum
     {
         InvalidIndex = 0xffff, // invalid index constant
@@ -243,6 +250,14 @@ public:
     virtual int GetByteSize();
     /// Create uninitialized buffers
     bool CreateEmpty();
+
+    /// optimize the mesh (can be redefined for each platform)
+    virtual bool OptimizeMesh(OptimizationFlag flags, float * vertices, int numVertices, ushort * indices, int numIndices);
+
+    #ifndef NGAME
+    /// enable/disable mesh optimization
+    static bool optimizeMesh;
+    #endif//NGAME
 
 protected:
     /// load mesh resource
