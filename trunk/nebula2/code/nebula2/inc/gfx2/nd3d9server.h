@@ -260,6 +260,9 @@ private:
     void DrawTextImmediate(nFont2* font, const nString& text, const vector4& color, const rectangle& rect, uint flags);
     /// add nEnvs describing display modes (for all adapters) to the NOH
     void CreateDisplayModeEnvVars();
+   
+    /// get a vertex declaration for a set of vertex component flags
+    IDirect3DVertexDeclaration9* NewVertexDeclaration(const int vertexCompMask);
 
     friend class nD3D9Mesh;
     friend class nD3D9Texture;
@@ -302,6 +305,9 @@ private:
     IDirect3DSurface9* captureSurface;          ///< an offscreen surface for fast screenshot capture
     ID3DXEffectPool* effectPool;                ///< global pool for shared effect parameters
     nRef<nD3D9Shader> refSharedShader;          ///< reference shader for shared effect parameters
+
+    nKeyArray<IDirect3DVertexDeclaration9*> vertexDeclarationCache; ///< indexed by vertexCompFlags
+    int curVertexComponents;                    ///< to avoid redundant vertex declaration changes
 
     #ifdef __NEBULA_STATS__
     IDirect3DQuery9* queryResourceManager;      ///< for querying the d3d resource manager
