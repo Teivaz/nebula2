@@ -73,8 +73,11 @@ private:
     bool IBMapFlag;
     uint vertexBuffer;
     uint indexBuffer;
-    void*  privVertexBuffer;
+    void* privVertexBuffer;
     void* privIndexBuffer;
+
+    void* vertexPtr;
+    void* indexPtr;
 
     ushort texCoordNum;
     int texCoordFirst;
@@ -82,6 +85,9 @@ private:
     static const ushort componentSize[];
 };
 
+//------------------------------------------------------------------------------
+/**
+*/
 inline
 GLsizei
 IndexStride()
