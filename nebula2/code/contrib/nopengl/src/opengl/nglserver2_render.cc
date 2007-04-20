@@ -641,9 +641,9 @@ nGLServer2::DrawIndexed(PrimitiveType primType)
     {
         shader->BeginPass(curPass);
         glDrawElements(glPrimType,
-                       this->indexRangeNum/*glNumPrimitives*/,
+                       this->indexRangeNum, //glNumPrimitives,
                        GL_UNSIGNED_SHORT,
-                       ((nGLMesh*)this->refVbMesh.get_unsafe())->IndexOffset(0));
+                       ((nGLMesh*)this->refIbMesh.get_unsafe())->IndexOffset(this->indexRangeFirst));
         n_gltrace("nGLServer2::DrawIndexed(): glDrawElements().");
         shader->EndPass();
 
@@ -690,7 +690,7 @@ nGLServer2::Draw(PrimitiveType primType)
     for (curPass = 0; curPass < numPasses; curPass++)
     {
         shader->BeginPass(curPass);
-        glDrawArrays(glPrimType, 0, glNumPrimitives); // 0 - ???
+        glDrawArrays(glPrimType, this->vertexRangeFirst, glNumPrimitives); // 0 - ???
         n_gltrace("nGLServer2::Draw(): glDrawArrays().");
         shader->EndPass();
 
@@ -732,9 +732,9 @@ nGLServer2::DrawIndexedNS(PrimitiveType primType)
     this->refShader->CommitChanges();
 
     glDrawElements(glPrimType,
-                   glNumPrimitives,
+                   this->indexRangeNum, //glNumPrimitives,
                    GL_UNSIGNED_SHORT,
-                   ((nGLMesh*)this->refVbMesh.get_unsafe())->IndexOffset(0));
+                   ((nGLMesh*)this->refIbMesh.get_unsafe())->IndexOffset(this->indexRangeFirst));
     n_gltrace("nGLServer2::DrawIndexedNS(): glDrawElements().");
     
     #ifdef __NEBULA_STATS__
@@ -766,7 +766,9 @@ nGLServer2::DrawNS(PrimitiveType primType)
 
     this->refShader->CommitChanges();
 
-    //glDrawArrays(glPrimType, 0, glNumPrimitives); // 0 - ???
+    //glDrawArrays(glPrimType,
+    //             this->vertexRangeFirst, // 0 - ???
+    //             this->vertexRangeNum); //glNumPrimitives);
     n_gltrace("nGLServer2::DrawNS(): glDrawArrays().");
     
     #ifdef __NEBULA_STATS__

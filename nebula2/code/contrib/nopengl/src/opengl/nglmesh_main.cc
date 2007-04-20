@@ -93,6 +93,7 @@ nGLMesh::LoadResource()
         // create the vertex declaration from the vertex component mask
         this->CreateVertexDeclaration();
     }
+
     return success;
 }
 
@@ -195,6 +196,8 @@ nGLMesh::CreateVertexBuffer()
         // vertex buffer
         this->privVertexBuffer = n_malloc(this->vertexBufferByteSize);
         n_assert(this->privVertexBuffer);
+
+        this->vertexPtr = this->privVertexBuffer;
     }
     else
     {
@@ -202,7 +205,7 @@ nGLMesh::CreateVertexBuffer()
         //n_printf("nGLMesh::CreateVertexBuffer(): buffer:%i.\n",this->vertexBuffer);
 
         //bind the buffer, so that all following commands aply on this buffer
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB,this->vertexBuffer);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexBuffer);
 
         //select usage type
         GLenum bufferUsage = GL_STATIC_DRAW_ARB; //default
@@ -219,6 +222,8 @@ nGLMesh::CreateVertexBuffer()
         n_assert(glVBufSize == this->vertexBufferByteSize);
 
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, NULL);
+
+        this->vertexPtr = 0;
     }
     n_gltrace("nGLMesh::CreateVertexBuffer().");
 }
@@ -242,6 +247,8 @@ nGLMesh::CreateIndexBuffer()
         // index buffer
         this->privIndexBuffer = n_malloc(this->indexBufferByteSize);
         n_assert(this->privIndexBuffer);
+
+        this->indexPtr = this->privIndexBuffer;
     }
     else
     {
@@ -250,7 +257,7 @@ nGLMesh::CreateIndexBuffer()
         //n_printf("nGLMesh::CreateIndexBuffer():  buffer:%i.\n",this->indexBuffer);
 
         //bind the buffer, so that all following commands aply on this buffer
-        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,this->indexBuffer);
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, this->indexBuffer);
 
         //select usage type
         GLenum bufferUsage = GL_STATIC_DRAW_ARB; //default
@@ -267,6 +274,8 @@ nGLMesh::CreateIndexBuffer()
         n_assert(glIBufSize == this->indexBufferByteSize);
 
         glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, NULL);
+
+        this->indexPtr = 0;
     }
     n_gltrace("nGLMesh::CreateIndexBuffer().");
 }
@@ -308,7 +317,7 @@ nGLMesh::LockVertices()
     this->VBMapFlag = true;
     if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB,this->vertexBuffer);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, this->vertexBuffer);
         void* ptr = glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
         n_gltrace("nGLMesh::LockVertices().");
         n_assert(ptr);    
@@ -354,7 +363,7 @@ nGLMesh::LockIndices()
     this->IBMapFlag = true;
     if (N_GL_EXTENSION_SUPPORTED(GL_ARB_vertex_buffer_object))
     {
-        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB,this->indexBuffer);
+        glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, this->indexBuffer);
         void* ptr = glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
         n_gltrace("nGLMesh::LockIndices().");
         n_assert(ptr);
@@ -403,21 +412,21 @@ nGLMesh::SetVertices(int vertexStart)
 
     if (this->vertexComponentMask & Coord)
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(this->componentSize[firstSetBitPos(Coord)],//3,
-            GL_FLOAT, stride, this->VertexOffset(vertexStart, Coord));
+            GL_FLOAT, stride, this->VertexOffset(0, Coord));
+        glEnableClientState(GL_VERTEX_ARRAY);
     }
 
     if (this->vertexComponentMask & Normal)
     {
+        glNormalPointer(GL_FLOAT, stride, this->VertexOffset(0, Normal));
         glEnableClientState(GL_NORMAL_ARRAY);
-        glNormalPointer(GL_FLOAT, stride, this->VertexOffset(vertexStart, Normal));
     }
 
     // we work with texture only if mesh has tex coordinates
     if (this->texCoordNum > 0)
     {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
         // binding textures
         int stage;
@@ -429,7 +438,7 @@ nGLMesh::SetVertices(int vertexStart)
             {                
                 int res = tex->ApplyCoords(
                     stage, this->componentSize[firstSetBitPos(Uv0 << stage)],
-                    stride, this->VertexOffset(vertexStart, this->texCoordFirst + stage));
+                    stride, this->VertexOffset(0, this->texCoordFirst + stage));
 
                 if (res == -1)
                 {
@@ -439,14 +448,14 @@ nGLMesh::SetVertices(int vertexStart)
                 if (res == 0) break;
             }
         }
-    //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     if (this->vertexComponentMask & Color)
     {
-        glEnableClientState(GL_COLOR_ARRAY);
         glColorPointer(this->componentSize[firstSetBitPos(Color)],//4,
-            GL_FLOAT, stride, this->VertexOffset(vertexStart, Color));
+            GL_FLOAT, stride, this->VertexOffset(0, Color));
+        glEnableClientState(GL_COLOR_ARRAY);
     }
 
     //n_printf("VStride(%s)\n", stride);
@@ -507,10 +516,10 @@ nGLMesh::SetIndices(int indexStart)
         glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, this->indexBuffer);
     }
 
-    int stride = sizeof(GLushort);//this->numIndices * sizeof(GLushort);
+    //int stride = sizeof(GLushort); //this->numIndices * sizeof(GLushort);
 
+    //glIndexPointer(GL_UNSIGNED_BYTE, stride, this->IndexOffset(indexStart)); //this->privIndexBuffer
     glEnableClientState(GL_INDEX_ARRAY);
-    glIndexPointer(GL_UNSIGNED_BYTE, stride, this->IndexOffset(indexStart));
 
     //n_printf("IStride(%s)\n", stride);
     n_gltrace("nGLMesh::SetIndices().");
@@ -543,7 +552,8 @@ nGLMesh::VertexOffset(int vertexStart, int component)
     int cm = this->vertexComponentMask & component;
     n_assert2(cm < AllComponents, "You have tried to get a buffer offset for a not possible type!!! this is a hard fail!\n");
 
-    float* basePtr = (float*)this->privVertexBuffer + vertexStart * this->vertexWidth + componentOffset[firstSetBitPos(cm)];
+    //float* basePtr = (float*)this->privVertexBuffer + vertexStart * this->vertexWidth + componentOffset[firstSetBitPos(cm)];
+    char* basePtr = (char*)this->vertexPtr + componentOffset[firstSetBitPos(cm)] + vertexStart * this->GetVertexWidth();
 
     return (void*) basePtr;
 }
@@ -555,7 +565,7 @@ nGLMesh::VertexOffset(int vertexStart, int component)
 void*
 nGLMesh::IndexOffset(int indexStart)
 {
-    return (void*)((ushort*)this->privIndexBuffer + indexStart);
+    return (void*)((char*)this->indexPtr + indexStart * sizeof(GLshort));
 }
 
 //------------------------------------------------------------------------------
