@@ -117,6 +117,9 @@ protected:
 
     void CollectChildNode(nRoot* node, nArray<nRoot*>& array);
 
+    /// get world transform matrix
+    matrix44 GetWorldTM(nTransformNode* node);
+
 protected:
     /// variable server
     nRef<nVariableServer> varServer;
