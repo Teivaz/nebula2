@@ -95,17 +95,19 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
             }
             else if (lightState.useNearAtten)
             {
-                size = lightState.attenEnd;
+                size = lightState.nearAttenEnd;
             }
             else
             {
                 size = 500.f; // use default
             }
-            light->SetFloat(nShaderState::LightRange, size);
-            
+
             // apply geom scale
             float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
             size *= geomScale;
+            
+            light->SetFloat(nShaderState::LightRange, size);
+            
             bbox3 box;
             box.set(vector3(), vector3(size, size, size));
             light->SetLocalBox(box);
@@ -121,8 +123,11 @@ bool nMaxLight::BuildLight(Object *obj, nLightNode* light)
         {
             light->SetType(nLight::Spot);
 
-            float hotsize  = lightState.hotsize;
-            float fallsize = lightState.fallsize;
+            // apply geom scale
+            float geomScale = nMaxOptions::Instance()->GetGeomScaleValue();
+
+            float hotsize  = lightState.hotsize * geomScale;
+            float fallsize = lightState.fallsize * geomScale;
         }
         break;
 
