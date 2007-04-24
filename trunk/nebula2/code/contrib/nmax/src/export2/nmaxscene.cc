@@ -737,7 +737,8 @@ bool nMaxScene::Postprocess()
 
             nTransformNode* sceneNode = (nTransformNode*)node;
 
-            matrix44 transform = sceneNode->GetTransform();
+            //matrix44 transform = sceneNode->GetTransform();
+            matrix44 transform = GetWorldTM(sceneNode);sceneNode;
             bbox3 bbox = sceneNode->GetLocalBox();
             // transfrom its original position
             bbox.transform(transform);
@@ -1026,6 +1027,16 @@ nSceneNode* nMaxScene::ExportGeomObject(INode* inode, Object* obj)
             //!nMaxBoneManager::Instance()->FindBoneIDByNode(inode))
         {
             createdNode = ExportGeomObject2(inode);
+
+            // if node is hidden, set inactive
+            if( inode->IsNodeHidden() != 0 )
+            {
+                if( createdNode->IsA("ntransformnode"))
+                {
+                    nTransformNode* tNode = static_cast<nTransformNode*>(createdNode);
+                    tNode->SetActive(false);
+                }
+            }
         }
     }
     return createdNode;
@@ -1475,4 +1486,35 @@ void nMaxScene::CollectChildNode(nRoot* node, nArray<nRoot*>& array)
 
         child = child->GetSucc();
     }
+}
+
+//-----------------------------------------------------------------------------
+/**
+    recursive collect child  node
+*/
+matrix44 nMaxScene::GetWorldTM(nTransformNode* node)
+{
+
+    n_assert(node);
+
+    matrix44 worldTM;
+    worldTM.ident();
+    
+    while(node)
+    {
+        const matrix44& tm = node->GetTransform();
+        worldTM = tm * worldTM;
+
+        nRoot* parent = node->GetParent();
+        if( parent->IsA("ntransformnode") )
+        {
+            node = (nTransformNode*)parent;
+        }
+        else
+        {
+            node = NULL;
+        }
+    }
+
+    return worldTM;
 }
