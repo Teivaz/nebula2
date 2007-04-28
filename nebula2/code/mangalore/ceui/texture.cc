@@ -22,6 +22,10 @@ Texture::Texture(CEGUI::Renderer* renderer) : CEGUI::Texture(renderer) {
 /**
 */
 Texture::~Texture() {
+    if (texture.isvalid()) {
+        texture->Release();
+        texture.invalidate();
+    }
 }
 
 //------------------------------------------------------------------------------
