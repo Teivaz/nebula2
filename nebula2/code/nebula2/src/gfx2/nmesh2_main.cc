@@ -13,7 +13,7 @@
 nNebulaClass(nMesh2, "nresource");
 
 #ifndef NGAME
-bool nMesh2::optimizeMesh = true;
+bool nMesh2::optimizeMesh = false;
 #endif //NGAME
 
 //------------------------------------------------------------------------------
