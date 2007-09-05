@@ -515,10 +515,10 @@ void
 _matrix33::rotate_local_x(const float a)
 {
     _matrix33 rotM;  // initialized as identity matrix
-	rotM.M22 = (float) cos(a); rotM.M23 = -(float) sin(a);
-	rotM.M32 = (float) sin(a); rotM.M33 =  (float) cos(a);
+    rotM.M22 = (float) cos(a); rotM.M23 = -(float) sin(a);
+    rotM.M32 = (float) sin(a); rotM.M33 =  (float) cos(a);
 
-	(*this) = rotM * (*this);
+    (*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -529,10 +529,10 @@ void
 _matrix33::rotate_local_y(const float a)
 {
     _matrix33 rotM;  // initialized as identity matrix
-	rotM.M11 = (float) cos(a);  rotM.M13 = (float) sin(a);
+    rotM.M11 = (float) cos(a);  rotM.M13 = (float) sin(a);
     rotM.M31 = -(float) sin(a); rotM.M33 = (float) cos(a);
 
-	(*this) = rotM * (*this);
+    (*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -544,9 +544,9 @@ _matrix33::rotate_local_z(const float a)
 {
     _matrix33 rotM;  // initialized as identity matrix
     rotM.M11 = (float) cos(a); rotM.M12 = -(float) sin(a);
-	rotM.M21 = (float) sin(a); rotM.M22 =  (float) cos(a);
+    rotM.M21 = (float) sin(a); rotM.M22 =  (float) cos(a);
 
-	(*this) = rotM * (*this);
+    (*this) = rotM * (*this);
 }
 
 //------------------------------------------------------------------------------
@@ -561,18 +561,18 @@ _matrix33::rotate(const _vector3& vec, float a)
     float sa = (float) n_sin(a);
     float ca = (float) n_cos(a);
 
-	_matrix33 rotM;
-	rotM.M11 = ca + (1.0f - ca) * v.x * v.x;
-	rotM.M12 = (1.0f - ca) * v.x * v.y - sa * v.z;
-	rotM.M13 = (1.0f - ca) * v.z * v.x + sa * v.y;
-	rotM.M21 = (1.0f - ca) * v.x * v.y + sa * v.z;
-	rotM.M22 = ca + (1.0f - ca) * v.y * v.y;
-	rotM.M23 = (1.0f - ca) * v.y * v.z - sa * v.x;
-	rotM.M31 = (1.0f - ca) * v.z * v.x - sa * v.y;
-	rotM.M32 = (1.0f - ca) * v.y * v.z + sa * v.x;
-	rotM.M33 = ca + (1.0f - ca) * v.z * v.z;
+    _matrix33 rotM;
+    rotM.M11 = ca + (1.0f - ca) * v.x * v.x;
+    rotM.M12 = (1.0f - ca) * v.x * v.y - sa * v.z;
+    rotM.M13 = (1.0f - ca) * v.z * v.x + sa * v.y;
+    rotM.M21 = (1.0f - ca) * v.x * v.y + sa * v.z;
+    rotM.M22 = ca + (1.0f - ca) * v.y * v.y;
+    rotM.M23 = (1.0f - ca) * v.y * v.z - sa * v.x;
+    rotM.M31 = (1.0f - ca) * v.z * v.x - sa * v.y;
+    rotM.M32 = (1.0f - ca) * v.y * v.z + sa * v.x;
+    rotM.M33 = ca + (1.0f - ca) * v.z * v.z;
 
-	(*this) = (*this) * rotM;
+    (*this) = (*this) * rotM;
 }
 
 //------------------------------------------------------------------------------

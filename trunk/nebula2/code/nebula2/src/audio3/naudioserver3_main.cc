@@ -16,7 +16,7 @@ nAudioServer3::nAudioServer3() :
     isOpen(false),
     inBeginScene(false),
     curTime(0.0),
-	isMuted(false)
+    isMuted(false)
 {
     n_assert(0 == Singleton);
     Singleton = this;
@@ -27,7 +27,7 @@ nAudioServer3::nAudioServer3() :
     this->masterVolumeDirty.Clear(true);
     this->masterVolumeChangedTime.SetSize(NumCategorys);
     this->masterVolumeChangedTime.Clear(this->curTime);
-	this->masterVolumeMuted.SetSize(NumCategorys);
+    this->masterVolumeMuted.SetSize(NumCategorys);
 }
 
 //------------------------------------------------------------------------------
@@ -216,15 +216,15 @@ nAudioServer3::UpdateAllSounds()
 void
 nAudioServer3::Mute()
 {
-	n_assert(!this->isMuted);
-	int i;
-	for (i = 0; i < NumCategorys; i++)
-	{
-		this->masterVolumeMuted[i] = this->GetMasterVolume((Category)i);
-		this->SetMasterVolume((Category)i , 0.0f);
-	}
+    n_assert(!this->isMuted);
+    int i;
+    for (i = 0; i < NumCategorys; i++)
+    {
+        this->masterVolumeMuted[i] = this->GetMasterVolume((Category)i);
+        this->SetMasterVolume((Category)i , 0.0f);
+    }
 
-	this->isMuted = true;
+    this->isMuted = true;
 }
 
 //------------------------------------------------------------------------------
@@ -233,14 +233,14 @@ nAudioServer3::Mute()
 void
 nAudioServer3::Unmute()
 {
-	n_assert(this->isMuted);
-	int i;
-	for (i = 0; i < NumCategorys; i++)
-	{
-		this->SetMasterVolume((Category)i, this->masterVolumeMuted[i]);
-	}
+    n_assert(this->isMuted);
+    int i;
+    for (i = 0; i < NumCategorys; i++)
+    {
+        this->SetMasterVolume((Category)i, this->masterVolumeMuted[i]);
+    }
 
-	this->isMuted = false;
+    this->isMuted = false;
 }
 
 //------------------------------------------------------------------------------
@@ -249,5 +249,5 @@ nAudioServer3::Unmute()
 bool
 nAudioServer3::IsMuted() const
 {
-	return this->isMuted;
+    return this->isMuted;
 }

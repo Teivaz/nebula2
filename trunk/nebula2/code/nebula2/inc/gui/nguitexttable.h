@@ -48,7 +48,7 @@ public:
     void SetText(int colIndex, int rowIndex, const nString& text);
     /// get cell text
     const nString& GetText(int colIndex, int rowIndex);
-	/// called when widget is becoming visible
+    /// called when widget is becoming visible
     virtual void OnShow();
     /// called when widget is becoming invisible
     virtual void OnHide();

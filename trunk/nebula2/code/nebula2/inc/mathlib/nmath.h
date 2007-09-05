@@ -313,7 +313,7 @@ inline
 float
 n_angulardistance(float from, float to)
 {
-	float normFrom = n_normangle(from);
+    float normFrom = n_normangle(from);
     float normTo   = n_normangle(to);
     float dist = normTo - normFrom;
     if (dist < n_deg2rad(-180.0f))

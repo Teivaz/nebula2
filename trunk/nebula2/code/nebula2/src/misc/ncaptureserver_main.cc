@@ -203,7 +203,7 @@ nCaptureServer::SaveTiledScreenShot(int numTilesX, int numTilesY)
 
     // derive view volume width and height from the projection matrix
     const matrix44& origProj = origCamera.GetProjection();
-	sceneServer->SaveProjectionMatrix(origProj);
+    sceneServer->SaveProjectionMatrix(origProj);
 
     // use hard coded Near/Far-Planes to improve Z-Buffer accuracy
     float zNear = 0.5f;
@@ -229,9 +229,9 @@ nCaptureServer::SaveTiledScreenShot(int numTilesX, int numTilesY)
             // manipulate camera entity and render a complete frame
             nCamera2 tileCamera;
             tileCamera.SetProjectionMatrix(tileProj);
-			this->SetCorrectRenderpathOffset(numTilesX, numTilesY, tileX, tileY, false);
+            this->SetCorrectRenderpathOffset(numTilesX, numTilesY, tileX, tileY, false);
 
-			gfxServer->SetCamera(tileCamera);
+            gfxServer->SetCamera(tileCamera);
             gfxServer->BeginFrame();
             sceneServer->RenderScene();
             gfxServer->EndScene();
@@ -255,7 +255,7 @@ nCaptureServer::SaveTiledScreenShot(int numTilesX, int numTilesY)
     sceneServer->SetOcclusionQuery(origOcclusionQuery);
     sceneServer->SetClipPlaneFencing(origClipPlaneFencing);
     sceneServer->SetCamerasEnabled(origCamerasEnabled);
-	this->SetCorrectRenderpathOffset(0, 0, 0, 0, true);
+    this->SetCorrectRenderpathOffset(0, 0, 0, 0, true);
     return retval;
 }
 
@@ -265,21 +265,21 @@ nCaptureServer::SaveTiledScreenShot(int numTilesX, int numTilesY)
 void
 nCaptureServer::SetCorrectRenderpathOffset(int numTilesX, int numTilesY, int tileXNum, int tileYNum, bool reset)
 {
-	nFloat4 offset;
-	if (reset)
-	{
+    nFloat4 offset;
+    if (reset)
+    {
         offset.x = 0.0f;
         offset.y = 1.0f;
         offset.z = 0.0f;
         offset.w = 1.0f;
-	}
-	else
-	{
+    }
+    else
+    {
         offset.x = (float)tileXNum / (float)numTilesX;
         offset.y =  offset.x + 1.0f / (float)numTilesX;
         offset.z = (float)tileYNum / (float)numTilesY;
         offset.w = offset.z + 1.0f / (float)numTilesY;
-	}
+    }
     nShader2* shaderParameter = (nShader2*)nResourceServer::Instance()->FindResource("shared", nResource::Shader);
-	shaderParameter->SetFloat4(nShaderState::RenderTargetOffset, offset);
+    shaderParameter->SetFloat4(nShaderState::RenderTargetOffset, offset);
 }

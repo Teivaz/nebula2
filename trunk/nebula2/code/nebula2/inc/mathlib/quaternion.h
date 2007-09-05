@@ -245,7 +245,7 @@ public:
         *this *= qz;
     }
 
-	//--- fuzzy compare operators -----------------------------------
+    //--- fuzzy compare operators -----------------------------------
     bool isequal(const quaternion& v, float tol) const
     {
         if (fabs(v.x-x) > tol)      return false;

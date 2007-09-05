@@ -1,11 +1,11 @@
 /*
  * tclMath.h --
  *
- *	This file is necessary because of Metrowerks CodeWarrior Pro 1
- *	on the Macintosh. With 8-byte doubles turned on, the definitions of
- *	sin, cos, acos, etc., are screwed up.  They are fine as long as
- *	they are used as function calls, but if the function pointers
- *	are passed around and used, they will crash hard on the 68K.
+ *  This file is necessary because of Metrowerks CodeWarrior Pro 1
+ *  on the Macintosh. With 8-byte doubles turned on, the definitions of
+ *  sin, cos, acos, etc., are screwed up.  They are fine as long as
+ *  they are used as function calls, but if the function pointers
+ *  are passed around and used, they will crash hard on the 68K.
  *
  * Copyright (c) 1997 Sun Microsystems, Inc.
  *

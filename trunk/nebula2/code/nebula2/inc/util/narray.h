@@ -1065,8 +1065,8 @@ nArray<TYPE>::BinarySearchIndex(const TYPE& elm) const
     {
         int half;
         int lo = 0;
-	    int hi = num - 1;
-	    int mid;
+        int hi = num - 1;
+        int mid;
         while (lo <= hi)
         {
             if ((half = num/2))

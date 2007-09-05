@@ -51,8 +51,8 @@ private:
     bool CaptureFrame();
     /// create session directory for new session
     bool CreateSessionDirectory();
-	/// Sets the renderPath offset variable to the right value
-	void SetCorrectRenderpathOffset(int numTilesX, int numTilesY, int tileXNum, int tileYNum, bool reset);
+    /// Sets the renderPath offset variable to the right value
+    void SetCorrectRenderpathOffset(int numTilesX, int numTilesY, int tileXNum, int tileYNum, bool reset);
 
     static nCaptureServer* Singleton;
 

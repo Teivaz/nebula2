@@ -79,9 +79,9 @@ nClippingCameraNode::RenderCamera(const matrix44& modelWorldMatrix, const matrix
 float
 nClippingCameraNode::sgn(float a)
 {
-	if (a > 0.0f) return 1.0f;
-	if (a < 0.0f) return -1.0f;
-	return 0.0f;
+    if (a > 0.0f) return 1.0f;
+    if (a < 0.0f) return -1.0f;
+    return 0.0f;
 }
 
 //------------------------------------------------------------------------------
@@ -131,11 +131,11 @@ nClippingCameraNode::ComputeProjectionMatrix(const matrix44& viewMatrix, const m
 
     vector4 c = _clipPlane * (1.0f / (_clipPlane.x*q.x + _clipPlane.y*q.y + _clipPlane.z*q.z + _clipPlane.w*q.w));
 
-	// Replace the third column of the projection matrix
-	_projectionMatrix.m[0][2] = c.x;
+    // Replace the third column of the projection matrix
+    _projectionMatrix.m[0][2] = c.x;
     _projectionMatrix.m[1][2] = c.y;
-	_projectionMatrix.m[2][2] = c.z;
-	_projectionMatrix.m[3][2] = c.w;
+    _projectionMatrix.m[2][2] = c.z;
+    _projectionMatrix.m[3][2] = c.w;
 
     return _projectionMatrix;
 }

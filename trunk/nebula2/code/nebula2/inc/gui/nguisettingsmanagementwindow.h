@@ -70,7 +70,7 @@ private:
     bool CheckDirAndCreate();
 
     nRef<nGuiTextButton>       refResetButton;
-	nRef<nGuiTextButton>       refSaveButton;
+    nRef<nGuiTextButton>       refSaveButton;
     nRef<nGuiTextButton>       refLoadButton;
     nRef<nGuiTextButton>       refBrowseButton;
     nRef<nGuiTextButton>       refSetDefaultButton;

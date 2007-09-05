@@ -29,14 +29,14 @@ int main(int argc, const char** argv)
         printf("ncompileshaders [-fx] [-help]\n"
                "(C) 2006 RadonLabs GmbH\n"
                "Compiles shaders from the shaderdb \n\n"
-               "-fx		        - the shader xml file\n"
+               "-fx             - the shader xml file\n"
                "-help           - show this help\n");
         return 5;
     }
     nKernelServer kernelServer;
-	nShaderParser parser;
+    nShaderParser parser;
 
-	parser.Initialize(shaderArg);
-	printf(parser.Parse().Get());
+    parser.Initialize(shaderArg);
+    printf(parser.Parse().Get());
     return 0;
 }

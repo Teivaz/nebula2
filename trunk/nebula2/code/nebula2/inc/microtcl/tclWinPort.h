@@ -1,9 +1,9 @@
 /*
  * tclWinPort.h --
  *
- *	This header file handles porting issues that occur because of
- *	differences between Windows and Unix. It should be the only
- *	file that contains #ifdefs to handle different flavors of OS.
+ *  This header file handles porting issues that occur because of
+ *  differences between Windows and Unix. It should be the only
+ *  file that contains #ifdefs to handle different flavors of OS.
  *
  * Copyright (c) 1994-1997 Sun Microsystems, Inc.
  *
@@ -85,7 +85,7 @@ typedef float *TCHAR;
  * Define EINPROGRESS in terms of WSAEINPROGRESS.
  */
 
-#ifndef	EINPROGRESS
+#ifndef EINPROGRESS
 #define EINPROGRESS WSAEINPROGRESS
 #endif
 
@@ -94,7 +94,7 @@ typedef float *TCHAR;
  */
 
 #ifndef ENOTSUP
-#define	ENOTSUP		-1030507
+#define ENOTSUP     -1030507
 #endif
 
 /*
@@ -106,103 +106,103 @@ typedef float *TCHAR;
 #define EWOULDBLOCK             EAGAIN
 #endif
 #ifndef EALREADY
-#define EALREADY	149	/* operation already in progress */
+#define EALREADY    149 /* operation already in progress */
 #endif
 #ifndef ENOTSOCK
-#define ENOTSOCK	95	/* Socket operation on non-socket */
+#define ENOTSOCK    95  /* Socket operation on non-socket */
 #endif
 #ifndef EDESTADDRREQ
-#define EDESTADDRREQ	96	/* Destination address required */
+#define EDESTADDRREQ    96  /* Destination address required */
 #endif
 #ifndef EMSGSIZE
-#define EMSGSIZE	97	/* Message too long */
+#define EMSGSIZE    97  /* Message too long */
 #endif
 #ifndef EPROTOTYPE
-#define EPROTOTYPE	98	/* Protocol wrong type for socket */
+#define EPROTOTYPE  98  /* Protocol wrong type for socket */
 #endif
 #ifndef ENOPROTOOPT
-#define ENOPROTOOPT	99	/* Protocol not available */
+#define ENOPROTOOPT 99  /* Protocol not available */
 #endif
 #ifndef EPROTONOSUPPORT
-#define EPROTONOSUPPORT	120	/* Protocol not supported */
+#define EPROTONOSUPPORT 120 /* Protocol not supported */
 #endif
 #ifndef ESOCKTNOSUPPORT
-#define ESOCKTNOSUPPORT	121	/* Socket type not supported */
+#define ESOCKTNOSUPPORT 121 /* Socket type not supported */
 #endif
 #ifndef EOPNOTSUPP
-#define EOPNOTSUPP	122	/* Operation not supported on socket */
+#define EOPNOTSUPP  122 /* Operation not supported on socket */
 #endif
 #ifndef EPFNOSUPPORT
-#define EPFNOSUPPORT	123	/* Protocol family not supported */
+#define EPFNOSUPPORT    123 /* Protocol family not supported */
 #endif
 #ifndef EAFNOSUPPORT
-#define EAFNOSUPPORT	124	/* Address family not supported */
+#define EAFNOSUPPORT    124 /* Address family not supported */
 #endif
 #ifndef EADDRINUSE
-#define EADDRINUSE	125	/* Address already in use */
+#define EADDRINUSE  125 /* Address already in use */
 #endif
 #ifndef EADDRNOTAVAIL
-#define EADDRNOTAVAIL	126	/* Can't assign requested address */
+#define EADDRNOTAVAIL   126 /* Can't assign requested address */
 #endif
 #ifndef ENETDOWN
-#define ENETDOWN	127	/* Network is down */
+#define ENETDOWN    127 /* Network is down */
 #endif
 #ifndef ENETUNREACH
-#define ENETUNREACH	128	/* Network is unreachable */
+#define ENETUNREACH 128 /* Network is unreachable */
 #endif
 #ifndef ENETRESET
-#define ENETRESET	129	/* Network dropped connection on reset */
+#define ENETRESET   129 /* Network dropped connection on reset */
 #endif
 #ifndef ECONNABORTED
-#define ECONNABORTED	130	/* Software caused connection abort */
+#define ECONNABORTED    130 /* Software caused connection abort */
 #endif
 #ifndef ECONNRESET
-#define ECONNRESET	131	/* Connection reset by peer */
+#define ECONNRESET  131 /* Connection reset by peer */
 #endif
 #ifndef ENOBUFS
-#define ENOBUFS		132	/* No buffer space available */
+#define ENOBUFS     132 /* No buffer space available */
 #endif
 #ifndef EISCONN
-#define EISCONN		133	/* Socket is already connected */
+#define EISCONN     133 /* Socket is already connected */
 #endif
 #ifndef ENOTCONN
-#define ENOTCONN	134	/* Socket is not connected */
+#define ENOTCONN    134 /* Socket is not connected */
 #endif
 #ifndef ESHUTDOWN
-#define ESHUTDOWN	143	/* Can't send after socket shutdown */
+#define ESHUTDOWN   143 /* Can't send after socket shutdown */
 #endif
 #ifndef ETOOMANYREFS
-#define ETOOMANYREFS	144	/* Too many references: can't splice */
+#define ETOOMANYREFS    144 /* Too many references: can't splice */
 #endif
 #ifndef ETIMEDOUT
-#define ETIMEDOUT	145	/* Connection timed out */
+#define ETIMEDOUT   145 /* Connection timed out */
 #endif
 #ifndef ECONNREFUSED
-#define ECONNREFUSED	146	/* Connection refused */
+#define ECONNREFUSED    146 /* Connection refused */
 #endif
 #ifndef ELOOP
-#define ELOOP		90	/* Symbolic link loop */
+#define ELOOP       90  /* Symbolic link loop */
 #endif
 #ifndef EHOSTDOWN
-#define EHOSTDOWN	147	/* Host is down */
+#define EHOSTDOWN   147 /* Host is down */
 #endif
 #ifndef EHOSTUNREACH
-#define EHOSTUNREACH	148	/* No route to host */
+#define EHOSTUNREACH    148 /* No route to host */
 #endif
 #ifndef ENOTEMPTY
-#define ENOTEMPTY 	93	/* directory not empty */
+#define ENOTEMPTY   93  /* directory not empty */
 #endif
 #ifndef EUSERS
-#define EUSERS		94	/* Too many users (for UFS) */
+#define EUSERS      94  /* Too many users (for UFS) */
 #endif
 #ifndef EDQUOT
-#define EDQUOT		49	/* Disc quota exceeded */
+#define EDQUOT      49  /* Disc quota exceeded */
 #endif
 #ifndef ESTALE
-#define ESTALE		151	/* Stale NFS file handle */
+#define ESTALE      151 /* Stale NFS file handle */
 #endif
 #ifndef EREMOTE
-#define EREMOTE		66	/* The object is remote */
+#define EREMOTE     66  /* The object is remote */
 #endif
 
 /*
@@ -345,7 +345,7 @@ typedef float *TCHAR;
 #    define exception _exception
 #    undef EDEADLOCK
 #    if defined(__MINGW32__) && !defined(__MSVCRT__)
-#	define timezone _timezone
+#   define timezone _timezone
 #    endif
 #endif /* _MSC_VER || __MINGW32__ */
 
@@ -361,7 +361,7 @@ typedef float *TCHAR;
  * The default platform eol translation on Windows is TCL_TRANSLATE_CRLF:
  */
 
-#define	TCL_PLATFORM_TRANSLATION	TCL_TRANSLATE_CRLF
+#define TCL_PLATFORM_TRANSLATION    TCL_TRANSLATE_CRLF
 
 /*
  * Declare dynamic loading extension macro.
@@ -375,19 +375,19 @@ typedef float *TCHAR;
  * the C level environment in synch with the system level environment.
  */
 
-#define USE_PUTENV	1
+#define USE_PUTENV  1
 
 /*
  * The following defines wrap the system memory allocation routines for
  * use by tclAlloc.c.
  */
 
-#define TclpSysAlloc(size, isBin)	((void*)HeapAlloc(GetProcessHeap(), \
-					    (DWORD)0, (DWORD)size))
-#define TclpSysFree(ptr)		(HeapFree(GetProcessHeap(), \
-					    (DWORD)0, (HGLOBAL)ptr))
-#define TclpSysRealloc(ptr, size)	((void*)HeapReAlloc(GetProcessHeap(), \
-					    (DWORD)0, (LPVOID)ptr, (DWORD)size))
+#define TclpSysAlloc(size, isBin)   ((void*)HeapAlloc(GetProcessHeap(), \
+                        (DWORD)0, (DWORD)size))
+#define TclpSysFree(ptr)        (HeapFree(GetProcessHeap(), \
+                        (DWORD)0, (HGLOBAL)ptr))
+#define TclpSysRealloc(ptr, size)   ((void*)HeapReAlloc(GetProcessHeap(), \
+                        (DWORD)0, (LPVOID)ptr, (DWORD)size))
 
 /*
  * The following defines map from standard socket names to our internal
@@ -396,10 +396,10 @@ typedef float *TCHAR;
  */
 
 /*
-#define getservbyname	TclWinGetServByName
-#define getsockopt	TclWinGetSockOpt
-#define ntohs		TclWinNToHS
-#define setsockopt	TclWinSetSockOpt
+#define getservbyname   TclWinGetServByName
+#define getsockopt  TclWinGetSockOpt
+#define ntohs       TclWinNToHS
+#define setsockopt  TclWinSetSockOpt
 */
 
 /*
@@ -408,7 +408,7 @@ typedef float *TCHAR;
  */
 
 /*
-#define TclpReleaseFile(file)	ckfree((char *) file)
+#define TclpReleaseFile(file)   ckfree((char *) file)
 */
 
 /*
@@ -416,9 +416,9 @@ typedef float *TCHAR;
  * functions.
  */
 
-#define TclpExit		exit
+#define TclpExit        exit
 
-//#define TclpLstat		TclpStat
+//#define TclpLstat     TclpStat
 
 /*
  * Declarations for Windows-only functions.
@@ -446,14 +446,14 @@ EXTERN TclFile TclWinMakeFile _ANSI_ARGS_((HANDLE handle));
 /*
 #ifdef TCL_THREADS
 typedef CRITICAL_SECTION TclpMutex;
-EXTERN void	TclpMutexInit _ANSI_ARGS_((TclpMutex *mPtr));
-EXTERN void	TclpMutexLock _ANSI_ARGS_((TclpMutex *mPtr));
-EXTERN void	TclpMutexUnlock _ANSI_ARGS_((TclpMutex *mPtr));
+EXTERN void TclpMutexInit _ANSI_ARGS_((TclpMutex *mPtr));
+EXTERN void TclpMutexLock _ANSI_ARGS_((TclpMutex *mPtr));
+EXTERN void TclpMutexUnlock _ANSI_ARGS_((TclpMutex *mPtr));
 #else
 typedef int TclpMutex;
-#define	TclpMutexInit(a)
-#define	TclpMutexLock(a)
-#define	TclpMutexUnlock(a)
+#define TclpMutexInit(a)
+#define TclpMutexLock(a)
+#define TclpMutexUnlock(a)
 #endif
 
 #include "tclPlatDecls.h"

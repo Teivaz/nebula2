@@ -100,10 +100,10 @@ public:
     void SetPerfGuiEnabled(bool b);
     /// get performance gui status
     bool GetPerfGuiEnabled() const;
-	/// set the projection matrix, that should be saved model matrix
+    /// set the projection matrix, that should be saved model matrix
     void SaveProjectionMatrix(const matrix44& m);
-	/// get the projection matrix, that was saved
-	const matrix44& GetSavedProjectionMatrix() const;
+    /// get the projection matrix, that was saved
+    const matrix44& GetSavedProjectionMatrix() const;
 private:
 
     static nSceneServer* Singleton;
@@ -234,7 +234,7 @@ private:
     nClass* reqRefractClass;
 
     nOcclusionQuery* occlusionQuery;
-	matrix44 savedProjectionMatrix;
+    matrix44 savedProjectionMatrix;
 
     PROFILER_DECLARE(profFrame);
     PROFILER_DECLARE(profAttach);
@@ -415,26 +415,26 @@ nSceneServer::GetModelTransform() const
 
 //------------------------------------------------------------------------------
 /**
-	set the projectio nmatrix, that should be saved model matrix
+    set the projectio nmatrix, that should be saved model matrix
 */
 inline
 void
 nSceneServer::SaveProjectionMatrix(const matrix44& m)
 {
-	this->savedProjectionMatrix = m;
-	vector3 scaleVec = vector3(2,0.5,1);
-	this->savedProjectionMatrix.scale(scaleVec);
+    this->savedProjectionMatrix = m;
+    vector3 scaleVec = vector3(2,0.5,1);
+    this->savedProjectionMatrix.scale(scaleVec);
 }
 
 //------------------------------------------------------------------------------
 /**
-	get the projection matrix, that was saved
+    get the projection matrix, that was saved
 */
 inline
 const matrix44&
 nSceneServer::GetSavedProjectionMatrix() const
 {
-	return this->savedProjectionMatrix;
+    return this->savedProjectionMatrix;
 }
 
 

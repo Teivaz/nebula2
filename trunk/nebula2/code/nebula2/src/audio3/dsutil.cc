@@ -216,7 +216,7 @@ HRESULT CSoundManager::Create(CSound** ppSound,
     dwDSBufferSize = pWaveFile->GetSize();
 
     // Minimal required buffer size
-	dwDSBufferSize = n_max(dwDSBufferSize , DSBSIZE_FX_MIN);
+    dwDSBufferSize = n_max(dwDSBufferSize , DSBSIZE_FX_MIN);
 
     // Create the direct sound buffer, and only request the flags needed
     // since each requires some overhead and limits if the buffer can
@@ -227,7 +227,7 @@ HRESULT CSoundManager::Create(CSound** ppSound,
     dsbd.dwFlags         = dwCreationFlags;
     dsbd.dwBufferBytes   = dwDSBufferSize;
     dsbd.guid3DAlgorithm = guid3DAlgorithm;
-	dsbd.lpwfxFormat     = pWaveFile->GetFormat();
+    dsbd.lpwfxFormat     = pWaveFile->GetFormat();
 
     // DirectSound is only guarenteed to play PCM data.  Other
     // formats may or may not work depending the sound card driver.
@@ -264,10 +264,10 @@ HRESULT CSoundManager::Create(CSound** ppSound,
     {
         for (i = 1; i < dwNumBuffers; i++)
         {
-			hr = m_pDS->DuplicateSoundBuffer(apDSBuffer[0], &apDSBuffer[i]);
+            hr = m_pDS->DuplicateSoundBuffer(apDSBuffer[0], &apDSBuffer[i]);
             if (FAILED(hr))
             {
-				n_dxtrace(hr, "CSoundManager::Create(): DuplicateSoundBuffer");
+                n_dxtrace(hr, "CSoundManager::Create(): DuplicateSoundBuffer");
                 goto LFail;
             }
         }
@@ -279,7 +279,7 @@ HRESULT CSoundManager::Create(CSound** ppSound,
             hr = m_pDS->CreateSoundBuffer(&dsbd, &apDSBuffer[i], NULL);
             if (FAILED(hr))
             {
-				n_dxtrace(hr, "CSoundManager::Create(): CreateSoundBuffer");
+                n_dxtrace(hr, "CSoundManager::Create(): CreateSoundBuffer");
                 goto LFail;
             }
         }

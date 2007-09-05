@@ -159,15 +159,15 @@ nGuiHardpointsBrowserWindow::OnEvent(const nGuiEvent& event)
         // reset time
         nTimeServer::Instance()->ResetTime();
     }
-	else if ((event.GetType() == nGuiEvent::SelectionDblClicked) && (event.GetWidget() == this->refCatBrowser))
-	{
+    else if ((event.GetType() == nGuiEvent::SelectionDblClicked) && (event.GetWidget() == this->refCatBrowser))
+    {
         // load object on doubleclick on selectiontext
-		nString objPath = this->refCatBrowser->GetSelectedPath();
+        nString objPath = this->refCatBrowser->GetSelectedPath();
         if ((!objPath.IsEmpty()) && (validJointSelected))
         {
             this->AddObject(objPath,jointIndex);
         }
-	}
+    }
 
     // hand to parent class
     nGuiClientWindow::OnEvent(event);

@@ -9,7 +9,7 @@
 
     -01-Nov-06  kims Changed seteulerrotation() to have vector3 animation instead of 
                      vector2 and return vector3 type for geteulerrotation().  
-		     The change were made for uv animation.
+             The change were made for uv animation.
 
     (C) 2004 RadonLabs GmbH
 */

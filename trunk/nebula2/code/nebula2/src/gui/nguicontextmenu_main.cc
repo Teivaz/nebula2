@@ -29,7 +29,7 @@ nGuiContextMenu::~nGuiContextMenu()
 
 //------------------------------------------------------------------------------
 /**
-	Attaches the text buttons and sizes to the proper size
+    Attaches the text buttons and sizes to the proper size
 */
 void
 nGuiContextMenu::OnShow()
@@ -40,12 +40,12 @@ nGuiContextMenu::OnShow()
     /// reset selection index
     this->selectedIndex = -1;
 
-	// set window attributes
-	this->SetTitleBar(false);
-	this->SetCloseButton(false);
-	this->SetResizable(false);
-	this->SetMovable(false);
-	this->SetModal(true);
+    // set window attributes
+    this->SetTitleBar(false);
+    this->SetCloseButton(false);
+    this->SetResizable(false);
+    this->SetMovable(false);
+    this->SetModal(true);
     this->SetDefaultBrush(0);
 
     // call parent class
@@ -53,7 +53,7 @@ nGuiContextMenu::OnShow()
 
     // get client area layout object
     nGuiFormLayout* layout = this->refFormLayout.get();
-	kernelServer->PushCwd(layout);
+    kernelServer->PushCwd(layout);
 
     // create text buttons
     vector2 btnSize = nGuiServer::Instance()->ComputeScreenSpaceBrushSize("menu_n");
@@ -118,7 +118,7 @@ nGuiContextMenu::OnShow()
 
 //------------------------------------------------------------------------------
 /**
-	Releases all buttons
+    Releases all buttons
 */
 void
 nGuiContextMenu::OnHide()
@@ -141,8 +141,8 @@ nGuiContextMenu::OnHide()
 void
 nGuiContextMenu::OnEvent(const nGuiEvent& event)
 {
-	// handle button ups
-	if (event.GetType() == nGuiEvent::RButtonUp)
+    // handle button ups
+    if (event.GetType() == nGuiEvent::RButtonUp)
     {
         const vector2& mousePos = nGuiServer::Instance()->GetMousePos();
 

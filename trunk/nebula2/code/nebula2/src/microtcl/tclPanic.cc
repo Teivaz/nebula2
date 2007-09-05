@@ -1,9 +1,9 @@
 /*
  * tclPanic.c --
  *
- *	Source code for the "Tcl_Panic" library procedure for Tcl;
- *	individual applications will probably override this with
- *	an application-specific panic procedure.
+ *  Source code for the "Tcl_Panic" library procedure for Tcl;
+ *  individual applications will probably override this with
+ *  an application-specific panic procedure.
  *
  * Copyright (c) 1988-1993 The Regents of the University of California.
  * Copyright (c) 1994 Sun Microsystems, Inc.
@@ -28,13 +28,13 @@ void (*panicProc) _ANSI_ARGS_(TCL_VARARGS(char *,format)) = NULL;
  *
  * Tcl_SetPanicProc --
  *
- *	Replace the default panic behavior with the specified functiion.
+ *  Replace the default panic behavior with the specified functiion.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Sets the panicProc variable.
+ *  Sets the panicProc variable.
  *
  *----------------------------------------------------------------------
  */
@@ -51,25 +51,25 @@ Tcl_SetPanicProc(proc)
  *
  * Tcl_PanicVA --
  *
- *	Print an error message and kill the process.
+ *  Print an error message and kill the process.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	The process dies, entering the debugger if possible.
+ *  The process dies, entering the debugger if possible.
  *
  *----------------------------------------------------------------------
  */
 
 void
 Tcl_PanicVA (format, argList)
-    char *format;		/* Format string, suitable for passing to
-				 * fprintf. */
-    va_list argList;		/* Variable argument list. */
+    char *format;       /* Format string, suitable for passing to
+                 * fprintf. */
+    va_list argList;        /* Variable argument list. */
 {
-    char *arg1, *arg2, *arg3, *arg4;	/* Additional arguments (variable in
-					 * number) to pass to fprintf. */
+    char *arg1, *arg2, *arg3, *arg4;    /* Additional arguments (variable in
+                     * number) to pass to fprintf. */
     char *arg5, *arg6, *arg7, *arg8;
 
     arg1 = va_arg(argList, char *);
@@ -82,14 +82,14 @@ Tcl_PanicVA (format, argList)
     arg8 = va_arg(argList, char *);
 
     if (panicProc != NULL) {
-	(void) (*panicProc)(format, arg1, arg2, arg3, arg4,
-		arg5, arg6, arg7, arg8);
+    (void) (*panicProc)(format, arg1, arg2, arg3, arg4,
+        arg5, arg6, arg7, arg8);
     } else {
-	(void) fprintf(stderr, format, arg1, arg2, arg3, arg4, arg5, arg6,
-		arg7, arg8);
-	(void) fprintf(stderr, "\n");
-	(void) fflush(stderr);
-	abort();
+    (void) fprintf(stderr, format, arg1, arg2, arg3, arg4, arg5, arg6,
+        arg7, arg8);
+    (void) fprintf(stderr, "\n");
+    (void) fflush(stderr);
+    abort();
     }
 }
 
@@ -98,18 +98,18 @@ Tcl_PanicVA (format, argList)
  *
  * panic --
  *
- *	Print an error message and kill the process.
+ *  Print an error message and kill the process.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	The process dies, entering the debugger if possible.
+ *  The process dies, entering the debugger if possible.
  *
  *----------------------------------------------------------------------
  */
 
-	/* VARARGS ARGSUSED */
+    /* VARARGS ARGSUSED */
 void
 panic TCL_VARARGS_DEF(char *,arg1)
 {

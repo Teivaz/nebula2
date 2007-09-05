@@ -1,7 +1,7 @@
 /*
  * tclCompExpr.c --
  *
- *	This file contains the code to compile Tcl expressions.
+ *  This file contains the code to compile Tcl expressions.
  *
  * Copyright (c) 1997 Sun Microsystems, Inc.
  * Copyright (c) 1998-2000 by Scriptics Corporation.
@@ -27,7 +27,7 @@
 #endif
 
 #ifdef NO_ERRNO_H
-extern int errno;			/* Use errno from tclExecute.c. */
+extern int errno;           /* Use errno from tclExecute.c. */
 #define ERANGE 34
 #endif
 
@@ -47,29 +47,29 @@ static int traceExprComp = 0;
  */
 
 typedef struct ExprInfo {
-    Tcl_Interp *interp;		/* Used for error reporting. */
-    Tcl_Parse *parsePtr;	/* Structure filled with information about
-				 * the parsed expression. */
-    char *expr;			/* The expression that was originally passed
-				 * to TclCompileExpr. */
-    char *lastChar;		/* Points just after last byte of expr. */
-    int hasOperators;		/* Set 1 if the expr has operators; 0 if
-				 * expr is only a primary. If 1 after
-				 * compiling an expr, a tryCvtToNumeric
-				 * instruction is emitted to convert the
-				 * primary to a number if possible. */
-    int exprIsJustVarRef;	/* Set 1 if the expr consists of just a
-				 * variable reference as in the expression
-				 * of "if $b then...". Otherwise 0. If 1 the
-				 * expr is compiled out-of-line in order to
-				 * implement expr's 2 level substitution
-				 * semantics properly. */
-    int exprIsComparison;	/* Set 1 if the top-level operator in the
-				 * expr is a comparison. Otherwise 0. If 1,
-				 * because the operands might be strings,
-				 * the expr is compiled out-of-line in order
-				 * to implement expr's 2 level substitution
-				 * semantics properly. */
+    Tcl_Interp *interp;     /* Used for error reporting. */
+    Tcl_Parse *parsePtr;    /* Structure filled with information about
+                 * the parsed expression. */
+    char *expr;         /* The expression that was originally passed
+                 * to TclCompileExpr. */
+    char *lastChar;     /* Points just after last byte of expr. */
+    int hasOperators;       /* Set 1 if the expr has operators; 0 if
+                 * expr is only a primary. If 1 after
+                 * compiling an expr, a tryCvtToNumeric
+                 * instruction is emitted to convert the
+                 * primary to a number if possible. */
+    int exprIsJustVarRef;   /* Set 1 if the expr consists of just a
+                 * variable reference as in the expression
+                 * of "if $b then...". Otherwise 0. If 1 the
+                 * expr is compiled out-of-line in order to
+                 * implement expr's 2 level substitution
+                 * semantics properly. */
+    int exprIsComparison;   /* Set 1 if the top-level operator in the
+                 * expr is a comparison. Otherwise 0. If 1,
+                 * because the operands might be strings,
+                 * the expr is compiled out-of-line in order
+                 * to implement expr's 2 level substitution
+                 * semantics properly. */
 } ExprInfo;
 
 /*
@@ -80,29 +80,29 @@ typedef struct ExprInfo {
  * Note that OP_PLUS and OP_MINUS represent both unary and binary operators.
  */
 
-#define OP_MULT		0
-#define OP_DIVIDE	1
-#define OP_MOD		2
-#define OP_PLUS		3
-#define OP_MINUS	4
-#define OP_LSHIFT	5
-#define OP_RSHIFT	6
-#define OP_LESS		7
-#define OP_GREATER	8
-#define OP_LE		9
-#define OP_GE		10
-#define OP_EQ		11
-#define OP_NEQ		12
-#define OP_BITAND	13
-#define OP_BITXOR	14
-#define OP_BITOR	15
-#define OP_LAND		16
-#define OP_LOR		17
-#define OP_QUESTY	18
-#define OP_LNOT		19
-#define OP_BITNOT	20
-#define OP_STREQ	21
-#define OP_STRNEQ	22
+#define OP_MULT     0
+#define OP_DIVIDE   1
+#define OP_MOD      2
+#define OP_PLUS     3
+#define OP_MINUS    4
+#define OP_LSHIFT   5
+#define OP_RSHIFT   6
+#define OP_LESS     7
+#define OP_GREATER  8
+#define OP_LE       9
+#define OP_GE       10
+#define OP_EQ       11
+#define OP_NEQ      12
+#define OP_BITAND   13
+#define OP_BITXOR   14
+#define OP_BITOR    15
+#define OP_LAND     16
+#define OP_LOR      17
+#define OP_QUESTY   18
+#define OP_LNOT     19
+#define OP_BITNOT   20
+#define OP_STREQ    21
+#define OP_STRNEQ   22
 
 /*
  * Table describing the expression operators. Entries in this table must
@@ -114,11 +114,11 @@ static int opTableInitialized = 0; /* 0 means not yet initialized. */
 TCL_DECLARE_MUTEX(opMutex)
 
 typedef struct OperatorDesc {
-    char *name;			/* Name of the operator. */
-    int numOperands;		/* Number of operands. 0 if the operator
-				 * requires special handling. */
-    int instruction;		/* Instruction opcode for the operator.
-				 * Ignored if numOperands is 0. */
+    char *name;         /* Name of the operator. */
+    int numOperands;        /* Number of operands. 0 if the operator
+                 * requires special handling. */
+    int instruction;        /* Instruction opcode for the operator.
+                 * Ignored if numOperands is 0. */
 } OperatorDesc;
 
 OperatorDesc operatorTable[] = {
@@ -159,21 +159,21 @@ static Tcl_HashTable opHashTable;
  * Declarations for local procedures to this file:
  */
 
-static int		CompileCondExpr _ANSI_ARGS_((
-			    Tcl_Token *exprTokenPtr, ExprInfo *infoPtr,
-			    CompileEnv *envPtr, Tcl_Token **endPtrPtr));
-static int		CompileLandOrLorExpr _ANSI_ARGS_((
-			    Tcl_Token *exprTokenPtr, int opIndex,
-			    ExprInfo *infoPtr, CompileEnv *envPtr,
-			    Tcl_Token **endPtrPtr));
-static int		CompileMathFuncCall _ANSI_ARGS_((
-			    Tcl_Token *exprTokenPtr, char *funcName,
-			    ExprInfo *infoPtr, CompileEnv *envPtr,
-			    Tcl_Token **endPtrPtr));
-static int		CompileSubExpr _ANSI_ARGS_((
-			    Tcl_Token *exprTokenPtr, ExprInfo *infoPtr,
-			    CompileEnv *envPtr));
-static void		LogSyntaxError _ANSI_ARGS_((ExprInfo *infoPtr));
+static int      CompileCondExpr _ANSI_ARGS_((
+                Tcl_Token *exprTokenPtr, ExprInfo *infoPtr,
+                CompileEnv *envPtr, Tcl_Token **endPtrPtr));
+static int      CompileLandOrLorExpr _ANSI_ARGS_((
+                Tcl_Token *exprTokenPtr, int opIndex,
+                ExprInfo *infoPtr, CompileEnv *envPtr,
+                Tcl_Token **endPtrPtr));
+static int      CompileMathFuncCall _ANSI_ARGS_((
+                Tcl_Token *exprTokenPtr, char *funcName,
+                ExprInfo *infoPtr, CompileEnv *envPtr,
+                Tcl_Token **endPtrPtr));
+static int      CompileSubExpr _ANSI_ARGS_((
+                Tcl_Token *exprTokenPtr, ExprInfo *infoPtr,
+                CompileEnv *envPtr));
+static void     LogSyntaxError _ANSI_ARGS_((ExprInfo *infoPtr));
 
 /*
  * Macro used to debug the execution of the expression compiler.
@@ -182,8 +182,8 @@ static void		LogSyntaxError _ANSI_ARGS_((ExprInfo *infoPtr));
 #ifdef TCL_COMPILE_DEBUG
 #define TRACE(exprBytes, exprLength, tokenBytes, tokenLength) \
     if (traceExprComp) { \
-	fprintf(stderr, "CompileSubExpr: \"%.*s\", token \"%.*s\"\n", \
-	        (exprLength), (exprBytes), (tokenLength), (tokenBytes)); \
+    fprintf(stderr, "CompileSubExpr: \"%.*s\", token \"%.*s\"\n", \
+            (exprLength), (exprBytes), (tokenLength), (tokenBytes)); \
     }
 #else
 #define TRACE(exprBytes, exprLength, tokenBytes, tokenLength)
@@ -194,44 +194,44 @@ static void		LogSyntaxError _ANSI_ARGS_((ExprInfo *infoPtr));
  *
  * TclCompileExpr --
  *
- *	This procedure compiles a string containing a Tcl expression into
- *	Tcl bytecodes. This procedure is the top-level interface to the
- *	the expression compilation module, and is used by such public
- *	procedures as Tcl_ExprString, Tcl_ExprStringObj, Tcl_ExprLong,
- *	Tcl_ExprDouble, Tcl_ExprBoolean, and Tcl_ExprBooleanObj.
+ *  This procedure compiles a string containing a Tcl expression into
+ *  Tcl bytecodes. This procedure is the top-level interface to the
+ *  the expression compilation module, and is used by such public
+ *  procedures as Tcl_ExprString, Tcl_ExprStringObj, Tcl_ExprLong,
+ *  Tcl_ExprDouble, Tcl_ExprBoolean, and Tcl_ExprBooleanObj.
  *
  * Results:
- *	The return value is TCL_OK on a successful compilation and TCL_ERROR
- *	on failure. If TCL_ERROR is returned, then the interpreter's result
- *	contains an error message.
+ *  The return value is TCL_OK on a successful compilation and TCL_ERROR
+ *  on failure. If TCL_ERROR is returned, then the interpreter's result
+ *  contains an error message.
  *
- *	envPtr->maxStackDepth is updated with the maximum number of stack
- *	elements needed to execute the expression.
+ *  envPtr->maxStackDepth is updated with the maximum number of stack
+ *  elements needed to execute the expression.
  *
- *	envPtr->exprIsJustVarRef is set 1 if the expression consisted of
- *	a single variable reference as in the expression of "if $b then...".
- *	Otherwise it is set 0. This is used to implement Tcl's two level
- *	expression substitution semantics properly.
+ *  envPtr->exprIsJustVarRef is set 1 if the expression consisted of
+ *  a single variable reference as in the expression of "if $b then...".
+ *  Otherwise it is set 0. This is used to implement Tcl's two level
+ *  expression substitution semantics properly.
  *
- *	envPtr->exprIsComparison is set 1 if the top-level operator in the
- *	expr is a comparison. Otherwise it is set 0. If 1, because the
- *	operands might be strings, the expr is compiled out-of-line in order
- *	to implement expr's 2 level substitution semantics properly.
+ *  envPtr->exprIsComparison is set 1 if the top-level operator in the
+ *  expr is a comparison. Otherwise it is set 0. If 1, because the
+ *  operands might be strings, the expr is compiled out-of-line in order
+ *  to implement expr's 2 level substitution semantics properly.
  *
  * Side effects:
- *	Adds instructions to envPtr to evaluate the expression at runtime.
+ *  Adds instructions to envPtr to evaluate the expression at runtime.
  *
  *----------------------------------------------------------------------
  */
 
 int
 TclCompileExpr(interp, script, numBytes, envPtr)
-    Tcl_Interp *interp;		/* Used for error reporting. */
-    char *script;		/* The source script to compile. */
-    int numBytes;		/* Number of bytes in script. If < 0, the
-				 * string consists of all bytes up to the
-				 * first null character. */
-    CompileEnv *envPtr;		/* Holds resulting instructions. */
+    Tcl_Interp *interp;     /* Used for error reporting. */
+    char *script;       /* The source script to compile. */
+    int numBytes;       /* Number of bytes in script. If < 0, the
+                 * string consists of all bytes up to the
+                 * first null character. */
+    CompileEnv *envPtr;     /* Holds resulting instructions. */
 {
     ExprInfo info;
     Tcl_Parse parse;
@@ -244,22 +244,22 @@ TclCompileExpr(interp, script, numBytes, envPtr)
      */
 
     if (numBytes < 0) {
-	numBytes = (script? strlen(script) : 0);
+    numBytes = (script? strlen(script) : 0);
     }
     if (!opTableInitialized) {
-	Tcl_MutexLock(&opMutex);
-	if (!opTableInitialized) {
-	    Tcl_InitHashTable(&opHashTable, TCL_STRING_KEYS);
-	    for (i = 0;  operatorTable[i].name != NULL;  i++) {
-		hPtr = Tcl_CreateHashEntry(&opHashTable,
-			operatorTable[i].name, &new);
-		if (new) {
-		    Tcl_SetHashValue(hPtr, (ClientData) i);
-		}
-	    }
-	    opTableInitialized = 1;
-	}
-	Tcl_MutexUnlock(&opMutex);
+    Tcl_MutexLock(&opMutex);
+    if (!opTableInitialized) {
+        Tcl_InitHashTable(&opHashTable, TCL_STRING_KEYS);
+        for (i = 0;  operatorTable[i].name != NULL;  i++) {
+        hPtr = Tcl_CreateHashEntry(&opHashTable,
+            operatorTable[i].name, &new);
+        if (new) {
+            Tcl_SetHashValue(hPtr, (ClientData) i);
+        }
+        }
+        opTableInitialized = 1;
+    }
+    Tcl_MutexUnlock(&opMutex);
     }
 
     /*
@@ -272,7 +272,7 @@ TclCompileExpr(interp, script, numBytes, envPtr)
     info.expr = script;
     info.lastChar = (script + numBytes);
     info.hasOperators = 0;
-    info.exprIsJustVarRef = 1;	/* will be set 0 if anything else is seen */
+    info.exprIsJustVarRef = 1;  /* will be set 0 if anything else is seen */
     info.exprIsComparison = 0;
 
     /*
@@ -282,25 +282,25 @@ TclCompileExpr(interp, script, numBytes, envPtr)
     maxDepth = 0;
     code = Tcl_ParseExpr(interp, script, numBytes, &parse);
     if (code != TCL_OK) {
-	goto done;
+    goto done;
     }
 
     code = CompileSubExpr(parse.tokenPtr, &info, envPtr);
     if (code != TCL_OK) {
-	Tcl_FreeParse(&parse);
-	goto done;
+    Tcl_FreeParse(&parse);
+    goto done;
     }
     maxDepth = envPtr->maxStackDepth;
 
     if (!info.hasOperators) {
-	/*
-	 * Attempt to convert the primary's object to an int or double.
-	 * This is done in order to support Tcl's policy of interpreting
-	 * operands if at all possible as first integers, else
-	 * floating-point numbers.
-	 */
+    /*
+     * Attempt to convert the primary's object to an int or double.
+     * This is done in order to support Tcl's policy of interpreting
+     * operands if at all possible as first integers, else
+     * floating-point numbers.
+     */
 
-	TclEmitOpcode(INST_TRY_CVT_TO_NUMERIC, envPtr);
+    TclEmitOpcode(INST_TRY_CVT_TO_NUMERIC, envPtr);
     }
     Tcl_FreeParse(&parse);
 
@@ -316,17 +316,17 @@ TclCompileExpr(interp, script, numBytes, envPtr)
  *
  * TclFinalizeCompilation --
  *
- *	Clean up the compilation environment so it can later be
- *	properly reinitialized. This procedure is called by
- *	TclFinalizeCompExecEnv() in tclObj.c, which in turn is called
- *	by Tcl_Finalize().
+ *  Clean up the compilation environment so it can later be
+ *  properly reinitialized. This procedure is called by
+ *  TclFinalizeCompExecEnv() in tclObj.c, which in turn is called
+ *  by Tcl_Finalize().
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Cleans up the compilation environment. At the moment, just the
- *	table of expression operators is freed.
+ *  Cleans up the compilation environment. At the moment, just the
+ *  table of expression operators is freed.
  *
  *----------------------------------------------------------------------
  */
@@ -347,41 +347,41 @@ TclFinalizeCompilation()
  *
  * CompileSubExpr --
  *
- *	Given a pointer to a TCL_TOKEN_SUB_EXPR token describing a
- *	subexpression, this procedure emits instructions to evaluate the
- *	subexpression at runtime.
+ *  Given a pointer to a TCL_TOKEN_SUB_EXPR token describing a
+ *  subexpression, this procedure emits instructions to evaluate the
+ *  subexpression at runtime.
  *
  * Results:
- *	The return value is TCL_OK on a successful compilation and TCL_ERROR
- *	on failure. If TCL_ERROR is returned, then the interpreter's result
- *	contains an error message.
+ *  The return value is TCL_OK on a successful compilation and TCL_ERROR
+ *  on failure. If TCL_ERROR is returned, then the interpreter's result
+ *  contains an error message.
  *
- *	envPtr->maxStackDepth is updated with the maximum number of stack
- *	elements needed to execute the subexpression.
+ *  envPtr->maxStackDepth is updated with the maximum number of stack
+ *  elements needed to execute the subexpression.
  *
- *	envPtr->exprIsJustVarRef is set 1 if the subexpression consisted of
- *	a single variable reference as in the expression of "if $b then...".
- *	Otherwise it is set 0. This is used to implement Tcl's two level
- *	expression substitution semantics properly.
+ *  envPtr->exprIsJustVarRef is set 1 if the subexpression consisted of
+ *  a single variable reference as in the expression of "if $b then...".
+ *  Otherwise it is set 0. This is used to implement Tcl's two level
+ *  expression substitution semantics properly.
  *
- *	envPtr->exprIsComparison is set 1 if the top-level operator in the
- *	subexpression is a comparison. Otherwise it is set 0. If 1, because
- *	the operands might be strings, the expr is compiled out-of-line in
- *	order to implement expr's 2 level substitution semantics properly.
+ *  envPtr->exprIsComparison is set 1 if the top-level operator in the
+ *  subexpression is a comparison. Otherwise it is set 0. If 1, because
+ *  the operands might be strings, the expr is compiled out-of-line in
+ *  order to implement expr's 2 level substitution semantics properly.
  *
  * Side effects:
- *	Adds instructions to envPtr to evaluate the subexpression.
+ *  Adds instructions to envPtr to evaluate the subexpression.
  *
  *----------------------------------------------------------------------
  */
 
 static int
 CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
-    Tcl_Token *exprTokenPtr;	/* Points to TCL_TOKEN_SUB_EXPR token
-				 * to compile. */
-    ExprInfo *infoPtr;		/* Describes the compilation state for the
-				 * expression being compiled. */
-    CompileEnv *envPtr;		/* Holds resulting instructions. */
+    Tcl_Token *exprTokenPtr;    /* Points to TCL_TOKEN_SUB_EXPR token
+                 * to compile. */
+    ExprInfo *infoPtr;      /* Describes the compilation state for the
+                 * expression being compiled. */
+    CompileEnv *envPtr;     /* Holds resulting instructions. */
 {
     Tcl_Interp *interp = infoPtr->interp;
     Tcl_Token *tokenPtr, *endPtr, *afterSubexprPtr;
@@ -393,8 +393,8 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
     char buffer[TCL_UTF_MAX];
 
     if (exprTokenPtr->type != TCL_TOKEN_SUB_EXPR) {
-	panic("CompileSubExpr: token type %d not TCL_TOKEN_SUB_EXPR\n",
-	        exprTokenPtr->type);
+    panic("CompileSubExpr: token type %d not TCL_TOKEN_SUB_EXPR\n",
+            exprTokenPtr->type);
     }
     maxDepth = 0;
     code = TCL_OK;
@@ -407,221 +407,221 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
 
     tokenPtr = exprTokenPtr+1;
     TRACE(exprTokenPtr->start, exprTokenPtr->size,
-	    tokenPtr->start, tokenPtr->size);
+        tokenPtr->start, tokenPtr->size);
     switch (tokenPtr->type) {
         case TCL_TOKEN_WORD:
-	    code = TclCompileTokens(interp, tokenPtr+1,
-	            tokenPtr->numComponents, envPtr);
-	    if (code != TCL_OK) {
-		goto done;
-	    }
-	    maxDepth = envPtr->maxStackDepth;
-	    tokenPtr += (tokenPtr->numComponents + 1);
-	    infoPtr->exprIsJustVarRef = 0;
-	    break;
+        code = TclCompileTokens(interp, tokenPtr+1,
+                tokenPtr->numComponents, envPtr);
+        if (code != TCL_OK) {
+        goto done;
+        }
+        maxDepth = envPtr->maxStackDepth;
+        tokenPtr += (tokenPtr->numComponents + 1);
+        infoPtr->exprIsJustVarRef = 0;
+        break;
 
         case TCL_TOKEN_TEXT:
-	    if (tokenPtr->size > 0) {
-		objIndex = TclRegisterLiteral(envPtr, tokenPtr->start,
-	                tokenPtr->size, /*onHeap*/ 0);
-	    } else {
-		objIndex = TclRegisterLiteral(envPtr, "", 0, /*onHeap*/ 0);
-	    }
-	    TclEmitPush(objIndex, envPtr);
-	    maxDepth = 1;
-	    tokenPtr += 1;
-	    infoPtr->exprIsJustVarRef = 0;
-	    break;
+        if (tokenPtr->size > 0) {
+        objIndex = TclRegisterLiteral(envPtr, tokenPtr->start,
+                    tokenPtr->size, /*onHeap*/ 0);
+        } else {
+        objIndex = TclRegisterLiteral(envPtr, "", 0, /*onHeap*/ 0);
+        }
+        TclEmitPush(objIndex, envPtr);
+        maxDepth = 1;
+        tokenPtr += 1;
+        infoPtr->exprIsJustVarRef = 0;
+        break;
 
         case TCL_TOKEN_BS:
-	    length = Tcl_UtfBackslash(tokenPtr->start, (int *) NULL,
-		    buffer);
-	    if (length > 0) {
-		objIndex = TclRegisterLiteral(envPtr, buffer, length,
-	                /*onHeap*/ 0);
-	    } else {
-		objIndex = TclRegisterLiteral(envPtr, "", 0, /*onHeap*/ 0);
-	    }
-	    TclEmitPush(objIndex, envPtr);
-	    maxDepth = 1;
-	    tokenPtr += 1;
-	    infoPtr->exprIsJustVarRef = 0;
-	    break;
+        length = Tcl_UtfBackslash(tokenPtr->start, (int *) NULL,
+            buffer);
+        if (length > 0) {
+        objIndex = TclRegisterLiteral(envPtr, buffer, length,
+                    /*onHeap*/ 0);
+        } else {
+        objIndex = TclRegisterLiteral(envPtr, "", 0, /*onHeap*/ 0);
+        }
+        TclEmitPush(objIndex, envPtr);
+        maxDepth = 1;
+        tokenPtr += 1;
+        infoPtr->exprIsJustVarRef = 0;
+        break;
 
         case TCL_TOKEN_COMMAND:
-	    code = TclCompileScript(interp, tokenPtr->start+1,
-		    tokenPtr->size-2, /*nested*/ 1, envPtr);
-	    if (code != TCL_OK) {
-		goto done;
-	    }
-	    maxDepth = envPtr->maxStackDepth;
-	    tokenPtr += 1;
-	    infoPtr->exprIsJustVarRef = 0;
-	    break;
+        code = TclCompileScript(interp, tokenPtr->start+1,
+            tokenPtr->size-2, /*nested*/ 1, envPtr);
+        if (code != TCL_OK) {
+        goto done;
+        }
+        maxDepth = envPtr->maxStackDepth;
+        tokenPtr += 1;
+        infoPtr->exprIsJustVarRef = 0;
+        break;
 
         case TCL_TOKEN_VARIABLE:
-	    code = TclCompileTokens(interp, tokenPtr, 1, envPtr);
-	    if (code != TCL_OK) {
-		goto done;
-	    }
-	    maxDepth = envPtr->maxStackDepth;
-	    tokenPtr += (tokenPtr->numComponents + 1);
-	    break;
+        code = TclCompileTokens(interp, tokenPtr, 1, envPtr);
+        if (code != TCL_OK) {
+        goto done;
+        }
+        maxDepth = envPtr->maxStackDepth;
+        tokenPtr += (tokenPtr->numComponents + 1);
+        break;
 
         case TCL_TOKEN_SUB_EXPR:
-	    infoPtr->exprIsComparison = 0;
-	    code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
-	    if (code != TCL_OK) {
-		goto done;
-	    }
-	    maxDepth = envPtr->maxStackDepth;
-	    tokenPtr += (tokenPtr->numComponents + 1);
-	    break;
+        infoPtr->exprIsComparison = 0;
+        code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
+        if (code != TCL_OK) {
+        goto done;
+        }
+        maxDepth = envPtr->maxStackDepth;
+        tokenPtr += (tokenPtr->numComponents + 1);
+        break;
 
         case TCL_TOKEN_OPERATOR:
-	    /*
-	     * Look up the operator. Temporarily overwrite the character
-	     * just after the end of the operator with a 0 byte. If the
-	     * operator isn't found, treat it as a math function.
-	     */
+        /*
+         * Look up the operator. Temporarily overwrite the character
+         * just after the end of the operator with a 0 byte. If the
+         * operator isn't found, treat it as a math function.
+         */
 
-	    /*
-	     * TODO: Note that the string is modified in place.  This is unsafe
-	     * and will break if any of the routines called while the string is
-	     * modified have side effects that depend on the original string
-	     * being unmodified (e.g. adding an entry to the literal table).
-	     */
+        /*
+         * TODO: Note that the string is modified in place.  This is unsafe
+         * and will break if any of the routines called while the string is
+         * modified have side effects that depend on the original string
+         * being unmodified (e.g. adding an entry to the literal table).
+         */
 
-	    operator = tokenPtr->start;
-	    savedChar = operator[tokenPtr->size];
-	    operator[tokenPtr->size] = 0;
-	    hPtr = Tcl_FindHashEntry(&opHashTable, operator);
-	    if (hPtr == NULL) {
-		code = CompileMathFuncCall(exprTokenPtr, operator, infoPtr,
-			envPtr, &endPtr);
-		operator[tokenPtr->size] = (char) savedChar;
-		if (code != TCL_OK) {
-		    goto done;
-		}
-		maxDepth = envPtr->maxStackDepth;
-		tokenPtr = endPtr;
-		infoPtr->exprIsJustVarRef = 0;
-		infoPtr->exprIsComparison = 0;
-		break;
-	    }
-	    operator[tokenPtr->size] = (char) savedChar;
-	    opIndex = (int) Tcl_GetHashValue(hPtr);
-	    opDescPtr = &(operatorTable[opIndex]);
+        operator = tokenPtr->start;
+        savedChar = operator[tokenPtr->size];
+        operator[tokenPtr->size] = 0;
+        hPtr = Tcl_FindHashEntry(&opHashTable, operator);
+        if (hPtr == NULL) {
+        code = CompileMathFuncCall(exprTokenPtr, operator, infoPtr,
+            envPtr, &endPtr);
+        operator[tokenPtr->size] = (char) savedChar;
+        if (code != TCL_OK) {
+            goto done;
+        }
+        maxDepth = envPtr->maxStackDepth;
+        tokenPtr = endPtr;
+        infoPtr->exprIsJustVarRef = 0;
+        infoPtr->exprIsComparison = 0;
+        break;
+        }
+        operator[tokenPtr->size] = (char) savedChar;
+        opIndex = (int) Tcl_GetHashValue(hPtr);
+        opDescPtr = &(operatorTable[opIndex]);
 
-	    /*
-	     * If the operator is "normal", compile it using information
-	     * from the operator table.
-	     */
+        /*
+         * If the operator is "normal", compile it using information
+         * from the operator table.
+         */
 
-	    if (opDescPtr->numOperands > 0) {
-		tokenPtr++;
-		code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
-		if (code != TCL_OK) {
-		    goto done;
-		}
-		maxDepth = envPtr->maxStackDepth;
-		tokenPtr += (tokenPtr->numComponents + 1);
+        if (opDescPtr->numOperands > 0) {
+        tokenPtr++;
+        code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
+        if (code != TCL_OK) {
+            goto done;
+        }
+        maxDepth = envPtr->maxStackDepth;
+        tokenPtr += (tokenPtr->numComponents + 1);
 
-		if (opDescPtr->numOperands == 2) {
-		    code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
-		    if (code != TCL_OK) {
-			goto done;
-		    }
-		    maxDepth = TclMax((envPtr->maxStackDepth + 1),
-		            maxDepth);
-		    tokenPtr += (tokenPtr->numComponents + 1);
-		}
-		TclEmitOpcode(opDescPtr->instruction, envPtr);
-		infoPtr->hasOperators = 1;
-		infoPtr->exprIsJustVarRef = 0;
-		infoPtr->exprIsComparison =
-		    (((opIndex >= OP_LESS) && (opIndex <= OP_NEQ))
-			    || ((opIndex >= OP_STREQ) && (opIndex <= OP_STRNEQ)));
-		break;
-	    }
+        if (opDescPtr->numOperands == 2) {
+            code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
+            if (code != TCL_OK) {
+            goto done;
+            }
+            maxDepth = TclMax((envPtr->maxStackDepth + 1),
+                    maxDepth);
+            tokenPtr += (tokenPtr->numComponents + 1);
+        }
+        TclEmitOpcode(opDescPtr->instruction, envPtr);
+        infoPtr->hasOperators = 1;
+        infoPtr->exprIsJustVarRef = 0;
+        infoPtr->exprIsComparison =
+            (((opIndex >= OP_LESS) && (opIndex <= OP_NEQ))
+                || ((opIndex >= OP_STREQ) && (opIndex <= OP_STRNEQ)));
+        break;
+        }
 
-	    /*
-	     * The operator requires special treatment, and is either
-	     * "+" or "-", or one of "&&", "||" or "?".
-	     */
+        /*
+         * The operator requires special treatment, and is either
+         * "+" or "-", or one of "&&", "||" or "?".
+         */
 
-	    switch (opIndex) {
-	        case OP_PLUS:
-	        case OP_MINUS:
-		    tokenPtr++;
-		    code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
-		    if (code != TCL_OK) {
-			goto done;
-		    }
-		    maxDepth = envPtr->maxStackDepth;
-		    tokenPtr += (tokenPtr->numComponents + 1);
+        switch (opIndex) {
+            case OP_PLUS:
+            case OP_MINUS:
+            tokenPtr++;
+            code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
+            if (code != TCL_OK) {
+            goto done;
+            }
+            maxDepth = envPtr->maxStackDepth;
+            tokenPtr += (tokenPtr->numComponents + 1);
 
-		    /*
-		     * Check whether the "+" or "-" is unary.
-		     */
+            /*
+             * Check whether the "+" or "-" is unary.
+             */
 
-		    afterSubexprPtr = exprTokenPtr
-			    + exprTokenPtr->numComponents+1;
-		    if (tokenPtr == afterSubexprPtr) {
-			TclEmitOpcode(((opIndex==OP_PLUS)?
-			        INST_UPLUS : INST_UMINUS),
-			        envPtr);
-			break;
-		    }
+            afterSubexprPtr = exprTokenPtr
+                + exprTokenPtr->numComponents+1;
+            if (tokenPtr == afterSubexprPtr) {
+            TclEmitOpcode(((opIndex==OP_PLUS)?
+                    INST_UPLUS : INST_UMINUS),
+                    envPtr);
+            break;
+            }
 
-		    /*
-		     * The "+" or "-" is binary.
-		     */
+            /*
+             * The "+" or "-" is binary.
+             */
 
-		    code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
-		    if (code != TCL_OK) {
-			goto done;
-		    }
-		    maxDepth = TclMax((envPtr->maxStackDepth + 1),
-			    maxDepth);
-		    tokenPtr += (tokenPtr->numComponents + 1);
-		    TclEmitOpcode(((opIndex==OP_PLUS)? INST_ADD : INST_SUB),
-			    envPtr);
-		    break;
+            code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
+            if (code != TCL_OK) {
+            goto done;
+            }
+            maxDepth = TclMax((envPtr->maxStackDepth + 1),
+                maxDepth);
+            tokenPtr += (tokenPtr->numComponents + 1);
+            TclEmitOpcode(((opIndex==OP_PLUS)? INST_ADD : INST_SUB),
+                envPtr);
+            break;
 
-	        case OP_LAND:
-	        case OP_LOR:
-		    code = CompileLandOrLorExpr(exprTokenPtr, opIndex,
-			    infoPtr, envPtr, &endPtr);
-		    if (code != TCL_OK) {
-			goto done;
-		    }
-		    maxDepth = envPtr->maxStackDepth;
-		    tokenPtr = endPtr;
-		    break;
+            case OP_LAND:
+            case OP_LOR:
+            code = CompileLandOrLorExpr(exprTokenPtr, opIndex,
+                infoPtr, envPtr, &endPtr);
+            if (code != TCL_OK) {
+            goto done;
+            }
+            maxDepth = envPtr->maxStackDepth;
+            tokenPtr = endPtr;
+            break;
 
-	        case OP_QUESTY:
-		    code = CompileCondExpr(exprTokenPtr, infoPtr,
-			    envPtr, &endPtr);
-		    if (code != TCL_OK) {
-			goto done;
-		    }
-		    maxDepth = envPtr->maxStackDepth;
-		    tokenPtr = endPtr;
-		    break;
-
-		default:
-		    panic("CompileSubExpr: unexpected operator %d requiring special treatment\n",
-		        opIndex);
-	    } /* end switch on operator requiring special treatment */
-	    infoPtr->hasOperators = 1;
-	    infoPtr->exprIsJustVarRef = 0;
-	    infoPtr->exprIsComparison = 0;
-	    break;
+            case OP_QUESTY:
+            code = CompileCondExpr(exprTokenPtr, infoPtr,
+                envPtr, &endPtr);
+            if (code != TCL_OK) {
+            goto done;
+            }
+            maxDepth = envPtr->maxStackDepth;
+            tokenPtr = endPtr;
+            break;
 
         default:
-	    panic("CompileSubExpr: unexpected token type %d\n",
-	            tokenPtr->type);
+            panic("CompileSubExpr: unexpected operator %d requiring special treatment\n",
+                opIndex);
+        } /* end switch on operator requiring special treatment */
+        infoPtr->hasOperators = 1;
+        infoPtr->exprIsJustVarRef = 0;
+        infoPtr->exprIsComparison = 0;
+        break;
+
+        default:
+        panic("CompileSubExpr: unexpected token type %d\n",
+                tokenPtr->type);
     }
 
     /*
@@ -632,8 +632,8 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
      */
 
     if (tokenPtr != (exprTokenPtr + exprTokenPtr->numComponents+1)) {
-	LogSyntaxError(infoPtr);
-	code = TCL_ERROR;
+    LogSyntaxError(infoPtr);
+    code = TCL_ERROR;
     }
 
     done:
@@ -646,43 +646,43 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
  *
  * CompileLandOrLorExpr --
  *
- *	This procedure compiles a Tcl logical and ("&&") or logical or
- *	("||") subexpression.
+ *  This procedure compiles a Tcl logical and ("&&") or logical or
+ *  ("||") subexpression.
  *
  * Results:
- *	The return value is TCL_OK on a successful compilation and TCL_ERROR
- *	on failure. If TCL_OK is returned, a pointer to the token just after
- *	the last one in the subexpression is stored at the address in
- *	endPtrPtr. If TCL_ERROR is returned, then the interpreter's result
- *	contains an error message.
+ *  The return value is TCL_OK on a successful compilation and TCL_ERROR
+ *  on failure. If TCL_OK is returned, a pointer to the token just after
+ *  the last one in the subexpression is stored at the address in
+ *  endPtrPtr. If TCL_ERROR is returned, then the interpreter's result
+ *  contains an error message.
  *
- *	envPtr->maxStackDepth is updated with the maximum number of stack
- *	elements needed to execute the expression.
+ *  envPtr->maxStackDepth is updated with the maximum number of stack
+ *  elements needed to execute the expression.
  *
  * Side effects:
- *	Adds instructions to envPtr to evaluate the expression at runtime.
+ *  Adds instructions to envPtr to evaluate the expression at runtime.
  *
  *----------------------------------------------------------------------
  */
 
 static int
 CompileLandOrLorExpr(exprTokenPtr, opIndex, infoPtr, envPtr, endPtrPtr)
-    Tcl_Token *exprTokenPtr;	 /* Points to TCL_TOKEN_SUB_EXPR token
-				  * containing the "&&" or "||" operator. */
-    int opIndex;		 /* A code describing the expression
-				  * operator: either OP_LAND or OP_LOR. */
-    ExprInfo *infoPtr;		 /* Describes the compilation state for the
-				  * expression being compiled. */
-    CompileEnv *envPtr;		 /* Holds resulting instructions. */
-    Tcl_Token **endPtrPtr;	 /* If successful, a pointer to the token
-				  * just after the last token in the
-				  * subexpression is stored here. */
+    Tcl_Token *exprTokenPtr;     /* Points to TCL_TOKEN_SUB_EXPR token
+                  * containing the "&&" or "||" operator. */
+    int opIndex;         /* A code describing the expression
+                  * operator: either OP_LAND or OP_LOR. */
+    ExprInfo *infoPtr;       /* Describes the compilation state for the
+                  * expression being compiled. */
+    CompileEnv *envPtr;      /* Holds resulting instructions. */
+    Tcl_Token **endPtrPtr;   /* If successful, a pointer to the token
+                  * just after the last token in the
+                  * subexpression is stored here. */
 {
     JumpFixup shortCircuitFixup; /* Used to fix up the short circuit jump
-				  * after the first subexpression. */
+                  * after the first subexpression. */
     JumpFixup lhsTrueFixup, lhsEndFixup;
-    				 /* Used to fix up jumps used to convert the
-				  * first operand to 0 or 1. */
+                     /* Used to fix up jumps used to convert the
+                  * first operand to 0 or 1. */
     Tcl_Token *tokenPtr;
     int dist, maxDepth, code;
 
@@ -694,7 +694,7 @@ CompileLandOrLorExpr(exprTokenPtr, opIndex, infoPtr, envPtr, endPtrPtr)
     tokenPtr = exprTokenPtr+2;
     code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
     if (code != TCL_OK) {
-	goto done;
+    goto done;
     }
     maxDepth = envPtr->maxStackDepth;
     tokenPtr += (tokenPtr->numComponents + 1);
@@ -710,12 +710,12 @@ CompileLandOrLorExpr(exprTokenPtr, opIndex, infoPtr, envPtr, endPtrPtr)
     dist = (envPtr->codeNext - envPtr->codeStart) - lhsTrueFixup.codeOffset;
     if (TclFixupForwardJump(envPtr, &lhsTrueFixup, dist, 127)) {
         badDist:
-	panic("CompileLandOrLorExpr: bad jump distance %d\n", dist);
+    panic("CompileLandOrLorExpr: bad jump distance %d\n", dist);
     }
     TclEmitPush(TclRegisterLiteral(envPtr, "1", 1, /*onHeap*/ 0), envPtr);
     dist = (envPtr->codeNext - envPtr->codeStart) - lhsEndFixup.codeOffset;
     if (TclFixupForwardJump(envPtr, &lhsEndFixup, dist, 127)) {
-	goto badDist;
+    goto badDist;
     }
 
     /*
@@ -726,8 +726,8 @@ CompileLandOrLorExpr(exprTokenPtr, opIndex, infoPtr, envPtr, endPtrPtr)
 
     TclEmitOpcode(INST_DUP, envPtr);
     TclEmitForwardJump(envPtr,
-	    ((opIndex==OP_LAND)? TCL_FALSE_JUMP : TCL_TRUE_JUMP),
-	    &shortCircuitFixup);
+        ((opIndex==OP_LAND)? TCL_FALSE_JUMP : TCL_TRUE_JUMP),
+        &shortCircuitFixup);
 
     /*
      * Emit code for the second operand.
@@ -735,7 +735,7 @@ CompileLandOrLorExpr(exprTokenPtr, opIndex, infoPtr, envPtr, endPtrPtr)
 
     code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
     if (code != TCL_OK) {
-	goto done;
+    goto done;
     }
     maxDepth = TclMax((envPtr->maxStackDepth + 1), maxDepth);
     tokenPtr += (tokenPtr->numComponents + 1);
@@ -754,7 +754,7 @@ CompileLandOrLorExpr(exprTokenPtr, opIndex, infoPtr, envPtr, endPtrPtr)
      */
 
     dist = (envPtr->codeNext - envPtr->codeStart)
-	    - shortCircuitFixup.codeOffset;
+        - shortCircuitFixup.codeOffset;
     TclFixupForwardJump(envPtr, &shortCircuitFixup, dist, 127);
     *endPtrPtr = tokenPtr;
 
@@ -768,40 +768,40 @@ CompileLandOrLorExpr(exprTokenPtr, opIndex, infoPtr, envPtr, endPtrPtr)
  *
  * CompileCondExpr --
  *
- *	This procedure compiles a Tcl conditional expression:
- *	condExpr ::= lorExpr ['?' condExpr ':' condExpr]
+ *  This procedure compiles a Tcl conditional expression:
+ *  condExpr ::= lorExpr ['?' condExpr ':' condExpr]
  *
  * Results:
- *	The return value is TCL_OK on a successful compilation and TCL_ERROR
- *	on failure. If TCL_OK is returned, a pointer to the token just after
- *	the last one in the subexpression is stored at the address in
- *	endPtrPtr. If TCL_ERROR is returned, then the interpreter's result
- *	contains an error message.
+ *  The return value is TCL_OK on a successful compilation and TCL_ERROR
+ *  on failure. If TCL_OK is returned, a pointer to the token just after
+ *  the last one in the subexpression is stored at the address in
+ *  endPtrPtr. If TCL_ERROR is returned, then the interpreter's result
+ *  contains an error message.
  *
- *	envPtr->maxStackDepth is updated with the maximum number of stack
- *	elements needed to execute the expression.
+ *  envPtr->maxStackDepth is updated with the maximum number of stack
+ *  elements needed to execute the expression.
  *
  * Side effects:
- *	Adds instructions to envPtr to evaluate the expression at runtime.
+ *  Adds instructions to envPtr to evaluate the expression at runtime.
  *
  *----------------------------------------------------------------------
  */
 
 static int
 CompileCondExpr(exprTokenPtr, infoPtr, envPtr, endPtrPtr)
-    Tcl_Token *exprTokenPtr;	/* Points to TCL_TOKEN_SUB_EXPR token
-				 * containing the "?" operator. */
-    ExprInfo *infoPtr;		/* Describes the compilation state for the
-				 * expression being compiled. */
-    CompileEnv *envPtr;		/* Holds resulting instructions. */
-    Tcl_Token **endPtrPtr;	/* If successful, a pointer to the token
-				 * just after the last token in the
-				 * subexpression is stored here. */
+    Tcl_Token *exprTokenPtr;    /* Points to TCL_TOKEN_SUB_EXPR token
+                 * containing the "?" operator. */
+    ExprInfo *infoPtr;      /* Describes the compilation state for the
+                 * expression being compiled. */
+    CompileEnv *envPtr;     /* Holds resulting instructions. */
+    Tcl_Token **endPtrPtr;  /* If successful, a pointer to the token
+                 * just after the last token in the
+                 * subexpression is stored here. */
 {
     JumpFixup jumpAroundThenFixup, jumpAroundElseFixup;
-				/* Used to update or replace one-byte jumps
-				 * around the then and else expressions when
-				 * their target PCs are determined. */
+                /* Used to update or replace one-byte jumps
+                 * around the then and else expressions when
+                 * their target PCs are determined. */
     Tcl_Token *tokenPtr;
     int elseCodeOffset, dist, maxDepth, code;
 
@@ -813,7 +813,7 @@ CompileCondExpr(exprTokenPtr, infoPtr, envPtr, endPtrPtr)
     tokenPtr = exprTokenPtr+2;
     code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
     if (code != TCL_OK) {
-	goto done;
+    goto done;
     }
     maxDepth = envPtr->maxStackDepth;
     tokenPtr += (tokenPtr->numComponents + 1);
@@ -834,12 +834,12 @@ CompileCondExpr(exprTokenPtr, infoPtr, envPtr, endPtrPtr)
     infoPtr->hasOperators = 0;
     code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
     if (code != TCL_OK) {
-	goto done;
+    goto done;
     }
     maxDepth = TclMax(envPtr->maxStackDepth, maxDepth);
     tokenPtr += (tokenPtr->numComponents + 1);
     if (!infoPtr->hasOperators) {
-	TclEmitOpcode(INST_TRY_CVT_TO_NUMERIC, envPtr);
+    TclEmitOpcode(INST_TRY_CVT_TO_NUMERIC, envPtr);
     }
 
     /*
@@ -847,7 +847,7 @@ CompileCondExpr(exprTokenPtr, infoPtr, envPtr, endPtrPtr)
      */
 
     TclEmitForwardJump(envPtr, TCL_UNCONDITIONAL_JUMP,
-	    &jumpAroundElseFixup);
+        &jumpAroundElseFixup);
 
     /*
      * Compile the "else" expression.
@@ -857,12 +857,12 @@ CompileCondExpr(exprTokenPtr, infoPtr, envPtr, endPtrPtr)
     infoPtr->hasOperators = 0;
     code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
     if (code != TCL_OK) {
-	goto done;
+    goto done;
     }
     maxDepth = TclMax(envPtr->maxStackDepth, maxDepth);
     tokenPtr += (tokenPtr->numComponents + 1);
     if (!infoPtr->hasOperators) {
-	TclEmitOpcode(INST_TRY_CVT_TO_NUMERIC, envPtr);
+    TclEmitOpcode(INST_TRY_CVT_TO_NUMERIC, envPtr);
     }
 
     /*
@@ -870,14 +870,14 @@ CompileCondExpr(exprTokenPtr, infoPtr, envPtr, endPtrPtr)
      */
 
     dist = (envPtr->codeNext - envPtr->codeStart)
-	    - jumpAroundElseFixup.codeOffset;
+        - jumpAroundElseFixup.codeOffset;
     if (TclFixupForwardJump(envPtr, &jumpAroundElseFixup, dist, 127)) {
-	/*
-	 * Update the else expression's starting code offset since it
-	 * moved down 3 bytes too.
-	 */
+    /*
+     * Update the else expression's starting code offset since it
+     * moved down 3 bytes too.
+     */
 
-	elseCodeOffset += 3;
+    elseCodeOffset += 3;
     }
 
     /*
@@ -898,37 +898,37 @@ CompileCondExpr(exprTokenPtr, infoPtr, envPtr, endPtrPtr)
  *
  * CompileMathFuncCall --
  *
- *	This procedure compiles a call on a math function in an expression:
- *	mathFuncCall ::= funcName '(' [condExpr {',' condExpr}] ')'
+ *  This procedure compiles a call on a math function in an expression:
+ *  mathFuncCall ::= funcName '(' [condExpr {',' condExpr}] ')'
  *
  * Results:
- *	The return value is TCL_OK on a successful compilation and TCL_ERROR
- *	on failure. If TCL_OK is returned, a pointer to the token just after
- *	the last one in the subexpression is stored at the address in
- *	endPtrPtr. If TCL_ERROR is returned, then the interpreter's result
- *	contains an error message.
+ *  The return value is TCL_OK on a successful compilation and TCL_ERROR
+ *  on failure. If TCL_OK is returned, a pointer to the token just after
+ *  the last one in the subexpression is stored at the address in
+ *  endPtrPtr. If TCL_ERROR is returned, then the interpreter's result
+ *  contains an error message.
  *
- *	envPtr->maxStackDepth is updated with the maximum number of stack
- *	elements needed to execute the function.
+ *  envPtr->maxStackDepth is updated with the maximum number of stack
+ *  elements needed to execute the function.
  *
  * Side effects:
- *	Adds instructions to envPtr to evaluate the math function at
- *	runtime.
+ *  Adds instructions to envPtr to evaluate the math function at
+ *  runtime.
  *
  *----------------------------------------------------------------------
  */
 
 static int
 CompileMathFuncCall(exprTokenPtr, funcName, infoPtr, envPtr, endPtrPtr)
-    Tcl_Token *exprTokenPtr;	/* Points to TCL_TOKEN_SUB_EXPR token
-				 * containing the math function call. */
-    char *funcName;		/* Name of the math function. */
-    ExprInfo *infoPtr;		/* Describes the compilation state for the
-				 * expression being compiled. */
-    CompileEnv *envPtr;		/* Holds resulting instructions. */
-    Tcl_Token **endPtrPtr;	/* If successful, a pointer to the token
-				 * just after the last token in the
-				 * subexpression is stored here. */
+    Tcl_Token *exprTokenPtr;    /* Points to TCL_TOKEN_SUB_EXPR token
+                 * containing the math function call. */
+    char *funcName;     /* Name of the math function. */
+    ExprInfo *infoPtr;      /* Describes the compilation state for the
+                 * expression being compiled. */
+    CompileEnv *envPtr;     /* Holds resulting instructions. */
+    Tcl_Token **endPtrPtr;  /* If successful, a pointer to the token
+                 * just after the last token in the
+                 * subexpression is stored here. */
 {
     Tcl_Interp *interp = infoPtr->interp;
     Interp *iPtr = (Interp *) interp;
@@ -945,10 +945,10 @@ CompileMathFuncCall(exprTokenPtr, funcName, infoPtr, envPtr, endPtrPtr)
     maxDepth = 0;
     hPtr = Tcl_FindHashEntry(&iPtr->mathFuncTable, funcName);
     if (hPtr == NULL) {
-	Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-		"unknown math function \"", funcName, "\"", (char *) NULL);
-	code = TCL_ERROR;
-	goto done;
+    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+        "unknown math function \"", funcName, "\"", (char *) NULL);
+    code = TCL_ERROR;
+    goto done;
     }
     mathFuncPtr = (MathFunc *) Tcl_GetHashValue(hPtr);
 
@@ -957,9 +957,9 @@ CompileMathFuncCall(exprTokenPtr, funcName, infoPtr, envPtr, endPtrPtr)
      */
 
     if (mathFuncPtr->builtinFuncIndex < 0) {
-	TclEmitPush(TclRegisterLiteral(envPtr, funcName, -1, /*onHeap*/ 0),
-	        envPtr);
-	maxDepth = 1;
+    TclEmitPush(TclRegisterLiteral(envPtr, funcName, -1, /*onHeap*/ 0),
+            envPtr);
+    maxDepth = 1;
     }
 
     /*
@@ -969,35 +969,35 @@ CompileMathFuncCall(exprTokenPtr, funcName, infoPtr, envPtr, endPtrPtr)
     tokenPtr = exprTokenPtr+2;
     afterSubexprPtr = exprTokenPtr + (exprTokenPtr->numComponents + 1);
     if (mathFuncPtr->numArgs > 0) {
-	for (i = 0;  i < mathFuncPtr->numArgs;  i++) {
-	    if (tokenPtr == afterSubexprPtr) {
-		Tcl_ResetResult(interp);
-		Tcl_AppendToObj(Tcl_GetObjResult(interp),
-		        "too few arguments for math function", -1);
-		code = TCL_ERROR;
-		goto done;
-	    }
-	    infoPtr->exprIsComparison = 0;
-	    code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
-	    if (code != TCL_OK) {
-		goto done;
-	    }
-	    tokenPtr += (tokenPtr->numComponents + 1);
-	    maxDepth++;
-	}
-	if (tokenPtr != afterSubexprPtr) {
-	    Tcl_ResetResult(interp);
-	    Tcl_AppendToObj(Tcl_GetObjResult(interp),
-		    "too many arguments for math function", -1);
-	    code = TCL_ERROR;
-	    goto done;
-	}
+    for (i = 0;  i < mathFuncPtr->numArgs;  i++) {
+        if (tokenPtr == afterSubexprPtr) {
+        Tcl_ResetResult(interp);
+        Tcl_AppendToObj(Tcl_GetObjResult(interp),
+                "too few arguments for math function", -1);
+        code = TCL_ERROR;
+        goto done;
+        }
+        infoPtr->exprIsComparison = 0;
+        code = CompileSubExpr(tokenPtr, infoPtr, envPtr);
+        if (code != TCL_OK) {
+        goto done;
+        }
+        tokenPtr += (tokenPtr->numComponents + 1);
+        maxDepth++;
+    }
+    if (tokenPtr != afterSubexprPtr) {
+        Tcl_ResetResult(interp);
+        Tcl_AppendToObj(Tcl_GetObjResult(interp),
+            "too many arguments for math function", -1);
+        code = TCL_ERROR;
+        goto done;
+    }
     } else if (tokenPtr != afterSubexprPtr) {
-	Tcl_ResetResult(interp);
-	Tcl_AppendToObj(Tcl_GetObjResult(interp),
-		"too many arguments for math function", -1);
-	code = TCL_ERROR;
-	goto done;
+    Tcl_ResetResult(interp);
+    Tcl_AppendToObj(Tcl_GetObjResult(interp),
+        "too many arguments for math function", -1);
+    code = TCL_ERROR;
+    goto done;
     }
 
     /*
@@ -1007,10 +1007,10 @@ CompileMathFuncCall(exprTokenPtr, funcName, infoPtr, envPtr, endPtrPtr)
      */
 
     if (mathFuncPtr->builtinFuncIndex >= 0) { /* a builtin function */
-	TclEmitInstInt1(INST_CALL_BUILTIN_FUNC1,
-	        mathFuncPtr->builtinFuncIndex, envPtr);
+    TclEmitInstInt1(INST_CALL_BUILTIN_FUNC1,
+            mathFuncPtr->builtinFuncIndex, envPtr);
     } else {
-	TclEmitInstInt1(INST_CALL_FUNC1, (mathFuncPtr->numArgs+1), envPtr);
+    TclEmitInstInt1(INST_CALL_FUNC1, (mathFuncPtr->numArgs+1), envPtr);
     }
     *endPtrPtr = afterSubexprPtr;
 
@@ -1024,30 +1024,30 @@ CompileMathFuncCall(exprTokenPtr, funcName, infoPtr, envPtr, endPtrPtr)
  *
  * LogSyntaxError --
  *
- *	This procedure is invoked after an error occurs when compiling an
- *	expression. It sets the interpreter result to an error message
- *	describing the error.
+ *  This procedure is invoked after an error occurs when compiling an
+ *  expression. It sets the interpreter result to an error message
+ *  describing the error.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Sets the interpreter result to an error message describing the
- *	expression that was being compiled when the error occurred.
+ *  Sets the interpreter result to an error message describing the
+ *  expression that was being compiled when the error occurred.
  *
  *----------------------------------------------------------------------
  */
 
 static void
 LogSyntaxError(infoPtr)
-    ExprInfo *infoPtr;		/* Describes the compilation state for the
-				 * expression being compiled. */
+    ExprInfo *infoPtr;      /* Describes the compilation state for the
+                 * expression being compiled. */
 {
     int numBytes = (infoPtr->lastChar - infoPtr->expr);
     char buffer[100];
 
     sprintf(buffer, "syntax error in expression \"%.*s\"",
-	    ((numBytes > 60)? 60 : numBytes), infoPtr->expr);
+        ((numBytes > 60)? 60 : numBytes), infoPtr->expr);
     Tcl_AppendStringsToObj(Tcl_GetObjResult(infoPtr->interp),
-	    buffer, (char *) NULL);
+        buffer, (char *) NULL);
 }

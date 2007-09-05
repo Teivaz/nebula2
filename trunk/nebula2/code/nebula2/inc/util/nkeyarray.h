@@ -82,7 +82,7 @@ nKeyArray<TYPE>::bsearch(int key) const
         if ((half = num/2))
         {
             mid = lo + ((num & 1) ? half : (half - 1));
-			int diff = key - this->elements[mid].key;
+            int diff = key - this->elements[mid].key;
             if (diff < 0)
             {
                 hi = mid - 1;
