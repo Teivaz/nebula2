@@ -1,8 +1,8 @@
 /*
  * tclListObj.c --
  *
- *	This file contains procedures that implement the Tcl list object
- *	type.
+ *  This file contains procedures that implement the Tcl list object
+ *  type.
  *
  * Copyright (c) 1995-1997 Sun Microsystems, Inc.
  * Copyright (c) 1998 by Scriptics Corporation.
@@ -18,12 +18,12 @@
  * Prototypes for procedures defined later in this file:
  */
 
-static void		DupListInternalRep _ANSI_ARGS_((Tcl_Obj *srcPtr,
-			    Tcl_Obj *copyPtr));
-static void		FreeListInternalRep _ANSI_ARGS_((Tcl_Obj *listPtr));
-static int		SetListFromAny _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tcl_Obj *objPtr));
-static void		UpdateStringOfList _ANSI_ARGS_((Tcl_Obj *listPtr));
+static void     DupListInternalRep _ANSI_ARGS_((Tcl_Obj *srcPtr,
+                Tcl_Obj *copyPtr));
+static void     FreeListInternalRep _ANSI_ARGS_((Tcl_Obj *listPtr));
+static int      SetListFromAny _ANSI_ARGS_((Tcl_Interp *interp,
+                Tcl_Obj *objPtr));
+static void     UpdateStringOfList _ANSI_ARGS_((Tcl_Obj *listPtr));
 
 /*
  * The structure below defines the list Tcl object type by means of
@@ -31,11 +31,11 @@ static void		UpdateStringOfList _ANSI_ARGS_((Tcl_Obj *listPtr));
  */
 
 Tcl_ObjType tclListType = {
-    "list",				/* name */
-    FreeListInternalRep,		/* freeIntRepProc */
-    DupListInternalRep,		        /* dupIntRepProc */
-    UpdateStringOfList,			/* updateStringProc */
-    SetListFromAny			/* setFromAnyProc */
+    "list",             /* name */
+    FreeListInternalRep,        /* freeIntRepProc */
+    DupListInternalRep,             /* dupIntRepProc */
+    UpdateStringOfList,         /* updateStringProc */
+    SetListFromAny          /* setFromAnyProc */
 };
 
 /*
@@ -43,23 +43,23 @@ Tcl_ObjType tclListType = {
  *
  * Tcl_NewListObj --
  *
- *	This procedure is normally called when not debugging: i.e., when
- *	TCL_MEM_DEBUG is not defined. It creates a new list object from an
- *	(objc,objv) array: that is, each of the objc elements of the array
- *	referenced by objv is inserted as an element into a new Tcl object.
+ *  This procedure is normally called when not debugging: i.e., when
+ *  TCL_MEM_DEBUG is not defined. It creates a new list object from an
+ *  (objc,objv) array: that is, each of the objc elements of the array
+ *  referenced by objv is inserted as an element into a new Tcl object.
  *
- *	When TCL_MEM_DEBUG is defined, this procedure just returns the
- *	result of calling the debugging version Tcl_DbNewListObj.
+ *  When TCL_MEM_DEBUG is defined, this procedure just returns the
+ *  result of calling the debugging version Tcl_DbNewListObj.
  *
  * Results:
- *	A new list object is returned that is initialized from the object
- *	pointers in objv. If objc is less than or equal to zero, an empty
- *	object is returned. The new object's string representation
- *	is left NULL. The resulting new list object has ref count 0.
+ *  A new list object is returned that is initialized from the object
+ *  pointers in objv. If objc is less than or equal to zero, an empty
+ *  object is returned. The new object's string representation
+ *  is left NULL. The resulting new list object has ref count 0.
  *
  * Side effects:
- *	The ref counts of the elements in objv are incremented since the
- *	resulting list now refers to them.
+ *  The ref counts of the elements in objv are incremented since the
+ *  resulting list now refers to them.
  *
  *----------------------------------------------------------------------
  */
@@ -69,8 +69,8 @@ Tcl_ObjType tclListType = {
 
 Tcl_Obj *
 Tcl_NewListObj(objc, objv)
-    int objc;			/* Count of objects referenced by objv. */
-    Tcl_Obj *CONST objv[];	/* An array of pointers to Tcl objects. */
+    int objc;           /* Count of objects referenced by objv. */
+    Tcl_Obj *CONST objv[];  /* An array of pointers to Tcl objects. */
 {
     return Tcl_DbNewListObj(objc, objv, "unknown", 0);
 }
@@ -79,8 +79,8 @@ Tcl_NewListObj(objc, objv)
 
 Tcl_Obj *
 Tcl_NewListObj(objc, objv)
-    int objc;			/* Count of objects referenced by objv. */
-    Tcl_Obj *CONST objv[];	/* An array of pointers to Tcl objects. */
+    int objc;           /* Count of objects referenced by objv. */
+    Tcl_Obj *CONST objv[];  /* An array of pointers to Tcl objects. */
 {
     register Tcl_Obj *listPtr;
     register Tcl_Obj **elemPtrs;
@@ -90,22 +90,22 @@ Tcl_NewListObj(objc, objv)
     TclNewObj(listPtr);
 
     if (objc > 0) {
-	Tcl_InvalidateStringRep(listPtr);
+    Tcl_InvalidateStringRep(listPtr);
 
-	elemPtrs = (Tcl_Obj **)
-	    ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
-	for (i = 0;  i < objc;  i++) {
-	    elemPtrs[i] = objv[i];
-	    Tcl_IncrRefCount(elemPtrs[i]);
-	}
+    elemPtrs = (Tcl_Obj **)
+        ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
+    for (i = 0;  i < objc;  i++) {
+        elemPtrs[i] = objv[i];
+        Tcl_IncrRefCount(elemPtrs[i]);
+    }
 
-	listRepPtr = (List *) ckalloc(sizeof(List));
-	listRepPtr->maxElemCount = objc;
-	listRepPtr->elemCount    = objc;
-	listRepPtr->elements     = elemPtrs;
+    listRepPtr = (List *) ckalloc(sizeof(List));
+    listRepPtr->maxElemCount = objc;
+    listRepPtr->elemCount    = objc;
+    listRepPtr->elements     = elemPtrs;
 
-	listPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
-	listPtr->typePtr = &tclListType;
+    listPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
+    listPtr->typePtr = &tclListType;
     }
     return listPtr;
 }
@@ -116,26 +116,26 @@ Tcl_NewListObj(objc, objv)
  *
  * Tcl_DbNewListObj --
  *
- *	This procedure is normally called when debugging: i.e., when
- *	TCL_MEM_DEBUG is defined. It creates new list objects. It is the
- *	same as the Tcl_NewListObj procedure above except that it calls
- *	Tcl_DbCkalloc directly with the file name and line number from its
- *	caller. This simplifies debugging since then the checkmem command
- *	will report the correct file name and line number when reporting
- *	objects that haven't been freed.
+ *  This procedure is normally called when debugging: i.e., when
+ *  TCL_MEM_DEBUG is defined. It creates new list objects. It is the
+ *  same as the Tcl_NewListObj procedure above except that it calls
+ *  Tcl_DbCkalloc directly with the file name and line number from its
+ *  caller. This simplifies debugging since then the checkmem command
+ *  will report the correct file name and line number when reporting
+ *  objects that haven't been freed.
  *
- *	When TCL_MEM_DEBUG is not defined, this procedure just returns the
- *	result of calling Tcl_NewListObj.
+ *  When TCL_MEM_DEBUG is not defined, this procedure just returns the
+ *  result of calling Tcl_NewListObj.
  *
  * Results:
- *	A new list object is returned that is initialized from the object
- *	pointers in objv. If objc is less than or equal to zero, an empty
- *	object is returned. The new object's string representation
- *	is left NULL. The new list object has ref count 0.
+ *  A new list object is returned that is initialized from the object
+ *  pointers in objv. If objc is less than or equal to zero, an empty
+ *  object is returned. The new object's string representation
+ *  is left NULL. The new list object has ref count 0.
  *
  * Side effects:
- *	The ref counts of the elements in objv are incremented since the
- *	resulting list now refers to them.
+ *  The ref counts of the elements in objv are incremented since the
+ *  resulting list now refers to them.
  *
  *----------------------------------------------------------------------
  */
@@ -144,12 +144,12 @@ Tcl_NewListObj(objc, objv)
 
 Tcl_Obj *
 Tcl_DbNewListObj(objc, objv, file, line)
-    int objc;			/* Count of objects referenced by objv. */
-    Tcl_Obj *CONST objv[];	/* An array of pointers to Tcl objects. */
-    char *file;			/* The name of the source file calling this
-				 * procedure; used for debugging. */
-    int line;			/* Line number in the source file; used
-				 * for debugging. */
+    int objc;           /* Count of objects referenced by objv. */
+    Tcl_Obj *CONST objv[];  /* An array of pointers to Tcl objects. */
+    char *file;         /* The name of the source file calling this
+                 * procedure; used for debugging. */
+    int line;           /* Line number in the source file; used
+                 * for debugging. */
 {
     register Tcl_Obj *listPtr;
     register Tcl_Obj **elemPtrs;
@@ -159,22 +159,22 @@ Tcl_DbNewListObj(objc, objv, file, line)
     TclDbNewObj(listPtr, file, line);
 
     if (objc > 0) {
-	Tcl_InvalidateStringRep(listPtr);
+    Tcl_InvalidateStringRep(listPtr);
 
-	elemPtrs = (Tcl_Obj **)
-	    ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
-	for (i = 0;  i < objc;  i++) {
-	    elemPtrs[i] = objv[i];
-	    Tcl_IncrRefCount(elemPtrs[i]);
-	}
+    elemPtrs = (Tcl_Obj **)
+        ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
+    for (i = 0;  i < objc;  i++) {
+        elemPtrs[i] = objv[i];
+        Tcl_IncrRefCount(elemPtrs[i]);
+    }
 
-	listRepPtr = (List *) ckalloc(sizeof(List));
-	listRepPtr->maxElemCount = objc;
-	listRepPtr->elemCount    = objc;
-	listRepPtr->elements     = elemPtrs;
+    listRepPtr = (List *) ckalloc(sizeof(List));
+    listRepPtr->maxElemCount = objc;
+    listRepPtr->elemCount    = objc;
+    listRepPtr->elements     = elemPtrs;
 
-	listPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
-	listPtr->typePtr = &tclListType;
+    listPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
+    listPtr->typePtr = &tclListType;
     }
     return listPtr;
 }
@@ -183,12 +183,12 @@ Tcl_DbNewListObj(objc, objv, file, line)
 
 Tcl_Obj *
 Tcl_DbNewListObj(objc, objv, file, line)
-    int objc;			/* Count of objects referenced by objv. */
-    Tcl_Obj *CONST objv[];	/* An array of pointers to Tcl objects. */
-    char *file;			/* The name of the source file calling this
-				 * procedure; used for debugging. */
-    int line;			/* Line number in the source file; used
-				 * for debugging. */
+    int objc;           /* Count of objects referenced by objv. */
+    Tcl_Obj *CONST objv[];  /* An array of pointers to Tcl objects. */
+    char *file;         /* The name of the source file calling this
+                 * procedure; used for debugging. */
+    int line;           /* Line number in the source file; used
+                 * for debugging. */
 {
     return Tcl_NewListObj(objc, objv);
 }
@@ -199,28 +199,28 @@ Tcl_DbNewListObj(objc, objv, file, line)
  *
  * Tcl_SetListObj --
  *
- *	Modify an object to be a list containing each of the objc elements
- *	of the object array referenced by objv.
+ *  Modify an object to be a list containing each of the objc elements
+ *  of the object array referenced by objv.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	The object is made a list object and is initialized from the object
- *	pointers in objv. If objc is less than or equal to zero, an empty
- *	object is returned. The new object's string representation
- *	is left NULL. The ref counts of the elements in objv are incremented
- *	since the list now refers to them. The object's old string and
- *	internal representations are freed and its type is set NULL.
+ *  The object is made a list object and is initialized from the object
+ *  pointers in objv. If objc is less than or equal to zero, an empty
+ *  object is returned. The new object's string representation
+ *  is left NULL. The ref counts of the elements in objv are incremented
+ *  since the list now refers to them. The object's old string and
+ *  internal representations are freed and its type is set NULL.
  *
  *----------------------------------------------------------------------
  */
 
 void
 Tcl_SetListObj(objPtr, objc, objv)
-    Tcl_Obj *objPtr;		/* Object whose internal rep to init. */
-    int objc;			/* Count of objects referenced by objv. */
-    Tcl_Obj *CONST objv[];	/* An array of pointers to Tcl objects. */
+    Tcl_Obj *objPtr;        /* Object whose internal rep to init. */
+    int objc;           /* Count of objects referenced by objv. */
+    Tcl_Obj *CONST objv[];  /* An array of pointers to Tcl objects. */
 {
     register Tcl_Obj **elemPtrs;
     register List *listRepPtr;
@@ -228,7 +228,7 @@ Tcl_SetListObj(objPtr, objc, objv)
     int i;
 
     if (Tcl_IsShared(objPtr)) {
-	panic("Tcl_SetListObj called with shared object");
+    panic("Tcl_SetListObj called with shared object");
     }
 
     /*
@@ -236,7 +236,7 @@ Tcl_SetListObj(objPtr, objc, objv)
      */
 
     if ((oldTypePtr != NULL) && (oldTypePtr->freeIntRepProc != NULL)) {
-	oldTypePtr->freeIntRepProc(objPtr);
+    oldTypePtr->freeIntRepProc(objPtr);
     }
     objPtr->typePtr = NULL;
     Tcl_InvalidateStringRep(objPtr);
@@ -248,22 +248,22 @@ Tcl_SetListObj(objPtr, objc, objv)
      */
 
     if (objc > 0) {
-	elemPtrs = (Tcl_Obj **)
-	    ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
-	for (i = 0;  i < objc;  i++) {
-	    elemPtrs[i] = objv[i];
-	    Tcl_IncrRefCount(elemPtrs[i]);
-	}
+    elemPtrs = (Tcl_Obj **)
+        ckalloc((unsigned) (objc * sizeof(Tcl_Obj *)));
+    for (i = 0;  i < objc;  i++) {
+        elemPtrs[i] = objv[i];
+        Tcl_IncrRefCount(elemPtrs[i]);
+    }
 
-	listRepPtr = (List *) ckalloc(sizeof(List));
-	listRepPtr->maxElemCount = objc;
-	listRepPtr->elemCount    = objc;
-	listRepPtr->elements     = elemPtrs;
+    listRepPtr = (List *) ckalloc(sizeof(List));
+    listRepPtr->maxElemCount = objc;
+    listRepPtr->elemCount    = objc;
+    listRepPtr->elements     = elemPtrs;
 
-	objPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
-	objPtr->typePtr = &tclListType;
+    objPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
+    objPtr->typePtr = &tclListType;
     } else {
-	objPtr->bytes = tclEmptyStringRep;
+    objPtr->bytes = tclEmptyStringRep;
     }
 }
 
@@ -272,48 +272,48 @@ Tcl_SetListObj(objPtr, objc, objv)
  *
  * Tcl_ListObjGetElements --
  *
- *	This procedure returns an (objc,objv) array of the elements in a
- *	list object.
+ *  This procedure returns an (objc,objv) array of the elements in a
+ *  list object.
  *
  * Results:
- *	The return value is normally TCL_OK; in this case *objcPtr is set to
- *	the count of list elements and *objvPtr is set to a pointer to an
- *	array of (*objcPtr) pointers to each list element. If listPtr does
- *	not refer to a list object and the object can not be converted to
- *	one, TCL_ERROR is returned and an error message will be left in
- *	the interpreter's result if interp is not NULL.
+ *  The return value is normally TCL_OK; in this case *objcPtr is set to
+ *  the count of list elements and *objvPtr is set to a pointer to an
+ *  array of (*objcPtr) pointers to each list element. If listPtr does
+ *  not refer to a list object and the object can not be converted to
+ *  one, TCL_ERROR is returned and an error message will be left in
+ *  the interpreter's result if interp is not NULL.
  *
- *	The objects referenced by the returned array should be treated as
- *	readonly and their ref counts are _not_ incremented; the caller must
- *	do that if it holds on to a reference. Furthermore, the pointer
- *	and length returned by this procedure may change as soon as any
- *	procedure is called on the list object; be careful about retaining
- *	the pointer in a local data structure.
+ *  The objects referenced by the returned array should be treated as
+ *  readonly and their ref counts are _not_ incremented; the caller must
+ *  do that if it holds on to a reference. Furthermore, the pointer
+ *  and length returned by this procedure may change as soon as any
+ *  procedure is called on the list object; be careful about retaining
+ *  the pointer in a local data structure.
  *
  * Side effects:
- *	The possible conversion of the object referenced by listPtr
- *	to a list object.
+ *  The possible conversion of the object referenced by listPtr
+ *  to a list object.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_ListObjGetElements(interp, listPtr, objcPtr, objvPtr)
-    Tcl_Interp *interp;		/* Used to report errors if not NULL. */
-    register Tcl_Obj *listPtr;	/* List object for which an element array
-				 * is to be returned. */
-    int *objcPtr;		/* Where to store the count of objects
-				 * referenced by objv. */
-    Tcl_Obj ***objvPtr;	        /* Where to store the pointer to an array
-				 * of pointers to the list's objects. */
+    Tcl_Interp *interp;     /* Used to report errors if not NULL. */
+    register Tcl_Obj *listPtr;  /* List object for which an element array
+                 * is to be returned. */
+    int *objcPtr;       /* Where to store the count of objects
+                 * referenced by objv. */
+    Tcl_Obj ***objvPtr;         /* Where to store the pointer to an array
+                 * of pointers to the list's objects. */
 {
     register List *listRepPtr;
 
     if (listPtr->typePtr != &tclListType) {
-	int result = SetListFromAny(interp, listPtr);
-	if (result != TCL_OK) {
-	    return result;
-	}
+    int result = SetListFromAny(interp, listPtr);
+    if (result != TCL_OK) {
+        return result;
+    }
     }
     listRepPtr = (List *) listPtr->internalRep.otherValuePtr;
     *objcPtr = listRepPtr->elemCount;
@@ -326,52 +326,52 @@ Tcl_ListObjGetElements(interp, listPtr, objcPtr, objvPtr)
  *
  * Tcl_ListObjAppendList --
  *
- *	This procedure appends the objects in the list referenced by
- *	elemListPtr to the list object referenced by listPtr. If listPtr is
- *	not already a list object, an attempt will be made to convert it to
- *	one.
+ *  This procedure appends the objects in the list referenced by
+ *  elemListPtr to the list object referenced by listPtr. If listPtr is
+ *  not already a list object, an attempt will be made to convert it to
+ *  one.
  *
  * Results:
- *	The return value is normally TCL_OK. If listPtr or elemListPtr do
- *	not refer to list objects and they can not be converted to one,
- *	TCL_ERROR is returned and an error message is left in
- *	the interpreter's result if interp is not NULL.
+ *  The return value is normally TCL_OK. If listPtr or elemListPtr do
+ *  not refer to list objects and they can not be converted to one,
+ *  TCL_ERROR is returned and an error message is left in
+ *  the interpreter's result if interp is not NULL.
  *
  * Side effects:
- *	The reference counts of the elements in elemListPtr are incremented
- *	since the list now refers to them. listPtr and elemListPtr are
- *	converted, if necessary, to list objects. Also, appending the
- *	new elements may cause listObj's array of element pointers to grow.
- *	listPtr's old string representation, if any, is invalidated.
+ *  The reference counts of the elements in elemListPtr are incremented
+ *  since the list now refers to them. listPtr and elemListPtr are
+ *  converted, if necessary, to list objects. Also, appending the
+ *  new elements may cause listObj's array of element pointers to grow.
+ *  listPtr's old string representation, if any, is invalidated.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_ListObjAppendList(interp, listPtr, elemListPtr)
-    Tcl_Interp *interp;		/* Used to report errors if not NULL. */
-    register Tcl_Obj *listPtr;	/* List object to append elements to. */
-    Tcl_Obj *elemListPtr;	/* List obj with elements to append. */
+    Tcl_Interp *interp;     /* Used to report errors if not NULL. */
+    register Tcl_Obj *listPtr;  /* List object to append elements to. */
+    Tcl_Obj *elemListPtr;   /* List obj with elements to append. */
 {
     register List *listRepPtr;
     int listLen, objc, result;
     Tcl_Obj **objv;
 
     if (Tcl_IsShared(listPtr)) {
-	panic("Tcl_ListObjAppendList called with shared object");
+    panic("Tcl_ListObjAppendList called with shared object");
     }
     if (listPtr->typePtr != &tclListType) {
-	result = SetListFromAny(interp, listPtr);
-	if (result != TCL_OK) {
-	    return result;
-	}
+    result = SetListFromAny(interp, listPtr);
+    if (result != TCL_OK) {
+        return result;
+    }
     }
     listRepPtr = (List *) listPtr->internalRep.otherValuePtr;
     listLen = listRepPtr->elemCount;
 
     result = Tcl_ListObjGetElements(interp, elemListPtr, &objc, &objv);
     if (result != TCL_OK) {
-	return result;
+    return result;
     }
 
     /*
@@ -387,46 +387,46 @@ Tcl_ListObjAppendList(interp, listPtr, elemListPtr)
  *
  * Tcl_ListObjAppendElement --
  *
- *	This procedure is a special purpose version of
- *	Tcl_ListObjAppendList: it appends a single object referenced by
- *	objPtr to the list object referenced by listPtr. If listPtr is not
- *	already a list object, an attempt will be made to convert it to one.
+ *  This procedure is a special purpose version of
+ *  Tcl_ListObjAppendList: it appends a single object referenced by
+ *  objPtr to the list object referenced by listPtr. If listPtr is not
+ *  already a list object, an attempt will be made to convert it to one.
  *
  * Results:
- *	The return value is normally TCL_OK; in this case objPtr is added
- *	to the end of listPtr's list. If listPtr does not refer to a list
- *	object and the object can not be converted to one, TCL_ERROR is
- *	returned and an error message will be left in the interpreter's
- *	result if interp is not NULL.
+ *  The return value is normally TCL_OK; in this case objPtr is added
+ *  to the end of listPtr's list. If listPtr does not refer to a list
+ *  object and the object can not be converted to one, TCL_ERROR is
+ *  returned and an error message will be left in the interpreter's
+ *  result if interp is not NULL.
  *
  * Side effects:
- *	The ref count of objPtr is incremented since the list now refers
- *	to it. listPtr will be converted, if necessary, to a list object.
- *	Also, appending the new element may cause listObj's array of element
- *	pointers to grow. listPtr's old string representation, if any,
- *	is invalidated.
+ *  The ref count of objPtr is incremented since the list now refers
+ *  to it. listPtr will be converted, if necessary, to a list object.
+ *  Also, appending the new element may cause listObj's array of element
+ *  pointers to grow. listPtr's old string representation, if any,
+ *  is invalidated.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_ListObjAppendElement(interp, listPtr, objPtr)
-    Tcl_Interp *interp;		/* Used to report errors if not NULL. */
-    Tcl_Obj *listPtr;		/* List object to append objPtr to. */
-    Tcl_Obj *objPtr;		/* Object to append to listPtr's list. */
+    Tcl_Interp *interp;     /* Used to report errors if not NULL. */
+    Tcl_Obj *listPtr;       /* List object to append objPtr to. */
+    Tcl_Obj *objPtr;        /* Object to append to listPtr's list. */
 {
     register List *listRepPtr;
     register Tcl_Obj **elemPtrs;
     int numElems, numRequired;
 
     if (Tcl_IsShared(listPtr)) {
-	panic("Tcl_ListObjAppendElement called with shared object");
+    panic("Tcl_ListObjAppendElement called with shared object");
     }
     if (listPtr->typePtr != &tclListType) {
-	int result = SetListFromAny(interp, listPtr);
-	if (result != TCL_OK) {
-	    return result;
-	}
+    int result = SetListFromAny(interp, listPtr);
+    if (result != TCL_OK) {
+        return result;
+    }
     }
 
     listRepPtr = (List *) listPtr->internalRep.otherValuePtr;
@@ -440,17 +440,17 @@ Tcl_ListObjAppendElement(interp, listPtr, objPtr)
      */
 
     if (numRequired > listRepPtr->maxElemCount) {
-	int newMax = (2 * numRequired);
-	Tcl_Obj **newElemPtrs = (Tcl_Obj **)
-	    ckalloc((unsigned) (newMax * sizeof(Tcl_Obj *)));
+    int newMax = (2 * numRequired);
+    Tcl_Obj **newElemPtrs = (Tcl_Obj **)
+        ckalloc((unsigned) (newMax * sizeof(Tcl_Obj *)));
 
-	memcpy((VOID *) newElemPtrs, (VOID *) elemPtrs,
-	       (size_t) (numElems * sizeof(Tcl_Obj *)));
+    memcpy((VOID *) newElemPtrs, (VOID *) elemPtrs,
+           (size_t) (numElems * sizeof(Tcl_Obj *)));
 
-	listRepPtr->maxElemCount = newMax;
-	listRepPtr->elements = newElemPtrs;
-	ckfree((char *) elemPtrs);
-	elemPtrs = newElemPtrs;
+    listRepPtr->maxElemCount = newMax;
+    listRepPtr->elements = newElemPtrs;
+    ckfree((char *) elemPtrs);
+    elemPtrs = newElemPtrs;
     }
 
     /*
@@ -476,48 +476,48 @@ Tcl_ListObjAppendElement(interp, listPtr, objPtr)
  *
  * Tcl_ListObjIndex --
  *
- *	This procedure returns a pointer to the index'th object from the
- *	list referenced by listPtr. The first element has index 0. If index
- *	is negative or greater than or equal to the number of elements in
- *	the list, a NULL is returned. If listPtr is not a list object, an
- *	attempt will be made to convert it to a list.
+ *  This procedure returns a pointer to the index'th object from the
+ *  list referenced by listPtr. The first element has index 0. If index
+ *  is negative or greater than or equal to the number of elements in
+ *  the list, a NULL is returned. If listPtr is not a list object, an
+ *  attempt will be made to convert it to a list.
  *
  * Results:
- *	The return value is normally TCL_OK; in this case objPtrPtr is set
- *	to the Tcl_Obj pointer for the index'th list element or NULL if
- *	index is out of range. This object should be treated as readonly and
- *	its ref count is _not_ incremented; the caller must do that if it
- *	holds on to the reference. If listPtr does not refer to a list and
- *	can't be converted to one, TCL_ERROR is returned and an error
- *	message is left in the interpreter's result if interp is not NULL.
+ *  The return value is normally TCL_OK; in this case objPtrPtr is set
+ *  to the Tcl_Obj pointer for the index'th list element or NULL if
+ *  index is out of range. This object should be treated as readonly and
+ *  its ref count is _not_ incremented; the caller must do that if it
+ *  holds on to the reference. If listPtr does not refer to a list and
+ *  can't be converted to one, TCL_ERROR is returned and an error
+ *  message is left in the interpreter's result if interp is not NULL.
  *
  * Side effects:
- *	listPtr will be converted, if necessary, to a list object.
+ *  listPtr will be converted, if necessary, to a list object.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_ListObjIndex(interp, listPtr, index, objPtrPtr)
-    Tcl_Interp *interp;		/* Used to report errors if not NULL. */
-    register Tcl_Obj *listPtr;	/* List object to index into. */
-    register int index;		/* Index of element to return. */
-    Tcl_Obj **objPtrPtr;	/* The resulting Tcl_Obj* is stored here. */
+    Tcl_Interp *interp;     /* Used to report errors if not NULL. */
+    register Tcl_Obj *listPtr;  /* List object to index into. */
+    register int index;     /* Index of element to return. */
+    Tcl_Obj **objPtrPtr;    /* The resulting Tcl_Obj* is stored here. */
 {
     register List *listRepPtr;
 
     if (listPtr->typePtr != &tclListType) {
-	int result = SetListFromAny(interp, listPtr);
-	if (result != TCL_OK) {
-	    return result;
-	}
+    int result = SetListFromAny(interp, listPtr);
+    if (result != TCL_OK) {
+        return result;
+    }
     }
 
     listRepPtr = (List *) listPtr->internalRep.otherValuePtr;
     if ((index < 0) || (index >= listRepPtr->elemCount)) {
-	*objPtrPtr = NULL;
+    *objPtrPtr = NULL;
     } else {
-	*objPtrPtr = listRepPtr->elements[index];
+    *objPtrPtr = listRepPtr->elements[index];
     }
 
     return TCL_OK;
@@ -528,36 +528,36 @@ Tcl_ListObjIndex(interp, listPtr, index, objPtrPtr)
  *
  * Tcl_ListObjLength --
  *
- *	This procedure returns the number of elements in a list object. If
- *	the object is not already a list object, an attempt will be made to
- *	convert it to one.
+ *  This procedure returns the number of elements in a list object. If
+ *  the object is not already a list object, an attempt will be made to
+ *  convert it to one.
  *
  * Results:
- *	The return value is normally TCL_OK; in this case *intPtr will be
- *	set to the integer count of list elements. If listPtr does not refer
- *	to a list object and the object can not be converted to one,
- *	TCL_ERROR is returned and an error message will be left in
- *	the interpreter's result if interp is not NULL.
+ *  The return value is normally TCL_OK; in this case *intPtr will be
+ *  set to the integer count of list elements. If listPtr does not refer
+ *  to a list object and the object can not be converted to one,
+ *  TCL_ERROR is returned and an error message will be left in
+ *  the interpreter's result if interp is not NULL.
  *
  * Side effects:
- *	The possible conversion of the argument object to a list object.
+ *  The possible conversion of the argument object to a list object.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_ListObjLength(interp, listPtr, intPtr)
-    Tcl_Interp *interp;		/* Used to report errors if not NULL. */
-    register Tcl_Obj *listPtr;	/* List object whose #elements to return. */
-    register int *intPtr;	/* The resulting int is stored here. */
+    Tcl_Interp *interp;     /* Used to report errors if not NULL. */
+    register Tcl_Obj *listPtr;  /* List object whose #elements to return. */
+    register int *intPtr;   /* The resulting int is stored here. */
 {
     register List *listRepPtr;
 
     if (listPtr->typePtr != &tclListType) {
-	int result = SetListFromAny(interp, listPtr);
-	if (result != TCL_OK) {
-	    return result;
-	}
+    int result = SetListFromAny(interp, listPtr);
+    if (result != TCL_OK) {
+        return result;
+    }
     }
 
     listRepPtr = (List *) listPtr->internalRep.otherValuePtr;
@@ -570,48 +570,48 @@ Tcl_ListObjLength(interp, listPtr, intPtr)
  *
  * Tcl_ListObjReplace --
  *
- *	This procedure replaces zero or more elements of the list referenced
- *	by listPtr with the objects from an (objc,objv) array.
- *	The objc elements of the array referenced by objv replace the
- *	count elements in listPtr starting at first.
+ *  This procedure replaces zero or more elements of the list referenced
+ *  by listPtr with the objects from an (objc,objv) array.
+ *  The objc elements of the array referenced by objv replace the
+ *  count elements in listPtr starting at first.
  *
- *	If the argument first is zero or negative, it refers to the first
- *	element. If first is greater than or equal to the number of elements
- *	in the list, then no elements are deleted; the new elements are
- *	appended to the list. Count gives the number of elements to
- *	replace. If count is zero or negative then no elements are deleted;
- *	the new elements are simply inserted before first.
+ *  If the argument first is zero or negative, it refers to the first
+ *  element. If first is greater than or equal to the number of elements
+ *  in the list, then no elements are deleted; the new elements are
+ *  appended to the list. Count gives the number of elements to
+ *  replace. If count is zero or negative then no elements are deleted;
+ *  the new elements are simply inserted before first.
  *
- *	The argument objv refers to an array of objc pointers to the new
- *	elements to be added to listPtr in place of those that were
- *	deleted. If objv is NULL, no new elements are added. If listPtr is
- *	not a list object, an attempt will be made to convert it to one.
+ *  The argument objv refers to an array of objc pointers to the new
+ *  elements to be added to listPtr in place of those that were
+ *  deleted. If objv is NULL, no new elements are added. If listPtr is
+ *  not a list object, an attempt will be made to convert it to one.
  *
  * Results:
- *	The return value is normally TCL_OK. If listPtr does
- *	not refer to a list object and can not be converted to one,
- *	TCL_ERROR is returned and an error message will be left in
- *	the interpreter's result if interp is not NULL.
+ *  The return value is normally TCL_OK. If listPtr does
+ *  not refer to a list object and can not be converted to one,
+ *  TCL_ERROR is returned and an error message will be left in
+ *  the interpreter's result if interp is not NULL.
  *
  * Side effects:
- *	The ref counts of the objc elements in objv are incremented since
- *	the resulting list now refers to them. Similarly, the ref counts for
- *	replaced objects are decremented. listPtr is converted, if
- *	necessary, to a list object. listPtr's old string representation, if
- *	any, is freed.
+ *  The ref counts of the objc elements in objv are incremented since
+ *  the resulting list now refers to them. Similarly, the ref counts for
+ *  replaced objects are decremented. listPtr is converted, if
+ *  necessary, to a list object. listPtr's old string representation, if
+ *  any, is freed.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
-    Tcl_Interp *interp;		/* Used for error reporting if not NULL. */
-    Tcl_Obj *listPtr;		/* List object whose elements to replace. */
-    int first;			/* Index of first element to replace. */
-    int count;			/* Number of elements to replace. */
-    int objc;			/* Number of objects to insert. */
-    Tcl_Obj *CONST objv[];	/* An array of objc pointers to Tcl objects
-				 * to insert. */
+    Tcl_Interp *interp;     /* Used for error reporting if not NULL. */
+    Tcl_Obj *listPtr;       /* List object whose elements to replace. */
+    int first;          /* Index of first element to replace. */
+    int count;          /* Number of elements to replace. */
+    int objc;           /* Number of objects to insert. */
+    Tcl_Obj *CONST objv[];  /* An array of objc pointers to Tcl objects
+                 * to insert. */
 {
     List *listRepPtr;
     register Tcl_Obj **elemPtrs, **newPtrs;
@@ -620,133 +620,133 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
     int start, shift, newMax, i, j, result;
 
     if (Tcl_IsShared(listPtr)) {
-	panic("Tcl_ListObjReplace called with shared object");
+    panic("Tcl_ListObjReplace called with shared object");
     }
     if (listPtr->typePtr != &tclListType) {
-	result = SetListFromAny(interp, listPtr);
-	if (result != TCL_OK) {
-	    return result;
-	}
+    result = SetListFromAny(interp, listPtr);
+    if (result != TCL_OK) {
+        return result;
+    }
     }
     listRepPtr = (List *) listPtr->internalRep.otherValuePtr;
     elemPtrs = listRepPtr->elements;
     numElems = listRepPtr->elemCount;
 
     if (first < 0)  {
-    	first = 0;
+        first = 0;
     }
     if (first >= numElems) {
-	first = numElems;	/* so we'll insert after last element */
+    first = numElems;   /* so we'll insert after last element */
     }
     if (count < 0) {
-	count = 0;
+    count = 0;
     }
 
     numRequired = (numElems - count + objc);
     if (numRequired <= listRepPtr->maxElemCount) {
-	/*
-	 * Enough room in the current array. First "delete" count
-	 * elements starting at first.
-	 */
+    /*
+     * Enough room in the current array. First "delete" count
+     * elements starting at first.
+     */
 
-	for (i = 0, j = first;  i < count;  i++, j++) {
-	    victimPtr = elemPtrs[j];
-	    TclDecrRefCount(victimPtr);
-	}
+    for (i = 0, j = first;  i < count;  i++, j++) {
+        victimPtr = elemPtrs[j];
+        TclDecrRefCount(victimPtr);
+    }
 
-	/*
-	 * Shift the elements after the last one removed to their
-	 * new locations.
-	 */
+    /*
+     * Shift the elements after the last one removed to their
+     * new locations.
+     */
 
-	start = (first + count);
-	numAfterLast = (numElems - start);
-	shift = (objc - count);	/* numNewElems - numDeleted */
-	if ((numAfterLast > 0) && (shift != 0)) {
-	    Tcl_Obj **src, **dst;
+    start = (first + count);
+    numAfterLast = (numElems - start);
+    shift = (objc - count); /* numNewElems - numDeleted */
+    if ((numAfterLast > 0) && (shift != 0)) {
+        Tcl_Obj **src, **dst;
 
-	    if (shift < 0) {
-		for (src = elemPtrs + start, dst = src + shift;
-			numAfterLast > 0; numAfterLast--, src++, dst++) {
-		    *dst = *src;
-		}
-	    } else {
-		for (src = elemPtrs + numElems - 1, dst = src + shift;
-			numAfterLast > 0; numAfterLast--, src--, dst--) {
-		    *dst = *src;
-		}
-	    }
-	}
+        if (shift < 0) {
+        for (src = elemPtrs + start, dst = src + shift;
+            numAfterLast > 0; numAfterLast--, src++, dst++) {
+            *dst = *src;
+        }
+        } else {
+        for (src = elemPtrs + numElems - 1, dst = src + shift;
+            numAfterLast > 0; numAfterLast--, src--, dst--) {
+            *dst = *src;
+        }
+        }
+    }
 
-	/*
-	 * Insert the new elements into elemPtrs before "first".
-	 */
+    /*
+     * Insert the new elements into elemPtrs before "first".
+     */
 
-	for (i = 0, j = first;  i < objc;  i++, j++) {
+    for (i = 0, j = first;  i < objc;  i++, j++) {
             elemPtrs[j] = objv[i];
             Tcl_IncrRefCount(objv[i]);
         }
 
-	/*
-	 * Update the count of elements.
-	 */
+    /*
+     * Update the count of elements.
+     */
 
-	listRepPtr->elemCount = numRequired;
+    listRepPtr->elemCount = numRequired;
     } else {
-	/*
-	 * Not enough room in the current array. Allocate a larger array and
-	 * insert elements into it.
-	 */
+    /*
+     * Not enough room in the current array. Allocate a larger array and
+     * insert elements into it.
+     */
 
-	newMax = (2 * numRequired);
-	newPtrs = (Tcl_Obj **)
-	    ckalloc((unsigned) (newMax * sizeof(Tcl_Obj *)));
+    newMax = (2 * numRequired);
+    newPtrs = (Tcl_Obj **)
+        ckalloc((unsigned) (newMax * sizeof(Tcl_Obj *)));
 
-	/*
-	 * Copy over the elements before "first".
-	 */
+    /*
+     * Copy over the elements before "first".
+     */
 
-	if (first > 0) {
-	    memcpy((VOID *) newPtrs, (VOID *) elemPtrs,
-		    (size_t) (first * sizeof(Tcl_Obj *)));
-	}
+    if (first > 0) {
+        memcpy((VOID *) newPtrs, (VOID *) elemPtrs,
+            (size_t) (first * sizeof(Tcl_Obj *)));
+    }
 
-	/*
-	 * "Delete" count elements starting at first.
-	 */
+    /*
+     * "Delete" count elements starting at first.
+     */
 
-	for (i = 0, j = first;  i < count;  i++, j++) {
-	    victimPtr = elemPtrs[j];
-	    TclDecrRefCount(victimPtr);
-	}
+    for (i = 0, j = first;  i < count;  i++, j++) {
+        victimPtr = elemPtrs[j];
+        TclDecrRefCount(victimPtr);
+    }
 
-	/*
-	 * Copy the elements after the last one removed, shifted to
-	 * their new locations.
-	 */
+    /*
+     * Copy the elements after the last one removed, shifted to
+     * their new locations.
+     */
 
-	start = (first + count);
-	numAfterLast = (numElems - start);
-	if (numAfterLast > 0) {
-	    memcpy((VOID *) &(newPtrs[first + objc]),
-		    (VOID *) &(elemPtrs[start]),
-		    (size_t) (numAfterLast * sizeof(Tcl_Obj *)));
-	}
+    start = (first + count);
+    numAfterLast = (numElems - start);
+    if (numAfterLast > 0) {
+        memcpy((VOID *) &(newPtrs[first + objc]),
+            (VOID *) &(elemPtrs[start]),
+            (size_t) (numAfterLast * sizeof(Tcl_Obj *)));
+    }
 
-	/*
-	 * Insert the new elements before "first" and update the
-	 * count of elements.
-	 */
+    /*
+     * Insert the new elements before "first" and update the
+     * count of elements.
+     */
 
-	for (i = 0, j = first;  i < objc;  i++, j++) {
-	    newPtrs[j] = objv[i];
-	    Tcl_IncrRefCount(objv[i]);
-	}
+    for (i = 0, j = first;  i < objc;  i++, j++) {
+        newPtrs[j] = objv[i];
+        Tcl_IncrRefCount(objv[i]);
+    }
 
-	listRepPtr->elemCount = numRequired;
-	listRepPtr->maxElemCount = newMax;
-	listRepPtr->elements = newPtrs;
-	ckfree((char *) elemPtrs);
+    listRepPtr->elemCount = numRequired;
+    listRepPtr->maxElemCount = newMax;
+    listRepPtr->elements = newPtrs;
+    ckfree((char *) elemPtrs);
     }
 
     /*
@@ -763,23 +763,23 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
  *
  * FreeListInternalRep --
  *
- *	Deallocate the storage associated with a list object's internal
- *	representation.
+ *  Deallocate the storage associated with a list object's internal
+ *  representation.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	Frees listPtr's List* internal representation and sets listPtr's
- *	internalRep.otherValuePtr to NULL. Decrements the ref counts
- *	of all element objects, which may free them.
+ *  Frees listPtr's List* internal representation and sets listPtr's
+ *  internalRep.otherValuePtr to NULL. Decrements the ref counts
+ *  of all element objects, which may free them.
  *
  *----------------------------------------------------------------------
  */
 
 static void
 FreeListInternalRep(listPtr)
-    Tcl_Obj *listPtr;		/* List object with internal rep to free. */
+    Tcl_Obj *listPtr;       /* List object with internal rep to free. */
 {
     register List *listRepPtr = (List *) listPtr->internalRep.otherValuePtr;
     register Tcl_Obj **elemPtrs = listRepPtr->elements;
@@ -788,8 +788,8 @@ FreeListInternalRep(listPtr)
     int i;
 
     for (i = 0;  i < numElems;  i++) {
-	objPtr = elemPtrs[i];
-	Tcl_DecrRefCount(objPtr);
+    objPtr = elemPtrs[i];
+    Tcl_DecrRefCount(objPtr);
     }
     ckfree((char *) elemPtrs);
     ckfree((char *) listRepPtr);
@@ -800,27 +800,27 @@ FreeListInternalRep(listPtr)
  *
  * DupListInternalRep --
  *
- *	Initialize the internal representation of a list Tcl_Obj to a
- *	copy of the internal representation of an existing list object.
+ *  Initialize the internal representation of a list Tcl_Obj to a
+ *  copy of the internal representation of an existing list object.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	"srcPtr"s list internal rep pointer should not be NULL and we assume
- *	it is not NULL. We set "copyPtr"s internal rep to a pointer to a
- *	newly allocated List structure that, in turn, points to "srcPtr"s
- *	element objects. Those element objects are not actually copied but
- *	are shared between "srcPtr" and "copyPtr". The ref count of each
- *	element object is incremented.
+ *  "srcPtr"s list internal rep pointer should not be NULL and we assume
+ *  it is not NULL. We set "copyPtr"s internal rep to a pointer to a
+ *  newly allocated List structure that, in turn, points to "srcPtr"s
+ *  element objects. Those element objects are not actually copied but
+ *  are shared between "srcPtr" and "copyPtr". The ref count of each
+ *  element object is incremented.
  *
  *----------------------------------------------------------------------
  */
 
 static void
 DupListInternalRep(srcPtr, copyPtr)
-    Tcl_Obj *srcPtr;		/* Object with internal rep to copy. */
-    Tcl_Obj *copyPtr;		/* Object with internal rep to set. */
+    Tcl_Obj *srcPtr;        /* Object with internal rep to copy. */
+    Tcl_Obj *copyPtr;       /* Object with internal rep to set. */
 {
     List *srcListRepPtr = (List *) srcPtr->internalRep.otherValuePtr;
     int numElems = srcListRepPtr->elemCount;
@@ -837,10 +837,10 @@ DupListInternalRep(srcPtr, copyPtr)
      */
 
     copyElemPtrs = (Tcl_Obj **)
-	ckalloc((unsigned) maxElems * sizeof(Tcl_Obj *));
+    ckalloc((unsigned) maxElems * sizeof(Tcl_Obj *));
     for (i = 0;  i < numElems;  i++) {
-	copyElemPtrs[i] = srcElemPtrs[i];
-	Tcl_IncrRefCount(copyElemPtrs[i]);
+    copyElemPtrs[i] = srcElemPtrs[i];
+    Tcl_IncrRefCount(copyElemPtrs[i]);
     }
 
     copyListRepPtr = (List *) ckalloc(sizeof(List));
@@ -857,31 +857,31 @@ DupListInternalRep(srcPtr, copyPtr)
  *
  * SetListFromAny --
  *
- *	Attempt to generate a list internal form for the Tcl object
- *	"objPtr".
+ *  Attempt to generate a list internal form for the Tcl object
+ *  "objPtr".
  *
  * Results:
- *	The return value is TCL_OK or TCL_ERROR. If an error occurs during
- *	conversion, an error message is left in the interpreter's result
- *	unless "interp" is NULL.
+ *  The return value is TCL_OK or TCL_ERROR. If an error occurs during
+ *  conversion, an error message is left in the interpreter's result
+ *  unless "interp" is NULL.
  *
  * Side effects:
- *	If no error occurs, a list is stored as "objPtr"s internal
- *	representation.
+ *  If no error occurs, a list is stored as "objPtr"s internal
+ *  representation.
  *
  *----------------------------------------------------------------------
  */
 
 static int
 SetListFromAny(interp, objPtr)
-    Tcl_Interp *interp;		/* Used for error reporting if not NULL. */
-    Tcl_Obj *objPtr;		/* The object to convert. */
+    Tcl_Interp *interp;     /* Used for error reporting if not NULL. */
+    Tcl_Obj *objPtr;        /* The object to convert. */
 {
     Tcl_ObjType *oldTypePtr = objPtr->typePtr;
     char *string, *s;
     CONST char *elemStart, *nextElem;
     int lenRemain, length, estCount, elemSize, hasBrace, i, j, result;
-    char *limit;		/* Points just after string's last byte. */
+    char *limit;        /* Points just after string's last byte. */
     register CONST char *p;
     register Tcl_Obj **elemPtrs;
     register Tcl_Obj *elemPtr;
@@ -905,9 +905,9 @@ SetListFromAny(interp, objPtr)
     limit = (string + length);
     estCount = 1;
     for (p = string;  p < limit;  p++) {
-	if (isspace(UCHAR(*p))) { /* INTL: ISO space. */
-	    estCount++;
-	}
+    if (isspace(UCHAR(*p))) { /* INTL: ISO space. */
+        estCount++;
+    }
     }
 
     /*
@@ -918,45 +918,45 @@ SetListFromAny(interp, objPtr)
      */
 
     elemPtrs = (Tcl_Obj **)
-	    ckalloc((unsigned) (estCount * sizeof(Tcl_Obj *)));
+        ckalloc((unsigned) (estCount * sizeof(Tcl_Obj *)));
     for (p = string, lenRemain = length, i = 0;
-	    lenRemain > 0;
-	    p = nextElem, lenRemain = (limit - nextElem), i++) {
-	result = TclFindElement(interp, p, lenRemain, &elemStart, &nextElem,
-				&elemSize, &hasBrace);
-	if (result != TCL_OK) {
-	    for (j = 0;  j < i;  j++) {
-		elemPtr = elemPtrs[j];
-		Tcl_DecrRefCount(elemPtr);
-	    }
-	    ckfree((char *) elemPtrs);
-	    return result;
-	}
-	if (elemStart >= limit) {
-	    break;
-	}
-	if (i > estCount) {
-	    panic("SetListFromAny: bad size estimate for list");
-	}
+        lenRemain > 0;
+        p = nextElem, lenRemain = (limit - nextElem), i++) {
+    result = TclFindElement(interp, p, lenRemain, &elemStart, &nextElem,
+                &elemSize, &hasBrace);
+    if (result != TCL_OK) {
+        for (j = 0;  j < i;  j++) {
+        elemPtr = elemPtrs[j];
+        Tcl_DecrRefCount(elemPtr);
+        }
+        ckfree((char *) elemPtrs);
+        return result;
+    }
+    if (elemStart >= limit) {
+        break;
+    }
+    if (i > estCount) {
+        panic("SetListFromAny: bad size estimate for list");
+    }
 
-	/*
-	 * Allocate a Tcl object for the element and initialize it from the
-	 * "elemSize" bytes starting at "elemStart".
-	 */
+    /*
+     * Allocate a Tcl object for the element and initialize it from the
+     * "elemSize" bytes starting at "elemStart".
+     */
 
-	s = ckalloc((unsigned) elemSize + 1);
-	if (hasBrace) {
-	    memcpy((VOID *) s, (VOID *) elemStart,  (size_t) elemSize);
-	    s[elemSize] = 0;
-	} else {
-	    elemSize = TclCopyAndCollapse(elemSize, elemStart, s);
-	}
+    s = ckalloc((unsigned) elemSize + 1);
+    if (hasBrace) {
+        memcpy((VOID *) s, (VOID *) elemStart,  (size_t) elemSize);
+        s[elemSize] = 0;
+    } else {
+        elemSize = TclCopyAndCollapse(elemSize, elemStart, s);
+    }
 
-	TclNewObj(elemPtr);
+    TclNewObj(elemPtr);
         elemPtr->bytes  = s;
         elemPtr->length = elemSize;
         elemPtrs[i] = elemPtr;
-	Tcl_IncrRefCount(elemPtr); /* since list now holds ref to it */
+    Tcl_IncrRefCount(elemPtr); /* since list now holds ref to it */
     }
 
     listRepPtr = (List *) ckalloc(sizeof(List));
@@ -971,7 +971,7 @@ SetListFromAny(interp, objPtr)
      */
 
     if ((oldTypePtr != NULL) && (oldTypePtr->freeIntRepProc != NULL)) {
-	oldTypePtr->freeIntRepProc(objPtr);
+    oldTypePtr->freeIntRepProc(objPtr);
     }
 
     objPtr->internalRep.otherValuePtr = (VOID *) listRepPtr;
@@ -984,25 +984,25 @@ SetListFromAny(interp, objPtr)
  *
  * UpdateStringOfList --
  *
- *	Update the string representation for a list object.
- *	Note: This procedure does not invalidate an existing old string rep
- *	so storage will be lost if this has not already been done.
+ *  Update the string representation for a list object.
+ *  Note: This procedure does not invalidate an existing old string rep
+ *  so storage will be lost if this has not already been done.
  *
  * Results:
- *	None.
+ *  None.
  *
  * Side effects:
- *	The object's string is set to a valid string that results from
- *	the list-to-string conversion. This string will be empty if the
- *	list has no elements. The list internal representation
- *	should not be NULL and we assume it is not NULL.
+ *  The object's string is set to a valid string that results from
+ *  the list-to-string conversion. This string will be empty if the
+ *  list has no elements. The list internal representation
+ *  should not be NULL and we assume it is not NULL.
  *
  *----------------------------------------------------------------------
  */
 
 static void
 UpdateStringOfList(listPtr)
-    Tcl_Obj *listPtr;		/* List object with string rep to update. */
+    Tcl_Obj *listPtr;       /* List object with string rep to update. */
 {
 #   define LOCAL_SIZE 20
     int localFlags[LOCAL_SIZE], *flagPtr;
@@ -1022,15 +1022,15 @@ UpdateStringOfList(listPtr)
      */
 
     if (numElems <= LOCAL_SIZE) {
-	flagPtr = localFlags;
+    flagPtr = localFlags;
     } else {
-	flagPtr = (int *) ckalloc((unsigned) numElems*sizeof(int));
+    flagPtr = (int *) ckalloc((unsigned) numElems*sizeof(int));
     }
     listPtr->length = 1;
     for (i = 0; i < numElems; i++) {
-	elem = Tcl_GetStringFromObj(listRepPtr->elements[i], &length);
-	listPtr->length += Tcl_ScanCountedElement(elem, length,
-		&flagPtr[i]) + 1;
+    elem = Tcl_GetStringFromObj(listRepPtr->elements[i], &length);
+    listPtr->length += Tcl_ScanCountedElement(elem, length,
+        &flagPtr[i]) + 1;
     }
 
     /*
@@ -1040,19 +1040,19 @@ UpdateStringOfList(listPtr)
     listPtr->bytes = ckalloc((unsigned) listPtr->length);
     dst = listPtr->bytes;
     for (i = 0; i < numElems; i++) {
-	elem = Tcl_GetStringFromObj(listRepPtr->elements[i], &length);
-	dst += Tcl_ConvertCountedElement(elem, length, dst, flagPtr[i]);
-	*dst = ' ';
-	dst++;
+    elem = Tcl_GetStringFromObj(listRepPtr->elements[i], &length);
+    dst += Tcl_ConvertCountedElement(elem, length, dst, flagPtr[i]);
+    *dst = ' ';
+    dst++;
     }
     if (flagPtr != localFlags) {
-	ckfree((char *) flagPtr);
+    ckfree((char *) flagPtr);
     }
     if (dst == listPtr->bytes) {
-	*dst = 0;
+    *dst = 0;
     } else {
-	dst--;
-	*dst = 0;
+    dst--;
+    *dst = 0;
     }
     listPtr->length = dst - listPtr->bytes;
 }

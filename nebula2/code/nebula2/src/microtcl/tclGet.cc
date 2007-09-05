@@ -1,9 +1,9 @@
 /*
  * tclGet.c --
  *
- *	This file contains procedures to convert strings into
- *	other forms, like integers or floating-point numbers or
- *	booleans, doing syntax checking along the way.
+ *  This file contains procedures to convert strings into
+ *  other forms, like integers or floating-point numbers or
+ *  booleans, doing syntax checking along the way.
  *
  * Copyright (c) 1990-1993 The Regents of the University of California.
  * Copyright (c) 1994-1997 Sun Microsystems, Inc.
@@ -22,26 +22,26 @@
  *
  * Tcl_GetInt --
  *
- *	Given a string, produce the corresponding integer value.
+ *  Given a string, produce the corresponding integer value.
  *
  * Results:
- *	The return value is normally TCL_OK;  in this case *intPtr
- *	will be set to the integer value equivalent to string.  If
- *	string is improperly formed then TCL_ERROR is returned and
- *	an error message will be left in the interp's result.
+ *  The return value is normally TCL_OK;  in this case *intPtr
+ *  will be set to the integer value equivalent to string.  If
+ *  string is improperly formed then TCL_ERROR is returned and
+ *  an error message will be left in the interp's result.
  *
  * Side effects:
- *	None.
+ *  None.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_GetInt(interp, string, intPtr)
-    Tcl_Interp *interp;		/* Interpreter to use for error reporting. */
-    char *string;		/* String containing a (possibly signed)
-				 * integer in a form acceptable to strtol. */
-    int *intPtr;		/* Place to store converted result. */
+    Tcl_Interp *interp;     /* Interpreter to use for error reporting. */
+    char *string;       /* String containing a (possibly signed)
+                 * integer in a form acceptable to strtol. */
+    int *intPtr;        /* Place to store converted result. */
 {
     char *end, *p;
     long i;
@@ -53,26 +53,26 @@ Tcl_GetInt(interp, string, intPtr)
      */
 
     errno = 0;
-    for (p = string; isspace(UCHAR(*p)); p++) {	/* INTL: ISO space. */
-	/* Empty loop body. */
+    for (p = string; isspace(UCHAR(*p)); p++) { /* INTL: ISO space. */
+    /* Empty loop body. */
     }
     if (*p == '-') {
-	p++;
-	i = -((long)strtoul(p, &end, 0)); /* INTL: Tcl source. */
+    p++;
+    i = -((long)strtoul(p, &end, 0)); /* INTL: Tcl source. */
     } else if (*p == '+') {
-	p++;
-	i = strtoul(p, &end, 0); /* INTL: Tcl source. */
+    p++;
+    i = strtoul(p, &end, 0); /* INTL: Tcl source. */
     } else {
-	i = strtoul(p, &end, 0); /* INTL: Tcl source. */
+    i = strtoul(p, &end, 0); /* INTL: Tcl source. */
     }
     if (end == p) {
-	badInteger:
+    badInteger:
         if (interp != (Tcl_Interp *) NULL) {
-	    Tcl_AppendResult(interp, "expected integer but got \"", string,
-		    "\"", (char *) NULL);
-	    TclCheckBadOctal(interp, string);
+        Tcl_AppendResult(interp, "expected integer but got \"", string,
+            "\"", (char *) NULL);
+        TclCheckBadOctal(interp, string);
         }
-	return TCL_ERROR;
+    return TCL_ERROR;
     }
 
     /*
@@ -83,18 +83,18 @@ Tcl_GetInt(interp, string, intPtr)
 
     if ((errno == ERANGE) || (((long)(int) i) != i)) {
         if (interp != (Tcl_Interp *) NULL) {
-	    Tcl_SetResult(interp, "integer value too large to represent",
-		    TCL_STATIC);
+        Tcl_SetResult(interp, "integer value too large to represent",
+            TCL_STATIC);
             Tcl_SetErrorCode(interp, "ARITH", "IOVERFLOW",
-		    Tcl_GetStringResult(interp), (char *) NULL);
+            Tcl_GetStringResult(interp), (char *) NULL);
         }
-	return TCL_ERROR;
+    return TCL_ERROR;
     }
     while ((*end != '\0') && isspace(UCHAR(*end))) { /* INTL: ISO space. */
-	end++;
+    end++;
     }
     if (*end != 0) {
-	goto badInteger;
+    goto badInteger;
     }
     *intPtr = (int) i;
     return TCL_OK;
@@ -105,31 +105,31 @@ Tcl_GetInt(interp, string, intPtr)
  *
  * TclGetLong --
  *
- *	Given a string, produce the corresponding long integer value.
- *	This routine is a version of Tcl_GetInt but returns a "long"
- *	instead of an "int".
+ *  Given a string, produce the corresponding long integer value.
+ *  This routine is a version of Tcl_GetInt but returns a "long"
+ *  instead of an "int".
  *
  * Results:
- *	The return value is normally TCL_OK; in this case *longPtr
- *	will be set to the long integer value equivalent to string. If
- *	string is improperly formed then TCL_ERROR is returned and
- *	an error message will be left in the interp's result if interp
- *	is non-NULL.
+ *  The return value is normally TCL_OK; in this case *longPtr
+ *  will be set to the long integer value equivalent to string. If
+ *  string is improperly formed then TCL_ERROR is returned and
+ *  an error message will be left in the interp's result if interp
+ *  is non-NULL.
  *
  * Side effects:
- *	None.
+ *  None.
  *
  *----------------------------------------------------------------------
  */
 
 int
 TclGetLong(interp, string, longPtr)
-    Tcl_Interp *interp;		/* Interpreter used for error reporting
-				 * if not NULL. */
-    char *string;		/* String containing a (possibly signed)
-				 * long integer in a form acceptable to
-				 * strtoul. */
-    long *longPtr;		/* Place to store converted long result. */
+    Tcl_Interp *interp;     /* Interpreter used for error reporting
+                 * if not NULL. */
+    char *string;       /* String containing a (possibly signed)
+                 * long integer in a form acceptable to
+                 * strtoul. */
+    long *longPtr;      /* Place to store converted long result. */
 {
     char *end, *p;
     long i;
@@ -140,41 +140,41 @@ TclGetLong(interp, string, longPtr)
      */
 
     errno = 0;
-    for (p = string; isspace(UCHAR(*p)); p++) {	/* INTL: ISO space. */
-	/* Empty loop body. */
+    for (p = string; isspace(UCHAR(*p)); p++) { /* INTL: ISO space. */
+    /* Empty loop body. */
     }
     if (*p == '-') {
-	p++;
-	i = -(int)strtoul(p, &end, 0); /* INTL: Tcl source. */
+    p++;
+    i = -(int)strtoul(p, &end, 0); /* INTL: Tcl source. */
     } else if (*p == '+') {
-	p++;
-	i = strtoul(p, &end, 0); /* INTL: Tcl source. */
+    p++;
+    i = strtoul(p, &end, 0); /* INTL: Tcl source. */
     } else {
-	i = strtoul(p, &end, 0); /* INTL: Tcl source. */
+    i = strtoul(p, &end, 0); /* INTL: Tcl source. */
     }
     if (end == p) {
-	badInteger:
+    badInteger:
         if (interp != (Tcl_Interp *) NULL) {
-	    Tcl_AppendResult(interp, "expected integer but got \"", string,
-		    "\"", (char *) NULL);
-	    TclCheckBadOctal(interp, string);
+        Tcl_AppendResult(interp, "expected integer but got \"", string,
+            "\"", (char *) NULL);
+        TclCheckBadOctal(interp, string);
         }
-	return TCL_ERROR;
+    return TCL_ERROR;
     }
     if (errno == ERANGE) {
         if (interp != (Tcl_Interp *) NULL) {
-	    Tcl_SetResult(interp, "integer value too large to represent",
-		    TCL_STATIC);
+        Tcl_SetResult(interp, "integer value too large to represent",
+            TCL_STATIC);
             Tcl_SetErrorCode(interp, "ARITH", "IOVERFLOW",
                     Tcl_GetStringResult(interp), (char *) NULL);
         }
-	return TCL_ERROR;
+    return TCL_ERROR;
     }
     while ((*end != '\0') && isspace(UCHAR(*end))) { /* INTL: ISO space. */
-	end++;
+    end++;
     }
     if (*end != 0) {
-	goto badInteger;
+    goto badInteger;
     }
     *longPtr = i;
     return TCL_OK;
@@ -185,27 +185,27 @@ TclGetLong(interp, string, longPtr)
  *
  * Tcl_GetDouble --
  *
- *	Given a string, produce the corresponding double-precision
- *	floating-point value.
+ *  Given a string, produce the corresponding double-precision
+ *  floating-point value.
  *
  * Results:
- *	The return value is normally TCL_OK; in this case *doublePtr
- *	will be set to the double-precision value equivalent to string.
- *	If string is improperly formed then TCL_ERROR is returned and
- *	an error message will be left in the interp's result.
+ *  The return value is normally TCL_OK; in this case *doublePtr
+ *  will be set to the double-precision value equivalent to string.
+ *  If string is improperly formed then TCL_ERROR is returned and
+ *  an error message will be left in the interp's result.
  *
  * Side effects:
- *	None.
+ *  None.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_GetDouble(interp, string, doublePtr)
-    Tcl_Interp *interp;		/* Interpreter used for error reporting. */
-    char *string;		/* String containing a floating-point number
-				 * in a form acceptable to strtod. */
-    double *doublePtr;		/* Place to store converted result. */
+    Tcl_Interp *interp;     /* Interpreter used for error reporting. */
+    char *string;       /* String containing a floating-point number
+                 * in a form acceptable to strtod. */
+    double *doublePtr;      /* Place to store converted result. */
 {
     char *end;
     double d;
@@ -213,25 +213,25 @@ Tcl_GetDouble(interp, string, doublePtr)
     errno = 0;
     d = strtod(string, &end); /* INTL: Tcl source. */
     if (end == string) {
-	badDouble:
+    badDouble:
         if (interp != (Tcl_Interp *) NULL) {
             Tcl_AppendResult(interp,
                     "expected floating-point number but got \"",
                     string, "\"", (char *) NULL);
         }
-	return TCL_ERROR;
+    return TCL_ERROR;
     }
     if (errno != 0 && (d == HUGE_VAL || d == -HUGE_VAL || d == 0)) {
         if (interp != (Tcl_Interp *) NULL) {
             TclExprFloatError(interp, d);
         }
-	return TCL_ERROR;
+    return TCL_ERROR;
     }
     while ((*end != 0) && isspace(UCHAR(*end))) { /* INTL: ISO space. */
-	end++;
+    end++;
     }
     if (*end != 0) {
-	goto badDouble;
+    goto badDouble;
     }
     *doublePtr = d;
     return TCL_OK;
@@ -242,29 +242,29 @@ Tcl_GetDouble(interp, string, doublePtr)
  *
  * Tcl_GetBoolean --
  *
- *	Given a string, return a 0/1 boolean value corresponding
- *	to the string.
+ *  Given a string, return a 0/1 boolean value corresponding
+ *  to the string.
  *
  * Results:
- *	The return value is normally TCL_OK;  in this case *boolPtr
- *	will be set to the 0/1 value equivalent to string.  If
- *	string is improperly formed then TCL_ERROR is returned and
- *	an error message will be left in the interp's result.
+ *  The return value is normally TCL_OK;  in this case *boolPtr
+ *  will be set to the 0/1 value equivalent to string.  If
+ *  string is improperly formed then TCL_ERROR is returned and
+ *  an error message will be left in the interp's result.
  *
  * Side effects:
- *	None.
+ *  None.
  *
  *----------------------------------------------------------------------
  */
 
 int
 Tcl_GetBoolean(interp, string, boolPtr)
-    Tcl_Interp *interp;		/* Interpreter used for error reporting. */
-    char *string;		/* String containing a boolean number
-				 * specified either as 1/0 or true/false or
-				 * yes/no. */
-    int *boolPtr;		/* Place to store converted result, which
-				 * will be 0 or 1. */
+    Tcl_Interp *interp;     /* Interpreter used for error reporting. */
+    char *string;       /* String containing a boolean number
+                 * specified either as 1/0 or true/false or
+                 * yes/no. */
+    int *boolPtr;       /* Place to store converted result, which
+                 * will be 0 or 1. */
 {
     int i;
     char lowerCase[10], c;
@@ -276,46 +276,46 @@ Tcl_GetBoolean(interp, string, boolPtr)
      */
 
     for (i = 0; i < 9; i++) {
-	c = string[i];
-	if (c == 0) {
-	    break;
-	}
-	if ((c >= 'A') && (c <= 'Z')) {
-	    c += (char) ('a' - 'A');
-	}
-	lowerCase[i] = c;
+    c = string[i];
+    if (c == 0) {
+        break;
+    }
+    if ((c >= 'A') && (c <= 'Z')) {
+        c += (char) ('a' - 'A');
+    }
+    lowerCase[i] = c;
     }
     lowerCase[i] = 0;
 
     length = strlen(lowerCase);
     c = lowerCase[0];
     if ((c == '0') && (lowerCase[1] == '\0')) {
-	*boolPtr = 0;
+    *boolPtr = 0;
     } else if ((c == '1') && (lowerCase[1] == '\0')) {
-	*boolPtr = 1;
+    *boolPtr = 1;
     } else if ((c == 'y') && (strncmp(lowerCase, "yes", length) == 0)) {
-	*boolPtr = 1;
+    *boolPtr = 1;
     } else if ((c == 'n') && (strncmp(lowerCase, "no", length) == 0)) {
-	*boolPtr = 0;
+    *boolPtr = 0;
     } else if ((c == 't') && (strncmp(lowerCase, "true", length) == 0)) {
-	*boolPtr = 1;
+    *boolPtr = 1;
     } else if ((c == 'f') && (strncmp(lowerCase, "false", length) == 0)) {
-	*boolPtr = 0;
+    *boolPtr = 0;
     } else if ((c == 'o') && (length >= 2)) {
-	if (strncmp(lowerCase, "on", length) == 0) {
-	    *boolPtr = 1;
-	} else if (strncmp(lowerCase, "off", length) == 0) {
-	    *boolPtr = 0;
-	} else {
-	    goto badBoolean;
-	}
+    if (strncmp(lowerCase, "on", length) == 0) {
+        *boolPtr = 1;
+    } else if (strncmp(lowerCase, "off", length) == 0) {
+        *boolPtr = 0;
     } else {
-	badBoolean:
+        goto badBoolean;
+    }
+    } else {
+    badBoolean:
         if (interp != (Tcl_Interp *) NULL) {
             Tcl_AppendResult(interp, "expected boolean value but got \"",
                     string, "\"", (char *) NULL);
         }
-	return TCL_ERROR;
+    return TCL_ERROR;
     }
     return TCL_OK;
 }

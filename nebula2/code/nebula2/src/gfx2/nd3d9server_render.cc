@@ -783,7 +783,7 @@ nD3D9Server::DrawIndexed(PrimitiveType primType)
     for (curPass = 0; curPass < numPasses; curPass++)
     {
         shader->BeginPass(curPass);
-		hr = this->d3d9Device->DrawIndexedPrimitive(
+        hr = this->d3d9Device->DrawIndexedPrimitive(
             d3dPrimType,
             0,
             this->vertexRangeFirst,
@@ -994,7 +994,7 @@ nD3D9Server::DrawIndexedInstancedNS(PrimitiveType primType)
 
         // invoke DrawPrimitive()
         curShader->CommitChanges();
-	    hr = this->d3d9Device->DrawIndexedPrimitive(d3dPrimType, 0, this->vertexRangeFirst, this->vertexRangeNum, this->indexRangeFirst, d3dNumPrimitives);
+        hr = this->d3d9Device->DrawIndexedPrimitive(d3dPrimType, 0, this->vertexRangeFirst, this->vertexRangeNum, this->indexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawIndexedPrimitive() failed!");
     }
     instStream->Unlock();
@@ -1063,7 +1063,7 @@ nD3D9Server::DrawInstancedNS(PrimitiveType primType)
 
         // invoke DrawPrimitive()
         curShader->CommitChanges();
-	    hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
+        hr = this->d3d9Device->DrawPrimitive(d3dPrimType, this->vertexRangeFirst, d3dNumPrimitives);
         n_dxtrace(hr, "DrawPrimitive() failed");
     }
     instStream->Unlock();

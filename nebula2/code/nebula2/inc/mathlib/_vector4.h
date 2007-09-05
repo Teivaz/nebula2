@@ -54,7 +54,7 @@ public:
     void operator *=(const float s);
     /// true if all elements are equal
     bool operator ==(const _vector4& v0);
-	/// true if any of the elements is not equal
+    /// true if any of the elements is not equal
     bool operator !=(const _vector4& v0);
     /// vector3 assignment operator (w set to 1.0f)
     _vector4& operator=(const _vector3& v);

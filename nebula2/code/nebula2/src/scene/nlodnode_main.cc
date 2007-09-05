@@ -56,7 +56,7 @@ nLodNode::Attach(nSceneServer* sceneServer, nRenderContext* renderContext)
         }
         */
 
-	    vector3 lodViewer = viewer.pos_component() - transform.pos_component();
+        vector3 lodViewer = viewer.pos_component() - transform.pos_component();
         float distance = lodViewer.len();
 
         if ((distance > this->minDistance) && (distance < this->maxDistance))

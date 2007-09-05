@@ -58,8 +58,8 @@ private:
     bool GetBoolAttr(TiXmlElement* elm, const char* name, bool defaultValue);
     /// parse a shader XML element
     void ParseShader(TiXmlElement* elm, nRenderPath2* renderPath);
-	///
-	void ParseShaders();
+    ///
+    void ParseShaders();
     /// parse RenderTarget XML element
     void ParseRenderTarget(TiXmlElement* elm, nRenderPath2* renderPath);
     /// create a variable from an XML element
@@ -82,7 +82,7 @@ private:
     TiXmlDocument* xmlDocument;
     nRenderPath2* renderPath;
     nString shaderPath;
-	nString mangledPath;
+    nString mangledPath;
 };
 
 //------------------------------------------------------------------------------

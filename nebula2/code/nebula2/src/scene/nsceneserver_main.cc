@@ -562,12 +562,12 @@ nSceneServer::CompareNodes(const ushort* i1, const ushort* i2)
     float diff = dist1.lensquared() - dist2.lensquared();
 
     if (sortingOrder == nRpPhase::FrontToBack)
-	{
-		// (closest first)
+    {
+        // (closest first)
         if (diff < 0.001f)      return -1;
         if (diff > 0.001f)      return 1;
     }
-	else if (sortingOrder == nRpPhase::BackToFront)
+    else if (sortingOrder == nRpPhase::BackToFront)
     {
         if (diff > 0.001f)      return -1;
         if (diff < 0.001f)      return 1;

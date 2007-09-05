@@ -1,17 +1,17 @@
 /*
  * tclUnixPort.h --
  *
- *	This header file handles porting issues that occur because
- *	of differences between systems.  It reads in UNIX-related
- *	header files and sets up UNIX-related macros for Tcl's UNIX
- *	core.  It should be the only file that contains #ifdefs to
- *	handle different flavors of UNIX.  This file sets up the
- *	union of all UNIX-related things needed by any of the Tcl
- *	core files.  This file depends on configuration #defines such
- *	as NO_DIRENT_H that are set up by the "configure" script.
+ *  This header file handles porting issues that occur because
+ *  of differences between systems.  It reads in UNIX-related
+ *  header files and sets up UNIX-related macros for Tcl's UNIX
+ *  core.  It should be the only file that contains #ifdefs to
+ *  handle different flavors of UNIX.  This file sets up the
+ *  union of all UNIX-related things needed by any of the Tcl
+ *  core files.  This file depends on configuration #defines such
+ *  as NO_DIRENT_H that are set up by the "configure" script.
  *
- *	Much of the material in this file was originally contributed
- *	by Karl Lehenbauer, Mark Diekhans and Peter da Silva.
+ *  Much of the material in this file was originally contributed
+ *  by Karl Lehenbauer, Mark Diekhans and Peter da Silva.
  *
  * Copyright (c) 1991-1994 The Regents of the University of California.
  * Copyright (c) 1994-1997 Sun Microsystems, Inc.
@@ -59,38 +59,38 @@
 #endif
 
 #ifdef HAVE_STRUCT_DIRENT64
-typedef struct dirent64	Tcl_DirEntry;
-#   define TclOSreaddir		readdir64
-#   define TclOSreaddir_r	readdir64_r
+typedef struct dirent64 Tcl_DirEntry;
+#   define TclOSreaddir     readdir64
+#   define TclOSreaddir_r   readdir64_r
 #else
-typedef struct dirent	Tcl_DirEntry;
-#   define TclOSreaddir		readdir
-#   define TclOSreaddir_r	readdir_r
+typedef struct dirent   Tcl_DirEntry;
+#   define TclOSreaddir     readdir
+#   define TclOSreaddir_r   readdir_r
 #endif
 
 #ifdef HAVE_TYPE_OFF64_T
-typedef off64_t		Tcl_SeekOffset;
-#   define TclOSseek		lseek64
-#   define TclOSopen		open64
+typedef off64_t     Tcl_SeekOffset;
+#   define TclOSseek        lseek64
+#   define TclOSopen        open64
 #else
-typedef off_t		Tcl_SeekOffset;
-#   define TclOSseek		lseek
-#   define TclOSopen		open
+typedef off_t       Tcl_SeekOffset;
+#   define TclOSseek        lseek
+#   define TclOSopen        open
 #endif
 
 #ifdef HAVE_STRUCT_STAT64
-#   define TclOSstat		stat64
-#   define TclOSlstat		lstat64
+#   define TclOSstat        stat64
+#   define TclOSlstat       lstat64
 #else
-#   define TclOSstat		stat
-#   define TclOSlstat		lstat
+#   define TclOSstat        stat
+#   define TclOSlstat       lstat
 #endif
 
 #if !HAVE_STRTOLL && defined(TCL_WIDE_INT_TYPE) && !TCL_WIDE_INT_IS_LONG
-EXTERN Tcl_WideInt	strtoll _ANSI_ARGS_((CONST char *string,
-					     char **endPtr, int base));
-EXTERN Tcl_WideUInt	strtoull _ANSI_ARGS_((CONST char *string,
-					      char **endPtr, int base));
+EXTERN Tcl_WideInt  strtoll _ANSI_ARGS_((CONST char *string,
+                         char **endPtr, int base));
+EXTERN Tcl_WideUInt strtoull _ANSI_ARGS_((CONST char *string,
+                          char **endPtr, int base));
 #endif
 
 #include <sys/file.h>
@@ -116,20 +116,20 @@ EXTERN Tcl_WideUInt	strtoull _ANSI_ARGS_((CONST char *string,
 #else
 #   include "../compat/unistd.h"
 #endif
-#ifdef	USE_FIONBIO
+#ifdef  USE_FIONBIO
     /*
      * Not using the Posix fcntl(...,O_NONBLOCK,...) interface, instead
      * we are using ioctl(..,FIONBIO,..).
      */
 
 #   ifdef HAVE_SYS_FILIO_H
-#	include	<sys/filio.h>	/* For FIONBIO. */
+#   include <sys/filio.h>   /* For FIONBIO. */
 #   endif
 
 #   ifdef HAVE_SYS_IOCTL_H
-#	include	<sys/ioctl.h>	/* For FIONBIO. */
+#   include <sys/ioctl.h>   /* For FIONBIO. */
 #   endif
-#endif	/* USE_FIONBIO */
+#endif  /* USE_FIONBIO */
 #include <utime.h>
 
 /*
@@ -137,13 +137,13 @@ EXTERN Tcl_WideUInt	strtoull _ANSI_ARGS_((CONST char *string,
  * each system.
  */
 
-#include <sys/socket.h>		/* struct sockaddr, SOCK_STREAM, ... */
+#include <sys/socket.h>     /* struct sockaddr, SOCK_STREAM, ... */
 #ifndef NO_UNAME
-#   include <sys/utsname.h>	/* uname system call. */
+#   include <sys/utsname.h> /* uname system call. */
 #endif
-#include <netinet/in.h>		/* struct in_addr, struct sockaddr_in */
-#include <arpa/inet.h>		/* inet_ntoa() */
-#include <netdb.h>		/* gethostbyname() */
+#include <netinet/in.h>     /* struct in_addr, struct sockaddr_in */
+#include <arpa/inet.h>      /* inet_ntoa() */
+#include <netdb.h>      /* gethostbyname() */
 
 /*
  * Some platforms (e.g. SunOS) don't define FLT_MAX and FLT_MIN, so we
@@ -161,16 +161,16 @@ EXTERN Tcl_WideUInt	strtoull _ANSI_ARGS_((CONST char *string,
 
 #ifndef FLT_MAX
 #   ifdef MAXFLOAT
-#	define FLT_MAX MAXFLOAT
+#   define FLT_MAX MAXFLOAT
 #   else
-#	define FLT_MAX 3.402823466E+38F
+#   define FLT_MAX 3.402823466E+38F
 #   endif
 #endif
 #ifndef FLT_MIN
 #   ifdef MINFLOAT
-#	define FLT_MIN MINFLOAT
+#   define FLT_MIN MINFLOAT
 #   else
-#	define FLT_MIN 1.175494351E-38F
+#   define FLT_MIN 1.175494351E-38F
 #   endif
 #endif
 
@@ -284,13 +284,13 @@ EXTERN Tcl_WideUInt	strtoull _ANSI_ARGS_((CONST char *string,
 #   endif
 #else
 #   ifdef HAVE_BSDGETTIMEOFDAY
-#	define gettimeofday BSDgettimeofday
+#   define gettimeofday BSDgettimeofday
 #   endif
 #endif
 
 #ifdef GETTOD_NOT_DECLARED
-EXTERN int		gettimeofday _ANSI_ARGS_((struct timeval *tp,
-			    struct timezone *tzp));
+EXTERN int      gettimeofday _ANSI_ARGS_((struct timeval *tp,
+                struct timezone *tzp));
 #endif
 
 /*
@@ -326,9 +326,9 @@ EXTERN int		gettimeofday _ANSI_ARGS_((struct timeval *tp,
 
 #ifndef S_IFLNK
 #   undef TclOSlstat
-#   define lstat	stat
-#   define lstat64	stat64
-#   define TclOSlstat	TclOSstat
+#   define lstat    stat
+#   define lstat64  stat64
+#   define TclOSlstat   TclOSstat
 #endif
 
 /*
@@ -415,12 +415,12 @@ EXTERN int		gettimeofday _ANSI_ARGS_((struct timeval *tp,
 #   define SELECT_MASK fd_set
 #else /* NO_FD_SET */
 #   ifndef _AIX
-	typedef long fd_mask;
+    typedef long fd_mask;
 #   endif /* !AIX */
 #   if defined(_IBMR2)
-#	define SELECT_MASK void
+#   define SELECT_MASK void
 #   else /* !defined(_IBMR2) */
-#	define SELECT_MASK int
+#   define SELECT_MASK int
 #   endif /* defined(_IBMR2) */
 #endif /* !NO_FD_SET */
 
@@ -438,9 +438,9 @@ EXTERN int		gettimeofday _ANSI_ARGS_((struct timeval *tp,
 
 #ifndef FD_SETSIZE
 #   ifdef OPEN_MAX
-#	define FD_SETSIZE OPEN_MAX
+#   define FD_SETSIZE OPEN_MAX
 #   else
-#	define FD_SETSIZE 256
+#   define FD_SETSIZE 256
 #   endif
 #endif /* FD_SETSIZE */
 #if !defined(howmany)
@@ -466,9 +466,9 @@ extern int errno;
 
 #ifndef EOVERFLOW
 #   ifdef EFBIG
-#	define EOVERFLOW EFBIG
+#   define EOVERFLOW EFBIG
 #   else /* !EFBIG */
-#	define EOVERFLOW EINVAL
+#   define EOVERFLOW EINVAL
 #   endif /* EFBIG */
 #endif /* EOVERFLOW */
 
@@ -510,9 +510,9 @@ extern double strtod();
  */
 
 #ifdef DJGPP
-#define	TCL_PLATFORM_TRANSLATION	TCL_TRANSLATE_CRLF
+#define TCL_PLATFORM_TRANSLATION    TCL_TRANSLATE_CRLF
 #else
-#define	TCL_PLATFORM_TRANSLATION	TCL_TRANSLATE_LF
+#define TCL_PLATFORM_TRANSLATION    TCL_TRANSLATE_LF
 #endif
 
 /*
@@ -520,8 +520,8 @@ extern double strtod();
  * address platform-specific issues.
  */
 
-#define TclpGetPid(pid)		((unsigned long) (pid))
-#define TclpReleaseFile(file)	/* Nothing. */
+#define TclpGetPid(pid)     ((unsigned long) (pid))
+#define TclpReleaseFile(file)   /* Nothing. */
 
 /*
  * The following defines wrap the system memory allocation routines for
@@ -529,9 +529,9 @@ extern double strtod();
  */
 
 #if USE_TCLALLOC
-#   define TclpSysAlloc(size, isBin)	malloc((size_t)size)
-#   define TclpSysFree(ptr)		free((char*)ptr)
-#   define TclpSysRealloc(ptr, size)	realloc((char*)ptr, (size_t)size)
+#   define TclpSysAlloc(size, isBin)    malloc((size_t)size)
+#   define TclpSysFree(ptr)     free((char*)ptr)
+#   define TclpSysRealloc(ptr, size)    realloc((char*)ptr, (size_t)size)
 #endif
 
 /*
@@ -539,7 +539,7 @@ extern double strtod();
  * functions.
  */
 
-#define TclpExit		exit
+#define TclpExit        exit
 
 /*
  * Platform specific mutex definition used by memory allocators.
@@ -551,24 +551,24 @@ extern double strtod();
 #ifdef TCL_THREADS
 #include <pthread.h>
 typedef pthread_mutex_t TclpMutex;
-EXTERN void	TclpMutexInit _ANSI_ARGS_((TclpMutex *mPtr));
-EXTERN void	TclpMutexLock _ANSI_ARGS_((TclpMutex *mPtr));
-EXTERN void	TclpMutexUnlock _ANSI_ARGS_((TclpMutex *mPtr));
-EXTERN Tcl_DirEntry * 	TclpReaddir(DIR *);
-EXTERN struct tm *     	TclpLocaltime(time_t *);
-EXTERN struct tm *     	TclpGmtime(time_t *);
-EXTERN char *          	TclpInetNtoa(struct in_addr);
-#define readdir(x)	TclpReaddir(x)
-#define localtime(x)	TclpLocaltime(x)
-#define gmtime(x)	TclpGmtime(x)
-#define inet_ntoa(x)	TclpInetNtoa(x)
+EXTERN void TclpMutexInit _ANSI_ARGS_((TclpMutex *mPtr));
+EXTERN void TclpMutexLock _ANSI_ARGS_((TclpMutex *mPtr));
+EXTERN void TclpMutexUnlock _ANSI_ARGS_((TclpMutex *mPtr));
+EXTERN Tcl_DirEntry *   TclpReaddir(DIR *);
+EXTERN struct tm *      TclpLocaltime(time_t *);
+EXTERN struct tm *      TclpGmtime(time_t *);
+EXTERN char *           TclpInetNtoa(struct in_addr);
+#define readdir(x)  TclpReaddir(x)
+#define localtime(x)    TclpLocaltime(x)
+#define gmtime(x)   TclpGmtime(x)
+#define inet_ntoa(x)    TclpInetNtoa(x)
 #undef TclOSreaddir
 #define TclOSreaddir(x) TclpReaddir(x)
 #else
 typedef int TclpMutex;
-#define	TclpMutexInit(a)
-#define	TclpMutexLock(a)
-#define	TclpMutexUnlock(a)
+#define TclpMutexInit(a)
+#define TclpMutexLock(a)
+#define TclpMutexUnlock(a)
 #endif /* TCL_THREADS */
 
 #include "tclPlatDecls.h"

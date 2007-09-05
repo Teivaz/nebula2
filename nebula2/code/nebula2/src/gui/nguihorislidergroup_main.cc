@@ -186,5 +186,5 @@ nGuiHoriSliderGroup::OnEvent(const nGuiEvent& event)
 nGuiSlider2*
 nGuiHoriSliderGroup::GetSlider() const
 {
-	return this->refSlider.get_unsafe();
+    return this->refSlider.get_unsafe();
 }

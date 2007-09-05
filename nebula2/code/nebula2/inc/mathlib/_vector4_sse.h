@@ -64,7 +64,7 @@ public:
     /// private constructor, takes _m128
     _vector4_sse(const __m128& m);
     /// add components
-	float addhorizontal(const __m128 &a);
+    float addhorizontal(const __m128 &a);
 };
 
 //------------------------------------------------------------------------------

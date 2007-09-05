@@ -27,7 +27,7 @@ nNebulaClass(nGuiSkyEditor, "nguiformlayout");
 /**
 */
 nGuiSkyEditor::nGuiSkyEditor():
-    sliderChanged(false),	// ???
+    sliderChanged(false),   // ???
     skyPath("/usr/scene"),
     refSky("/usr/scene"),
     layoutChanged(false),
@@ -41,7 +41,7 @@ nGuiSkyEditor::nGuiSkyEditor():
     updateSkyTime(true),
     activeType(nSkyNode::InvalidElement)
 {
-	this->FindSkyNode(refSky);
+    this->FindSkyNode(refSky);
 }
 
 
@@ -62,7 +62,7 @@ nGuiSkyEditor::OnShow()
     // call parent class
     nGuiFormLayout::OnShow();
 
-	this->ShowSky();
+    this->ShowSky();
 
     // update all layouts
     this->UpdateLayout(this->rect);
@@ -122,9 +122,9 @@ nGuiSkyEditor::ShowSky()
         button->SetMinSize(buttonSize);
         button->SetMaxSize(buttonSize);
         button->SetColor(vector4(0,0,0,1));
-		this->AttachForm(button, nGuiFormLayout::Top, 3 * border);
-		this->AttachForm(button, nGuiFormLayout::Right, 0.005f);
-		button->OnShow();
+        this->AttachForm(button, nGuiFormLayout::Top, 3 * border);
+        this->AttachForm(button, nGuiFormLayout::Right, 0.005f);
+        button->OnShow();
         this->refRefreshButton = button;
 
         button = (nGuiTextButton*) kernelServer->New("nguitextbutton", "saveButton");
@@ -139,8 +139,8 @@ nGuiSkyEditor::ShowSky()
         button->SetMaxSize(buttonSize);
         button->SetColor(vector4(0,0,0,1));
         this->AttachWidget(button, nGuiFormLayout::Right, this->refRefreshButton, 0.005f);
-		this->AttachForm(button, nGuiFormLayout::Top, 3 * border);
-		button->OnShow();
+        this->AttachForm(button, nGuiFormLayout::Top, 3 * border);
+        button->OnShow();
         this->refSaveButton = button;
 
         slider = (nGuiHoriSliderGroup*) kernelServer->New("nguihorislidergroup", "SkyStartTimeSlider");
@@ -614,7 +614,7 @@ nGuiSkyEditor::ShowCloud()
             {
                 vector4 vec = this->refElement->GetVector(nShaderState::Move);
                 vector2 dirvec = vector2(vec.x,vec.y);
-				if (dirvec.x == 0) dirvec.x = 0.0001f;
+                if (dirvec.x == 0) dirvec.x = 0.0001f;
                 float dir =(float)(90-((atan(fabs(dirvec.y)/fabs(dirvec.x))*180)/N_PI));
                 if      ((dirvec.x > 0)&&(dirvec.y < 0)) dir += 90;
                 else if ((dirvec.x < 0)&&(dirvec.y < 0)) dir += 180;
@@ -1005,7 +1005,7 @@ nGuiSkyEditor::ReleaseCloud()
 {
     if (this->refElement.isvalid())
     {
-		// FIXME: check each one
+        // FIXME: check each one
         this->refCloudAddSlider->Release();
         this->refCloudMulSlider->Release();
         this->refCloudColSlider->Release();
@@ -1422,7 +1422,7 @@ void
 nGuiSkyEditor::ReleaseSkycolor()
 {
     if (this->refElement.isvalid())
-    {	// FIXME: check each one
+    {   // FIXME: check each one
         this->refSkyTopColSlider->Release();
         this->refSkyBotColSlider->Release();
         this->refSkySunColSlider->Release();
@@ -1569,7 +1569,7 @@ void
 nGuiSkyEditor::ReleaseSun()
 {
     if (this->refElement.isvalid())
-    {	// FIXME: check each one
+    {   // FIXME: check each one
         this->refSunColSlider->Release();
         this->refSunScaleSlider->Release();
     }
@@ -1770,7 +1770,7 @@ void
 nGuiSkyEditor::ReleaseSunlight()
 {
     if (this->refElement.isvalid())
-    {	// FIXME: Check each one
+    {   // FIXME: Check each one
         this->refSunLightDiffuseColSlider->Release();
         this->refSunLightDiffuse1ColSlider->Release();
         this->refSunLightAmbientColSlider->Release();
@@ -1906,7 +1906,7 @@ nGuiSkyEditor::OnFrame()
         this->UpdateLayout(this->GetRect());
     }
 
-	// Refresh Button was pressed
+    // Refresh Button was pressed
     if (this->refresh && (this->activeElement > -1) && (this->refSky.isvalid()))
     {
         type = this->refSky->GetElementType(this->activeElement);
@@ -1922,7 +1922,7 @@ nGuiSkyEditor::OnFrame()
         this->refresh = false;
     }
 
-	// Don't update skytime slider, if it was moved
+    // Don't update skytime slider, if it was moved
     if (this->updateSkyTime && this->refSkyTimeSlider.isvalid() && this->refSky.isvalid())
     {
         this->refSkyTimeSlider->SetValue(this->refSky->GetSkyTime());
@@ -1932,10 +1932,10 @@ nGuiSkyEditor::OnFrame()
         this->updateSkyTime = true;
     }
 
-	// Save Button was pressed
+    // Save Button was pressed
     if (this->saveSky)
     {   // FIXME: Hardcoded...
-		nDynAutoRef<nRoot> refPath(this->skyPath.ExtractToLastSlash().Get());
+        nDynAutoRef<nRoot> refPath(this->skyPath.ExtractToLastSlash().Get());
         refPath->SaveAs("proj:export/gfxlib/examples/SkySave.n2");
         this->saveSky = false;
     }
@@ -2006,18 +2006,18 @@ nGuiSkyEditor::UpdateColorSliderFromElement(nGuiColorSliderGroup* slider, nShade
 void
 nGuiSkyEditor::FindSkyNode(nRoot* node)
 {
-	if (node->IsInstanceOf("nskynode"))
-	{
-		this->skyPath = node->GetFullName();
-		this->refSky.set(this->skyPath.Get());
-	}
-	else
-	{
-		nRoot* child = node->GetHead();
-		while (child)
-		{
-			this->FindSkyNode(child);
-			child = child->GetSucc();
-		}
-	}
+    if (node->IsInstanceOf("nskynode"))
+    {
+        this->skyPath = node->GetFullName();
+        this->refSky.set(this->skyPath.Get());
+    }
+    else
+    {
+        nRoot* child = node->GetHead();
+        while (child)
+        {
+            this->FindSkyNode(child);
+            child = child->GetSucc();
+        }
+    }
 }

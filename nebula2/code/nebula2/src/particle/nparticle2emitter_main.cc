@@ -279,8 +279,8 @@ nParticle2Emitter::Update(float curTime)
                 int vertexWidth = this->refEmitterMesh->GetVertexWidth();
                 ushort* indices = this->refEmitterMesh->LockIndices();
                 const nMeshGroup& meshGroup = this->refEmitterMesh->Group(this->emitterMeshGroupIndex);
-		        int firstIndex  = meshGroup.GetFirstIndex();
-		        int numIndices = meshGroup.GetNumIndices();
+                int firstIndex  = meshGroup.GetFirstIndex();
+                int numIndices = meshGroup.GetNumIndices();
                 matrix33 transform33(this->transform.x_component(), this->transform.y_component(), this->transform.z_component());
                 vector3 emissionPos, emissionNormal;
 
@@ -402,8 +402,8 @@ nParticle2Emitter::Update(float curTime)
                     }
                 }
                 this->remainingTime = timeToDo;
-  		        this->refEmitterMesh->UnlockVertices();
-		        this->refEmitterMesh->UnlockIndices();
+                this->refEmitterMesh->UnlockVertices();
+                this->refEmitterMesh->UnlockIndices();
             }
         }
         else

@@ -58,7 +58,7 @@ nD3D9Server::DrawShapeNS(ShapeType type, const matrix44& model)
 {
     n_assert(0 != this->shapeMeshes[type]);
     this->PushTransform(nGfxServer2::Model, model);
-	this->refShader->CommitChanges();
+    this->refShader->CommitChanges();
     HRESULT hr = this->shapeMeshes[type]->DrawSubset(0);
     n_dxtrace(hr, "DrawSubset() failed in nD3D9Server::DrawShape()");
     this->PopTransform(nGfxServer2::Model);

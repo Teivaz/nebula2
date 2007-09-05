@@ -154,18 +154,18 @@ public:
 
 __inline int GetScrollPos(HWND hWnd, int nBar)
 {
-	SCROLLINFO si;
-	memset(&si, 0, sizeof(si));
-	si.cbSize = sizeof(si);
-	si.fMask = SIF_POS;
-	if (!GetScrollInfo(hWnd, nBar, &si))
-	{
-		return 0;
-	}
-	else
-	{
-		return si.nPos;
-	}
+    SCROLLINFO si;
+    memset(&si, 0, sizeof(si));
+    si.cbSize = sizeof(si);
+    si.fMask = SIF_POS;
+    if (!GetScrollInfo(hWnd, nBar, &si))
+    {
+        return 0;
+    }
+    else
+    {
+        return si.nPos;
+    }
 }
 
 #else // !UNDER_CE
