@@ -549,7 +549,7 @@ nSceneServer::CompareNodes(const ushort* i1, const ushort* i2)
 
     // by identical scene node
     cmp = int(g1.sceneNode) - int(g2.sceneNode);
-    if (cmp != 0)
+    if (cmp == 0)
     {
         return cmp;
     }
