@@ -744,6 +744,7 @@ nD3D9Server::UpdateCursor()
             int hotspotY = this->curMouseCursor.GetHotspotY();
             hr = this->d3d9Device->SetCursorProperties(hotspotX, hotspotY, surfPtr);
             n_dxtrace(hr, "In nD3D9Server::UpdateCursor(): SetCursorProperties() failed!");
+            surfPtr->Release();
         }
 
         switch (this->cursorVisibility)
@@ -862,6 +863,12 @@ nD3D9Server::OnDeviceCleanup(bool shutdown)
     // inform line renderer
     HRESULT hr = this->d3dxLine->OnLostDevice();
     n_dxtrace(hr, "OnLostDevice() on d3dxLine failed");
+
+    for (int i=0; i < this->vertexDeclarationCache.Size(); i++) {
+        this->vertexDeclarationCache[i]->Release();
+    }
+    this->vertexDeclarationCache.Clear();
+
 
     #ifdef __NEBULA_STATS__
     // release the d3d query object
