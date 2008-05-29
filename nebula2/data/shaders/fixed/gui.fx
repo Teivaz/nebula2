@@ -30,7 +30,7 @@ technique t0
     {
         WorldTransform[0] = <Model>;
         ViewTransform = <View>;
-    	ProjectionTransform = <Projection>;
+        ProjectionTransform = <Projection>;
 
         ZWriteEnable     = False;
         ZEnable          = False;
@@ -47,8 +47,8 @@ technique t0
         StencilZFail = KEEP;
         StencilPass =  KEEP;
 
-        VertexShader = 0;
-        PixelShader  = 0;
+        VertexShader = NULL;
+        PixelShader  = NULL;
 
         Sampler[0] = <DiffSampler>;
 

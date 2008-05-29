@@ -13,7 +13,7 @@ technique tPhaseAlpha
         AlphaBlendEnable = True;
         AlphaTestEnable  = False;
         Lighting         = True;
-        VertexShader     = 0;
+        VertexShader     = NULL;
         FogEnable        = True;
     }
 }
@@ -23,7 +23,7 @@ technique tPhaseMultiPass
     pass p0
     {
         ZWriteEnable     = True;
-        VertexShader     = 0;
+        VertexShader     = NULL;
         FogEnable        = True;
         Lighting         = True;
 
@@ -47,7 +47,7 @@ technique tPhaseOpaque
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         AlphaFunc        = GreaterEqual;
-        VertexShader     = 0;
+        VertexShader     = NULL;
         FogEnable        = True;
         LightEnable[0]   = True;
         Lighting         = True;
@@ -62,7 +62,7 @@ technique tPhaseOpaqueNoFog
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         AlphaFunc        = GreaterEqual;
-        VertexShader     = 0;
+        VertexShader     = NULL;
         FogEnable        = False;
         LightEnable[0]   = True;
         Lighting         = True;
@@ -77,7 +77,7 @@ technique tPhaseOpaqueATest
         AlphaBlendEnable = False;
         AlphaTestEnable  = True;
         AlphaFunc        = GreaterEqual;
-        VertexShader     = 0;
+        VertexShader     = NULL;
         FogEnable        = True;
         LightEnable[0]   = True;
         Lighting         = True;
@@ -92,7 +92,7 @@ technique tPhaseOpaqueNoLightNoFog
         AlphaBlendEnable = False;
         AlphaTestEnable  = False;
         AlphaFunc        = GreaterEqual;
-        VertexShader     = 0;
+        VertexShader     = NULL;
         FogEnable        = False;
         LightEnable[0]   = False;
         Lighting         = False;

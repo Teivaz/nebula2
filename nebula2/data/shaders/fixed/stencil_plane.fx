@@ -15,7 +15,7 @@ technique t0
     {
         WorldTransform[0] = <Model>;
         ViewTransform = <View>;
-    	ProjectionTransform = <Projection>;
+        ProjectionTransform = <Projection>;
 
         ZWriteEnable     = False;
         ZEnable          = False;
@@ -23,8 +23,8 @@ technique t0
 
         CullMode = None;
 
-        VertexShader = 0;
-        PixelShader  = 0;
+        VertexShader = NULL;
+        PixelShader  = NULL;
 
         ColorWriteEnable = RED|GREEN|BLUE|ALPHA;
 

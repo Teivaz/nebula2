@@ -15,15 +15,15 @@ technique tPassColor
     pass p0
     {
         ViewTransform       = <View>;
-    	ProjectionTransform = <Projection>;
+        ProjectionTransform = <Projection>;
         ColorWriteEnable    = RED|GREEN|BLUE|ALPHA;
         NormalizeNormals    = True;
         ZEnable             = True;
         ZFunc               = LessEqual;
         StencilEnable       = False;
         DepthBias           = 0.0f;
-        PixelShader         = 0;
-        SpecularEnable	    = False;
+        PixelShader         = NULL;
+        SpecularEnable      = False;
 
         FogEnable           = True;
         FogColor            = <FogColor>;
