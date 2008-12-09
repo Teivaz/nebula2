@@ -105,9 +105,9 @@ nD3D9Shader::LoadResource()
 
     ID3DXBuffer* errorBuffer = 0;
     #if N_D3D9_DEBUG
-        DWORD compileFlags = D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION;
+        DWORD compileFlags = D3DXSHADER_DEBUG | D3DXSHADER_SKIPOPTIMIZATION | D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
     #else
-        DWORD compileFlags = 0;
+        DWORD compileFlags = D3DXSHADER_USE_LEGACY_D3DX9_31_DLL;
     #endif
 
     // create include file handler
