@@ -263,6 +263,7 @@ void nShdTunerApp::OpenServers() {
     fileSvr->SetAssign("data", "home:data");
     fileSvr->SetAssign("export", "home:export");
     fileSvr->SetAssign("scripts", "data:scripts");
+	fileSvr->SetAssign("renderpath", "data:shaders");
     fileSvr->SetAssign("gfxlib", "export:gfxlib");
     fileSvr->SetAssign("anims", "export:anims");
     fileSvr->SetAssign("meshes", "export:meshes");
