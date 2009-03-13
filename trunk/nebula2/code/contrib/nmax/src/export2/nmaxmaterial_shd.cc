@@ -655,9 +655,10 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
                 // it is hard to bind those control type with parameters block.
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
                 // openEvent
+				int i = 1;
                 tmp.Format("\t\t\t%s_modulation.selection = %s[9];\n", paramName.Get(), paramName.Get(), paramName.Get() );    openEvent += tmp;
                 tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
-                for( int i = 1; i<6; ++i )
+                for( i = 1; i<6; ++i )
                 {
                     tmp.Format("\t\t\tparams += (%s[%d] as string) + \", \"\n", paramName.Get(), i);    openEvent += tmp;
                 }
@@ -707,8 +708,9 @@ void GenerateScript(TiXmlElement* elemParam, nString& shdName, nString& strParam
             {
 #if USE_ACTIVEX_ENVELOPECURVE_CTRL
                 // open event
+				int i = 1;
                 tmp.Format("\t\t\tparams = \"\"\n");    openEvent += tmp;
-                for( int i = 1; i< 14; ++i )
+                for( i = 1; i< 14; ++i )
                 {
                     tmp.Format("\t\t\tparams += (%s[%d] as string) + \", \"\n", paramName.Get(), i);    openEvent += tmp;
                 }
