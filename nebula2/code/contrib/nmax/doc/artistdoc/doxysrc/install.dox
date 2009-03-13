@@ -32,7 +32,8 @@
              Compile it through using 'HTML Help Workshop'. It will generate <tt>nmaxtoolbox.chm</tt> and then copy it
              to <tt>$3dsmax/scripts/nebula2</tt> directory to be available it within 3ds Max.
              
-
+    <b>Remark:</b> User for <b>3dsmax9</b> user on <b>Vista</b> <br>
+    The <tt>nmaxtoolbox.ini</tt> file should be put in the <tt>'User/Administrator/AppData/Local/Autodesk/3dsmax/9-32bit/enu/plugcfg'</tt> directory not <tt>'$3dsmax9/plugcfg'</tt> directory, if not, there might be the plug-in loading error at the start up of 3dsmax.
     <td>
     </tr>
     </table>
