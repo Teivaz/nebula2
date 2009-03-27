@@ -776,38 +776,39 @@ nMeshBuilder::Vertex nMaxMesh::GetVertex(Mesh* mesh, Face& face, int faceNo, int
 
     nMaxOptions* option = nMaxOptions::Instance();
 
-    if( this->hasCustomAttr )
-    {
-        // vertex normal.
-        if (this->ExportNormals())
-        {
-            vector3 norm = GetVertexNormal(mesh, face, faceNo, vIdx);
-            vertex.SetNormal(norm);
-        }
+	// FIXME: we don't use MAX's custom attributes for filtering each of vertex components
+    //if( this->hasCustomAttr )
+    //{
+    //    // vertex normal.
+    //    if (this->ExportNormals())
+    //    {
+    //        vector3 norm = GetVertexNormal(mesh, face, faceNo, vIdx);
+    //        vertex.SetNormal(norm);
+    //    }
 
-        // vertex color.
-        if (this->ExportColors())
-        {
-            vector4 col = GetVertexColor(mesh, faceNo, vIdx);
-            vertex.SetColor(col);
-        }
+    //    // vertex color.
+    //    if (this->ExportColors())
+    //    {
+    //        vector4 col = GetVertexColor(mesh, faceNo, vIdx);
+    //        vertex.SetColor(col);
+    //    }
 
-        // vertex uvs.
-        if (this->ExportUvs())
-        {
-            //FIXME: is 'm' identical to map channel?
-            int layer = 0;
-            for (int m=1; m<MAX_MESHMAPS-1; m++)
-            {
-                if (mesh->mapSupport(m))
-                {
-                    vector2 uvs = GetVertexUv(mesh, faceNo, vIdx, m);
-                    vertex.SetUv(layer++, uvs);
-                }
-            }
-        }
-    }
-    else
+    //    // vertex uvs.
+    //    if (this->ExportUvs())
+    //    {
+    //        //FIXME: is 'm' identical to map channel?
+    //        int layer = 0;
+    //        for (int m=1; m<MAX_MESHMAPS-1; m++)
+    //        {
+    //            if (mesh->mapSupport(m))
+    //            {
+    //                vector2 uvs = GetVertexUv(mesh, faceNo, vIdx, m);
+    //                vertex.SetUv(layer++, uvs);
+    //            }
+    //        }
+    //    }
+    //}
+    //else
     {
         // vertex normal.
         if (option->ExportNormals())
