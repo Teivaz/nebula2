@@ -84,9 +84,18 @@ nIniPrefServer* nMaxOptions::BeginINIPref(const nString& section)
     // check the .ini file exist in 3dsmax plugin directory.
     if (!fileServer->FileExists(iniFilename))
     {
-        // .ini file does not exist in '/plugcfg' directory.
-        n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
-        return 0;
+		// try to find the .ini file in the 'scripts\nebula' dirtectory. e.g.) d:\3dsmax\Scripts\nebula2
+		iniFilename = "";
+        iniFilename += GetCOREInterface()->GetDir(APP_SCRIPTS_DIR);
+        iniFilename += "\\";
+		iniFilename += "nebula2\\";
+        iniFilename += N_MAXEXPORT_INIFILE;
+        if (!fileServer->FileExists(iniFilename))
+        {
+            // .ini file does not exist in '/plugcfg' directory.
+            n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
+            return 0;
+		}
     }
 
     nIniPrefServer* iniFile = (nIniPrefServer*)nKernelServer::Instance()->New("niniprefserver", "/iniprefsrv");
