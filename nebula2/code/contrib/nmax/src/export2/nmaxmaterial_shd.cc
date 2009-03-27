@@ -55,12 +55,21 @@ nString GetShaderXmlPath(nString file)
     // check the .ini file exist in 3dsmax plugin directory.
     if (!fileServer->FileExists(iniFilename))
     {
-        // .ini file does not exist in '/plugcfg' directory.
-        n_message("%s file does not exist in '$3dsmax/plugcfg' directory.\n", 
-            N_MAXEXPORT_INIFILE);
+		// try to find the .ini file in the 'scripts\nebula' dirtectory. e.g.) d:\3dsmax\Scripts\nebula2
+		iniFilename = "";
+        iniFilename += GetCOREInterface()->GetDir(APP_SCRIPTS_DIR);
+        iniFilename += "\\";
+		iniFilename += "nebula2\\";
+        iniFilename += N_MAXEXPORT_INIFILE;
+        if (!fileServer->FileExists(iniFilename))
+        {
+            // .ini file does not exist in '/plugcfg' directory.
+            n_message("%s file does not exist in '$3dsmax/plugcfg' directory.\n", 
+                N_MAXEXPORT_INIFILE);
 
-        // return a empty string.
-        return shdxml;
+            // return a empty string.
+            return shdxml;
+		}
     }
 
     nString homeDir;
