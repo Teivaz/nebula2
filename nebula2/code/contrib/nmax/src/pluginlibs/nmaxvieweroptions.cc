@@ -47,11 +47,28 @@ bool nMaxViewerOptions::Read()
     // check the .ini file exist in 3dsmax plugin directory.
     if (!fileServer->FileExists(iniFilename))
     {
-        // the .ini file does not exist, so make new one.
-        nFile* file = fileServer->NewFileObject();
-        file->Open(iniFilename.Get(), "w");
-        file->Close();
-        file->Release();
+	    // try to find the .ini file in the 'scripts\nebula' dirtectory. e.g.) d:\3dsmax\Scripts\nebula2
+	    iniFilename = "";
+        iniFilename += GetCOREInterface()->GetDir(APP_SCRIPTS_DIR);
+        iniFilename += "\\";
+	    iniFilename += "nebula2\\";
+
+		nString iniFileDir = iniFilename;
+
+        iniFilename += N_MAXEXPORT_INIFILE;
+
+		if (!fileServer->FileExists(iniFilename))
+		{
+			// the .ini file does not exist, so make new one.
+			//nFile* file = fileServer->NewFileObject();
+			//file->Open(iniFilename.Get(), "w");
+			//file->Close();
+			//file->Release();
+			
+			n_message("%s file does not exist in %s directory.\n", iniFilename.Get(), iniFileDir.Get());
+
+			return false;
+		}
     }
 
     // read viewer options.
