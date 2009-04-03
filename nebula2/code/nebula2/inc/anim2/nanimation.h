@@ -72,7 +72,7 @@
     }
 
     FOR EACH CURVE {
-        int16 ipolType          // nAnimation::Curve::IpolType
+        int32 ipolType          // nAnimation::Curve::IpolType
         int32 firstKeyIndex     // index of first curve key in key pool (-1 if collapsed!)
         int32 isAnimated        // flag, if the curve's joint is animated
         float[4] collapsedKey   // the key value if this is a collapsed curve
