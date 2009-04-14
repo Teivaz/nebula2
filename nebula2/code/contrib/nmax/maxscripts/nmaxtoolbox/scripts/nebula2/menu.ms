@@ -38,6 +38,19 @@ tooltip:"Export"
     )
 )
 
+macroScript NebulaToolBox_ExportAnim
+category:"nmaxtoolbox" 
+buttonText:"Export Animation"
+tooltip:"Export Animation" 
+( 	   
+    on execute do
+    (
+        include "nebula2/exportanim.ms"
+        
+        nExportAnim()
+    )
+)
+
 ---------------------------------------------------------------------------------
 -- macro script for 'Batch Export' menu item.
 ---------------------------------------------------------------------------------
@@ -277,6 +290,7 @@ fn AddMenu =
         local ItemsTemp = #()
         ItemsTemp[1] = menuMan.createActionItem "NebulaToolBox_Preview" "nmaxtoolbox"
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_Export" "nmaxtoolbox")
+        append ItemsTemp (menuMan.createActionItem "NebulaToolBox_ExportAnim" "nmaxtoolbox")
         append ItemsTemp (menuMan.createActionItem "NebulaToolBox_BatchExport" "nmaxtoolbox")
         append ItemsTemp (menuMan.createSeparatorItem())	
 		
