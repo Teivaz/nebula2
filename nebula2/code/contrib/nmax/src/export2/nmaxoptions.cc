@@ -36,6 +36,7 @@ nMaxOptions::nMaxOptions() :
     groupMeshes(true),
     meshFileExtension(".n3d2"),
     animFileExtension(".nanim2"),
+	useCharacter3SkinAnimator(false),
     geomScale(0.01f),
     maxJointPaletteSize(24),
     weightThreshold(0.0001f),
@@ -46,7 +47,8 @@ nMaxOptions::nMaxOptions() :
     useIndivisualMesh(false),
     verboseLevel(2/*Low*/),
     overwriteExistTexture(true),
-    previewMode(false),
+    //previewMode(false),
+	exportMode(Normal),
     useDefaultViewer(true),
     meshSuffixStatic(""),
     meshSuffixSkinned("_skinned"),
@@ -516,6 +518,12 @@ bool nMaxOptions::LoadUtilityOptions()
     iniFile->SetDefault("2");
     this->sampleRate = iniFile->ReadInt ("SampleRate");
 
+	iniFile->SetDefault("false");
+	this->useCharacter3SkinAnimator = iniFile->ReadBool("UseCharacter3SkinAnimator");
+
+    //FIXME: change it to use ReadBool()
+    //int tmpExportHiddenNode;
+
     iniFile->SetDefault("false");
     this->exportHiddenNodes = iniFile->ReadBool("ExportHiddenNode");
 
@@ -561,6 +569,7 @@ void nMaxOptions::SaveUtilityOptions()
     iniFile->WriteFloat ("WeightThreshold", this->weightThreshold);
     iniFile->WriteString("SaveMeshAs",      this->meshFileExtension);
     iniFile->WriteString("SaveAnimAs",      this->animFileExtension);
+	iniFile->WriteBool  ("UseCharacter3SkinAnimator", this->useCharacter3SkinAnimator);
     iniFile->WriteInt   ("SampleRate",      this->sampleRate);
     iniFile->WriteBool  ("ExportHiddenNode",this->exportHiddenNodes);
     iniFile->WriteString("ScriptServer",    this->saveScriptServer);

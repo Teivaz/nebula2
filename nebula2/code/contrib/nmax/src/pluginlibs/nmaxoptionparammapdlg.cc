@@ -158,6 +158,11 @@ void nMaxOptionParamMapDlg::InitDialog(HWND hwnd)
         CheckDlgButton(hwnd, IDC_NANIM2, BST_UNCHECKED);
         CheckDlgButton(hwnd, IDC_NAX2, BST_CHECKED);
     }
+
+	// 'Use Character3 Animator' checkbox button
+	bool useCharacter3SkinAnimator = nMaxOptions::Instance()->GetUseCharacter3SkinAnimator();
+	int flag = useCharacter3SkinAnimator ? 1 : 0;
+	CheckDlgButton(hwnd, IDC_USE_CHARACTER3SKINANIMATOR, flag);
     
     // hidden node.
     bool tmpExportHiddenNode = nMaxOptions::Instance()->ExportHiddenNodes();
@@ -288,6 +293,10 @@ void nMaxOptionParamMapDlg::OnCommand(HWND hwnd, WORD highParam, WORD lowParam)
         OnAnimFileType(hwnd);
         break;
 
+	case IDC_USE_CHARACTER3SKINANIMATOR:
+		OnUseCharacter3SkinAnimator(hwnd);
+		break;
+
     case IDC_HIDDEN_OBJ:
         OnHiddenObject(hwnd);
         break;
@@ -402,6 +411,21 @@ void nMaxOptionParamMapDlg::OnAnimFileType(HWND hwnd)
     {
         nMaxOptions::Instance()->SetAnimFileType(".nax2");
     }
+}
+
+//------------------------------------------------------------------------------
+/**
+*/
+void nMaxOptionParamMapDlg::OnUseCharacter3SkinAnimator(HWND hwnd)
+{
+	if (IsChecked(hwnd, IDC_USE_CHARACTER3SKINANIMATOR))
+	{
+		nMaxOptions::Instance()->SetUseCharacter3SkinAnimator(true);
+	}
+	else
+	{
+		nMaxOptions::Instance()->SetUseCharacter3SkinAnimator(false);
+	}
 }
 
 //------------------------------------------------------------------------------

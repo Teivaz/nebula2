@@ -50,6 +50,8 @@ private:
     void OnMeshFileType(HWND hwnd);
     void OnAnimFileType(HWND hwnd);
 
+	void OnUseCharacter3SkinAnimator(HWND hwnd);
+
     void OnHiddenObject(HWND hwnd);
 
     /// @name script server combobox
