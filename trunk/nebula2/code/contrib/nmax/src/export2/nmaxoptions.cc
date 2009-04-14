@@ -516,11 +516,8 @@ bool nMaxOptions::LoadUtilityOptions()
     iniFile->SetDefault("2");
     this->sampleRate = iniFile->ReadInt ("SampleRate");
 
-    //FIXME: change it to use ReadBool()
-    int tmpExportHiddenNode;
-
     iniFile->SetDefault("false");
-    tmpExportHiddenNode = iniFile->ReadBool("ExportHiddenNode");
+    this->exportHiddenNodes = iniFile->ReadBool("ExportHiddenNode");
 
     iniFile->SetDefault("ntclserver");
     this->saveScriptServer = iniFile->ReadString("ScriptServer");
