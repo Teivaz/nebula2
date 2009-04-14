@@ -11,7 +11,7 @@
 #include "pluginlibs/nmaxdlg.h"
 #include "pluginlibs/nmaxlogdlg.h"
 
-#include "scene/nskinanimator.h"
+#include "scene/ncharacter3skinanimator.h"
 
 //-----------------------------------------------------------------------------
 /**
@@ -36,7 +36,21 @@ nAnimator* nMaxSkinAnimator::Export(int skelIndex, const char* animatorName, con
     n_assert(animatorName);
     n_assert(animFilename);
 
-    nSkinAnimator* animator = (nSkinAnimator*)this->CreateNebulaObject("nskinanimator", animatorName);
+	nString skinAnimatorName;
+	nSkinAnimator* animator;
+
+	if (nMaxOptions::Instance()->GetUseCharacter3SkinAnimator())
+	{
+		skinAnimatorName = "ncharacter3skinanimator";
+		//FIXME: ugly casting!
+		animator = (nCharacter3SkinAnimator*)this->CreateNebulaObject(skinAnimatorName.Get(), animatorName);
+	}
+	else
+	{
+		skinAnimatorName = "nskinanimator";
+		//FIXME: ugly casting!
+		animator = (nSkinAnimator*)this->CreateNebulaObject(skinAnimatorName.Get(), animatorName);
+	}
 
     if (animator)
     {

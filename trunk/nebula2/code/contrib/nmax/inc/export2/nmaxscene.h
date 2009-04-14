@@ -74,6 +74,8 @@ protected:
     // @{
     ///
     bool ExportNodes(INode* inode);
+	///
+	bool ExportSkinAnimator(bool animOnly = false);
     ///
     virtual nSceneNode* ExportGeomObject(INode* inode, Object* obj);
     ///

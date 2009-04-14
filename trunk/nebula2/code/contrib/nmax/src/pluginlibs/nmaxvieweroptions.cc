@@ -243,7 +243,7 @@ bool nMaxViewerOptions::ReadDefaultViewerOptions(const nString &iniFilename,
     }
 
     // specifies to use ram file in shared memory.
-    if (nMaxOptions::Instance()->UsePreviewMode())
+    if (nMaxOptions::Preview == nMaxOptions::Instance()->GetExportMode())
         this->arguments += "-useram "; //use ram file.
 
     iniFile->Release();

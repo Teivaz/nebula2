@@ -90,6 +90,15 @@ bool nMaxScene::Export(INode* inode)
         return false;
     }
 
+	// if the given secene has any number of bones, 
+	// we first export its animation with skinanimator.
+    if(!this->ExportSkinAnimator())
+		return false;
+
+	// if we only export animation data(.nax2 or .nanim2), we've done all necessary.
+	if (nMaxOptions::Instance()->GetExportMode() == nMaxOptions::AnimOnly)
+		return true;
+
     // if the given node is NULL, it passes scene root node.
     INode* node = (inode ? inode : rootNode);
 
@@ -284,7 +293,7 @@ bool nMaxScene::OpenNebula()
     }
 
     // if preview mode was set, switch to ram file server.
-    if (nMaxOptions::Instance()->UsePreviewMode())
+    if (nMaxOptions::Instance()->GetExportMode() == nMaxOptions::Preview )
         ks->ReplaceFileServer("nramfileserver");
     else
         ks->ReplaceFileServer("nfileserver2");
@@ -666,34 +675,6 @@ bool nMaxScene::Postprocess()
         this->globalParticle2MeshBuilder.Save(fileServer, meshFileName.Get());
     }
 
-    // create skin animators
-    nMaxBoneManager *bm = nMaxBoneManager::Instance();
-    if (bm->GetNumBones() > 0) 
-    {
-        for (int skelIndex = 0; skelIndex < bm->GetNumSkeletons(); skelIndex++) 
-        {
-            // export .anim2 and skin animator, if the exported scene has skinned mesh.
-            nString animFilename = this->GetAnimFileNameToSave(skelIndex);
-
-            if (!nMaxBoneManager::Instance()->Export(skelIndex, animFilename.Get()))
-            {
-                n_maxlog(Error, "Failed to export animation %s", animFilename.Get());
-                return false;
-            }
-
-            nSkinAnimator* createdAnimator = NULL;
-
-            nMaxSkinAnimator skinAnimator;
-            nString animatorName("skinanimator");
-            animatorName.AppendInt(skelIndex);
-            createdAnimator = (nSkinAnimator*)skinAnimator.Export(skelIndex, animatorName.Get(), animFilename.Get());
-            if (createdAnimator)
-            {
-                nKernelServer::Instance()->PopCwd();
-            }
-        }
-    }
-
     //
     // save node to export.(save .n2 file on disk)
     //
@@ -962,6 +943,58 @@ bool nMaxScene::ExportNodes(INode* inode)
     }
 
     return true;
+}
+
+//-----------------------------------------------------------------------------
+/**
+    Export skin animator.
+
+	This member function is called before calling ExportNodes which exports all
+	3dsmax nodes of the given scene.
+
+	Nebula3 assumes any skinanimator places fisrt at its scene hierarchy when it 
+	loads and parses .n2 legacy file. So we also need to change skinanimators location. 
+
+    @note
+	It should be called after nMaxScene::OpenNebula() member function otherwise 
+	it will be failed.
+
+	@param animOnly used for exporting only animation file.
+*/
+bool nMaxScene::ExportSkinAnimator(bool animOnly)
+{
+    nMaxBoneManager *bm = nMaxBoneManager::Instance();
+    if (bm->GetNumBones() > 0)
+    {
+		// create skin animators
+		for (int skelIndex = 0; skelIndex < bm->GetNumSkeletons(); skelIndex++) 
+		{
+			// export .anim2 and skin animator, if the exported scene has skinned mesh.
+			nString animFilename = this->GetAnimFileNameToSave(skelIndex);
+
+			if (!nMaxBoneManager::Instance()->Export(skelIndex, animFilename.Get()))
+			{
+				n_maxlog(Error, "Failed to export animation %s", animFilename.Get());
+				return false;
+			}
+
+			if(animOnly)
+				continue;
+
+			nSkinAnimator* createdAnimator = NULL;
+
+			nMaxSkinAnimator skinAnimator;
+			nString animatorName("skinanimator");
+			animatorName.AppendInt(skelIndex);
+			createdAnimator = (nSkinAnimator*)skinAnimator.Export(skelIndex, animatorName.Get(), animFilename.Get());
+			if (createdAnimator)
+			{
+				nKernelServer::Instance()->PopCwd();
+			}
+		}
+	}
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------

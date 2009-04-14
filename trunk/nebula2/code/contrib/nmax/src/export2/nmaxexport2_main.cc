@@ -167,7 +167,7 @@ void ReleaseSingletons()
 
     @return Return 0, if it failed to export.
 */
-int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode)
+int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int mode)
 {
     n_assert(inf);
 
@@ -216,24 +216,72 @@ int ExportScene(const TCHAR* name, Interface* inf, INode* inode, int previewMode
     expOptions->SetSaveFileName(nString(name));
 
     // specifies preview mode.
-    if (-1 == previewMode )
-        expOptions->SetPreviewMode(true);
-    else
-        expOptions->SetPreviewMode(false);
+    //if (-1 == previewMode )
+    //    expOptions->SetPreviewMode(true);
+    //else
+    //    expOptions->SetPreviewMode(false);
+
+	//FIXME: ugly export mode specification.
+	nMaxOptions::ExportMode exportMode;
+
+	if (-1 == mode)
+	{
+		exportMode = nMaxOptions::Preview;
+	}
+	else
+	{
+		if (0 == mode)
+		{
+			exportMode = nMaxOptions::Normal;
+		}
+		else
+		if (1 == mode)
+		{
+			exportMode = nMaxOptions::AnimOnly;
+		}
+		else
+		{
+			n_maxlog(Error, "Unknown Export Mode: Failed to export scene.");
+
+            ReleaseSingletons();
+			return 0;
+		}
+
+		//nString exportedFileName (name);
+		//if (exportedFileName.CheckExtension("n2"))
+		//{
+        //  exportMode = nMaxOptions::Normal;
+		//}
+		//else
+		//if (exportedFileName.CheckExtension("nax2") || 
+		//	exportedFileName.CheckExtension("nanim2"))
+		//{
+		//	exportMode = nMaxOptions::AnimOnly;
+		//}
+		//else
+		//{
+		//	n_maxlog(Error, "Unknown Export Mode: Failed to export scene.");
+
+        //  ReleaseSingletons();
+		//	return 0;
+		//}
+	}
+	
+	expOptions->SetExportMode(exportMode);
 
     // export scene.
     nMaxScene scene;
     if (!scene.Export(inode))
     {
-        n_maxlog(Error, "Failed to export scene.");
+		n_maxlog(Error, "Failed to export Nodes: Failed to export scene.");
 
         ReleaseSingletons();
 
         return 0;
     }
 
-    // run viewer app.
-    if (expOptions->RunViewer())
+    // run viewer app. - It only works on normal exporting mode!
+	if (expOptions->RunViewer() && (expOptions->GetExportMode() == nMaxOptions::Normal))
     {
         nString saveFile = name;
         nString sceneFile = saveFile.ExtractFileName();

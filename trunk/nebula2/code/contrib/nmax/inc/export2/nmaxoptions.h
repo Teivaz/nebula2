@@ -21,6 +21,16 @@ class nIniPrefServer;
 class nMaxOptions
 {
 public:
+	enum ExportMode
+	{
+		Preview  = 0,
+		Normal, 
+		AnimOnly,
+
+		NumMode,
+	};
+
+public:
     /// the destructor.
     virtual ~nMaxOptions();
 
@@ -85,6 +95,9 @@ public:
     void SetAnimFileType(const char* type);
     const nString& GetAnimFileType() const;
 
+	void SetUseCharacter3SkinAnimator(bool b);
+	bool GetUseCharacter3SkinAnimator() const;
+
     void SetExportHiddenNodes(bool status);
     bool ExportHiddenNodes();
 
@@ -108,8 +121,10 @@ public:
 
     bool OverwriteExistTexture() const;
 
-    void SetPreviewMode(bool on);
-    bool UsePreviewMode() const;
+    //void SetPreviewMode(bool on);
+    //bool UsePreviewMode() const;
+    void SetExportMode(ExportMode m);
+    ExportMode GetExportMode() const;
 
     bool UseDefaultViewer() const;
     void SetUseDefaultViewer(bool use);
@@ -125,6 +140,10 @@ public:
     nString GetParticle2MeshSuffix() const;
     /// @}
 
+	/// @name Pack Vertex Component 
+	/// @{
+	bool PackVertexComponents() const;
+	/// @}
 protected:
     ///
     bool LoadDirSettings();
@@ -160,6 +179,8 @@ protected:
     nString animFileExtension;
 
     nString sceneFilename;
+
+	bool useCharacter3SkinAnimator;
 
     /// animation sample rate.
     int sampleRate;
@@ -203,7 +224,8 @@ protected:
     /// launch specified viewer.
     bool runViewer;
     /// preview mode. It ueses ram file to view exported model.
-    bool previewMode;
+    //bool previewMode;
+	ExportMode exportMode;
     /// default viewer.
     bool useDefaultViewer;
     /// verbose level of log message. 0: errors only, 1:warning, 2:low, 3:midium, 4:high
@@ -384,6 +406,18 @@ const nString& nMaxOptions::GetAnimFileType() const
 }
 //-----------------------------------------------------------------------------
 inline
+void nMaxOptions::SetUseCharacter3SkinAnimator(bool b)
+{
+	this->useCharacter3SkinAnimator = b;
+}
+//-----------------------------------------------------------------------------
+inline
+bool nMaxOptions::GetUseCharacter3SkinAnimator() const
+{
+	return this->useCharacter3SkinAnimator;
+}
+//-----------------------------------------------------------------------------
+inline
 void nMaxOptions::SetMaxJointPaletteSize(int size)
 {
     this->maxJointPaletteSize = size;
@@ -420,15 +454,16 @@ float nMaxOptions::GetGeomScaleValue() const
 }
 //-----------------------------------------------------------------------------
 inline
-void nMaxOptions::SetPreviewMode(bool on)
+void nMaxOptions::SetExportMode(ExportMode m)
 {
-    this->previewMode = on;
+    this->exportMode = m;
 }
 //-----------------------------------------------------------------------------
 inline
-bool nMaxOptions::UsePreviewMode() const
+nMaxOptions::ExportMode 
+nMaxOptions::GetExportMode() const
 {
-    return this->previewMode;
+    return this->exportMode;
 }
 //-----------------------------------------------------------------------------
 inline
