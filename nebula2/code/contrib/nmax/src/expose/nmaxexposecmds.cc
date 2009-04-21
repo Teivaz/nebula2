@@ -325,7 +325,7 @@ void nNebulaInterface::NPrint(TCHAR* msg)
     char* text = _T(msg);
     n_printf ("%s", text);
 
-    n_listener("%s", text);
+    n_listener("%s\n", text);
 }
 
 //-----------------------------------------------------------------------------

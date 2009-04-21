@@ -928,7 +928,7 @@ bool GetShaderFilter()
     // Load the shaders.xml file
     if (!xmlDoc.LoadFile(filterXmlFilePath.Get()))
     {
-        n_listener("Filed to load %s.", filterXmlFilePath.Get());
+        n_listener("Filed to load %s.\n", filterXmlFilePath.Get());
         return false;
     }
 
@@ -992,7 +992,7 @@ bool EvalCustomMaterialPlugin()
     // Load the shaders.xml file
     if (!xmlDoc.LoadFile(shdXmlFilePath.Get()))
     {
-        n_listener("Filed to load %s.", shdXmlFilePath.Get());
+        n_listener("Filed to load %s.\n", shdXmlFilePath.Get());
         return false;
     }
 
@@ -1341,7 +1341,7 @@ bool GetDefaultValueFromDataBase(const nString &shader, const nString &param, nS
     // Load the shaders.xml file
     if (!xmlDoc.LoadFile(shdXmlFilePath.Get()))
     {
-        n_listener("Filed to load %s.", shdXmlFilePath.Get());
+        n_listener("Filed to load %s.\n", shdXmlFilePath.Get());
         return false;
     }
 

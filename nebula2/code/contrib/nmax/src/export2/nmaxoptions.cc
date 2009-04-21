@@ -95,7 +95,7 @@ nIniPrefServer* nMaxOptions::BeginINIPref(const nString& section)
         if (!fileServer->FileExists(iniFilename))
         {
             // .ini file does not exist in '/plugcfg' directory.
-            n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.", N_MAXEXPORT_INIFILE);
+            n_listener("%s file does not exist in '$3dsmax/plugcfg' directory.\n", N_MAXEXPORT_INIFILE);
             return 0;
 		}
     }
@@ -234,7 +234,7 @@ bool nMaxOptions::LoadDirSettings()
 
     if (!fileServer->DirectoryExists(this->homeDir.Get()))
     {
-        n_listener("Home path '%s' does not exist.", this->homeDir.Get());
+        n_listener("Home path '%s' does not exist.\n", this->homeDir.Get());
         return false;
     }
     else
@@ -368,7 +368,7 @@ bool nMaxOptions::LoadDirSettings()
         {
             nString alerts("ALERT: assignment of paths are wrong:");
             alerts += tmp;
-            n_listener("%s", alerts.Get());
+            n_listener("%s\n", alerts.Get());
             return false;
         }
     }
