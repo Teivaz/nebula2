@@ -158,7 +158,7 @@ char* nMaxScriptBuilder::BuildMaxScriptFromNebulaObject(const char* objPath)
                
             if (!objAttr.Open())
             {
-                n_listener("nMaxScriptBuilder: %s.xml file does not exist", clazz->GetName());
+                n_listener("nMaxScriptBuilder: %s.xml file does not exist.\n", clazz->GetName());
             }
 
             // get cmds list of the object 
@@ -299,7 +299,7 @@ void MakeControl(nObjectAttribute& objAttr, nCmdProto* cmdProto, nString& param,
         AddVariousParam(ncmd, cmd, param, rollout, setupbody);
         break;
     default:
-        n_listener("Unknown type in %s.xml file: %s command.", 
+        n_listener("Unknown type in %s.xml file: %s command.\n", 
             objAttr.GetName().Get(), commandName.Get());
         break;
     }

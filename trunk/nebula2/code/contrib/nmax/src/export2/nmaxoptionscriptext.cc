@@ -19,7 +19,7 @@ const char* GetProjDir()
     nMaxOptions* options = nMaxOptions::Instance();
     if (!options->Initialize())
     {
-        n_listener("Failed to read '%s' file from 'plugcfg' directory.", N_MAXEXPORT_INIFILE);
+        n_listener("Failed to read '%s' file from 'plugcfg' directory.\n", N_MAXEXPORT_INIFILE);
 
         return NULL;
     }

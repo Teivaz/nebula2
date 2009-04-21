@@ -209,10 +209,10 @@ void nObjectAttribute::Command::StringToType(const char* str)
         if (0 == strcmp("various", str))
             this->type = Various;
         else
-            n_listener("Invalid type of string: %s", str);
+            n_listener("Invalid type of string: %s\n", str);
     }
     else
     {
-        n_listener("Type for command %s does not exist.", this->GetName());
+        n_listener("Type for command %s does not exist.\n", this->GetName());
     }
 }
