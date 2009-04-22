@@ -135,15 +135,31 @@ void nMaxSkinAnimator::BuildJoints(nSkinAnimator* animator,
 //-----------------------------------------------------------------------------
 /**
     Build animation clips.
+
+    - 22-Apr-09 kims Changed to add "default" clip name if it does not have any.
 */
 void nMaxSkinAnimator::BuildAnimClips(nSkinAnimator* animator, nMaxNoteTrack& noteTrack)
 {
     int numClips = noteTrack.GetNumStates();
     animator->BeginClips(numClips);
 
+    nString clipName;
+
     for (int i=0; i<numClips; i++)
     {
         const nMaxAnimState& clip = noteTrack.GetState(i);
+
+        // force to get clip name if it does not have any.
+        if(clip.name.IsEmpty())
+        {
+            clipName = "default";
+            clipName.AppendInt(i);
+        }
+        else
+        {
+            clipName = clip.name;
+        }
+
         animator->SetClip(i, i, clip.name);
     }
 
