@@ -83,8 +83,8 @@
     <tt>Dope sheet Track View</tt>.
     Select <i>'Graph Editors > Track View - Dope Sheet...'</i>
 
-    The Nebula2 animation state dialog creates note track on the root biped object.
-    Select the root biped object and collapse to see its note track.
+    The Nebula2 animation state dialog creates note track on the <b>root</b> biped object.
+    Select the <b>root</b> biped object and collapse to see its note track.
 
     @image html dopetrackview01.png
 
@@ -101,14 +101,21 @@
     -- create a new notetrack which has "AnimStateNotetrack" for its name
     newNoteTrack = notetrack "AnimStateNotetrack"
 
-    -- add created notetrack to the max node
+    -- add created notetrack to the max node.
+    -- '$root' is root biped object's name.
     addNoteTrack $root newNoteTrack
 
-    -- create notetrack's key
+    -- create notetrack's key.
     ntKey = newNoteTrack.keys
 
     -- add key to the specified location.  
     addedKey = addNewNoteKey ntKey 12
+
+    @image html dopetrackview01.png
+
+    @note
+    Remark the note should be assigned on the root the biped object otherwise the plugin 
+    does not retrieve clips. Also it only possible with biped object not bone object.
 
     -- The animation state which has "Kick" for its name and repeat for its type is created. 
     -- Also the animation state has 20 and 0.0 for its duration and fade-in-time value. 
